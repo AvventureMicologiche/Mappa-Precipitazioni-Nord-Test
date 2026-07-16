@@ -96,6 +96,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 /* Select regioni mobile */
 .region-select-mobile{display:none;}
 .region-btns-desktop{display:grid;}
+/* Regione "orfana" con numero dispari di pulsanti: occupa tutta la riga */
+.rcheck-full{grid-column:1/-1;}
 
 /* Pulsanti periodo */
 .tp-title{font-size:14px;font-weight:700;color:#1b3f6e;
@@ -640,7 +642,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
             <span class="rcheck-box"></span>
             <span class="rcheck-name">Alto Adige</span>
           </label>
-          <label class="rcheck-wrap">
+          <label class="rcheck-wrap rcheck-full">
             <input type="checkbox" id="chk-ticino" value="ticino">
             <span class="rcheck-box"></span>
             <span class="rcheck-name">Ticino (CH)</span>
