@@ -640,6 +640,11 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
             <span class="rcheck-box"></span>
             <span class="rcheck-name">Alto Adige</span>
           </label>
+          <label class="rcheck-wrap">
+            <input type="checkbox" id="chk-ticino" value="ticino">
+            <span class="rcheck-box"></span>
+            <span class="rcheck-name">Ticino (CH)</span>
+          </label>
         </div>
         <!-- Mobile: select dropdown -->
         <select id="region-select" class="region-select-mobile">
@@ -654,6 +659,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <option value="friuli">Friuli V.G.</option>
           <option value="trentino">Trentino</option>
           <option value="altoadige">Alto Adige</option>
+          <option value="ticino">Ticino (CH)</option>
         </select>
       </div>
     </div>
@@ -1159,6 +1165,16 @@ var REGIONS = {
       {n:"Torbole Belvedere",   lat:45.870, lon:10.877, q:90},
       {n:"Passo Pian Fugazze",  lat:45.759, lon:11.175, q:1170}
     ]
+  },
+
+  ticino: {
+    name: 'Ticino',
+    center: [46.2, 8.8], zoom: 9,
+    fonte: 'OASI Ticino',
+    geojsonUrl: 'ticino-confine.geojson',
+    geojsonFilter: 'ticino',
+    dataSource: 'oasi_ticino',
+    stations: []
   },
 
   toscana: {
@@ -1992,6 +2008,10 @@ function loadData(pastDate,nowDate,labelPeriodo){
       loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,function(dati){
         onRegionDone(dati,'🟢 SIR Toscana');
       });
+    } else if(source==='oasi_ticino'){
+      loadTicinoRegion(pastDate,nowDate,labelPeriodo,function(dati){
+        onRegionDone(dati,'🟢 OASI Ticino');
+      });
     } else {
       loadOpenMeteoRegion(cfg.stations||[],pastDate,nowDate,labelPeriodo,function(dati){
         onRegionDone(dati,'🌍 Open-Meteo');
@@ -2683,6 +2703,54 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
 // ═══════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════
+// TICINO (OASI) — carica dati giornalieri da GitHub (repo di TEST)
+// NOTA: quando il Ticino verrà promosso in produzione, cambiare
+// TICINO_RAW per puntare al repo Mappa-Precipitazioni-Nord.
+// ═══════════════════════════════════════════════════════════════
+function loadTicinoRegion(pastDate,nowDate,labelPeriodo,cb){
+  var TICINO_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord-Test/main/data/ticino';
+  var rainTot={}, stMeta={};
+  var dates=[];
+  var d=new Date(pastDate.getTime());
+  while(d<=nowDate){
+    var y=d.getFullYear(),mo=String(d.getMonth()+1).padStart(2,'0'),dy=String(d.getDate()).padStart(2,'0');
+    dates.push(y+'-'+mo+'-'+dy);
+    d.setDate(d.getDate()+1);
+  }
+
+  var pending=dates.length;
+  if(pending===0){cb([]);return;}
+
+  dates.forEach(function(dateStr){
+    fetch(TICINO_RAW+'/'+dateStr+'.json')
+      .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(function(data){
+        if(data.stations){
+          data.stations.forEach(function(s){
+            var key=s.id||s.n;
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'TI'};
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+          });
+        }
+      })
+      .catch(function(){})
+      .finally(function(){
+        pending--;
+        if(pending>0) return;
+        var full=Object.keys(rainTot).map(function(key){
+          var s=stMeta[key];if(!s)return null;
+          var mm=rainTot[key]||0;
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'TI',
+                  mm:mm<0.5?0:Math.round(mm*10)/10};
+        }).filter(Boolean);
+        if(full.length<5){cb([]);return;}
+        full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
+        cb(full);
+      });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
 // OPEN-METEO STORICO — carica dati giornalieri da GitHub
 // Usato per Valle d'Aosta e Friuli
 // ═══════════════════════════════════════════════════════════════
@@ -3065,12 +3133,24 @@ function loadGeoJSONOnce(cb){
     .catch(function(){geojsonCache={features:[]};cb(geojsonCache);});
 }
 
+// Confini da URL dedicato (es. Ticino: cantone svizzero, non presente nei geojson italiani)
+var geojsonUrlCache={};
+function loadGeoJSONUrl(url,cb){
+  if(geojsonUrlCache[url]){cb(geojsonUrlCache[url]);return;}
+  fetch(url)
+    .then(function(r){if(!r.ok)throw new Error('HTTP');return r.json();})
+    .then(function(data){geojsonUrlCache[url]=data;cb(data);})
+    .catch(function(){cb({features:[]});});
+}
+
 var regionBorders={}; // cache layer bordi per regione
 
 function setRegionBorder(regionKey,cb){
   var cfg=REGIONS[regionKey]||REGIONS.lombardia;
   var filterField=cfg.geojsonFilterField||null;
-  var loader=filterField?loadGeoJSONProvince:loadGeoJSONOnce;
+  var loader=cfg.geojsonUrl
+    ? function(cb2){loadGeoJSONUrl(cfg.geojsonUrl,cb2);}
+    : (filterField?loadGeoJSONProvince:loadGeoJSONOnce);
 
   loader(function(data){
     var filter=cfg.geojsonFilter||'lombar';

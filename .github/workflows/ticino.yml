@@ -1,0 +1,52 @@
+name: Ticino
+on:
+  workflow_dispatch:
+    inputs:
+      date_override:
+        description: 'Data da raccogliere (YYYY-MM-DD, lascia vuoto per ieri+altroieri)'
+        required: false
+        default: ''
+  schedule:
+    # OASI pubblica il dato giornaliero solo a giornata conclusa, quindi ogni run
+    # raccoglie ieri + altroieri: bastano 3 run/giorno (mattina presto per il primo
+    # dato di ieri, poi due passaggi di consolidamento).
+    - cron: '30 4 * * *'
+    - cron: '30 10 * * *'
+    - cron: '30 16 * * *'
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Raccoglie dati Ticino
+        id: collect
+        run: node .github/scripts/collect-ticino-gh.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+        continue-on-error: true
+      - name: Retry 1
+        if: steps.collect.outcome == 'failure'
+        run: sleep 30 && node .github/scripts/collect-ticino-gh.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+        continue-on-error: true
+      - name: Retry 2
+        if: steps.collect.outcome == 'failure'
+        run: sleep 60 && node .github/scripts/collect-ticino-gh.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+      - name: Commit e push
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@bot.com"
+          mkdir -p data/ticino
+          git add data/ticino/
+          git diff --staged --quiet || git commit -m "ticino $(date -u +%Y-%m-%d)"
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin main && git push && break
+            echo "Push fallito (tentativo $i/5), retry tra 10s..."
+            sleep 10
+          done
