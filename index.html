@@ -3337,6 +3337,7 @@ document.getElementById('region-select').addEventListener('change', function(){
   else if(rk==='altoadige') map.setView([46.4, 11.4], 8);
   else if(rk==='trentino') map.setView([45.9, 11.1], 8.5);
   else if(rk==='toscana') map.setView([window.innerWidth<=375 ? 43.1 : 42.85, 11.0], 7.5);
+  else if(rk==='ticino') map.setView([46.05, 8.8], 8.5);
   setRegionBorder(rk, function(){
     clearMarkers();
     addDefaultMarkersForRegion(rk);
