@@ -189,6 +189,22 @@ async function main() {
     writeDay(dayBeforeStr, await collectDay(stations, dayBeforeStr));
   }
 
+  // ── Pulizia file > 365 giorni (retention finestra scorrevole) ──
+  const MAX_DAYS = 365;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - MAX_DAYS);
+  const cutoffStr = cutoff.toISOString().substring(0, 10);
+  let deleted = 0;
+  fs.readdirSync(DATA_DIR)
+    .filter(function(f) { return /^\d{4}-\d{2}-\d{2}\.json$/.test(f); })
+    .forEach(function(f) {
+      if (f.replace('.json', '') < cutoffStr) {
+        fs.unlinkSync(path.join(DATA_DIR, f));
+        deleted++;
+      }
+    });
+  if (deleted > 0) console.log('Pulizia retention: ' + deleted + ' file oltre i ' + MAX_DAYS + ' giorni eliminati');
+
   console.log('=== collect-ticino-gh completato ===');
 }
 
