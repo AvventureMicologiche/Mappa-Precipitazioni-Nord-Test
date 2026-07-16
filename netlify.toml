@@ -1,0 +1,11 @@
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[functions]
+  directory = "netlify/functions"
+
+[build]
+  publish = "."
+  ignore = "git diff --quiet HEAD^ HEAD -- index.html netlify/"
