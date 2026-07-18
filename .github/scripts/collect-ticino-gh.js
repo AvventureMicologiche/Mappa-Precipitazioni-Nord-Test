@@ -103,14 +103,33 @@ function parseOasiCsv(csv) {
 
 async function collectDay(stations, dateStr) {
   const out = [];
+  let fallbacks = 0;
   for (let i = 0; i < stations.length; i++) {
     const s = stations[i];
     try {
       const url = `${BASE_URL}/measure/csv?domain=meteo&resolution=d&parameter=Prec&from=${dateStr}&to=${dateStr}&location=${encodeURIComponent(s.code)}`;
       const csv = await fetchRaw(url);
       const rows = parseOasiCsv(csv).filter(r => r.date === dateStr);
+      let mm = null;
       if (rows.length > 0) {
-        const mm = Math.round(rows[0].mm * 10) / 10;
+        mm = rows[0].mm;
+      } else {
+        // Il totale giornaliero di ieri viene pubblicato da OASI solo a metà
+        // mattina (~08:30 CEST): fino ad allora la riga esiste ma è vuota.
+        // Fallback: somma delle letture da 10 minuti, disponibili in tempo
+        // quasi reale (validato: scarto ~3% dal giornaliero ufficiale).
+        // I run successivi sovrascrivono col valore ufficiale.
+        const hUrl = `${BASE_URL}/measure/csv?domain=meteo&resolution=h&parameter=Prec&from=${dateStr}&to=${dateStr}&location=${encodeURIComponent(s.code)}`;
+        const hRows = parseOasiCsv(await fetchRaw(hUrl)).filter(r => r.date === dateStr);
+        // 144 letture attese (10 min): accetta solo giornate quasi complete
+        // per non scrivere sottostime grossolane da buchi di trasmissione.
+        if (hRows.length >= 120) {
+          mm = hRows.reduce((a, r) => a + r.mm, 0);
+          fallbacks++;
+        }
+      }
+      if (mm !== null) {
+        mm = Math.round(mm * 10) / 10;
         if (mm >= 0 && mm <= 500) {
           out.push({ id: s.code, n: s.name, lat: s.lat, lon: s.lon, q: s.q, p: 'TI', mm });
         }
@@ -122,6 +141,7 @@ async function collectDay(stations, dateStr) {
     }
   }
   console.log('');
+  if (fallbacks > 0) console.log(`  (${fallbacks} stazioni da somma 10-min, giornaliero non ancora pubblicato)`);
   return out;
 }
 
@@ -187,6 +207,23 @@ async function main() {
 
     console.log(`  Consolido l'altroieri (${dayBeforeStr})...`);
     writeDay(dayBeforeStr, await collectDay(stations, dayBeforeStr));
+
+    // ── Auto-riparazione: recupera dall'archivio OASI eventuali giorni
+    // mancanti negli ultimi 7 (es. run falliti per piu' giorni di fila).
+    // Possibile solo perche' le query storiche OASI funzionano.
+    for (let i = 3; i <= 7; i++) {
+      const dStr = fmtDate(new Date(noon - i * 24 * 3600000));
+      const f = path.join(DATA_DIR, `${dStr}.json`);
+      let needsRepair = !fs.existsSync(f);
+      if (!needsRepair) {
+        try { needsRepair = (JSON.parse(fs.readFileSync(f, 'utf8')).count || 0) < 30; }
+        catch(e) { needsRepair = true; }
+      }
+      if (needsRepair) {
+        console.log(`  Auto-riparazione: recupero ${dStr} dall'archivio...`);
+        writeDay(dStr, await collectDay(stations, dStr));
+      }
+    }
   }
 
   // ── Pulizia file > 365 giorni (retention finestra scorrevole) ──

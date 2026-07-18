@@ -7,9 +7,11 @@ on:
         required: false
         default: ''
   schedule:
-    # OASI pubblica il dato giornaliero solo a giornata conclusa, quindi ogni run
-    # raccoglie ieri + altroieri: bastano 3 run/giorno (mattina presto per il primo
-    # dato di ieri, poi due passaggi di consolidamento).
+    # Ogni run raccoglie ieri + altroieri. Il totale giornaliero OASI viene
+    # pubblicato solo a metà mattina (~08:30 CEST): il run notturno (00:30 UTC)
+    # e quello delle 04:30 usano il fallback a somma 10-min del collector, i
+    # run successivi consolidano col valore ufficiale.
+    - cron: '30 0 * * *'
     - cron: '30 4 * * *'
     - cron: '30 10 * * *'
     - cron: '30 16 * * *'
