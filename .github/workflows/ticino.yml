@@ -6,15 +6,20 @@ on:
         description: 'Data da raccogliere (YYYY-MM-DD, lascia vuoto per ieri+altroieri)'
         required: false
         default: ''
-  schedule:
-    # Ogni run raccoglie ieri + altroieri. Il totale giornaliero OASI viene
-    # pubblicato solo a metà mattina (~08:30 CEST): il run notturno (00:30 UTC)
-    # e quello delle 04:30 usano il fallback a somma 10-min del collector, i
-    # run successivi consolidano col valore ufficiale.
-    - cron: '30 0 * * *'
-    - cron: '30 4 * * *'
-    - cron: '30 10 * * *'
-    - cron: '30 16 * * *'
+  # DISATTIVATO il 22 luglio 2026: il Ticino è in produzione dal 17 luglio e
+  # l'index.html di questo repo ora legge `data/ticino` dal repo di produzione,
+  # quindi questa raccolta non la guardava più nessuno. I cron sono commentati
+  # invece che cancellati: per riattivarla basta togliere i cancelletti, e nel
+  # frattempo resta lanciabile a mano da "Run workflow" (workflow_dispatch).
+  # Ogni run raccoglie ieri + altroieri. Il totale giornaliero OASI viene
+  # pubblicato solo a metà mattina (~08:30 CEST): il run notturno (00:30 UTC)
+  # e quello delle 04:30 usano il fallback a somma 10-min del collector, i
+  # run successivi consolidano col valore ufficiale.
+  # schedule:
+  #   - cron: '30 0 * * *'
+  #   - cron: '30 4 * * *'
+  #   - cron: '30 10 * * *'
+  #   - cron: '30 16 * * *'
 permissions:
   contents: write
 jobs:

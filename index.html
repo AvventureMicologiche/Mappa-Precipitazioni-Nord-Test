@@ -1,13 +1,38 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <!-- Il config parte solo sul dominio di produzione: questo stesso file gira
+       anche sul sito di test (avventurepluvio-test.netlify.app), che non deve
+       finire nelle statistiche. Senza config gtag.js non invia nulla, quindi
+       le chiamate gtag('event',...) sparse nella pagina restano innocue. -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    if (/(^|\.)avventuremicologiche\.it$/.test(location.hostname)) {
+      gtag('config', 'G-9R7MXXS0V4');
+    }
+  </script>
+
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <meta name="description" content="Mappa interattiva delle precipitazioni in Nord Italia con dati da stazioni meteo reali. Pianifica le tue uscite funghi.">
   <meta property="og:title" content="Precipitazioni Nord Italia | Avventure Micologiche">
   <meta property="og:description" content="Mappa interattiva con dati meteo reali per pianificare ogni uscita. Trova le zone dove ha piovuto di più.">
-  <meta property="og:image" content="https://precipitazioni.avventuremicologiche.it/preview.jpg">
+  <!-- Anteprima rifatta il 22 luglio 2026 (Emilia Romagna, 30 giorni, 1200x630).
+       Il ?v= serve a far riscaricare l'immagine ai social, che la tengono in
+       cache per URL e altrimenti continuerebbero a mostrare la vecchia. -->
+  <meta property="og:image" content="https://precipitazioni.avventuremicologiche.it/preview.jpg?v=20260722">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:alt" content="Mappa delle precipitazioni degli ultimi 30 giorni in Emilia Romagna">
   <meta property="og:url" content="https://precipitazioni.avventuremicologiche.it">
   <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://precipitazioni.avventuremicologiche.it/preview.jpg?v=20260722">
   <meta name="theme-color" content="#1b3f6e">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -94,7 +119,16 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .rcheck-wrap:hover input:checked ~ .rcheck-name{background:#234f8a;}
 
 /* Select regioni mobile */
-.region-select-mobile{display:none;}
+.region-select-mobile{display:none;
+  /* La lista che si apre al tocco è disegnata dal sistema operativo, non dal
+     nostro CSS: di default segue il tema del telefono (scura su Android in
+     dark mode, bianca in tema chiaro o su altri browser). Con color-scheme
+     la chiediamo scura sempre, così l'aspetto è lo stesso ovunque.
+     Fuori da ogni media query: il select è già nascosto su desktop. */
+  color-scheme:dark;}
+/* Fallback per i browser che ignorano color-scheme sui select ma colorano
+   le singole voci. */
+.region-select-mobile option{background:#2b2b2b;color:#f2f2f2;}
 .region-btns-desktop{display:grid;}
 /* Regione "orfana" con numero dispari di pulsanti: occupa tutta la riga */
 .rcheck-full{grid-column:1/-1;}
@@ -197,35 +231,102 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .tt-row b{color:#ddd;font-weight:600}
 .tt-fonte{font-size:9px;color:#555;margin-top:5px;padding-top:5px;border-top:1px solid #333}
 
+/* Pannello stazione con grafico storico — sostituisce il vecchio tooltip
+   sui marker con i dati (stessa palette scura, così resta coerente). */
+#st-history{position:absolute;z-index:2100;display:none;width:296px;background:#1e1e1e;
+  color:#fff;border-radius:7px;padding:10px 13px;box-shadow:0 4px 20px rgba(0,0,0,.5);}
+.sh-close{position:absolute;top:5px;right:7px;cursor:pointer;color:#777;
+  font-size:16px;line-height:1;border:0;background:none;padding:2px 5px;}
+.sh-close:hover{color:#fff}
+.sh-nome{font-size:13px;font-weight:700;border-bottom:1px solid #3a3a3a;
+  padding-bottom:5px;margin-bottom:6px;padding-right:16px}
+.sh-meta{font-size:10px;color:#888;font-weight:400}
+.sh-big{display:flex;align-items:baseline;gap:5px;margin-bottom:4px}
+.sh-mm{font-size:22px;font-weight:700;color:#7ec8f8}
+.sh-unit2{font-size:11px;color:#888}
+.sh-row{display:flex;justify-content:space-between;font-size:10px;padding:1px 0;color:#aaa}
+.sh-row b{color:#ddd;font-weight:600}
+.sh-per{font-size:10px;color:#888;margin:7px 0 0}
+.sh-unit{font-size:9px;color:#777;text-align:right;padding-right:28px;margin:2px 0}
+.sh-plot{position:relative;padding-right:28px}
+.sh-grid{position:absolute;left:0;right:28px;border-top:1px dashed #3a3a3a}
+.sh-grid span{position:absolute;right:-27px;top:-7px;font-size:9px;color:#777;width:25px}
+.sh-bars{display:flex;align-items:flex-end;gap:2px;height:60px;position:relative;z-index:1}
+.sh-bar{flex:1;min-height:2px;border-radius:2px 2px 0 0}
+.sh-x{display:flex;gap:2px;margin-top:3px;padding-right:28px}
+.sh-x span{flex:1;text-align:center;font-size:8px;color:#777}
+.sh-note{font-size:9px;color:#666;margin-top:5px}
+.sh-fonte{font-size:9px;color:#555;margin-top:5px;padding-top:5px;border-top:1px solid #333}
+.sh-load{font-size:11px;color:#888;padding:18px 0;text-align:center}
+@media(max-width:600px){
+  /* Su schermi piccoli il pannello si aggancia in basso a tutta larghezza.
+     Il "bottom" lo calcola histPosition() in base all'altezza della legenda
+     (fixed, stesso z-index): la barra dei cumulati deve restare visibile. */
+  #st-history{position:fixed;width:auto;left:8px!important;right:8px;top:auto!important;}
+  #st-history .sh-bars{height:46px}
+  #st-history .sh-nome{padding-bottom:4px;margin-bottom:4px}
+  #st-history .sh-big{margin-bottom:2px}
+  #st-history .sh-per{margin-top:5px}
+}
+
 .fonte-tag{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
   z-index:1000;background:rgba(255,255,255,.88);
   border-radius:10px;padding:3px 12px;font-size:9px;color:#888;
   pointer-events:none;white-space:nowrap;}
 
-/* Logo canale stile ARPAL — quadrato */
+/* ── Box canale YouTube (desktop, in basso a destra) ──
+   Filigrana sullo SFONDO, non sull'intero elemento: la mappa si intravede
+   ma Archie e il pulsante restano pieni. Col mouse sopra diventa opaco. */
 #channel-logo{
-  position:absolute;bottom:28px;right:10px;
-  z-index:1000;
-  display:flex;align-items:center;gap:8px;
-  background:rgba(255,255,255,.60);
-  border-radius:6px;
-  padding:8px 12px;
+  position:absolute;bottom:28px;right:14px;z-index:1000;
+  display:flex;align-items:center;gap:14px;
+  width:328px;padding:14px 17px;
+  background:rgba(255,255,255,.72);
+  border:1px solid rgba(226,224,216,.85);
+  border-radius:13px;
+  box-shadow:0 3px 14px rgba(0,0,0,.12);
   text-decoration:none;
-  opacity:0.75;
-  transition:opacity .2s;
+  transition:background .2s, box-shadow .2s;
 }
-#channel-logo:hover{opacity:1;}
-.iscriviti-btn{display:inline-block;}
-@media(max-width:600px){.iscriviti-btn{display:none!important;}}
-#channel-logo .ch-text{
-  display:flex;flex-direction:column;align-items:flex-start;line-height:1.2;
+#channel-logo:hover{background:#fff;box-shadow:0 4px 18px rgba(0,0,0,.20);}
+#channel-logo .ch-ava{
+  width:62px;height:62px;border-radius:50%;flex:none;
+  border:2px solid #1b3f6e;object-fit:cover;background:#f3efe6;
 }
-#channel-logo .ch-text span{
-  font-size:13px;font-weight:700;
-  color:#1a1a2e;
-  letter-spacing:.01em;
+#channel-logo .ch-txt{flex:1;min-width:0;}
+#channel-logo .ch-nome{
+  font-size:18px;font-weight:700;color:#1b3f6e;line-height:1.15;
   font-family:'Segoe UI',Arial,sans-serif;
-  display:block;
+}
+#channel-logo .ch-claim{font-size:14px;color:#5f5e5a;margin:4px 0 10px;}
+#channel-logo .ch-btn{
+  background:#FF0000;color:#fff;font-size:15px;font-weight:700;
+  padding:8px 0;border-radius:5px;text-align:center;letter-spacing:.4px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+
+/* ── Pillola canale (schermi piccoli) ──
+   Vive nel pannello dei cumulati, sotto le statistiche: non copre mai la
+   mappa. Sostituisce il box desktop, che sotto i 600px sparisce (prima
+   spariva solo il pulsante ISCRIVITI, lasciando un logo non cliccabile). */
+#channel-pill{display:none;}
+@media(max-width:600px){
+  #channel-logo{display:none!important;}
+  /* Blu istituzionale (#1b3f6e, lo stesso di titoli e pannelli): la pillola
+     sembra parte del sito e non un annuncio. Il rosso resta solo sull'icona
+     YouTube, che basta a dire dove porta il link. */
+  #channel-pill{
+    display:flex;align-items:center;gap:11px;
+    margin-top:9px;padding:9px 12px;
+    background:#1b3f6e;border-radius:26px;text-decoration:none;
+  }
+  #channel-pill img{
+    width:46px;height:46px;border-radius:50%;flex:none;
+    border:2px solid #fff;object-fit:cover;background:#f3efe6;
+  }
+  #channel-pill .cp-t{color:#fff;font-size:15px;font-weight:700;line-height:1.25;flex:1;}
+  #channel-pill .cp-t small{display:block;font-weight:400;font-size:11.5px;opacity:.85;margin-top:1px;}
+  #channel-pill .cp-yt{flex:none;display:flex;align-items:center;}
 }
 
 /* ── Frecce tutorial ── */
@@ -531,12 +632,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 
 <header>
   <div class="hdr-l">
-    <a href="https://avventuremicologiche.it" target="_blank" rel="noopener" title="Avventure Micologiche" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,0.12);color:#fff;text-decoration:none;flex-shrink:0;margin-right:2px;">
+    <a href="https://avventuremicologiche.it" target="_blank" rel="noopener" title="Avventure Micologiche" onclick="try{gtag('event','click_home')}catch(e){}" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,0.12);color:#fff;text-decoration:none;flex-shrink:0;margin-right:2px;">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     </a>
     <span style="font-size:18px">🌧</span>
     <div>
-      <h1>Precipitazioni Nord Italia <span style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(BETA V3.0)</span></h1>
+      <h1>Precipitazioni Nord Italia <span style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v4.0)</span></h1>
       <div class="hdr-sub" id="datehdr">Seleziona il periodo</div>
     </div>
   </div>
@@ -558,28 +659,42 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       <div class="tt-row"><span>Ranking</span><b id="tt-rank"></b></div>
       <div class="tt-fonte" id="tt-fonte"></div>
     </div>
+    <div id="st-history">
+      <button class="sh-close" id="sh-close" aria-label="Chiudi">×</button>
+      <div class="sh-nome" id="sh-nome"></div>
+      <div class="sh-big">
+        <span>💧</span>
+        <span class="sh-mm" id="sh-mm"></span>
+        <span class="sh-unit2">mm</span>
+      </div>
+      <div class="sh-row"><span id="sh-prov-lbl">Provincia</span><b id="sh-prov"></b></div>
+      <div class="sh-row"><span>Quota</span><b id="sh-quota"></b></div>
+      <div class="sh-row"><span>Ranking</span><b id="sh-rank"></b></div>
+      <div class="sh-per" id="sh-per"></div>
+      <div id="sh-body"></div>
+      <div class="sh-fonte" id="sh-fonte"></div>
+    </div>
     <div class="fonte-tag" id="fonte-tag">Fonte: ARPA Lombardia</div>
 
-    <!-- Logo canale stile ARPAL — bottom right -->
+    <!-- Box canale YouTube — desktop, in basso a destra.
+         Filigrana: lo SFONDO è semitrasparente (si intravede la mappa) ma il
+         contenuto resta pieno, così il pulsante rosso non risulta spento.
+         Prima era opacity:.80 sull'intero elemento, che sbiadiva tutto. -->
     <a href="https://www.youtube.com/@avventuremicologiche" target="_blank"
-       style="position:absolute;bottom:56px;right:20px;z-index:1000;
-              display:flex;flex-direction:column;align-items:center;gap:8px;
-              background:rgba(255,255,255,.70);border-radius:5px;
-              padding:10px 16px;text-decoration:none;opacity:0.80;
-              transition:opacity .2s;"
-       onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.80"
+       onclick="try{gtag('event','click_youtube')}catch(e){}"
        id="channel-logo">
-      <div style="display:flex;flex-direction:row;align-items:center;gap:10px;">
-        <svg width="42" height="30" viewBox="0 0 42 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="42" height="30" rx="6" fill="#FF0000"/>
-          <polygon points="16,7 16,23 31,15" fill="white"/>
-        </svg>
-        <div style="display:flex;flex-direction:column;align-items:center;line-height:1.2;">
-          <span style="font-size:22px;font-weight:700;color:#1b3f6e;font-family:Arial,sans-serif;letter-spacing:.01em;">Avventure</span>
-          <span style="font-size:22px;font-weight:700;color:#1b3f6e;font-family:Arial,sans-serif;letter-spacing:.01em;">Micologiche</span>
+      <img src="archie-avatar.png" alt="Archie" class="ch-ava">
+      <div class="ch-txt">
+        <div class="ch-nome">Avventure Micologiche</div>
+        <div class="ch-claim">Archie ti aspetta su YouTube</div>
+        <div class="ch-btn">
+          <svg width="19" height="14" viewBox="0 0 42 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="42" height="30" rx="6" fill="#fff"/>
+            <polygon points="16,7 16,23 31,15" fill="#FF0000"/>
+          </svg>
+          ISCRIVITI
         </div>
       </div>
-      <div class="iscriviti-btn" style="background:#FF0000;color:white;font-size:12px;font-weight:700;padding:5px 18px;border-radius:3px;letter-spacing:0.3px;">ISCRIVITI</div>
     </a>
 
     <!-- Pannelli: su desktop sovrapposti alla mappa via absolute -->
@@ -714,6 +829,18 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <div class="stat"><div class="sv" id="sav">–</div><div class="sl">Media</div></div>
         <div class="stat"><div class="sv" id="smn">–</div><div class="sl">Min</div></div>
       </div>
+      <a href="https://www.youtube.com/@avventuremicologiche" target="_blank"
+         onclick="try{gtag('event','click_youtube')}catch(e){}"
+         id="channel-pill">
+        <img src="archie-avatar.png" alt="Archie">
+        <div class="cp-t">Archie ti aspetta su YouTube<small>Avventure Micologiche · iscriviti</small></div>
+        <div class="cp-yt">
+          <svg width="26" height="19" viewBox="0 0 42 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="42" height="30" rx="6" fill="#FF0000"/>
+            <polygon points="16,7 16,23 31,15" fill="#fff"/>
+          </svg>
+        </div>
+      </a>
     </div>
   </div>
 </div>
@@ -1401,7 +1528,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
 // STATO
 // ═══════════════════════════════════════════════════════════════
 var activeRegions   = ['lombardia','piemonte']; // regioni con checkbox spuntata
-var currentRegion  = 'lombardia';
+var DEFAULT_REGION = 'lombardia'; // ripiego se nessuna regione risulta spuntata
 var lastUsedFonte  = '—'; // fonte effettiva usata nell'ultimo render
 var ARPA_STATIONS    = null; // stazioni ARPA Lombardia
 var ARPA_PIE_STATIONS = null; // stazioni ARPA Piemonte (caricate al boot)
@@ -1559,6 +1686,10 @@ function posTooltip(mx,my){
   tooltip.style.left=tx+'px';tooltip.style.top=ty+'px';
 }
 function showTooltip(s,rank,mx,my){
+  // Col grafico storico aperto il tooltip si sovrapporrebbe (su mobile in modo
+  // vistoso, visto che il popup occupa tutta la larghezza): niente tooltip.
+  var _h=document.getElementById('st-history');
+  if(_h&&_h.style.display==='block') return;
   // Determina la regione dalla provincia della stazione
   var fonte=lastUsedFonte||'—';
   document.getElementById('tt-nome').textContent=s.n;
@@ -1573,6 +1704,252 @@ function showTooltip(s,rank,mx,my){
 function hideTooltip(){tooltip.style.display='none';}
 
 // ═══════════════════════════════════════════════════════════════
+// PANNELLO STAZIONE CON GRAFICO STORICO
+// Sostituisce il vecchio tooltip sui marker con i dati: si apre al
+// passaggio del mouse (con un attimo di ritardo, per non sparare
+// richieste mentre si attraversa la mappa) e resta fisso se si clicca.
+// Finestra SEMPRE di 30 giorni che termina con la fine del periodo
+// selezionato (non con oggi: le date personalizzate possono stare nel
+// passato). I giorni del periodo scelto sono a colori pieni e fanno il
+// totale mostrato dalla mappa; gli altri sono spenti, servono solo a
+// leggere l'andamento. Periodi più lunghi di 30 giorni mostrano solo
+// gli ultimi 30 (il totale in alto resta quello dell'intero periodo).
+// ═══════════════════════════════════════════════════════════════
+var HIST_DAYS=30;
+var HIST_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
+// Regioni il cui storico PRIMA di questa data non è dato di stazione reale
+// (Toscana: pre-switch a SIR, ricostruito con stime Open-Meteo — bug #14).
+// Il grafico si ferma lì invece di mostrare stime come fossero misure.
+var HIST_REAL_FROM={toscana:'2026-07-12'};
+var histEl=document.getElementById('st-history');
+var histToken=0;
+var histOpenedAt=0;   // vedi map.on('click'): evita l'auto-chiusura all'apertura
+var histPinned=false; // true dopo un clic: non si chiude uscendo col mouse
+var histHoverT=null,histHideT=null;
+// Cache dei file giorno già scaricati (chiave regione/data → nome stazione: mm):
+// ogni file contiene TUTTE le stazioni della regione, quindi dopo la prima
+// stazione le successive non scaricano più nulla.
+var histFileCache={},histLombCache={};
+
+function histColor(v){
+  if(v<=0) return '#3d3d3d';
+  if(v<10) return '#85B7EB';
+  if(v<20) return '#378ADD';
+  if(v<60) return '#1D9E75';
+  return '#639922';
+}
+
+// Serie giornaliera da file JSON del repo (tutte le regioni tranne Lombardia)
+function histFromFiles(region,station,days,cb){
+  function assemble(){
+    var out={};
+    days.forEach(function(ds){
+      var m=histFileCache[region+'/'+ds];
+      if(m&&typeof m[station.n]==='number') out[ds]=m[station.n];
+    });
+    cb(out);
+  }
+  var need=days.filter(function(ds){return !histFileCache[region+'/'+ds];});
+  if(!need.length){assemble();return;}
+  var pending=need.length;
+  need.forEach(function(ds){
+    fetch(HIST_RAW+region+'/'+ds+'.json')
+      .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
+      .then(function(d){
+        var m={};
+        if(d&&d.stations) d.stations.forEach(function(s){m[s.n]=s.mm||0;});
+        histFileCache[region+'/'+ds]=m;
+      })
+      .catch(function(){histFileCache[region+'/'+ds]={};}) // giorno mancante: non ritentare
+      .then(function(){if(--pending===0)assemble();});
+  });
+}
+
+// Lombardia: nessun file storico nel repo, ma Socrata sa raggruppare per
+// giorno → 30 totali giornalieri di UNA stazione in una sola chiamata.
+function histFromLombardia(station,days,cb){
+  if(!station.idsensore||!days.length){cb({});return;}
+  var key=station.idsensore+'|'+days[0]+'|'+days[days.length-1];
+  if(histLombCache[key]){cb(histLombCache[key]);return;}
+  var out={};
+  var where="idsensore='"+station.idsensore+"' AND data between '"
+    +days[0]+"T00:00:00' and '"+days[days.length-1]+"T23:59:59' AND valore >= 0";
+  var url='/.netlify/functions/arpa?endpoint=647i-nhxk.json'
+    +'&$select='+encodeURIComponent('date_trunc_ymd(data) as g, sum(valore) as s')
+    +'&$where='+encodeURIComponent(where)
+    +'&$group=g&$order=g&$limit=100';
+  fetch(url)
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(rows){
+      (rows||[]).forEach(function(r){
+        var v=Math.round((parseFloat(r.s)||0)*10)/10;
+        if(v>500) v=0; // stessa sanity check della mappa
+        out[(r.g||'').substring(0,10)]=v;
+      });
+      histLombCache[key]=out;
+      cb(out);
+    })
+    .catch(function(){cb(out);});
+}
+
+function histRender(station,regionKey,days,serie,selFrom,selTo,periodoLungo){
+  var body=document.getElementById('sh-body');
+  var vals=days.map(function(ds){return (typeof serie[ds]==='number')?serie[ds]:null;});
+  var known=vals.filter(function(v){return v!==null;});
+  if(!known.length){
+    body.innerHTML='<div class="sh-load">Storico non disponibile per questa stazione.</div>';
+    return;
+  }
+  var max=Math.max.apply(null,known);
+  var scale=Math.max(max,4); // evita barre enormi con pioggia minima
+  // linee guida: due tacche tonde sotto il massimo
+  var step=scale<=10?5:(scale<=30?10:(scale<=60?20:50));
+  var ticks=[];
+  for(var t=step;t<=scale;t+=step) ticks.push(t);
+  if(ticks.length>3) ticks=ticks.slice(-3);
+
+  var h='<div class="sh-unit">mm</div><div class="sh-plot">';
+  ticks.forEach(function(tk){
+    h+='<div class="sh-grid" style="bottom:'+Math.round(tk/scale*100)+'%"><span>'+tk+'</span></div>';
+  });
+  h+='<div class="sh-bars">';
+  days.forEach(function(ds,i){
+    var v=vals[i];
+    var sel=(ds>=selFrom&&ds<=selTo);
+    var col=(v===null)?'#262626':(sel?histColor(v):(v>0?'#5f5f5f':'#2f2f2f'));
+    var hh=(v===null)?2:Math.max(2,Math.round(v/scale*100));
+    var lbl=(v===null)?'dato non disponibile':(v+' mm');
+    h+='<div class="sh-bar" style="height:'+hh+'%;background:'+col+'" title="'+ds+' · '+lbl+'"></div>';
+  });
+  h+='</div></div><div class="sh-x">';
+  days.forEach(function(ds,i){
+    h+='<span>'+((i%3===0)?ds.substring(8,10):'')+'</span>';
+  });
+  h+='</div>';
+  var note=[];
+  if(periodoLungo) note.push('grafico: ultimi 30 giorni del periodo');
+  if(HIST_REAL_FROM[regionKey]) note.push('storico dal '+HIST_REAL_FROM[regionKey].split('-').reverse().join('/'));
+  if(note.length) h+='<div class="sh-note">'+note.join(' · ')+'</div>';
+  body.innerHTML=h;
+}
+
+function histPosition(mx,my){
+  // Schermi piccoli: pannello agganciato in basso, SOPRA la legenda dei
+  // cumulati (fixed, stesso z-index) che deve restare sempre visibile.
+  if(window.innerWidth<=600){
+    var leg=document.getElementById('legend-panel');
+    var legH=(leg&&getComputedStyle(leg).display!=='none')
+      ? leg.getBoundingClientRect().height : 0;
+    histEl.style.bottom=(legH+8)+'px';
+    return;
+  }
+  histEl.style.bottom=''; // ripulisce l'aggancio mobile dopo un resize
+  var r=mapEl.getBoundingClientRect();
+  var w=histEl.offsetWidth||310,hh=histEl.offsetHeight||200;
+  var x=mx-r.left+18,y=my-r.top-hh/2;
+  if(x+w>mapEl.clientWidth-8) x=mx-r.left-w-18;
+  if(x<8) x=8;
+  if(y<8) y=8;
+  if(y+hh>mapEl.clientHeight-8) y=Math.max(8,mapEl.clientHeight-hh-8);
+  // Anche su desktop la legenda dei cumulati non va mai coperta: se il
+  // pannello ci finisce sopra lo sposto prima sopra di essa, e se non c'è
+  // spazio a destra.
+  var leg=document.getElementById('legend-panel');
+  if(leg&&getComputedStyle(leg).display!=='none'){
+    var lr=leg.getBoundingClientRect();
+    var px=r.left+x,py=r.top+y;
+    if(!(px+w<lr.left||px>lr.right||py+hh<lr.top||py>lr.bottom)){
+      var ny=lr.top-hh-8-r.top;
+      if(ny>=8) y=ny;
+      else {
+        var nx=lr.right+8-r.left;
+        if(nx+w<=mapEl.clientWidth-8) x=nx;
+      }
+    }
+  }
+  histEl.style.left=x+'px';
+  histEl.style.top=y+'px';
+}
+
+function closeStationHistory(){
+  histEl.style.display='none';
+  histPinned=false;
+  histToken++;
+}
+
+function openStationHistory(s,rank,mx,my){
+  hideTooltip();
+  if(!currentPast||!currentNow) return;
+  var token=++histToken;
+  histOpenedAt=Date.now();
+
+  // Fine finestra = ultimo giorno del periodo selezionato, mai oggi
+  var end=new Date(currentNow.getFullYear(),currentNow.getMonth(),currentNow.getDate());
+  var todayStr=fmtISOLocal(new Date());
+  if(fmtISOLocal(end)>=todayStr){end=new Date();end.setDate(end.getDate()-1);}
+  var selFrom=fmtISOLocal(currentPast),selTo=fmtISOLocal(end);
+  var regionKey=getActiveRegions()[0]||DEFAULT_REGION;
+  var limit=HIST_REAL_FROM[regionKey];
+
+  var days=[];
+  for(var i=HIST_DAYS-1;i>=0;i--){
+    var d=new Date(end.getFullYear(),end.getMonth(),end.getDate()-i);
+    var ds=fmtISOLocal(d);
+    if(limit&&ds<limit) continue;
+    days.push(ds);
+  }
+  if(!days.length) return;
+  var periodoLungo=(selFrom<days[0]);
+
+  document.getElementById('sh-nome').textContent=s.n;
+  document.getElementById('sh-mm').textContent=s.mm;
+  // OMIRL Liguria non espone la provincia: il campo p contiene il comune
+  // (verificato sulla fonte). Etichetta coerente col dato invece che sbagliata.
+  document.getElementById('sh-prov-lbl').textContent=(regionKey==='liguria')?'Comune':'Provincia';
+  document.getElementById('sh-prov').textContent=s.p||'—';
+  document.getElementById('sh-quota').textContent=(s.q||0)+' m slm';
+  document.getElementById('sh-rank').textContent=rank?('#'+rank+' / '+totalStations):'—';
+  document.getElementById('sh-fonte').textContent=lastUsedFonte||'—';
+  var gg=Math.round((end-currentPast)/(24*3600000))+1;
+  document.getElementById('sh-per').textContent=
+    fmtBreve(currentPast)+' – '+fmtBreve(end)+' · '+gg+(gg===1?' giorno':' giorni');
+  document.getElementById('sh-body').innerHTML='<div class="sh-load">Carico lo storico…</div>';
+  histEl.style.display='block';
+  histPosition(mx,my);
+
+  function done(serie){
+    if(token!==histToken) return; // clic su un'altra stazione nel frattempo
+    histRender(s,regionKey,days,serie,selFrom,selTo,periodoLungo);
+    histPosition(mx,my);
+  }
+  if(regionKey==='lombardia') histFromLombardia(s,days,done);
+  else histFromFiles(regionKey,s,days,done);
+}
+
+function fmtBreve(d){
+  var m=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  return d.getDate()+' '+m[d.getMonth()];
+}
+
+document.getElementById('sh-close').addEventListener('click',closeStationHistory);
+// Col mouse dentro al pannello non si chiude (serve per leggerlo e per il
+// tooltip dei valori sulle singole barre)
+histEl.addEventListener('mouseenter',function(){if(histHideT)clearTimeout(histHideT);});
+histEl.addEventListener('mouseleave',function(){
+  if(histPinned) return;
+  histHideT=setTimeout(closeStationHistory,280);
+});
+// Clic sulla mappa = chiudi. Il clic su un marker propaga comunque fino a qui
+// (Leaflet inoltra l'evento dei layer vettoriali alla mappa), quindi ignoro
+// quelli che arrivano nell'istante in cui il popup si è appena aperto:
+// senza questa guardia il popup si chiuderebbe da solo e la richiesta in
+// volo verrebbe annullata dal cambio di histToken.
+map.on('click',function(){
+  if(Date.now()-histOpenedAt<400) return;
+  closeStationHistory();
+});
+
+// ═══════════════════════════════════════════════════════════════
 // MARKER
 // ═══════════════════════════════════════════════════════════════
 function clearMarkers(){activeMarkers.forEach(function(m){m.remove();});activeMarkers=[];}
@@ -1585,22 +1962,40 @@ function addMarkers(dati,sorted){
       color:'#333',weight:1.5,pane:'markerPane'
     }).addTo(map);
     activeMarkers.push(m);
+    // Hover: apre il pannello con il grafico (sostituisce il vecchio tooltip).
+    // Il ritardo evita di partire con le richieste mentre si attraversa la
+    // mappa; i file giorno restano in cache, quindi dalla seconda stazione
+    // in poi l'apertura è immediata.
     m.on('mouseover',function(e){
-      if(hideTimer)clearTimeout(hideTimer);
+      if(histHideT)clearTimeout(histHideT);
       this.setStyle({radius:8,weight:2,color:'#000'});
-      showTooltip(s,rank,e.originalEvent.clientX,e.originalEvent.clientY);
+      if(histPinned) return;
+      var cx=e.originalEvent.clientX,cy=e.originalEvent.clientY;
+      if(histHoverT)clearTimeout(histHoverT);
+      histHoverT=setTimeout(function(){openStationHistory(s,rank,cx,cy);},160);
     });
-    m.on('mousemove',function(e){posTooltip(e.originalEvent.clientX,e.originalEvent.clientY);});
-    m.on('mouseout',function(){this.setStyle({radius:5,weight:1.5,color:'#333'});hideTimer=setTimeout(hideTooltip,150);});
+    m.on('mouseout',function(){
+      this.setStyle({radius:5,weight:1.5,color:'#333'});
+      if(histHoverT)clearTimeout(histHoverT);
+      if(histPinned) return;
+      histHideT=setTimeout(closeStationHistory,280);
+    });
+    // Clic: fissa il pannello (resta aperto anche spostando il mouse)
     m.on('click',function(e){
-      map.setView([s.lat,s.lon],12);
+      if(e.originalEvent&&window.L&&L.DomEvent) L.DomEvent.stopPropagation(e.originalEvent);
+      if(histHoverT)clearTimeout(histHoverT);
+      if(histHideT)clearTimeout(histHideT);
+      histPinned=false; // riapre sulla stazione cliccata, poi fissa
+      openStationHistory(s,rank,e.originalEvent.clientX,e.originalEvent.clientY);
+      histPinned=true;
     });
-    // Touch support per mobile
+    // Touch: un tap apre il pannello e lo lascia fisso
     m.on('touchstart',function(e){
-      if(hideTimer)clearTimeout(hideTimer);
       this.setStyle({radius:10,weight:2,color:'#000'});
       var touch=e.originalEvent.touches[0];
-      showTooltip(s,rank,touch.clientX,touch.clientY);
+      histPinned=false;
+      openStationHistory(s,rank,touch.clientX,touch.clientY);
+      histPinned=true;
       e.originalEvent.stopPropagation();
     });
     m.on('touchend',function(e){
@@ -1609,41 +2004,10 @@ function addMarkers(dati,sorted){
   });
 }
 
-// ═══════════════════════════════════════════════════════════════
-// RENDER FINALE
-// ═══════════════════════════════════════════════════════════════
-function render(dati,fonte,labelPeriodo){
-  totalStations=dati.length;
-  var sorted=dati.slice().sort(function(a,b){return b.mm-a.mm;});
-  var vals=dati.map(function(d){return d.mm;});
-  var mx=Math.max.apply(null,vals),mn=Math.min.apply(null,vals);
-  var av=Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length*10)/10;
-  document.getElementById('sn').textContent=dati.length;
-  document.getElementById('smx').textContent=Math.round(mx*10)/10;
-  document.getElementById('sav').textContent=av;
-  document.getElementById('smn').textContent=Math.round(mn*10)/10;
-  document.getElementById('badge').textContent=dati.length+' stazioni · '+fonte;
-  document.getElementById('leg-title').textContent='mm cumulati ('+labelPeriodo+')';
-  document.getElementById('legend-panel').style.display='block';
-  showLegendMobile();
-  positionLegend();
-  addMarkers(dati,sorted);
-  var hasRain=dati.some(function(s){return s.mm>0;});
-  document.getElementById('tp-status').textContent=hasRain?'⏳ Calcolo mappa…':'✅ Nessuna pioggia';
-  setTimeout(function(){
-    initCanvas();
-    clearHeatmap();
-    if(hasRain){
-      var rings=regionRings[currentRegion]||[];
-      var idwR=0.35;
-      var grR=GRID_RES;
-      gridPoints=buildGrid(dati,rings,idwR,grR);
-      drawGrid();
-      var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='✅ '+labelPeriodo;
-    }
-    setLoading(false);
-  },20);
-}
+// La funzione render() vive più sotto, nella sezione "RENDER MULTI-REGIONE":
+// qui c'era una prima versione che veniva sovrascritta al caricamento e non
+// è mai stata eseguita (usava regionRings[currentRegion] anziché la regione
+// realmente selezionata). Rimossa perché induceva in errore chi legge.
 
 function positionPanels(){
   if(window.innerWidth<=900) return;
@@ -1911,6 +2275,9 @@ function loadData(pastDate,nowDate,labelPeriodo){
     return;
   }
 
+  // Statistica analisi per regione (Google Analytics)
+  try{ regions.forEach(function(r){ gtag('event', 'analisi_regione', { regione: r }); }); }catch(e){}
+
   isLoading=true;
   loadSessionId++; // invalida tutte le richieste precedenti
   var mySession=loadSessionId;
@@ -2041,9 +2408,10 @@ function renderMulti(allData, labelPeriodo, fontiArr){
   render(allData, fonteStr, labelPeriodo, allRings);
 }
 
-// Estende render per accettare rings opzionale
-var _renderBase=render;
-render=function(dati,fonte,labelPeriodo,ringsOverride){
+// Render della mappa. Accetta rings opzionale (usato da renderMulti per
+// unire i confini di più regioni); senza, ritaglia sui confini della prima
+// regione selezionata.
+function render(dati,fonte,labelPeriodo,ringsOverride){
   totalStations=dati.length;
   var sorted=dati.slice().sort(function(a,b){return b.mm-a.mm;});
   var vals=dati.map(function(d){return d.mm;});
@@ -2075,7 +2443,7 @@ render=function(dati,fonte,labelPeriodo,ringsOverride){
     }
     setLoading(false);
   },20);
-};
+}
 
 // ─── Wrapper ARPA Lombardia → callback ───────────────────────
 function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
@@ -2161,6 +2529,7 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
           var todayMM=omMap[s.n||s.nomestazione]||0;
           var total=bestMm+todayMM;
           return {n:s.n||s.nomestazione,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'—',
+                  idsensore:s.idsensore||s.id||null, // serve al grafico storico (query Socrata per sensore)
                   mm:total<0.5?0:Math.round(total*10)/10};
         });
         cb(out.filter(function(s){return s.lat&&s.lon;}).length>=3?
@@ -2705,12 +3074,10 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
 // ═══════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════
-// TICINO (OASI) — carica dati giornalieri da GitHub (repo di TEST)
-// NOTA: quando il Ticino verrà promosso in produzione, cambiare
-// TICINO_RAW per puntare al repo Mappa-Precipitazioni-Nord.
+// TICINO (OASI) — carica dati giornalieri da GitHub
 // ═══════════════════════════════════════════════════════════════
 function loadTicinoRegion(pastDate,nowDate,labelPeriodo,cb){
-  var TICINO_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord-Test/main/data/ticino';
+  var TICINO_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/ticino';
   var rainTot={}, stMeta={};
   var dates=[];
   var d=new Date(pastDate.getTime());
@@ -3198,53 +3565,9 @@ function loadAllBorders(regionKeys, cb){
   });
 }
 
-// ═══════════════════════════════════════════════════════════════
-// CAMBIO REGIONE
-// ═══════════════════════════════════════════════════════════════
-function switchRegion(regionKey){
-  if(regionKey===currentRegion) return;
-  currentRegion=regionKey;
-
-  // Aggiorna tab
-  document.querySelectorAll('.rtab').forEach(function(t){
-    t.classList.toggle('active',t.dataset.region===regionKey);
-  });
-
-  // Reset UI
-  document.querySelectorAll('.tp-btn,.tp-custom-btn').forEach(function(b){b.classList.remove('active');});
-  clearMarkers();
-  clearHeatmap();
-  document.getElementById('legend-panel').style.display='none';
-  hideLegendMobile();
-  var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
-  document.getElementById('badge').textContent='–';
-  document.getElementById('datehdr').textContent='Seleziona un periodo';
-  hideTooltip();
-
-  // Centra mappa sulla nuova regione
-  var cfg=REGIONS[regionKey];
-  if(cfg){
-    if(window.innerWidth<=900){
-      if(regionKey==='lombardia') map.setView([45.5, 9.85], 8, {animate:true});
-      else if(regionKey==='piemonte') map.setView([44.9, 7.9], 8, {animate:true});
-      else if(regionKey==='veneto') map.setView([45.6, 11.8], 8, {animate:true});
-      else if(regionKey==='liguria') map.setView([44.3, 8.8], 7.5, {animate:true});
-    } else {
-      map.setView(cfg.center, cfg.zoom, {animate:true});
-    }
-  }
-
-  // Aggiorna fonte tag
-  document.getElementById('fonte-tag').textContent='Fonte: '+(cfg?cfg.fonte:'—');
-
-  // Carica confine GeoJSON della nuova regione
-  setRegionBorder(regionKey, function(){
-    // Se c'era un periodo selezionato, ricarica i dati per la nuova regione
-    if(currentPast && currentNow){
-      loadData(currentPast, currentNow, currentLabel);
-    }
-  });
-}
+// La funzione switchRegion() stava qui: non veniva chiamata da nessuna parte
+// (il cambio regione passa dai checkbox e dal select mobile) e teneva in vita
+// riferimenti a elementi .rtab non più presenti. Rimossa.
 
 // ─── Centra mappa sulle regioni attive ───────────────────────
 var REGION_BOUNDS={
