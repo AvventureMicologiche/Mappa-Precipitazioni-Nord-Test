@@ -674,7 +674,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       <div id="sh-body"></div>
       <div class="sh-fonte" id="sh-fonte"></div>
     </div>
-    <div class="fonte-tag" id="fonte-tag">Fonte: ARPA Lombardia</div>
+    <div class="fonte-tag" id="fonte-tag">Fonte: —</div>
 
     <!-- Box canale YouTube — desktop, in basso a destra.
          Filigrana: lo SFONDO è semitrasparente (si intravede la mappa) ma il
@@ -2356,23 +2356,23 @@ function loadData(pastDate,nowDate,labelPeriodo){
 
     if(source==='arpa_lombardia'){
       loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 ARPA live');
+        onRegionDone(dati,'🟢 ARPA Lombardia');
       });
     } else if(source==='arpa_piemonte'){
       loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 ARPA live');
+        onRegionDone(dati,'🟢 ARPA Piemonte');
       });
     } else if(source==='arpa_veneto'){
       loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 ARPA live');
+        onRegionDone(dati,'🟢 ARPA Veneto');
       });
     } else if(source==='arpa_liguria'){
       loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 ARPA live');
+        onRegionDone(dati,'🟢 ARPA Liguria');
       });
     } else if(source==='arpa_emilia'){
       loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 ARPA live');
+        onRegionDone(dati,'🟢 ARPAE Emilia-Romagna');
       });
     } else if(source==='open_meteo_vda'){
       loadOpenMeteoStorico('valledaosta',pastDate,nowDate,labelPeriodo,function(dati){
@@ -2423,9 +2423,10 @@ function renderMulti(allData, labelPeriodo, fontiArr){
   document.getElementById('fonte-tag').textContent='Fonte: '+fonteStr;
   lastUsedFonte=fonteStr;
 
-  // Per i crediti si usano i nomi canonici delle regioni attive, non le
-  // etichette runtime: quelle dicono cose tipo "ARPA live", che come
-  // attribuzione a chi fornisce i dati non basta.
+  // Per i crediti si usano i nomi canonici dal campo `fonte` delle regioni
+  // attive, non le etichette runtime della chip: quelle raccontano lo stato
+  // del caricamento (🟢 dati di stazione, 🌍 ripiego Open-Meteo), qui serve
+  // il nome di chi fornisce i dati.
   aggiornaCrediti(regions.map(function(rk){
     return REGIONS[rk]?REGIONS[rk].fonte:null;
   }).filter(function(v,i,a){return v && a.indexOf(v)===i;}).join(' · '));
