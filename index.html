@@ -846,7 +846,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 </div>
 
 <div class="fonte">
-  Dati: <a href="https://www.dati.lombardia.it" target="_blank">ARPA Lombardia</a> ·
+  Dati: <span id="fonte-dati">agenzie regionali</span> ·
   Mappa: <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap</a>
 </div>
 
@@ -1521,8 +1521,25 @@ var initCenter=(screenW<=900)?[44.8,9.5]:[45.0,9.5];
 var map=L.map('map',{zoomSnap:0.5,zoomDelta:0.5}).setView(initCenter, initZoom);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
   maxZoom:19,subdomains:'abc',
-  attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | ARPA Lombardia'
+  attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
+
+// ─── Crediti delle fonti dati ──────────────────────────────────
+// Fino al 22 luglio 2026 sia il piè di pagina sia l'attribuzione Leaflet
+// dicevano "ARPA Lombardia" fisso, qualunque regione fosse selezionata:
+// sbagliato verso le altre agenzie, e finiva pure nell'anteprima social.
+// Ora seguono le regioni attive.
+var _creditoAttuale = null;
+function aggiornaCrediti(testo){
+  if(!testo) return;
+  var el=document.getElementById('fonte-dati');
+  if(el) el.textContent=testo;
+  if(map.attributionControl){
+    if(_creditoAttuale) map.attributionControl.removeAttribution(_creditoAttuale);
+    _creditoAttuale=testo;
+    map.attributionControl.addAttribution(testo);
+  }
+}
 
 // ═══════════════════════════════════════════════════════════════
 // STATO
@@ -2405,6 +2422,13 @@ function renderMulti(allData, labelPeriodo, fontiArr){
   }).filter(function(v,i,a){return a.indexOf(v)===i;}).join(' + ');
   document.getElementById('fonte-tag').textContent='Fonte: '+fonteStr;
   lastUsedFonte=fonteStr;
+
+  // Per i crediti si usano i nomi canonici delle regioni attive, non le
+  // etichette runtime: quelle dicono cose tipo "ARPA live", che come
+  // attribuzione a chi fornisce i dati non basta.
+  aggiornaCrediti(regions.map(function(rk){
+    return REGIONS[rk]?REGIONS[rk].fonte:null;
+  }).filter(function(v,i,a){return v && a.indexOf(v)===i;}).join(' · '));
   render(allData, fonteStr, labelPeriodo, allRings);
 }
 
