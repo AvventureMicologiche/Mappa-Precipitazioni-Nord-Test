@@ -8,4 +8,9 @@
 
 [build]
   publish = "."
-  ignore = "git diff --quiet HEAD^ HEAD -- index.html netlify/"
+  # Salta la build solo se il commit ha toccato SOLTANTO data/ (i collector
+  # scrivono decine di commit al giorno e non serve ripubblicare per quelli).
+  # Prima la regola elencava i file che DEVONO far ripubblicare (index.html e
+  # netlify/), e il 22 luglio 2026 una preview.jpg nuova e' rimasta su GitHub
+  # senza mai arrivare sul sito. Elencare cosa si ignora, non cosa conta.
+  ignore = "git diff --quiet HEAD^ HEAD -- . ':(exclude)data'"
