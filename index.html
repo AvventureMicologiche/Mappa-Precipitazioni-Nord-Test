@@ -2423,12 +2423,13 @@ function renderMulti(allData, labelPeriodo, fontiArr){
   document.getElementById('fonte-tag').textContent='Fonte: '+fonteStr;
   lastUsedFonte=fonteStr;
 
-  // Per i crediti si usano i nomi canonici dal campo `fonte` delle regioni
-  // attive, non le etichette runtime della chip: quelle raccontano lo stato
-  // del caricamento (🟢 dati di stazione, 🌍 ripiego Open-Meteo), qui serve
-  // il nome di chi fornisce i dati.
-  aggiornaCrediti(regions.map(function(rk){
-    return REGIONS[rk]?REGIONS[rk].fonte:null;
+  // I crediti derivano dalle STESSE etichette della chip, ripulite dall'emoji
+  // di stato (🟢 dati di stazione, 🌍 ripiego Open-Meteo). Leggerli invece
+  // dalle caselle spuntate li faceva divergere dalla chip quando si cambiava
+  // regione con un caricamento ancora in volo: la chip descrive i dati che
+  // sono davvero disegnati, le caselle solo quelli richiesti.
+  aggiornaCrediti((fontiArr||[]).map(function(f){
+    return String(f).replace(/^[^A-Za-z]+/,'').trim();
   }).filter(function(v,i,a){return v && a.indexOf(v)===i;}).join(' · '));
   render(allData, fonteStr, labelPeriodo, allRings);
 }
