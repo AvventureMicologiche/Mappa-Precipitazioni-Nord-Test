@@ -1,0 +1,56 @@
+name: Valle d'Aosta CF (pilota)
+on:
+  workflow_dispatch:
+    inputs:
+      date_override:
+        description: 'Data da raccogliere (YYYY-MM-DD, lascia vuoto per ultimi 7 giorni)'
+        required: false
+        default: ''
+  schedule:
+    # Dati REALI Centro Funzionale VdA, in valutazione per sostituire Open-Meteo.
+    # Ogni run copre ieri + auto-riparazione della settimana (una chiamata per
+    # stazione con intervallo). Il valore giornaliero è stabile a giorno chiuso,
+    # bastano 2 run. Orari sfalsati da meteohub.yml (xx:50) e ticino.
+    - cron: '15 4 * * *'
+    - cron: '15 12 * * *'
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Raccoglie dati Valle d'Aosta CF
+        id: collect
+        run: node .github/scripts/collect-valledaosta-cf.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+        continue-on-error: true
+      - name: Retry 1
+        if: steps.collect.outcome == 'failure'
+        run: sleep 30 && node .github/scripts/collect-valledaosta-cf.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+        continue-on-error: true
+      - name: Retry 2
+        if: steps.collect.outcome == 'failure'
+        run: sleep 60 && node .github/scripts/collect-valledaosta-cf.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+      - name: Commit e push
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@bot.com"
+          mkdir -p data/valledaosta-cf
+          git add data/valledaosta-cf/
+          git diff --staged --quiet || git commit -m "valledaosta-cf $(date -u +%Y-%m-%d)"
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push; then ok=1; break; fi
+            echo "Push fallito (tentativo $i/5), retry tra 10s..."
+            sleep 10
+          done
+          [ "$ok" = "1" ] || { echo "Push fallito dopo 5 tentativi"; exit 1; }
