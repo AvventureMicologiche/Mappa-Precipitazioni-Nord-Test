@@ -16,15 +16,33 @@ Mappa interattiva delle precipitazioni del Nord Italia per il canale YouTube "Av
 ## PILOTA MeteoHub (dal 20 luglio 2026 — solo repo di test)
 
 Valutazione di MeteoHub (meteohub.agenziaitaliameteo.it, Agenzia ItaliaMeteo, ex Mistral)
-come fonte unica per l'espansione della mappa a tutta Italia.
+per espandere la mappa a tutta Italia.
+
+### Inquadratura della decisione (23 luglio 2026)
+
+**La domanda NON è sostituire i collector del Nord** — quelli funzionano e restano. È: **per fare il resto d'Italia (centro-sud), collector diretti regione-per-regione o MeteoHub?**
+
+- **Regione-per-regione**: massima qualità/robustezza, ma il Nord è costato ~2 mesi e i bug #1-#19, uno per collector. Rifarlo per ~10 regioni = stesso identico sforzo.
+- **MeteoHub**: una sola API per tutte le regioni nuove. Valori provati fedeli. Un solo punto di rottura.
+
+**Cosa è già accertato:**
+- **Valori fedeli alla verità a terra.** MeteoHub `dpcn-lombardia` vs ARPA Lombardia (Socrata) su 15/21/22 luglio: medie regionali entro **1-3%**, max identici (45.8 il 15/7). La rete dpcn è in larga parte la stessa rete ARPA → il guadagno di qualità del collector diretto è appunto 1-3%, sproporzionato allo sforzo di farne 10.
+- **Copertura** (sondata sulle reti `dpcn-<regione>` il 23/7):
+  - **PRESENTI** — Lombardia (198 staz.), Piemonte (280), Veneto (124), Liguria (148), Marche (116), Umbria (79), **Lazio (208), Campania (178), Puglia (133), Calabria (140), Sicilia (438), Sardegna (93), Basilicata (61), Molise (28)**
+  - **ASSENTI (404)** — Toscana, Emilia-Romagna, Trentino, Alto Adige, Friuli, Valle d'Aosta, **Abruzzo**
+  - Nota la simmetria: le assenti sono quasi tutte già coperte da noi (Toscana SIR, Emilia ARPAE, Trentino, Alto Adige) o via Open-Meteo (Friuli, VdA). L'unico buco nuovo vero è **l'Abruzzo** (da fare a parte). Le presenti sono esattamente tutto il centro-sud che ci manca.
+
+**Il nodo aperto = FREQUENZA dei buchi di ingestione.** MeteoHub ha perso 16-17 luglio: **1 solo evento, 2 giorni consecutivi, su tutte e 3 le reti insieme** = blackout di piattaforma, non guasti sparsi per regione. Su una finestra di 10 giorni fa "20% perso", ma è un numero ingannevole: con un solo evento non si distingue "caso raro" (~3% reale, trascurabile) da "cronico". **Serve osservare ~4 settimane.** Metrica da seguire: numero di eventi-buco distinti e giorni tra un evento e l'altro, NON la % di giorni persi.
+
+**Perché la frequenza è decisiva:** i buchi MeteoHub non hanno una toppa "reale". Riempirli con Open-Meteo Archive userebbe STIME — diverso dal backfill Toscana una-tantum (che era solo per lo storico rotto pre-SIR; la Toscana oggi ha dati reali SIR). Usare Open-Meteo in pianta stabile sui buchi violerebbe la regola #1 "storico sempre accurato". Quindi se MeteoHub buca spesso, per rispettare la regola servirebbe comunque una fonte diretta di riserva → il vantaggio "una sola API" si assottiglia. **Decisione rimandata finché la frequenza non si stabilizza.**
+
+### Dettagli tecnici
 
 - **Collect:** `collect-meteohub.js` + workflow `meteohub.yml` (4 run/giorno, orari sfalsati da Ticino)
-- **Reti raccolte:** `dpcn-lombardia` (~200 staz., CONTROLLO: da confrontare con ARPA Lombardia Socrata che è la nostra verità a terra), `dpcn-marche` (~115 staz.) e `dpcn-umbria` (~79 staz.) come prime candidate nuove
-- **API:** JSON senza login (finestra pubblica ~10 giorni), prodotto B13011, licenza CC-BY con citazione. Reftime in UTC (verificato), accumuli che terminano al reftime; granularità VARIA per rete (Lombardia 10 min, Marche 15 min, Umbria 1 min) — il collector sceglie la serie più fitta e la somma, con soglia di completezza ≥85% delle letture attese
-- **Dati in:** `data/meteohub-lombardia|marche|umbria/` — NON collegati alla mappa, servono solo al confronto
-- **Trovato già il 20/7:** buco di ingestione piattaforma di ~24h (16/7 ~13:30 UTC → 17/7 ~13:30 UTC) su tutte le reti; i giorni 16 e 17 sono stati rifiutati dalla soglia di completezza. I nostri collector regionali in produzione quei giorni li hanno coperti: primo punto a favore delle fonti dirette
-- **VdA e Friuli NON esistono su MeteoHub** (nessun dataset dpcn): la speranza di sostituire Open-Meteo lì per ora tramonta
-- **Valutazione prevista 24-25 luglio 2026:** confronto Lombardia MeteoHub vs ARPA Socrata (stessi giorni, stazioni vicine), coerenza Marche/Umbria vs Open-Meteo e vs confini Toscana/Emilia, conteggio giorni persi per buchi piattaforma
+- **Reti in pilota:** `dpcn-lombardia` (CONTROLLO, verità a terra via ARPA Socrata), `dpcn-marche`, `dpcn-umbria`
+- **API:** `meteohub.agenziaitaliameteo.it/api/observations?networks=<rete>&q=reftime:...;product:B13011;license:CCBY_COMPLIANT`. JSON senza login (finestra pubblica ~10 giorni), CC-BY con citazione. Reftime in UTC (verificato), accumuli che terminano al reftime; granularità VARIA per rete (Lombardia 10 min, Marche 15 min, Umbria 1 min) — il collector sceglie la serie più fitta e la somma, soglia completezza ≥85%
+- **Dati in:** `data/meteohub-lombardia|marche|umbria/` — NON collegati alla mappa, solo per il confronto
+- **Checkpoint frequenza buchi:** 24-25 luglio (primo), poi settimanale. Mappa buchi: contare i giorni mancanti per rete nella finestra
 - **Ticino disattivato in questo repo** (22 luglio 2026): `ticino.yml` ha i cron commentati e l'`index.html` legge il Ticino dal repo di produzione (in prod dal 17 luglio). Resta lanciabile a mano da `workflow_dispatch`
 
 ---
