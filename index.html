@@ -3704,6 +3704,13 @@ document.getElementById('region-select').addEventListener('change', function(){
 document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){
   cb.addEventListener('change',function(){
     var rk=this.value;
+    // Massimo 3 regioni insieme: oltre, la mappa diventa lenta (troppe stazioni)
+    if(this.checked && getActiveRegions().length>3){
+      this.checked=false;
+      var _m=document.getElementById('tp-status');
+      if(_m){ _m.className=''; _m.textContent='⚠️ Massimo 3 regioni per volta'; setTimeout(function(){ if(_m.textContent.indexOf('Massimo 3')>-1) _m.textContent=''; },2800); }
+      return;
+    }
     // Serve almeno una regione: se hai tolto l'ultima, rimettila
     if(getActiveRegions().length===0){ this.checked=true; return; }
     // MULTIREGIONE: la spunta aggiunge/toglie solo la sua regione, non azzera le altre.
