@@ -3703,40 +3703,26 @@ document.getElementById('region-select').addEventListener('change', function(){
 
 document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){
   cb.addEventListener('change',function(){
-    if(!this.checked){
-      // Se deseleziona l'unica attiva, non fare nulla
-      this.checked=true;
-      return;
+    var rk=this.value;
+    // Serve almeno una regione: se hai tolto l'ultima, rimettila
+    if(getActiveRegions().length===0){ this.checked=true; return; }
+    // MULTIREGIONE: la spunta aggiunge/toglie solo la sua regione, non azzera le altre.
+    // Se la regione è stata TOLTA, rimuovi solo il suo bordo dalla mappa.
+    if(!this.checked && regionBorders[rk]){
+      map.removeLayer(regionBorders[rk]); delete regionBorders[rk];
     }
-    // Deseleziona tutte le altre
-    document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(other){
-      if(other!==cb){
-        other.checked=false;
-        var rk=other.value;
-        if(regionBorders[rk]){map.removeLayer(regionBorders[rk]);delete regionBorders[rk];}
-      }
-    });
-    // Reset mappa
+    var regions=getActiveRegions();
+    // Reset del disegno, poi ridisegna TUTTE le regioni attive insieme
     clearMarkers();
     clearHeatmap();
     document.getElementById('legend-panel').style.display='none';
-  hideLegendMobile();
+    hideLegendMobile();
     document.getElementById('badge').textContent='–';
-    document.getElementById('datehdr').textContent='Seleziona il periodo';
     var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
-    var rk=this.value;
-    // Centra mappa su mobile
-    if(window.innerWidth<=900){
-      if(rk==='lombardia') map.setView([45.3, 9.85], 7.5);
-      else if(rk==='piemonte') map.setView([44.8, 7.9], 7.5);
-      else if(rk==='veneto') map.setView([45.5, 11.8], 7.5);
-      else if(rk==='liguria') map.setView([43.9, 8.8], window.innerWidth<=375 ? 7.25 : 7.75);
-      else if(rk==='emilia') map.setView([43.9, 11.0], 7.0);
-    }
-    setRegionBorder(rk,function(){
-      clearMarkers();
-      addDefaultMarkersForRegion(rk);
-      if(window.innerWidth>600) fitMapToRegions([rk]);
+    // Inquadra su tutte le regioni attive (fitMapToRegions gestisce sia 1 che N)
+    fitMapToRegions(regions);
+    regions.forEach(function(r){
+      setRegionBorder(r,function(){ addDefaultMarkersForRegion(r); });
     });
     if(currentPast&&currentNow){
       loadData(currentPast,currentNow,currentLabel);
