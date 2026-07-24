@@ -3674,8 +3674,18 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
     regions.forEach(function(r){
       setRegionBorder(r,function(){ addDefaultMarkersForRegion(r); });
     });
+    // DEBOUNCE: non ricaricare a ogni spunta. Bordi e marker si aggiornano
+    // subito (sopra), ma il caricamento DATI parte una volta sola ~550ms dopo
+    // l'ultima modifica — così puoi aggiungere/togliere più regioni di fila
+    // senza aspettare. isLoading=false abbandona un caricamento in corso (i suoi
+    // risultati vengono scartati dal controllo loadSessionId), evitando l'impallo.
     if(currentPast&&currentNow){
-      loadData(currentPast,currentNow,currentLabel);
+      clearTimeout(window.__multiRegLoadT);
+      _ts.textContent='⏳ aggiorno ('+regions.length+(regions.length===1?' regione)':' regioni)');
+      window.__multiRegLoadT=setTimeout(function(){
+        isLoading=false;
+        loadData(currentPast,currentNow,currentLabel);
+      }, 550);
     }
   });
 });
