@@ -1,0 +1,56 @@
+name: Friuli OSMER (pilota)
+on:
+  workflow_dispatch:
+    inputs:
+      date_override:
+        description: 'Data da raccogliere (YYYY-MM-DD, lascia vuoto per ieri+altroieri)'
+        required: false
+        default: ''
+  schedule:
+    # Dati REALI ARPA OSMER (archivio), in valutazione per sostituire Open-Meteo.
+    # Ogni run copre ieri + altroieri + auto-riparazione (~5gg). L'archivio è
+    # storico e stabile, bastano 2 run. Orari sfalsati da meteohub (xx:50),
+    # valledaosta-cf (xx:15) e ticino, per ridurre i conflitti di push.
+    - cron: '35 5 * * *'
+    - cron: '35 13 * * *'
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Raccoglie dati Friuli OSMER
+        id: collect
+        run: node .github/scripts/collect-friuli-osmer.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+        continue-on-error: true
+      - name: Retry 1
+        if: steps.collect.outcome == 'failure'
+        run: sleep 30 && node .github/scripts/collect-friuli-osmer.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+        continue-on-error: true
+      - name: Retry 2
+        if: steps.collect.outcome == 'failure'
+        run: sleep 60 && node .github/scripts/collect-friuli-osmer.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+      - name: Commit e push
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@bot.com"
+          mkdir -p data/friuli-osmer
+          git add data/friuli-osmer/
+          git diff --staged --quiet || git commit -m "friuli-osmer $(date -u +%Y-%m-%d)"
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push; then ok=1; break; fi
+            echo "Push fallito (tentativo $i/5), retry tra 10s..."
+            sleep 10
+          done
+          [ "$ok" = "1" ] || { echo "Push fallito dopo 5 tentativi"; exit 1; }
