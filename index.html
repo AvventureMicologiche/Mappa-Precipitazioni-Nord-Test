@@ -2473,69 +2473,48 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
 
 // ─── Wrapper ARPA Lombardia → callback ───────────────────────
 function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
-  var BASE='/.netlify/functions/arpa';
-  function getDays(from,to){
-    var days=[];
-    var d=new Date(from.getFullYear(),from.getMonth(),from.getDate());
-    var e=new Date(to.getFullYear(),to.getMonth(),to.getDate());
-    while(d<=e){days.push(new Date(d));d.setDate(d.getDate()+1);}
-    return days;
-  }
-  var days=getDays(pastDate,nowDate);
-  var stazioni=ARPA_STATIONS||LOMBARDIA_STATIONS;
-  var stMap={};
-  stazioni.forEach(function(s){
-    if(s.idsensore) stMap[s.idsensore]={n:s.n||s.nomestazione,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'—'};
-    else if(s.id) stMap[s.id]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,p:s.p};
-  });
-  if(Object.keys(stMap).length<5){
-    loadOpenMeteoRegion(LOMBARDIA_STATIONS,pastDate,nowDate,labelPeriodo,cb);
-    return;
-  }
-  // Una SOLA query per l'intero periodo (oggi escluso), invece che giorno-per-giorno:
-  // sum(valore) raggruppata per sensore -> 2 richieste invece di ~60 su 30 giorni.
-  // Inoltre i sensori MORTI (che non riportano MAI nel periodo) NON entrano in rainMap,
-  // quindi non finiscono in mappa come stazioni "asciutte" a 0mm: erano sensori offline
-  // (verificato il 24/7/2026: su 30gg, 71 sensori mai un dato, 0 online genuinamente a 0).
-  function fmtLoc(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
-  var ieri=new Date(new Date().getTime()-24*3600000);
-  var endD=(nowDate<ieri)?nowDate:ieri;                 // oggi sempre escluso
-  var startStr=fmtLoc(pastDate), endStr=fmtLoc(endD);
-  if(endStr<startStr){ cb([]); return; }
-  var numDays=Math.round((new Date(endStr).getTime()-new Date(startStr).getTime())/86400000)+1;
-  var capMm=Math.max(600,numDays*250);                  // sanity: oltre = sensore rotto
-  var allIds=Object.keys(stMap);
-  var mid=Math.ceil(allIds.length/2);
-  var idBatches=[allIds.slice(0,mid),allIds.slice(mid)].filter(function(b){return b.length>0;});
-  var startISO=startStr+'T00:00:00', endISO=endStr+'T23:59:59';
-  Promise.all(idBatches.map(function(batchIds){
-    var orClause=batchIds.map(function(id){return "idsensore='"+id+"'";}).join(' OR ');
-    var whereStr="data between '"+startISO+"' and '"+endISO+"' AND valore >= '0' AND ("+orClause+')';
-    var url=BASE+'?endpoint=647i-nhxk.json&$select=idsensore,sum(valore)%20as%20s&$where='+encodeURIComponent(whereStr)+'&$group=idsensore&$limit=5000';
-    return fetch(url).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});
-  })).then(function(results){
-    var rainMap={};
-    results.reduce(function(a,b){return a.concat(b);},[]).forEach(function(pr){
-      var tot=Math.round((parseFloat(pr.s)||0)*10)/10;
-      if(tot>capMm)tot=0;
-      rainMap[pr.idsensore]=tot;
-    });
-    // arpaList: SOLO i sensori che hanno riportato (i morti restano fuori)
-    var arpaList=Object.keys(rainMap).map(function(id){
-      var st=stMap[id]; if(!st) return null;
-      return {lat:st.lat,lon:st.lon,mm:rainMap[id]};
-    }).filter(Boolean);
-    if(arpaList.length<3){ cb([]); return; }
+  // Dal 24/7/2026 la Lombardia legge file giornalieri come le altre regioni,
+  // invece di interrogare Socrata live a ogni caricamento (lento sui periodi
+  // lunghi). I file (collect-lombardia.js) contengono solo i sensori che
+  // riportano — i morti sono già fuori. Il grid nearest-neighbor resta identico
+  // (aspetto invariato). NB in produzione il RAW va cambiato in Mappa-Precipitazioni-Nord.
+  var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord-Test/main/data/lombardia';
+  function _fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
+  var todayStr=_fmt(new Date());
+  var days=[];
+  var d=new Date(pastDate);
+  while(d<=nowDate){ var ds=_fmt(new Date(d)); if(ds!==todayStr) days.push(ds); d.setDate(d.getDate()+1); }
+  if(days.length===0){cb([]);return;}
+  var rainMap={}, meta={};
+  var pending=days.length;
+  function finalizza(){
+    var arpaList=Object.keys(rainMap).map(function(id){ var m=meta[id]; return {lat:m.lat,lon:m.lon,mm:rainMap[id]}; });
+    if(arpaList.length<3){ loadOpenMeteoRegion(LOMBARDIA_STATIONS,pastDate,nowDate,labelPeriodo,cb); return; } // fallback se i file mancano
     var gridSt=(ARPA_STATIONS && ARPA_STATIONS.length>10)?selectUniform(ARPA_STATIONS,150):LOMBARDIA_STATIONS;
     var out=gridSt.map(function(s){
       var bestMm=0,bestDist=999;
-      arpaList.forEach(function(a){var d=Math.abs(a.lat-s.lat)+Math.abs(a.lon-s.lon);if(d<bestDist){bestDist=d;bestMm=a.mm;}});
+      arpaList.forEach(function(a){var di=Math.abs(a.lat-s.lat)+Math.abs(a.lon-s.lon);if(di<bestDist){bestDist=di;bestMm=a.mm;}});
       return {n:s.n||s.nomestazione,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'—',
               idsensore:s.idsensore||s.id||null,
               mm:bestMm<0.5?0:Math.round(bestMm*10)/10};
     }).filter(function(s){return s.lat&&s.lon;});
     cb(out.length>=3?out:[]);
-  }).catch(function(e){console.warn('[ARPA Lombardia]',e.message);cb([]);});
+  }
+  days.forEach(function(day){
+    fetch(GITHUB_RAW+'/'+day+'.json')
+      .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
+      .then(function(data){
+        if(data&&data.stations){
+          data.stations.forEach(function(s){
+            if(!s.id)return;
+            rainMap[s.id]=(rainMap[s.id]||0)+(s.mm||0);
+            if(!meta[s.id]) meta[s.id]={lat:s.lat,lon:s.lon};
+          });
+        }
+      })
+      .catch(function(){})
+      .finally(function(){ pending--; if(pending<=0) finalizza(); });
+  });
 }
 
 // ─── Wrapper Open-Meteo → callback ───────────────────────────

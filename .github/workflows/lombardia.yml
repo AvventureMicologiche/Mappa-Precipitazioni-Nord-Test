@@ -1,0 +1,58 @@
+name: Lombardia
+on:
+  workflow_dispatch:
+    inputs:
+      date_override:
+        description: 'Data (YYYY-MM-DD) o range A:B, vuoto = ieri+altroieri'
+        required: false
+        default: ''
+  schedule:
+    # 6 run/giorno. Ogni run raccoglie ieri + altroieri (dati Socrata stabili a
+    # giorno chiuso). Orari sfalsati dagli altri workflow.
+    - cron: '40 0 * * *'
+    - cron: '40 4 * * *'
+    - cron: '40 8 * * *'
+    - cron: '40 12 * * *'
+    - cron: '40 16 * * *'
+    - cron: '40 20 * * *'
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Raccoglie dati Lombardia
+        id: collect
+        run: node .github/scripts/collect-lombardia.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+        continue-on-error: true
+      - name: Retry 1
+        if: steps.collect.outcome == 'failure'
+        run: sleep 30 && node .github/scripts/collect-lombardia.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+        continue-on-error: true
+      - name: Retry 2
+        if: steps.collect.outcome == 'failure'
+        run: sleep 60 && node .github/scripts/collect-lombardia.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+      - name: Commit e push
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@bot.com"
+          mkdir -p data/lombardia
+          git add data/lombardia/
+          git diff --staged --quiet || git commit -m "lombardia $(date -u +%Y-%m-%d)"
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push; then ok=1; break; fi
+            echo "Push fallito (tentativo $i/5), retry tra 10s..."
+            sleep 10
+          done
+          [ "$ok" = "1" ] || { echo "Push fallito dopo 5 tentativi"; exit 1; }
