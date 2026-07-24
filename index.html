@@ -1905,7 +1905,7 @@ function openStationHistory(s,rank,mx,my){
   var todayStr=fmtISOLocal(new Date());
   if(fmtISOLocal(end)>=todayStr){end=new Date();end.setDate(end.getDate()-1);}
   var selFrom=fmtISOLocal(currentPast),selTo=fmtISOLocal(end);
-  var regionKey=getActiveRegions()[0]||DEFAULT_REGION;
+  var regionKey=s._region||getActiveRegions()[0]||DEFAULT_REGION; // multiregione: la regione della stazione cliccata, non la 1a attiva
   var limit=HIST_REAL_FROM[regionKey];
 
   var days=[];
@@ -2317,8 +2317,11 @@ function loadData(pastDate,nowDate,labelPeriodo){
   var allFonti=[];
   var pending=regions.length;
 
-  function onRegionDone(dati, fonte){
+  function onRegionDone(dati, fonte, regionKey){
     if(loadSessionId!==mySession) return; // richiesta obsoleta, ignora
+    // Etichetta ogni stazione con la sua regione: in multiregione il grafico
+    // storico deve sapere da dove viene la stazione cliccata (non la 1a attiva).
+    if(dati && regionKey) dati.forEach(function(s){ if(s) s._region=regionKey; });
     allData=allData.concat(dati);
     if(fonte && allFonti.indexOf(fonte)<0) allFonti.push(fonte);
     pending--;
@@ -2356,51 +2359,51 @@ function loadData(pastDate,nowDate,labelPeriodo){
 
     if(source==='arpa_lombardia'){
       loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 ARPA Lombardia');
+        onRegionDone(dati,'🟢 ARPA Lombardia',regionKey);
       });
     } else if(source==='arpa_piemonte'){
       loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 ARPA Piemonte');
+        onRegionDone(dati,'🟢 ARPA Piemonte',regionKey);
       });
     } else if(source==='arpa_veneto'){
       loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 ARPA Veneto');
+        onRegionDone(dati,'🟢 ARPA Veneto',regionKey);
       });
     } else if(source==='arpa_liguria'){
       loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 ARPA Liguria');
+        onRegionDone(dati,'🟢 ARPA Liguria',regionKey);
       });
     } else if(source==='arpa_emilia'){
       loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 ARPAE Emilia-Romagna');
+        onRegionDone(dati,'🟢 ARPAE Emilia-Romagna',regionKey);
       });
     } else if(source==='open_meteo_vda'){
       loadOpenMeteoStorico('valledaosta',pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 Open-Meteo');
+        onRegionDone(dati,'🟢 Open-Meteo',regionKey);
       });
     } else if(source==='open_meteo_fvg'){
       loadOpenMeteoStorico('friuli',pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 Open-Meteo');
+        onRegionDone(dati,'🟢 Open-Meteo',regionKey);
       });
     } else if(source==='meteo_altoadige'){
       loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 Meteo Alto Adige');
+        onRegionDone(dati,'🟢 Meteo Alto Adige',regionKey);
       });
     } else if(source==='meteotrentino'){
       loadMeteotrentino(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 Meteotrentino');
+        onRegionDone(dati,'🟢 Meteotrentino',regionKey);
       });
     } else if(source==='cfr_toscana'){
       loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 SIR Toscana');
+        onRegionDone(dati,'🟢 SIR Toscana',regionKey);
       });
     } else if(source==='oasi_ticino'){
       loadTicinoRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 OASI Ticino');
+        onRegionDone(dati,'🟢 OASI Ticino',regionKey);
       });
     } else {
       loadOpenMeteoRegion(cfg.stations||[],pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🌍 Open-Meteo');
+        onRegionDone(dati,'🌍 Open-Meteo',regionKey);
       });
     }
   });
