@@ -71,7 +71,7 @@ per espandere la mappa a tutta Italia.
 - **Collect:** `collect-piemonte.js`
 - **Formula:** `sum(cum_rain_1h)` per totale giornaliero + merge MAX protezione
 - **Merge MAX:** se "aggiorna ieri" riceve <1000 record, salta l'aggiornamento
-- **PIEMONTE_STATIONS:** 170 stazioni curate (filtrate da 275) nell'index.html. Ceppo Morelli esclusa (sensore offline). MONTE MALANOTTE (id 106, Cuneo) NON è in lista e non va aggiunta: pluviometro guasto dal 16 luglio 2026 — pioggia fantasma per giorni consecutivi (fino a 136mm/giorno) con Open-Meteo a 0.0, vicini asciutti e sensori temperatura/umidità null. I valori errati restano nei file grezzi `data/piemonte/` (16-20 luglio+) ma non arrivano mai in mappa (filtro applicato prima dell'accumulo). Ricontrollare ai check periodici se il sensore torna sano.
+- **PIEMONTE_STATIONS:** 170 stazioni curate (filtrate da 275) nell'index.html. Ceppo Morelli esclusa (sensore offline). MONTE MALANOTTE (id 106, Cuneo) NON è in lista e non va aggiunta: pluviometro guasto dal 16 luglio 2026 — pioggia fantasma per giorni consecutivi (fino a 136mm/giorno) con Open-Meteo a 0.0, vicini asciutti e sensori temperatura/umidità null. I valori errati restano nei file grezzi `data/piemonte/` (16-20 luglio+) ma non arrivano mai in mappa (filtro applicato prima dell'accumulo). **Ricontrollata il 25 luglio 2026:** tornata online dal 22/7, ma temperatura/umidità ancora al 100% `null` (la firma del guasto persiste) e nessun evento di pioggia per testare il pluviometro → **esclusa in via definitiva, non riaggiungere e non serve più ricontrollarla ai check periodici.**
 - **Orari:** 6 run/giorno
 - **Dati corretti da:** ~12 giugno 2026
 - **Bug noto:** API manutenzione alle 04:00 UTC → run delle 06:00 CEST spesso fallisce
