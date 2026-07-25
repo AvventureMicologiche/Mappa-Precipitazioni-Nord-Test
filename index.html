@@ -3731,22 +3731,25 @@ function fitMapToRegions(regionKeys){
     }
   }
   if(!bounds) bounds=[[latMin,lonMin],[latMax,lonMax]];
-  // Le regioni del Nord formano un blocco compatto/quadrato mentre l'area mappa
-  // è larga (16:9): "tutto visibile" (fit) lascia grandi margini laterali. Per
-  // riempire di più si zooma verso il livello "riempi" (che ritaglia sopra/sotto
-  // — Alpi/mare), fermandosi a una VIA DI MEZZO per non tagliare troppo. Centro
-  // invariato (regione di mezzo per 3 regioni). FILL_BLEND: 0=tutto visibile,
-  // 1=riempi pieno. (Richiesta utente 25/7/2026.)
+  // Le regioni del Nord formano un blocco compatto mentre l'area mappa è larga
+  // (16:9): "tutto visibile" (_fit) lascia grandi margini laterali. Per riempire
+  // di più si zooma sopra _fit, ritagliando sopra/sotto (Alpi/mare), fino al
+  // massimo "riempi pieno" (_fill).
   var _lb=L.latLngBounds(bounds), _pp=L.point(pad[0],pad[1]);
   var _fit=map.getBoundsZoom(_lb,false,_pp);   // tutto dentro (margini laterali)
   var _fill=map.getBoundsZoom(_lb,true,_pp);   // riempie ritagliando sopra/sotto
-  var FILL_BLEND=0.30;
+  // ZOOM_STEP: mezzi-livelli di zoom sopra _fit. Lo zoomSnap della mappa è 0,5 e
+  // _fit è già un multiplo di 0,5, quindi ogni step di 0,5 CAMBIA sempre a video
+  // (niente più valori che sembrano identici). 0=tutto visibile; 0.5/1.0/1.5=
+  // sempre più pieno. Cap a _fill. (Manopola zoom multiregione, utente 25/7/2026.)
+  var ZOOM_STEP=0.5;
+  var _z=Math.min(_fit+ZOOM_STEP,_fill);
   // VSHIFT: spostamento verticale del centro. >0 ABBASSA il contenuto a video
   // (regola #5: latitudine più alta = contenuto più in basso), ritagliando un po'
-  // più a sud e meno a nord. (Richiesta utente 25/7/2026.)
+  // più a sud e meno a nord. (Manopola verticale multiregione, utente 25/7/2026.)
   var VSHIFT=0.20;
   var _ctr=_lb.getCenter();
-  map.setView([_ctr.lat+VSHIFT,_ctr.lng], _fit+(_fill-_fit)*FILL_BLEND, {animate:true,duration:0.6});
+  map.setView([_ctr.lat+VSHIFT,_ctr.lng], _z, {animate:true,duration:0.6});
 }
 
 // Adiacenze (confini) tra le regioni selezionabili. Servono a individuare la
