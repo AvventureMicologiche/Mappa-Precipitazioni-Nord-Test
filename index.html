@@ -3745,7 +3745,7 @@ function fitMapToRegions(regionKeys){
   // _fit è già un multiplo di 0,5, quindi ogni step di 0,5 CAMBIA sempre a video
   // (niente più valori che sembrano identici). 0=tutto visibile; 0.5/1.0/1.5=
   // sempre più pieno. Cap a _fill. (Manopola zoom multiregione, utente 25/7/2026.)
-  var ZOOM_STEP=0.25;
+  var ZOOM_STEP=0;
   var _z=Math.min(_fit+ZOOM_STEP,_fill);
   // VSHIFT: spostamento verticale del centro. >0 ABBASSA il contenuto a video
   // (regola #5: latitudine più alta = contenuto più in basso), ritagliando un po'
