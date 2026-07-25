@@ -1169,10 +1169,10 @@ var REGIONS = {
   friuli: {
     name: 'Friuli V.G.',
     center: [46.05, 13.2], zoom: 8.5,
-    fonte: 'Open-Meteo',
+    fonte: 'ARPA OSMER FVG',
     geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson',
     geojsonFilter: 'friuli',
-    dataSource: 'open_meteo_fvg',
+    dataSource: 'osmer_fvg',
     stations: [
       {n:"Trieste",           lat:45.649, lon:13.764, q:30,  p:"TS"},
       {n:"Udine",             lat:46.063, lon:13.235, q:113, p:"UD"},
@@ -1734,10 +1734,21 @@ function hideTooltip(){tooltip.style.display='none';}
 // ═══════════════════════════════════════════════════════════════
 var HIST_DAYS=30;
 var HIST_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
+// Override base-URL per lo storico di alcune "regioni" logiche: il dato OSMER
+// del Friuli sta nel repo di TEST (pilota), non in produzione.
+var HIST_RAW_BY_REGION={
+  'friuli-osmer':'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord-Test/main/data/'
+};
+function histRawBase(region){ return HIST_RAW_BY_REGION[region]||HIST_RAW; }
+// Pilota OSMER Friuli: il dato reale di stazione parte da questa data. Prima,
+// per i periodi che sconfinano, si usa Open-Meteo da produzione (vedi
+// loadOSMERFriuliRegion). Switch a periodo intero, mai mix nello stesso periodo.
+var OSMER_FVG_FROM='2026-07-18';
+var friuliActiveSource='osmer'; // 'osmer' o 'om': fonte Friuli dell'ultimo caricamento
 // Regioni il cui storico PRIMA di questa data non è dato di stazione reale
-// (Toscana: pre-switch a SIR, ricostruito con stime Open-Meteo — bug #14).
-// Il grafico si ferma lì invece di mostrare stime come fossero misure.
-var HIST_REAL_FROM={toscana:'2026-07-12'};
+// (Toscana: pre-switch a SIR, ricostruito con stime Open-Meteo — bug #14;
+// Friuli-OSMER: il pilota parte dal 18/7, prima non c'è dato di stazione).
+var HIST_REAL_FROM={toscana:'2026-07-12','friuli-osmer':OSMER_FVG_FROM};
 var histEl=document.getElementById('st-history');
 var histToken=0;
 var histOpenedAt=0;   // vedi map.on('click'): evita l'auto-chiusura all'apertura
@@ -1770,7 +1781,7 @@ function histFromFiles(region,station,days,cb){
   if(!need.length){assemble();return;}
   var pending=need.length;
   need.forEach(function(ds){
-    fetch(HIST_RAW+region+'/'+ds+'.json')
+    fetch(histRawBase(region)+region+'/'+ds+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
       .then(function(d){
         var m={};
@@ -1906,7 +1917,10 @@ function openStationHistory(s,rank,mx,my){
   if(fmtISOLocal(end)>=todayStr){end=new Date();end.setDate(end.getDate()-1);}
   var selFrom=fmtISOLocal(currentPast),selTo=fmtISOLocal(end);
   var regionKey=s._region||getActiveRegions()[0]||DEFAULT_REGION; // multiregione: la regione della stazione cliccata, non la 1a attiva
-  var limit=HIST_REAL_FROM[regionKey];
+  // Friuli: lo storico legge dal dato OSMER (repo test) quando è la fonte attiva,
+  // altrimenti da Open-Meteo produzione. Le altre regioni usano regionKey tal quale.
+  var histRegion=(regionKey==='friuli'&&friuliActiveSource==='osmer')?'friuli-osmer':regionKey;
+  var limit=HIST_REAL_FROM[histRegion]||HIST_REAL_FROM[regionKey];
 
   var days=[];
   for(var i=HIST_DAYS-1;i>=0;i--){
@@ -1940,7 +1954,7 @@ function openStationHistory(s,rank,mx,my){
     histPosition(mx,my);
   }
   if(regionKey==='lombardia') histFromLombardia(s,days,done);
-  else histFromFiles(regionKey,s,days,done);
+  else histFromFiles(histRegion,s,days,done);
 }
 
 function fmtBreve(d){
@@ -2381,9 +2395,9 @@ function loadData(pastDate,nowDate,labelPeriodo){
       loadOpenMeteoStorico('valledaosta',pastDate,nowDate,labelPeriodo,function(dati){
         onRegionDone(dati,'🟢 Open-Meteo',regionKey);
       });
-    } else if(source==='open_meteo_fvg'){
-      loadOpenMeteoStorico('friuli',pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 Open-Meteo',regionKey);
+    } else if(source==='osmer_fvg'){
+      loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,function(dati,fonte){
+        onRegionDone(dati,fonte,regionKey);
       });
     } else if(source==='meteo_altoadige'){
       loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,function(dati){
@@ -3131,6 +3145,62 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
         cb(selectUniform(full,150));
+      });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FRIULI — OSMER reale (pilota, repo TEST) con ripiego Open-Meteo
+// Switch a PERIODO INTERO per non mescolare set di stazioni diversi (OSMER ~40
+// reali vs Open-Meteo ~30 stimate, coordinate diverse):
+//  · periodo tutto dentro la copertura OSMER (≥ OSMER_FVG_FROM) → OSMER reale
+//  · periodo che sconfina prima → Open-Meteo da produzione (storia completa)
+// La finestra OSMER cresce ogni giorno: sempre più periodi diventano reali.
+// ═══════════════════════════════════════════════════════════════
+function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
+  function fmtD(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
+  // Il periodo sconfina prima del pilota → Open-Meteo produzione per tutto
+  if(fmtD(pastDate) < OSMER_FVG_FROM){
+    friuliActiveSource='om';
+    loadOpenMeteoStorico('friuli',pastDate,nowDate,labelPeriodo,function(dati){ cb(dati,'🌍 Open-Meteo'); });
+    return;
+  }
+  friuliActiveSource='osmer';
+  var OSMER_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord-Test/main/data/friuli-osmer';
+  var rainTot={}, stMeta={};
+  var dates=[];
+  var d=new Date(pastDate.getTime());
+  while(d<=nowDate){
+    var y=d.getFullYear(),mo=String(d.getMonth()+1).padStart(2,'0'),dy=String(d.getDate()).padStart(2,'0');
+    dates.push(y+'-'+mo+'-'+dy);
+    d.setDate(d.getDate()+1);
+  }
+  var pending=dates.length;
+  if(pending===0){cb([],'🟢 ARPA OSMER FVG');return;}
+  dates.forEach(function(dateStr){
+    fetch(OSMER_RAW+'/'+dateStr+'.json')
+      .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(function(data){
+        if(data.stations){
+          data.stations.forEach(function(s){
+            var key=s.id||s.n;
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG'};
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+          });
+        }
+      })
+      .catch(function(){})
+      .finally(function(){
+        pending--;
+        if(pending>0) return;
+        var full=Object.keys(rainTot).map(function(key){
+          var s=stMeta[key];if(!s)return null;
+          var mm=rainTot[key]||0;
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',mm:mm<0.5?0:Math.round(mm*10)/10};
+        }).filter(Boolean);
+        if(full.length<5){cb([],'🟢 ARPA OSMER FVG');return;}
+        full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
+        cb(selectUniform(full,150),'🟢 ARPA OSMER FVG');
       });
   });
 }
