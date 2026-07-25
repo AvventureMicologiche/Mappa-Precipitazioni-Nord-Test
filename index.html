@@ -3723,8 +3723,11 @@ function fitMapToRegions(regionKeys){
     var c=mid&&REGIONS[mid]&&REGIONS[mid].center;
     if(c){
       var hw=Math.max(Math.abs(lonMax-c[1]),Math.abs(c[1]-lonMin));
-      var hh=Math.max(Math.abs(latMax-c[0]),Math.abs(c[0]-latMin));
-      bounds=[[c[0]-hh,c[1]-hw],[c[0]+hh,c[1]+hw]];
+      // Orizzontale: simmetrico attorno alla regione di mezzo (resta centrata in lon).
+      // Verticale: estensione reale del contenuto (latMin..latMax), NON simmetrica
+      // attorno alla regione di mezzo — altrimenti lo "specchio" del mare a sud
+      // spingeva il contenuto troppo in alto e le Alpi a nord venivano ritagliate.
+      bounds=[[latMin,c[1]-hw],[latMax,c[1]+hw]];
     }
   }
   if(!bounds) bounds=[[latMin,lonMin],[latMax,lonMax]];
