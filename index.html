@@ -1579,6 +1579,11 @@ function clearHeatmap(){
 }
 
 var GRID_RES=0.009, IDW_RAD=0.15;
+// Passo EFFETTIVO della griglia: in multiregione la vista è zoomata fuori e il
+// dettaglio fine non si vede, quindi render() lo ingrandisce per non calcolare
+// centinaia di migliaia di celle (buildGrid è sincrono e bloccherebbe il thread).
+// gridPxSize() lo usa così i quadrati del disegno restano allineati al passo.
+var activeGridRes=GRID_RES;
 
 function pipGeo(lon,lat,ring){
   var inside=false,n=ring.length;
@@ -1602,17 +1607,36 @@ function inRegion(lon,lat,rings){
 
 function buildGrid(data,rings,idwRad,gridRes){
   var rad=idwRad||IDW_RAD;
-  var GR=gridRes||GRID_RES;
+  var GR=gridRes||activeGridRes||GRID_RES;
   // Usa TUTTE le stazioni incluse quelle a 0mm come "voti contrari"
   var dataForIDW=data;
   // Bounding box per regione
   var lons=data.map(function(s){return s.lon;}),lats=data.map(function(s){return s.lat;});
   var LON_MIN=Math.min.apply(null,lons)-0.5, LON_MAX=Math.max.apply(null,lons)+0.5;
   var LAT_MIN=Math.min.apply(null,lats)-0.3, LAT_MAX=Math.max.apply(null,lats)+0.3;
+  // Bounding box dell'anello esterno di ogni poligono: la stragrande maggioranza
+  // delle celle è fuori regione e viene scartata da questo confronto O(1), senza
+  // il point-in-polygon sui migliaia di vertici del confine (era il collo di
+  // bottiglia in multiregione: box unito grande × tutti i confini per cella).
+  var polys=rings.map(function(poly){
+    var r0=poly[0],xmn=Infinity,xmx=-Infinity,ymn=Infinity,ymx=-Infinity;
+    for(var k=0;k<r0.length;k++){var X=r0[k][0],Y=r0[k][1];if(X<xmn)xmn=X;if(X>xmx)xmx=X;if(Y<ymn)ymn=Y;if(Y>ymx)ymx=Y;}
+    return {poly:poly,bx0:xmn,bx1:xmx,by0:ymn,by1:ymx};
+  });
   var pts=[];
   for(var lat=LAT_MIN;lat<=LAT_MAX;lat+=GR){
     for(var lon=LON_MIN;lon<=LON_MAX;lon+=GR){
-      if(!inRegion(lon,lat,rings)) continue;
+      var inside=false;
+      for(var pz=0;pz<polys.length;pz++){
+        var P=polys[pz];
+        if(lon<P.bx0||lon>P.bx1||lat<P.by0||lat>P.by1) continue; // AABB: reject veloce
+        if(pipGeo(lon,lat,P.poly[0])){
+          var hole=false;
+          for(var h=1;h<P.poly.length;h++){if(pipGeo(lon,lat,P.poly[h])){hole=true;break;}}
+          if(!hole){inside=true;break;}
+        }
+      }
+      if(!inside) continue;
       var num=0,den=0,found=false;
       for(var i=0;i<dataForIDW.length;i++){
         var dlat=lat-dataForIDW[i].lat;
@@ -1631,7 +1655,7 @@ function buildGrid(data,rings,idwRad,gridRes){
 }
 
 function gridPxSize(){
-  var gr=GRID_RES;
+  var gr=activeGridRes;
   var mpp=156543.03392*Math.cos(45.0*Math.PI/180)/Math.pow(2,map.getZoom());
   return Math.ceil(gr*111000/mpp)+1;
 }
@@ -2479,8 +2503,14 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
       var activeR=getActiveRegions();
       var rings=ringsOverride||(regionRings[activeR[0]]||[]);
       var idwR=0.35;
-      var grR=GRID_RES;
-      gridPoints=buildGrid(dati,rings,idwR,grR);
+      // Multiregione: griglia più grossa (vista zoomata fuori, il dettaglio fine
+      // non si vede) e stazioni per l'IDW campionate uniformi — così buildGrid non
+      // blocca il thread per secondi. Single-region invariato (fattore 1, tutte le
+      // stazioni). I marker restano comunque tutti (addMarkers usa 'dati' pieno).
+      var nReg=ringsOverride?getActiveRegions().length:1;
+      activeGridRes=GRID_RES*(nReg>=3?2.4:(nReg===2?1.7:1));
+      var idwData=(nReg>1&&dati.length>320)?selectUniform(dati,320):dati;
+      gridPoints=buildGrid(idwData,rings,idwR,activeGridRes);
       drawGrid();
       var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='✅ '+labelPeriodo;
     }
