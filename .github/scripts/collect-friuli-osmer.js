@@ -17,11 +17,14 @@
  *    Risposta: stringa JSON contenente HTML, con dentro un data-URI CSV.
  *
  * PERCHÉ ORARI (H_2) E NON GIORNALIERI (H_3): l'archivio giornaliero copre solo
- * ~8 stazioni, l'orario ~20. Si sommano le 24 ore (colonna "Pioggia mm") per
- * ottenere il totale del giorno. Le ore sono in UTC: il totale è quindi il
- * giorno UTC, con un piccolo sfasamento (~2h) rispetto al giorno di calendario
- * italiano usato dalle altre regioni — DA VALIDARE nel confronto con Open-Meteo.
- * Soglia completezza: ≥20/24 ore valide, altrimenti niente dato (no sottostime).
+ * ~8 stazioni, l'orario ~20-40. Le ore sono in UTC (confermato dal footer del CSV
+ * il 25/07/2026: colonna "ora UTC", valori 1..24). Per allinearsi al GIORNO SOLARE
+ * ITALIANO usato da tutte le altre regioni (mezzanotte-mezzanotte locale) NON si
+ * sommano le 24 ore UTC del giorno (sfaserebbe di ~2h), ma le 24 ore locali: le
+ * ultime `offset` ore del giorno UTC precedente + le prime `24-offset` del giorno
+ * UTC corrente (offset = 2 in ora legale, 1 in ora solare). Vedi localDayTotal.
+ * L'ora h = pioggia dell'intervallo UTC [h-1, h]. Allineamento validato con
+ * analisi di lag vs Open-Meteo (25/07/2026). Soglia completezza: ≥20/24 ore.
  */
 
 const https = require('https');
@@ -100,8 +103,10 @@ function parseStazioni(html) {
   return out;
 }
 
-/** Somma oraria → totale giornaliero, o null se troppo bucato. */
-function dailyTotal(bodyStr) {
+/** Estrae la mappa oraria {ora(1..24) → mm} dal CSV OSMER, o null se illeggibile.
+ *  Solo le ore con valore numerico valido entrano nella mappa (il '-' = dato
+ *  mancante, NON zero). */
+function parseHourly(bodyStr) {
   let html;
   try { html = JSON.parse(bodyStr); } catch (e) { return null; }
   const m = html.match(/data:application\/csv;charset=utf-8,([^"']+)/i);
@@ -109,39 +114,43 @@ function dailyTotal(bodyStr) {
   const csv = decodeURIComponent(m[1]).split(/\r?\n/);
   if (csv.length < 2) return null;
   const header = csv[0].split(';');
+  const hc = header.findIndex(c => /ora/i.test(c));
   const pc = header.findIndex(c => /pioggia|precip/i.test(c));
-  if (pc < 0) return null;
-  let sum = 0, valid = 0;
+  if (hc < 0 || pc < 0) return null;
+  const hours = {};
   for (const line of csv.slice(1)) {
     const c = line.split(';');
-    if (c.length <= pc) continue;
+    if (c.length <= Math.max(hc, pc)) continue;
+    const h = parseInt(c[hc], 10);
+    if (isNaN(h) || h < 1 || h > 24) continue;
     const v = c[pc];
-    if (v && v !== '-') { const f = parseFloat(v); if (!isNaN(f)) { sum += f; valid++; } }
+    if (v && v !== '-') { const f = parseFloat(v); if (!isNaN(f)) hours[h] = f; }
   }
+  return hours;
+}
+
+/** Totale del GIORNO SOLARE ITALIANO combinando le ore UTC dei due giorni al
+ *  confine: dal giorno UTC precedente le ore > (24-offset), dal corrente le ore
+ *  ≤ (24-offset). offset = 2 (ora legale) o 1 (ora solare). null se < MIN_ORE. */
+function localDayTotal(prevHours, curHours, offset) {
+  const B = 24 - offset;
+  let sum = 0, valid = 0;
+  for (let h = B + 1; h <= 24; h++) { if (prevHours && prevHours[h] != null) { sum += prevHours[h]; valid++; } }
+  for (let h = 1; h <= B; h++)      { if (curHours  && curHours[h]  != null) { sum += curHours[h];  valid++; } }
   if (valid < MIN_ORE) return null;
   const mm = Math.round(sum * 10) / 10;
   return (mm < 0 || mm > 500) ? null : mm;
 }
 
-async function collectDay(sess, stazioni, dateStr) {
-  const [a, m, g] = dateStr.split('-').map(x => String(parseInt(x, 10)));
+/** Scarica e parsa la serie oraria (UTC) di una stazione per una data UTC. */
+async function fetchHourly(sess, stVal, utcDate) {
+  const [a, m, g] = utcDate.split('-').map(x => String(parseInt(x, 10)));
   const H = { 'Cookie': sess.cookie, 'X-Requested-With': 'XMLHttpRequest', 'Referer': `https://${HOST}/archivio.php?ln=&p=dati` };
-  const stations = [];
-  const BATCH = 5;
-  for (let i = 0; i < stazioni.length; i += BATCH) {
-    const chunk = stazioni.slice(i, i + BATCH);
-    await Promise.all(chunk.map(async st => {
-      try {
-        const r = await req('/ajax/getStationData.php', 'POST', H, { a, m, g, s: st.val, t: 'H_2', ln: '', o: 'visualizza' });
-        if (r.code !== 200) return;
-        const mm = dailyTotal(r.body);
-        if (mm === null) return;
-        stations.push({ id: `osmer_${st.val.split('@')[0]}`, n: st.n, lat: Math.round(st.lat * 10000) / 10000, lon: Math.round(st.lon * 10000) / 10000, q: 0, p: 'FVG', mm });
-      } catch (e) {}
-    }));
-    await sleep(400);
-  }
-  return stations;
+  try {
+    const r = await req('/ajax/getStationData.php', 'POST', H, { a, m, g, s: stVal, t: 'H_2', ln: '', o: 'visualizza' });
+    if (r.code !== 200) return null;
+    return parseHourly(r.body);
+  } catch (e) { return null; }
 }
 
 /**
@@ -191,10 +200,38 @@ async function main() {
     for (let i = 1; i <= GIORNI_WINDOW; i++) targetDays.push(fmtDate(new Date(noon - i * 24 * 3600000)));
   }
 
+  // Ogni giorno solare italiano usa le ore di DUE date UTC (quella del giorno e
+  // la precedente, per le ore al confine). Raccolgo l'insieme minimo di date UTC:
+  // giorni adiacenti condividono la data di confine, quindi per 7 giorni sono 8.
+  const prevOf = d => fmtDate(new Date(new Date(d + 'T12:00:00Z').getTime() - 24 * 3600000));
+  const utcSet = new Set();
+  targetDays.forEach(d => { utcSet.add(d); utcSet.add(prevOf(d)); });
+  const utcDates = [...utcSet];
+
+  // Scarico la serie oraria di ogni (stazione, data UTC) una sola volta, in
+  // batch di 5 richieste (stesso ritmo di prima), tenendola in cache.
+  const cache = {}; // `${stVal}|${utcDate}` -> mappa oraria
+  const tasks = [];
+  for (const st of stazioni) for (const ud of utcDates) tasks.push({ st, ud });
+  console.log(`  ${stazioni.length} stazioni × ${utcDates.length} date UTC = ${tasks.length} richieste`);
+  const BATCH = 5;
+  for (let i = 0; i < tasks.length; i += BATCH) {
+    const chunk = tasks.slice(i, i + BATCH);
+    await Promise.all(chunk.map(async t => { cache[`${t.st.val}|${t.ud}`] = await fetchHourly(sess, t.st.val, t.ud); }));
+    await sleep(400);
+  }
+
+  // Compongo ogni giorno solare italiano dalle ore in cache, poi merge.
   for (const dStr of targetDays) {
-    console.log(`  Raccolgo ${dStr}...`);
-    try { mergeDay(dStr, await collectDay(sess, stazioni, dStr)); }
-    catch (e) { console.warn(`  Warn ${dStr}: ${e.message}`); }
+    const pd = prevOf(dStr);
+    const offset = getItalyOffset(new Date(dStr + 'T12:00:00Z'));
+    const stations = [];
+    for (const st of stazioni) {
+      const mm = localDayTotal(cache[`${st.val}|${pd}`], cache[`${st.val}|${dStr}`], offset);
+      if (mm === null) continue;
+      stations.push({ id: `osmer_${st.val.split('@')[0]}`, n: st.n, lat: Math.round(st.lat * 10000) / 10000, lon: Math.round(st.lon * 10000) / 10000, q: 0, p: 'FVG', mm });
+    }
+    mergeDay(dStr, stations);
   }
 
   // ── Pulizia file > 365 giorni (retention finestra scorrevole) ──
