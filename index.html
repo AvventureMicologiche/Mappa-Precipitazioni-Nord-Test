@@ -3728,7 +3728,17 @@ function fitMapToRegions(regionKeys){
     }
   }
   if(!bounds) bounds=[[latMin,lonMin],[latMax,lonMax]];
-  map.fitBounds(L.latLngBounds(bounds),opts);
+  // Le regioni del Nord formano un blocco compatto/quadrato mentre l'area mappa
+  // è larga (16:9): "tutto visibile" (fit) lascia grandi margini laterali. Per
+  // riempire di più si zooma verso il livello "riempi" (che ritaglia sopra/sotto
+  // — Alpi/mare), fermandosi a una VIA DI MEZZO per non tagliare troppo. Centro
+  // invariato (regione di mezzo per 3 regioni). FILL_BLEND: 0=tutto visibile,
+  // 1=riempi pieno. (Richiesta utente 25/7/2026.)
+  var _lb=L.latLngBounds(bounds), _pp=L.point(pad[0],pad[1]);
+  var _fit=map.getBoundsZoom(_lb,false,_pp);   // tutto dentro (margini laterali)
+  var _fill=map.getBoundsZoom(_lb,true,_pp);   // riempie ritagliando sopra/sotto
+  var FILL_BLEND=0.55;
+  map.setView(_lb.getCenter(), _fit+(_fill-_fit)*FILL_BLEND, {animate:true,duration:0.6});
 }
 
 // Adiacenze (confini) tra le regioni selezionabili. Servono a individuare la
