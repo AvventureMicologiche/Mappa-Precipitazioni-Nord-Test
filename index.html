@@ -1521,7 +1521,10 @@ if(screenW<=480){
 }
 // Centro sul Nord Italia (Piemonte + Lombardia + Liguria + ER visibili)
 var initCenter=(screenW<=900)?[44.8,9.5]:[45.0,9.5];
-var map=L.map('map',{zoomSnap:0.5,zoomDelta:0.5}).setView(initCenter, initZoom);
+// zoomSnap 0.25: permette livelli di zoom a quarti (serve al controllo fine
+// dell'inquadratura multiregione, ZOOM_STEP). zoomDelta resta 0.5 → i pulsanti
+// +/- e la rotellina zoomano di 0,5 come prima (zoom manuale invariato).
+var map=L.map('map',{zoomSnap:0.25,zoomDelta:0.5}).setView(initCenter, initZoom);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
   maxZoom:19,subdomains:'abc',
   attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -3742,7 +3745,7 @@ function fitMapToRegions(regionKeys){
   // _fit è già un multiplo di 0,5, quindi ogni step di 0,5 CAMBIA sempre a video
   // (niente più valori che sembrano identici). 0=tutto visibile; 0.5/1.0/1.5=
   // sempre più pieno. Cap a _fill. (Manopola zoom multiregione, utente 25/7/2026.)
-  var ZOOM_STEP=0.5;
+  var ZOOM_STEP=0.25;
   var _z=Math.min(_fit+ZOOM_STEP,_fill);
   // VSHIFT: spostamento verticale del centro. >0 ABBASSA il contenuto a video
   // (regola #5: latitudine più alta = contenuto più in basso), ritagliando un po'
