@@ -30,9 +30,17 @@ const path  = require('path');
 
 const HOST     = 'www.meteo.fvg.it';
 const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'friuli-osmer');
-const GIORNI_TARGET = 2;    // ieri + altroieri
-const GIORNI_REPAIR = 5;    // auto-riparazione se un file manca/è scarno
-const MIN_ORE = 20;         // completezza minima per accettare un giorno
+// L'archivio OSMER continua a ingerire le ore di un giorno per diversi giorni
+// (una stazione supera la soglia solo quando ha ~24 ore complete). Perciò si
+// riscarica SEMPRE una finestra larga e si fa MERGE col file esistente (vedi
+// mergeDay): la copertura può solo crescere e il rumore di richiesta (timeout
+// silenziosi) non cancella mai una stazione già presa. Verificato il 25/07/2026:
+// riscaricando i giorni vecchi guadagnavano stazioni, i recenti oscillavano per
+// i timeout — il vecchio last-write-wins su finestra di 2 giorni li peggiorava
+// (es. 23/7 sceso da 39 a 32 stazioni).
+const GIORNI_WINDOW = 7;    // giorni indietro riscaricati sempre (finestra di riempimento)
+const MIN_ORE = 20;         // completezza minima (ore valide) per accettare una stazione
+const MIN_STAZIONI = 8;     // sotto questa soglia il giorno non si scrive
 
 function getItalyOffset(date) {
   const year = date.getUTCFullYear();
@@ -136,12 +144,29 @@ async function collectDay(sess, stazioni, dateStr) {
   return stations;
 }
 
-function writeDay(dateStr, stations) {
-  if (stations.length < 8) { console.warn(`  ${dateStr}: solo ${stations.length} stazioni, salto`); return false; }
-  fs.writeFileSync(path.join(DATA_DIR, `${dateStr}.json`), JSON.stringify({
+/**
+ * Unisce le stazioni appena raccolte con quelle già nel file del giorno:
+ * per ogni stazione (per id) vince la lettura più recente (fresca = archivio
+ * più completo); le stazioni già presenti che questo run NON riprende (timeout,
+ * o non più nel form) NON vengono perse. Così la copertura può solo crescere e
+ * un run "magro" non peggiora mai un file già ricco.
+ */
+function mergeDay(dateStr, freshStations) {
+  const file = path.join(DATA_DIR, `${dateStr}.json`);
+  const byId = {};
+  if (fs.existsSync(file)) {
+    try {
+      const prev = JSON.parse(fs.readFileSync(file, 'utf8'));
+      (prev.stations || []).forEach(s => { if (s && s.id) byId[s.id] = s; });
+    } catch (e) {}
+  }
+  freshStations.forEach(s => { if (s && s.id) byId[s.id] = s; });
+  const stations = Object.keys(byId).map(k => byId[k]);
+  if (stations.length < MIN_STAZIONI) { console.warn(`  ${dateStr}: solo ${stations.length} stazioni, salto`); return false; }
+  fs.writeFileSync(file, JSON.stringify({
     date: dateStr, collected: new Date().toISOString(), source: 'osmer-fvg', count: stations.length, stations
   }));
-  console.log(`  ✅ ${dateStr}: ${stations.length} stazioni`);
+  console.log(`  ✅ ${dateStr}: ${stations.length} stazioni (fresche questo run: ${freshStations.length})`);
   return true;
 }
 
@@ -163,19 +188,12 @@ async function main() {
     targetDays = [process.env.DATE_OVERRIDE.trim()];
   } else {
     targetDays = [];
-    for (let i = 1; i <= GIORNI_TARGET; i++) targetDays.push(fmtDate(new Date(noon - i * 24 * 3600000)));
-    for (let i = GIORNI_TARGET + 1; i <= GIORNI_REPAIR; i++) {
-      const dStr = fmtDate(new Date(noon - i * 24 * 3600000));
-      const f = path.join(DATA_DIR, `${dStr}.json`);
-      let repair = !fs.existsSync(f);
-      if (!repair) { try { repair = (JSON.parse(fs.readFileSync(f, 'utf8')).count || 0) < 8; } catch (e) { repair = true; } }
-      if (repair) targetDays.push(dStr);
-    }
+    for (let i = 1; i <= GIORNI_WINDOW; i++) targetDays.push(fmtDate(new Date(noon - i * 24 * 3600000)));
   }
 
   for (const dStr of targetDays) {
     console.log(`  Raccolgo ${dStr}...`);
-    try { writeDay(dStr, await collectDay(sess, stazioni, dStr)); }
+    try { mergeDay(dStr, await collectDay(sess, stazioni, dStr)); }
     catch (e) { console.warn(`  Warn ${dStr}: ${e.message}`); }
   }
 
