@@ -3740,7 +3740,7 @@ function fitMapToRegions(regionKeys){
   var _lb=L.latLngBounds(bounds), _pp=L.point(pad[0],pad[1]);
   var _fit=map.getBoundsZoom(_lb,false,_pp);   // tutto dentro (margini laterali)
   var _fill=map.getBoundsZoom(_lb,true,_pp);   // riempie ritagliando sopra/sotto
-  var FILL_BLEND=0.35;
+  var FILL_BLEND=0.30;
   // VSHIFT: spostamento verticale del centro. >0 ABBASSA il contenuto a video
   // (regola #5: latitudine più alta = contenuto più in basso), ritagliando un po'
   // più a sud e meno a nord. (Richiesta utente 25/7/2026.)
