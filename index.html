@@ -130,10 +130,9 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    le singole voci. */
 .region-select-mobile option{background:#2b2b2b;color:#f2f2f2;}
 .region-btns-desktop{display:grid;}
-/* Hint "max 3 regioni" — solo desktop (in multiregione). Nascosta su mobile
-   insieme ai checkbox (vedi media query). */
-.region-max-hint{font-size:11px;color:#8a94a6;font-weight:600;font-style:italic;
-  text-align:center;margin-top:6px;letter-spacing:.02em;}
+/* Hint "(MAX 3)" accanto al titolo "Seleziona regione" — solo desktop (in
+   multiregione). Nascosta su mobile insieme ai checkbox (vedi media query). */
+.region-max-hint{color:inherit;font-weight:600;margin-left:5px;}
 /* Regione "orfana" con numero dispari di pulsanti: occupa tutta la riga */
 .rcheck-full{grid-column:1/-1;}
 
@@ -706,7 +705,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <!-- Pannello regioni: gemello del pannello periodo -->
     <div id="region-panel">
       <div class="tp-handle" id="rp-handle">
-        <div class="tp-title" style="font-size:11px;white-space:nowrap;align-self:center;margin-top:-4px;">🗺 Seleziona regione</div>
+        <div class="tp-title" style="font-size:11px;white-space:nowrap;align-self:center;margin-top:-4px;">🗺 Seleziona regione <span class="region-max-hint">(MAX 3)</span></div>
       </div>
       <div class="tp-content">
         <!-- Desktop: bottoni (nascosti su mobile) -->
@@ -767,7 +766,6 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
             <span class="rcheck-name">Ticino (CH)</span>
           </label>
         </div>
-        <div class="region-max-hint">max 3 regioni</div>
         <!-- Mobile: select dropdown -->
         <select id="region-select" class="region-select-mobile">
           <option value="">Tocca per scegliere la regione ▼</option>
