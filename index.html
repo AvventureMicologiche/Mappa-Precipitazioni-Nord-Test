@@ -3652,7 +3652,7 @@ function loadAllBorders(regionKeys, cb){
 // il 25/7/2026 con Toscana+Emilia). Le bbox racchiudono le coordinate reali
 // delle stazioni di ciascuna regione (con un po' di margine).
 var REGION_BOUNDS={
-  lombardia:   [[44.90, 8.90],[46.40,10.70]],
+  lombardia:   [[44.90, 8.90],[46.45,10.85]],
   piemonte:    [[43.80, 6.63],[46.46, 9.22]],
   veneto:      [[44.79,10.63],[46.68,13.10]],
   valledaosta: [[45.47, 6.80],[45.99, 7.94]],
@@ -3708,24 +3708,27 @@ function fitMapToRegions(regionKeys){
   // Nessuna bbox trovata: NON chiamare fitBounds su valori invertiti
   // (Leaflet li normalizzerebbe a tutto il mondo). Meglio lasciare la vista com'è.
   if(!found) return;
-  var pad=window.innerWidth<=900?[20,10]:[30,30];
+  // Margine di fit ridotto = zoom un filo più stretto, SENZA tagliare le regioni
+  // (richiesta utente 25/7/2026: regione di mezzo centrata + più riempimento).
+  // Il margine vuoto residuo su un lato è intrinseco alla centratura sulla
+  // regione di mezzo (schermo largo 16:9 vs regioni compatte).
+  var pad=window.innerWidth<=900?[10,8]:[12,12];
   var opts={animate:true,duration:0.6,padding:pad};
+  var bounds;
   // Con 3 regioni: centro sulla regione "di mezzo" (quella che confina con
-  // entrambe le altre), mantenendole comunque tutte visibili. Si costruisce
-  // una bbox SIMMETRICA attorno al centro della regione di mezzo, abbastanza
-  // ampia da contenere la bbox unificata: fitBounds la centra lì e sceglie lo
-  // zoom che mostra tutte e tre. (Richiesta utente 25/7/2026.)
+  // entrambe le altre) tramite una bbox SIMMETRICA attorno al suo centro,
+  // abbastanza ampia da contenere la bbox unificata.
   if(regionKeys.length===3){
     var mid=middleRegion(regionKeys);
     var c=mid&&REGIONS[mid]&&REGIONS[mid].center;
     if(c){
       var hw=Math.max(Math.abs(lonMax-c[1]),Math.abs(c[1]-lonMin));
       var hh=Math.max(Math.abs(latMax-c[0]),Math.abs(c[0]-latMin));
-      map.fitBounds([[c[0]-hh,c[1]-hw],[c[0]+hh,c[1]+hw]],opts);
-      return;
+      bounds=[[c[0]-hh,c[1]-hw],[c[0]+hh,c[1]+hw]];
     }
   }
-  map.fitBounds([[latMin,lonMin],[latMax,lonMax]],opts);
+  if(!bounds) bounds=[[latMin,lonMin],[latMax,lonMax]];
+  map.fitBounds(L.latLngBounds(bounds),opts);
 }
 
 // Adiacenze (confini) tra le regioni selezionabili. Servono a individuare la
