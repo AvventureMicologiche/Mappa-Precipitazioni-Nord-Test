@@ -130,6 +130,10 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    le singole voci. */
 .region-select-mobile option{background:#2b2b2b;color:#f2f2f2;}
 .region-btns-desktop{display:grid;}
+/* Hint "max 3 regioni" — solo desktop (in multiregione). Nascosta su mobile
+   insieme ai checkbox (vedi media query). */
+.region-max-hint{font-size:11px;color:#8a94a6;font-weight:600;font-style:italic;
+  text-align:center;margin-top:6px;letter-spacing:.02em;}
 /* Regione "orfana" con numero dispari di pulsanti: occupa tutta la riga */
 .rcheck-full{grid-column:1/-1;}
 
@@ -363,7 +367,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   /* Tablet layout */
 
   /* 1. Select regione: attaccata alla barra blu, tutta larghezza */
-  .region-btns-desktop{display:none !important;}
+  .region-btns-desktop,.region-max-hint{display:none !important;}
   .region-select-mobile{
     display:block !important;
     width:100% !important;
@@ -494,7 +498,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     padding-top:4px !important;
     padding-bottom:4px !important;
   }
-  .region-btns-desktop{display:none !important;}
+  .region-btns-desktop,.region-max-hint{display:none !important;}
   #rp-handle{display:none !important;}
   #region-panel{
     padding:6px 6px !important;
@@ -763,6 +767,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
             <span class="rcheck-name">Ticino (CH)</span>
           </label>
         </div>
+        <div class="region-max-hint">max 3 regioni</div>
         <!-- Mobile: select dropdown -->
         <select id="region-select" class="region-select-mobile">
           <option value="">Tocca per scegliere la regione ▼</option>
@@ -2508,7 +2513,11 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
       // blocca il thread per secondi. Single-region invariato (fattore 1, tutte le
       // stazioni). I marker restano comunque tutti (addMarkers usa 'dati' pieno).
       var nReg=ringsOverride?getActiveRegions().length:1;
-      activeGridRes=GRID_RES*(nReg>=3?2.4:(nReg===2?1.7:1));
+      // Passo griglia crescente col n. di regioni (più regioni = vista più zoomata
+      // fuori = dettaglio fine invisibile). Anche a 1 regione un lieve coarsening
+      // (×1,5) dimezza il point-in-polygon per cella — il costo dominante — con
+      // resa praticamente identica (celle ~3px a video invece di ~2).
+      activeGridRes=GRID_RES*(nReg>=3?2.4:(nReg===2?1.7:1.5));
       var idwData=(nReg>1&&dati.length>320)?selectUniform(dati,320):dati;
       gridPoints=buildGrid(idwData,rings,idwR,activeGridRes);
       drawGrid();
@@ -3826,7 +3835,7 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
     if(this.checked && getActiveRegions().length>3){
       this.checked=false;
       var _m=document.getElementById('tp-status');
-      if(_m){ _m.className=''; _m.textContent='⚠️ Massimo 3 regioni per volta'; setTimeout(function(){ if(_m.textContent.indexOf('Massimo 3')>-1) _m.textContent=''; },2800); }
+      if(_m){ _m.className='error'; _m.textContent='⚠️ Massimo 3 regioni per volta'; setTimeout(function(){ if(_m.textContent.indexOf('Massimo 3')>-1){ _m.textContent=''; _m.className=''; } },2800); }
       return;
     }
     // Serve almeno una regione: se hai tolto l'ultima, rimettila
