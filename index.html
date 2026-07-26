@@ -108,8 +108,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .rcheck-name{
   display:block;width:100%;
   background:#f0f4fb;border:1px solid #d0d8e8;border-radius:5px;
-  color:#1b3f6e;font-size:10.5px;font-weight:700;
-  padding:6px 1px;text-align:center;white-space:nowrap;
+  color:#1b3f6e;font-size:11.5px;font-weight:700;
+  padding:9px 1px;text-align:center;white-space:nowrap;
   cursor:pointer;transition:background .15s,border-color .15s;
 }
 .rcheck-wrap input:checked ~ .rcheck-name{
@@ -710,13 +710,11 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       <div class="tp-content">
         <!-- Desktop: bottoni (nascosti su mobile) -->
         <div class="tp-grid4 region-btns-desktop">
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-valledaosta" value="valledaosta"><span class="rcheck-box"></span><span class="rcheck-name">Valle d'Aosta</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-piemonte" value="piemonte"><span class="rcheck-box"></span><span class="rcheck-name">Piemonte</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-piemonte-vda" value="piemonte-vda"><span class="rcheck-box"></span><span class="rcheck-name">Piemonte-VdA</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-liguria" value="liguria"><span class="rcheck-box"></span><span class="rcheck-name">Liguria</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-lombardia" value="lombardia"><span class="rcheck-box"></span><span class="rcheck-name">Lombardia</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-ticino" value="ticino"><span class="rcheck-box"></span><span class="rcheck-name">Ticino (CH)</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-trentino" value="trentino"><span class="rcheck-box"></span><span class="rcheck-name">Trentino</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-altoadige" value="altoadige"><span class="rcheck-box"></span><span class="rcheck-name">Alto Adige</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-trentino-aa" value="trentino-aa"><span class="rcheck-box"></span><span class="rcheck-name">Trentino-A.A.</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-veneto" value="veneto"><span class="rcheck-box"></span><span class="rcheck-name">Veneto</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-friuli" value="friuli"><span class="rcheck-box"></span><span class="rcheck-name">Friuli V.G.</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-emilia" value="emilia"><span class="rcheck-box"></span><span class="rcheck-name">Emilia-R.</span></label>
@@ -736,13 +734,11 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <!-- Mobile: select dropdown -->
         <select id="region-select" class="region-select-mobile">
           <option value="">Tocca per scegliere la regione ▼</option>
-          <option value="valledaosta">Valle d'Aosta</option>
-          <option value="piemonte">Piemonte</option>
+          <option value="piemonte-vda">Piemonte-Valle d'Aosta</option>
           <option value="liguria">Liguria</option>
           <option value="lombardia">Lombardia</option>
           <option value="ticino">Ticino (CH)</option>
-          <option value="trentino">Trentino</option>
-          <option value="altoadige">Alto Adige</option>
+          <option value="trentino-aa">Trentino-Alto Adige</option>
           <option value="veneto">Veneto</option>
           <option value="friuli">Friuli V.G.</option>
           <option value="emilia">Emilia Romagna</option>
@@ -2366,10 +2362,15 @@ function loadOpenMeteo(stations,pastDate,nowDate,labelPeriodo,badgePrefix){
 // ═══════════════════════════════════════════════════════════════
 // HELPER: regioni attive dalle checkbox
 // ═══════════════════════════════════════════════════════════════
+// Coppie accorpate in un solo bottone (regioni piccole/legate): il valore del
+// checkbox combo si espande nelle regioni reali, così dispatcher/fit/render
+// lavorano sulle regioni vere senza sapere nulla dei combo.
+var COMBO_REGIONS={ 'piemonte-vda':['piemonte','valledaosta'], 'trentino-aa':['trentino','altoadige'] };
+function expandRegion(v){ return COMBO_REGIONS[v]||[v]; }
 function getActiveRegions(){
   var active=[];
   document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){
-    if(cb.checked) active.push(cb.value);
+    if(cb.checked) expandRegion(cb.value).forEach(function(r){ if(active.indexOf(r)<0) active.push(r); });
   });
   return active;
 }
@@ -4038,10 +4039,10 @@ document.getElementById('region-select').addEventListener('change', function(){
   else if(rk==='trentino') map.setView([45.9, 11.1], 8.5);
   else if(rk==='toscana') map.setView([window.innerWidth<=375 ? 43.1 : 42.85, 11.0], 7.5);
   else if(rk==='ticino') map.setView([46.05, 8.8], 8.5);
-  setRegionBorder(rk, function(){
-    clearMarkers();
-    addDefaultMarkersForRegion(rk);
-  });
+  else if(rk==='piemonte-vda') map.setView([45.25, 7.55], 7.25);
+  else if(rk==='trentino-aa') map.setView([46.25, 11.3], 7.5);
+  clearMarkers();
+  expandRegion(rk).forEach(function(r){ setRegionBorder(r, function(){ addDefaultMarkersForRegion(r); }); });
   if(currentPast&&currentNow) loadData(currentPast, currentNow, currentLabel);
   // Apri time panel su mobile/tablet dopo selezione regione
   if(window.innerWidth<=900){
@@ -4064,8 +4065,8 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
     if(getActiveRegions().length===0){ this.checked=true; return; }
     // MULTIREGIONE: la spunta aggiunge/toglie solo la sua regione, non azzera le altre.
     // Se la regione è stata TOLTA, rimuovi solo il suo bordo dalla mappa.
-    if(!this.checked && regionBorders[rk]){
-      map.removeLayer(regionBorders[rk]); delete regionBorders[rk];
+    if(!this.checked){
+      expandRegion(rk).forEach(function(r){ if(regionBorders[r]){ map.removeLayer(regionBorders[r]); delete regionBorders[r]; } });
     }
     var regions=getActiveRegions();
     // Reset del disegno, poi ridisegna TUTTE le regioni attive insieme
