@@ -18,8 +18,8 @@
   </script>
 
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <meta name="description" content="Mappa interattiva delle precipitazioni in Nord Italia con dati da stazioni meteo reali. Pianifica le tue uscite funghi.">
-  <meta property="og:title" content="Precipitazioni Nord Italia | Avventure Micologiche">
+  <meta name="description" content="Mappa interattiva delle precipitazioni in Italia con dati da stazioni meteo reali. Pianifica le tue uscite funghi.">
+  <meta property="og:title" content="Mappa Pluviometrica Italia | Avventure Micologiche">
   <meta property="og:description" content="Mappa interattiva con dati meteo reali per pianificare ogni uscita. Trova le zone dove ha piovuto di più.">
   <!-- Anteprima rifatta il 22 luglio 2026 (Emilia Romagna, 30 giorni, 1200x630).
        Il ?v= serve a far riscaricare l'immagine ai social, che la tengono in
@@ -36,7 +36,7 @@
   <meta name="theme-color" content="#1b3f6e">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Precipitazioni Nord Italia</title>
+<title>Mappa Pluviometrica Italia</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -640,7 +640,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     </a>
     <span style="font-size:18px">🌧</span>
     <div>
-      <h1>Precipitazioni Nord Italia <span style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v4.0)</span></h1>
+      <h1>Mappa Pluviometrica Italia <span style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v5.0)</span></h1>
       <div class="hdr-sub" id="datehdr">Seleziona il periodo</div>
     </div>
   </div>
@@ -4327,11 +4327,33 @@ loadGeoJSONOnce(function(){
     });
 });
 
+var meteohubStationsCache={};
+// Anagrafe stazioni MeteoHub per i puntini di default (prima di scegliere un
+// periodo): non c'è lista statica, si prende da un file recente (in cache).
+function loadMeteoHubStations(regionKey,cb){
+  if(meteohubStationsCache[regionKey]){ cb(meteohubStationsCache[regionKey]); return; }
+  var RAW=PILOT_DATA_BASE+'meteohub-'+regionKey, tries=[], now=new Date();
+  for(var i=1;i<=6;i++){ var d=new Date(now.getTime()-i*86400000); tries.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')); }
+  var idx=0;
+  (function attempt(){
+    if(idx>=tries.length){ cb([]); return; }
+    fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
+      .then(function(data){ var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};}); meteohubStationsCache[regionKey]=st; cb(st); })
+      .catch(function(){ idx++; attempt(); });
+  })();
+}
 function addDefaultMarkersForRegion(regionKey){
   var cfg=REGIONS[regionKey];
-  // MeteoHub non ha lista stations (i punti vengono dai file) → [] per non crashare
-  // (undefined.forEach interrompeva il change handler prima della ricarica).
+  // MeteoHub non ha lista stations statica: prende l'anagrafe da un file recente
+  // (async). Le altre regioni usano cfg.stations (o l'anagrafe ARPA per Lombardia).
+  if(cfg && cfg.dataSource==='meteohub'){
+    loadMeteoHubStations(regionKey,function(st){ drawDefaultMarkers(st,cfg); });
+    return;
+  }
   var stazioni=(regionKey==='lombardia')?(ARPA_STATIONS||LOMBARDIA_STATIONS):((cfg&&cfg.stations)?cfg.stations:[]);
+  drawDefaultMarkers(stazioni,cfg);
+}
+function drawDefaultMarkers(stazioni,cfg){
   stazioni.forEach(function(s){
     var m=L.circleMarker([s.lat,s.lon],{
       radius:5,fillColor:'#fff',fillOpacity:0.9,
