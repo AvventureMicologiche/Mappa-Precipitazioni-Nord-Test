@@ -82,26 +82,33 @@ function addDays(dateStr, n) {
   return d;
 }
 
-// Prende il file reale più recente della cartella (source NON di backfill) per
-// avere l'anagrafe corretta delle stazioni (id/n/lat/lon/q/p).
-function latestRealFile(dir) {
+// Costruisce l'anagrafe UNENDO le stazioni di TUTTI i file reali (source NON di
+// backfill). Il feed OSMER/CF pubblica un set variabile giorno per giorno: usare
+// un solo file lascerebbe fuori le stazioni assenti quel giorno, che poi
+// sparirebbero dal backfill e non accumulerebbero pioggia nei periodi lunghi.
+function unionRealStations(dir) {
   const files = fs.readdirSync(dir).filter(f => /^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort();
-  for (let i = files.length - 1; i >= 0; i--) {
-    const d = JSON.parse(fs.readFileSync(path.join(dir, files[i]), 'utf8'));
-    if (d.source && d.source.indexOf('backfill') < 0 && d.stations && d.stations.length > 0) return d;
+  const byId = {}; let nFiles = 0;
+  for (const f of files) {
+    const d = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+    if (!d.source || d.source.indexOf('backfill') >= 0 || !d.stations || !d.stations.length) continue;
+    nFiles++;
+    d.stations.forEach(s => { byId[s.id] = s; }); // file ordinati: vince l'occorrenza più recente
   }
-  throw new Error('nessun file reale trovato in ' + dir);
+  const stations = Object.values(byId);
+  if (!stations.length) throw new Error('nessun file reale trovato in ' + dir);
+  return { date: 'unione ' + nFiles + ' file', stations };
 }
 
 async function backfillRegion(key) {
   const cfg = CONFIG[key];
   console.log(`\n=== Backfill ${key} ===`);
 
-  const anag = latestRealFile(cfg.dir);
+  const anag = unionRealStations(cfg.dir);
   const stations = anag.stations.map(s => ({
     id: s.id, n: s.n, lat: s.lat, lon: s.lon, q: s.q || 0, p: s.p || cfg.provDefault
   }));
-  console.log(`  Anagrafe da ${anag.date}: ${stations.length} stazioni`);
+  console.log(`  Anagrafe (${anag.date}): ${stations.length} stazioni`);
 
   const endDate   = ymd(addDays(cfg.realFrom, -1));               // giorno prima del primo reale
   const startDate = ymd(addDays(cfg.realFrom, -BACKFILL_DAYS));
