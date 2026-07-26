@@ -108,8 +108,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .rcheck-name{
   display:block;width:100%;
   background:#f0f4fb;border:1px solid #d0d8e8;border-radius:5px;
-  color:#1b3f6e;font-size:13px;font-weight:700;
-  padding:8px 2px;text-align:center;
+  color:#1b3f6e;font-size:10.5px;font-weight:700;
+  padding:6px 1px;text-align:center;white-space:nowrap;
   cursor:pointer;transition:background .15s,border-color .15s;
 }
 .rcheck-wrap input:checked ~ .rcheck-name{
@@ -709,77 +709,55 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       </div>
       <div class="tp-content">
         <!-- Desktop: bottoni (nascosti su mobile) -->
-        <div class="tp-grid2 region-btns-desktop">
-          <label class="rcheck-wrap">
-            <input type="checkbox" id="chk-liguria" value="liguria">
-            <span class="rcheck-box"></span>
-            <span class="rcheck-name">Liguria</span>
-          </label>
-          <label class="rcheck-wrap">
-            <input type="checkbox" id="chk-piemonte" value="piemonte">
-            <span class="rcheck-box"></span>
-            <span class="rcheck-name">Piemonte</span>
-          </label>
-          <label class="rcheck-wrap">
-            <input type="checkbox" id="chk-valledaosta" value="valledaosta">
-            <span class="rcheck-box"></span>
-            <span class="rcheck-name">Valle d'Aosta</span>
-          </label>
-          <label class="rcheck-wrap">
-            <input type="checkbox" id="chk-lombardia" value="lombardia">
-            <span class="rcheck-box"></span>
-            <span class="rcheck-name">Lombardia</span>
-          </label>
-          <label class="rcheck-wrap">
-            <input type="checkbox" id="chk-emilia" value="emilia">
-            <span class="rcheck-box"></span>
-            <span class="rcheck-name">Emilia Romagna</span>
-          </label>
-          <label class="rcheck-wrap">
-            <input type="checkbox" id="chk-toscana" value="toscana">
-            <span class="rcheck-box"></span>
-            <span class="rcheck-name">Toscana</span>
-          </label>
-          <label class="rcheck-wrap">
-            <input type="checkbox" id="chk-veneto" value="veneto">
-            <span class="rcheck-box"></span>
-            <span class="rcheck-name">Veneto</span>
-          </label>
-          <label class="rcheck-wrap">
-            <input type="checkbox" id="chk-friuli" value="friuli">
-            <span class="rcheck-box"></span>
-            <span class="rcheck-name">Friuli V.G.</span>
-          </label>
-          <label class="rcheck-wrap">
-            <input type="checkbox" id="chk-trentino" value="trentino">
-            <span class="rcheck-box"></span>
-            <span class="rcheck-name">Trentino</span>
-          </label>
-          <label class="rcheck-wrap">
-            <input type="checkbox" id="chk-altoadige" value="altoadige">
-            <span class="rcheck-box"></span>
-            <span class="rcheck-name">Alto Adige</span>
-          </label>
-          <label class="rcheck-wrap rcheck-full">
-            <input type="checkbox" id="chk-ticino" value="ticino">
-            <span class="rcheck-box"></span>
-            <span class="rcheck-name">Ticino (CH)</span>
-          </label>
+        <div class="tp-grid4 region-btns-desktop">
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-valledaosta" value="valledaosta"><span class="rcheck-box"></span><span class="rcheck-name">Valle d'Aosta</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-piemonte" value="piemonte"><span class="rcheck-box"></span><span class="rcheck-name">Piemonte</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-liguria" value="liguria"><span class="rcheck-box"></span><span class="rcheck-name">Liguria</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-lombardia" value="lombardia"><span class="rcheck-box"></span><span class="rcheck-name">Lombardia</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-ticino" value="ticino"><span class="rcheck-box"></span><span class="rcheck-name">Ticino (CH)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-trentino" value="trentino"><span class="rcheck-box"></span><span class="rcheck-name">Trentino</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-altoadige" value="altoadige"><span class="rcheck-box"></span><span class="rcheck-name">Alto Adige</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-veneto" value="veneto"><span class="rcheck-box"></span><span class="rcheck-name">Veneto</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-friuli" value="friuli"><span class="rcheck-box"></span><span class="rcheck-name">Friuli V.G.</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-emilia" value="emilia"><span class="rcheck-box"></span><span class="rcheck-name">Emilia-R.</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-toscana" value="toscana"><span class="rcheck-box"></span><span class="rcheck-name">Toscana</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-umbria" value="umbria"><span class="rcheck-box"></span><span class="rcheck-name">Umbria</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-marche" value="marche"><span class="rcheck-box"></span><span class="rcheck-name">Marche</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-lazio" value="lazio"><span class="rcheck-box"></span><span class="rcheck-name">Lazio</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-abruzzo" value="abruzzo"><span class="rcheck-box"></span><span class="rcheck-name">Abruzzo</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-molise" value="molise"><span class="rcheck-box"></span><span class="rcheck-name">Molise</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-campania" value="campania"><span class="rcheck-box"></span><span class="rcheck-name">Campania</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-puglia" value="puglia"><span class="rcheck-box"></span><span class="rcheck-name">Puglia</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-basilicata" value="basilicata"><span class="rcheck-box"></span><span class="rcheck-name">Basilicata</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-calabria" value="calabria"><span class="rcheck-box"></span><span class="rcheck-name">Calabria</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-sicilia" value="sicilia"><span class="rcheck-box"></span><span class="rcheck-name">Sicilia</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-sardegna" value="sardegna"><span class="rcheck-box"></span><span class="rcheck-name">Sardegna</span></label>
         </div>
         <!-- Mobile: select dropdown -->
         <select id="region-select" class="region-select-mobile">
           <option value="">Tocca per scegliere la regione ▼</option>
-          <option value="liguria">Liguria</option>
-          <option value="piemonte">Piemonte</option>
           <option value="valledaosta">Valle d'Aosta</option>
+          <option value="piemonte">Piemonte</option>
+          <option value="liguria">Liguria</option>
           <option value="lombardia">Lombardia</option>
-          <option value="emilia">Emilia Romagna</option>
-          <option value="toscana">Toscana</option>
-          <option value="veneto">Veneto</option>
-          <option value="friuli">Friuli V.G.</option>
+          <option value="ticino">Ticino (CH)</option>
           <option value="trentino">Trentino</option>
           <option value="altoadige">Alto Adige</option>
-          <option value="ticino">Ticino (CH)</option>
+          <option value="veneto">Veneto</option>
+          <option value="friuli">Friuli V.G.</option>
+          <option value="emilia">Emilia Romagna</option>
+          <option value="toscana">Toscana</option>
+          <option value="umbria">Umbria</option>
+          <option value="marche">Marche</option>
+          <option value="lazio">Lazio</option>
+          <option value="abruzzo">Abruzzo</option>
+          <option value="molise">Molise</option>
+          <option value="campania">Campania</option>
+          <option value="puglia">Puglia</option>
+          <option value="basilicata">Basilicata</option>
+          <option value="calabria">Calabria</option>
+          <option value="sicilia">Sicilia</option>
+          <option value="sardegna">Sardegna</option>
         </select>
       </div>
     </div>
@@ -1348,6 +1326,72 @@ var REGIONS = {
       {n:"Firenzuola",          lat:44.120,lon:11.375,q:422, p:"FI"},
       {n:"Zoo di Poppi",        lat:43.736,lon:11.783,q:437, p:"AR"}
     ]
+  },
+
+  // ───────── CENTRO-SUD (MeteoHub / Agenzia ItaliaMeteo) — pilota, repo TEST ─────────
+  // Un solo loader generico (loadMeteoHubRegion) legge data/meteohub-<regione> dal
+  // repo test (backfill Open-Meteo + reale, già nei file). Niente lista stations.
+  marche:     { name:'Marche',      center:[43.32,13.01], zoom:8.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'marche',     dataSource:'meteohub' },
+  umbria:     { name:'Umbria',      center:[43.02,12.57], zoom:8.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'umbria',     dataSource:'meteohub' },
+  lazio:      { name:'Lazio',       center:[41.85,12.75], zoom:8,   fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'lazio',      dataSource:'meteohub' },
+  molise:     { name:'Molise',      center:[41.71,14.56], zoom:8.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'molise',     dataSource:'meteohub' },
+  campania:   { name:'Campania',    center:[40.76,14.77], zoom:8,   fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'campania',   dataSource:'meteohub' },
+  puglia:     { name:'Puglia',      center:[40.88,16.72], zoom:7.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'puglia',     dataSource:'meteohub' },
+  basilicata: { name:'Basilicata',  center:[40.49,16.07], zoom:8,   fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'basilicata', dataSource:'meteohub' },
+  calabria:   { name:'Calabria',    center:[39.02,16.39], zoom:7.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'calabria',   dataSource:'meteohub' },
+  sicilia:    { name:'Sicilia',     center:[37.62,13.78], zoom:7,   fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'sicil',      dataSource:'meteohub' },
+  sardegna:   { name:'Sardegna',    center:[40.10, 8.96], zoom:7.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'sardegna',   dataSource:'meteohub' },
+
+  // Abruzzo: nessun feed reale → Open-Meteo live (~40 punti), come erano VdA/Friuli
+  abruzzo: {
+    name: 'Abruzzo',
+    center: [42.30, 13.85], zoom: 8.5,
+    fonte: 'Open-Meteo',
+    geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson',
+    geojsonFilter: 'abruzz',
+    dataSource: 'open_meteo',
+    stations: [
+      {n:"L'Aquila",             lat:42.350,lon:13.400,q:714, p:"AQ"},
+      {n:"Avezzano",            lat:42.030,lon:13.430,q:697, p:"AQ"},
+      {n:"Sulmona",             lat:42.050,lon:13.930,q:405, p:"AQ"},
+      {n:"Tagliacozzo",         lat:42.070,lon:13.250,q:740, p:"AQ"},
+      {n:"Carsoli",             lat:42.100,lon:13.090,q:640, p:"AQ"},
+      {n:"Celano",              lat:42.090,lon:13.550,q:800, p:"AQ"},
+      {n:"Ovindoli",            lat:42.130,lon:13.520,q:1375,p:"AQ"},
+      {n:"Campo Imperatore",    lat:42.442,lon:13.560,q:2130,p:"AQ"},
+      {n:"Scanno",              lat:41.900,lon:13.880,q:1015,p:"AQ"},
+      {n:"Pescasseroli",        lat:41.810,lon:13.790,q:1167,p:"AQ"},
+      {n:"Barrea",              lat:41.753,lon:13.992,q:1060,p:"AQ"},
+      {n:"Castel di Sangro",    lat:41.783,lon:14.110,q:793, p:"AQ"},
+      {n:"Roccaraso",           lat:41.848,lon:14.073,q:1236,p:"AQ"},
+      {n:"Pratola Peligna",     lat:42.100,lon:13.870,q:340, p:"AQ"},
+      {n:"Navelli",             lat:42.238,lon:13.723,q:760, p:"AQ"},
+      {n:"Fonte Cerreto",       lat:42.420,lon:13.520,q:1120,p:"AQ"},
+      {n:"Teramo",              lat:42.660,lon:13.700,q:265, p:"TE"},
+      {n:"Giulianova",          lat:42.750,lon:13.960,q:68,  p:"TE"},
+      {n:"Roseto degli Abruzzi",lat:42.680,lon:14.020,q:15,  p:"TE"},
+      {n:"Atri",                lat:42.580,lon:13.980,q:442, p:"TE"},
+      {n:"Nereto",              lat:42.820,lon:13.820,q:145, p:"TE"},
+      {n:"Alba Adriatica",      lat:42.830,lon:13.920,q:5,   p:"TE"},
+      {n:"Martinsicuro",        lat:42.880,lon:13.920,q:4,   p:"TE"},
+      {n:"Isola del Gran Sasso",lat:42.500,lon:13.660,q:415, p:"TE"},
+      {n:"Pescara",             lat:42.460,lon:14.210,q:4,   p:"PE"},
+      {n:"Montesilvano",        lat:42.510,lon:14.150,q:5,   p:"PE"},
+      {n:"Penne",               lat:42.450,lon:13.930,q:438, p:"PE"},
+      {n:"Popoli",              lat:42.170,lon:13.830,q:254, p:"PE"},
+      {n:"Città Sant'Angelo",   lat:42.520,lon:14.060,q:317, p:"PE"},
+      {n:"Chieti",              lat:42.350,lon:14.170,q:330, p:"CH"},
+      {n:"Lanciano",            lat:42.230,lon:14.390,q:265, p:"CH"},
+      {n:"Vasto",               lat:42.110,lon:14.710,q:144, p:"CH"},
+      {n:"Ortona",              lat:42.350,lon:14.400,q:72,  p:"CH"},
+      {n:"Francavilla al Mare", lat:42.420,lon:14.290,q:20,  p:"CH"},
+      {n:"San Salvo",           lat:42.050,lon:14.730,q:100, p:"CH"},
+      {n:"Guardiagrele",        lat:42.190,lon:14.220,q:576, p:"CH"},
+      {n:"Casoli",              lat:42.120,lon:14.290,q:378, p:"CH"},
+      {n:"Gissi",               lat:42.020,lon:14.550,q:373, p:"CH"},
+      {n:"Atessa",              lat:42.070,lon:14.450,q:435, p:"CH"},
+      {n:"Roccascalegna",       lat:42.060,lon:14.310,q:500, p:"CH"}
+    ]
   }
 };
 
@@ -1513,14 +1557,14 @@ var screenW=window.innerWidth;
 var screenH=window.innerHeight;
 var initZoom;
 if(screenW<=480){
-  initZoom = 6.5;
+  initZoom = 5;
 } else if(screenW<=900){
-  initZoom = 7;
+  initZoom = 5.25;
 } else {
-  initZoom = 7.5;
+  initZoom = 5.75;
 }
-// Centro sul Nord Italia (Piemonte + Lombardia + Liguria + ER visibili)
-var initCenter=(screenW<=900)?[44.8,9.5]:[45.0,9.5];
+// Vista sull'Italia intera (dalle Alpi alla Sicilia)
+var initCenter=(screenW<=900)?[42.0,12.5]:[42.2,12.8];
 // zoomSnap 0.25: permette livelli di zoom a quarti (serve al controllo fine
 // dell'inquadratura multiregione, ZOOM_STEP). zoomDelta resta 0.5 → i pulsanti
 // +/- e la rotellina zoomano di 0,5 come prima (zoom manuale invariato).
@@ -1774,7 +1818,7 @@ var HIST_RAW_BY_REGION={
   'friuli-osmer':PILOT_DATA_BASE,
   'valledaosta-cf':PILOT_DATA_BASE
 };
-function histRawBase(region){ return HIST_RAW_BY_REGION[region]||HIST_RAW; }
+function histRawBase(region){ if(region&&region.indexOf('meteohub-')===0) return PILOT_DATA_BASE; return HIST_RAW_BY_REGION[region]||HIST_RAW; }
 // Piloti VdA-CF e Friuli-OSMER: lo storico è backfill Open-Meteo (stime, source
 // 'open-meteo-backfill-*') per i 60 giorni prima del primo dato reale + dati reali
 // di stazione, tutti sulle STESSE coordinate. Nessuno switch runtime: si legge
@@ -1955,7 +1999,7 @@ function openStationHistory(s,rank,mx,my){
   var regionKey=s._region||getActiveRegions()[0]||DEFAULT_REGION; // multiregione: la regione della stazione cliccata, non la 1a attiva
   // Friuli: lo storico legge dal dato OSMER (repo test) quando è la fonte attiva,
   // altrimenti da Open-Meteo produzione. Le altre regioni usano regionKey tal quale.
-  var histRegion=(regionKey==='friuli')?'friuli-osmer':(regionKey==='valledaosta')?'valledaosta-cf':regionKey;
+  var histRegion=(REGIONS[regionKey]&&REGIONS[regionKey].dataSource==='meteohub')?'meteohub-'+regionKey:(regionKey==='friuli')?'friuli-osmer':(regionKey==='valledaosta')?'valledaosta-cf':regionKey;
   var limit=HIST_REAL_FROM[histRegion]||HIST_REAL_FROM[regionKey];
 
   var days=[];
@@ -2454,6 +2498,10 @@ function loadData(pastDate,nowDate,labelPeriodo){
     } else if(source==='oasi_ticino'){
       loadTicinoRegion(pastDate,nowDate,labelPeriodo,function(dati){
         onRegionDone(dati,'🟢 OASI Ticino',regionKey);
+      });
+    } else if(source==='meteohub'){
+      loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,function(dati){
+        onRegionDone(dati,'🟢 MeteoHub',regionKey);
       });
     } else {
       loadOpenMeteoRegion(cfg.stations||[],pastDate,nowDate,labelPeriodo,function(dati){
@@ -3328,6 +3376,49 @@ function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
   });
 }
 
+// Loader generico MeteoHub (centro-sud, pilota repo TEST): legge
+// data/meteohub-<regione> (backfill Open-Meteo + reale già nei file), somma per
+// stazione nel periodo. Stesso pattern dei loader a file (Alto Adige/Trentino).
+function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
+  var RAW=PILOT_DATA_BASE+'meteohub-'+regionKey;
+  var rainTot={}, stMeta={};
+  var dates=[];
+  var d=new Date(pastDate.getTime());
+  while(d<=nowDate){
+    var y=d.getFullYear(),mo=String(d.getMonth()+1).padStart(2,'0'),dy=String(d.getDate()).padStart(2,'0');
+    dates.push(y+'-'+mo+'-'+dy);
+    d.setDate(d.getDate()+1);
+  }
+  var pending=dates.length;
+  if(pending===0){cb([]);return;}
+  dates.forEach(function(dateStr){
+    fetch(RAW+'/'+dateStr+'.json')
+      .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(function(data){
+        if(data.stations){
+          data.stations.forEach(function(s){
+            var key=s.id||s.n;
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+          });
+        }
+      })
+      .catch(function(){})
+      .finally(function(){
+        pending--;
+        if(pending>0) return;
+        var full=Object.keys(rainTot).map(function(key){
+          var s=stMeta[key];if(!s)return null;
+          var mm=rainTot[key]||0;
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'',mm:mm<0.5?0:Math.round(mm*10)/10};
+        }).filter(Boolean);
+        if(full.length<5){cb([]);return;}
+        full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
+        cb(selectUniform(full,150));
+      });
+  });
+}
+
 function loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,cb){
   var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/altoadige';
   // Storico da GitHub: legge JSON giornalieri da GitHub
@@ -3748,7 +3839,19 @@ var REGION_BOUNDS={
   friuli:      [[45.58,12.32],[46.65,13.92]],
   trentino:    [[45.67,10.45],[46.53,11.96]],
   altoadige:   [[46.22,10.38],[47.09,12.48]],
-  ticino:      [[45.82, 8.38],[46.63, 9.16]]
+  ticino:      [[45.82, 8.38],[46.63, 9.16]],
+  // Centro-sud (bounds dalle stazioni reali MeteoHub) + Abruzzo (Open-Meteo)
+  marche:      [[42.74,12.13],[43.91,13.89]],
+  umbria:      [[42.53,11.95],[43.52,13.19]],
+  lazio:       [[40.93,11.56],[42.76,13.95]],
+  abruzzo:     [[41.68,13.00],[42.90,14.78]],
+  molise:      [[41.45,14.13],[41.97,14.99]],
+  campania:    [[40.07,13.84],[41.45,15.70]],
+  puglia:      [[39.81,14.96],[41.95,18.48]],
+  basilicata:  [[39.94,15.38],[41.04,16.75]],
+  calabria:    [[37.99,15.64],[40.05,17.14]],
+  sicilia:     [[36.68,11.95],[38.56,15.60]],
+  sardegna:    [[38.97, 8.21],[41.22, 9.70]]
 };
 
 function fitMapToRegions(regionKeys){
@@ -3846,12 +3949,23 @@ var REGION_ADJ={
   liguria:['piemonte','emilia','toscana'],
   lombardia:['piemonte','emilia','veneto','trentino','ticino'],
   emilia:['lombardia','liguria','toscana','veneto'],
-  toscana:['liguria','emilia'],
+  toscana:['liguria','emilia','umbria','marche','lazio'],
   veneto:['lombardia','emilia','trentino','altoadige','friuli'],
   trentino:['lombardia','veneto','altoadige'],
   altoadige:['trentino','veneto'],
   friuli:['veneto'],
-  ticino:['piemonte','lombardia']
+  ticino:['piemonte','lombardia'],
+  umbria:['toscana','marche','lazio','abruzzo'],
+  marche:['emilia','toscana','umbria','abruzzo','lazio'],
+  lazio:['toscana','umbria','abruzzo','molise','campania'],
+  abruzzo:['marche','umbria','lazio','molise'],
+  molise:['abruzzo','lazio','campania','puglia'],
+  campania:['lazio','molise','puglia','basilicata'],
+  puglia:['molise','campania','basilicata'],
+  basilicata:['campania','puglia','calabria'],
+  calabria:['basilicata','sicilia'],
+  sicilia:['calabria'],
+  sardegna:[]
 };
 // La regione della terna che confina con entrambe le altre. Se la terna non è
 // contigua (nessuna confina con le altre due), ripiega sulla regione il cui
