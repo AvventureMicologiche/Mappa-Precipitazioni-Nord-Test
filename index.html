@@ -4054,8 +4054,9 @@ document.getElementById('region-select').addEventListener('change', function(){
 document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){
   cb.addEventListener('change',function(){
     var rk=this.value;
-    // Massimo 3 regioni insieme: oltre, la mappa diventa lenta (troppe stazioni)
-    if(this.checked && getActiveRegions().length>3){
+    // Massimo 3 SELEZIONI insieme (i bottoni combo Piemonte-VdA / Trentino-A.A.
+    // valgono 1: due combo + una singola = 5 regioni reali, ma 3 selezioni).
+    if(this.checked && document.querySelectorAll('.rcheck-wrap input[type=checkbox]:checked').length>3){
       this.checked=false;
       var _m=document.getElementById('tp-status');
       if(_m){ _m.className='error'; _m.textContent='⚠️ Massimo 3 regioni per volta'; setTimeout(function(){ if(_m.textContent.indexOf('Massimo 3')>-1){ _m.textContent=''; _m.className=''; } },2800); }
