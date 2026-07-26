@@ -1557,14 +1557,14 @@ var screenW=window.innerWidth;
 var screenH=window.innerHeight;
 var initZoom;
 if(screenW<=480){
-  initZoom = 5;
-} else if(screenW<=900){
   initZoom = 5.25;
+} else if(screenW<=900){
+  initZoom = 5.5;
 } else {
-  initZoom = 5.75;
+  initZoom = 6;
 }
 // Vista sull'Italia intera (dalle Alpi alla Sicilia)
-var initCenter=(screenW<=900)?[42.0,12.5]:[42.2,12.8];
+var initCenter=(screenW<=900)?[42.0,12.6]:[42.0,12.9];
 // zoomSnap 0.25: permette livelli di zoom a quarti (serve al controllo fine
 // dell'inquadratura multiregione, ZOOM_STEP). zoomDelta resta 0.5 → i pulsanti
 // +/- e la rotellina zoomano di 0,5 come prima (zoom manuale invariato).
