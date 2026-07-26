@@ -1118,10 +1118,10 @@ var REGIONS = {
   valledaosta: {
     name: "Valle d'Aosta",
     center: [45.73, 7.4], zoom: 8.5,
-    fonte: 'Open-Meteo',
+    fonte: 'Centro Funzionale VdA',
     geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson',
     geojsonFilter: 'aosta',
-    dataSource: 'open_meteo_vda',
+    dataSource: 'cf_valledaosta',
     stations: [
       {n:"Aosta",                lat:45.737, lon:7.315,  q:583},
       {n:"Saint-Vincent",        lat:45.751, lon:7.640,  q:575},
@@ -1766,19 +1766,25 @@ var HIST_DAYS=30;
 var HIST_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
 // Override base-URL per lo storico di alcune "regioni" logiche: il dato OSMER
 // del Friuli sta nel repo di TEST (pilota), non in produzione.
+// Repo dei dati dei piloti VdA-CF e Friuli-OSMER. Finché non si promuove, i file
+// stanno nel repo di TEST. ►► PROMOZIONE A PROD: cambiare Nord-Test → Nord in questa
+// UNICA riga (e spostare data/valledaosta-cf + data/friuli-osmer nel repo prod). ◄◄
+var PILOT_DATA_BASE='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord-Test/main/data/';
 var HIST_RAW_BY_REGION={
-  'friuli-osmer':'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord-Test/main/data/'
+  'friuli-osmer':PILOT_DATA_BASE,
+  'valledaosta-cf':PILOT_DATA_BASE
 };
 function histRawBase(region){ return HIST_RAW_BY_REGION[region]||HIST_RAW; }
-// Pilota OSMER Friuli: il dato reale di stazione parte da questa data. Prima,
-// per i periodi che sconfinano, si usa Open-Meteo da produzione (vedi
-// loadOSMERFriuliRegion). Switch a periodo intero, mai mix nello stesso periodo.
-var OSMER_FVG_FROM='2026-07-18';
-var friuliActiveSource='osmer'; // 'osmer' o 'om': fonte Friuli dell'ultimo caricamento
-// Regioni il cui storico PRIMA di questa data non è dato di stazione reale
-// (Toscana: pre-switch a SIR, ricostruito con stime Open-Meteo — bug #14;
-// Friuli-OSMER: il pilota parte dal 18/7, prima non c'è dato di stazione).
-var HIST_REAL_FROM={toscana:'2026-07-12','friuli-osmer':OSMER_FVG_FROM};
+// Piloti VdA-CF e Friuli-OSMER: lo storico è backfill Open-Meteo (stime, source
+// 'open-meteo-backfill-*') per i 60 giorni prima del primo dato reale + dati reali
+// di stazione, tutti sulle STESSE coordinate. Nessuno switch runtime: si legge
+// sempre dai file (come la Toscana). Queste date = primo giorno disponibile (inizio
+// backfill): VdA reale dal 16/7 → backfill dal 17/5; Friuli reale dal 18/7 → dal 19/5.
+var VDA_HIST_FROM='2026-05-17';
+var FRIULI_HIST_FROM='2026-05-19';
+// Regioni il cui storico PRIMA di questa data non è disponibile (limite inferiore
+// per grafico storico e date personalizzate).
+var HIST_REAL_FROM={toscana:'2026-07-12','friuli-osmer':FRIULI_HIST_FROM,'valledaosta-cf':VDA_HIST_FROM};
 var histEl=document.getElementById('st-history');
 var histToken=0;
 var histOpenedAt=0;   // vedi map.on('click'): evita l'auto-chiusura all'apertura
@@ -1949,7 +1955,7 @@ function openStationHistory(s,rank,mx,my){
   var regionKey=s._region||getActiveRegions()[0]||DEFAULT_REGION; // multiregione: la regione della stazione cliccata, non la 1a attiva
   // Friuli: lo storico legge dal dato OSMER (repo test) quando è la fonte attiva,
   // altrimenti da Open-Meteo produzione. Le altre regioni usano regionKey tal quale.
-  var histRegion=(regionKey==='friuli'&&friuliActiveSource==='osmer')?'friuli-osmer':regionKey;
+  var histRegion=(regionKey==='friuli')?'friuli-osmer':(regionKey==='valledaosta')?'valledaosta-cf':regionKey;
   var limit=HIST_REAL_FROM[histRegion]||HIST_REAL_FROM[regionKey];
 
   var days=[];
@@ -2420,6 +2426,10 @@ function loadData(pastDate,nowDate,labelPeriodo){
     } else if(source==='arpa_emilia'){
       loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,function(dati){
         onRegionDone(dati,'🟢 ARPAE Emilia-Romagna',regionKey);
+      });
+    } else if(source==='cf_valledaosta'){
+      loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,function(dati,fonte){
+        onRegionDone(dati,fonte,regionKey);
       });
     } else if(source==='open_meteo_vda'){
       loadOpenMeteoStorico('valledaosta',pastDate,nowDate,labelPeriodo,function(dati){
@@ -3190,23 +3200,13 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
 }
 
 // ═══════════════════════════════════════════════════════════════
-// FRIULI — OSMER reale (pilota, repo TEST) con ripiego Open-Meteo
-// Switch a PERIODO INTERO per non mescolare set di stazioni diversi (OSMER ~40
-// reali vs Open-Meteo ~30 stimate, coordinate diverse):
-//  · periodo tutto dentro la copertura OSMER (≥ OSMER_FVG_FROM) → OSMER reale
-//  · periodo che sconfina prima → Open-Meteo da produzione (storia completa)
-// La finestra OSMER cresce ogni giorno: sempre più periodi diventano reali.
+// FRIULI — OSMER reale (pilota, repo TEST). Storico = backfill Open-Meteo (stime,
+// dal 19/5) + dati reali di stazione (dal 18/7), tutti sulle STESSE coordinate.
+// Nessuno switch runtime: si legge sempre dai file (come la Toscana). Le date
+// oltre la copertura non sono selezionabili (limite nel datepicker).
 // ═══════════════════════════════════════════════════════════════
 function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
-  function fmtD(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
-  // Il periodo sconfina prima del pilota → Open-Meteo produzione per tutto
-  if(fmtD(pastDate) < OSMER_FVG_FROM){
-    friuliActiveSource='om';
-    loadOpenMeteoStorico('friuli',pastDate,nowDate,labelPeriodo,function(dati){ cb(dati,'🌍 Open-Meteo'); });
-    return;
-  }
-  friuliActiveSource='osmer';
-  var OSMER_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord-Test/main/data/friuli-osmer';
+  var OSMER_RAW=PILOT_DATA_BASE+'friuli-osmer';
   var rainTot={}, stMeta={};
   var dates=[];
   var d=new Date(pastDate.getTime());
@@ -3241,6 +3241,49 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
         if(full.length<5){cb([],'🟢 ARPA OSMER FVG');return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
         cb(selectUniform(full,150),'🟢 ARPA OSMER FVG');
+      });
+  });
+}
+
+// Valle d'Aosta — Centro Funzionale reale (pilota, repo TEST). Storico = backfill
+// Open-Meteo (stime, dal 17/5) + dati reali (dal 16/7), stesse coordinate. Si legge
+// sempre dai file, nessuno switch runtime (vedi loadOSMERFriuliRegion).
+function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
+  var CF_RAW=PILOT_DATA_BASE+'valledaosta-cf';
+  var rainTot={}, stMeta={};
+  var dates=[];
+  var d=new Date(pastDate.getTime());
+  while(d<=nowDate){
+    var y=d.getFullYear(),mo=String(d.getMonth()+1).padStart(2,'0'),dy=String(d.getDate()).padStart(2,'0');
+    dates.push(y+'-'+mo+'-'+dy);
+    d.setDate(d.getDate()+1);
+  }
+  var pending=dates.length;
+  if(pending===0){cb([],'🟢 Centro Funzionale VdA');return;}
+  dates.forEach(function(dateStr){
+    fetch(CF_RAW+'/'+dateStr+'.json')
+      .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(function(data){
+        if(data.stations){
+          data.stations.forEach(function(s){
+            var key=s.id||s.n;
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'AO'};
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+          });
+        }
+      })
+      .catch(function(){})
+      .finally(function(){
+        pending--;
+        if(pending>0) return;
+        var full=Object.keys(rainTot).map(function(key){
+          var s=stMeta[key];if(!s)return null;
+          var mm=rainTot[key]||0;
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'AO',mm:mm<0.5?0:Math.round(mm*10)/10};
+        }).filter(Boolean);
+        if(full.length<5){cb([],'🟢 Centro Funzionale VdA');return;}
+        full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
+        cb(selectUniform(full,150),'🟢 Centro Funzionale VdA');
       });
   });
 }
@@ -3967,19 +4010,25 @@ document.getElementById('btn-custom').addEventListener('click',function(){
     var ieri=new Date(); ieri.setDate(ieri.getDate()-1);
     var maxDate=fmtISOLocal(ieri);
 
-    // Regioni con storico misto OM+ARPA: minDate dinamica
-    // Data base = 15 maggio 2026, si sblocca 1 giorno al giorno
-    var MIXED_REGIONS=['liguria','piemonte','veneto','emilia','toscana'];
+    // minDate dinamico per le regioni a storico limitato (miste OM+ARPA e piloti
+    // VdA/Friuli col backfill). Le altre hanno storico Open-Meteo profondo → 2021.
+    // La finestra parte dalla data d'inizio e si allarga di 1 giorno al giorno,
+    // finché non raggiunge i 365 giorni della retention, poi il minimo scorre.
+    var REGION_HIST_START={
+      liguria:'2026-05-15', piemonte:'2026-05-15', veneto:'2026-05-15',
+      emilia:'2026-05-15', toscana:'2026-05-15',
+      valledaosta:VDA_HIST_FROM, friuli:FRIULI_HIST_FROM
+    };
     var activeRegs=getActiveRegions();
-    var hasMixed=activeRegs.some(function(r){return MIXED_REGIONS.indexOf(r)>=0;});
+    // In multiregione vince la data più RESTRITTIVA (più recente) tra le attive,
+    // così ogni regione ha copertura per tutto il periodo selezionabile.
+    var starts=activeRegs.map(function(r){return REGION_HIST_START[r];}).filter(Boolean).sort();
     var minDate;
-    if(hasMixed){
-      var baseDate=new Date('2026-05-15T00:00:00');
-      var today=new Date(); today.setHours(0,0,0,0);
-      var daysSinceBase=Math.floor((today-baseDate)/(24*3600*1000));
-      var minMs=baseDate.getTime()-daysSinceBase*24*3600*1000;
-      var minDt=new Date(Math.max(minMs, new Date('2026-05-15').getTime()));
-      minDate=fmtISOLocal(minDt);
+    if(starts.length){
+      var start=starts[starts.length-1];
+      var lim=new Date(); lim.setDate(lim.getDate()-365); // retention 365gg
+      var limStr=fmtISOLocal(lim);
+      minDate=(start>limStr)?start:limStr;
     } else {
       minDate='2021-01-01';
     }
