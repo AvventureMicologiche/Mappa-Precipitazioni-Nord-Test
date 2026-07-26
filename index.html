@@ -3204,10 +3204,25 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
 // dal 19/5) + dati reali di stazione (dal 18/7), tutti sulle STESSE coordinate.
 // Nessuno switch runtime: si legge sempre dai file (come la Toscana). Le date
 // oltre la copertura non sono selezionabili (limite nel datepicker).
+//
+// DUE PROTEZIONI sulla qualità (il feed orario OSMER pubblica un set variabile e
+// alcune stazioni hanno l'archivio orario bucato → certi giorni scendono sotto la
+// soglia del collector e spariscono, sottostimando il cumulato = macchia secca falsa):
+//  1) Filtro copertura: una stazione OSMER è mostrata solo se presente in ≥ COV_MIN
+//     dei GIORNI REALI del periodo (i giorni backfill, completi, non contano nel
+//     denominatore). Sotto soglia si nasconde e l'IDW dei vicini copre la zona.
+//  2) Stazioni ARPA Veneto di confine (Cadore/Comelico): coprono l'alta Carnia NW,
+//     dove le OSMER scarseggiano. Storico reale dal repo PROD (no backfill), NON
+//     soggette al filtro. Caricate solo se il Veneto non è già selezionato (evita
+//     doppioni in multiregione). Contribuiscono all'IDW anche se fuori confine.
 // ═══════════════════════════════════════════════════════════════
+var FRIULI_VENETO_BORDER={'Sella Ciampigotto':1,'Santo Stefano di Cadore':1,'Costalta':1,'Domegge di Cadore':1,'Casamazzagno':1};
 function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
   var OSMER_RAW=PILOT_DATA_BASE+'friuli-osmer';
-  var rainTot={}, stMeta={};
+  var VENETO_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/veneto';
+  var COV_MIN=0.8;
+  var addVeneto=getActiveRegions().indexOf('veneto')<0; // no doppioni se il Veneto è già in mappa
+  var rainTot={}, stMeta={}, presReal={}, realDays=0, usaVeneto=false;
   var dates=[];
   var d=new Date(pastDate.getTime());
   while(d<=nowDate){
@@ -3215,33 +3230,58 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
     dates.push(y+'-'+mo+'-'+dy);
     d.setDate(d.getDate()+1);
   }
-  var pending=dates.length;
-  if(pending===0){cb([],'🟢 ARPA OSMER FVG');return;}
+  if(dates.length===0){cb([],'🟢 ARPA OSMER FVG');return;}
+  var pending=dates.length*(addVeneto?2:1);
+
+  function finalizza(){
+    var full=Object.keys(rainTot).map(function(key){
+      var s=stMeta[key];if(!s)return null;
+      // Filtro copertura: solo stazioni OSMER, solo se il periodo ha giorni reali
+      if(s._src==='osmer' && realDays>0 && (presReal[key]||0)/realDays < COV_MIN) return null;
+      var mm=rainTot[key]||0;
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',mm:mm<0.5?0:Math.round(mm*10)/10};
+    }).filter(Boolean);
+    if(full.length<5){cb([],'🟢 ARPA OSMER FVG');return;}
+    full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
+    cb(selectUniform(full,150), usaVeneto?'🟢 ARPA OSMER FVG + ARPA Veneto':'🟢 ARPA OSMER FVG');
+  }
+  function done(){ pending--; if(pending<=0) finalizza(); }
+
   dates.forEach(function(dateStr){
+    // OSMER (backfill + reale)
     fetch(OSMER_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
       .then(function(data){
-        if(data.stations){
-          data.stations.forEach(function(s){
-            var key=s.id||s.n;
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG'};
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
-          });
-        }
+        if(!data.stations) return;
+        var isReal=data.source && data.source.indexOf('backfill')<0;
+        if(isReal) realDays++;
+        data.stations.forEach(function(s){
+          var key=s.id||s.n;
+          if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',_src:'osmer'};
+          rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+          if(isReal) presReal[key]=(presReal[key]||0)+1;
+        });
       })
       .catch(function(){})
-      .finally(function(){
-        pending--;
-        if(pending>0) return;
-        var full=Object.keys(rainTot).map(function(key){
-          var s=stMeta[key];if(!s)return null;
-          var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',mm:mm<0.5?0:Math.round(mm*10)/10};
-        }).filter(Boolean);
-        if(full.length<5){cb([],'🟢 ARPA OSMER FVG');return;}
-        full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
-        cb(selectUniform(full,150),'🟢 ARPA OSMER FVG');
-      });
+      .finally(done);
+
+    // ARPA Veneto di confine (solo le 5 stazioni della zona NW, dal repo prod)
+    if(addVeneto){
+      fetch(VENETO_RAW+'/'+dateStr+'.json')
+        .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+        .then(function(data){
+          if(!data.stations) return;
+          data.stations.forEach(function(s){
+            if(!FRIULI_VENETO_BORDER[s.n]) return;
+            usaVeneto=true;
+            var key='ven_'+s.n;
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'BL',_src:'veneto'};
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+          });
+        })
+        .catch(function(){})
+        .finally(done);
+    }
   });
 }
 
