@@ -4330,7 +4330,9 @@ loadGeoJSONOnce(function(){
 
 function addDefaultMarkersForRegion(regionKey){
   var cfg=REGIONS[regionKey];
-  var stazioni=(regionKey==='lombardia')?(ARPA_STATIONS||LOMBARDIA_STATIONS):(cfg?cfg.stations:[]);
+  // MeteoHub non ha lista stations (i punti vengono dai file) → [] per non crashare
+  // (undefined.forEach interrompeva il change handler prima della ricarica).
+  var stazioni=(regionKey==='lombardia')?(ARPA_STATIONS||LOMBARDIA_STATIONS):((cfg&&cfg.stations)?cfg.stations:[]);
   stazioni.forEach(function(s){
     var m=L.circleMarker([s.lat,s.lon],{
       radius:5,fillColor:'#fff',fillOpacity:0.9,
