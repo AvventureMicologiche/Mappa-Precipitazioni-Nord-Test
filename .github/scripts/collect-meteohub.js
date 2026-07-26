@@ -38,9 +38,19 @@ const BASE_URL = 'https://meteohub.agenziaitaliameteo.it/api/observations';
 const DATA_ROOT = path.join(__dirname, '../..', 'data');
 
 const NETWORKS = [
-  { net: 'dpcn-lombardia', dir: 'meteohub-lombardia', sigla: 'LOM' },
-  { net: 'dpcn-marche',    dir: 'meteohub-marche',    sigla: 'MAR' },
-  { net: 'dpcn-umbria',    dir: 'meteohub-umbria',    sigla: 'UMB' },
+  // Lombardia = regione di CONTROLLO (verità a terra via ARPA Socrata), NON va in
+  // mappa (la Lombardia usa ARPA). Le altre alimentano la mappa del centro-sud.
+  { net: 'dpcn-lombardia',  dir: 'meteohub-lombardia',  sigla: 'LOM' },
+  { net: 'dpcn-marche',     dir: 'meteohub-marche',     sigla: 'MAR' },
+  { net: 'dpcn-umbria',     dir: 'meteohub-umbria',     sigla: 'UMB' },
+  { net: 'dpcn-lazio',      dir: 'meteohub-lazio',      sigla: 'LAZ' },
+  { net: 'dpcn-campania',   dir: 'meteohub-campania',   sigla: 'CAM' },
+  { net: 'dpcn-puglia',     dir: 'meteohub-puglia',     sigla: 'PUG' },
+  { net: 'dpcn-calabria',   dir: 'meteohub-calabria',   sigla: 'CAL' },
+  { net: 'dpcn-sicilia',    dir: 'meteohub-sicilia',    sigla: 'SIC' },
+  { net: 'dpcn-sardegna',   dir: 'meteohub-sardegna',   sigla: 'SAR' },
+  { net: 'dpcn-basilicata', dir: 'meteohub-basilicata', sigla: 'BAS' },
+  { net: 'dpcn-molise',     dir: 'meteohub-molise',     sigla: 'MOL' },
 ];
 
 function getItalyOffset(date) {

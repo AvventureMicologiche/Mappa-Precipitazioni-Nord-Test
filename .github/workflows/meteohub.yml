@@ -45,8 +45,7 @@ jobs:
         run: |
           git config user.name "bot"
           git config user.email "bot@bot.com"
-          mkdir -p data/meteohub-lombardia data/meteohub-marche data/meteohub-umbria
-          git add data/meteohub-lombardia/ data/meteohub-marche/ data/meteohub-umbria/
+          git add data/meteohub-*/
           git diff --staged --quiet || git commit -m "meteohub $(date -u +%Y-%m-%d)"
           ok=0
           for i in 1 2 3 4 5; do

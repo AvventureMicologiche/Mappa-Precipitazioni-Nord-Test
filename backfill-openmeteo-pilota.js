@@ -24,6 +24,11 @@ const fs    = require('fs');
 const path  = require('path');
 const https = require('https');
 
+// Regioni MeteoHub del centro-sud (NON lombardia: è la regione di controllo, in
+// mappa usa ARPA). realFrom non fisso: si calcola dal primo file reale della
+// cartella (ogni rete è partita in giorni diversi).
+const MH_REGIONS = ['marche','umbria','lazio','campania','puglia','calabria','sicilia','sardegna','basilicata','molise'];
+
 const CONFIG = {
   vda: {
     dir:       path.join(__dirname, 'data', 'valledaosta-cf'),
@@ -36,7 +41,16 @@ const CONFIG = {
     realFrom:  '2026-07-18',
     sourceTag: 'open-meteo-backfill-friuli',
     provDefault: 'FVG'
-  }
+  },
+  ...MH_REGIONS.reduce((o, r) => {
+    o[r] = {
+      dir:         path.join(__dirname, 'data', 'meteohub-' + r),
+      sourceTag:   'open-meteo-backfill-' + r,
+      provDefault: r.slice(0, 3).toUpperCase(),
+      group:       'meteohub'
+    };
+    return o;
+  }, {})
 };
 
 const BACKFILL_DAYS = 60;
@@ -100,18 +114,29 @@ function unionRealStations(dir) {
   return { date: 'unione ' + nFiles + ' file', stations };
 }
 
+// Primo giorno con dati reali (source non-backfill) nella cartella.
+function firstRealDay(dir) {
+  const files = fs.readdirSync(dir).filter(f => /^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort();
+  for (const f of files) {
+    const d = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+    if (d.source && d.source.indexOf('backfill') < 0) return f.replace('.json', '');
+  }
+  throw new Error('nessun file reale in ' + dir);
+}
+
 async function backfillRegion(key) {
   const cfg = CONFIG[key];
   console.log(`\n=== Backfill ${key} ===`);
 
+  const realFrom = cfg.realFrom || firstRealDay(cfg.dir); // MeteoHub: auto dal primo file reale
   const anag = unionRealStations(cfg.dir);
   const stations = anag.stations.map(s => ({
     id: s.id, n: s.n, lat: s.lat, lon: s.lon, q: s.q || 0, p: s.p || cfg.provDefault
   }));
-  console.log(`  Anagrafe (${anag.date}): ${stations.length} stazioni`);
+  console.log(`  Anagrafe (${anag.date}): ${stations.length} stazioni | realFrom ${realFrom}`);
 
-  const endDate   = ymd(addDays(cfg.realFrom, -1));               // giorno prima del primo reale
-  const startDate = ymd(addDays(cfg.realFrom, -BACKFILL_DAYS));
+  const endDate   = ymd(addDays(realFrom, -1));               // giorno prima del primo reale
+  const startDate = ymd(addDays(realFrom, -BACKFILL_DAYS));
   console.log(`  Periodo backfill: ${startDate} → ${endDate} (${BACKFILL_DAYS} giorni)`);
 
   const days = [];
@@ -168,9 +193,12 @@ async function backfillRegion(key) {
 
 async function main() {
   const arg = (process.argv[2] || 'all').toLowerCase();
-  const keys = arg === 'all' ? Object.keys(CONFIG) : [arg];
+  let keys;
+  if (arg === 'all')           keys = Object.keys(CONFIG);
+  else if (arg === 'meteohub') keys = Object.keys(CONFIG).filter(k => CONFIG[k].group === 'meteohub');
+  else                         keys = [arg];
   for (const k of keys) {
-    if (!CONFIG[k]) { console.error('regione sconosciuta: ' + k + ' (usa: vda | friuli | all)'); process.exit(1); }
+    if (!CONFIG[k]) { console.error('regione sconosciuta: ' + k + ' (usa: vda | friuli | meteohub | <regione> | all)'); process.exit(1); }
     await backfillRegion(k);
   }
   console.log('\n✅ Backfill completato.');
