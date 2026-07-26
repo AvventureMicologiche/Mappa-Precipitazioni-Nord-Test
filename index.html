@@ -3925,21 +3925,18 @@ function fitMapToRegions(regionKeys){
   // (16:9): "tutto visibile" (_fit) lascia grandi margini laterali. Per riempire
   // di più si zooma sopra _fit, ritagliando sopra/sotto (Alpi/mare), fino al
   // massimo "riempi pieno" (_fill).
-  var _lb=L.latLngBounds(bounds), _pp=L.point(pad[0],pad[1]);
-  var _fit=map.getBoundsZoom(_lb,false,_pp);   // tutto dentro (margini laterali)
-  var _fill=map.getBoundsZoom(_lb,true,_pp);   // riempie ritagliando sopra/sotto
-  // ZOOM_STEP: mezzi-livelli di zoom sopra _fit. Lo zoomSnap della mappa è 0,5 e
-  // _fit è già un multiplo di 0,5, quindi ogni step di 0,5 CAMBIA sempre a video
-  // (niente più valori che sembrano identici). 0=tutto visibile; 0.5/1.0/1.5=
-  // sempre più pieno. Cap a _fill. (Manopola zoom multiregione, utente 25/7/2026.)
-  var ZOOM_STEP=0;
-  var _z=Math.min(_fit+ZOOM_STEP,_fill);
-  // VSHIFT: spostamento verticale del centro. >0 ABBASSA il contenuto a video
-  // (regola #5: latitudine più alta = contenuto più in basso), ritagliando un po'
-  // più a sud e meno a nord. (Manopola verticale multiregione, utente 25/7/2026.)
-  var VSHIFT=0.20;
-  var _ctr=_lb.getCenter();
-  map.setView([_ctr.lat+VSHIFT,_ctr.lng], _z, {animate:true,duration:0.6});
+  // I pannelli (selezione regione + periodo) coprono la parte SINISTRA della mappa
+  // su desktop: con padding SIMMETRICO il contenuto viene centrato sull'intera area
+  // e le regioni a ovest (es. Sardegna) restano nascoste dietro il pannello. Uso
+  // padding ASIMMETRICO — molto più a sinistra — così fitBounds calcola zoom E centro
+  // nell'area realmente visibile a destra dei pannelli. Su mobile i pannelli non
+  // coprono il lato (tendina + pannello in basso), padding quasi simmetrico.
+  var isDesk=window.innerWidth>900;
+  map.fitBounds(L.latLngBounds(bounds),{
+    paddingTopLeft:     isDesk?L.point(430,80):L.point(14,64),
+    paddingBottomRight: isDesk?L.point(40,60):L.point(14,170),
+    animate:true, duration:0.6
+  });
 }
 
 // Adiacenze (confini) tra le regioni selezionabili. Servono a individuare la
