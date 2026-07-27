@@ -140,7 +140,29 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 /* Fallback per i browser che ignorano color-scheme sui select ma colorano
    le singole voci. */
 .region-select-mobile option{background:#2b2b2b;color:#f2f2f2;}
-.region-btns-desktop{display:grid;}
+.region-btns-desktop{display:none !important;} /* dal 27/7: su desktop si clicca la mappa, i checkbox restano solo come stato (il !important vince su .tp-grid4) */
+/* Hint selezione da mappa + pulsante Ricomincia (solo desktop) */
+.map-hint-desktop{display:flex;align-items:center;gap:10px;padding:2px 0 3px;}
+.map-hint-desktop span{font-size:12.5px;color:#1b3f6e;}
+/* "← Indietro" flottante accanto al pannello regioni (solo desktop, appare
+   con ≥1 regione selezionata — visibilità gestita da updateGuidePulse). */
+#btn-reset-regions{display:none;position:absolute;top:100px;left:420px;z-index:1000;
+  background:rgba(255,255,255,.96);border:1px solid #d0d8e8;border-radius:10px;
+  color:#1b3f6e;font-size:15px;font-weight:700;padding:12px 20px;cursor:pointer;
+  box-shadow:0 2px 12px rgba(0,0,0,.22);font-family:inherit;white-space:nowrap;}
+#btn-reset-regions:hover{background:#dde8ff;border-color:#90b0d8;}
+/* Guida a lampeggio (solo desktop): pulsa il pannello del passo attivo —
+   regioni finché non ne selezioni una, poi periodo finché non lo clicchi.
+   Anello marcato + sfondo che "respira" verso l'azzurro per farsi notare. */
+@media(min-width:901px){
+  @keyframes panelPulse{
+    0%{box-shadow:0 2px 12px rgba(0,0,0,.22),0 0 0 0 rgba(27,63,110,.8);background:rgba(255,255,255,.96);}
+    40%{background:rgba(219,233,252,.97);}
+    70%{box-shadow:0 2px 12px rgba(0,0,0,.22),0 0 0 16px rgba(27,63,110,0);background:rgba(255,255,255,.96);}
+    100%{box-shadow:0 2px 12px rgba(0,0,0,.22),0 0 0 0 rgba(27,63,110,0);background:rgba(255,255,255,.96);}
+  }
+  .panel-pulse{animation:panelPulse 1.5s ease-out infinite;}
+}
 /* Hint "(MAX 3)" accanto al titolo "Seleziona regione" — solo desktop (in
    multiregione). Nascosta su mobile insieme ai checkbox (vedi media query). */
 .region-max-hint{color:inherit;font-weight:600;margin-left:5px;}
@@ -375,7 +397,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   /* Tablet layout */
 
   /* 1. Select regione: attaccata alla barra blu, tutta larghezza */
-  .region-btns-desktop,.region-max-hint{display:none !important;}
+  .region-btns-desktop,.region-max-hint,.map-hint-desktop,#btn-reset-regions{display:none !important;}
   .region-select-mobile{
     display:block !important;
     width:100% !important;
@@ -506,7 +528,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     padding-top:4px !important;
     padding-bottom:4px !important;
   }
-  .region-btns-desktop,.region-max-hint{display:none !important;}
+  .region-btns-desktop,.region-max-hint,.map-hint-desktop,#btn-reset-regions{display:none !important;}
   #rp-handle{display:none !important;}
   #region-panel{
     padding:6px 6px !important;
@@ -728,7 +750,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <!-- Pannello regioni: gemello del pannello periodo -->
     <div id="region-panel">
       <div class="tp-handle" id="rp-handle">
-        <div class="tp-title" style="font-size:11px;white-space:nowrap;align-self:center;margin-top:-4px;">🗺 Seleziona regione <span class="region-max-hint">(MAX 3)</span></div>
+        <div class="tp-title" style="font-size:11px;white-space:nowrap;align-self:center;margin-top:-4px;">🗺 Seleziona regione</div>
       </div>
       <div class="tp-content">
         <!-- Desktop: bottoni (nascosti su mobile) -->
@@ -753,6 +775,18 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <label class="rcheck-wrap"><input type="checkbox" id="chk-calabria" value="calabria"><span class="rcheck-box"></span><span class="rcheck-name">Calabria</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-sicilia" value="sicilia"><span class="rcheck-box"></span><span class="rcheck-name">Sicilia</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-sardegna" value="sardegna"><span class="rcheck-box"></span><span class="rcheck-name">Sardegna</span></label>
+          <!-- Checkbox INDIVIDUALI (mai visibili): stato per la selezione da mappa
+               su desktop, dove i combo Piemonte-VdA / Trentino-A.A. non esistono
+               e ogni regione si clicca da sola. La tendina mobile continua a
+               usare i combo qui sopra. -->
+          <label class="rcheck-wrap" style="display:none"><input type="checkbox" id="chk-piemonte" value="piemonte"><span class="rcheck-box"></span><span class="rcheck-name">Piemonte</span></label>
+          <label class="rcheck-wrap" style="display:none"><input type="checkbox" id="chk-valledaosta" value="valledaosta"><span class="rcheck-box"></span><span class="rcheck-name">Valle d'Aosta</span></label>
+          <label class="rcheck-wrap" style="display:none"><input type="checkbox" id="chk-trentino" value="trentino"><span class="rcheck-box"></span><span class="rcheck-name">Trentino</span></label>
+          <label class="rcheck-wrap" style="display:none"><input type="checkbox" id="chk-altoadige" value="altoadige"><span class="rcheck-box"></span><span class="rcheck-name">Alto Adige</span></label>
+        </div>
+        <!-- Desktop: hint per la selezione da mappa + reset -->
+        <div class="map-hint-desktop">
+          <span>🖱 Seleziona massimo 3 regioni sulla mappa</span>
         </div>
         <!-- Mobile: select dropdown -->
         <select id="region-select" class="region-select-mobile">
@@ -780,6 +814,10 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         </select>
       </div>
     </div>
+
+    <!-- "← Indietro" flottante: appare accanto al pannello regioni solo
+         quando c'è almeno una regione selezionata (gestito da updateGuidePulse) -->
+    <button id="btn-reset-regions" type="button">← Indietro</button>
 
     <div id="time-panel">
       <!-- Handle: sempre visibile, tap per aprire/chiudere -->
@@ -2202,6 +2240,10 @@ function setLoading(on){
   isLoading=on;
   document.getElementById('tp-spinner').style.display=on?'flex':'none';
   document.getElementById('map-spinner').style.display=on?'flex':'none';
+  // Lo spinner cambia l'altezza del pannello periodo: riposiziona i pannelli
+  // sotto (la legenda restava a +39px invece del GAP di 10 — misurata quando
+  // lo spinner era ancora visibile).
+  if(!on && typeof positionPanels==='function') positionPanels();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2447,6 +2489,11 @@ function loadData(pastDate,nowDate,labelPeriodo){
   loadSessionId++; // invalida tutte le richieste precedenti
   var mySession=loadSessionId;
   currentPast=pastDate; currentNow=nowDate; currentLabel=labelPeriodo;
+  if(typeof updateGuidePulse==='function') updateGuidePulse(); // periodo scelto → stop lampeggio subito
+  // Desktop: lo zoom sulle regioni avviene QUI (al click del periodo), non alla
+  // selezione — così sull'Italia intera si cliccano comodamente anche regioni
+  // lontane. Mobile/tablet invariati (la tendina centra già alla selezione).
+  if(window.innerWidth>900) fitMapToRegions(regions);
 
   clearMarkers();
   clearHeatmap();
@@ -2636,6 +2683,7 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
       drawGrid();
       var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='✅ '+labelPeriodo;
       osmerInlineDesktop(); // avviso Friuli inline accanto a "✅ Ieri" (solo desktop + Ieri)
+      if(typeof refreshSelectorStyles==='function') refreshSelectorStyles(); // via il riempimento: non deve coprire la heatmap
     }
     setLoading(false);
   },20);
@@ -3861,6 +3909,116 @@ function setRegionBorder(regionKey,cb){
   });
 }
 
+// ── SELETTORE REGIONI SULLA MAPPA (solo desktop >900px, dal 27/7/2026) ──
+// Al load tutti i confini regionali sono disegnati in stile neutro e cliccabili:
+// il click spunta il checkbox nascosto della regione e dispatcha 'change', così
+// tutta la logica esistente (max 3, debounce, multiregione, avviso Friuli) si
+// riusa senza duplicazioni. Su mappa NIENTE combo: ogni regione si seleziona da
+// sola (checkbox individuali piemonte/valledaosta/trentino/altoadige). La
+// tendina mobile/tablet resta com'era (con i combo).
+var selectorLayers={};
+function selStyle(on){
+  if(on){
+    // Con un'analisi visibile NIENTE riempimento (coprirebbe la heatmap):
+    // resta il bordo marcato. fillOpacity 0 (non fill:false) così l'interno
+    // rimane cliccabile per deselezionare. Il riempimento evidenzia solo la
+    // fase di scelta, prima delle date.
+    var fo=currentLabel?0:.16;
+    return {color:'#1b3f6e',weight:2.2,opacity:.95,fillColor:'#1b3f6e',fillOpacity:fo};
+  }
+  return {color:'#4a6c9b',weight:1.1,opacity:.55,fillColor:'#1b3f6e',fillOpacity:.03};
+}
+function selIsOn(rk){
+  var cb=document.getElementById('chk-'+rk);
+  return !!(cb&&cb.checked);
+}
+function refreshSelectorStyles(){
+  Object.keys(selectorLayers).forEach(function(rk){
+    selectorLayers[rk].setStyle(selStyle(selIsOn(rk)));
+  });
+  updateGuidePulse();
+}
+// Guida a lampeggio: pulsa il pannello del passo che manca (solo desktop).
+// Passo 1 = nessuna regione → pulsa "Seleziona regione"; passo 2 = regioni
+// scelte ma nessun periodo → pulsa "Seleziona periodo"; periodo scelto → stop.
+function updateGuidePulse(){
+  var rp=document.getElementById('region-panel'), tp=document.getElementById('time-panel');
+  var back=document.getElementById('btn-reset-regions');
+  if(!rp||!tp) return;
+  if(window.innerWidth<=900){ rp.classList.remove('panel-pulse'); tp.classList.remove('panel-pulse'); if(back) back.style.display='none'; return; }
+  var nSel=document.querySelectorAll('.rcheck-wrap input[type=checkbox]:checked').length;
+  var hasPeriod=!!currentLabel;
+  rp.classList.toggle('panel-pulse', nSel===0);
+  tp.classList.toggle('panel-pulse', nSel>0 && !hasPeriod);
+  if(back) back.style.display=nSel>0?'block':'none'; // "← Indietro" appare solo dopo la prima selezione
+}
+function toggleRegionFromMap(rk){
+  if(isLoading) return;
+  var cb=document.getElementById('chk-'+rk);
+  if(!cb) return;
+  // Click sull'UNICA regione selezionata → deseleziona e torna alla vista
+  // iniziale (il handler dei checkbox altrimenti la rimetterebbe: "serve
+  // almeno una regione" vale per i bottoni, non per il flusso da mappa).
+  if(cb.checked && document.querySelectorAll('.rcheck-wrap input[type=checkbox]:checked').length===1){
+    resetToStart();
+    return;
+  }
+  cb.checked=!cb.checked;
+  cb.dispatchEvent(new Event('change'));  // il handler esistente valida (max 3) e carica
+  refreshSelectorStyles();                // legge lo stato FINALE (dopo eventuale rifiuto)
+}
+function buildRegionSelector(){
+  if(window.innerWidth<=900) return;
+  Object.keys(REGIONS).forEach(function(rk){
+    var cfg=REGIONS[rk];
+    if(!document.getElementById('chk-'+rk)) return; // solo regioni con checkbox individuale
+    var filterField=cfg.geojsonFilterField||null;
+    var loader=cfg.geojsonUrl
+      ? function(cb2){loadGeoJSONUrl(cfg.geojsonUrl,cb2);}
+      : (filterField?loadGeoJSONProvince:loadGeoJSONOnce);
+    loader(function(data){
+      var filter=(cfg.geojsonFilter||'').toLowerCase();
+      var feat=null;
+      data.features.forEach(function(f){
+        var v=filterField?(f.properties[filterField]||''):(f.properties.reg_name||f.properties.NOME_REG||'');
+        if(v.toLowerCase().indexOf(filter)>=0) feat=f;
+      });
+      if(!feat) return;
+      var layer=L.geoJSON(feat,{style:selStyle(selIsOn(rk))}).addTo(map);
+      layer.on('click',function(e){ L.DomEvent.stopPropagation(e); toggleRegionFromMap(rk); });
+      layer.on('mouseover',function(){ if(!selIsOn(rk)) layer.setStyle({fillOpacity:.10,opacity:.85}); });
+      layer.on('mouseout',function(){ layer.setStyle(selStyle(selIsOn(rk))); });
+      selectorLayers[rk]=layer;
+    });
+  });
+}
+buildRegionSelector();
+updateGuidePulse(); // al load pulsa il passo 1 ("Seleziona regione")
+if(typeof positionPanels==='function') positionPanels(); // il pannello periodo risale sotto il pannello regioni ristretto
+// "← Indietro" (e deselezione dell'ultima regione da mappa): deseleziona
+// tutto e torna alla vista Italia neutra.
+function resetToStart(){
+  if(isLoading) return;
+  document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb2){ cb2.checked=false; });
+  Object.keys(regionBorders).forEach(function(rk2){ map.removeLayer(regionBorders[rk2]); delete regionBorders[rk2]; });
+  clearMarkers(); clearHeatmap();
+  document.getElementById('legend-panel').style.display='none';
+  hideLegendMobile();
+  document.getElementById('badge').textContent='';
+  document.getElementById('datehdr').textContent='Seleziona il periodo';
+  var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
+  document.querySelectorAll('.tp-btn,.tp-custom-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('custom-box').style.display='none';
+  document.getElementById('fonte-tag').textContent='Fonte: —';
+  currentPast=null; currentNow=null; currentLabel='';
+  updateOsmerNotice();
+  refreshSelectorStyles();
+  map.setView(initCenter,initZoom);
+  if(typeof positionPanels==='function') positionPanels();
+}
+var _btnResetRegions=document.getElementById('btn-reset-regions');
+if(_btnResetRegions) _btnResetRegions.addEventListener('click',resetToStart);
+
 // Carica i confini di tutte le regioni attive in parallelo
 function loadAllBorders(regionKeys, cb){
   var pending=regionKeys.length;
@@ -4081,6 +4239,7 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
     }
     var regions=getActiveRegions();
     updateOsmerNotice();
+    if(typeof refreshSelectorStyles==='function') refreshSelectorStyles(); // evidenzia/spegni sul selettore mappa
     // Reset del disegno, poi ridisegna TUTTE le regioni attive insieme
     clearMarkers();
     clearHeatmap();
@@ -4088,8 +4247,9 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
     hideLegendMobile();
     document.getElementById('badge').textContent='';
     var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
-    // Inquadra su tutte le regioni attive (fitMapToRegions gestisce sia 1 che N)
-    fitMapToRegions(regions);
+    // NIENTE zoom in fase di selezione (27/7): la vista resta sull'Italia così
+    // si possono cliccare comodamente anche regioni lontane tra loro. Il fit
+    // scatta in loadData, cioè quando si clicca il periodo.
     regions.forEach(function(r){
       setRegionBorder(r,function(){ addDefaultMarkersForRegion(r); });
     });
