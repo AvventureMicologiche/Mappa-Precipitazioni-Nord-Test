@@ -52,15 +52,16 @@ header{background:#1b3f6e;color:#fff;padding:0 12px;height:46px;
 h1{font-size:14px;font-weight:600;white-space:nowrap}
 .hdr-sub{font-size:9px;opacity:.6;white-space:nowrap}
 
-#badge{font-size:9px;padding:2px 8px;border-radius:10px;
+#badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  font-size:9px;padding:2px 8px;border-radius:10px;
   background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
-  white-space:nowrap;flex-shrink:0}
+  white-space:nowrap;}
 #hdr-yt{display:none;}
 .hdr-socials{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .hdr-soc{color:#fff;display:flex;line-height:0;text-decoration:none;opacity:.9;transition:opacity .15s;}
 .hdr-soc:hover{opacity:1;}
 .hdr-soc svg{width:20px;height:20px;fill:currentColor;}
-@media(max-width:600px){#hdr-yt{display:inline-flex;align-items:center;gap:5px;background:#e12b2b;color:#fff;font-size:12px;font-weight:600;padding:5px 9px;border-radius:7px;text-decoration:none;flex-shrink:0;line-height:1;}.ver-tag{display:none;}.hdr-socials{display:none;}}
+@media(max-width:600px){#hdr-yt{display:inline-flex;align-items:center;gap:5px;background:#e12b2b;color:#fff;font-size:12px;font-weight:600;padding:5px 9px;border-radius:7px;text-decoration:none;flex-shrink:0;line-height:1;}.ver-tag{display:none;}.hdr-socials{display:none;}#badge{display:none;}}
 
 /* ── Selettore regioni nel pannello ── */
 .panel-region-selector{padding:4px 0 6px 0;}
@@ -650,8 +651,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       <h1>Mappa Pluviometrica Italia <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v5.0)</span></h1>
       <div class="hdr-sub" id="datehdr">Seleziona il periodo</div>
     </div>
-    <div id="badge">–</div>
   </div>
+  <div id="badge">–</div>
   <div class="hdr-r" style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
     <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener"
        onclick="try{gtag('event','click_youtube')}catch(e){}"
