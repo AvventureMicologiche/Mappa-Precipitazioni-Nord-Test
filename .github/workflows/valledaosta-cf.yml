@@ -11,7 +11,10 @@ on:
     # Ogni run copre ieri + auto-riparazione della settimana (una chiamata per
     # stazione con intervallo). Il valore giornaliero è stabile a giorno chiuso,
     # bastano 2 run. Orari sfalsati da meteohub.yml (xx:50) e ticino.
-    - cron: '15 4 * * *'
+    # Run mattutini ridondanti (i cron GitHub slittano): "ieri" pronto presto.
+    - cron: '30 2 * * *'
+    - cron: '30 4 * * *'
+    - cron: '30 7 * * *'
     - cron: '15 12 * * *'
 permissions:
   contents: write

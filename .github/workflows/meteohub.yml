@@ -10,8 +10,11 @@ on:
     # Ogni run raccoglie ieri + altroieri + auto-riparazione fino a 7gg.
     # Orari sfalsati rispetto a ticino.yml (xx:30) per ridurre i conflitti
     # di push tra workflow concorrenti.
-    - cron: '50 1 * * *'
-    - cron: '50 5 * * *'
+    # Run mattutini ridondanti (i cron GitHub slittano di 40-70 min) → "ieri"
+    # pronto presto. Il dato MeteoHub di ieri è disponibile subito (no lag ingestione).
+    - cron: '20 2 * * *'
+    - cron: '20 4 * * *'
+    - cron: '20 7 * * *'
     - cron: '50 11 * * *'
     - cron: '50 17 * * *'
 permissions:
