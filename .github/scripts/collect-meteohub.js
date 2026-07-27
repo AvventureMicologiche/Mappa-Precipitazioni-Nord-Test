@@ -5,8 +5,8 @@
  *
  * Scopo del pilota (luglio 2026): valutare MeteoHub come fonte unica per
  * l'espansione della mappa a tutta Italia.
- *  - dpcn-lombardia: regione di CONTROLLO — abbiamo la verità a terra via
- *    ARPA Lombardia (Socrata) per validare che MeteoHub sia attendibile
+ *  - dpcn-lombardia era la regione di CONTROLLO (verità a terra via ARPA
+ *    Socrata) — RIMOSSA il 27/7/2026: in mappa/prod la Lombardia usa ARPA.
  *  - dpcn-marche, dpcn-umbria: prime regioni nuove candidate
  *
  * API (verificata il 20/07/2026, nessun login richiesto):
@@ -38,9 +38,9 @@ const BASE_URL = 'https://meteohub.agenziaitaliameteo.it/api/observations';
 const DATA_ROOT = path.join(__dirname, '../..', 'data');
 
 const NETWORKS = [
-  // Lombardia = regione di CONTROLLO (verità a terra via ARPA Socrata), NON va in
-  // mappa (la Lombardia usa ARPA). Le altre alimentano la mappa del centro-sud.
-  { net: 'dpcn-lombardia',  dir: 'meteohub-lombardia',  sigla: 'LOM' },
+  // Lombardia RIMOSSA il 27/7/2026: in mappa (e in produzione) la Lombardia usa
+  // ARPA, non MeteoHub. La rete dpcn-lombardia serviva solo da CONTROLLO — la
+  // cartella storica data/meteohub-lombardia resta nel repo ma non si aggiorna più.
   { net: 'dpcn-marche',     dir: 'meteohub-marche',     sigla: 'MAR' },
   { net: 'dpcn-umbria',     dir: 'meteohub-umbria',     sigla: 'UMB' },
   { net: 'dpcn-lazio',      dir: 'meteohub-lazio',      sigla: 'LAZ' },
