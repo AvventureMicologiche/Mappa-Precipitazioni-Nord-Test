@@ -143,14 +143,15 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .region-btns-desktop{display:none !important;} /* dal 27/7: su desktop si clicca la mappa, i checkbox restano solo come stato (il !important vince su .tp-grid4) */
 /* Hint selezione da mappa + pulsante Ricomincia (solo desktop) */
 .map-hint-desktop{display:flex;align-items:center;gap:10px;padding:2px 0 3px;}
-.map-hint-desktop span{font-size:12.5px;color:#1b3f6e;}
-/* "← Indietro" flottante accanto al pannello regioni (solo desktop, appare
-   con ≥1 regione selezionata — visibilità gestita da updateGuidePulse). */
-#btn-reset-regions{display:none;position:absolute;top:100px;left:420px;z-index:1000;
-  background:rgba(255,255,255,.96);border:1px solid #d0d8e8;border-radius:10px;
-  color:#1b3f6e;font-size:15px;font-weight:700;padding:12px 20px;cursor:pointer;
-  box-shadow:0 2px 12px rgba(0,0,0,.22);font-family:inherit;white-space:nowrap;}
-#btn-reset-regions:hover{background:#dde8ff;border-color:#90b0d8;}
+.map-hint-desktop span{font-size:16px;color:#1b3f6e;white-space:nowrap;}
+/* Pannello "← Indietro" (solo desktop): PRENDE IL POSTO del pannello regioni
+   quando c'è ≥1 regione selezionata; deselezionando tutto i due si riscambiano
+   (visibilità gestita da updateGuidePulse). */
+#btn-reset-regions{display:none;position:absolute;top:100px;left:10px;z-index:1000;width:400px;
+  background:#1b3f6e;border:none;border-radius:10px;
+  color:#fff;font-size:20px;font-weight:700;padding:14px;cursor:pointer;
+  box-shadow:0 2px 12px rgba(0,0,0,.22);font-family:inherit;white-space:nowrap;text-align:center;}
+#btn-reset-regions:hover{background:#234f8a;}
 /* Guida a lampeggio (solo desktop): pulsa il pannello del passo attivo —
    regioni finché non ne selezioni una, poi periodo finché non lo clicchi.
    Anello marcato + sfondo che "respira" verso l'azzurro per farsi notare. */
@@ -786,7 +787,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         </div>
         <!-- Desktop: hint per la selezione da mappa + reset -->
         <div class="map-hint-desktop">
-          <span>🖱 Seleziona massimo 3 regioni sulla mappa</span>
+          <span>🖱 Clicca sulla mappa e seleziona le regioni (max 3)</span>
         </div>
         <!-- Mobile: select dropdown -->
         <select id="region-select" class="region-select-mobile">
@@ -817,7 +818,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 
     <!-- "← Indietro" flottante: appare accanto al pannello regioni solo
          quando c'è almeno una regione selezionata (gestito da updateGuidePulse) -->
-    <button id="btn-reset-regions" type="button">← Indietro</button>
+    <button id="btn-reset-regions" type="button">↩ Indietro</button>
 
     <div id="time-panel">
       <!-- Handle: sempre visibile, tap per aprire/chiudere -->
@@ -2185,8 +2186,16 @@ function positionPanels(){
   var tp=document.getElementById('time-panel');
   var leg=document.getElementById('legend-panel');
 
-  // region-panel fisso a top:100px — leggo il suo offsetTop + offsetHeight
-  var rpBottom = rp.offsetTop + rp.offsetHeight;
+  // region-panel fisso a top:100px — leggo il suo offsetTop + offsetHeight.
+  // Se è nascosto (scambiato col pannello "← Indietro"), il riferimento è
+  // quel pannello, che occupa la stessa posizione.
+  var rpBottom;
+  if(rp.offsetParent!==null){
+    rpBottom = rp.offsetTop + rp.offsetHeight;
+  } else {
+    var backP=document.getElementById('btn-reset-regions');
+    rpBottom = (backP && backP.offsetParent!==null) ? (backP.offsetTop + backP.offsetHeight) : rp.offsetTop;
+  }
 
   // time-panel: GAP sotto region-panel
   tp.style.top=(rpBottom+GAP)+'px';
@@ -3945,12 +3954,18 @@ function updateGuidePulse(){
   var rp=document.getElementById('region-panel'), tp=document.getElementById('time-panel');
   var back=document.getElementById('btn-reset-regions');
   if(!rp||!tp) return;
-  if(window.innerWidth<=900){ rp.classList.remove('panel-pulse'); tp.classList.remove('panel-pulse'); if(back) back.style.display='none'; return; }
+  if(window.innerWidth<=900){ rp.classList.remove('panel-pulse'); tp.classList.remove('panel-pulse'); rp.style.display=''; if(back) back.style.display='none'; return; }
   var nSel=document.querySelectorAll('.rcheck-wrap input[type=checkbox]:checked').length;
   var hasPeriod=!!currentLabel;
   rp.classList.toggle('panel-pulse', nSel===0);
   tp.classList.toggle('panel-pulse', nSel>0 && !hasPeriod);
-  if(back) back.style.display=nSel>0?'block':'none'; // "← Indietro" appare solo dopo la prima selezione
+  // SCAMBIO: il pannello regioni resta visibile per tutta la fase di scelta;
+  // sparisce (sostituito dal pannello "← Indietro") solo quando si clicca la
+  // data — cioè nel momento dello zoom. Deselezionando tutto si riscambiano.
+  var showBack = nSel>0 && hasPeriod;
+  rp.style.display=showBack?'none':'';
+  if(back) back.style.display=showBack?'block':'none';
+  if(typeof positionPanels==='function') positionPanels(); // il pannello periodo si riaggancia a quello visibile
 }
 function toggleRegionFromMap(rk){
   if(isLoading) return;
