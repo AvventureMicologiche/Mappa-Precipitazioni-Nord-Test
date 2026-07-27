@@ -2375,11 +2375,33 @@ function getActiveRegions(){
   });
   return active;
 }
-// Avviso sul ritardo di pubblicazione OSMER: visibile solo col Friuli selezionato.
-function updateOsmerNotice(){
+// Avviso ritardo pubblicazione OSMER (Friuli), due contesti distinti:
+//  - DESKTOP (>900px): testo inline accanto a "✅ Ieri" (solo periodo Ieri).
+//  - MOBILE  (≤900px): box giallo sotto "Piogge per funghi", visibile da quando
+//    si sceglie Friuli fino al primo click su un periodo (poi lo copre la scala).
+function osmerInlineDesktop(){
+  var ts=document.getElementById('tp-status');
+  var old=document.getElementById('osmer-notice-inline');
+  if(old) old.remove();
+  var show=(window.innerWidth>900 && getActiveRegions().indexOf('friuli')>=0 && currentLabel==='Ieri');
+  if(show && ts){
+    var s=document.createElement('span');
+    s.id='osmer-notice-inline';
+    s.style.cssText='margin-left:8px;font-size:11px;font-weight:400;color:#8a6d3b;';
+    s.innerHTML='· ℹ️ <b>Friuli</b>: ritardo pubblicazione 24-48 h';
+    ts.appendChild(s);
+  }
+}
+function osmerMobileHide(){
   var n=document.getElementById('osmer-notice');
-  if(!n) return;
-  n.style.display=(getActiveRegions().indexOf('friuli')>=0 && currentLabel==='Ieri')?'block':'none';
+  if(n) n.style.display='none';
+  if(typeof positionPanels==='function') positionPanels();
+}
+function updateOsmerNotice(){
+  osmerInlineDesktop();
+  // Ramo mobile: box sotto i funghi, mostrato alla selezione di Friuli.
+  var n=document.getElementById('osmer-notice');
+  if(n) n.style.display=(window.innerWidth<=900 && getActiveRegions().indexOf('friuli')>=0)?'block':'none';
   if(typeof positionPanels==='function') positionPanels(); // riposiziona la legenda sotto il pannello cresciuto
 }
 
@@ -2590,7 +2612,7 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
       gridPoints=buildGrid(idwData,rings,idwR,activeGridRes);
       drawGrid();
       var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='✅ '+labelPeriodo;
-      updateOsmerNotice(); // avviso Friuli visibile solo se periodo === 'Ieri'
+      osmerInlineDesktop(); // avviso Friuli inline accanto a "✅ Ieri" (solo desktop + Ieri)
     }
     setLoading(false);
   },20);
@@ -3967,6 +3989,7 @@ document.getElementById('btn-funghi').addEventListener('click',function(){
   function fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
   var label='🍄 Piogge 16-23 gg fa ('+fmt(past23)+' → '+fmt(past16)+')';
   currentPast=past23; currentNow=past16; currentLabel=label;
+  osmerMobileHide(); // scelto un periodo → nascondi la nota mobile
   var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
   document.getElementById('datehdr').textContent=fmt(past23)+' – '+fmt(past16);
   loadData(past23,past16,label);
@@ -4084,6 +4107,7 @@ document.querySelectorAll('.tp-btn').forEach(function(btn){
       return;
     }
     var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
+    osmerMobileHide(); // scelto un periodo → nascondi la nota mobile (poi la copre la scala)
     setActiveBtn(this);
     document.getElementById('custom-box').style.display='none';
     document.getElementById('btn-custom').classList.remove('active');
@@ -4121,6 +4145,7 @@ document.getElementById('btn-custom').addEventListener('click',function(){
     return;
   }
   var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
+  osmerMobileHide(); // aperte le date personalizzate → nascondi la nota mobile
   var box=document.getElementById('custom-box');
   var open=box.style.display==='block';
   box.style.display=open?'none':'block';
