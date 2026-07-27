@@ -781,7 +781,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         </div>
         <div class="tp-custom-btn" id="btn-custom">📅 Date personalizzate</div>
         <div class="tp-custom-btn tp-funghi-btn" id="btn-funghi"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAC6ElEQVR42m2TPWxTVxTHz7nvvveuE8cmtuNgG8cGQhEfgRCGBqlFqAtDVTGwsMOKOnTpUFUdq6pjhmYoDEhVVQnxIb6UABKIqoWUqFUpBNpA3IKdBD+C46R+ee/eczo8KwmoZ/7/7l/63XOQmWF1mADFbH3h9tWLT+7f9hsvVSJdHhh+7/BH5WIeAJgZEQEA2xgzM4MQ3337zdjol+xVilnVqdzQmGaLmnZ6z5ETxz/5TElkBkRsY0QGhPXVpycnTo30pqGwKbMhkQi1EYiWANbB1F/V+PDRL0a/dyxEFAIAyBghrLNnTt07PVLqs4VrubYTBAGRMUavBDpga8/AttbE2TMjXwthMRESEQIs+8HHh3cpr4IuIHNfPtuhlDHEAMRMRASo0DxasD4/92tvJiWYCBCfTD1qvZhmo5sN3Vg0U09r03/PeguLzUZDt5ZdpJgEW8WUX//j/l0AkJGZTDr1WqWTW7cWCuWQ8Xmt3lPMLQd+p2svvfa8ymMnaOa7VtAEK/6/bZOR1ouXLv0++WNPKr7YaFpS9m/eFIsnDxz8YKbyfHJiMpvqGj//w4M7N0fHfyuVSm2TETk3O1epzFy5fCGXsuOdnbv37i9v6Z9/OT8+dmvf0FB1bj6dLRw6+D4zy+ifEZGIejf29mSzP98ZSyZjwCKR3EDMUsrilv6BoeF3O2ICMSoQaxvCzMw3ro9pv2lZtm3bjqu01l3xuA5aHTElEIgocrGGCSEQcfrPh5lMdxiGtutKKQ2R6yrbwmqtBoARs4ZF1c2l5aVFL6aU1lq5ypISmBkgmYi/qtej2BtYNK88j40GRCnt0uZ+aL/Njuv4fmt98g2MmQGIiXbs2tuzMWe0jnyFgXZc9T9YtNO5fC4kK5cvvLNjZxiGiCillFJUZ+f7SqUo9nYbM7uO8+GRY0//8Wq1KiIAsN9qXbt2o1jenuruXtW47t7WiXk2M/PL3Z8AjC1lqGnb9p2Dg4OrBxrNfxMWeekz+THZAAAAAElFTkSuQmCC" style="width:18px;height:18px;vertical-align:middle;margin-right:5px;">Piogge per funghi <span style="font-size:13px;opacity:.8">(range 16-23 gg fa)</span></div>
-        <div id="osmer-notice" style="display:none;margin-top:6px;font-size:12.5px;line-height:1.35;color:#8a6d3b;background:#fcf6e3;border:1px solid #f0e2b8;border-radius:5px;padding:6px 8px;">ℹ️ <b>Friuli</b>: alcune stazioni possono avere ritardi fino a 48h.</div>
+        <div id="osmer-notice" style="display:none;margin-top:6px;font-size:12.5px;line-height:1.35;color:#1b3f6e;background:#fcf6e3;border:1px solid #f0e2b8;border-radius:5px;padding:6px 8px;">ℹ️ <b>Friuli</b>: alcune stazioni possono avere ritardi fino a 48h.</div>
         <div id="custom-box">
           <div class="cd-lbl">Data inizio</div>
           <input type="date" class="cd-inp" id="cd-from">
@@ -1343,7 +1343,7 @@ var REGIONS = {
   abruzzo: {
     name: 'Abruzzo',
     center: [42.30, 13.85], zoom: 8.5,
-    fonte: 'Open-Meteo',
+    fonte: 'stime Open-Meteo',
     geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson',
     geojsonFilter: 'abruzz',
     dataSource: 'open_meteo',
@@ -2387,7 +2387,7 @@ function osmerInlineDesktop(){
   if(show && ts){
     var s=document.createElement('span');
     s.id='osmer-notice-inline';
-    s.style.cssText='margin-left:8px;font-size:11px;font-weight:400;color:#8a6d3b;';
+    s.style.cssText='margin-left:8px;font-size:11px;font-weight:400;color:#1b3f6e;';
     s.innerHTML='· ℹ️ <b>Friuli</b>: alcune stazioni possono avere ritardi fino a 48h';
     ts.appendChild(s);
   }
@@ -2536,7 +2536,7 @@ function loadData(pastDate,nowDate,labelPeriodo){
       });
     } else {
       loadOpenMeteoRegion(cfg.stations||[],pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🌍 Open-Meteo',regionKey);
+        onRegionDone(dati,'🌍 stime Open-Meteo',regionKey);
       });
     }
   });
@@ -4335,12 +4335,31 @@ function loadMeteoHubStations(regionKey,cb){
       .catch(function(){ idx++; attempt(); });
   })();
 }
+// Ticino: come MeteoHub non ha lista stations statica → anagrafe da un file
+// recente del repo prod (stesso formato: data.stations[] con n,lat,lon,q,p).
+var ticinoStationsCache=null;
+function loadTicinoStations(cb){
+  if(ticinoStationsCache){ cb(ticinoStationsCache); return; }
+  var RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/ticino', tries=[], now=new Date();
+  for(var i=1;i<=6;i++){ var d=new Date(now.getTime()-i*86400000); tries.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')); }
+  var idx=0;
+  (function attempt(){
+    if(idx>=tries.length){ cb([]); return; }
+    fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
+      .then(function(data){ var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'TI'};}); ticinoStationsCache=st; cb(st); })
+      .catch(function(){ idx++; attempt(); });
+  })();
+}
 function addDefaultMarkersForRegion(regionKey){
   var cfg=REGIONS[regionKey];
   // MeteoHub non ha lista stations statica: prende l'anagrafe da un file recente
   // (async). Le altre regioni usano cfg.stations (o l'anagrafe ARPA per Lombardia).
   if(cfg && cfg.dataSource==='meteohub'){
     loadMeteoHubStations(regionKey,function(st){ drawDefaultMarkers(st,cfg); });
+    return;
+  }
+  if(cfg && cfg.dataSource==='oasi_ticino'){
+    loadTicinoStations(function(st){ drawDefaultMarkers(st,cfg); });
     return;
   }
   var stazioni=(regionKey==='lombardia')?(ARPA_STATIONS||LOMBARDIA_STATIONS):((cfg&&cfg.stations)?cfg.stations:[]);
