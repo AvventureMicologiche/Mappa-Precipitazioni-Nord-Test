@@ -755,6 +755,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <option value="sicilia">Sicilia</option>
           <option value="sardegna">Sardegna</option>
         </select>
+        <div id="osmer-notice" style="display:none;margin-top:8px;font-size:9.5px;line-height:1.35;color:#8a6d3b;background:#fcf6e3;border:1px solid #f0e2b8;border-radius:5px;padding:5px 8px;">ℹ️ <b>Friuli</b>: alcune stazioni pubblicano il dato con un ritardo fino a 24-48 ore, quindi la copertura del giorno più recente si completa nelle ore successive.</div>
       </div>
     </div>
 
@@ -2374,6 +2375,11 @@ function getActiveRegions(){
   });
   return active;
 }
+// Avviso sul ritardo di pubblicazione OSMER: visibile solo col Friuli selezionato.
+function updateOsmerNotice(){
+  var n=document.getElementById('osmer-notice');
+  if(n) n.style.display=(getActiveRegions().indexOf('friuli')>=0)?'block':'none';
+}
 
 // ═══════════════════════════════════════════════════════════════
 // DISPATCHER: carica dati per tutte le regioni attive
@@ -3975,6 +3981,7 @@ document.getElementById('region-select').addEventListener('change', function(){
   // Seleziona il checkbox corrispondente
   var cb = document.getElementById('chk-'+rk);
   if(cb) cb.checked = true;
+  updateOsmerNotice();
   clearMarkers(); clearHeatmap();
   document.getElementById('legend-panel').style.display='none';
   hideLegendMobile();
@@ -4024,6 +4031,7 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
       expandRegion(rk).forEach(function(r){ if(regionBorders[r]){ map.removeLayer(regionBorders[r]); delete regionBorders[r]; } });
     }
     var regions=getActiveRegions();
+    updateOsmerNotice();
     // Reset del disegno, poi ridisegna TUTTE le regioni attive insieme
     clearMarkers();
     clearHeatmap();
