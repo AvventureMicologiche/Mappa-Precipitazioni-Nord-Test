@@ -781,6 +781,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         </div>
         <div class="tp-custom-btn" id="btn-custom">📅 Date personalizzate</div>
         <div class="tp-custom-btn tp-funghi-btn" id="btn-funghi"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAC6ElEQVR42m2TPWxTVxTHz7nvvveuE8cmtuNgG8cGQhEfgRCGBqlFqAtDVTGwsMOKOnTpUFUdq6pjhmYoDEhVVQnxIb6UABKIqoWUqFUpBNpA3IKdBD+C46R+ee/eczo8KwmoZ/7/7l/63XOQmWF1mADFbH3h9tWLT+7f9hsvVSJdHhh+7/BH5WIeAJgZEQEA2xgzM4MQ3337zdjol+xVilnVqdzQmGaLmnZ6z5ETxz/5TElkBkRsY0QGhPXVpycnTo30pqGwKbMhkQi1EYiWANbB1F/V+PDRL0a/dyxEFAIAyBghrLNnTt07PVLqs4VrubYTBAGRMUavBDpga8/AttbE2TMjXwthMRESEQIs+8HHh3cpr4IuIHNfPtuhlDHEAMRMRASo0DxasD4/92tvJiWYCBCfTD1qvZhmo5sN3Vg0U09r03/PeguLzUZDt5ZdpJgEW8WUX//j/l0AkJGZTDr1WqWTW7cWCuWQ8Xmt3lPMLQd+p2svvfa8ymMnaOa7VtAEK/6/bZOR1ouXLv0++WNPKr7YaFpS9m/eFIsnDxz8YKbyfHJiMpvqGj//w4M7N0fHfyuVSm2TETk3O1epzFy5fCGXsuOdnbv37i9v6Z9/OT8+dmvf0FB1bj6dLRw6+D4zy+ifEZGIejf29mSzP98ZSyZjwCKR3EDMUsrilv6BoeF3O2ICMSoQaxvCzMw3ro9pv2lZtm3bjqu01l3xuA5aHTElEIgocrGGCSEQcfrPh5lMdxiGtutKKQ2R6yrbwmqtBoARs4ZF1c2l5aVFL6aU1lq5ypISmBkgmYi/qtej2BtYNK88j40GRCnt0uZ+aL/Njuv4fmt98g2MmQGIiXbs2tuzMWe0jnyFgXZc9T9YtNO5fC4kK5cvvLNjZxiGiCillFJUZ+f7SqUo9nYbM7uO8+GRY0//8Wq1KiIAsN9qXbt2o1jenuruXtW47t7WiXk2M/PL3Z8AjC1lqGnb9p2Dg4OrBxrNfxMWeekz+THZAAAAAElFTkSuQmCC" style="width:18px;height:18px;vertical-align:middle;margin-right:5px;">Piogge per funghi <span style="font-size:13px;opacity:.8">(range 16-23 gg fa)</span></div>
+        <div id="osmer-notice" style="display:none;margin-top:6px;font-size:11px;line-height:1.35;color:#8a6d3b;background:#fcf6e3;border:1px solid #f0e2b8;border-radius:5px;padding:6px 8px;">ℹ️ <b>Friuli</b>: alcune stazioni possono avere ritardi fino a 48h.</div>
         <div id="custom-box">
           <div class="cd-lbl">Data inizio</div>
           <input type="date" class="cd-inp" id="cd-from">
@@ -790,7 +791,6 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         </div>
         <div id="tp-status"></div>
         <div id="tp-spinner"><div class="mini-spin"></div><span>Caricamento…</span></div>
-        <div id="osmer-notice" style="display:none;margin-top:6px;font-size:11px;line-height:1.35;color:#8a6d3b;background:#fcf6e3;border:1px solid #f0e2b8;border-radius:5px;padding:6px 8px;">ℹ️ <b>Friuli</b>: alcune stazioni pubblicano con un ritardo di 24-48 h.</div>
       </div>
     </div>
 
@@ -2388,7 +2388,7 @@ function osmerInlineDesktop(){
     var s=document.createElement('span');
     s.id='osmer-notice-inline';
     s.style.cssText='margin-left:8px;font-size:11px;font-weight:400;color:#8a6d3b;';
-    s.innerHTML='· ℹ️ <b>Friuli</b>: ritardo pubblicazione 24-48 h';
+    s.innerHTML='· ℹ️ <b>Friuli</b>: alcune stazioni possono avere ritardi fino a 48h';
     ts.appendChild(s);
   }
 }
