@@ -790,7 +790,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         </div>
         <div id="tp-status"></div>
         <div id="tp-spinner"><div class="mini-spin"></div><span>Caricamento…</span></div>
-        <div id="osmer-notice" style="display:none;margin-top:10px;font-size:11px;line-height:1.35;color:#8a6d3b;background:#fcf6e3;border:1px solid #f0e2b8;border-radius:5px;padding:6px 8px;">ℹ️ <b>Friuli</b>: alcune stazioni pubblicano con un ritardo di 24-48 h.</div>
+        <div id="osmer-notice" style="display:none;margin-top:6px;font-size:11px;line-height:1.35;color:#8a6d3b;background:#fcf6e3;border:1px solid #f0e2b8;border-radius:5px;padding:6px 8px;">ℹ️ <b>Friuli</b>: alcune stazioni pubblicano con un ritardo di 24-48 h.</div>
       </div>
     </div>
 
@@ -2379,7 +2379,7 @@ function getActiveRegions(){
 function updateOsmerNotice(){
   var n=document.getElementById('osmer-notice');
   if(!n) return;
-  n.style.display=(getActiveRegions().indexOf('friuli')>=0)?'block':'none';
+  n.style.display=(getActiveRegions().indexOf('friuli')>=0 && currentLabel==='Ieri')?'block':'none';
   if(typeof positionPanels==='function') positionPanels(); // riposiziona la legenda sotto il pannello cresciuto
 }
 
@@ -2590,6 +2590,7 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
       gridPoints=buildGrid(idwData,rings,idwR,activeGridRes);
       drawGrid();
       var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='✅ '+labelPeriodo;
+      updateOsmerNotice(); // avviso Friuli visibile solo se periodo === 'Ieri'
     }
     setLoading(false);
   },20);
