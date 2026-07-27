@@ -3857,24 +3857,7 @@ var REGION_BOUNDS={
 
 function fitMapToRegions(regionKeys){
   if(!regionKeys||regionKeys.length===0) return;
-  if(regionKeys.length===1){
-    var cfg=REGIONS[regionKeys[0]];
-    if(cfg) {
-      if(window.innerWidth<=900){
-        var rk0=regionKeys[0];
-        if(rk0==='lombardia') { map.setView([45.5, 9.85], 8, {animate:true,duration:0.6}); }
-        else if(rk0==='piemonte') { map.setView([44.9, 7.9], 8, {animate:true,duration:0.6}); }
-        else if(rk0==='veneto') { map.setView([45.6, 11.8], 8, {animate:true,duration:0.6}); }
-        else if(rk0==='liguria') { map.setView([44.3, 8.8], 7.5, {animate:true,duration:0.6}); }
-        else if(rk0==='emilia') { map.setView([43.9, 11.0], 7.0, {animate:true,duration:0.6}); }
-        else { map.setView(cfg.center, cfg.zoom, {animate:true,duration:0.6}); }
-      } else {
-        map.setView(cfg.center, cfg.zoom, {animate:true,duration:0.6});
-      }
-    }
-    return;
-  }
-  // Più regioni: calcola bbox unificata
+  // Bbox unificata delle regioni attive (stesso codice per 1 o N regioni).
   var latMin=90,latMax=-90,lonMin=180,lonMax=-180,found=false;
   regionKeys.forEach(function(rk){
     var b=REGION_BOUNDS[rk];
@@ -3898,45 +3881,19 @@ function fitMapToRegions(regionKeys){
   // Nessuna bbox trovata: NON chiamare fitBounds su valori invertiti
   // (Leaflet li normalizzerebbe a tutto il mondo). Meglio lasciare la vista com'è.
   if(!found) return;
-  // Margine di fit ridotto = zoom un filo più stretto, SENZA tagliare le regioni
-  // (richiesta utente 25/7/2026: regione di mezzo centrata + più riempimento).
-  // Il margine vuoto residuo su un lato è intrinseco alla centratura sulla
-  // regione di mezzo (schermo largo 16:9 vs regioni compatte).
-  var pad=window.innerWidth<=900?[10,8]:[12,12];
-  var opts={animate:true,duration:0.6,padding:pad};
-  var bounds;
-  // Con 3 regioni: centro sulla regione "di mezzo" (quella che confina con
-  // entrambe le altre) tramite una bbox SIMMETRICA attorno al suo centro,
-  // abbastanza ampia da contenere la bbox unificata.
-  if(regionKeys.length===3){
-    var mid=middleRegion(regionKeys);
-    var c=mid&&REGIONS[mid]&&REGIONS[mid].center;
-    if(c){
-      var hw=Math.max(Math.abs(lonMax-c[1]),Math.abs(c[1]-lonMin));
-      // Orizzontale: simmetrico attorno alla regione di mezzo (resta centrata in lon).
-      // Verticale: estensione reale del contenuto (latMin..latMax), NON simmetrica
-      // attorno alla regione di mezzo — altrimenti lo "specchio" del mare a sud
-      // spingeva il contenuto troppo in alto e le Alpi a nord venivano ritagliate.
-      bounds=[[latMin,c[1]-hw],[latMax,c[1]+hw]];
-    }
-  }
-  if(!bounds) bounds=[[latMin,lonMin],[latMax,lonMax]];
-  // Le regioni del Nord formano un blocco compatto mentre l'area mappa è larga
-  // (16:9): "tutto visibile" (_fit) lascia grandi margini laterali. Per riempire
-  // di più si zooma sopra _fit, ritagliando sopra/sotto (Alpi/mare), fino al
-  // massimo "riempi pieno" (_fill).
+  var _lb=L.latLngBounds([[latMin,lonMin],[latMax,lonMax]]);
   // I pannelli (selezione regione + periodo) coprono la parte SINISTRA della mappa
-  // su desktop: con padding SIMMETRICO il contenuto viene centrato sull'intera area
-  // e le regioni a ovest (es. Sardegna) restano nascoste dietro il pannello. Uso
-  // padding ASIMMETRICO — molto più a sinistra — così fitBounds calcola zoom E centro
-  // nell'area realmente visibile a destra dei pannelli. Su mobile i pannelli non
-  // coprono il lato (tendina + pannello in basso), padding quasi simmetrico.
+  // su desktop: le regioni a ovest (es. Sardegna) finivano nascoste dietro il
+  // pannello, e lo zoom lasciava troppo vuoto. Riservo lo spazio del pannello:
+  // calcolo lo zoom sull'area visibile e sposto il centro a est così il contenuto
+  // sta a destra dei pannelli e li riempie. (fitBounds con padding NON animava →
+  // uso getBoundsZoom + setView, il meccanismo che funziona.)
   var isDesk=window.innerWidth>900;
-  map.fitBounds(L.latLngBounds(bounds),{
-    paddingTopLeft:     isDesk?L.point(430,80):L.point(14,64),
-    paddingBottomRight: isDesk?L.point(40,60):L.point(14,170),
-    animate:true, duration:0.6
-  });
+  var panelPx=isDesk?420:0;
+  var _pp=L.point((panelPx/2)+30, 70);            // padding simmetrico che riserva il pannello
+  var _z=map.getBoundsZoom(_lb,false,_pp);
+  var _cp=map.project(_lb.getCenter(),_z).subtract(L.point(panelPx/2,0)); // centro a ovest → contenuto a est
+  map.setView(map.unproject(_cp,_z), _z, {animate:true,duration:0.6});
 }
 
 // Adiacenze (confini) tra le regioni selezionabili. Servono a individuare la
@@ -4354,6 +4311,9 @@ function addDefaultMarkersForRegion(regionKey){
   drawDefaultMarkers(stazioni,cfg);
 }
 function drawDefaultMarkers(stazioni,cfg){
+  // Cap uniforme a 150 (come i dati e le altre regioni): reti fitte tipo Sicilia
+  // (426 staz.) coprivano tutta la mappa rendendo i puntini illeggibili e inutili.
+  if(stazioni && stazioni.length>150) stazioni=selectUniform(stazioni,150);
   stazioni.forEach(function(s){
     var m=L.circleMarker([s.lat,s.lon],{
       radius:5,fillColor:'#fff',fillOpacity:0.9,
