@@ -755,7 +755,6 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <option value="sicilia">Sicilia</option>
           <option value="sardegna">Sardegna</option>
         </select>
-        <div id="osmer-notice" style="display:none;margin-top:8px;font-size:11px;line-height:1.35;color:#8a6d3b;background:#fcf6e3;border:1px solid #f0e2b8;border-radius:5px;padding:6px 8px;">ℹ️ <b>Friuli</b>: alcune stazioni pubblicano con un ritardo di 24-48 h.</div>
       </div>
     </div>
 
@@ -791,6 +790,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         </div>
         <div id="tp-status"></div>
         <div id="tp-spinner"><div class="mini-spin"></div><span>Caricamento…</span></div>
+        <div id="osmer-notice" style="display:none;margin-top:10px;font-size:11px;line-height:1.35;color:#8a6d3b;background:#fcf6e3;border:1px solid #f0e2b8;border-radius:5px;padding:6px 8px;">ℹ️ <b>Friuli</b>: alcune stazioni pubblicano con un ritardo di 24-48 h.</div>
       </div>
     </div>
 
@@ -2378,7 +2378,9 @@ function getActiveRegions(){
 // Avviso sul ritardo di pubblicazione OSMER: visibile solo col Friuli selezionato.
 function updateOsmerNotice(){
   var n=document.getElementById('osmer-notice');
-  if(n) n.style.display=(getActiveRegions().indexOf('friuli')>=0)?'block':'none';
+  if(!n) return;
+  n.style.display=(getActiveRegions().indexOf('friuli')>=0)?'block':'none';
+  if(typeof positionPanels==='function') positionPanels(); // riposiziona la legenda sotto il pannello cresciuto
 }
 
 // ═══════════════════════════════════════════════════════════════
