@@ -56,6 +56,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   font-size:9px;padding:2px 8px;border-radius:10px;
   background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
   white-space:nowrap;}
+#badge:empty{display:none;}
 #hdr-yt{display:none;}
 .hdr-socials{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .hdr-soc{color:#fff;display:flex;line-height:0;text-decoration:none;opacity:.9;transition:opacity .15s;}
@@ -652,7 +653,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       <div class="hdr-sub" id="datehdr">Seleziona il periodo</div>
     </div>
   </div>
-  <div id="badge">–</div>
+  <div id="badge"></div>
   <div class="hdr-r" style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
     <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener"
        onclick="try{gtag('event','click_youtube')}catch(e){}"
@@ -4033,7 +4034,7 @@ document.getElementById('region-select').addEventListener('change', function(){
   clearMarkers(); clearHeatmap();
   document.getElementById('legend-panel').style.display='none';
   hideLegendMobile();
-  document.getElementById('badge').textContent='–';
+  document.getElementById('badge').textContent='';
   document.getElementById('datehdr').textContent='Seleziona il periodo';
   var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
   // Centra mappa
@@ -4085,7 +4086,7 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
     clearHeatmap();
     document.getElementById('legend-panel').style.display='none';
     hideLegendMobile();
-    document.getElementById('badge').textContent='–';
+    document.getElementById('badge').textContent='';
     var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
     // Inquadra su tutte le regioni attive (fitMapToRegions gestisce sia 1 che N)
     fitMapToRegions(regions);
