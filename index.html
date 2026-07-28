@@ -93,21 +93,33 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 #map{width:100%;height:100%;position:relative;}
 
 /* ── Pannelli DESKTOP: sovrapposti sulla mappa ── */
+/* PROVA estetica 28/7: "vetro" come il box canale (sfondo semi-trasparente +
+   blur), raggio 13px e ombre morbide uniformi su tutti i pannelli. */
 #time-panel,#legend-panel{
   position:absolute;left:10px;z-index:1000;
-  background:rgba(255,255,255,.96);border-radius:10px;
-  box-shadow:0 2px 12px rgba(0,0,0,.22);
-  pointer-events:all;width:400px;
+  background:rgba(255,255,255,.78);border:1px solid rgba(226,224,216,.85);border-radius:13px;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  box-shadow:0 3px 14px rgba(0,0,0,.12);
+  pointer-events:all;width:400px;box-sizing:border-box;
 }
 #region-panel{
   position:absolute;left:10px;top:100px;z-index:1000;
-  background:rgba(255,255,255,.96);border-radius:10px;
-  box-shadow:0 2px 12px rgba(0,0,0,.22);
-  pointer-events:all;width:400px;
+  background:rgba(255,255,255,.78);border:1px solid rgba(226,224,216,.85);border-radius:13px;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  box-shadow:0 3px 14px rgba(0,0,0,.12);
+  pointer-events:all;width:400px;box-sizing:border-box;
   padding:9px 10px;
 }
 #time-panel{top:182px;padding:11px 13px;}
 #legend-panel{padding:11px 14px;display:none;max-height:calc(100vh - 200px);overflow-y:auto;}
+/* Il "vetro" resta solo desktop: su mobile pannello pieno (leggibilità e
+   prestazioni — backdrop-filter costa sui telefoni). */
+@media (max-width:900px){
+  #time-panel,#legend-panel,#region-panel{
+    background:rgba(255,255,255,.96);
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+  }
+}
 
 /* Checkbox nel pannello regioni — stile identico a tp-btn */
 .rcheck-wrap{display:flex;width:100%;cursor:pointer;user-select:none;}
@@ -148,16 +160,18 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    quando c'è ≥1 regione selezionata; deselezionando tutto i due si riscambiano
    (visibilità gestita da updateGuidePulse). */
 #btn-reset-regions{display:none;position:absolute;top:100px;left:10px;z-index:1000;width:400px;
-  background:#1b3f6e;border:none;border-radius:10px;
+  background:rgba(27,63,110,.85);border:none;border-radius:13px;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
   color:#fff;font-size:20px;font-weight:700;padding:14px;cursor:pointer;
-  box-shadow:0 2px 12px rgba(0,0,0,.22);font-family:inherit;white-space:nowrap;text-align:center;}
+  box-shadow:0 3px 14px rgba(0,0,0,.12);font-family:inherit;white-space:nowrap;text-align:center;box-sizing:border-box;}
 #btn-reset-regions:hover{background:#234f8a;}
 /* Pannello hint blu (stesso stile di Indietro, non cliccabile): sostituisce il
    vecchio pannello "Seleziona regione" su desktop. */
 #map-hint-panel{display:none;position:absolute;top:100px;left:10px;z-index:1000;width:400px;
-  background:#1b3f6e;border-radius:10px;
+  background:rgba(27,63,110,.85);border-radius:13px;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
   color:#fff;font-size:15px;font-weight:700;padding:14px 8px;
-  box-shadow:0 2px 12px rgba(0,0,0,.22);white-space:nowrap;text-align:center;box-sizing:border-box;}
+  box-shadow:0 3px 14px rgba(0,0,0,.12);white-space:nowrap;text-align:center;box-sizing:border-box;}
 /* Guida a lampeggio (solo desktop): pulsa il pannello del passo attivo —
    regioni finché non ne selezioni una, poi periodo finché non lo clicchi.
    Anello marcato + sfondo che "respira" verso l'azzurro per farsi notare. */
@@ -197,14 +211,14 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .tp-btn{background:#f0f4fb;border:1px solid #d0d8e8;border-radius:5px;
   font-size:14px;font-weight:600;color:#1b3f6e;
   padding:7px 2px;text-align:center;cursor:pointer;
-  transition:background .12s;user-select:none;}
-.tp-btn:hover{background:#dde8ff;border-color:#90b0d8}
+  transition:background .12s,transform .12s,box-shadow .12s;user-select:none;}
+.tp-btn:hover{background:#dde8ff;border-color:#90b0d8;transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.12)}
 .tp-btn.active{background:#1b3f6e;color:#fff;border-color:#1b3f6e}
 .tp-custom-btn{width:100%;margin-top:4px;padding:7px;
   background:#f0f4fb;border:1px solid #d0d8e8;border-radius:5px;
   font-size:13px;font-weight:600;color:#1b3f6e;cursor:pointer;
-  text-align:center;transition:background .12s;}
-.tp-custom-btn:hover{background:#dde8ff}
+  text-align:center;transition:background .12s,transform .12s,box-shadow .12s;}
+.tp-custom-btn:hover{background:#dde8ff;transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.12)}
 .tp-custom-btn.active{background:#1b3f6e;color:#fff}
 #tp-status{font-size:14px;color:#1b6e3f;font-weight:600;margin-top:8px;min-height:18px}
 #tp-status.error{color:#cc0000;}
