@@ -152,6 +152,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   color:#fff;font-size:20px;font-weight:700;padding:14px;cursor:pointer;
   box-shadow:0 2px 12px rgba(0,0,0,.22);font-family:inherit;white-space:nowrap;text-align:center;}
 #btn-reset-regions:hover{background:#234f8a;}
+/* Pannello hint blu (stesso stile di Indietro, non cliccabile): sostituisce il
+   vecchio pannello "Seleziona regione" su desktop. */
+#map-hint-panel{display:none;position:absolute;top:100px;left:10px;z-index:1000;width:400px;
+  background:#1b3f6e;border-radius:10px;
+  color:#fff;font-size:15px;font-weight:700;padding:14px 8px;
+  box-shadow:0 2px 12px rgba(0,0,0,.22);white-space:nowrap;text-align:center;box-sizing:border-box;}
 /* Guida a lampeggio (solo desktop): pulsa il pannello del passo attivo —
    regioni finché non ne selezioni una, poi periodo finché non lo clicchi.
    Anello marcato + sfondo che "respira" verso l'azzurro per farsi notare. */
@@ -163,6 +169,13 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     100%{box-shadow:0 2px 12px rgba(0,0,0,.22),0 0 0 0 rgba(27,63,110,0);background:rgba(255,255,255,.96);}
   }
   .panel-pulse{animation:panelPulse 1.5s ease-out infinite;}
+  /* Variante solo-anello per i pannelli blu (lo sfondo non deve sbiancare) */
+  @keyframes panelPulseRing{
+    0%{box-shadow:0 2px 12px rgba(0,0,0,.22),0 0 0 0 rgba(27,63,110,.8);}
+    70%{box-shadow:0 2px 12px rgba(0,0,0,.22),0 0 0 16px rgba(27,63,110,0);}
+    100%{box-shadow:0 2px 12px rgba(0,0,0,.22),0 0 0 0 rgba(27,63,110,0);}
+  }
+  .panel-pulse-ring{animation:panelPulseRing 1.5s ease-out infinite;}
 }
 /* Hint "(MAX 3)" accanto al titolo "Seleziona regione" — solo desktop (in
    multiregione). Nascosta su mobile insieme ai checkbox (vedi media query). */
@@ -398,7 +411,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   /* Tablet layout */
 
   /* 1. Select regione: attaccata alla barra blu, tutta larghezza */
-  .region-btns-desktop,.region-max-hint,.map-hint-desktop,#btn-reset-regions{display:none !important;}
+  .region-btns-desktop,.region-max-hint,.map-hint-desktop,#btn-reset-regions,#map-hint-panel{display:none !important;}
   .region-select-mobile{
     display:block !important;
     width:100% !important;
@@ -529,7 +542,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     padding-top:4px !important;
     padding-bottom:4px !important;
   }
-  .region-btns-desktop,.region-max-hint,.map-hint-desktop,#btn-reset-regions{display:none !important;}
+  .region-btns-desktop,.region-max-hint,.map-hint-desktop,#btn-reset-regions,#map-hint-panel{display:none !important;}
   #rp-handle{display:none !important;}
   #region-panel{
     padding:6px 6px !important;
@@ -816,8 +829,9 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       </div>
     </div>
 
-    <!-- "← Indietro" flottante: appare accanto al pannello regioni solo
-         quando c'è almeno una regione selezionata (gestito da updateGuidePulse) -->
+    <!-- Coppia di pannelli blu (solo desktop, si alternano via updateGuidePulse):
+         l'hint invita a cliccare la mappa; dopo il click della data diventa "Indietro" -->
+    <div id="map-hint-panel">🖱 Clicca sulla mappa e seleziona le regioni (max 3)</div>
     <button id="btn-reset-regions" type="button">↩ Indietro</button>
 
     <div id="time-panel">
@@ -2186,16 +2200,16 @@ function positionPanels(){
   var tp=document.getElementById('time-panel');
   var leg=document.getElementById('legend-panel');
 
-  // region-panel fisso a top:100px — leggo il suo offsetTop + offsetHeight.
-  // Se è nascosto (scambiato col pannello "← Indietro"), il riferimento è
-  // quel pannello, che occupa la stessa posizione.
+  // Riferimento in alto: il pannello visibile tra region-panel (mobile/tablet),
+  // hint blu "Clicca sulla mappa…" e "↩ Indietro" (occupano la stessa posizione).
+  function _vis(el){ return el && el.offsetParent!==null; }
+  var hintP=document.getElementById('map-hint-panel');
+  var backP=document.getElementById('btn-reset-regions');
   var rpBottom;
-  if(rp.offsetParent!==null){
-    rpBottom = rp.offsetTop + rp.offsetHeight;
-  } else {
-    var backP=document.getElementById('btn-reset-regions');
-    rpBottom = (backP && backP.offsetParent!==null) ? (backP.offsetTop + backP.offsetHeight) : rp.offsetTop;
-  }
+  if(_vis(rp))        rpBottom = rp.offsetTop + rp.offsetHeight;
+  else if(_vis(hintP)) rpBottom = hintP.offsetTop + hintP.offsetHeight;
+  else if(_vis(backP)) rpBottom = backP.offsetTop + backP.offsetHeight;
+  else                 rpBottom = rp.offsetTop;
 
   // time-panel: GAP sotto region-panel
   tp.style.top=(rpBottom+GAP)+'px';
@@ -3953,18 +3967,29 @@ function refreshSelectorStyles(){
 function updateGuidePulse(){
   var rp=document.getElementById('region-panel'), tp=document.getElementById('time-panel');
   var back=document.getElementById('btn-reset-regions');
+  var hint=document.getElementById('map-hint-panel');
   if(!rp||!tp) return;
-  if(window.innerWidth<=900){ rp.classList.remove('panel-pulse'); tp.classList.remove('panel-pulse'); rp.style.display=''; if(back) back.style.display='none'; return; }
+  if(window.innerWidth<=900){
+    rp.classList.remove('panel-pulse'); tp.classList.remove('panel-pulse');
+    rp.style.display='';
+    if(back) back.style.display='none';
+    if(hint){ hint.style.display='none'; hint.classList.remove('panel-pulse-ring'); }
+    return;
+  }
   var nSel=document.querySelectorAll('.rcheck-wrap input[type=checkbox]:checked').length;
   var hasPeriod=!!currentLabel;
-  rp.classList.toggle('panel-pulse', nSel===0);
-  tp.classList.toggle('panel-pulse', nSel>0 && !hasPeriod);
-  // SCAMBIO: il pannello regioni resta visibile per tutta la fase di scelta;
-  // sparisce (sostituito dal pannello "← Indietro") solo quando si clicca la
-  // data — cioè nel momento dello zoom. Deselezionando tutto si riscambiano.
+  // Su desktop il pannello bianco "Seleziona regione" non si mostra mai: al suo
+  // posto due pannelli blu che si alternano — l'HINT ("Clicca sulla mappa…")
+  // in fase di scelta, "↩ Indietro" dopo il click della data (= allo zoom).
   var showBack = nSel>0 && hasPeriod;
-  rp.style.display=showBack?'none':'';
+  rp.style.display='none';
+  rp.classList.remove('panel-pulse');
+  if(hint){
+    hint.style.display=showBack?'none':'block';
+    hint.classList.toggle('panel-pulse-ring', nSel===0); // pulsa finché non selezioni
+  }
   if(back) back.style.display=showBack?'block':'none';
+  tp.classList.toggle('panel-pulse', nSel>0 && !hasPeriod);
   if(typeof positionPanels==='function') positionPanels(); // il pannello periodo si riaggancia a quello visibile
 }
 function toggleRegionFromMap(rk){
@@ -4082,7 +4107,10 @@ var REGION_BOUNDS={
   sardegna:    [[38.97, 8.21],[41.22, 9.70]]
 };
 
-function fitMapToRegions(regionKeys){
+// factor opzionale (0..1): 1 = fit completo; 0.5 = a METÀ strada tra la vista
+// Italia iniziale e il fit — usato alla selezione della regione, così ci si
+// avvicina senza perdere di vista le altre regioni cliccabili.
+function fitMapToRegions(regionKeys,factor){
   if(!regionKeys||regionKeys.length===0) return;
   // Bbox unificata delle regioni attive (stesso codice per 1 o N regioni).
   var latMin=90,latMax=-90,lonMin=180,lonMax=-180,found=false;
@@ -4119,8 +4147,28 @@ function fitMapToRegions(regionKeys){
   var panelPx=isDesk?420:0;
   var _pp=L.point((panelPx/2)+30, 70);            // padding simmetrico che riserva il pannello
   var _z=map.getBoundsZoom(_lb,false,_pp);
-  var _cp=map.project(_lb.getCenter(),_z).subtract(L.point(panelPx/2,0)); // centro a ovest → contenuto a est
-  map.setView(map.unproject(_cp,_z), _z, {animate:true,duration:0.6});
+  // Spostamento a est del contenuto (per liberare i pannelli): sulle finestre
+  // STRETTE lo spostamento fisso di panelPx/2 spingeva la regione fuori dal
+  // bordo destro. Cap: mai oltre lo spazio che resta alla zoom scelta.
+  var _shift=panelPx/2;
+  if(isDesk){
+    var _nw=map.project(_lb.getNorthWest(),_z), _se=map.project(_lb.getSouthEast(),_z);
+    var _contentW=Math.abs(_se.x-_nw.x);
+    var _maxShift=Math.max(0,(map.getSize().x-_contentW)/2-10);
+    if(_shift>_maxShift) _shift=_maxShift;
+  }
+  var _cp=map.project(_lb.getCenter(),_z).subtract(L.point(_shift,0)); // centro a ovest → contenuto a est
+  var _target=map.unproject(_cp,_z);
+  var f=(typeof factor==='number')?factor:1;
+  if(f<1){
+    // Vista intermedia: interpolo centro e zoom tra la vista Italia iniziale e il fit.
+    var _lat=initCenter[0]+(_target.lat-initCenter[0])*f;
+    var _lng=initCenter[1]+(_target.lng-initCenter[1])*f;
+    var _zi=initZoom+(_z-initZoom)*f;
+    map.setView([_lat,_lng], _zi, {animate:true,duration:0.6});
+    return;
+  }
+  map.setView(_target, _z, {animate:true,duration:0.6});
 }
 
 // Adiacenze (confini) tra le regioni selezionabili. Servono a individuare la
@@ -4262,9 +4310,11 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
     hideLegendMobile();
     document.getElementById('badge').textContent='';
     var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
-    // NIENTE zoom in fase di selezione (27/7): la vista resta sull'Italia così
-    // si possono cliccare comodamente anche regioni lontane tra loro. Il fit
-    // scatta in loadData, cioè quando si clicca il periodo.
+    // Zoom in DUE TEMPI (27/7): alla selezione ci si avvicina a METÀ strada
+    // (factor 0.5 — le altre regioni restano cliccabili), il fit completo
+    // scatta in loadData al click del periodo. Con un'analisi già visibile
+    // niente mezzo zoom: ci pensa il reload automatico col fit pieno.
+    if(window.innerWidth>900 && !(currentPast&&currentNow)) fitMapToRegions(regions,0.5);
     regions.forEach(function(r){
       setRegionBorder(r,function(){ addDefaultMarkersForRegion(r); });
     });
