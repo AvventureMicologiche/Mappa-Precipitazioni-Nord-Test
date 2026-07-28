@@ -15,6 +15,7 @@ on:
     # piena in 1-2 giorni). Più run nell'arco della giornata: il merge accumula
     # progressivamente le stazioni man mano che l'archivio si popola.
     - cron: '35 3 * * *'
+    - cron: '30 5 * * *'
     - cron: '35 6 * * *'
     - cron: '35 9 * * *'
     - cron: '35 12 * * *'
