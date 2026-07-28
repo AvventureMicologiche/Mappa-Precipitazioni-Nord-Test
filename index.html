@@ -3989,7 +3989,7 @@ function updateGuidePulse(){
   rp.classList.remove('panel-pulse');
   if(hint){
     hint.style.display=showBack?'none':'block';
-    hint.classList.toggle('panel-pulse-ring', nSel===0); // pulsa finché non selezioni
+    hint.classList.remove('panel-pulse-ring'); // pulsazione disattivata (28/7): il pannello resta fisso
   }
   if(back) back.style.display=showBack?'block':'none';
   tp.classList.toggle('panel-pulse', nSel>0 && !hasPeriod);
