@@ -339,6 +339,16 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   transition:background .2s, box-shadow .2s;
 }
 #channel-logo:hover{background:#fff;box-shadow:0 4px 18px rgba(0,0,0,.20);}
+/* Archie festeggia al passaggio del mouse: "tada" una tantum, niente loop */
+@keyframes archieTada{
+  0%{transform:scale(1);}
+  10%,20%{transform:scale(.92) rotate(-4deg);}
+  30%,50%,70%{transform:scale(1.1) rotate(4deg);}
+  40%,60%{transform:scale(1.1) rotate(-4deg);}
+  80%{transform:scale(1) rotate(0);}
+  100%{transform:scale(1);}
+}
+#channel-logo:hover .ch-ava{animation:archieTada .85s ease;}
 #channel-logo .ch-ava{
   width:80px;height:80px;border-radius:50%;flex:none;
   border:2px solid #1b3f6e;object-fit:cover;background:#f3efe6;
