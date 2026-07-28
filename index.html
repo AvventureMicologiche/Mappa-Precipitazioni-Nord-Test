@@ -328,7 +328,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    Filigrana sullo SFONDO, non sull'intero elemento: la mappa si intravede
    ma Archie e il pulsante restano pieni. Col mouse sopra diventa opaco. */
 #channel-logo{
-  position:absolute;top:12px;right:14px;z-index:1000;
+  position:absolute;top:100px;right:14px;z-index:1000;
   display:flex;align-items:center;gap:14px;
   width:328px;padding:14px 17px;
   background:rgba(255,255,255,.65);
@@ -686,7 +686,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <span style="font-size:18px">🌧</span>
     <div>
       <h1>Mappa Pluviometrica Italia <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v5.0)</span></h1>
-      <div class="hdr-sub" id="datehdr">Seleziona il periodo</div>
+      <div class="hdr-sub" id="datehdr"></div>
     </div>
   </div>
   <div id="badge"></div>
@@ -4048,7 +4048,7 @@ function resetToStart(){
   document.getElementById('legend-panel').style.display='none';
   hideLegendMobile();
   document.getElementById('badge').textContent='';
-  document.getElementById('datehdr').textContent='Seleziona il periodo';
+  document.getElementById('datehdr').textContent='';
   var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
   document.querySelectorAll('.tp-btn,.tp-custom-btn').forEach(function(b){b.classList.remove('active');});
   document.getElementById('custom-box').style.display='none';
@@ -4259,7 +4259,7 @@ document.getElementById('region-select').addEventListener('change', function(){
   document.getElementById('legend-panel').style.display='none';
   hideLegendMobile();
   document.getElementById('badge').textContent='';
-  document.getElementById('datehdr').textContent='Seleziona il periodo';
+  document.getElementById('datehdr').textContent='';
   var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
   // Centra mappa
   if(rk==='lombardia') map.setView([45.3, 9.85], 7.5);
