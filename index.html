@@ -2475,8 +2475,8 @@ function osmerInlineDesktop(){
   if(show && ts){
     var s=document.createElement('span');
     s.id='osmer-notice-inline';
-    s.style.cssText='margin-left:8px;font-size:11px;font-weight:400;color:#1b3f6e;';
-    s.innerHTML='· ℹ️ <b>Friuli</b>: alcune stazioni possono avere ritardi fino a 48h';
+    s.style.cssText='margin-left:8px;font-size:11px;font-weight:400;color:#1b3f6e;white-space:nowrap;';
+    s.innerHTML='· ℹ️ <b>Friuli</b>: possibili ritardi fino a 48h';
     ts.appendChild(s);
   }
 }
@@ -2684,6 +2684,9 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
   addMarkers(dati,sorted);
   var hasRain=dati.some(function(s){return s.mm>0;});
   document.getElementById('tp-status').textContent=hasRain?'⏳ Calcolo mappa…':'✅ Nessuna pioggia';
+  // Avviso Friuli anche nel ramo "Nessuna pioggia": è proprio il caso del
+  // ritardo OSMER (giorno appena chiuso non ancora pubblicato) in cui serve.
+  if(typeof osmerInlineDesktop==='function') osmerInlineDesktop();
   setTimeout(function(){
     initCanvas();
     clearHeatmap();
