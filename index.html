@@ -2672,8 +2672,21 @@ function loadData(pastDate,nowDate,labelPeriodo){
 // ═══════════════════════════════════════════════════════════════
 // RENDER MULTI-REGIONE
 // ═══════════════════════════════════════════════════════════════
-function renderMulti(allData, labelPeriodo, fontiArr){
+function renderMulti(allData, labelPeriodo, fontiArr, _retry){
   var regions=getActiveRegions();
+  // Barriera confini: se il GeoJSON di una regione attiva non è ancora arrivato
+  // (click sul periodo troppo rapido dopo la selezione), il ritaglio della
+  // griglia la ESCLUDEREBBE dalla heatmap pur mostrando marker e statistiche
+  // giuste (successo il 29/7: Emilia+Toscana+Umbria con la Toscana scomparsa).
+  // Si aspettano i confini mancanti e si ridisegna; un solo retry per non
+  // bloccarsi se un GeoJSON fosse irrecuperabile.
+  if(!_retry){
+    var mancanti=regions.filter(function(rk){return !(regionRings[rk]&&regionRings[rk].length);});
+    if(mancanti.length){
+      loadAllBorders(mancanti,function(){ renderMulti(allData,labelPeriodo,fontiArr,true); });
+      return;
+    }
+  }
   var allRings=[];
   regions.forEach(function(rk){
     var rings=regionRings[rk]||[];
@@ -2741,6 +2754,14 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
       var idwData=(nReg>1&&dati.length>320)?selectUniform(dati,320):dati;
       gridPoints=buildGrid(idwData,rings,idwR,activeGridRes);
       drawGrid();
+      // Ridisegni di sicurezza: se il primo draw avviene con la mappa ancora
+      // in animazione (fit del periodo appena partito), celle e canvas restano
+      // sfalsati rispetto ai tile finché un moveend non corregge — e in alcuni
+      // casi l'evento non arriva (successo il 29/7: heatmap spostata a est di
+      // ~mezzo grado dopo Indietro + nuova analisi). A mappa ferma il redraw
+      // è idempotente e costa pochi ms.
+      setTimeout(drawGrid,700);
+      setTimeout(drawGrid,1600);
       var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='✅ '+labelPeriodo;
       osmerInlineDesktop(); // avviso Friuli inline accanto a "✅ Ieri" (solo desktop + Ieri)
       if(typeof refreshSelectorStyles==='function') refreshSelectorStyles(); // via il riempimento: non deve coprire la heatmap
