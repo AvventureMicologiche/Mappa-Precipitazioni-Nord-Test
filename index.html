@@ -261,11 +261,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
 .leg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;gap:8px;}
 .leg-header .leg-title{margin-bottom:0;}
-#btn-share{margin-left:auto;background:#f0f4fb;border:1px solid #d0d8e8;border-radius:6px;
+#btn-share,#btn-shot{background:#f0f4fb;border:1px solid #d0d8e8;border-radius:6px;
   color:#1b3f6e;font-size:12px;font-weight:700;padding:4px 9px;cursor:pointer;
   font-family:inherit;white-space:nowrap;transition:background .12s;}
-#btn-share:hover{background:#dde8ff;}
-#btn-share.ok{background:#1b6e3f;border-color:#1b6e3f;color:#fff;}
+#btn-shot{margin-left:auto;padding:4px 7px;}
+#btn-share:hover,#btn-shot:hover{background:#dde8ff;}
+#btn-share.ok,#btn-shot.ok{background:#1b6e3f;border-color:#1b6e3f;color:#fff;}
 #leg-back-btn{display:none;}
 .grad{height:13px;border-radius:4px;margin-bottom:4px;
   background:-webkit-linear-gradient(left,
@@ -903,7 +904,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <div id="legend-panel">
       <div class="leg-header">
         <div class="leg-title" id="leg-title">mm cumulati</div>
-        <button id="btn-share" type="button" title="Condividi il link di questa mappa (regioni, date e zoom inclusi)">🔗 Condividi</button>
+        <button id="btn-shot" type="button" title="Scarica l'immagine di questa mappa">📷</button>
+        <button id="btn-share" type="button" title="Condividi questa mappa (da telefono: immagine + link)">🔗 Condividi</button>
         <button id="leg-back-btn" onclick="hideLegendMobile()">← Indietro</button>
       </div>
       <div class="grad"></div>
@@ -1675,6 +1677,7 @@ var initCenter=(screenW<=900)?[42.0,12.6]:[42.0,12.9];
 var map=L.map('map',{zoomSnap:0.25,zoomDelta:0.5}).setView(initCenter, initZoom);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
   maxZoom:19,subdomains:'abc',
+  crossOrigin:true, // necessario per esportare la mappa su canvas (immagine di condivisione)
   attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
@@ -4540,21 +4543,90 @@ function buildShareUrl(){
   return location.origin+location.pathname+'?'+p.toString();
 }
 window.buildShareUrl=buildShareUrl;
-var _btnShare=document.getElementById('btn-share');
-if(_btnShare) _btnShare.addEventListener('click',function(){
-  var url=buildShareUrl();
-  if(!url) return;
-  try{gtag('event','share_map',{regioni:getActiveRegions().join(',')})}catch(e){}
-  if(navigator.share){
-    // Telefoni/tablet: menu di condivisione nativo (WhatsApp, Telegram, ...)
-    navigator.share({title:'Mappa Pluviometrica',text:'Guarda le precipitazioni in questa zona 🍄',url:url}).catch(function(){});
-  } else if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(url).then(function(){
-      _btnShare.classList.add('ok');_btnShare.textContent='✓ Link copiato';
-      setTimeout(function(){_btnShare.classList.remove('ok');_btnShare.textContent='🔗 Condividi';},2200);
+// ── Immagine della mappa (canvas) per condivisione/download ────────────────
+// html2canvas si carica solo alla prima richiesta (pre-riscaldato all'hover/
+// touch dei bottoni, così il click resta dentro la finestra del gesto utente).
+var _h2cLoading=null;
+function ensureHtml2Canvas(){
+  if(window.html2canvas) return Promise.resolve();
+  if(_h2cLoading) return _h2cLoading;
+  _h2cLoading=new Promise(function(res,rej){
+    var s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+    s.onload=res; s.onerror=function(){_h2cLoading=null;rej(new Error('html2canvas non disponibile'));};
+    document.head.appendChild(s);
+  });
+  return _h2cLoading;
+}
+function captureMapBlob(){
+  // Ferma eventuali animazioni in corso e riassesta i pane: html2canvas legge
+  // i transform "a metà volo" e sfasa heatmap/marker rispetto ai tile.
+  try{ map.stop(); map.panBy([0,0],{animate:false}); }catch(e){}
+  return ensureHtml2Canvas().then(function(){
+    return new Promise(function(res){ setTimeout(res,150); }); // un frame per assestare
+  }).then(function(){
+    return window.html2canvas(document.getElementById('map'),{useCORS:true,backgroundColor:'#ffffff',logging:false,scale:1});
+  }).then(function(canvas){
+    return new Promise(function(res,rej){
+      canvas.toBlob(function(b){ if(b) res(b); else rej(new Error('canvas vuoto')); },'image/jpeg',0.85);
     });
-  } else { prompt('Copia il link:',url); }
-});
+  });
+}
+window.captureMapBlob=captureMapBlob;
+function _prewarmH2C(){ ensureHtml2Canvas().catch(function(){}); }
+
+var _btnShare=document.getElementById('btn-share');
+if(_btnShare){
+  _btnShare.addEventListener('mouseenter',_prewarmH2C);
+  _btnShare.addEventListener('touchstart',_prewarmH2C,{passive:true});
+  _btnShare.addEventListener('click',function(){
+    var url=buildShareUrl();
+    if(!url) return;
+    try{gtag('event','share_map',{regioni:getActiveRegions().join(',')})}catch(e){}
+    var testo='Guarda le precipitazioni in questa zona 🍄 '+url;
+    if(navigator.share){
+      // Telefoni/tablet: menu nativo con FOTO della heatmap + link. Il link
+      // sta anche nel testo (didascalia): alcune app scartano il campo url
+      // quando c'è un file allegato. Se la cattura fallisce → solo link.
+      captureMapBlob().then(function(blob){
+        var file=new File([blob],'mappa-pluviometrica.jpg',{type:'image/jpeg'});
+        if(navigator.canShare&&navigator.canShare({files:[file]})){
+          return navigator.share({files:[file],title:'Mappa Pluviometrica',text:testo,url:url});
+        }
+        return navigator.share({title:'Mappa Pluviometrica',text:testo,url:url});
+      }).catch(function(){
+        navigator.share({title:'Mappa Pluviometrica',text:testo,url:url}).catch(function(){});
+      });
+    } else if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(function(){
+        _btnShare.classList.add('ok');_btnShare.textContent='✓ Link copiato';
+        setTimeout(function(){_btnShare.classList.remove('ok');_btnShare.textContent='🔗 Condividi';},2200);
+      });
+    } else { prompt('Copia il link:',url); }
+  });
+}
+var _btnShot=document.getElementById('btn-shot');
+if(_btnShot){
+  _btnShot.addEventListener('mouseenter',_prewarmH2C);
+  _btnShot.addEventListener('touchstart',_prewarmH2C,{passive:true});
+  _btnShot.addEventListener('click',function(){
+    if(getActiveRegions().length===0||!currentPast) return;
+    var old=_btnShot.textContent;
+    _btnShot.disabled=true;_btnShot.textContent='⏳';
+    captureMapBlob().then(function(blob){
+      var a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download='mappa-pluviometrica.jpg';
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(function(){URL.revokeObjectURL(a.href);},5000);
+      _btnShot.classList.add('ok');_btnShot.textContent='✓';
+      setTimeout(function(){_btnShot.classList.remove('ok');_btnShot.textContent=old;_btnShot.disabled=false;},1800);
+    }).catch(function(){
+      _btnShot.textContent='✗';
+      setTimeout(function(){_btnShot.textContent=old;_btnShot.disabled=false;},1800);
+    });
+  });
+}
 
 // ── Apertura da link condiviso ──────────────────────────────────────────────
 // Ricostruisce lo stato e lancia l'analisi. La vista (z/c) del mittente è
