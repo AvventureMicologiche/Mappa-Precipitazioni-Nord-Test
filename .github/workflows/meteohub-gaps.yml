@@ -1,0 +1,39 @@
+name: MeteoHub gap check (pilota)
+on:
+  workflow_dispatch:
+  schedule:
+    # 1 run/giorno dopo i run di raccolta del mattino (02:20/04:20/07:20 UTC
+    # + slittamenti 40-70 min). Rileva i buchi di ingestione, aggiorna il
+    # registro data/meteohub-gaps.json e copre con Open-Meteo i buchi piu'
+    # vecchi di GRACE_DAYS (vedi check-meteohub-gaps.js).
+    - cron: '40 8 * * *'
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check buchi MeteoHub
+        id: check
+        run: node .github/scripts/check-meteohub-gaps.js
+        continue-on-error: true
+      - name: Retry 1
+        if: steps.check.outcome == 'failure'
+        run: sleep 30 && node .github/scripts/check-meteohub-gaps.js
+      - name: Commit e push
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@bot.com"
+          git add data/meteohub-*
+          git diff --staged --quiet || git commit -m "meteohub-gaps $(date -u +%Y-%m-%d)"
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push; then ok=1; break; fi
+            echo "Push fallito (tentativo $i/5), retry tra 10s..."
+            sleep 10
+          done
+          [ "$ok" = "1" ] || { echo "Push fallito dopo 5 tentativi"; exit 1; }
