@@ -4575,28 +4575,28 @@ function captureMapBlob(){
 window.captureMapBlob=captureMapBlob;
 function _prewarmH2C(){ ensureHtml2Canvas().catch(function(){}); }
 
+// Descrizione condivisibile: regioni + date ("Pioggia Piemonte · 22 lug – 28 lug 2026")
+function shareDescr(){
+  var nomi=getActiveRegions().map(function(k){return (REGIONS[k]&&REGIONS[k].name)||k;}).join(' + ');
+  var dr=document.getElementById('datehdr').textContent;
+  return 'Pioggia '+nomi+' · '+dr;
+}
+// Il menu di condivisione nativo va usato solo sui dispositivi touch: anche
+// Chrome su Windows ha navigator.share, ma la tendina di sistema scarta il
+// link quando c'è un file — su PC meglio copia negli appunti + download.
+function isTouchShare(){ return !!navigator.share && matchMedia('(pointer:coarse)').matches; }
+
 var _btnShare=document.getElementById('btn-share');
 if(_btnShare){
-  _btnShare.addEventListener('mouseenter',_prewarmH2C);
-  _btnShare.addEventListener('touchstart',_prewarmH2C,{passive:true});
   _btnShare.addEventListener('click',function(){
     var url=buildShareUrl();
     if(!url) return;
     try{gtag('event','share_map',{regioni:getActiveRegions().join(',')})}catch(e){}
-    var testo='Guarda le precipitazioni in questa zona 🍄 '+url;
-    if(navigator.share){
-      // Telefoni/tablet: menu nativo con FOTO della heatmap + link. Il link
-      // sta anche nel testo (didascalia): alcune app scartano il campo url
-      // quando c'è un file allegato. Se la cattura fallisce → solo link.
-      captureMapBlob().then(function(blob){
-        var file=new File([blob],'mappa-pluviometrica.jpg',{type:'image/jpeg'});
-        if(navigator.canShare&&navigator.canShare({files:[file]})){
-          return navigator.share({files:[file],title:'Mappa Pluviometrica',text:testo,url:url});
-        }
-        return navigator.share({title:'Mappa Pluviometrica',text:testo,url:url});
-      }).catch(function(){
-        navigator.share({title:'Mappa Pluviometrica',text:testo,url:url}).catch(function(){});
-      });
+    var descr=shareDescr();
+    if(isTouchShare()){
+      // Telefono: SOLO link (+testo con regioni e date) — arriva sempre,
+      // e il sito mostra comunque l'anteprima og. La foto sta sul 📷.
+      navigator.share({title:descr,text:descr+' 🍄',url:url}).catch(function(){});
     } else if(navigator.clipboard&&navigator.clipboard.writeText){
       navigator.clipboard.writeText(url).then(function(){
         _btnShare.classList.add('ok');_btnShare.textContent='✓ Link copiato';
@@ -4611,20 +4611,29 @@ if(_btnShot){
   _btnShot.addEventListener('touchstart',_prewarmH2C,{passive:true});
   _btnShot.addEventListener('click',function(){
     if(getActiveRegions().length===0||!currentPast) return;
-    var old=_btnShot.textContent;
+    var old='📷';
     _btnShot.disabled=true;_btnShot.textContent='⏳';
-    captureMapBlob().then(function(blob){
-      var a=document.createElement('a');
-      a.href=URL.createObjectURL(blob);
-      a.download='mappa-pluviometrica.jpg';
-      document.body.appendChild(a);a.click();a.remove();
-      setTimeout(function(){URL.revokeObjectURL(a.href);},5000);
-      _btnShot.classList.add('ok');_btnShot.textContent='✓';
+    var fine=function(esito){
+      _btnShot.textContent=esito;
+      if(esito==='✓') _btnShot.classList.add('ok');
       setTimeout(function(){_btnShot.classList.remove('ok');_btnShot.textContent=old;_btnShot.disabled=false;},1800);
-    }).catch(function(){
-      _btnShot.textContent='✗';
-      setTimeout(function(){_btnShot.textContent=old;_btnShot.disabled=false;},1800);
-    });
+    };
+    captureMapBlob().then(function(blob){
+      var descr=shareDescr(), url=buildShareUrl();
+      var file=new File([blob],'mappa-pluviometrica.jpg',{type:'image/jpeg'});
+      if(isTouchShare()&&navigator.canShare&&navigator.canShare({files:[file]})){
+        // Telefono: foto nel menu nativo, con regioni+date+link in didascalia
+        navigator.share({files:[file],title:descr,text:descr+' 🍄 '+url})
+          .then(function(){fine('✓');},function(){fine(old);});
+      } else {
+        var a=document.createElement('a');
+        a.href=URL.createObjectURL(blob);
+        a.download='mappa-pluviometrica.jpg';
+        document.body.appendChild(a);a.click();a.remove();
+        setTimeout(function(){URL.revokeObjectURL(a.href);},5000);
+        fine('✓');
+      }
+    }).catch(function(){ fine('✗'); });
   });
 }
 
