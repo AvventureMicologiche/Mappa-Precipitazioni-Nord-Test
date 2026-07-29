@@ -4585,13 +4585,33 @@ if(_btnShare) _btnShare.addEventListener('click',function(){
   var pastDate=new Date(da+'T00:00:00');
   var nowDate=new Date(a+'T23:59:59');
   var dfmt=function(dd){return dd.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});};
-  loadData(pastDate,nowDate,dfmt(pastDate)+' → '+dfmt(nowDate));
-  var z=parseFloat(q.get('z')),c=(q.get('c')||'').split(',').map(Number);
-  if(window.innerWidth>900 && isFinite(z) && c.length===2 && isFinite(c[0]) && isFinite(c[1])){
-    setTimeout(function(){ map.setView([c[0],c[1]],z,{animate:false}); },0);
-  } else if(window.innerWidth<=900){
-    try{ fitMapToRegions(keys); }catch(e){}
+  // Se il range del link coincide ancora con un preset del ricevente (aperto
+  // lo stesso giorno: "30 giorni", "Ieri", ...) si accendono bottone ed
+  // etichetta come nel flusso normale; altrimenti si mostrano le date
+  // esplicite (il link congela le date assolute di proposito).
+  var label=dfmt(pastDate)+' → '+dfmt(nowDate), btnMatch=null;
+  if(a===ieriStr){
+    if(da===a){ label='Ieri'; btnMatch=document.querySelector('.tp-btn[data-type="ieri"]'); }
+    else{
+      var nGiorni=Math.round((new Date(a+'T12:00:00')-new Date(da+'T12:00:00'))/86400000)+1;
+      var bMatch=document.querySelector('.tp-btn[data-type="d"][data-val="'+nGiorni+'"]');
+      if(bMatch){ label=nGiorni+' giorni'; btnMatch=bMatch; }
+    }
   }
+  if(btnMatch&&typeof setActiveBtn==='function') setActiveBtn(btnMatch);
+  // I confini GeoJSON DEVONO esserci prima dell'analisi: loadData li richiede
+  // senza aspettarli (nel flusso normale sono già caricati dalla selezione) e
+  // se i dati vincono la corsa la griglia viene ritagliata su un confine
+  // assente → heatmap invisibile (successo al primo test reale del 29/7).
+  loadAllBorders(keys,function(){
+    loadData(pastDate,nowDate,label);
+    var z=parseFloat(q.get('z')),c=(q.get('c')||'').split(',').map(Number);
+    if(window.innerWidth>900 && isFinite(z) && c.length===2 && isFinite(c[0]) && isFinite(c[1])){
+      setTimeout(function(){ map.setView([c[0],c[1]],z,{animate:false}); },0);
+    } else if(window.innerWidth<=900){
+      try{ fitMapToRegions(keys); }catch(e){}
+    }
+  });
 })();
 
 // ── Toggle pannello mobile ───────────────────────────────────────────────
