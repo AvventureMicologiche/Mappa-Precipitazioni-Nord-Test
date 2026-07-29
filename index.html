@@ -4581,6 +4581,10 @@ function shareDescr(){
   var dr=document.getElementById('datehdr').textContent;
   return 'Pioggia '+nomi+' · '+dr;
 }
+// Nome file immagine: regioni + date (es. pioggia_lombardia-piemonte_2026-07-09_2026-07-28.jpg)
+function shareFileName(){
+  return 'pioggia_'+getActiveRegions().join('-')+'_'+fmtISOLocal(new Date(currentPast))+'_'+fmtISOLocal(new Date(currentNow))+'.jpg';
+}
 // Il menu di condivisione nativo va usato solo sui dispositivi touch: anche
 // Chrome su Windows ha navigator.share, ma la tendina di sistema scarta il
 // link quando c'è un file — su PC meglio copia negli appunti + download.
@@ -4598,11 +4602,13 @@ if(_btnShare){
       // e il sito mostra comunque l'anteprima og. La foto sta sul 📷.
       navigator.share({title:descr,text:descr+' 🍄',url:url}).catch(function(){});
     } else if(navigator.clipboard&&navigator.clipboard.writeText){
-      navigator.clipboard.writeText(url).then(function(){
-        _btnShare.classList.add('ok');_btnShare.textContent='✓ Link copiato';
+      // PC: copia testo descrittivo + link, così incollando in chat arrivano
+      // anche regioni e date, non il solo URL.
+      navigator.clipboard.writeText(descr+' 🍄 '+url).then(function(){
+        _btnShare.classList.add('ok');_btnShare.textContent='✓ Copiato';
         setTimeout(function(){_btnShare.classList.remove('ok');_btnShare.textContent='🔗 Condividi';},2200);
       });
-    } else { prompt('Copia il link:',url); }
+    } else { prompt('Copia il link:',descr+' 🍄 '+url); }
   });
 }
 var _btnShot=document.getElementById('btn-shot');
@@ -4620,7 +4626,7 @@ if(_btnShot){
     };
     captureMapBlob().then(function(blob){
       var descr=shareDescr(), url=buildShareUrl();
-      var file=new File([blob],'mappa-pluviometrica.jpg',{type:'image/jpeg'});
+      var file=new File([blob],shareFileName(),{type:'image/jpeg'});
       if(isTouchShare()&&navigator.canShare&&navigator.canShare({files:[file]})){
         // Telefono: foto nel menu nativo, con regioni+date+link in didascalia
         navigator.share({files:[file],title:descr,text:descr+' 🍄 '+url})
@@ -4628,7 +4634,7 @@ if(_btnShot){
       } else {
         var a=document.createElement('a');
         a.href=URL.createObjectURL(blob);
-        a.download='mappa-pluviometrica.jpg';
+        a.download=shareFileName();
         document.body.appendChild(a);a.click();a.remove();
         setTimeout(function(){URL.revokeObjectURL(a.href);},5000);
         fine('✓');
