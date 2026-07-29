@@ -259,8 +259,13 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 /* Legenda */
 .leg-title{font-size:10px;font-weight:700;color:#777;
   text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
-.leg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.leg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;gap:8px;}
 .leg-header .leg-title{margin-bottom:0;}
+#btn-share{margin-left:auto;background:#f0f4fb;border:1px solid #d0d8e8;border-radius:6px;
+  color:#1b3f6e;font-size:12px;font-weight:700;padding:4px 9px;cursor:pointer;
+  font-family:inherit;white-space:nowrap;transition:background .12s;}
+#btn-share:hover{background:#dde8ff;}
+#btn-share.ok{background:#1b6e3f;border-color:#1b6e3f;color:#fff;}
 #leg-back-btn{display:none;}
 .grad{height:13px;border-radius:4px;margin-bottom:4px;
   background:-webkit-linear-gradient(left,
@@ -898,6 +903,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <div id="legend-panel">
       <div class="leg-header">
         <div class="leg-title" id="leg-title">mm cumulati</div>
+        <button id="btn-share" type="button" title="Condividi il link di questa mappa (regioni, date e zoom inclusi)">🔗 Condividi</button>
         <button id="leg-back-btn" onclick="hideLegendMobile()">← Indietro</button>
       </div>
       <div class="grad"></div>
@@ -4518,6 +4524,75 @@ window.addEventListener('resize', function(){
 
 // Posiziona pannelli subito all'avvio
 setTimeout(positionPanels, 100);
+
+// ── Condivisione: link con lo stato corrente (regioni, date, vista) ─────────
+// ?r=reg1,reg2&da=YYYY-MM-DD&a=YYYY-MM-DD&z=8.25&c=45.62,9.81
+function buildShareUrl(){
+  var regions=getActiveRegions();
+  if(regions.length===0||!currentPast||!currentNow) return null;
+  var p=new URLSearchParams();
+  p.set('r',regions.join(','));
+  p.set('da',fmtISOLocal(new Date(currentPast)));
+  p.set('a',fmtISOLocal(new Date(currentNow)));
+  p.set('z',String(Math.round(map.getZoom()*100)/100));
+  var c=map.getCenter();
+  p.set('c',c.lat.toFixed(4)+','+c.lng.toFixed(4));
+  return location.origin+location.pathname+'?'+p.toString();
+}
+window.buildShareUrl=buildShareUrl;
+var _btnShare=document.getElementById('btn-share');
+if(_btnShare) _btnShare.addEventListener('click',function(){
+  var url=buildShareUrl();
+  if(!url) return;
+  try{gtag('event','share_map',{regioni:getActiveRegions().join(',')})}catch(e){}
+  if(navigator.share){
+    // Telefoni/tablet: menu di condivisione nativo (WhatsApp, Telegram, ...)
+    navigator.share({title:'Mappa Pluviometrica',text:'Guarda le precipitazioni in questa zona 🍄',url:url}).catch(function(){});
+  } else if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(function(){
+      _btnShare.classList.add('ok');_btnShare.textContent='✓ Link copiato';
+      setTimeout(function(){_btnShare.classList.remove('ok');_btnShare.textContent='🔗 Condividi';},2200);
+    });
+  } else { prompt('Copia il link:',url); }
+});
+
+// ── Apertura da link condiviso ──────────────────────────────────────────────
+// Ricostruisce lo stato e lancia l'analisi. La vista (z/c) del mittente è
+// rispettata su desktop; su schermi stretti si ricalcola il fit per lo schermo
+// del ricevente (la vista di un monitor largo taglierebbe i lati). Il motore
+// multiregione gira anche su mobile: un link a 3 regioni si VEDE anche lì
+// ("render di cortesia"); cambiando regione dalla tendina si torna al normale
+// flusso mono-regione.
+(function(){
+  var q=new URLSearchParams(location.search);
+  var r=q.get('r'),da=q.get('da'),a=q.get('a');
+  if(!r||!da||!a) return;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(da)||!/^\d{4}-\d{2}-\d{2}$/.test(a)||da>a) return;
+  var keys=r.split(',').filter(function(k){return document.getElementById('chk-'+k);}).slice(0,3);
+  if(keys.length===0) return;
+  var ieriStr=fmtISOLocal(new Date(new Date().setDate(new Date().getDate()-1)));
+  if(a>ieriStr) a=ieriStr; // il link può essere di "ieri" aperto oggi: si accorcia
+  var lim=new Date(); lim.setDate(lim.getDate()-365);
+  if(a<fmtISOLocal(lim)){
+    var _ts0=document.getElementById('tp-status');
+    if(_ts0){_ts0.className='error';_ts0.textContent='⚠️ Il periodo di questo link non è più disponibile (lo storico copre 365 giorni).';}
+    return;
+  }
+  document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){cb.checked=false;});
+  keys.forEach(function(k){document.getElementById('chk-'+k).checked=true;});
+  if(typeof refreshSelectorStyles==='function') refreshSelectorStyles();
+  try{gtag('event','open_shared_map',{regioni:keys.join(',')})}catch(e){}
+  var pastDate=new Date(da+'T00:00:00');
+  var nowDate=new Date(a+'T23:59:59');
+  var dfmt=function(dd){return dd.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});};
+  loadData(pastDate,nowDate,dfmt(pastDate)+' → '+dfmt(nowDate));
+  var z=parseFloat(q.get('z')),c=(q.get('c')||'').split(',').map(Number);
+  if(window.innerWidth>900 && isFinite(z) && c.length===2 && isFinite(c[0]) && isFinite(c[1])){
+    setTimeout(function(){ map.setView([c[0],c[1]],z,{animate:false}); },0);
+  } else if(window.innerWidth<=900){
+    try{ fitMapToRegions(keys); }catch(e){}
+  }
+})();
 
 // ── Toggle pannello mobile ───────────────────────────────────────────────
 (function(){
