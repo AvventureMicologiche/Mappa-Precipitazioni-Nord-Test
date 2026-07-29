@@ -4599,18 +4599,31 @@ if(_btnShare) _btnShare.addEventListener('click',function(){
     }
   }
   if(btnMatch&&typeof setActiveBtn==='function') setActiveBtn(btnMatch);
-  // I confini GeoJSON DEVONO esserci prima dell'analisi: loadData li richiede
-  // senza aspettarli (nel flusso normale sono già caricati dalla selezione) e
-  // se i dati vincono la corsa la griglia viene ritagliata su un confine
-  // assente → heatmap invisibile (successo al primo test reale del 29/7).
-  loadAllBorders(keys,function(){
-    loadData(pastDate,nowDate,label);
-    var z=parseFloat(q.get('z')),c=(q.get('c')||'').split(',').map(Number);
-    if(window.innerWidth>900 && isFinite(z) && c.length===2 && isFinite(c[0]) && isFinite(c[1])){
-      setTimeout(function(){ map.setView([c[0],c[1]],z,{animate:false}); },0);
-    } else if(window.innerWidth<=900){
-      try{ fitMapToRegions(keys); }catch(e){}
-    }
+  // Prerequisiti async che nel flusso normale sono già pronti al click del
+  // periodo, ma che aprendo un link partono insieme all'analisi:
+  // 1) anagrafe ARPA Lombardia (Socrata via Netlify function) — senza,
+  //    loadARPALombardiaRegion ripiega sulla lista statica ridotta e la
+  //    Lombardia esce con ~100 stazioni in meno (successo al test del 29/7);
+  // 2) confini GeoJSON — senza, la griglia viene ritagliata su un confine
+  //    assente e la heatmap non compare.
+  function whenLombardiaReady(cb){
+    if(keys.indexOf('lombardia')<0){cb();return;}
+    var t0=Date.now();
+    (function poll(){
+      if((typeof ARPA_STATIONS!=='undefined'&&ARPA_STATIONS&&ARPA_STATIONS.length>10)||Date.now()-t0>8000){cb();return;}
+      setTimeout(poll,150);
+    })();
+  }
+  whenLombardiaReady(function(){
+    loadAllBorders(keys,function(){
+      loadData(pastDate,nowDate,label);
+      var z=parseFloat(q.get('z')),c=(q.get('c')||'').split(',').map(Number);
+      if(window.innerWidth>900 && isFinite(z) && c.length===2 && isFinite(c[0]) && isFinite(c[1])){
+        setTimeout(function(){ map.setView([c[0],c[1]],z,{animate:false}); },0);
+      } else if(window.innerWidth<=900){
+        try{ fitMapToRegions(keys); }catch(e){}
+      }
+    });
   });
 })();
 
