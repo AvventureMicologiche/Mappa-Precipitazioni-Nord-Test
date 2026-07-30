@@ -21,19 +21,20 @@
   <meta name="description" content="Mappa interattiva delle precipitazioni in Italia con dati da stazioni meteo reali. Pianifica le tue uscite funghi.">
   <meta property="og:title" content="Mappa Pluviometrica Italia | Avventure Micologiche">
   <meta property="og:description" content="Mappa interattiva con dati meteo reali per pianificare ogni uscita. Trova le zone dove ha piovuto di più.">
-  <!-- Anteprima rifatta il 30 luglio 2026 (pomeriggio): ITALIA INTERA a 30
-       giorni, tutte e 22 le regioni, 2606 stazioni — screenshot dell'utente a
-       1920x856, adattato in larghezza a 1200x630 con due fasce chiare sopra e
-       sotto (colore campionato dal mare) per il formato social 1.91:1.
-       Ottenuta alzando temporaneamente in locale il limite delle 3 regioni,
-       con pallini stazione ridotti e campionamento IDW disattivato (modifiche
-       solo locali, ripristinate subito dopo lo scatto).
+  <!-- Anteprima rifatta il 30 luglio 2026 (sera): ITALIA INTERA a 30 giorni,
+       tutte e 22 le regioni, 2606 stazioni, CON l'header del sito in cima —
+       scatto del tasto 📷 Screen dell'utente (1920x902, dopo il fix che
+       adatta la vista e include l'header), adattato in larghezza a 1200x630
+       con due fasce chiare sopra e sotto (colore campionato dal mare) per il
+       formato social 1.91:1. Ottenuta alzando temporaneamente in locale il
+       limite delle 3 regioni, con pallini stazione ridotti e campionamento
+       IDW disattivato (modifiche solo locali, ripristinate dopo lo scatto).
        Il ?v= serve a far riscaricare l'immagine ai social, che la tengono in
        cache per URL e altrimenti continuerebbero a mostrare la vecchia.
        NB: qui l'URL punta al dominio di TEST, così l'anteprima si può davvero
        provare. PROMUOVENDO IN PRODUZIONE va rimesso il dominio di prod, come
        per PILOT_DATA_BASE. -->
-  <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg?v=20260730b">
+  <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg?v=20260730c">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:type" content="image/jpeg">
@@ -41,7 +42,7 @@
   <meta property="og:url" content="https://precipitazioni.avventuremicologiche.it">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://avventurepluvio-test.netlify.app/preview.jpg?v=20260730b">
+  <meta name="twitter:image" content="https://avventurepluvio-test.netlify.app/preview.jpg?v=20260730c">
   <meta name="theme-color" content="#1b3f6e">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -4721,11 +4722,18 @@ function captureMapBlob(scala){
   var mapEl=document.getElementById('map');
   var mr=mapEl.getBoundingClientRect();
   var S=scala||window.devicePixelRatio||1;
+  // Anche l'HEADER fa parte dello scatto (30/7/2026): è il marchio del sito —
+  // titolo, versione e date del periodo — e chi scarica si aspetta l'intera
+  // finestra, non la sola mappa. Il canvas si allunga della sua altezza e ogni
+  // strato scende di conseguenza (l'offset sta dentro rel(): l'header, che a
+  // schermo è SOPRA la mappa, atterra così esattamente a y=0).
+  var hdrEl=document.querySelector('header');
+  var hdrH=hdrEl?Math.round(hdrEl.getBoundingClientRect().height):0;
   var out=document.createElement('canvas');
-  out.width=Math.round(mr.width*S); out.height=Math.round(mr.height*S);
+  out.width=Math.round(mr.width*S); out.height=Math.round((mr.height+hdrH)*S);
   var ctx=out.getContext('2d');
   ctx.scale(S,S);
-  var rel=function(el){ var r=el.getBoundingClientRect(); return {x:r.x-mr.x,y:r.y-mr.y,w:r.width,h:r.height}; };
+  var rel=function(el){ var r=el.getBoundingClientRect(); return {x:r.x-mr.x,y:r.y-mr.y+hdrH,w:r.width,h:r.height}; };
   var visibile=function(el){ var s=getComputedStyle(el); return s.display!=='none'&&s.visibility!=='hidden'&&parseFloat(s.opacity)>0.01; };
 
   return ensureHtml2Canvas().then(function(){
@@ -4747,7 +4755,7 @@ function captureMapBlob(scala){
   }).then(function(){
     // sfondo (il colore del contenitore mappa, visibile dove non c'è tile)
     ctx.fillStyle=getComputedStyle(mapEl).backgroundColor||'#e8ecf1';
-    ctx.fillRect(0,0,mr.width,mr.height);
+    ctx.fillRect(0,0,mr.width,mr.height+hdrH);
     // 1) tile della mappa base
     var tiles=mapEl.querySelectorAll('.leaflet-tile');
     for(var i=0;i<tiles.length;i++){
@@ -4782,7 +4790,9 @@ function captureMapBlob(scala){
     // questo passaggio zoom +/- e attribuzione sparivano dall'immagine.
     var pannelli=[].slice.call(mapEl.children).filter(function(el){
       return !el.classList.contains('leaflet-pane') && !el.classList.contains('leaflet-control-container') && visibile(el);
-    }).concat([].slice.call(mapEl.querySelectorAll('.leaflet-control-container .leaflet-control')).filter(visibile));
+    }).concat([].slice.call(mapEl.querySelectorAll('.leaflet-control-container .leaflet-control')).filter(visibile))
+      // L'header è fuori da #map ma va nello scatto: rel() lo porta a y=0
+      .concat(hdrEl&&visibile(hdrEl)?[hdrEl]:[]);
     return Promise.all(pannelli.map(function(el,idx){
       var r=rel(el);
       if(r.w<1||r.h<1) return Promise.resolve(null);
