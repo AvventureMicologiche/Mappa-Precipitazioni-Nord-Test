@@ -4792,50 +4792,69 @@ function captureMapBlob(scala){
     });
   }).then(function(dis){
     dis.forEach(function(d){ if(d.im){ try{ ctx.drawImage(d.im,d.r.x,d.r.y,d.r.w,d.r.h); }catch(e){} } });
-    // 4) pannelli HTML sovrapposti (periodo, legenda, box canale…) + i controlli
-    // Leaflet presi uno per uno: il loro contenitore ha dimensione zero e senza
-    // questo passaggio zoom +/- e attribuzione sparivano dall'immagine.
+    // 4) pannelli HTML sovrapposti (periodo, legenda, box canale…), controlli
+    // Leaflet e header in UNA SOLA passata di html2canvas sull'intero documento
+    // (refactor 30/7/2026): la versione precedente lo chiamava una volta PER
+    // PANNELLO (~10 chiamate) e ognuna ri-clona e ri-analizza l'intera pagina
+    // da capo — 8,2s dei 9,2s totali misurati col cronometro per fase. Nel
+    // clone si nascondono i livelli Leaflet (tile, heat, svg: sono già
+    // composti a mano qui sopra) e si rendono trasparenti gli sfondi di body,
+    // #map-wrap e #map, che altrimenti coprirebbero la mappa già disegnata.
+    // I controlli (zoom, attribuzione) nella passata intera si rendono da
+    // soli alle loro posizioni — il vecchio problema del contenitore a
+    // dimensione zero riguardava solo la cattura elemento-per-elemento.
     var pannelli=[].slice.call(mapEl.children).filter(function(el){
       return !el.classList.contains('leaflet-pane') && !el.classList.contains('leaflet-control-container') && visibile(el);
     }).concat([].slice.call(mapEl.querySelectorAll('.leaflet-control-container .leaflet-control')).filter(visibile))
       // L'header è fuori da #map ma va nello scatto: rel() lo porta a y=0
       .concat(hdrEl&&visibile(hdrEl)?[hdrEl]:[]);
-    return Promise.all(pannelli.map(function(el,idx){
+    // Vetro (backdrop-filter) e ombre (box-shadow) dei pannelli restano
+    // ricreati a mano nel passo successivo: qui si raccolgono i parametri e
+    // si marcano gli elementi, così nel clone gli si toglie la box-shadow
+    // (html2canvas la stende su TUTTO il pannello invece che dietro, e lo
+    // sfondo semi-trasparente usciva grigio invece che chiaro).
+    var effetti=[];
+    pannelli.forEach(function(el){
       var r=rel(el);
-      if(r.w<1||r.h<1) return Promise.resolve(null);
+      if(r.w<1||r.h<1) return;
       var cs=getComputedStyle(el);
       var bf=cs.backdropFilter||cs.webkitBackdropFilter||'none';
       var mb=/blur\(([\d.]+)px\)/.exec(bf);
-      // L'ombra (box-shadow) va tolta dalla copia: html2canvas la stende su
-      // TUTTO il pannello invece che dietro, e lo sfondo semi-trasparente usciva
-      // grigio invece che chiaro. La ridisegniamo noi col canvas.
       var ms=/(rgba?\([^)]+\))\s+(-?[\d.]+)px\s+(-?[\d.]+)px\s+([\d.]+)px/.exec(cs.boxShadow||'');
-      // Marcatore UNIVOCO: i pannelli si catturano in parallelo e con un
-      // attributo uguale per tutti ogni onclone finiva per togliere l'ombra
-      // sempre al primo elemento trovato.
-      var tag='cat'+idx;
-      el.setAttribute('data-cattura',tag);
-      return window.html2canvas(el,{useCORS:true,backgroundColor:null,logging:false,scale:S,
-          onclone:function(doc){
-            var q=doc.querySelector('[data-cattura="'+tag+'"]');
-            if(!q) return;
-            q.style.boxShadow='none';
-            // I due tasti vanno ritratti a riposo: durante la cattura mostrano
-            // lo stato di attesa (⏳) o l'esito (✓), che finiva nell'immagine.
-            var b1=q.querySelector('#btn-shot'); if(b1) b1.textContent='📷 Screen';
-            var b2=q.querySelector('#btn-share'); if(b2) b2.textContent='🔗 Link';
-          }})
-        .then(function(c){
-          el.removeAttribute('data-cattura');
-          return {c:c,r:r,blur:mb?parseFloat(mb[1]):0,raggio:parseFloat(cs.borderRadius)||0,
-                  ombra:ms?{col:ms[1],dx:parseFloat(ms[2]),dy:parseFloat(ms[3]),blur:parseFloat(ms[4])}:null};
-        })
-        .catch(function(){ el.removeAttribute('data-cattura'); return null; });
-    }));
+      if(mb||ms) effetti.push({r:r,blur:mb?parseFloat(mb[1]):0,raggio:parseFloat(cs.borderRadius)||0,
+        ombra:ms?{col:ms[1],dx:parseFloat(ms[2]),dy:parseFloat(ms[3]),blur:parseFloat(ms[4])}:null});
+      el.setAttribute('data-cattura','1');
+    });
+    return window.html2canvas(document.body,{useCORS:true,backgroundColor:null,logging:false,scale:S,
+        onclone:function(doc){
+          [].slice.call(doc.querySelectorAll('.leaflet-pane')).forEach(function(el){ el.style.display='none'; });
+          doc.body.style.background='none';
+          var mw=doc.getElementById('map-wrap'); if(mw) mw.style.background='none';
+          var mp=doc.getElementById('map'); if(mp) mp.style.background='none';
+          [].slice.call(doc.querySelectorAll('[data-cattura]')).forEach(function(el){ el.style.boxShadow='none'; });
+          // I due tasti vanno ritratti a riposo: durante la cattura mostrano
+          // lo stato di attesa (⏳) o l'esito (✓), che finiva nell'immagine.
+          var b1=doc.querySelector('#btn-shot'); if(b1) b1.textContent='📷 Screen';
+          var b2=doc.querySelector('#btn-share'); if(b2) b2.textContent='🔗 Link';
+        }})
+      .then(function(c){ return {c:c,effetti:effetti}; })
+      .catch(function(){ return {c:null,effetti:effetti}; })
+      .then(function(ris){
+        pannelli.forEach(function(el){ el.removeAttribute('data-cattura'); });
+        return ris;
+      });
   }).then(function(pan){
-    pan.forEach(function(p){
-      if(!p||!p.c) return;
-      var r=p.r;
+    // Prima gli effetti SOTTO e FUORI dai pannelli, poi il livello dei
+    // pannelli in un colpo solo. Il percorso arrotondato è lo stesso per
+    // vetro e ombra.
+    var tondo=function(x,y,w,h,rr){
+      ctx.moveTo(x+rr,y);
+      ctx.arcTo(x+w,y,x+w,y+h,rr); ctx.arcTo(x+w,y+h,x,y+h,rr);
+      ctx.arcTo(x,y+h,x,y,rr);     ctx.arcTo(x,y,x+w,y,rr);
+      ctx.closePath();
+    };
+    pan.effetti.forEach(function(p){
+      var r=p.r,x=r.x,y=r.y,w=r.w,h=r.h,rr=Math.min(p.raggio,w/2,h/2);
       // I pannelli "a vetro" (backdrop-filter: blur) vanno ricreati a mano:
       // html2canvas non conosce il backdrop-filter e lascia la mappa NITIDA
       // dentro il pannello, che a schermo è invece sfocata.
@@ -4844,11 +4863,8 @@ function captureMapBlob(scala){
           var pad=Math.ceil(p.blur*2);
           ctx.save();
           ctx.beginPath();
-          var x=r.x,y=r.y,w=r.w,h=r.h,rr=Math.min(p.raggio,w/2,h/2);
-          ctx.moveTo(x+rr,y);
-          ctx.arcTo(x+w,y,x+w,y+h,rr); ctx.arcTo(x+w,y+h,x,y+h,rr);
-          ctx.arcTo(x,y+h,x,y,rr);     ctx.arcTo(x,y,x+w,y,rr);
-          ctx.closePath(); ctx.clip();
+          tondo(x,y,w,h,rr);
+          ctx.clip();
           ctx.filter='blur('+p.blur+'px)';
           // si prende un margine extra attorno, altrimenti la sfocatura
           // "risucchia" il vuoto ai bordi e li scurisce
@@ -4859,18 +4875,34 @@ function captureMapBlob(scala){
           ctx.restore();
         }catch(e){}
       }
-      try{
-        if(p.ombra){
+      // Solo l'ALONE dell'ombra: si dipinge il rettangolo arrotondato con
+      // l'ombra attiva, ma con un clip evenodd che ESCLUDE l'interno del
+      // pannello — resta quindi visibile soltanto l'ombra proiettata fuori
+      // (l'interno lo copre il livello pannelli, semi-trasparente, che non
+      // deve posarsi su un fondo sporcato dal riempimento).
+      if(p.ombra){
+        try{
           ctx.save();
+          ctx.beginPath();
+          ctx.rect(-20,-20,mr.width+40,mr.height+hdrH+40);
+          tondo(x,y,w,h,rr);
+          ctx.clip('evenodd');
           ctx.shadowColor=p.ombra.col; ctx.shadowOffsetX=p.ombra.dx*S;
           ctx.shadowOffsetY=p.ombra.dy*S; ctx.shadowBlur=p.ombra.blur*S;
-          ctx.drawImage(p.c,r.x,r.y,r.w,r.h);
+          ctx.fillStyle='#fff';
+          ctx.beginPath();
+          tondo(x,y,w,h,rr);
+          ctx.fill();
           ctx.restore();
-        } else {
-          ctx.drawImage(p.c,r.x,r.y,r.w,r.h);
-        }
-      }catch(e){}
+        }catch(e){}
+      }
     });
+    // Livello pannelli+header+controlli: la cattura è dell'intero body, il
+    // nostro canvas parte dall'header — l'offset riallinea i due sistemi
+    // (dy≈0 finché sopra la mappa c'è solo l'header).
+    if(pan.c){
+      try{ ctx.drawImage(pan.c,-mr.x,hdrH-mr.y,pan.c.width/S,pan.c.height/S); }catch(e){}
+    }
     return new Promise(function(res,rej){
       // PNG, non JPEG: a qualità 0.92 il JPEG triplicava lo scarto dallo schermo
       // (1,37 → 3,89 su 255) e ammorbidiva scritte e cerchietti.
