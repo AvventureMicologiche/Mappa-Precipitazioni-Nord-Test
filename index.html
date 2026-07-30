@@ -976,8 +976,9 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <div id="legend-panel">
       <div class="leg-header">
         <div class="leg-title" id="leg-title">mm cumulati</div>
-        <button id="btn-shot" type="button" title="Salva/condividi l'immagine di questa mappa">📷 Screen</button>
-        <button id="btn-share" type="button" title="Copia il link di questa mappa (regioni, date e zoom inclusi)">🔗 Link</button>
+        <!-- Etichette da desktop; su telefono le riscrive impostaEtichetteCondivisione() -->
+        <button id="btn-shot" type="button" data-label="📷 Immagine" title="Scarica l'immagine di questa mappa (regioni, date e vista incluse)">📷 Immagine</button>
+        <button id="btn-share" type="button" data-label="🔗 Copia link" title="Copia il link di questa mappa (regioni, date e zoom inclusi)">🔗 Copia link</button>
         <button id="leg-back-btn" onclick="hideLegendMobile()">← Indietro</button>
       </div>
       <div class="grad"></div>
@@ -4834,8 +4835,8 @@ function captureMapBlob(scala){
           [].slice.call(doc.querySelectorAll('[data-cattura]')).forEach(function(el){ el.style.boxShadow='none'; });
           // I due tasti vanno ritratti a riposo: durante la cattura mostrano
           // lo stato di attesa (⏳) o l'esito (✓), che finiva nell'immagine.
-          var b1=doc.querySelector('#btn-shot'); if(b1) b1.textContent='📷 Screen';
-          var b2=doc.querySelector('#btn-share'); if(b2) b2.textContent='🔗 Link';
+          var b1=doc.querySelector('#btn-shot'); if(b1) b1.textContent=b1.dataset.label||b1.textContent;
+          var b2=doc.querySelector('#btn-share'); if(b2) b2.textContent=b2.dataset.label||b2.textContent;
         }})
       .then(function(c){ return {c:c,effetti:effetti}; })
       .catch(function(){ return {c:null,effetti:effetti}; })
@@ -4930,6 +4931,35 @@ function shareFileName(){
 // link quando c'è un file — su PC meglio copia negli appunti + download.
 function isTouchShare(){ return !!navigator.share && matchMedia('(pointer:coarse)').matches; }
 
+// Etichette dei due tasti: devono dire cosa succede DAVVERO, e succede una
+// cosa diversa a seconda del dispositivo — su desktop uno scarica un file e
+// l'altro copia negli appunti, su telefono entrambi aprono il menu di
+// condivisione (lì il verbo è lo stesso, "Invia", e a distinguere è l'oggetto).
+// Su telefono il suggerimento a comparsa NON esiste (niente passaggio del
+// mouse), quindi lì l'etichetta deve bastare da sola ed è più esplicita.
+// Testi tenuti in UN SOLO posto (data-label): la cattura e i gestori del click
+// rimettono l'etichetta a riposo rileggendola da lì. Prima erano scritte a mano
+// in 5 punti e bastava dimenticarne uno perché dopo uno scatto il tasto
+// tornasse all'etichetta vecchia.
+function impostaEtichetteCondivisione(){
+  var condivideFile=false;
+  try{ condivideFile=!!(navigator.canShare&&navigator.canShare({files:[new File([''],'x.png',{type:'image/png'})]})); }catch(e){}
+  var fotoCondivisa=isTouchShare()&&condivideFile;
+  var s=document.getElementById('btn-shot'), l=document.getElementById('btn-share');
+  if(s){
+    s.dataset.label=fotoCondivisa?'📷 Invia foto':'📷 Immagine';
+    s.title=fotoCondivisa?'Invia l\'immagine di questa mappa'
+                         :'Scarica l\'immagine di questa mappa (regioni, date e vista incluse)';
+    if(!s.disabled) s.textContent=s.dataset.label;
+  }
+  if(l){
+    l.dataset.label=isTouchShare()?'🔗 Invia link':'🔗 Copia link';
+    l.title=(isTouchShare()?'Invia':'Copia')+' il link di questa mappa (regioni, date e zoom inclusi)';
+    if(!l.classList.contains('ok')) l.textContent=l.dataset.label;
+  }
+}
+impostaEtichetteCondivisione();
+
 var _btnShare=document.getElementById('btn-share');
 if(_btnShare){
   _btnShare.addEventListener('click',function(){
@@ -4942,7 +4972,7 @@ if(_btnShare){
     } else if(navigator.clipboard&&navigator.clipboard.writeText){
       navigator.clipboard.writeText(url).then(function(){
         _btnShare.classList.add('ok');_btnShare.textContent='✓ Copiato';
-        setTimeout(function(){_btnShare.classList.remove('ok');_btnShare.textContent='🔗 Link';},2200);
+        setTimeout(function(){_btnShare.classList.remove('ok');_btnShare.textContent=_btnShare.dataset.label;},2200);
       });
     } else { prompt('Copia il link:',url); }
   });
@@ -4953,7 +4983,7 @@ if(_btnShot){
   _btnShot.addEventListener('touchstart',_prewarmH2C,{passive:true});
   _btnShot.addEventListener('click',function(){
     if(getActiveRegions().length===0||!currentPast) return;
-    var old='📷 Screen';
+    var old=_btnShot.dataset.label;
     _btnShot.disabled=true;_btnShot.textContent='⏳';
     var fine=function(esito){
       _btnShot.textContent=esito;
