@@ -4613,7 +4613,15 @@ window.addEventListener('resize', function(){
   positionPanels();
 });
 
-// Posiziona pannelli subito all'avvio
+// Posiziona pannelli subito all'avvio: chiamata DIRETTA, non solo ritardata.
+// Col solo setTimeout la pagina veniva disegnata con il pannello periodo alla
+// posizione del CSS (top:182px) e solo dopo spostato a quella vera (397px in
+// produzione, sotto il pannello regioni alto 287px): un salto di 215px ben
+// visibile un decimo di secondo dopo l'apertura. Qui il pannello regioni è già
+// stato letto dal parser, quindi la misura è valida e il riposizionamento
+// avviene prima del primo disegno. Il setTimeout resta come rete di sicurezza:
+// ricalcola lo stesso valore, quindi non sposta nulla.
+positionPanels();
 setTimeout(positionPanels, 100);
 
 // Nota "I dati escludono la giornata odierna": su telefono si vede solo la ℹ️,
