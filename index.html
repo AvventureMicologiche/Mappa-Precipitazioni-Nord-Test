@@ -4721,7 +4721,14 @@ function captureMapBlob(scala){
   }catch(e){}
   var mapEl=document.getElementById('map');
   var mr=mapEl.getBoundingClientRect();
-  var S=scala||window.devicePixelRatio||1;
+  // Almeno 2×: a qualità schermo (1×) testi, pallini e pannelli uscivano
+  // impastati appena l'immagine veniva guardata da vicino (confronto del
+  // 30/7/2026). Heat, confini, marker e pannelli sono RIDISEGNATI a questa
+  // scala, quindi guadagnano davvero; solo i tile OSM, che esistono in unica
+  // risoluzione, vengono riscalati. Sui telefoni (dpr già 2-3) non cambia
+  // nulla; il peso sale (~3,5 → ~12 MB su finestra 1920) ma per download e
+  // condivisione va bene così.
+  var S=scala||Math.max(2,window.devicePixelRatio||1);
   // Anche l'HEADER fa parte dello scatto (30/7/2026): è il marchio del sito —
   // titolo, versione e date del periodo — e chi scarica si aspetta l'intera
   // finestra, non la sola mappa. Il canvas si allunga della sua altezza e ogni
