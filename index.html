@@ -423,6 +423,34 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .spinner{width:36px;height:36px;border:3px solid #eee;
   border-top-color:#1b3f6e;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* Loader iniziale (confini regionali + anagrafi ARPA). Era senza regole CSS:
+   restava un blocco nel flusso, primo figlio del body flex, e per ~1,5s si
+   prendeva 66px in cima schiacciando header e mappa — al termine tutto
+   risaliva di colpo (CLS 0.045 sul test, 0.089 in prod). Ora è fuori dal
+   flusso, quindi non sposta nulla, e compare solo dopo 2,5s: il caricamento
+   normale è di 1,4s sul test e 1,9s in prod (misurati), quindi fa sempre in
+   tempo a sparire prima di vedersi — la pillola appare solo se la rete è
+   davvero lenta, così l'utente non pensa che il sito sia bloccato. */
+#loader{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  z-index:2500;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+  flex-wrap:wrap;gap:4px 10px;
+  /* width:max-content serve perché con left:50% la larghezza "a contenuto" di un
+     elemento fixed viene tagliata a metà viewport (su telefono mandava a capo). */
+  width:max-content;max-width:min(90vw,360px);
+  padding:8px 14px;border-radius:12px;
+  background:rgba(255,255,255,0.85);backdrop-filter:blur(6px);
+  box-shadow:0 2px 10px rgba(0,0,0,0.12);
+  opacity:0;animation:loader-in .25s ease 2.5s forwards;
+}
+#loader .spinner{width:18px;height:18px;border-width:2px}
+@keyframes loader-in{to{opacity:1}}
+/* Su telefono il pannello periodo aperto occupa tutta la parte bassa: la
+   pillola va portata al centro della mappa, altrimenti finisce dietro. */
+@media(max-width:600px){
+  #loader{top:40%;bottom:auto;transform:translate(-50%,-50%)}
+}
 #map-spinner{display:none;position:absolute;top:0;left:0;right:0;bottom:0;
   background:rgba(255,255,255,0.45);z-index:800;
   align-items:center;justify-content:center;pointer-events:none}
@@ -4942,6 +4970,9 @@ if(_btnShot){
 // I confini e le stazioni vengono mostrati solo quando l'utente seleziona una regione
 loadGeoJSONOnce(function(){
   document.getElementById('lmsg').textContent='Caricamento stazioni ARPA…';
+  // I confini sono arrivati: via il messaggio della fase precedente, altrimenti
+  // la pillola annuncia ancora un caricamento già concluso.
+  document.getElementById('lsub').textContent='';
 
   // Carica stazioni Lombardia e Piemonte in parallelo
   var stUrlLombardia='/.netlify/functions/arpa?endpoint=nf78-nj6b.json&$limit=500&$select=idsensore,nomestazione,lat,lng,quota,provincia&$where=tipologia=%27Precipitazione%27';
