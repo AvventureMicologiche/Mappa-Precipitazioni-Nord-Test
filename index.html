@@ -213,6 +213,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .tp-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px;width:100%;}
 .tp-title-row{display:flex;align-items:baseline;justify-content:flex-start;width:100%;gap:8px;white-space:nowrap;}
 .tp-info-nota-inline{font-size:12px;color:#1b3f6e;white-space:nowrap;display:inline;}
+/* Pallino "i" blu al posto dell'emoji ℹ️, che ogni sistema disegna a modo suo
+   (su Android usciva slavato). */
+.nota-i{display:inline-flex;align-items:center;justify-content:center;
+  width:17px;height:17px;border-radius:50%;background:#1b3f6e;color:#fff;
+  font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:700;
+  font-size:12px;line-height:1;vertical-align:0;}
 .tp-btn{background:#f0f4fb;border:1px solid #d0d8e8;border-radius:5px;
   font-size:14px;font-weight:600;color:#1b3f6e;
   padding:7px 2px;text-align:center;cursor:pointer;
@@ -651,7 +657,10 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     box-shadow:0 3px 12px rgba(0,0,0,.3);
   }
   .tp-info-nota-inline.aperta .nota-testo{display:block;}
-  .tp-title{margin-bottom:0 !important;font-size:11px !important;white-space:nowrap;flex-shrink:0;line-height:1.2;}
+  /* Titolo del pannello periodo: un filo più grande e più scuro (su telefono
+     a 11px e in blu chiaro si leggeva poco). */
+  .tp-title{margin-bottom:0 !important;font-size:13px !important;color:#123252 !important;white-space:nowrap;flex-shrink:0;line-height:1.2;}
+  .nota-i{width:21px;height:21px;font-size:14px;vertical-align:-1px;}
   /* Contenuto nascosto quando collassato */
   .tp-content{padding-top:10px;}
   #time-panel.open{transform:translateY(0);}
@@ -690,10 +699,15 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   }
   /* Su telefono titolo + Screen + Link + Indietro non stanno in una riga
      (Indietro finiva 14px oltre il bordo su 390px, 44px su 360px): il titolo
-     prende una riga sua e i tre tasti vanno sotto. */
-  .leg-header{flex-wrap:wrap;}
-  .leg-header .leg-title{flex:1 1 100%;margin-bottom:6px;}
-  #btn-shot{margin-left:0;}
+     prende una riga sua e i tre tasti vanno sotto, occupando tutta la larghezza
+     (a dimensione da desktop restavano due tasti minuscoli accanto a Indietro). */
+  .leg-header{flex-wrap:wrap;gap:10px;}
+  .leg-header .leg-title{flex:1 1 100%;margin-bottom:2px;}
+  #btn-shot,#btn-share{
+    flex:1 1 0;min-width:0;margin-left:0;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    font-size:15px;padding:11px 8px;border-radius:10px;
+  }
 
   /* Nascondi tasti zoom su mobile (si usa pinch) */
   .leaflet-control-zoom { display: none; }
@@ -896,7 +910,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <div class="tp-handle-bar"></div>
         <div class="tp-title-row">
           <div class="tp-title" style="white-space:nowrap;font-size:11px;">🕒 Seleziona periodo</div>
-          <div class="tp-info-nota-inline" id="nota-oggi">ℹ️<span class="nota-testo"> I dati escludono la giornata odierna</span></div>
+          <div class="tp-info-nota-inline" id="nota-oggi"><span class="nota-i">i</span><span class="nota-testo"> I dati escludono la giornata odierna</span></div>
         </div>
       </div>
       <!-- Contenuto: nascosto quando collassato -->
