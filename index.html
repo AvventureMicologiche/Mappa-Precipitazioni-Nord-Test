@@ -623,15 +623,29 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     flex-wrap:nowrap !important;
     overflow:hidden;
   }
+  /* Su telefono resta la sola ℹ️: il testo per esteso veniva troncato
+     ("I dati escludono la gior…"). Toccando l'icona compare in un fumetto. */
   .tp-info-nota-inline{
-    font-size:12.5px !important;
+    font-size:14px !important;
     color:#1b3f6e !important;
-    flex-shrink:1;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
+    flex-shrink:0;
+    cursor:pointer;
     line-height:1.2;
+    padding:2px 4px;
   }
+  /* Il fumetto è ancorato alla riga del titolo (non all'icona): agganciato
+     all'icona sbordava fuori dallo schermo. */
+  .tp-handle{position:relative;}
+  .tp-info-nota-inline .nota-testo{
+    display:none;
+    position:absolute; left:10px; right:10px; top:calc(100% + 2px); z-index:1300;
+    background:rgba(27,63,110,.96); color:#fff;
+    font-size:12.5px; font-weight:600; line-height:1.35;
+    padding:7px 11px; border-radius:9px;
+    white-space:normal; text-align:center;
+    box-shadow:0 3px 12px rgba(0,0,0,.3);
+  }
+  .tp-info-nota-inline.aperta .nota-testo{display:block;}
   .tp-title{margin-bottom:0 !important;font-size:11px !important;white-space:nowrap;flex-shrink:0;line-height:1.2;}
   /* Contenuto nascosto quando collassato */
   .tp-content{padding-top:10px;}
@@ -669,6 +683,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     cursor:pointer;
     white-space:nowrap;
   }
+  /* Su telefono titolo + Screen + Link + Indietro non stanno in una riga
+     (Indietro finiva 14px oltre il bordo su 390px, 44px su 360px): il titolo
+     prende una riga sua e i tre tasti vanno sotto. */
+  .leg-header{flex-wrap:wrap;}
+  .leg-header .leg-title{flex:1 1 100%;margin-bottom:6px;}
+  #btn-shot{margin-left:0;}
 
   /* Nascondi tasti zoom su mobile (si usa pinch) */
   .leaflet-control-zoom { display: none; }
@@ -871,7 +891,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <div class="tp-handle-bar"></div>
         <div class="tp-title-row">
           <div class="tp-title" style="white-space:nowrap;font-size:11px;">🕒 Seleziona periodo</div>
-          <div class="tp-info-nota-inline">ℹ️ I dati escludono la giornata odierna</div>
+          <div class="tp-info-nota-inline" id="nota-oggi">ℹ️<span class="nota-testo"> I dati escludono la giornata odierna</span></div>
         </div>
       </div>
       <!-- Contenuto: nascosto quando collassato -->
@@ -904,8 +924,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <div id="legend-panel">
       <div class="leg-header">
         <div class="leg-title" id="leg-title">mm cumulati</div>
-        <button id="btn-shot" type="button" title="Scarica l'immagine di questa mappa">📷</button>
-        <button id="btn-share" type="button" title="Condividi questa mappa (da telefono: immagine + link)">🔗 Condividi</button>
+        <button id="btn-shot" type="button" title="Salva/condividi l'immagine di questa mappa">📷 Screen</button>
+        <button id="btn-share" type="button" title="Copia il link di questa mappa (regioni, date e zoom inclusi)">🔗 Link</button>
         <button id="leg-back-btn" onclick="hideLegendMobile()">← Indietro</button>
       </div>
       <div class="grad"></div>
@@ -4549,6 +4569,22 @@ window.addEventListener('resize', function(){
 // Posiziona pannelli subito all'avvio
 setTimeout(positionPanels, 100);
 
+// Nota "I dati escludono la giornata odierna": su telefono si vede solo la ℹ️,
+// il testo compare toccandola. Lo stopPropagation serve perché la riga del
+// titolo è anche la maniglia che apre/chiude il pannello periodo.
+(function(){
+  var nota=document.getElementById('nota-oggi');
+  if(!nota) return;
+  var chiudi=function(){ nota.classList.remove('aperta'); };
+  nota.addEventListener('click',function(e){
+    if(window.innerWidth>600) return;
+    e.stopPropagation();
+    nota.classList.toggle('aperta');
+    if(nota.classList.contains('aperta')) setTimeout(chiudi,6000);
+  });
+  document.addEventListener('click',function(e){ if(!nota.contains(e.target)) chiudi(); });
+})();
+
 // ── Condivisione: link con lo stato corrente (regioni, date, vista) ─────────
 // ?r=reg1,reg2&da=YYYY-MM-DD&a=YYYY-MM-DD&z=8.25&c=45.62,9.81
 function buildShareUrl(){
@@ -4579,32 +4615,155 @@ function ensureHtml2Canvas(){
   });
   return _h2cLoading;
 }
-function captureMapBlob(){
-  // Ferma eventuali animazioni in corso e riassesta i pane: html2canvas legge
-  // i transform "a metà volo" e sfasa heatmap/marker rispetto ai tile.
-  try{ map.stop(); map.panBy([0,0],{animate:false}); }catch(e){}
+// Composizione dell'immagine STRATO PER STRATO, usando le posizioni reali a
+// schermo (getBoundingClientRect). html2canvas da solo NON va: i livelli Leaflet
+// (marker e confini) sono SVG con viewBox a origine negativa più un transform
+// uguale, e lui conta lo scostamento due volte → marker e confini finivano in
+// mare mentre tile e heatmap restavano al loro posto. Qui html2canvas serve solo
+// per i pannelli HTML sovrapposti, che rende correttamente.
+function _imgDaSvg(svg,w,h){
+  return new Promise(function(res){
+    try{
+      var clone=svg.cloneNode(true);
+      clone.setAttribute('xmlns','http://www.w3.org/2000/svg');
+      clone.setAttribute('width',w); clone.setAttribute('height',h);
+      clone.style.transform='none';
+      var testo=new XMLSerializer().serializeToString(clone);
+      var im=new Image();
+      im.onload=function(){res(im);}; im.onerror=function(){res(null);};
+      im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(testo);
+    }catch(e){ res(null); }
+  });
+}
+function captureMapBlob(scala){
+  try{ map.stop(); }catch(e){}
+  var mapEl=document.getElementById('map');
+  var mr=mapEl.getBoundingClientRect();
+  var S=scala||window.devicePixelRatio||1;
+  var out=document.createElement('canvas');
+  out.width=Math.round(mr.width*S); out.height=Math.round(mr.height*S);
+  var ctx=out.getContext('2d');
+  ctx.scale(S,S);
+  var rel=function(el){ var r=el.getBoundingClientRect(); return {x:r.x-mr.x,y:r.y-mr.y,w:r.width,h:r.height}; };
+  var visibile=function(el){ var s=getComputedStyle(el); return s.display!=='none'&&s.visibility!=='hidden'&&parseFloat(s.opacity)>0.01; };
+
   return ensureHtml2Canvas().then(function(){
-    return new Promise(function(res){ setTimeout(res,150); }); // un frame per assestare
+    return new Promise(function(res){ setTimeout(res,120); }); // un frame per assestare
   }).then(function(){
-    return window.html2canvas(document.getElementById('map'),{useCORS:true,backgroundColor:'#ffffff',logging:false,scale:1});
-  }).then(function(canvas){
+    // sfondo (il colore del contenitore mappa, visibile dove non c'è tile)
+    ctx.fillStyle=getComputedStyle(mapEl).backgroundColor||'#e8ecf1';
+    ctx.fillRect(0,0,mr.width,mr.height);
+    // 1) tile della mappa base
+    var tiles=mapEl.querySelectorAll('.leaflet-tile');
+    for(var i=0;i<tiles.length;i++){
+      var t=tiles[i];
+      if(!t.complete||!t.naturalWidth||!visibile(t)) continue;
+      var r=rel(t);
+      try{ ctx.drawImage(t,r.x,r.y,r.w,r.h); }catch(e){}
+    }
+    // 2) confini, heatmap e marker NELL'ORDINE DI SOVRAPPOSIZIONE DELLA PAGINA:
+    // il canvas della heat ha z-index 200 dentro l'overlay pane, quindi copre i
+    // confini (che essendo sotto risultano più chiari); i marker stanno sopra
+    // tutto. Disegnandoli nell'ordine sbagliato il confine usciva più scuro.
+    // Gli SVG sono rasterizzati alla risoluzione FINALE (×S): a scala 1.25
+    // (Windows al 125%) i cerchietti uscivano con mezzo pixel di scarto.
+    var svgOverlay=[].slice.call(mapEl.querySelectorAll('.leaflet-overlay-pane svg')).filter(visibile);
+    var svgSopra=[].slice.call(mapEl.querySelectorAll('.leaflet-pane svg')).filter(function(s){
+      return visibile(s) && svgOverlay.indexOf(s)<0;
+    });
+    var raster=function(lista){
+      return Promise.all(lista.map(function(s){ var r=rel(s); return _imgDaSvg(s,Math.round(r.w*S),Math.round(r.h*S)).then(function(im){ return {im:im,r:r}; }); }));
+    };
+    return raster(svgOverlay).then(function(sotto){
+      sotto.forEach(function(d){ if(d.im){ try{ ctx.drawImage(d.im,d.r.x,d.r.y,d.r.w,d.r.h); }catch(e){} } });
+      var heat=mapEl.querySelector('.leaflet-overlay-pane canvas');
+      if(heat&&visibile(heat)){ var rh=rel(heat); try{ ctx.drawImage(heat,rh.x,rh.y,rh.w,rh.h); }catch(e){} }
+      return raster(svgSopra);
+    });
+  }).then(function(dis){
+    dis.forEach(function(d){ if(d.im){ try{ ctx.drawImage(d.im,d.r.x,d.r.y,d.r.w,d.r.h); }catch(e){} } });
+    // 4) pannelli HTML sovrapposti (periodo, legenda, box canale…) + i controlli
+    // Leaflet presi uno per uno: il loro contenitore ha dimensione zero e senza
+    // questo passaggio zoom +/- e attribuzione sparivano dall'immagine.
+    var pannelli=[].slice.call(mapEl.children).filter(function(el){
+      return !el.classList.contains('leaflet-pane') && !el.classList.contains('leaflet-control-container') && visibile(el);
+    }).concat([].slice.call(mapEl.querySelectorAll('.leaflet-control-container .leaflet-control')).filter(visibile));
+    return Promise.all(pannelli.map(function(el,idx){
+      var r=rel(el);
+      if(r.w<1||r.h<1) return Promise.resolve(null);
+      var cs=getComputedStyle(el);
+      var bf=cs.backdropFilter||cs.webkitBackdropFilter||'none';
+      var mb=/blur\(([\d.]+)px\)/.exec(bf);
+      // L'ombra (box-shadow) va tolta dalla copia: html2canvas la stende su
+      // TUTTO il pannello invece che dietro, e lo sfondo semi-trasparente usciva
+      // grigio invece che chiaro. La ridisegniamo noi col canvas.
+      var ms=/(rgba?\([^)]+\))\s+(-?[\d.]+)px\s+(-?[\d.]+)px\s+([\d.]+)px/.exec(cs.boxShadow||'');
+      // Marcatore UNIVOCO: i pannelli si catturano in parallelo e con un
+      // attributo uguale per tutti ogni onclone finiva per togliere l'ombra
+      // sempre al primo elemento trovato.
+      var tag='cat'+idx;
+      el.setAttribute('data-cattura',tag);
+      return window.html2canvas(el,{useCORS:true,backgroundColor:null,logging:false,scale:S,
+          onclone:function(doc){ var q=doc.querySelector('[data-cattura="'+tag+'"]'); if(q) q.style.boxShadow='none'; }})
+        .then(function(c){
+          el.removeAttribute('data-cattura');
+          return {c:c,r:r,blur:mb?parseFloat(mb[1]):0,raggio:parseFloat(cs.borderRadius)||0,
+                  ombra:ms?{col:ms[1],dx:parseFloat(ms[2]),dy:parseFloat(ms[3]),blur:parseFloat(ms[4])}:null};
+        })
+        .catch(function(){ el.removeAttribute('data-cattura'); return null; });
+    }));
+  }).then(function(pan){
+    pan.forEach(function(p){
+      if(!p||!p.c) return;
+      var r=p.r;
+      // I pannelli "a vetro" (backdrop-filter: blur) vanno ricreati a mano:
+      // html2canvas non conosce il backdrop-filter e lascia la mappa NITIDA
+      // dentro il pannello, che a schermo è invece sfocata.
+      if(p.blur>0){
+        try{
+          var pad=Math.ceil(p.blur*2);
+          ctx.save();
+          ctx.beginPath();
+          var x=r.x,y=r.y,w=r.w,h=r.h,rr=Math.min(p.raggio,w/2,h/2);
+          ctx.moveTo(x+rr,y);
+          ctx.arcTo(x+w,y,x+w,y+h,rr); ctx.arcTo(x+w,y+h,x,y+h,rr);
+          ctx.arcTo(x,y+h,x,y,rr);     ctx.arcTo(x,y,x+w,y,rr);
+          ctx.closePath(); ctx.clip();
+          ctx.filter='blur('+p.blur+'px)';
+          // si prende un margine extra attorno, altrimenti la sfocatura
+          // "risucchia" il vuoto ai bordi e li scurisce
+          ctx.drawImage(out,
+            Math.max(0,(x-pad)*S), Math.max(0,(y-pad)*S), (w+pad*2)*S, (h+pad*2)*S,
+            x-pad, y-pad, w+pad*2, h+pad*2);
+          ctx.filter='none';
+          ctx.restore();
+        }catch(e){}
+      }
+      try{
+        if(p.ombra){
+          ctx.save();
+          ctx.shadowColor=p.ombra.col; ctx.shadowOffsetX=p.ombra.dx*S;
+          ctx.shadowOffsetY=p.ombra.dy*S; ctx.shadowBlur=p.ombra.blur*S;
+          ctx.drawImage(p.c,r.x,r.y,r.w,r.h);
+          ctx.restore();
+        } else {
+          ctx.drawImage(p.c,r.x,r.y,r.w,r.h);
+        }
+      }catch(e){}
+    });
     return new Promise(function(res,rej){
-      canvas.toBlob(function(b){ if(b) res(b); else rej(new Error('canvas vuoto')); },'image/jpeg',0.85);
+      // PNG, non JPEG: a qualità 0.92 il JPEG triplicava lo scarto dallo schermo
+      // (1,37 → 3,89 su 255) e ammorbidiva scritte e cerchietti.
+      out.toBlob(function(b){ if(b) res(b); else rej(new Error('canvas vuoto')); },'image/png');
     });
   });
 }
 window.captureMapBlob=captureMapBlob;
 function _prewarmH2C(){ ensureHtml2Canvas().catch(function(){}); }
 
-// Descrizione condivisibile: regioni + date ("Pioggia Piemonte · 22 lug – 28 lug 2026")
-function shareDescr(){
-  var nomi=getActiveRegions().map(function(k){return (REGIONS[k]&&REGIONS[k].name)||k;}).join(' + ');
-  var dr=document.getElementById('datehdr').textContent;
-  return 'Pioggia '+nomi+' · '+dr;
-}
-// Nome file immagine: regioni + date (es. pioggia_lombardia-piemonte_2026-07-09_2026-07-28.jpg)
+// Nome file immagine: regioni + date (es. pioggia_lombardia-piemonte_2026-07-09_2026-07-28.png)
 function shareFileName(){
-  return 'pioggia_'+getActiveRegions().join('-')+'_'+fmtISOLocal(new Date(currentPast))+'_'+fmtISOLocal(new Date(currentNow))+'.jpg';
+  return 'pioggia_'+getActiveRegions().join('-')+'_'+fmtISOLocal(new Date(currentPast))+'_'+fmtISOLocal(new Date(currentNow))+'.png';
 }
 // Il menu di condivisione nativo va usato solo sui dispositivi touch: anche
 // Chrome su Windows ha navigator.share, ma la tendina di sistema scarta il
@@ -4617,19 +4776,15 @@ if(_btnShare){
     var url=buildShareUrl();
     if(!url) return;
     try{gtag('event','share_map',{regioni:getActiveRegions().join(',')})}catch(e){}
-    var descr=shareDescr();
     if(isTouchShare()){
-      // Telefono: SOLO link (+testo con regioni e date) — arriva sempre,
-      // e il sito mostra comunque l'anteprima og. La foto sta sul 📷.
-      navigator.share({title:descr,text:descr+' 🍄',url:url}).catch(function(){});
+      // Solo il link, senza descrizione: l'anteprima la mette l'app di chat.
+      navigator.share({url:url}).catch(function(){});
     } else if(navigator.clipboard&&navigator.clipboard.writeText){
-      // PC: copia testo descrittivo + link, così incollando in chat arrivano
-      // anche regioni e date, non il solo URL.
-      navigator.clipboard.writeText(descr+' 🍄 '+url).then(function(){
+      navigator.clipboard.writeText(url).then(function(){
         _btnShare.classList.add('ok');_btnShare.textContent='✓ Copiato';
-        setTimeout(function(){_btnShare.classList.remove('ok');_btnShare.textContent='🔗 Condividi';},2200);
+        setTimeout(function(){_btnShare.classList.remove('ok');_btnShare.textContent='🔗 Link';},2200);
       });
-    } else { prompt('Copia il link:',descr+' 🍄 '+url); }
+    } else { prompt('Copia il link:',url); }
   });
 }
 var _btnShot=document.getElementById('btn-shot');
@@ -4638,7 +4793,7 @@ if(_btnShot){
   _btnShot.addEventListener('touchstart',_prewarmH2C,{passive:true});
   _btnShot.addEventListener('click',function(){
     if(getActiveRegions().length===0||!currentPast) return;
-    var old='📷';
+    var old='📷 Screen';
     _btnShot.disabled=true;_btnShot.textContent='⏳';
     var fine=function(esito){
       _btnShot.textContent=esito;
@@ -4646,11 +4801,11 @@ if(_btnShot){
       setTimeout(function(){_btnShot.classList.remove('ok');_btnShot.textContent=old;_btnShot.disabled=false;},1800);
     };
     captureMapBlob().then(function(blob){
-      var descr=shareDescr(), url=buildShareUrl();
-      var file=new File([blob],shareFileName(),{type:'image/jpeg'});
+      var url=buildShareUrl();
+      var file=new File([blob],shareFileName(),{type:'image/png'});
       if(isTouchShare()&&navigator.canShare&&navigator.canShare({files:[file]})){
-        // Telefono: foto nel menu nativo, con regioni+date+link in didascalia
-        navigator.share({files:[file],title:descr,text:descr+' 🍄 '+url})
+        // Telefono: foto nel menu nativo, col solo link in didascalia
+        navigator.share({files:[file],text:url})
           .then(function(){fine('✓');},function(){fine(old);});
       } else {
         var a=document.createElement('a');
