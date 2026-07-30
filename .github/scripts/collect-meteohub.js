@@ -132,12 +132,52 @@ async function collectDay(netCfg, dateStr) {
   return out;
 }
 
-function writeDay(dir, dateStr, stations, net) {
+/** Stazioni REALI (non stimate) presenti in un file già scritto. */
+function realiInFile(j) {
+  if (!j || !Array.isArray(j.stations)) return 0;
+  return j.stations.filter(s => !s.om).length;
+}
+/** Il file contiene stime Open-Meteo? (copertura intera o integrazione parziale) */
+function haStime(j) {
+  return !!j && (j.source === 'open-meteo-gapfill' || !!j.gapfill ||
+                 (Array.isArray(j.stations) && j.stations.some(s => s.om)));
+}
+function leggiFile(f) {
+  try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return null; }
+}
+/** Quante stazioni reali porta di solito questa rete: mediana sui file recenti. */
+function tipicoReali(dir, giorni) {
+  const v = [];
+  for (const d of giorni) {
+    const j = leggiFile(path.join(dir, `${d}.json`));
+    if (j && !haStime(j)) v.push(realiInFile(j));
+  }
+  if (v.length < 3) return 0;
+  v.sort((a, b) => a - b);
+  return v[Math.floor(v.length / 2)];
+}
+
+function writeDay(dir, dateStr, stations, net, soglia) {
   if (stations.length < 10) {
     console.warn(`  ${dateStr}: solo ${stations.length} stazioni, salto la scrittura`);
     return false;
   }
   const outFile = path.join(dir, `${dateStr}.json`);
+  // Non peggiorare un giorno già coperto: se il file contiene stime Open-Meteo
+  // (che coprono l'intera rete) lo si sostituisce solo quando la raccolta nuova
+  // è abbastanza ricca da reggere da sola. Altrimenti si rimpiazzerebbero 130
+  // stazioni stimate con le 2 o 3 vere che MeteoHub ha ripubblicato, lasciando
+  // la mappa più vuota di prima.
+  if (soglia) {
+    const vecchio = leggiFile(outFile);
+    if (haStime(vecchio) && stations.length < soglia) {
+      console.log(`  ${dateStr}: ${stations.length} stazioni reali < soglia ${soglia}, tengo il file con le stime`);
+      return false;
+    }
+    if (haStime(vecchio)) {
+      console.log(`  ${dateStr}: dato reale tornato (${stations.length} stazioni), sostituisco le stime`);
+    }
+  }
   fs.writeFileSync(outFile, JSON.stringify({
     date:      dateStr,
     collected: new Date().toISOString(),
@@ -164,28 +204,43 @@ async function main() {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
     let targetDays;
+    let soglia = 0; // stazioni reali minime perché un giorno regga senza stime
     if (process.env.DATE_OVERRIDE && process.env.DATE_OVERRIDE.trim()) {
       targetDays = [process.env.DATE_OVERRIDE.trim()];
     } else {
-      // ieri + altroieri sempre; auto-riparazione 3-7 giorni indietro
-      // (la finestra pubblica MeteoHub copre ~10 giorni)
+      // ieri + altroieri sempre; auto-riparazione 3-9 giorni indietro
+      // (la finestra pubblica MeteoHub copre ~10 giorni: 9 lascia un giorno di
+      // margine ed è più larga dei 7 di prima).
+      //
+      // Il campanello "questo giorno è venuto male" ora conta le stazioni
+      // REALI, non le righe del file (30/7/2026). Prima bastava `count < 10`,
+      // e siccome la copertura Open-Meteo scrive un file pieno (130 stazioni
+      // stimate per la Puglia del 27/7), dal momento della toppa in poi il
+      // giorno sembrava sano e non veniva più riprovato: ci chiudevamo da soli
+      // la porta al dato reale, sprecando i giorni di finestra rimasti. Peggio
+      // ancora i giorni parziali sopra le 10 stazioni (Molise 29/7: 23 su 28),
+      // che non venivano riletti MAI.
       targetDays = [1, 2].map(i => fmtDate(new Date(noon - i * 24 * 3600000)));
-      for (let i = 3; i <= 7; i++) {
+      const recenti = [];
+      for (let i = 1; i <= 10; i++) recenti.push(fmtDate(new Date(noon - i * 24 * 3600000)));
+      soglia = Math.floor(tipicoReali(dir, recenti) * 0.9); // 0 se la finestra è troppo scarna
+      for (let i = 3; i <= 9; i++) {
         const dStr = fmtDate(new Date(noon - i * 24 * 3600000));
-        const f = path.join(dir, `${dStr}.json`);
-        let needsRepair = !fs.existsSync(f);
-        if (!needsRepair) {
-          try { needsRepair = (JSON.parse(fs.readFileSync(f, 'utf8')).count || 0) < 10; }
-          catch(e) { needsRepair = true; }
-        }
-        if (needsRepair) targetDays.push(dStr);
+        const j = leggiFile(path.join(dir, `${dStr}.json`));
+        const reali = realiInFile(j);
+        let motivo = null;
+        if (!j) motivo = 'file assente';
+        else if ((j.count || 0) < 10) motivo = `solo ${j.count || 0} righe`;
+        else if (haStime(j)) motivo = `contiene stime (${reali} stazioni reali)`;
+        else if (soglia >= 10 && reali < soglia) motivo = `${reali} stazioni reali sotto la soglia ${soglia}`;
+        if (motivo) { targetDays.push(dStr); console.log(`  ↻ ${dStr}: ${motivo}, riprovo`); }
       }
     }
 
     for (const dStr of targetDays) {
       try {
         console.log(`  Raccolgo ${dStr}...`);
-        writeDay(dir, dStr, await collectDay(netCfg, dStr), netCfg.net);
+        writeDay(dir, dStr, await collectDay(netCfg, dStr), netCfg.net, soglia);
       } catch(e) {
         console.warn(`  Warn: ${netCfg.net} ${dStr} fallito: ${e.message}`);
       }

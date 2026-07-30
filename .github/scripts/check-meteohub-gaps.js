@@ -119,10 +119,18 @@ async function main() {
       const buco = !j ? 'mancante' : (isReal(j) && nReali < soglia ? 'parziale' : null);
       let ev = find(region, day);
 
-      // chiusura automatica: MeteoHub ha (ri)consegnato i dati
-      if (ev && ev.stato === 'aperto' && !buco) {
-        ev.stato = 'risolto-meteohub'; ev.risoltoIl = todayStr; cambiato = true;
-        console.log(`✅ ${region} ${day}: risolto da MeteoHub`);
+      // chiusura automatica: MeteoHub ha (ri)consegnato i dati.
+      // Vale anche per un evento GIÀ COPERTO con le stime: dal 30/7/2026 il
+      // collector rilegge i giorni coperti fino a 9 giorni indietro e, se il
+      // dato reale ricompare abbastanza ricco, sostituisce le stime — qui si
+      // prende atto che il buco si è chiuso davvero. Serve isReal(): su un file
+      // di sole stime `buco` è null, ma non è certo un giorno risolto.
+      if (ev && (ev.stato === 'aperto' || ev.stato === 'coperto-openmeteo') && !buco && isReal(j)) {
+        const tardivo = ev.stato === 'coperto-openmeteo';
+        ev.stato = 'risolto-meteohub'; ev.risoltoIl = todayStr;
+        if (tardivo) { ev.stimeSostituite = true; delete ev.stazioniCoperte; }
+        cambiato = true;
+        console.log(`✅ ${region} ${day}: risolto da MeteoHub${tardivo ? ' (stime sostituite dal dato reale)' : ''}`);
         continue;
       }
       if (!buco || (j && !isReal(j) && j.source === 'open-meteo-gapfill')) continue;
