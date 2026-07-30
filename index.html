@@ -4696,6 +4696,28 @@ function _imgDaSvg(svg,w,h){
 }
 function captureMapBlob(scala){
   try{ map.stop(); }catch(e){}
+  // Lo screen deve contenere TUTTA l'analisi, non la porzione che capita nella
+  // finestra: su schermi bassi (o con tante regioni insieme) il contenuto
+  // sborda e l'immagine usciva tagliata sopra e sotto — successo il 30/7/2026
+  // con l'Italia intera. Se le regioni attive non sono tutte in vista, la
+  // mappa si adatta prima dello scatto e la vista dell'utente viene
+  // ripristinata subito dopo (vedi coda della promise).
+  var vistaPrec=null;
+  try{
+    var _bb=null;
+    getActiveRegions().forEach(function(k){
+      var b=REGION_BOUNDS[k]; if(!b) return;
+      _bb=_bb?_bb.extend(L.latLngBounds(b)):L.latLngBounds(b);
+    });
+    if(_bb && !map.getBounds().contains(_bb)){
+      vistaPrec={c:map.getCenter(),z:map.getZoom()};
+      // Padding asimmetrico: su desktop i pannelli di sinistra (~410px) sono
+      // sovrapposti alla mappa — un fit centrato nasconderebbe dietro di loro
+      // il bordo ovest del contenuto (successo col Piemonte al primo test).
+      var _pl=(window.innerWidth>900)?440:24;
+      map.fitBounds(_bb,{animate:false,paddingTopLeft:L.point(_pl,24),paddingBottomRight:L.point(24,40)});
+    }
+  }catch(e){}
   var mapEl=document.getElementById('map');
   var mr=mapEl.getBoundingClientRect();
   var S=scala||window.devicePixelRatio||1;
@@ -4708,6 +4730,20 @@ function captureMapBlob(scala){
 
   return ensureHtml2Canvas().then(function(){
     return new Promise(function(res){ setTimeout(res,120); }); // un frame per assestare
+  }).then(function(){
+    // Se la vista è stata appena adattata, i tile della nuova inquadratura
+    // stanno ancora arrivando: si aspetta che finiscano (tetto 2,5s — un tile
+    // perso non deve bloccare lo scatto per sempre) più un respiro per il
+    // ridisegno di heat e confini sugli handler di zoom/move.
+    if(!vistaPrec) return;
+    return new Promise(function(res){
+      var t0=Date.now();
+      (function poll(){
+        var mancanti=[].slice.call(mapEl.querySelectorAll('.leaflet-tile')).some(function(t){ return !t.complete||!t.naturalWidth; });
+        if(!mancanti||Date.now()-t0>2500) return setTimeout(res,300);
+        setTimeout(poll,120);
+      })();
+    });
   }).then(function(){
     // sfondo (il colore del contenitore mappa, visibile dove non c'è tile)
     ctx.fillStyle=getComputedStyle(mapEl).backgroundColor||'#e8ecf1';
@@ -4823,6 +4859,14 @@ function captureMapBlob(scala){
       // (1,37 → 3,89 su 255) e ammorbidiva scritte e cerchietti.
       out.toBlob(function(b){ if(b) res(b); else rej(new Error('canvas vuoto')); },'image/png');
     });
+  }).then(function(blob){
+    // Vista dell'utente com'era prima dell'eventuale adattamento — sia in
+    // successo sia in errore, altrimenti la mappa resta "saltata".
+    if(vistaPrec){ try{ map.setView(vistaPrec.c,vistaPrec.z,{animate:false}); }catch(e){} }
+    return blob;
+  },function(err){
+    if(vistaPrec){ try{ map.setView(vistaPrec.c,vistaPrec.z,{animate:false}); }catch(e){} }
+    throw err;
   });
 }
 window.captureMapBlob=captureMapBlob;
