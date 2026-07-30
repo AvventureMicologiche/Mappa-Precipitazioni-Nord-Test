@@ -8,7 +8,9 @@
       "stazioniViste": 0,
       "stazioniAttese": 128,
       "rilevato": "2026-07-29",
-      "stato": "aperto"
+      "stato": "coperto-openmeteo",
+      "copertoIl": "2026-07-30",
+      "stazioniCoperte": 130
     },
     {
       "rete": "basilicata",
@@ -17,8 +19,19 @@
       "stazioniViste": 50,
       "stazioniAttese": 61,
       "rilevato": "2026-07-29",
+      "stato": "coperto-openmeteo",
+      "copertoIl": "2026-07-30",
+      "stazioniCoperte": 11
+    },
+    {
+      "rete": "molise",
+      "data": "2026-07-29",
+      "tipo": "parziale",
+      "stazioniViste": 23,
+      "stazioniAttese": 28,
+      "rilevato": "2026-07-30",
       "stato": "aperto"
     }
   ],
-  "aggiornato": "2026-07-29T12:58:53.514Z"
+  "aggiornato": "2026-07-30T10:49:49.631Z"
 }
