@@ -30,8 +30,10 @@
       "stazioniViste": 23,
       "stazioniAttese": 28,
       "rilevato": "2026-07-30",
-      "stato": "aperto"
+      "stato": "coperto-openmeteo",
+      "copertoIl": "2026-07-31",
+      "stazioniCoperte": 5
     }
   ],
-  "aggiornato": "2026-07-30T10:49:49.631Z"
+  "aggiornato": "2026-07-31T11:11:09.599Z"
 }
