@@ -27,7 +27,16 @@ const path = require('path');
 const DATA_ROOT = path.join(__dirname, '..', '..', 'data');
 const LEDGER = path.join(DATA_ROOT, 'meteohub-gaps.json');
 
-const GRACE_DAYS = 3;      // giorni di attesa prima della copertura Open-Meteo
+// Giorni di attesa prima di coprire un buco con le stime Open-Meteo.
+// Da 3 a 2 il 31/7/2026. Sui primi tre eventi il terzo giorno non ha MAI
+// recuperato nulla (Puglia 27/7 ferma a 0 stazioni buone anche oggi, quattro
+// giorni dopo; Basilicata 27/7 ferma a 50 su 61; Molise 29/7 a 23 su 28):
+// quando MeteoHub perde un giorno non lo ripubblica, e l'attesa non compra
+// niente. Soprattutto, dal 30/7 coprire non è più una scelta irreversibile —
+// il collector continua a riprovare i giorni coperti fino a 9 giorni indietro
+// e rimpiazza le stime se il dato reale ricompare. Restiamo a 2 e non a 1
+// perché il giorno subito dopo l'ingestione si sta ancora completando.
+const GRACE_DAYS = 2;
 const WINDOW_DAYS = 10;    // finestra di scansione (= finestra pubblica MeteoHub)
 const PARTIAL_RATIO = 0.9; // sotto il 90% della mediana → giorno parziale
 

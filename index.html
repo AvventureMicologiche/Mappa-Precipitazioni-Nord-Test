@@ -478,7 +478,11 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   .tp-btn{font-size:12px !important;padding:5px 1px !important;}
   #btn-funghi{font-size:11px !important;padding:6px 6px !important;line-height:1.3 !important;}
   #btn-cd{font-size:11px !important;padding:6px 6px !important;}
-  #tp-status{display:none !important;}
+  /* L'avviso NON si nasconde (31/7/2026): era `display:none` per far stare il
+     pannello negli schermi stretti, ma così chi cliccava "Ieri" in un giorno
+     senza dati non leggeva niente e sembrava che il sito non rispondesse.
+     Compare solo quando c'è davvero un problema e costa 26px in altezza. */
+  #tp-status{font-size:13px !important;line-height:1.3 !important;}
   #time-panel .tp-content{padding-top:5px !important;}
 }
 
@@ -2654,7 +2658,11 @@ function loadData(pastDate,nowDate,labelPeriodo){
     // Tutte le regioni caricate — render finale unificato
     if(allData.length<3){
       setLoading(false);
-      var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='⚠️ Nessun dato disponibile per il periodo selezionato';
+      // Classe 'error' (rosso): prima restava verde, il colore che il sito usa
+      // per gli esiti riusciti — un avviso di dati mancanti in verde è un
+      // messaggio contraddittorio. Testo accorciato per stare su una riga
+      // anche sugli schermi da 375px, dove ora è visibile.
+      var _ts=document.getElementById('tp-status');_ts.className='error';_ts.textContent='⚠️ Nessun dato per questo periodo';
       return;
     }
     renderMulti(allData,labelPeriodo,allFonti);
