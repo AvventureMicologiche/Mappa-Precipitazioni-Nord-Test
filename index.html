@@ -2623,6 +2623,10 @@ function loadData(pastDate,nowDate,labelPeriodo){
   loadSessionId++; // invalida tutte le richieste precedenti
   var mySession=loadSessionId;
   currentPast=pastDate; currentNow=nowDate; currentLabel=labelPeriodo;
+  // Azzeramento dei conteggi su stime e giorni mancanti (vedi usaGiorno).
+  // _periodoUnGiorno decide se le stime si possono usare: su un giorno solo no.
+  _giorniStimati=new Set(); _giorniSaltati=new Set();
+  _periodoUnGiorno=(fmtISOLocal(pastDate)===fmtISOLocal(nowDate));
   if(typeof updateGuidePulse==='function') updateGuidePulse(); // periodo scelto → stop lampeggio subito
   // Desktop: lo zoom sulle regioni avviene QUI (al click del periodo), non alla
   // selezione — così sull'Italia intera si cliccano comodamente anche regioni
@@ -2843,7 +2847,12 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
       // è idempotente e costa pochi ms.
       setTimeout(drawGrid,700);
       setTimeout(drawGrid,1600);
-      var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='✅ '+labelPeriodo;
+      // All'etichetta del periodo si aggiunge, quando serve, cosa manca o cosa
+      // è stimato: prima un periodo con giorni bucati usciva con la spunta
+      // verde e i totali più bassi del vero, senza dire niente.
+      var _ts=document.getElementById('tp-status');
+      _ts.className=avvisoDati()?'error':'';
+      _ts.textContent=(avvisoDati()?'⚠️ ':'✅ ')+labelPeriodo+avvisoDati();
       osmerInlineDesktop(); // avviso Friuli inline accanto a "✅ Ieri" (solo desktop + Ieri)
       if(typeof refreshSelectorStyles==='function') refreshSelectorStyles(); // via il riempimento: non deve coprire la heatmap
     }
@@ -2852,6 +2861,48 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
 }
 
 // ─── Wrapper ARPA Lombardia → callback ───────────────────────
+// ─── Stime Open-Meteo: quando usarle, e dirlo ───────────────────────────────
+// Un file giornaliero può essere una stima intera (copertura di un buco,
+// source "open-meteo-gapfill", tutte le stazioni con om:true) oppure contenere
+// solo alcune stazioni stimate (copertura parziale: le reali restano intatte).
+// NB: il backfill storico dei piloti NON marca le stazioni con om, quindi non
+// finisce qui dentro — è la pre-storia documentata, non un buco tappato.
+//
+// Regola decisa il 31/7/2026 dopo aver misurato la qualità delle stime su una
+// giornata di temporali in Emilia (313 stazioni): errore mediano 11-18 mm per
+// stazione, con Casteldelci a 79 mm reali stimata 0 e Frassineto a 15 mm reali
+// stimata 94. Il totale regionale resta nell'ordine di grandezza giusto, ma
+// LA DISTRIBUZIONE no: la stima può accendere una macchia dove non è caduto
+// nulla, e per chi cerca funghi mandarlo nel posto sbagliato è peggio che
+// dirgli meno pioggia dappertutto.
+//   • periodo di UN SOLO giorno → le stime NON si usano: lì sarebbero tutta
+//     la mappa. Se restano meno di 5 stazioni reali il giorno vale come
+//     mancante, e l'utente legge l'avviso invece di una mappa inventata.
+//   • periodo lungo → si usano: il totale resta corretto e l'errore del
+//     singolo giorno si annacqua fra gli altri. Meglio di un buco, che
+//     toglierebbe in silenzio un giorno intero dalla somma.
+// I due insiemi (per data, non per regione: in multiregione lo stesso giorno
+// non va contato tre volte) alimentano l'avviso sotto al pannello.
+var _giorniStimati=new Set(), _giorniSaltati=new Set(), _periodoUnGiorno=false;
+/** Coda da appendere all'etichetta del periodo: '' se è filato tutto liscio. */
+function avvisoDati(){
+  var p=[], s=_giorniSaltati.size, t=_giorniStimati.size;
+  if(s) p.push(s===1?'1 giorno senza dati':s+' giorni senza dati');
+  if(t) p.push(t===1?'1 giorno stimato':t+' giorni stimati');
+  return p.length?' · '+p.join(' · '):'';
+}
+function usaGiorno(data,giorno){
+  if(!data||!data.stations){ _giorniSaltati.add(giorno); return {stations:[]}; }
+  var stimate=0;
+  for(var i=0;i<data.stations.length;i++) if(data.stations[i].om) stimate++;
+  if(stimate===0) return data;
+  if(!_periodoUnGiorno){ _giorniStimati.add(giorno); return data; }
+  var reali=data.stations.filter(function(s){return !s.om;});
+  if(reali.length<5){ _giorniSaltati.add(giorno); return {stations:[]}; }
+  _giorniStimati.add(giorno);
+  return {date:data.date,source:data.source,count:reali.length,stations:reali};
+}
+
 function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
   // Dal 24/7/2026 la Lombardia legge file giornalieri come le altre regioni,
   // invece di interrogare Socrata live a ogni caricamento (lento sui periodi
@@ -2883,6 +2934,7 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
   days.forEach(function(day){
     fetch(GITHUB_RAW+'/'+day+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
+      .then(function(d){return usaGiorno(d,day);},function(e){_giorniSaltati.add(day);throw e;})
       .then(function(data){
         if(data&&data.stations){
           data.stations.forEach(function(s){
@@ -3174,6 +3226,7 @@ function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
   days.forEach(function(day){
     fetch(GITHUB_RAW+'/'+day+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
+      .then(function(d){return usaGiorno(d,day);},function(e){_giorniSaltati.add(day);throw e;})
       .then(function(data){
         if(data&&data.stations){
           data.stations.forEach(function(s){
@@ -3234,6 +3287,7 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
   days.forEach(function(day){
     fetch(GITHUB_RAW+'/'+day+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
+      .then(function(d){return usaGiorno(d,day);},function(e){_giorniSaltati.add(day);throw e;})
       .then(function(data){
         if(data&&data.stations){
           data.stations.forEach(function(s){
@@ -3335,6 +3389,7 @@ function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
   days.forEach(function(day){
     fetch(GITHUB_RAW+'/'+day+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
+      .then(function(d){return usaGiorno(d,day);},function(e){_giorniSaltati.add(day);throw e;})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -3392,6 +3447,7 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
   days.forEach(function(day){
     fetch(GITHUB_RAW+'/'+day+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
+      .then(function(d){return usaGiorno(d,day);},function(e){_giorniSaltati.add(day);throw e;})
       .then(function(data){
         if(data&&data.stations){
           data.stations.forEach(function(s){
@@ -3439,6 +3495,7 @@ function loadTicinoRegion(pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(TICINO_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(function(d){return usaGiorno(d,dateStr);},function(e){_giorniSaltati.add(dateStr);throw e;})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -3486,6 +3543,7 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(GITHUB_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(function(d){return usaGiorno(d,dateStr);},function(e){_giorniSaltati.add(dateStr);throw e;})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -3564,6 +3622,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
     // OSMER (backfill + reale)
     fetch(OSMER_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(function(d){return usaGiorno(d,dateStr);},function(e){_giorniSaltati.add(dateStr);throw e;})
       .then(function(data){
         if(!data.stations) return;
         var isReal=data.source && data.source.indexOf('backfill')<0;
@@ -3582,6 +3641,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
     if(addVeneto){
       fetch(VENETO_RAW+'/'+dateStr+'.json')
         .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(function(d){return usaGiorno(d,dateStr);},function(e){_giorniSaltati.add(dateStr);throw e;})
         .then(function(data){
           if(!data.stations) return;
           data.stations.forEach(function(s){
@@ -3616,6 +3676,7 @@ function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(CF_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(function(d){return usaGiorno(d,dateStr);},function(e){_giorniSaltati.add(dateStr);throw e;})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -3659,6 +3720,7 @@ function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(function(d){return usaGiorno(d,dateStr);},function(e){_giorniSaltati.add(dateStr);throw e;})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -3702,6 +3764,7 @@ function loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(GITHUB_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(function(d){return usaGiorno(d,dateStr);},function(e){_giorniSaltati.add(dateStr);throw e;})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -3746,6 +3809,7 @@ function loadMeteotrentino(pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(GITHUB_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(function(d){return usaGiorno(d,dateStr);},function(e){_giorniSaltati.add(dateStr);throw e;})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -3978,6 +4042,7 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
   days.forEach(function(day){
     fetch(GITHUB_RAW+'/'+day+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
+      .then(function(d){return usaGiorno(d,day);},function(e){_giorniSaltati.add(day);throw e;})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
