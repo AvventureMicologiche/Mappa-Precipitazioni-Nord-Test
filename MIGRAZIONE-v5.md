@@ -35,9 +35,11 @@ Una copia integrale **cancellerebbe due settimane di dati reali** e rimetterebbe
 
 Fresche anche nel test (perché lì i loro workflow girano davvero): `friuli-osmer`, `valledaosta-cf`, `lombardia`, `ticino`. Non serve copiarle: in produzione sono già uguali o più avanti.
 
-### ⛔ `meteohub-lombardia` fuori da tutti gli allarmi
+### ⛔ `meteohub-lombardia` non si copia e non si sorveglia
 
-È ferma dal 26/7 **per scelta** (era la rete di controllo per il confronto con la verità ARPA, non alimenta la mappa). Se finisse tra le regioni sorvegliate manderebbe una mail il primo giorno e un promemoria ogni tre, per sempre. Da decidere se portarla in prod come storico; in ogni caso **non** va nelle liste dei controlli.
+**Deciso il 31/7/2026: non va in produzione.** Era la rete di controllo per il confronto con la verità ARPA, non ha mai alimentato la mappa (in Lombardia i dati sono e restano ARPA Socrata) ed è ferma dal 26/7. La cartella `data/meteohub-lombardia` resta nel repo di test come storico del confronto già fatto.
+
+Non deve finire né in `data/` di produzione né nelle liste dei controlli: una regione ferma per scelta, se sorvegliata, manda una mail il primo giorno e un promemoria ogni tre, per sempre.
 
 ### ⛔ I `.js` nella cartella principale non c'entrano
 
@@ -58,7 +60,7 @@ In tutte e due i repo, alla radice, ci sono vecchie copie dei collector (`collec
 - [ ] `.github/workflows/meteohub-gaps.yml` (08:40 UTC)
 
 **Dati**
-- [ ] `data/meteohub-{marche,umbria,lazio,molise,campania,puglia,basilicata,calabria,sicilia,sardegna}/`
+- [ ] `data/meteohub-{marche,umbria,lazio,molise,campania,puglia,basilicata,calabria,sicilia,sardegna}/` — dieci cartelle, **senza** `meteohub-lombardia`
 - [ ] `data/meteohub-gaps.json` — il registro degli eventi. **Serve**: è la fonte della verità della metrica "frequenza dei buchi" e senza di lui il gapfill ripartirebbe da zero riaprendo eventi già chiusi
 
 ---
