@@ -13,6 +13,8 @@ Mappa interattiva delle precipitazioni del Nord Italia per il canale YouTube "Av
 
 ---
 
+> **Migrazione a produzione: la checklist è in [`MIGRAZIONE-v5.md`](MIGRAZIONE-v5.md).** Leggerla PRIMA di copiare qualsiasi cosa — contiene le trappole viste sul campo (le cartelle `data/` del Nord qui sono ferme a metà luglio: una copia in blocco cancellerebbe due settimane di dati veri in produzione) e il pezzo di lavoro che si dimentica, cioè estendere l'allarme via mail alle regioni MeteoHub.
+
 ## PILOTA MeteoHub (dal 20 luglio 2026 — solo repo di test)
 
 Valutazione di MeteoHub (meteohub.agenziaitaliameteo.it, Agenzia ItaliaMeteo, ex Mistral)
