@@ -2892,8 +2892,33 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
   // Dal 24/7/2026 la Lombardia legge file giornalieri come le altre regioni,
   // invece di interrogare Socrata live a ogni caricamento (lento sui periodi
   // lunghi). I file (collect-lombardia.js) contengono solo i sensori che
-  // riportano — i morti sono già fuori. Il grid nearest-neighbor resta identico
-  // (aspetto invariato). NB in produzione il RAW va cambiato in Mappa-Precipitazioni-Nord.
+  // riportano — i morti sono già fuori.
+  //
+  // 31/7/2026 — SI DISEGNANO LE STAZIONI VERE. Prima la Lombardia era l'unica
+  // regione a non mostrare le proprie stazioni: prendeva l'ANAGRAFE ARPA (326
+  // pluviometri), la assottigliava due volte con selectUniform (326→187→160) e
+  // a ognuno di quei 160 punti assegnava il valore della stazione reale più
+  // vicina. Era il compromesso dell'epoca live, quando 325 chiamate a Socrata
+  // erano insostenibili; con i file non serve più e costava carissimo.
+  // Misurato sul periodo 8-15 luglio: 253 stazioni misuravano, solo 128 misure
+  // arrivavano in mappa — 125 non si vedevano MAI, compreso il massimo del
+  // periodo (77,2 mm a Oltre il Colle Zambla, mentre il pannello dichiarava
+  // 68,6). selectUniform tiene al massimo 4 stazioni per ognuna delle 80
+  // caselle in cui divide la regione, quindi decima proprio la montagna, dove
+  // la rete è fitta: nelle Orobie sopravvivevano 2 pluviometri su 12 e una
+  // sacca da 44 mm risultava asciutta. Per una mappa che serve a trovare dove
+  // ha piovuto 16-23 giorni fa è il difetto peggiore possibile.
+  // NB in produzione il RAW va cambiato in Mappa-Precipitazioni-Nord.
+  //
+  // Sensori esclusi: hanno coordinate corrotte nell'anagrafe ARPA (nome e
+  // provincia di un posto, coordinate di un altro). Oggi sono tutti e tre morti
+  // da sempre, quindi il filtro non cambia nulla — serve a non ritrovarseli in
+  // mezzo alla mappa se un giorno tornassero a riportare.
+  //   2239 "Ispra prato" (VA)             → coordinate di Gandellino Tezzi (BG)
+  //   2206 "Ispra tetto" (VA)             → colline bergamasche, non Ispra
+  //   2535 "Virgilio Mantova Cerese" (MN) → coordinate di Dorio (LC)
+  // Attenzione: "Ispra JRC" (32355) è invece corretta e riporta ogni giorno.
+  var LOMB_ESCLUSE={'2239':1,'2206':1,'2535':1};
   var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord-Test/main/data/lombardia';
   function _fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
   var todayStr=_fmt(new Date());
@@ -2904,17 +2929,14 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
   var rainMap={}, meta={};
   var pending=days.length;
   function finalizza(){
-    var arpaList=Object.keys(rainMap).map(function(id){ var m=meta[id]; return {lat:m.lat,lon:m.lon,mm:rainMap[id]}; });
-    if(arpaList.length<3){ loadOpenMeteoRegion(LOMBARDIA_STATIONS,pastDate,nowDate,labelPeriodo,cb); return; } // fallback se i file mancano
-    var gridSt=(ARPA_STATIONS && ARPA_STATIONS.length>10)?selectUniform(ARPA_STATIONS,150):LOMBARDIA_STATIONS;
-    var out=gridSt.map(function(s){
-      var bestMm=0,bestDist=999;
-      arpaList.forEach(function(a){var di=Math.abs(a.lat-s.lat)+Math.abs(a.lon-s.lon);if(di<bestDist){bestDist=di;bestMm=a.mm;}});
-      return {n:s.n||s.nomestazione,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'—',
-              idsensore:s.idsensore||s.id||null,
-              mm:bestMm<0.5?0:Math.round(bestMm*10)/10};
+    var out=Object.keys(rainMap).map(function(id){
+      var m=meta[id];
+      return {n:m.n||'—',lat:m.lat,lon:m.lon,q:m.q||0,p:m.p||'—',
+              idsensore:id,                                  // serve al grafico storico
+              mm:rainMap[id]<0.5?0:Math.round(rainMap[id]*10)/10};
     }).filter(function(s){return s.lat&&s.lon;});
-    cb(out.length>=3?out:[]);
+    if(out.length<3){ loadOpenMeteoRegion(LOMBARDIA_STATIONS,pastDate,nowDate,labelPeriodo,cb); return; } // fallback se i file mancano
+    cb(out);
   }
   days.forEach(function(day){
     fetch(GITHUB_RAW+'/'+day+'.json')
@@ -2923,9 +2945,9 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
       .then(function(data){
         if(data&&data.stations){
           data.stations.forEach(function(s){
-            if(!s.id)return;
+            if(!s.id||LOMB_ESCLUSE[String(s.id)])return;
             rainMap[s.id]=(rainMap[s.id]||0)+(s.mm||0);
-            if(!meta[s.id]) meta[s.id]={lat:s.lat,lon:s.lon};
+            if(!meta[s.id]) meta[s.id]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,p:s.p};
           });
         }
       })
