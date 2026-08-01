@@ -4535,6 +4535,10 @@ document.getElementById('region-select').addEventListener('change', function(){
   else if(rk==='ticino') map.setView([46.05, 8.8], 8.5);
   else if(rk==='piemonte-vda') map.setView([45.25, 7.55], 7.25);
   else if(rk==='trentino-aa') map.setView([46.25, 11.3], 7.5);
+  // Centro-sud e regioni future: nessuna vista calibrata a mano nella catena
+  // qui sopra → si usa centro/zoom della scheda regione (senza questo ramo la
+  // mappa restava sull'Italia intera: successo su Android con la Basilicata).
+  else if(REGIONS[rk]&&REGIONS[rk].center) map.setView(REGIONS[rk].center, REGIONS[rk].zoom||7.5);
   clearMarkers();
   expandRegion(rk).forEach(function(r){ setRegionBorder(r, function(){ addDefaultMarkersForRegion(r); }); });
   if(currentPast&&currentNow) loadData(currentPast, currentNow, currentLabel);
