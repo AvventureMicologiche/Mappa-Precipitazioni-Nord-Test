@@ -50,6 +50,7 @@ In tutte e due i repo, alla radice, ci sono vecchie copie dei collector (`collec
 ## 2. Cosa copiare, esattamente
 
 **Sito**
+- [ ] **PRIMA di copiare `index.html`: controllare che niente sia rimasto solo in prod.** La migrazione sostituisce il file, quindi una correzione fatta di corsa solo in produzione e mai riportata nel test verrebbe cancellata in silenzio. Controllo: `git log --since="..." -- index.html` sul repo di prod dall'ultima data di allineamento, e per ogni modifica verificare **nel contenuto** del file di test che ci sia (i messaggi di commit non bastano: il test è stato riallineato in blocco il 22/7 e la storia non combacia). Al **1/8/2026** verificato allineato — la Lombardia a stazioni vere (`LOMB_ESCLUSE`), la regola stime sul giorno singolo e tutto il resto ci sono in entrambi.
 - [ ] `index.html` — porta con sé header `(v5.0)`, titolo «Mappa Pluviometrica Italia», le 22 regioni, il tasto Screen rifatto e le etichette dei tasti per dispositivo
 - [ ] `preview.jpg` — anteprima Italia intera a 30 giorni, 2606 stazioni
 
