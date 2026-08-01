@@ -360,6 +360,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   border-radius:10px;padding:3px 12px;font-size:9px;color:#888;
   pointer-events:none;white-space:nowrap;}
 
+/* ── Fase di test Centro-Sud (regioni MeteoHub) ──
+   Badge "beta" accanto ai nomi regione + pillola di contesto sopra la chip
+   fonte, visibile solo quando almeno una regione MeteoHub e' attiva. */
+.beta-tag{font-size:8px;font-weight:700;color:#b07d10;letter-spacing:.4px;
+  text-transform:uppercase;vertical-align:super;margin-left:2px;}
+#beta-note{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
+  z-index:1000;background:rgba(255,244,214,.94);border:1px solid #e6c869;
+  border-radius:10px;padding:3px 12px;font-size:9px;color:#8a6d1a;
+  pointer-events:none;white-space:nowrap;display:none;}
+@media(max-width:600px){#beta-note{bottom:auto;top:72px;font-size:8px;}}
+
 /* ── Box canale YouTube (desktop, in basso a destra) ──
    Filigrana sullo SFONDO, non sull'intero elemento: la mappa si intravede
    ma Archie e il pulsante restano pieni. Col mouse sopra diventa opaco. */
@@ -844,6 +855,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       <div class="sh-fonte" id="sh-fonte"></div>
     </div>
     <div class="fonte-tag" id="fonte-tag">Fonte: —</div>
+    <div id="beta-note">🧪 Centro-Sud in fase di test: dati MeteoHub in validazione</div>
 
     <!-- Box canale YouTube — desktop, in basso a destra.
          Filigrana: lo SFONDO è semitrasparente (si intravede la mappa) ma il
@@ -885,17 +897,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <label class="rcheck-wrap"><input type="checkbox" id="chk-friuli" value="friuli"><span class="rcheck-box"></span><span class="rcheck-name">Friuli V.G.</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-emilia" value="emilia"><span class="rcheck-box"></span><span class="rcheck-name">Emilia-R.</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-toscana" value="toscana"><span class="rcheck-box"></span><span class="rcheck-name">Toscana</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-umbria" value="umbria"><span class="rcheck-box"></span><span class="rcheck-name">Umbria</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-marche" value="marche"><span class="rcheck-box"></span><span class="rcheck-name">Marche</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-lazio" value="lazio"><span class="rcheck-box"></span><span class="rcheck-name">Lazio</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-umbria" value="umbria"><span class="rcheck-box"></span><span class="rcheck-name">Umbria <sup class="beta-tag">beta</sup></span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-marche" value="marche"><span class="rcheck-box"></span><span class="rcheck-name">Marche <sup class="beta-tag">beta</sup></span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-lazio" value="lazio"><span class="rcheck-box"></span><span class="rcheck-name">Lazio <sup class="beta-tag">beta</sup></span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-abruzzo" value="abruzzo"><span class="rcheck-box"></span><span class="rcheck-name">Abruzzo</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-molise" value="molise"><span class="rcheck-box"></span><span class="rcheck-name">Molise</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-campania" value="campania"><span class="rcheck-box"></span><span class="rcheck-name">Campania</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-puglia" value="puglia"><span class="rcheck-box"></span><span class="rcheck-name">Puglia</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-basilicata" value="basilicata"><span class="rcheck-box"></span><span class="rcheck-name">Basilicata</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-calabria" value="calabria"><span class="rcheck-box"></span><span class="rcheck-name">Calabria</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-sicilia" value="sicilia"><span class="rcheck-box"></span><span class="rcheck-name">Sicilia</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-sardegna" value="sardegna"><span class="rcheck-box"></span><span class="rcheck-name">Sardegna</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-molise" value="molise"><span class="rcheck-box"></span><span class="rcheck-name">Molise <sup class="beta-tag">beta</sup></span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-campania" value="campania"><span class="rcheck-box"></span><span class="rcheck-name">Campania <sup class="beta-tag">beta</sup></span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-puglia" value="puglia"><span class="rcheck-box"></span><span class="rcheck-name">Puglia <sup class="beta-tag">beta</sup></span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-basilicata" value="basilicata"><span class="rcheck-box"></span><span class="rcheck-name">Basilicata <sup class="beta-tag">beta</sup></span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-calabria" value="calabria"><span class="rcheck-box"></span><span class="rcheck-name">Calabria <sup class="beta-tag">beta</sup></span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-sicilia" value="sicilia"><span class="rcheck-box"></span><span class="rcheck-name">Sicilia <sup class="beta-tag">beta</sup></span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-sardegna" value="sardegna"><span class="rcheck-box"></span><span class="rcheck-name">Sardegna <sup class="beta-tag">beta</sup></span></label>
           <!-- Checkbox INDIVIDUALI (mai visibili): stato per la selezione da mappa
                su desktop, dove i combo Piemonte-VdA / Trentino-A.A. non esistono
                e ogni regione si clicca da sola. La tendina mobile continua a
@@ -921,17 +933,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <option value="friuli">Friuli V.G.</option>
           <option value="emilia">Emilia Romagna</option>
           <option value="toscana">Toscana</option>
-          <option value="umbria">Umbria</option>
-          <option value="marche">Marche</option>
-          <option value="lazio">Lazio</option>
+          <option value="umbria">Umbria (beta)</option>
+          <option value="marche">Marche (beta)</option>
+          <option value="lazio">Lazio (beta)</option>
           <option value="abruzzo">Abruzzo</option>
-          <option value="molise">Molise</option>
-          <option value="campania">Campania</option>
-          <option value="puglia">Puglia</option>
-          <option value="basilicata">Basilicata</option>
-          <option value="calabria">Calabria</option>
-          <option value="sicilia">Sicilia</option>
-          <option value="sardegna">Sardegna</option>
+          <option value="molise">Molise (beta)</option>
+          <option value="campania">Campania (beta)</option>
+          <option value="puglia">Puglia (beta)</option>
+          <option value="basilicata">Basilicata (beta)</option>
+          <option value="calabria">Calabria (beta)</option>
+          <option value="sicilia">Sicilia (beta)</option>
+          <option value="sardegna">Sardegna (beta)</option>
         </select>
       </div>
     </div>
@@ -2814,6 +2826,13 @@ function renderMulti(allData, labelPeriodo, fontiArr, _retry){
   document.getElementById('fonte-tag').textContent='Fonte: '+fonteStr;
   lastUsedFonte=fonteStr;
 
+  // Pillola "fase di test": visibile solo se tra le regioni disegnate
+  // ce n'e' almeno una su dati MeteoHub (Centro-Sud in validazione).
+  var betaAttivo=regions.some(function(rk){
+    return REGIONS[rk]&&REGIONS[rk].dataSource==='meteohub';
+  });
+  document.getElementById('beta-note').style.display=betaAttivo?'block':'none';
+
   // I crediti derivano dalle STESSE etichette della chip, ripulite dall'emoji
   // di stato (🟢 dati di stazione, 🌍 ripiego Open-Meteo). Leggerli invece
   // dalle caselle spuntate li faceva divergere dalla chip quando si cambiava
@@ -4293,6 +4312,7 @@ function resetToStart(){
   document.querySelectorAll('.tp-btn,.tp-custom-btn').forEach(function(b){b.classList.remove('active');});
   document.getElementById('custom-box').style.display='none';
   document.getElementById('fonte-tag').textContent='Fonte: —';
+  document.getElementById('beta-note').style.display='none';
   currentPast=null; currentNow=null; currentLabel='';
   updateOsmerNotice();
   refreshSelectorStyles();
