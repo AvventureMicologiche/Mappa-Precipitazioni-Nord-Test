@@ -1796,6 +1796,11 @@ var currentPast    = null;
 var currentNow     = null;
 var currentLabel   = '';
 var loadSessionId  = 0; // incrementato ad ogni loadData — invalida richieste precedenti
+// Riprova automatica sul timeout di sicurezza (1/8/2026): un solo colpo.
+// _autoRetryUsed = questo giro di caricamenti ha già consumato la riprova;
+// _retryCall     = il prossimo loadData È la riprova (non azzerare il budget).
+var _autoRetryUsed = false;
+var _retryCall     = false;
 
 // ═══════════════════════════════════════════════════════════════
 // CANVAS / HEATMAP
@@ -2622,6 +2627,9 @@ function loadData(pastDate,nowDate,labelPeriodo){
   isLoading=true;
   loadSessionId++; // invalida tutte le richieste precedenti
   var mySession=loadSessionId;
+  // Caricamento chiesto dall'utente → il budget della riprova automatica si
+  // rinnova. Se invece è la riprova stessa, il budget resta consumato.
+  if(_retryCall){ _retryCall=false; } else { _autoRetryUsed=false; }
   currentPast=pastDate; currentNow=nowDate; currentLabel=labelPeriodo;
   // Su un giorno solo le stime non si usano (vedi usaGiorno).
   _periodoUnGiorno=(fmtISOLocal(pastDate)===fmtISOLocal(nowDate));
@@ -2670,11 +2678,25 @@ function loadData(pastDate,nowDate,labelPeriodo){
     renderMulti(allData,labelPeriodo,allFonti);
   }
 
-  // Timeout sicurezza — se dopo 30 secondi non finisce, forza completamento
+  // Timeout sicurezza — se dopo 30 secondi non finisce, forza completamento.
+  // Prima di arrendersi il sito RIPROVA UNA VOLTA da solo (1/8/2026): l'unico
+  // incaglio visto dal vivo (prima visita assoluta a cache fredda + click sul
+  // periodo nei primissimi istanti) al secondo tentativo è sempre rientrato.
+  // La riprova parte SOLO se la sessione è ancora questa, cioè se l'utente è
+  // rimasto in attesa proprio di questo caricamento: qualunque altro click nel
+  // frattempo ha cambiato sessione e questo timer muore in silenzio, identico
+  // a prima. Il budget di 1 evita ogni possibilità di riprove a catena; se
+  // fallisce anche la riprova si mostra l'errore come sempre.
   var safetyTimer=setTimeout(function(){
     if(loadSessionId===mySession && isLoading){
       console.warn('[loadData] timeout sicurezza — forzato completamento');
       setLoading(false);
+      if(!_autoRetryUsed && currentPast && currentNow){
+        _autoRetryUsed=true; _retryCall=true;
+        console.warn('[loadData] riprovo da solo (tentativo unico)');
+        loadData(currentPast,currentNow,currentLabel);
+        return;
+      }
       var _ts=document.getElementById('tp-status');_ts.className='error';
       _ts.textContent='⚠️ Caricamento timeout — riprova';
     }
