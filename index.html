@@ -1801,6 +1801,12 @@ var loadSessionId  = 0; // incrementato ad ogni loadData — invalida richieste 
 // _retryCall     = il prossimo loadData È la riprova (non azzerare il budget).
 var _autoRetryUsed = false;
 var _retryCall     = false;
+// Apertura da link condiviso con vista propria (1/8/2026): il prossimo
+// loadData NON deve chiamare fitMapToRegions. Prima lo chiamava, e siccome è
+// un setView ANIMATO (600ms), lo zoom del link — applicato subito dopo con
+// animate:false — veniva scavalcato dall'animazione in corsa: il link si
+// apriva sempre alla vista di default. Trovato dall'utente il 1/8.
+var _linkView      = false;
 
 // ═══════════════════════════════════════════════════════════════
 // CANVAS / HEATMAP
@@ -2637,7 +2643,11 @@ function loadData(pastDate,nowDate,labelPeriodo){
   // Desktop: lo zoom sulle regioni avviene QUI (al click del periodo), non alla
   // selezione — così sull'Italia intera si cliccano comodamente anche regioni
   // lontane. Mobile/tablet invariati (la tendina centra già alla selezione).
-  if(window.innerWidth>900) fitMapToRegions(regions);
+  if(window.innerWidth>900){
+    // Da link condiviso la vista arriva dall'URL: il fit la scavalcherebbe.
+    if(_linkView){ _linkView=false; }
+    else fitMapToRegions(regions);
+  }
 
   clearMarkers();
   clearHeatmap();
@@ -5171,10 +5181,14 @@ if(_btnShot){
   }
   whenLombardiaReady(function(){
     loadAllBorders(keys,function(){
-      loadData(pastDate,nowDate,label);
       var z=parseFloat(q.get('z')),c=(q.get('c')||'').split(',').map(Number);
-      if(window.innerWidth>900 && isFinite(z) && c.length===2 && isFinite(c[0]) && isFinite(c[1])){
-        setTimeout(function(){ map.setView([c[0],c[1]],z,{animate:false}); },0);
+      var vistaDalLink=(window.innerWidth>900 && isFinite(z) && c.length===2 && isFinite(c[0]) && isFinite(c[1]));
+      // Il flag va alzato PRIMA di loadData (è lì dentro che parte il fit).
+      if(vistaDalLink) _linkView=true;
+      loadData(pastDate,nowDate,label);
+      _linkView=false; // se loadData è uscito presto (isLoading), il flag non deve sopravvivere
+      if(vistaDalLink){
+        map.setView([c[0],c[1]],z,{animate:false});
       } else if(window.innerWidth<=900){
         try{ fitMapToRegions(keys); }catch(e){}
       }
