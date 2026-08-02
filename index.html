@@ -198,8 +198,11 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      (la classe la gestisce refreshSelectorStyles). Il Ticino respira più
      forte sul suo velo rosso. Sull'elemento in hover l'animazione si toglie,
      così l'evidenziazione al passaggio del mouse resta visibile. */
-  @keyframes confPulse{0%,100%{fill-opacity:.03}50%{fill-opacity:.11}}
-  @keyframes confPulseTicino{0%,100%{fill-opacity:.10}50%{fill-opacity:.22}}
+  /* Ampiezze alzate il 2/8 sera: la prima versione (3-11%) era "appena
+     percepibile" (utente, dal vivo). Respira anche il BORDO: una linea che
+     pulsa si nota molto più di una campitura. */
+  @keyframes confPulse{0%,100%{fill-opacity:.04;stroke-opacity:.55}50%{fill-opacity:.16;stroke-opacity:1}}
+  @keyframes confPulseTicino{0%,100%{fill-opacity:.10;stroke-opacity:.75}50%{fill-opacity:.30;stroke-opacity:1}}
   path.conf-pulse{animation:confPulse 3.2s ease-in-out infinite;}
   path.conf-pulse[stroke-dasharray]{animation:confPulseTicino 3.2s ease-in-out infinite;}
   path.conf-pulse:hover{animation:none;}
