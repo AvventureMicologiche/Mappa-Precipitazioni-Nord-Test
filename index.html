@@ -4425,11 +4425,15 @@ function fitMapToRegions(regionKeys,factor){
   var _target=map.unproject(_cp,_z);
   var f=(typeof factor==='number')?factor:1;
   if(f<1){
-    // Vista intermedia: interpolo centro e zoom tra la vista Italia iniziale e il fit.
-    var _lat=initCenter[0]+(_target.lat-initCenter[0])*f;
-    var _lng=initCenter[1]+(_target.lng-initCenter[1])*f;
+    // Vista intermedia: zoom a metà strada tra la vista Italia e il fit, ma
+    // CENTRATA sulla regione (2/8/2026). Prima si interpolava anche il centro,
+    // e per le regioni ai bordi il punto di mezzo cadeva altrove: Alto Adige
+    // selezionato → mappa centrata su Emilia/Toscana con Bolzano fuori dallo
+    // schermo (trovato dall'utente in prod); Sicilia e Sardegna → centro nel
+    // Tirreno. Con il centro sulla regione e lo zoom largo i vicini restano
+    // visibili per completare la selezione (max 3), lo scopo della vista.
     var _zi=initZoom+(_z-initZoom)*f;
-    map.setView([_lat,_lng], _zi, {animate:true,duration:0.6});
+    map.setView(_target, _zi, {animate:true,duration:0.6});
     return;
   }
   map.setView(_target, _z, {animate:true,duration:0.6});
@@ -4798,6 +4802,10 @@ function buildShareUrl(){
   return location.origin+location.pathname+'?'+p.toString();
 }
 window.buildShareUrl=buildShareUrl;
+// Gancio di collaudo: la mappa vive nella IIFE e dalla console non si legge.
+// Serve solo alle verifiche automatiche (centro/zoom dopo le animazioni);
+// nessun codice del sito lo usa.
+window._mapDebug=map;
 // ── Immagine della mappa (canvas) per condivisione/download ────────────────
 // html2canvas si carica solo alla prima richiesta (pre-riscaldato all'hover/
 // touch dei bottoni, così il click resta dentro la finestra del gesto utente).
