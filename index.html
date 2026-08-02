@@ -4255,7 +4255,11 @@ function refreshSelectorStyles(){
 // e solo sulle regioni non ancora selezionate. setStyle non tocca le classi
 // CSS, quindi la classe sopravvive ai restyle e va gestita qui.
 function aggiornaConfPulse(rk){
-  var attivo=!currentLabel && !selIsOn(rk);
+  // Il respiro invita al PRIMO click: appena una regione qualsiasi è
+  // selezionata si spegne OVUNQUE (2/8 sera, richiesta utente) — a quel punto
+  // l'utente ha capito come funziona, continuare a pulsare distrarrebbe.
+  var attivo=!currentLabel &&
+    document.querySelectorAll('.rcheck-wrap input[type=checkbox]:checked').length===0;
   selectorLayers[rk].eachLayer(function(l){
     if(l._path) l._path.classList.toggle('conf-pulse', attivo);
   });
