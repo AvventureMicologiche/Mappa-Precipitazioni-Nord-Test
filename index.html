@@ -4371,6 +4371,44 @@ var REGION_BOUNDS={
   sardegna:    [[38.97, 8.21],[41.22, 9.70]]
 };
 
+// Vista iniziale adattiva (2/8/2026): con initZoom fisso (6.25 desktop) le
+// finestre BASSE tagliavano l'inquadratura — a 1280x720 il bordo nord cadeva a
+// 46,35°N: il Ticino (fino a 46,63) restava quasi tutto fuori, Bolzano finiva
+// dietro l'header e a sud si perdeva la punta della Sicilia. Un utente non
+// poteva capire che il Ticino fosse selezionabile (il pannello coi nomi su
+// desktop è nascosto). Qui si calcola lo zoom che fa entrare l'UNIONE delle
+// REGION_BOUNDS ([[36.68,6.63],[47.09,18.48]]) e lo si applica SOLO se più
+// largo di initZoom: su finestre alte non cambia nulla (verificato: su mappa
+// alta 937px getBoundsZoom dà esattamente 6.25). Si aggiornano initZoom e
+// initCenter, non solo la vista, perché resetToStart() e fitMapToRegions
+// (factor<1) li rileggono. Padding e spostamento a est: stessa ricetta di
+// fitMapToRegions (pannelli sinistri ~400px + margine, cap sullo spazio).
+(function fitVistaIniziale(){
+  var latMin=90,latMax=-90,lonMin=180,lonMax=-180;
+  Object.keys(REGION_BOUNDS).forEach(function(rk){
+    var b=REGION_BOUNDS[rk];
+    if(b[0][0]<latMin) latMin=b[0][0];
+    if(b[1][0]>latMax) latMax=b[1][0];
+    if(b[0][1]<lonMin) lonMin=b[0][1];
+    if(b[1][1]>lonMax) lonMax=b[1][1];
+  });
+  var lb=L.latLngBounds([[latMin,lonMin],[latMax,lonMax]]);
+  var isDesk=window.innerWidth>900;
+  var panelPx=isDesk?420:0;
+  var z=map.getBoundsZoom(lb,false,L.point((panelPx/2)+30,70));
+  if(z>=initZoom) return;   // ci sta già dentro: vista invariata
+  var shift=panelPx/2;
+  if(isDesk){
+    var nw=map.project(lb.getNorthWest(),z), se=map.project(lb.getSouthEast(),z);
+    var maxShift=Math.max(0,(map.getSize().x-Math.abs(se.x-nw.x))/2-10);
+    if(shift>maxShift) shift=maxShift;
+  }
+  var c=map.unproject(map.project(lb.getCenter(),z).subtract(L.point(shift,0)),z);
+  initZoom=z;
+  initCenter=[c.lat,c.lng];
+  map.setView(initCenter,initZoom,{animate:false});
+})();
+
 // factor opzionale (0..1): 1 = fit completo; 0.5 = a METÀ strada tra la vista
 // Italia iniziale e il fit — usato alla selezione della regione, così ci si
 // avvicina senza perdere di vista le altre regioni cliccabili.
