@@ -193,6 +193,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     100%{box-shadow:0 2px 12px rgba(0,0,0,.22),0 0 0 0 rgba(27,63,110,0);background:rgba(255,255,255,.96);}
   }
   .panel-pulse{animation:panelPulse 1.5s ease-out infinite;}
+  /* Respiro dei confini in fase di scelta (2/8/2026): il riempimento delle
+     regioni "respira" piano finché non si clicca una data, poi si spegne
+     (la classe la gestisce refreshSelectorStyles). Il Ticino respira più
+     forte sul suo velo rosso. Sull'elemento in hover l'animazione si toglie,
+     così l'evidenziazione al passaggio del mouse resta visibile. */
+  @keyframes confPulse{0%,100%{fill-opacity:.03}50%{fill-opacity:.11}}
+  @keyframes confPulseTicino{0%,100%{fill-opacity:.10}50%{fill-opacity:.22}}
+  path.conf-pulse{animation:confPulse 3.2s ease-in-out infinite;}
+  path.conf-pulse[stroke-dasharray]{animation:confPulseTicino 3.2s ease-in-out infinite;}
+  path.conf-pulse:hover{animation:none;}
+  @media(prefers-reduced-motion:reduce){path.conf-pulse{animation:none!important;}}
   /* Variante solo-anello per i pannelli blu (lo sfondo non deve sbiancare) */
   @keyframes panelPulseRing{
     0%{box-shadow:0 2px 12px rgba(0,0,0,.22),0 0 0 0 rgba(27,63,110,.8);}
@@ -4181,7 +4192,10 @@ function setRegionBorder(regionKey,cb){
 
     if(feat){
       var layer=L.geoJSON(feat,{
-        style:{color:'#1b3f6e',weight:1.5,opacity:0.6,fill:false}
+        // Il tratteggio del Ticino (confine di stato) resta anche sul bordo
+        // disegnato durante l'analisi, così l'identità non sparisce coi dati.
+        style:{color:'#1b3f6e',weight:1.5,opacity:0.6,fill:false,
+               dashArray:regionKey==='ticino'?'6 4':null}
       }).addTo(map);
       regionBorders[regionKey]=layer;
 
@@ -4203,16 +4217,25 @@ function setRegionBorder(regionKey,cb){
 // sola (checkbox individuali piemonte/valledaosta/trentino/altoadige). La
 // tendina mobile/tablet resta com'era (con i combo).
 var selectorLayers={};
-function selStyle(on){
+function selStyle(on,rk){
+  // Il Ticino è Svizzera e deve riconoscersi (2/8/2026): bordo TRATTEGGIATO
+  // (il segno cartografico del confine di stato) in rosso spento, più un velo
+  // di riempimento leggerissimo nella sola fase di scelta. Niente tinte sul
+  // resto d'Italia: verde e rosso sono già le "parole" della scala pioggia,
+  // si marca l'eccezione e non la regola. Il velo sparisce con l'analisi
+  // (currentLabel): sui dati la pioggia resta l'unico colore in campo.
+  var ch=(rk==='ticino');
   if(on){
     // Con un'analisi visibile NIENTE riempimento (coprirebbe la heatmap):
     // resta il bordo marcato. fillOpacity 0 (non fill:false) così l'interno
     // rimane cliccabile per deselezionare. Il riempimento evidenzia solo la
     // fase di scelta, prima delle date.
     var fo=currentLabel?0:.16;
-    return {color:'#1b3f6e',weight:2.2,opacity:.95,fillColor:'#1b3f6e',fillOpacity:fo};
+    return {color:'#1b3f6e',weight:2.2,opacity:.95,fillColor:'#1b3f6e',fillOpacity:fo,dashArray:ch?'6 4':null};
   }
-  return {color:'#4a6c9b',weight:1.1,opacity:.55,fillColor:'#1b3f6e',fillOpacity:.03};
+  if(ch) return {color:'#b0403a',weight:1.8,opacity:.85,fillColor:'#c0564c',
+                 fillOpacity:currentLabel?.03:.12,dashArray:'6 4'};
+  return {color:'#4a6c9b',weight:1.1,opacity:.55,fillColor:'#1b3f6e',fillOpacity:.03,dashArray:null};
 }
 function selIsOn(rk){
   var cb=document.getElementById('chk-'+rk);
@@ -4220,9 +4243,19 @@ function selIsOn(rk){
 }
 function refreshSelectorStyles(){
   Object.keys(selectorLayers).forEach(function(rk){
-    selectorLayers[rk].setStyle(selStyle(selIsOn(rk)));
+    selectorLayers[rk].setStyle(selStyle(selIsOn(rk),rk));
+    aggiornaConfPulse(rk);
   });
   updateGuidePulse();
+}
+// Respiro dei confini: acceso solo in fase di scelta (nessuna data cliccata)
+// e solo sulle regioni non ancora selezionate. setStyle non tocca le classi
+// CSS, quindi la classe sopravvive ai restyle e va gestita qui.
+function aggiornaConfPulse(rk){
+  var attivo=!currentLabel && !selIsOn(rk);
+  selectorLayers[rk].eachLayer(function(l){
+    if(l._path) l._path.classList.toggle('conf-pulse', attivo);
+  });
 }
 // Guida a lampeggio: pulsa il pannello del passo che manca (solo desktop).
 // Passo 1 = nessuna regione → pulsa "Seleziona regione"; passo 2 = regioni
@@ -4287,11 +4320,18 @@ function buildRegionSelector(){
         if(v.toLowerCase().indexOf(filter)>=0) feat=f;
       });
       if(!feat) return;
-      var layer=L.geoJSON(feat,{style:selStyle(selIsOn(rk))}).addTo(map);
+      var layer=L.geoJSON(feat,{style:selStyle(selIsOn(rk),rk)}).addTo(map);
       layer.on('click',function(e){ L.DomEvent.stopPropagation(e); toggleRegionFromMap(rk); });
-      layer.on('mouseover',function(){ if(!selIsOn(rk)) layer.setStyle({fillOpacity:.10,opacity:.85}); });
-      layer.on('mouseout',function(){ layer.setStyle(selStyle(selIsOn(rk))); });
+      // Hover: il Ticino parte da un velo già al 12%, quindi il generico 10%
+      // lo SPEGNEVA invece di accenderlo (trovato dall'utente il 2/8): per lui
+      // l'evidenziazione deve salire sopra il velo.
+      layer.on('mouseover',function(){
+        if(selIsOn(rk)) return;
+        layer.setStyle(rk==='ticino'?{fillOpacity:.20,opacity:1}:{fillOpacity:.10,opacity:.85});
+      });
+      layer.on('mouseout',function(){ layer.setStyle(selStyle(selIsOn(rk),rk)); });
       selectorLayers[rk]=layer;
+      aggiornaConfPulse(rk); // il respiro parte già alla creazione, non al primo refresh
     });
   });
 }
