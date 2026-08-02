@@ -5119,6 +5119,9 @@ if(_btnShot){
   _btnShot.addEventListener('touchstart',_prewarmH2C,{passive:true});
   _btnShot.addEventListener('click',function(){
     if(getActiveRegions().length===0||!currentPast) return;
+    // Contatore GA come share_map: si conta il click, non l'esito (la
+    // condivisione nativa non dice se l'utente ha poi annullato il menu).
+    try{gtag('event','share_image',{regioni:getActiveRegions().join(',')})}catch(e){}
     var old=_btnShot.dataset.label;
     _btnShot.disabled=true;_btnShot.textContent='⏳';
     var fine=function(esito){
