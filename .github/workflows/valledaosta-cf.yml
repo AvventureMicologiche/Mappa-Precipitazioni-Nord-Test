@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
       - name: Raccoglie dati Valle d'Aosta CF
         id: collect
         run: node .github/scripts/collect-valledaosta-cf.js
