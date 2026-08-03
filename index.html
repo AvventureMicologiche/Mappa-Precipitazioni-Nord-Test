@@ -1987,8 +1987,12 @@ map.on('moveend',function(){
   if(drawTimer) clearTimeout(drawTimer);
   drawTimer=setTimeout(drawGrid,80);
 });
-map.on('zoomstart',function(){if(cvs) cvs.style.opacity='0';});
+// _zoomInCorso serve ai marker (vedi aMappaFerma): durante l'animazione di
+// zoom i vettori non vanno disegnati. La heat si difende già nascondendosi qui.
+var _zoomInCorso=false;
+map.on('zoomstart',function(){_zoomInCorso=true; if(cvs) cvs.style.opacity='0';});
 map.on('zoomend',function(){
+  _zoomInCorso=false;
   if(gridPoints.length===0) return;
   if(drawTimer) clearTimeout(drawTimer);
   drawTimer=setTimeout(drawGrid,100);
@@ -2299,9 +2303,36 @@ map.on('click',function(){
 // ═══════════════════════════════════════════════════════════════
 // MARKER
 // ═══════════════════════════════════════════════════════════════
-function clearMarkers(){activeMarkers.forEach(function(m){m.remove();});activeMarkers=[];}
+// _markerGen: ogni pulizia invalida i disegni rimandati da aMappaFerma, così i
+// pallini di un caricamento superato non ricompaiono sopra quelli nuovi.
+var _markerGen=0;
+function clearMarkers(){_markerGen++;activeMarkers.forEach(function(m){m.remove();});activeMarkers=[];}
 
-function addMarkers(dati,sorted){
+// Guardia anti-zoom sui pallini stazione (3/8/2026, segnalato dall'utente).
+// Durante l'animazione di zoom Leaflet NON ridisegna i vettori: applica una
+// transform di SCALA all'intero livello e li rimette a posto solo alla fine.
+// I marker creati nel frattempo ereditano quella scala, e finché l'animazione
+// non finisce si vedono INGRANDITI e FUORI POSTO. Misurato in produzione
+// (Lombardia, "Ieri"): pallini larghi 24px invece di 10 e spostati di ~490px,
+// per 870ms — dall'arrivo dei dati (233ms) al moveend (1106ms). La finestra si
+// allarga quanto più dura il calcolo sincrono della griglia, che ritarda
+// l'evento di fine zoom. Si disegna quindi solo a mappa ferma: i pallini
+// compaiono un attimo dopo, ma subito al posto giusto.
+function aMappaFerma(fn){
+  if(!_zoomInCorso){ fn(); return; }
+  var gen=_markerGen, fatto=false;
+  function esegui(){
+    if(fatto) return;
+    fatto=true;
+    if(gen!==_markerGen) return;   // nel frattempo è partito un altro caricamento
+    fn();
+  }
+  map.once('zoomend',function(){ setTimeout(esegui,0); });
+  setTimeout(esegui,1500);         // rete di sicurezza se zoomend non arrivasse
+}
+
+function addMarkers(dati,sorted){ aMappaFerma(function(){ _addMarkers(dati,sorted); }); }
+function _addMarkers(dati,sorted){
   dati.forEach(function(s){
     var rank=sorted.indexOf(s)+1;
     var m=L.circleMarker([s.lat,s.lon],{
@@ -5504,7 +5535,8 @@ function addDefaultMarkersForRegion(regionKey){
   var stazioni=(regionKey==='lombardia')?(ARPA_STATIONS||LOMBARDIA_STATIONS):((cfg&&cfg.stations)?cfg.stations:[]);
   drawDefaultMarkers(stazioni,cfg);
 }
-function drawDefaultMarkers(stazioni,cfg){
+function drawDefaultMarkers(stazioni,cfg){ aMappaFerma(function(){ _drawDefaultMarkers(stazioni,cfg); }); }
+function _drawDefaultMarkers(stazioni,cfg){
   // Cap uniforme a 150 (come i dati e le altre regioni): reti fitte tipo Sicilia
   // (426 staz.) coprivano tutta la mappa rendendo i puntini illeggibili e inutili.
   if(stazioni && stazioni.length>150) stazioni=selectUniform(stazioni,150);
