@@ -1,0 +1,62 @@
+name: Svizzera
+on:
+  workflow_dispatch:
+    inputs:
+      date_override:
+        description: 'Data da raccogliere (YYYY-MM-DD, lascia vuoto per ieri+altroieri)'
+        required: false
+        default: ''
+  # PILOTA Svizzera intera (MeteoSwiss OGD) — dal 3 agosto 2026, solo repo di test.
+  # Ogni run raccoglie ieri + altroieri e auto-ripara i giorni 3..10 se mancanti
+  # (il file "recent" copre l'intero anno: la riparazione non costa richieste extra).
+  # Il run delle 02:20 UTC è opportunistico: se il recent non copre ancora tutto
+  # ieri, la soglia MIN_ORE evita scritture parziali e ci pensa il run delle 04:50
+  # (alle 06:17 UTC il recent aveva già tutte le ore di ieri, verificato il 3/8).
+  # Quello delle 12:40 gira dopo il refresh ufficiale delle 12 UTC.
+  schedule:
+    - cron: '20 2 * * *'
+    - cron: '50 4 * * *'
+    - cron: '40 7 * * *'
+    - cron: '40 12 * * *'
+    - cron: '10 17 * * *'
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '20'
+      - name: Raccoglie dati Svizzera (MeteoSwiss)
+        id: collect
+        run: node .github/scripts/collect-svizzera-meteoswiss.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+        continue-on-error: true
+      - name: Retry 1
+        if: steps.collect.outcome == 'failure'
+        run: sleep 30 && node .github/scripts/collect-svizzera-meteoswiss.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+        continue-on-error: true
+      - name: Retry 2
+        if: steps.collect.outcome == 'failure'
+        run: sleep 60 && node .github/scripts/collect-svizzera-meteoswiss.js
+        env:
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+      - name: Commit e push
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@bot.com"
+          mkdir -p data/svizzera
+          git add data/svizzera/
+          git diff --staged --quiet || git commit -m "svizzera $(date -u +%Y-%m-%d)"
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push; then ok=1; break; fi
+            echo "Push fallito (tentativo $i/5), retry tra 10s..."
+            sleep 10
+          done
+          [ "$ok" = "1" ] || { echo "Push fallito dopo 5 tentativi"; exit 1; }
