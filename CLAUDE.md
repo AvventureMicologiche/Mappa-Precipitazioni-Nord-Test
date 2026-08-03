@@ -51,6 +51,56 @@ per espandere la mappa a tutta Italia.
 
 ---
 
+## PILOTA SVIZZERA INTERA (dal 3 agosto 2026 — solo repo di test)
+
+Espansione all'intera Svizzera con **MeteoSwiss OGD** (open data della Confederazione,
+CC BY 4.0, attribuzione «Fonte: MeteoSvizzera»). In mappa un solo bottone **"Svizzera
+(CH)"** al posto di "Ticino (CH)": sotto, DUE fonti unite — il Ticino resta OASI
+(data/ticino, repo prod), il resto del paese è MeteoSwiss (`data/svizzera`, qui).
+
+- **Collect:** `collect-svizzera-meteoswiss.js` + `svizzera.yml` (5 run/giorno).
+  **261 stazioni** dalle collezioni STAC `ch.meteoschweiz.ogd-smn` (SwissMetNet)
+  e `ogd-smn-precip` (rete pluvio): CSV per stazione su data.geo.admin.ch, coordinate
+  già WGS84 nell'anagrafe, filtro su inventario `rre150h0` attivo. **Escluse: canton
+  TI** (coperto da OASI) **e `SBE` S. Bernardino** — OASI copre anche il Moesano GR
+  e SBE è la stessa stazione fisica (unico doppione su 260×47 coppie, 0,01 km).
+- **RICETTA (validata 3/8 su 639 giorni-stazione, match al centesimo):** i giornalieri
+  ufficiali NON coincidono col giorno solare italiano — `rre150d0` = finestra 06-06 UTC,
+  `rka150d0` = giorno di calendario UTC. Quindi si sommano le ORE `rre150h0` (timestamp
+  = FINE intervallo) sul giorno solare italiano, ricetta OSMER, MIN_ORE=20. File
+  `_h_recent` (anno corrente) già completo di ieri al mattino presto (verificato 06:17
+  UTC); `_h_now` (10 min) come integrazione dell'ultima ora.
+- **Auto-riparazione GRATIS D-3..D-10**: `recent` copre l'intero anno, i giorni mancanti
+  si ricostruiscono senza richieste extra. Come OASI, un run fallito non perde mai dati.
+- **Backfill 365 giorni REALI** (`backfill-svizzera-meteoswiss.js`, una tantum, girato
+  in LOCALE il 3/8 — scarica ~1 GB dai file `_h_historical_2020-2029`): 354 giorni
+  dal 4/8/2025, 252-262 stazioni stabili anche d'inverno (pluviometri riscaldati).
+  Niente stime, niente fase beta. Campo `backfill: true` nei file.
+- **Confine:** `svizzera-confine.geojson` — layer Landesgebiet swissBOUNDARIES3D via
+  `api3.geo.admin.ch` (find su `bez=Schweiz`, sr=4326), semplificato Douglas-Peucker
+  52k→5k vertici (~40 m), CON i buchi di Campione d'Italia e Büsingen.
+- **index.html:** regione `svizzera` (dataSource `svizzera`), `loadSvizzeraRegion`
+  somma i file di ENTRAMBE le fonti con chiavi prefissate `ti:`/`ch:` → 307 stazioni;
+  fonte/chip/crediti "OASI Ticino + MeteoSvizzera". Grafico storico a doppia cartella
+  col tag per-stazione `_src` (`oasi`→data/ticino prod, `ms`→data/svizzera qui, vedi
+  `histRegion` e `HIST_RAW_BY_REGION`). **Vista iniziale INVARIATA** (la chiave
+  `svizzera` è esclusa dal `fitVistaIniziale`: il confine entra dal bordo alto).
+  **Alias link**: `?r=ticino` apre la Svizzera (link vecchi in circolazione).
+  `REGION_ADJ`: svizzera ↔ valledaosta/piemonte/lombardia/altoadige.
+- **Velo rosso ALLEGGERITO il 3/8 (richiesta utente):** il pacchetto grafica "confine
+  di stato" tarato sul Ticino (velo 12%, bordo 85%, respiro 10-30%) sull'intero paese
+  era una macchia → velo 6% (2% con analisi), bordo 70%, respiro 5-15%, hover 12%.
+- **Confronti ai confini (3/8):** SBE identica in OASI/MeteoSwiss (16,4 = 16,4 il 26/7);
+  Binn↔Alpe Devero, Ulrichen↔Formazza (Piemonte), Gran San Bernardo↔Crévacol e altre
+  4 coppie VdA, Soglio↔Villa di Chiavenna (Lombardia): stessi giorni di pioggia,
+  differenze coerenti con quota/microclima.
+- **Per la promozione a prod restano:** nome sito (v6 "Italia + Svizzera"?), anteprima
+  social, descrizione YouTube, estensione allarme fonti/gapfill alla voce svizzera,
+  spostare `data/svizzera` + collector nel repo prod (e `PILOT_DATA_BASE` di
+  conseguenza), decidere gli orari definitivi dei cron.
+
+---
+
 ## Regole fondamentali
 
 1. **Lo storico precipitazioni deve essere SEMPRE accurato e completo.** Mai accettare dati parziali o sbagliati come "non catastrofici". Ogni problema va risolto completamente.
