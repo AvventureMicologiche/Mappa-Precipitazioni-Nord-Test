@@ -21,20 +21,22 @@
   <meta name="description" content="Mappa interattiva delle precipitazioni in Italia con dati da stazioni meteo reali. Pianifica le tue uscite funghi.">
   <meta property="og:title" content="Mappa Pluviometrica Italia + Svizzera | Avventure Micologiche">
   <meta property="og:description" content="Mappa interattiva con dati meteo reali per pianificare ogni uscita. Trova le zone dove ha piovuto di più.">
-  <!-- Anteprima rifatta il 30 luglio 2026 (sera): ITALIA INTERA a 30 giorni,
-       tutte e 22 le regioni, 2606 stazioni, CON l'header del sito in cima —
-       scatto del tasto 📷 Screen dell'utente (1920x902, dopo il fix che
-       adatta la vista e include l'header), adattato in larghezza a 1200x630
-       con due fasce chiare sopra e sotto (colore campionato dal mare) per il
-       formato social 1.91:1. Ottenuta alzando temporaneamente in locale il
-       limite delle 3 regioni, con pallini stazione ridotti e campionamento
-       IDW disattivato (modifiche solo locali, ripristinate dopo lo scatto).
-       Il ?v= serve a far riscaricare l'immagine ai social, che la tengono in
-       cache per URL e altrimenti continuerebbero a mostrare la vecchia.
-       NB: qui l'URL punta al dominio di TEST, così l'anteprima si può davvero
-       provare. PROMUOVENDO IN PRODUZIONE va rimesso il dominio di prod, come
-       per PILOT_DATA_BASE. -->
-  <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg?v=20260730c">
+  <!-- Anteprima rifatta il 3 agosto 2026 con la v6.0: ITALIA + SVIZZERA a 30
+       giorni, 22 regioni e la Svizzera intera, 2960 stazioni, con header e
+       pannelli. Ricetta: pagina locale usa-e-getta (copia dell'index con il
+       limite delle 3 regioni tolto, campionamento IDW disattivato, griglia
+       più fine, pallini stazione a raggio 2 — RIPRISTINI HOVER COMPRESI,
+       altrimenti ogni stazione sfiorata dal mouse resta grossa e sullo scatto
+       si vede la scia) fotografata da Chrome headless in finestra 1920x1008 a
+       doppia densità, cioè GIA' nel rapporto 1.91:1 dei social: si scala a
+       1200x630 e basta. La versione di luglio partiva da 1920x902 (2.13:1) e
+       serviva rattopparla — tagliando a destra si mozza il box del canale,
+       con le fasce sopra/sotto si perde spazio: molto meglio scattare già nel
+       formato giusto. Il ?v= serve a far riscaricare l'immagine ai social,
+       che la tengono in cache per URL e altrimenti mostrerebbero la vecchia.
+       NB: nel repo di TEST l'URL punta al dominio di test (per provare
+       l'anteprima); in produzione è il dominio vero. -->
+  <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg?v=20260803">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:type" content="image/jpeg">
@@ -42,7 +44,7 @@
   <meta property="og:url" content="https://precipitazioni.avventuremicologiche.it">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://avventurepluvio-test.netlify.app/preview.jpg?v=20260730c">
+  <meta name="twitter:image" content="https://avventurepluvio-test.netlify.app/preview.jpg?v=20260803">
   <meta name="theme-color" content="#1b3f6e">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
