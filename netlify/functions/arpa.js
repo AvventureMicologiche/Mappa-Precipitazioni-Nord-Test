@@ -1,4 +1,9 @@
+const { cors, estranea, rifiuto } = require('./_origini');
+
 exports.handler = async function(event) {
+  // Chiamate da siti estranei: rifiutate (vedi _origini.js)
+  if (estranea(event)) return rifiuto();
+
   const params = event.queryStringParameters || {};
   const endpoint = params.endpoint || 'nf78-nj6b.json';
 
@@ -19,7 +24,7 @@ exports.handler = async function(event) {
       statusCode: response.status,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
+        ...cors(event),
         // Cache CDN Netlify: 1 ora per misure, 5 min per stazioni
         'Cache-Control': endpoint === 'pstb-pga6.json'
           ? 'public, s-maxage=3600, stale-while-revalidate=300'
@@ -30,7 +35,7 @@ exports.handler = async function(event) {
   } catch(error) {
     return {
       statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: cors(event),
       body: JSON.stringify({ error: error.message })
     };
   }

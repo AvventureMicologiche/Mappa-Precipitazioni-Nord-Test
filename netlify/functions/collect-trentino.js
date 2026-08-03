@@ -52,7 +52,12 @@ function fetchURL(url) {
   });
 }
 
+const { cors, estranea, rifiuto } = require('./_origini');
+
 exports.handler = async (event) => {
+  // Chiamate da siti estranei: rifiutate (vedi _origini.js)
+  if (estranea(event)) return rifiuto();
+
   const hours = parseInt(event.queryStringParameters?.hours || '24', 10);
   const lats  = OM_STATIONS.map(s => s.lat).join(',');
   const lons  = OM_STATIONS.map(s => s.lon).join(',');
@@ -91,7 +96,7 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Content-Type': 'application/json', ...cors(event) },
       body: JSON.stringify({ source: 'Open-Meteo', hours, count: stations.length, stations })
     };
 

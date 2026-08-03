@@ -3,7 +3,12 @@ const path = require('path');
 
 const API_BASE = 'https://utility.arpa.piemonte.it/api_realtime';
 
+const { cors, estranea, rifiuto } = require('./_origini');
+
 exports.handler = async function(event) {
+  // Chiamate da siti estranei: rifiutate (vedi _origini.js)
+  if (estranea(event)) return rifiuto();
+
   const params = event.queryStringParameters || {};
   const type   = params.type || 'anag';
 
@@ -13,16 +18,16 @@ exports.handler = async function(event) {
     if(type === 'storico'){
       const date = params.date;
       if(!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)){
-        return { statusCode: 400, headers: cors(), body: JSON.stringify({error:'date param required'}) };
+        return { statusCode: 400, headers: cors(event), body: JSON.stringify({error:'date param required'}) };
       }
       const filePath = path.join(__dirname, '..', '..', 'data', 'piemonte', `${date}.json`);
       if(!fs.existsSync(filePath)){
-        return { statusCode: 404, headers: cors(), body: JSON.stringify({error:'no data', date}) };
+        return { statusCode: 404, headers: cors(event), body: JSON.stringify({error:'no data', date}) };
       }
       const data = fs.readFileSync(filePath, 'utf8');
       return {
         statusCode: 200,
-        headers: { ...cors(), 'Content-Type':'application/json', 'Cache-Control':'public, s-maxage=86400' },
+        headers: { ...cors(event), 'Content-Type':'application/json', 'Cache-Control':'public, s-maxage=86400' },
         body: data
       };
     }
@@ -43,7 +48,7 @@ exports.handler = async function(event) {
       }
       return {
         statusCode: 200,
-        headers: { ...cors(), 'Content-Type':'application/json' },
+        headers: { ...cors(event), 'Content-Type':'application/json' },
         body: JSON.stringify({ firstDate, lastDate, count })
       };
     }
@@ -54,7 +59,7 @@ exports.handler = async function(event) {
       const data = await res.text();
       return {
         statusCode: res.status,
-        headers: { ...cors(), 'Content-Type':'application/json', 'Cache-Control':'public, s-maxage=3600' },
+        headers: { ...cors(event), 'Content-Type':'application/json', 'Cache-Control':'public, s-maxage=3600' },
         body: data
       };
     }
@@ -72,18 +77,15 @@ exports.handler = async function(event) {
       console.log('[PIE proxy] status:', res.status, 'body length:', data.length);
       return {
         statusCode: res.status,
-        headers: { ...cors(), 'Content-Type':'application/json', 'Cache-Control':'public, s-maxage=300' },
+        headers: { ...cors(event), 'Content-Type':'application/json', 'Cache-Control':'public, s-maxage=300' },
         body: data
       };
     }
 
-    return { statusCode: 400, headers: cors(), body: JSON.stringify({error:'unknown type: '+type}) };
+    return { statusCode: 400, headers: cors(event), body: JSON.stringify({error:'unknown type: '+type}) };
 
   } catch(error){
-    return { statusCode: 500, headers: cors(), body: JSON.stringify({error: error.message}) };
+    return { statusCode: 500, headers: cors(event), body: JSON.stringify({error: error.message}) };
   }
 };
 
-function cors(){
-  return { 'Access-Control-Allow-Origin': '*' };
-}

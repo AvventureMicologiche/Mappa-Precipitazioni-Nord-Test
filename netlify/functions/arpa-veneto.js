@@ -5,7 +5,12 @@ const zlib  = require('zlib');
 
 const BASE_URL = 'https://meteo.arpa.veneto.it/meteo/dati_meteo/xml';
 
+const { cors, estranea, rifiuto } = require('./_origini');
+
 exports.handler = async function(event) {
+  // Chiamate da siti estranei: rifiutate (vedi _origini.js)
+  if (estranea(event)) return rifiuto();
+
   const params = event.queryStringParameters || {};
   const type   = params.type || 'realtime';
 
@@ -14,11 +19,11 @@ exports.handler = async function(event) {
     if (type === 'storico') {
       const date = params.date;
       if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date))
-        return { statusCode: 400, headers: cors(), body: JSON.stringify({error:'date required'}) };
+        return { statusCode: 400, headers: cors(event), body: JSON.stringify({error:'date required'}) };
       const fp = path.join(__dirname, '..', '..', 'data', 'veneto', `${date}.json`);
       if (!fs.existsSync(fp))
-        return { statusCode: 404, headers: cors(), body: JSON.stringify({error:'no data', date}) };
-      return { statusCode: 200, headers: {...cors(),'Content-Type':'application/json','Cache-Control':'public,s-maxage=86400'}, body: fs.readFileSync(fp,'utf8') };
+        return { statusCode: 404, headers: cors(event), body: JSON.stringify({error:'no data', date}) };
+      return { statusCode: 200, headers: {...cors(event),'Content-Type':'application/json','Cache-Control':'public,s-maxage=86400'}, body: fs.readFileSync(fp,'utf8') };
     }
 
     // ── INFO ─────────────────────────────────────────────────────
@@ -30,7 +35,7 @@ exports.handler = async function(event) {
         count = files.length;
         if (files.length) { firstDate=files[0].replace('.json',''); lastDate=files[files.length-1].replace('.json',''); }
       }
-      return { statusCode: 200, headers: {...cors(),'Content-Type':'application/json'}, body: JSON.stringify({firstDate,lastDate,count}) };
+      return { statusCode: 200, headers: {...cors(event),'Content-Type':'application/json'}, body: JSON.stringify({firstDate,lastDate,count}) };
     }
 
     // ── REALTIME: scarica stazioni.xml + dati per stazione ───────
@@ -54,12 +59,12 @@ exports.handler = async function(event) {
 
     return {
       statusCode: 200,
-      headers: {...cors(),'Content-Type':'application/json','Cache-Control':'public,s-maxage=600'},
+      headers: {...cors(event),'Content-Type':'application/json','Cache-Control':'public,s-maxage=600'},
       body: JSON.stringify({ stations: results, count: results.length })
     };
 
   } catch(e) {
-    return { statusCode: 500, headers: cors(), body: JSON.stringify({error: e.message}) };
+    return { statusCode: 500, headers: cors(event), body: JSON.stringify({error: e.message}) };
   }
 };
 
@@ -139,4 +144,3 @@ async function fetchStazione(s, prefix1, prefix2) {
   return null;
 }
 
-function cors() { return { 'Access-Control-Allow-Origin': '*' }; }
