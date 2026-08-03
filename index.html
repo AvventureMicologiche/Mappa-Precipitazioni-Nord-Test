@@ -201,12 +201,13 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   /* Ampiezze alzate il 2/8 sera: la prima versione (3-11%) era "appena
      percepibile" (utente, dal vivo). Respira anche il BORDO: una linea che
      pulsa si nota molto più di una campitura. */
-  /* 3/8/2026 (richiesta utente): ciclo accorciato 2,4s → 1,6s e Svizzera in
-     CONTROFASE — i suoi keyframes sono invertiti (parte dal massimo mentre
-     l'Italia parte dal minimo), così i due respiri si alternano invece di
-     andare all'unisono. Stessa durata = sfasamento costante di mezzo ciclo. */
+  /* 3/8/2026 (richiesta utente): ciclo accorciato 2,4s → 1,6s. Respiro
+     SINCRONIZZATO tra Italia e Svizzera (provata anche la controfase con i
+     keyframes invertiti, scartata dall'utente lo stesso giorno): la sincronia
+     esatta la garantisce l'aggancio startTime=0 in aggiornaConfPulse — senza,
+     la fase dipende da quando ogni confine riceve la classe. */
   @keyframes confPulse{0%,100%{fill-opacity:.04;stroke-opacity:.55}50%{fill-opacity:.16;stroke-opacity:1}}
-  @keyframes confPulseSvizzera{0%,100%{fill-opacity:.15;stroke-opacity:.9}50%{fill-opacity:.05;stroke-opacity:.6}}
+  @keyframes confPulseSvizzera{0%,100%{fill-opacity:.05;stroke-opacity:.6}50%{fill-opacity:.15;stroke-opacity:.9}}
   path.conf-pulse{animation:confPulse 1.6s ease-in-out infinite;}
   path.conf-pulse[stroke-dasharray]{animation:confPulseSvizzera 1.6s ease-in-out infinite;}
   path.conf-pulse:hover{animation:none;}
