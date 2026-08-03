@@ -87,9 +87,13 @@ CC BY 4.0, attribuzione «Fonte: MeteoSvizzera»). In mappa un solo bottone **"S
   `svizzera` è esclusa dal `fitVistaIniziale`: il confine entra dal bordo alto).
   **Alias link**: `?r=ticino` apre la Svizzera (link vecchi in circolazione).
   `REGION_ADJ`: svizzera ↔ valledaosta/piemonte/lombardia/altoadige.
-- **Velo rosso ALLEGGERITO il 3/8 (richiesta utente):** il pacchetto grafica "confine
-  di stato" tarato sul Ticino (velo 12%, bordo 85%, respiro 10-30%) sull'intero paese
-  era una macchia → velo 6% (2% con analisi), bordo 70%, respiro 5-15%, hover 12%.
+- **Rosso TOLTO il 3/8 (decisione utente, dopo due riduzioni provate):** la Svizzera
+  veste il blu delle regioni italiane e si distingue solo col bordo TRATTEGGIATO
+  (confine di stato); header → "Mappa Pluviometrica Italia + Svizzera (v6.0)"
+  (anche <title> e og:title). Respiro unico `confPulse` per tutti, ciclo 1,6s,
+  sincronia esatta via `startTime=0` in `aggiornaConfPulse` (senza, la fase
+  dipendeva da quando ogni confine riceveva la classe; la controfase è stata
+  provata e scartata).
 - **Confronti ai confini (3/8):** SBE identica in OASI/MeteoSwiss (16,4 = 16,4 il 26/7);
   Binn↔Alpe Devero, Ulrichen↔Formazza (Piemonte), Gran San Bernardo↔Crévacol e altre
   4 coppie VdA, Soglio↔Villa di Chiavenna (Lombardia): stessi giorni di pioggia,

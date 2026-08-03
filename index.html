@@ -19,7 +19,7 @@
 
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <meta name="description" content="Mappa interattiva delle precipitazioni in Italia con dati da stazioni meteo reali. Pianifica le tue uscite funghi.">
-  <meta property="og:title" content="Mappa Pluviometrica Italia | Avventure Micologiche">
+  <meta property="og:title" content="Mappa Pluviometrica Italia + Svizzera | Avventure Micologiche">
   <meta property="og:description" content="Mappa interattiva con dati meteo reali per pianificare ogni uscita. Trova le zone dove ha piovuto di più.">
   <!-- Anteprima rifatta il 30 luglio 2026 (sera): ITALIA INTERA a 30 giorni,
        tutte e 22 le regioni, 2606 stazioni, CON l'header del sito in cima —
@@ -46,7 +46,7 @@
   <meta name="theme-color" content="#1b3f6e">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mappa Pluviometrica Italia</title>
+<title>Mappa Pluviometrica Italia + Svizzera</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -195,8 +195,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   .panel-pulse{animation:panelPulse 1.5s ease-out infinite;}
   /* Respiro dei confini in fase di scelta (2/8/2026): il riempimento delle
      regioni "respira" piano finché non si clicca una data, poi si spegne
-     (la classe la gestisce refreshSelectorStyles). La Svizzera respira più
-     forte sul suo velo rosso. Sull'elemento in hover l'animazione si toglie,
+     (la classe la gestisce refreshSelectorStyles). Sull'elemento in hover l'animazione si toglie,
      così l'evidenziazione al passaggio del mouse resta visibile. */
   /* Ampiezze alzate il 2/8 sera: la prima versione (3-11%) era "appena
      percepibile" (utente, dal vivo). Respira anche il BORDO: una linea che
@@ -205,11 +204,11 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      SINCRONIZZATO tra Italia e Svizzera (provata anche la controfase con i
      keyframes invertiti, scartata dall'utente lo stesso giorno): la sincronia
      esatta la garantisce l'aggancio startTime=0 in aggiornaConfPulse — senza,
-     la fase dipende da quando ogni confine riceve la classe. */
+     la fase dipende da quando ogni confine riceve la classe. Tolto il rosso
+     alla Svizzera (stesso giorno), è sparito anche il keyframe dedicato:
+     tutti i confini respirano con confPulse. */
   @keyframes confPulse{0%,100%{fill-opacity:.04;stroke-opacity:.55}50%{fill-opacity:.16;stroke-opacity:1}}
-  @keyframes confPulseSvizzera{0%,100%{fill-opacity:.05;stroke-opacity:.6}50%{fill-opacity:.15;stroke-opacity:.9}}
   path.conf-pulse{animation:confPulse 1.6s ease-in-out infinite;}
-  path.conf-pulse[stroke-dasharray]{animation:confPulseSvizzera 1.6s ease-in-out infinite;}
   path.conf-pulse:hover{animation:none;}
   @media(prefers-reduced-motion:reduce){path.conf-pulse{animation:none!important;}}
   /* Variante solo-anello per i pannelli blu (lo sfondo non deve sbiancare) */
@@ -822,7 +821,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     </a>
     <span style="font-size:18px">🌧</span>
     <div>
-      <h1>Mappa Pluviometrica Italia <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v5.0)</span></h1>
+      <h1>Mappa Pluviometrica Italia + Svizzera <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v6.0)</span></h1>
       <div class="hdr-sub" id="datehdr"></div>
     </div>
   </div>
@@ -4245,12 +4244,12 @@ function setRegionBorder(regionKey,cb){
 // tendina mobile/tablet resta com'era (con i combo).
 var selectorLayers={};
 function selStyle(on,rk){
-  // La Svizzera deve riconoscersi come stato estero (2/8/2026): bordo TRATTEGGIATO
-  // (il segno cartografico del confine di stato) in rosso spento, più un velo
-  // di riempimento leggerissimo nella sola fase di scelta. Niente tinte sul
-  // resto d'Italia: verde e rosso sono già le "parole" della scala pioggia,
-  // si marca l'eccezione e non la regola. Il velo sparisce con l'analisi
-  // (currentLabel): sui dati la pioggia resta l'unico colore in campo.
+  // La Svizzera si riconosce come stato estero dal solo bordo TRATTEGGIATO
+  // (il segno cartografico del confine di stato). La versione col velo rosso
+  // (2/8, poi alleggerita) è stata TOLTA il 3/8 su decisione utente: col
+  // respiro sincronizzato e l'header "Italia + Svizzera" bastava il tratteggio,
+  // e niente tinte in mappa — verde e rosso sono già le "parole" della scala
+  // pioggia.
   var ch=(rk==='svizzera');
   if(on){
     // Con un'analisi visibile NIENTE riempimento (coprirebbe la heatmap):
@@ -4260,10 +4259,14 @@ function selStyle(on,rk){
     var fo=currentLabel?0:.16;
     return {color:'#1b3f6e',weight:2.2,opacity:.95,fillColor:'#1b3f6e',fillOpacity:fo,dashArray:ch?'6 4':null};
   }
-  // Velo e bordo ALLEGGERITI il 3/8/2026 (richiesta utente): il 12% tarato sul
-  // solo Ticino, spalmato sull'intero paese, faceva una macchia rossa pesante.
-  if(ch) return {color:'#b0403a',weight:1.8,opacity:.7,fillColor:'#c0564c',
-                 fillOpacity:currentLabel?.02:.06,dashArray:'6 4'};
+  // NIENTE PIÙ ROSSO (3/8/2026, decisione utente dopo due riduzioni): col
+  // respiro sincronizzato e l'header "Italia + Svizzera" la presenza della
+  // Svizzera si spiega da sola. Resta il TRATTEGGIO — il segno cartografico
+  // del confine di stato — sulla stessa veste blu delle regioni italiane
+  // (bordo appena più marcato: la linea tratteggiata a parità di peso si
+  // vede meno di una continua).
+  if(ch) return {color:'#4a6c9b',weight:1.4,opacity:.6,fillColor:'#1b3f6e',
+                 fillOpacity:.03,dashArray:'6 4'};
   return {color:'#4a6c9b',weight:1.1,opacity:.55,fillColor:'#1b3f6e',fillOpacity:.03,dashArray:null};
 }
 function selIsOn(rk){
@@ -4366,12 +4369,11 @@ function buildRegionSelector(){
       if(!feat) return;
       var layer=L.geoJSON(feat,{style:selStyle(selIsOn(rk),rk)}).addTo(map);
       layer.on('click',function(e){ L.DomEvent.stopPropagation(e); toggleRegionFromMap(rk); });
-      // Hover: la Svizzera parte da un velo già al 12%, quindi il generico 10%
       // lo SPEGNEVA invece di accenderlo (trovato dall'utente il 2/8): per lui
       // l'evidenziazione deve salire sopra il velo.
       layer.on('mouseover',function(){
         if(selIsOn(rk)) return;
-        layer.setStyle(rk==='svizzera'?{fillOpacity:.12,opacity:1}:{fillOpacity:.10,opacity:.85});
+        layer.setStyle({fillOpacity:.10,opacity:.85});
       });
       layer.on('mouseout',function(){ layer.setStyle(selStyle(selIsOn(rk),rk)); });
       selectorLayers[rk]=layer;
