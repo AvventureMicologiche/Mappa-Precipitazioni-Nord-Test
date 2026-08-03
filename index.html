@@ -195,16 +195,16 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   .panel-pulse{animation:panelPulse 1.5s ease-out infinite;}
   /* Respiro dei confini in fase di scelta (2/8/2026): il riempimento delle
      regioni "respira" piano finché non si clicca una data, poi si spegne
-     (la classe la gestisce refreshSelectorStyles). Il Ticino respira più
+     (la classe la gestisce refreshSelectorStyles). La Svizzera respira più
      forte sul suo velo rosso. Sull'elemento in hover l'animazione si toglie,
      così l'evidenziazione al passaggio del mouse resta visibile. */
   /* Ampiezze alzate il 2/8 sera: la prima versione (3-11%) era "appena
      percepibile" (utente, dal vivo). Respira anche il BORDO: una linea che
      pulsa si nota molto più di una campitura. */
   @keyframes confPulse{0%,100%{fill-opacity:.04;stroke-opacity:.55}50%{fill-opacity:.16;stroke-opacity:1}}
-  @keyframes confPulseTicino{0%,100%{fill-opacity:.10;stroke-opacity:.75}50%{fill-opacity:.30;stroke-opacity:1}}
+  @keyframes confPulseSvizzera{0%,100%{fill-opacity:.05;stroke-opacity:.6}50%{fill-opacity:.15;stroke-opacity:.9}}
   path.conf-pulse{animation:confPulse 2.4s ease-in-out infinite;}
-  path.conf-pulse[stroke-dasharray]{animation:confPulseTicino 2.4s ease-in-out infinite;}
+  path.conf-pulse[stroke-dasharray]{animation:confPulseSvizzera 2.4s ease-in-out infinite;}
   path.conf-pulse:hover{animation:none;}
   @media(prefers-reduced-motion:reduce){path.conf-pulse{animation:none!important;}}
   /* Variante solo-anello per i pannelli blu (lo sfondo non deve sbiancare) */
@@ -905,7 +905,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <label class="rcheck-wrap"><input type="checkbox" id="chk-piemonte-vda" value="piemonte-vda"><span class="rcheck-box"></span><span class="rcheck-name">Piemonte-VdA</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-liguria" value="liguria"><span class="rcheck-box"></span><span class="rcheck-name">Liguria</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-lombardia" value="lombardia"><span class="rcheck-box"></span><span class="rcheck-name">Lombardia</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-ticino" value="ticino"><span class="rcheck-box"></span><span class="rcheck-name">Ticino (CH)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-svizzera" value="svizzera"><span class="rcheck-box"></span><span class="rcheck-name">Svizzera (CH)</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-trentino-aa" value="trentino-aa"><span class="rcheck-box"></span><span class="rcheck-name">Trentino-A.A.</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-veneto" value="veneto"><span class="rcheck-box"></span><span class="rcheck-name">Veneto</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-friuli" value="friuli"><span class="rcheck-box"></span><span class="rcheck-name">Friuli V.G.</span></label>
@@ -941,7 +941,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <option value="piemonte-vda">Piemonte-Valle d'Aosta</option>
           <option value="liguria">Liguria</option>
           <option value="lombardia">Lombardia</option>
-          <option value="ticino">Ticino (CH)</option>
+          <option value="svizzera">Svizzera (CH)</option>
           <option value="trentino-aa">Trentino-Alto Adige</option>
           <option value="veneto">Veneto</option>
           <option value="friuli">Friuli V.G.</option>
@@ -1487,13 +1487,17 @@ var REGIONS = {
     ]
   },
 
-  ticino: {
-    name: 'Ticino',
-    center: [46.2, 8.8], zoom: 9,
-    fonte: 'OASI Ticino',
-    geojsonUrl: 'ticino-confine.geojson',
-    geojsonFilter: 'ticino',
-    dataSource: 'oasi_ticino',
+  // Svizzera intera (pilota dal 3/8/2026): sotto un solo bottone due fonti —
+  // il Ticino resta OASI (data/ticino, repo prod), il resto del paese è
+  // MeteoSwiss OGD (data/svizzera, collector del pilota). S. Bernardino,
+  // unico doppione (OASI copre anche il Moesano GR), è escluso lato collector.
+  svizzera: {
+    name: 'Svizzera',
+    center: [46.6, 8.4], zoom: 7,
+    fonte: 'OASI Ticino + MeteoSvizzera',
+    geojsonUrl: 'svizzera-confine.geojson',
+    geojsonFilter: 'svizzera',
+    dataSource: 'svizzera',
     stations: []
   },
 
@@ -2038,7 +2042,8 @@ var HIST_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Preci
 var PILOT_DATA_BASE='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord-Test/main/data/';
 var HIST_RAW_BY_REGION={
   'friuli-osmer':PILOT_DATA_BASE,
-  'valledaosta-cf':PILOT_DATA_BASE
+  'valledaosta-cf':PILOT_DATA_BASE,
+  'svizzera':PILOT_DATA_BASE   // pilota MeteoSwiss (il Ticino OASI resta su HIST_RAW prod)
 };
 function histRawBase(region){ if(region&&region.indexOf('meteohub-')===0) return PILOT_DATA_BASE; return HIST_RAW_BY_REGION[region]||HIST_RAW; }
 // Piloti VdA-CF e Friuli-OSMER: lo storico è backfill Open-Meteo (stime, source
@@ -2221,7 +2226,10 @@ function openStationHistory(s,rank,mx,my){
   var regionKey=s._region||getActiveRegions()[0]||DEFAULT_REGION; // multiregione: la regione della stazione cliccata, non la 1a attiva
   // Friuli: lo storico legge dal dato OSMER (repo test) quando è la fonte attiva,
   // altrimenti da Open-Meteo produzione. Le altre regioni usano regionKey tal quale.
-  var histRegion=(REGIONS[regionKey]&&REGIONS[regionKey].dataSource==='meteohub')?'meteohub-'+regionKey:(regionKey==='friuli')?'friuli-osmer':(regionKey==='valledaosta')?'valledaosta-cf':regionKey;
+  // Svizzera: regione a due fonti — le stazioni OASI hanno lo storico in
+  // data/ticino (prod), quelle MeteoSwiss in data/svizzera (pilota). Il tag
+  // _src lo mette loadSvizzeraRegion.
+  var histRegion=(REGIONS[regionKey]&&REGIONS[regionKey].dataSource==='meteohub')?'meteohub-'+regionKey:(regionKey==='friuli')?'friuli-osmer':(regionKey==='valledaosta')?'valledaosta-cf':(regionKey==='svizzera')?((s._src==='oasi')?'ticino':'svizzera'):regionKey;
   var limit=HIST_REAL_FROM[histRegion]||HIST_REAL_FROM[regionKey];
 
   var days=[];
@@ -2795,9 +2803,9 @@ function loadData(pastDate,nowDate,labelPeriodo){
       loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,function(dati){
         onRegionDone(dati,'🟢 SIR Toscana',regionKey);
       });
-    } else if(source==='oasi_ticino'){
-      loadTicinoRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 OASI Ticino',regionKey);
+    } else if(source==='svizzera'){
+      loadSvizzeraRegion(pastDate,nowDate,labelPeriodo,function(dati){
+        onRegionDone(dati,'🟢 OASI Ticino + MeteoSvizzera',regionKey);
       });
     } else if(source==='meteohub'){
       loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,function(dati){
@@ -3549,10 +3557,19 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
 // ═══════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════
-// TICINO (OASI) — carica dati giornalieri da GitHub
+// SVIZZERA — regione a DUE FONTI (pilota dal 3/8/2026):
+//  - Ticino: OASI, data/ticino nel repo di PRODUZIONE (collector storico)
+//  - resto del paese: MeteoSwiss OGD, data/svizzera nel repo del pilota
+// Le chiavi stazione sono prefissate per fonte ('ti:'/'ch:') così due id
+// uguali nei due mondi non si sommerebbero mai; _src serve al grafico
+// storico per scegliere la cartella giusta.
 // ═══════════════════════════════════════════════════════════════
-function loadTicinoRegion(pastDate,nowDate,labelPeriodo,cb){
-  var TICINO_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/ticino';
+function loadSvizzeraRegion(pastDate,nowDate,labelPeriodo,cb){
+  var SRC=[
+    {raw:'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/ticino',
+     pref:'ti:', src:'oasi', pDef:'TI'},
+    {raw:PILOT_DATA_BASE+'svizzera', pref:'ch:', src:'ms', pDef:''}
+  ];
   var rainTot={}, stMeta={};
   var dates=[];
   var d=new Date(pastDate.getTime());
@@ -3562,36 +3579,38 @@ function loadTicinoRegion(pastDate,nowDate,labelPeriodo,cb){
     d.setDate(d.getDate()+1);
   }
 
-  var pending=dates.length;
+  var pending=dates.length*SRC.length;
   if(pending===0){cb([]);return;}
 
-  dates.forEach(function(dateStr){
-    fetch(TICINO_RAW+'/'+dateStr+'.json')
-      .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-      .then(usaGiorno)
-      .then(function(data){
-        if(data.stations){
-          data.stations.forEach(function(s){
-            var key=s.id||s.n;
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'TI'};
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
-          });
-        }
-      })
-      .catch(function(){})
-      .finally(function(){
-        pending--;
-        if(pending>0) return;
-        var full=Object.keys(rainTot).map(function(key){
-          var s=stMeta[key];if(!s)return null;
-          var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'TI',
-                  mm:mm<0.5?0:Math.round(mm*10)/10};
-        }).filter(Boolean);
-        if(full.length<5){cb([]);return;}
-        full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
-        cb(full);
-      });
+  SRC.forEach(function(srcCfg){
+    dates.forEach(function(dateStr){
+      fetch(srcCfg.raw+'/'+dateStr+'.json')
+        .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+        .then(usaGiorno)
+        .then(function(data){
+          if(data.stations){
+            data.stations.forEach(function(s){
+              var key=srcCfg.pref+(s.id||s.n);
+              if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||srcCfg.pDef,_src:srcCfg.src};
+              rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            });
+          }
+        })
+        .catch(function(){})
+        .finally(function(){
+          pending--;
+          if(pending>0) return;
+          var full=Object.keys(rainTot).map(function(key){
+            var s=stMeta[key];if(!s)return null;
+            var mm=rainTot[key]||0;
+            return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p,_src:s._src,
+                    mm:mm<0.5?0:Math.round(mm*10)/10};
+          }).filter(Boolean);
+          if(full.length<5){cb([]);return;}
+          full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
+          cb(full);
+        });
+    });
   });
 }
 
@@ -4195,10 +4214,10 @@ function setRegionBorder(regionKey,cb){
 
     if(feat){
       var layer=L.geoJSON(feat,{
-        // Il tratteggio del Ticino (confine di stato) resta anche sul bordo
+        // Il tratteggio della Svizzera (confine di stato) resta anche sul bordo
         // disegnato durante l'analisi, così l'identità non sparisce coi dati.
         style:{color:'#1b3f6e',weight:1.5,opacity:0.6,fill:false,
-               dashArray:regionKey==='ticino'?'6 4':null}
+               dashArray:regionKey==='svizzera'?'6 4':null}
       }).addTo(map);
       regionBorders[regionKey]=layer;
 
@@ -4221,13 +4240,13 @@ function setRegionBorder(regionKey,cb){
 // tendina mobile/tablet resta com'era (con i combo).
 var selectorLayers={};
 function selStyle(on,rk){
-  // Il Ticino è Svizzera e deve riconoscersi (2/8/2026): bordo TRATTEGGIATO
+  // La Svizzera deve riconoscersi come stato estero (2/8/2026): bordo TRATTEGGIATO
   // (il segno cartografico del confine di stato) in rosso spento, più un velo
   // di riempimento leggerissimo nella sola fase di scelta. Niente tinte sul
   // resto d'Italia: verde e rosso sono già le "parole" della scala pioggia,
   // si marca l'eccezione e non la regola. Il velo sparisce con l'analisi
   // (currentLabel): sui dati la pioggia resta l'unico colore in campo.
-  var ch=(rk==='ticino');
+  var ch=(rk==='svizzera');
   if(on){
     // Con un'analisi visibile NIENTE riempimento (coprirebbe la heatmap):
     // resta il bordo marcato. fillOpacity 0 (non fill:false) così l'interno
@@ -4236,8 +4255,10 @@ function selStyle(on,rk){
     var fo=currentLabel?0:.16;
     return {color:'#1b3f6e',weight:2.2,opacity:.95,fillColor:'#1b3f6e',fillOpacity:fo,dashArray:ch?'6 4':null};
   }
-  if(ch) return {color:'#b0403a',weight:1.8,opacity:.85,fillColor:'#c0564c',
-                 fillOpacity:currentLabel?.03:.12,dashArray:'6 4'};
+  // Velo e bordo ALLEGGERITI il 3/8/2026 (richiesta utente): il 12% tarato sul
+  // solo Ticino, spalmato sull'intero paese, faceva una macchia rossa pesante.
+  if(ch) return {color:'#b0403a',weight:1.8,opacity:.7,fillColor:'#c0564c',
+                 fillOpacity:currentLabel?.02:.06,dashArray:'6 4'};
   return {color:'#4a6c9b',weight:1.1,opacity:.55,fillColor:'#1b3f6e',fillOpacity:.03,dashArray:null};
 }
 function selIsOn(rk){
@@ -4329,12 +4350,12 @@ function buildRegionSelector(){
       if(!feat) return;
       var layer=L.geoJSON(feat,{style:selStyle(selIsOn(rk),rk)}).addTo(map);
       layer.on('click',function(e){ L.DomEvent.stopPropagation(e); toggleRegionFromMap(rk); });
-      // Hover: il Ticino parte da un velo già al 12%, quindi il generico 10%
+      // Hover: la Svizzera parte da un velo già al 12%, quindi il generico 10%
       // lo SPEGNEVA invece di accenderlo (trovato dall'utente il 2/8): per lui
       // l'evidenziazione deve salire sopra il velo.
       layer.on('mouseover',function(){
         if(selIsOn(rk)) return;
-        layer.setStyle(rk==='ticino'?{fillOpacity:.20,opacity:1}:{fillOpacity:.10,opacity:.85});
+        layer.setStyle(rk==='svizzera'?{fillOpacity:.12,opacity:1}:{fillOpacity:.10,opacity:.85});
       });
       layer.on('mouseout',function(){ layer.setStyle(selStyle(selIsOn(rk),rk)); });
       selectorLayers[rk]=layer;
@@ -4403,7 +4424,9 @@ var REGION_BOUNDS={
   friuli:      [[45.58,12.32],[46.65,13.92]],
   trentino:    [[45.67,10.45],[46.53,11.96]],
   altoadige:   [[46.22,10.38],[47.09,12.48]],
-  ticino:      [[45.82, 8.38],[46.63, 9.16]],
+  // Svizzera intera (bbox nazionale swissBOUNDARIES3D). ATTENZIONE: è esclusa
+  // apposta dal fitVistaIniziale — l'inquadratura di apertura resta l'Italia.
+  svizzera:    [[45.82, 5.96],[47.81,10.49]],
   // Centro-sud (bounds dalle stazioni reali MeteoHub) + Abruzzo (Open-Meteo)
   marche:      [[42.74,12.13],[43.91,13.89]],
   umbria:      [[42.53,11.95],[43.52,13.19]],
@@ -4433,6 +4456,10 @@ var REGION_BOUNDS={
 (function fitVistaIniziale(){
   var latMin=90,latMax=-90,lonMin=180,lonMax=-180;
   Object.keys(REGION_BOUNDS).forEach(function(rk){
+    // La Svizzera intera NON entra nella vista di apertura (decisione 3/8/2026):
+    // includerla fino a Sciaffusa (47,8°N) rimpicciolirebbe l'Italia. Il suo
+    // confine si vede entrare dal bordo alto; selezionandola il fit la mostra tutta.
+    if(rk==='svizzera') return;
     var b=REGION_BOUNDS[rk];
     if(b[0][0]<latMin) latMin=b[0][0];
     if(b[1][0]>latMax) latMax=b[1][0];
@@ -4527,17 +4554,17 @@ function fitMapToRegions(regionKeys,factor){
 // Adiacenze (confini) tra le regioni selezionabili. Servono a individuare la
 // "regione di mezzo" in una terna: quella che confina con entrambe le altre.
 var REGION_ADJ={
-  valledaosta:['piemonte'],
-  piemonte:['valledaosta','lombardia','liguria','ticino'],
+  valledaosta:['piemonte','svizzera'],
+  piemonte:['valledaosta','lombardia','liguria','svizzera'],
   liguria:['piemonte','emilia','toscana'],
-  lombardia:['piemonte','emilia','veneto','trentino','ticino'],
+  lombardia:['piemonte','emilia','veneto','trentino','svizzera'],
   emilia:['lombardia','liguria','toscana','veneto'],
   toscana:['liguria','emilia','umbria','marche','lazio'],
   veneto:['lombardia','emilia','trentino','altoadige','friuli'],
   trentino:['lombardia','veneto','altoadige'],
-  altoadige:['trentino','veneto'],
+  altoadige:['trentino','veneto','svizzera'],
   friuli:['veneto'],
-  ticino:['piemonte','lombardia'],
+  svizzera:['valledaosta','piemonte','lombardia','altoadige'],
   umbria:['toscana','marche','lazio','abruzzo'],
   marche:['emilia','toscana','umbria','abruzzo','lazio'],
   lazio:['toscana','umbria','abruzzo','molise','campania'],
@@ -4622,7 +4649,7 @@ document.getElementById('region-select').addEventListener('change', function(){
   else if(rk==='altoadige') map.setView([46.4, 11.4], 8);
   else if(rk==='trentino') map.setView([45.9, 11.1], 8.5);
   else if(rk==='toscana') map.setView([window.innerWidth<=375 ? 43.1 : 42.85, 11.0], 7.5);
-  else if(rk==='ticino') map.setView([46.05, 8.8], 8.5);
+  else if(rk==='svizzera') map.setView([46.6, 8.3], window.innerWidth<=375 ? 6.5 : 6.75);
   else if(rk==='piemonte-vda') map.setView([45.25, 7.55], 7.25);
   else if(rk==='trentino-aa') map.setView([46.25, 11.3], 7.5);
   // Centro-sud e regioni future: nessuna vista calibrata a mano nella catena
@@ -5254,7 +5281,12 @@ if(_btnShot){
   var r=q.get('r'),da=q.get('da'),a=q.get('a');
   if(!r||!da||!a) return;
   if(!/^\d{4}-\d{2}-\d{2}$/.test(da)||!/^\d{4}-\d{2}-\d{2}$/.test(a)||da>a) return;
-  var keys=r.split(',').filter(function(k){return document.getElementById('chk-'+k);}).slice(0,3);
+  // Alias per i link già in circolazione: prima del 3/8/2026 la Svizzera in
+  // mappa era il solo Ticino (regione 'ticino'). Quei link devono continuare
+  // ad aprirsi: si mappano sulla regione 'svizzera' che lo contiene.
+  var keys=r.split(',').map(function(k){return k==='ticino'?'svizzera':k;})
+    .filter(function(k,i,arr){return arr.indexOf(k)===i;})
+    .filter(function(k){return document.getElementById('chk-'+k);}).slice(0,3);
   if(keys.length===0) return;
   var ieriStr=fmtISOLocal(new Date(new Date().setDate(new Date().getDate()-1)));
   if(a>ieriStr) a=ieriStr; // il link può essere di "ieri" aperto oggi: si accorcia
@@ -5412,20 +5444,30 @@ function loadMeteoHubStations(regionKey,cb){
       .catch(function(){ idx++; attempt(); });
   })();
 }
-// Ticino: come MeteoHub non ha lista stations statica → anagrafe da un file
-// recente del repo prod (stesso formato: data.stations[] con n,lat,lon,q,p).
-var ticinoStationsCache=null;
-function loadTicinoStations(cb){
-  if(ticinoStationsCache){ cb(ticinoStationsCache); return; }
-  var RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/ticino', tries=[], now=new Date();
+// Svizzera: come MeteoHub non ha lista stations statica → anagrafe da un file
+// recente di CIASCUNA delle due fonti (OASI dal repo prod, MeteoSwiss dal
+// pilota), unite. Se una delle due non risponde si mostrano le stazioni
+// dell'altra: meglio metà anagrafe che nessun pallino.
+var svizzeraStationsCache=null;
+function loadSvizzeraStations(cb){
+  if(svizzeraStationsCache){ cb(svizzeraStationsCache); return; }
+  var RAWS=['https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/ticino',
+            PILOT_DATA_BASE+'svizzera'];
+  var tries=[], now=new Date();
   for(var i=1;i<=6;i++){ var d=new Date(now.getTime()-i*86400000); tries.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')); }
-  var idx=0;
-  (function attempt(){
-    if(idx>=tries.length){ cb([]); return; }
-    fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
-      .then(function(data){ var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'TI'};}); ticinoStationsCache=st; cb(st); })
-      .catch(function(){ idx++; attempt(); });
-  })();
+  var merged=[], pendingSrc=RAWS.length;
+  RAWS.forEach(function(RAW){
+    var idx=0;
+    (function attempt(){
+      if(idx>=tries.length){ if(--pendingSrc===0){ svizzeraStationsCache=merged; cb(merged); } return; }
+      fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
+        .then(function(data){
+          (data.stations||[]).forEach(function(s){ merged.push({n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''}); });
+          if(--pendingSrc===0){ svizzeraStationsCache=merged; cb(merged); }
+        })
+        .catch(function(){ idx++; attempt(); });
+    })();
+  });
 }
 function addDefaultMarkersForRegion(regionKey){
   var cfg=REGIONS[regionKey];
@@ -5435,8 +5477,8 @@ function addDefaultMarkersForRegion(regionKey){
     loadMeteoHubStations(regionKey,function(st){ drawDefaultMarkers(st,cfg); });
     return;
   }
-  if(cfg && cfg.dataSource==='oasi_ticino'){
-    loadTicinoStations(function(st){ drawDefaultMarkers(st,cfg); });
+  if(cfg && cfg.dataSource==='svizzera'){
+    loadSvizzeraStations(function(st){ drawDefaultMarkers(st,cfg); });
     return;
   }
   var stazioni=(regionKey==='lombardia')?(ARPA_STATIONS||LOMBARDIA_STATIONS):((cfg&&cfg.stations)?cfg.stations:[]);
