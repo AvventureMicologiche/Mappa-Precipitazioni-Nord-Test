@@ -39,6 +39,17 @@ const LEDGER = path.join(DATA_ROOT, 'meteohub-gaps.json');
 const GRACE_DAYS = 2;
 const WINDOW_DAYS = 10;    // finestra di scansione (= finestra pubblica MeteoHub)
 const PARTIAL_RATIO = 0.9; // sotto il 90% della mediana → giorno parziale
+// Sotto quale quota della normalità un calo merita davvero le stime (4/8/2026).
+// Il 90% qui sopra serve ad ACCORGERSI del calo e a scriverlo nel registro; è
+// una soglia sensibile apposta, perché la frequenza degli eventi è la metrica
+// con cui si giudica MeteoHub. Ma ACCORGERSI non vuol dire INTERVENIRE: il
+// 3/8 la Sicilia è scesa a 341 stazioni reali su 426 (80%) e il gapfill ci ha
+// infilato 91 stime — in una regione che con 341 stazioni ha una densità
+// migliore di Lombardia e Piemonte in giornata normale (13,2 contro 10,6 e
+// 11,1 ogni 1000 km²). Stime al posto di niente vanno bene; stime aggiunte a
+// una rete già fitta sono solo rumore su misure vere. Da qui in poi si integra
+// solo quando il calo è tale da compromettere davvero la copertura.
+const SOGLIA_GRAVE = 0.6;  // parziale sopra il 60% della normalità = lieve, non si copre
 
 // Reti attive (meteohub-lombardia è chiusa dal 27/7, resta solo come storico)
 const REGIONS = ['marche','umbria','lazio','campania','puglia','calabria','sicilia','sardegna','basilicata','molise'];
@@ -144,15 +155,24 @@ async function main() {
       }
       if (!buco || (j && !isReal(j) && j.source === 'open-meteo-gapfill')) continue;
 
+      // Un parziale che lascia la rete sopra SOGLIA_GRAVE è "lieve": si annota
+      // (serve alla metrica frequenza) ma non si copre e non fa scattare la mail.
+      const lieve = (buco === 'parziale' && nReali >= tipico * SOGLIA_GRAVE);
+
       // nuovo evento o aggiornamento
       if (!ev) {
-        ev = { rete: region, data: day, tipo: buco, stazioniViste: nReali, stazioniAttese: tipico, rilevato: todayStr, stato: 'aperto' };
+        ev = { rete: region, data: day, tipo: buco, lieve, stazioniViste: nReali, stazioniAttese: tipico, rilevato: todayStr, stato: 'aperto' };
         ledger.eventi.push(ev); cambiato = true;
-        console.log(`🕳️  ${region} ${day}: buco ${buco} (${nReali}/${tipico} stazioni)`);
-      } else if (ev.stato === 'aperto' && (ev.tipo !== buco || ev.stazioniViste !== nReali)) {
-        ev.tipo = buco; ev.stazioniViste = nReali; cambiato = true;
+        console.log(`🕳️  ${region} ${day}: buco ${buco}${lieve ? ' LIEVE' : ''} (${nReali}/${tipico} stazioni)`);
+      } else if (ev.stato === 'aperto' && (ev.tipo !== buco || ev.stazioniViste !== nReali || ev.lieve !== lieve)) {
+        ev.tipo = buco; ev.stazioniViste = nReali; ev.lieve = lieve; cambiato = true;
       }
       if (ev.stato !== 'aperto') continue;
+
+      if (lieve) {
+        console.log(`   ${region} ${day}: calo lieve (${nReali}/${tipico}, ${Math.round(nReali / tipico * 100)}% della norma) — annotato, nessuna stima`);
+        continue;
+      }
 
       // copertura Open-Meteo dopo GRACE_DAYS
       const diff = daysDiff(todayStr, day);
