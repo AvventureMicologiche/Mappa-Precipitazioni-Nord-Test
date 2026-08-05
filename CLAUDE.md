@@ -109,8 +109,8 @@ CC BY 4.0, attribuzione «Fonte: MeteoSvizzera»). In mappa un solo bottone **"S
 
 Espansione all'Austria con **GeoSphere Austria Data Hub** (ex ZAMG), `dataset.api.hub.geosphere.at`,
 dataset `klima-v2-1h`, parametro `rr`. **Licenza CC BY 4.0** verificata sulla pagina del
-dataset — attribuzione «Fonte: GeoSphere Austria», voce da aggiungere in `fonti.html`.
-**Non ancora agganciata alla mappa**: ci sono collector, workflow e storico.
+dataset — attribuzione «Fonte: GeoSphere Austria», voce in `fonti.html`.
+**IN MAPPA sul sito di test dal 5/8/2026**, bottone "Austria (AT)" accanto alla Svizzera.
 
 - **Collect:** `collect-austria-geosphere.js` + `austria.yml` (5 run/giorno, orari sfalsati
   dalla Svizzera per non accavallare i push). **~269 stazioni** con ore sufficienti su 280
@@ -157,9 +157,28 @@ dataset — attribuzione «Fonte: GeoSphere Austria», voce da aggiungere in `fo
   non è raggiungibile (endpoint statici 404, l'app `webmet` ha URL offuscati) e il dataset del
   portale open data è fermo al **febbraio 2022**, senza risorse scaricabili e su letture
   **manuali** delle 7.
-- **Da fare:** agganciare alla mappa di test (`REGIONS`, `REGION_BOUNDS`, `REGION_ADJ`, loader,
-  confine GeoJSON dell'Austria), aggiungere il confine Alto Adige↔Tirolo a `check-confini.js`,
-  voce in `fonti.html`, poi promozione.
+- **In mappa (5/8/2026):** regione `austria` in `REGIONS`/`REGION_BOUNDS`/`REGION_ADJ` (confina
+  con svizzera, altoadige, veneto, friuli), `loadAustriaRegion` su `PILOT_DATA_BASE+austria`,
+  anagrafe da file recente (`loadAustriaStations`, come MeteoHub e Svizzera), dispatcher e
+  `HIST_RAW_BY_REGION` per il grafico storico. Come la Svizzera: **bordo TRATTEGGIATO** ed
+  **esclusione dalla vista di apertura** — per l'Austria conta ancora di più, si spinge a
+  17,2°E e includerla trascinerebbe l'inquadratura fino all'Ungheria.
+  **NIENTE tag beta**, a differenza del centro-sud: quel beta nasce dai buchi di ingestione di
+  MeteoHub, che qui non esistono. Verificato dal vivo sul sito di test: Austria sola (269 staz.,
+  30 gg) e Austria + Trentino-A.A. insieme (432 staz., finestra funghi), con la heatmap che
+  passa il confine senza gradini.
+- **Confine nazionale:** `austria-confine.geojson`, BEV via data.gv.at, semplificato
+  Douglas-Peucker 249.277→4.661 vertici (~70 m), 90 KB, coordinate a 5 decimali.
+  ⚠️ **Licenza CC BY-SA 2.0 AT** — diversa da quella dei dati di pioggia (CC BY 4.0): essendo
+  il nostro file una semplificazione, resta CC BY-SA, e la cosa è dichiarata in `fonti.html`.
+- **Confine Alto Adige↔Tirolo in `check-confini.js` (preset `altoadige-tirolo`)**, con la
+  variabile **`DATA_ALT`** che punta alla cartella `data` del repo di test — senza, il confine
+  non si potrebbe misurare finché l'Austria non è promossa, cioè proprio quando la misura serve
+  per decidere se promuoverla. **Primo esito (60 giorni, 16 coppie, 416 confronti): Austria più
+  alta nel 54%, scarto +0,69 mm, 5 stazioni su e 4 giù → equilibrato.**
+- **Da fare per la promozione:** spostare `data/austria` + collector + workflow nel repo prod,
+  `PILOT_DATA_BASE`, voce in `fonti.html` di produzione, allarme fonti/`check-fonti.js` esteso
+  all'Austria, e decidere se l'header diventa "Italia + Svizzera + Austria".
 
 ---
 
