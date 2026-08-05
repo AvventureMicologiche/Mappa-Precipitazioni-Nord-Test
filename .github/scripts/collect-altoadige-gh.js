@@ -111,9 +111,16 @@ async function main() {
         const prev = JSON.parse(fs.readFileSync(prevFile, 'utf8'));
         const prevMap = new Map((prev.stations || []).map(s => [s.id, s.mm]));
         const totale = stations.reduce((a, s) => a + s.mm, 0);
-        const identiche = stations.filter(s => prevMap.get(s.id) === s.mm).length;
-        skipWrite = totale > 0 && identiche >= stations.length * 0.9;
-        if (skipWrite) console.log(`  Guardia reset: ${identiche}/${stations.length} stazioni identiche a ${prevStr}`);
+        // SOLO LE STAZIONI BAGNATE (5 agosto 2026, terza recidiva del bug #18):
+        // 0 contro 0 è identico sempre, e in una giornata quasi asciutta le
+        // decine di stazioni a zero diluiscono le poche contaminate. Il 30
+        // luglio 2026: 44/57 su tutte (77%, sotto la vecchia soglia del 90%)
+        // ma 26/39 fra le bagnate (67%). Collaudo su 366 giorni: prende il 27
+        // e il 30 luglio, zero falsi allarmi. Parità col repo di produzione.
+        const bagnate = stations.filter(s => prevMap.get(s.id) > 0 || s.mm > 0);
+        const uguali  = bagnate.filter(s => Math.abs(prevMap.get(s.id) - s.mm) < 0.05).length;
+        skipWrite = totale > 0 && bagnate.length >= 5 && uguali >= bagnate.length * 0.6;
+        if (skipWrite) console.log(`  Guardia reset: ${uguali}/${bagnate.length} stazioni BAGNATE identiche a ${prevStr}`);
       } catch(e) {
         console.warn('  Warn: guardia reset non applicabile: ' + e.message);
       }

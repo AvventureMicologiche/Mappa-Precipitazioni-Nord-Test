@@ -105,6 +105,64 @@ CC BY 4.0, attribuzione «Fonte: MeteoSvizzera»). In mappa un solo bottone **"S
 
 ---
 
+## PILOTA AUSTRIA (dal 5 agosto 2026 — solo repo di test)
+
+Espansione all'Austria con **GeoSphere Austria Data Hub** (ex ZAMG), `dataset.api.hub.geosphere.at`,
+dataset `klima-v2-1h`, parametro `rr`. **Licenza CC BY 4.0** verificata sulla pagina del
+dataset — attribuzione «Fonte: GeoSphere Austria», voce da aggiungere in `fonti.html`.
+**Non ancora agganciata alla mappa**: ci sono collector, workflow e storico.
+
+- **Collect:** `collect-austria-geosphere.js` + `austria.yml` (5 run/giorno, orari sfalsati
+  dalla Svizzera per non accavallare i push). **~269 stazioni** con ore sufficienti su 280
+  in anagrafe.
+- **Storico: 365 giorni di dati REALI dal primo giorno** — `backfill-austria-geosphere.js`,
+  girato in locale il 5/8 (355 giorni, dal 5/8/2025). **Niente stime, niente fase beta.**
+  Molto più leggero del backfill svizzero: una richiesta copre un mese intero per un gruppo
+  di stazioni, quindi ~70 richieste JSON invece di ~1 GB di CSV. Copertura stabile anche
+  d'inverno (261-269 stazioni a dicembre); massimo storico 148,2 mm (Dornbirn, 21/8/2025).
+- **RICETTA (validata il 5/8 PRIMA di scrivere il collector):** il giornaliero ufficiale
+  `klima-v2-1d` **non si usa** — è la finestra 06-06 UTC, cioè il *Klimatag* 07-07 in ora
+  solare mitteleuropea, stessa trappola di `rre150d0` per MeteoSvizzera. Si sommano le ORE
+  `rr` sul giorno solare italiano, finestra `(start, end]` su timestamp di **FINE
+  intervallo**, MIN_ORE=20 — identica a Svizzera e OSMER Friuli.
+  - **Due misure indipendenti, entrambe necessarie.** (1) Somma oraria contro giornaliero
+    ufficiale: lo sfasamento che li allinea è di **7 ore** = 6 (finestra Klimatag) + 1 (fine
+    intervallo), con **379 giorni bagnati esatti su 380** e scarto medio 0,050 mm su 15
+    stazioni. ⚠️ Sui giorni *tutti* l'accordo scende al 52%, perché gli asciutti fanno
+    punteggio gratis: **il numero che decide è quello sui giorni bagnati.** (2) La misura (1)
+    fissa solo il TOTALE di 7 ore, non la scomposizione — per quella serve un'ancora già
+    validata: **correlazione oraria con MeteoSvizzera** sulla coppia **Rohrspitz (AT) ↔
+    Altenrhein (CH), 5,0 km**, r=**0,822 a sfasamento 0** contro 0,32 a ±1 ora.
+- **⚠️ DOPPIONI — il filtro senza cui tutto sballa:** GeoSphere pubblica quasi ogni sito
+  **due volte**, come stazione `COMBINED` (serie storica unita, id basso) e `INDIVIDUAL`
+  (strumento fisico, id alto), con nome e quota identici e gli **stessi identici valori**.
+  Al primo run erano **189 doppioni su 469**. Senza il filtro la mappa disegnerebbe ogni
+  pluviometro austriaco due volte e l'IDW lo peserebbe il doppio — è il caso di S. Bernardino
+  in Svizzera, ma su scala industriale. Il collector deduplica per **distanza (<500 m)**,
+  **non per nome**: i doppioni si scrivono anche in modo diverso ("St.Jakob" / "St. Jakob").
+  A parità di posizione si tiene la COMBINED, che ha la storia più lunga.
+- **Vantaggi rispetto a tutte le altre fonti del progetto:** una sola richiesta copre TUTTE
+  le stazioni (niente 199 chiamate come in Liguria); le query storiche rispondono su qualsiasi
+  data → auto-riparazione D-3..D-10 gratis, un run fallito non perde mai dati; e **l'anagrafe
+  pubblica la QUOTA**, cosa che Piemonte, OSMER e le reti MeteoHub non fanno → il filtro
+  dislivello di `check-confini.js` funzionerebbe davvero sul confine **Alto Adige↔Tirolo**,
+  il confronto più pulito che avremmo mai avuto.
+- **Ha già ripagato prima di andare in mappa:** al primo run ha trovato la terza recidiva del
+  bug #18 in produzione (Alto Adige 30/7/2026, coda cumulata del 29), dando le stazioni di
+  confine a 0 e l'Austria intera a 41 mm su 269. **È la prima volta che una rete estera fa da
+  controllo a una nostra regione.**
+- **Slovenia — SCARTATA il 5/8/2026, non riproporre.** ARSO pubblica 105 stazioni automatiche
+  con coordinate, ma `rr_val` è la pioggia degli **ultimi 10 minuti** (`rrHh`=0,1666) e solo
+  l'ultima lettura: per un giorno servirebbero 144 run. È il bug #11 della Liguria. L'archivio
+  non è raggiungibile (endpoint statici 404, l'app `webmet` ha URL offuscati) e il dataset del
+  portale open data è fermo al **febbraio 2022**, senza risorse scaricabili e su letture
+  **manuali** delle 7.
+- **Da fare:** agganciare alla mappa di test (`REGIONS`, `REGION_BOUNDS`, `REGION_ADJ`, loader,
+  confine GeoJSON dell'Austria), aggiungere il confine Alto Adige↔Tirolo a `check-confini.js`,
+  voce in `fonti.html`, poi promozione.
+
+---
+
 ## Regole fondamentali
 
 1. **Lo storico precipitazioni deve essere SEMPRE accurato e completo.** Mai accettare dati parziali o sbagliati come "non catastrofici". Ogni problema va risolto completamente.
