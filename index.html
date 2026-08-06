@@ -2712,6 +2712,14 @@ function loadData(pastDate,nowDate,labelPeriodo){
   // Su un giorno solo le stime non si usano (vedi usaGiorno).
   _periodoUnGiorno=(fmtISOLocal(pastDate)===fmtISOLocal(nowDate));
   if(typeof updateGuidePulse==='function') updateGuidePulse(); // periodo scelto → stop lampeggio subito
+  // Il velo di selezione (#1b3f6e al 16%) va spento SUBITO, non a fine disegno.
+  // selStyle lo azzera già quando currentLabel è impostato, ma finora nessuno
+  // rileggeva lo stile fino al refresh di fine render: per tutto il caricamento
+  // la regione restava velata. Sulle regioni italiane non si notava — sotto ci
+  // sono già le tile della vista iniziale — ma con l'Austria la mappa vola su
+  // un'area mai scaricata, resta bianca, e il velo diventa una sagoma grigia a
+  // tutto schermo che sembra un guasto (segnalato dall'utente il 6/8/2026).
+  if(typeof refreshSelectorStyles==='function') refreshSelectorStyles();
   // Desktop: lo zoom sulle regioni avviene QUI (al click del periodo), non alla
   // selezione — così sull'Italia intera si cliccano comodamente anche regioni
   // lontane. Mobile/tablet invariati (la tendina centra già alla selezione).
