@@ -5045,7 +5045,26 @@ document.getElementById('region-select').addEventListener('change', function(){
   // Centro-sud e regioni future: nessuna vista calibrata a mano nella catena
   // qui sopra → si usa centro/zoom della scheda regione (senza questo ramo la
   // mappa restava sull'Italia intera: successo su Android con la Basilicata).
-  else if(REGIONS[rk]&&REGIONS[rk].center) map.setView(REGIONS[rk].center, REGIONS[rk].zoom||7.5);
+  else if(REGIONS[rk]&&REGIONS[rk].center){
+    // ...ma un centro e uno zoom FISSI non sanno quanto è larga la regione né
+    // quanto è largo il telefono. L'Austria è larga 7,6° di longitudine e a
+    // zoom 7 un telefono ne mostra ~4,3: si apriva tagliata (segnalato il
+    // 6/8/2026 su Pixel). Qui si calcola lo zoom che la fa entrare davvero e
+    // si tiene il PIÙ LARGO dei due, così le regioni già tarate a mano non
+    // cambiano di una virgola e solo quelle che non ci stavano si allargano.
+    var zt=REGIONS[rk].zoom||7.5, ct=REGIONS[rk].center;
+    var bb=null;
+    expandRegion(rk).forEach(function(r){
+      var b=REGION_BOUNDS[r]; if(!b) return;
+      var lb=L.latLngBounds([[b[0][0],b[0][1]],[b[1][0],b[1][1]]]);
+      bb=bb?bb.extend(lb):lb;
+    });
+    if(bb){
+      var zf=map.getBoundsZoom(bb,false,L.point(14,14));
+      if(zf<zt){ zt=zf; ct=bb.getCenter(); }   // non ci stava: si allarga e si ricentra
+    }
+    map.setView(ct,zt);
+  }
   clearMarkers();
   expandRegion(rk).forEach(function(r){ setRegionBorder(r, function(){ addDefaultMarkersForRegion(r); }); });
   if(currentPast&&currentNow) loadData(currentPast, currentNow, currentLabel);
