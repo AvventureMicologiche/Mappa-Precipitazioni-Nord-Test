@@ -4801,6 +4801,53 @@ var REGION_BOUNDS={
   map.setView(initCenter,initZoom,{animate:false});
 })();
 
+/**
+ * L'avanzo verticale si REGALA AL NORD (6 agosto 2026, su segnalazione utente).
+ *
+ * Sotto la punta della Sicilia avanzava un grado intero di mare — 75 px a
+ * 1920×950 — mentre in cima Svizzera e Austria restavano tagliate. Lo spazio
+ * c'era, era solo dalla parte sbagliata.
+ *
+ * Non è un ritocco a occhio: si sposta il centro verso nord fin dove i due
+ * vincoli lo consentono, e i vincoli sono espressi in pixel perché è in pixel
+ * che si vede il problema.
+ *   - sotto: almeno MARGINE_SUD px di respiro sotto la punta della Sicilia,
+ *     se no sembra tagliata via;
+ *   - sopra: non oltre LIMITE_NORD, il bordo settentrionale dell'Austria —
+ *     più su ci sarebbe solo Germania, che non è nostra.
+ * Vince il vincolo più stringente, e se il risultato non è uno spostamento
+ * verso nord non si tocca niente.
+ *
+ * Regola #5 del progetto: per far SCENDERE il contenuto sullo schermo la
+ * latitudine del centro deve AUMENTARE. Qui infatti la latitudine sale.
+ *
+ * SOLO DESKTOP. Su telefono la vista di apertura è tarata e il pubblico è il
+ * 69% del totale: non si tocca per un miglioramento pensato su uno schermo
+ * largo.
+ */
+(function avanzoAlNord(){
+  if(window.innerWidth<=900) return;
+  var MARGINE_SUD=45, LIMITE_NORD=49.10;
+  var latMin=90,latMax=-90;
+  Object.keys(REGION_BOUNDS).forEach(function(rk){
+    if(rk==='svizzera'||rk==='austria') return;   // la vista di apertura è l'Italia
+    var b=REGION_BOUNDS[rk];
+    if(b[0][0]<latMin) latMin=b[0][0];
+    if(b[1][0]>latMax) latMax=b[1][0];
+  });
+  if(latMin>latMax) return;
+  var h=map.getSize().y, z=initZoom;
+  var yCentro=map.project(L.latLng(initCenter[0],initCenter[1]),z).y;
+  // In Mercator la Y cresce verso SUD: andare a nord = diminuire la Y.
+  var ySud=map.project(L.latLng(latMin,initCenter[1]),z).y;       // punta della Sicilia
+  var yLim=map.project(L.latLng(LIMITE_NORD,initCenter[1]),z).y;  // bordo nord dell'Austria
+  var yMin=Math.max(ySud+MARGINE_SUD-h/2, yLim+h/2);              // il più stringente dei due
+  if(yMin>=yCentro) return;                                        // non ci sarebbe da guadagnare
+  var nuovo=map.unproject(L.point(0,yMin),z).lat;
+  initCenter=[nuovo,initCenter[1]];
+  map.setView(initCenter,initZoom,{animate:false});
+})();
+
 // factor opzionale (0..1): 1 = fit completo; 0.5 = a METÀ strada tra la vista
 // Italia iniziale e il fit — usato alla selezione della regione, così ci si
 // avvicina senza perdere di vista le altre regioni cliccabili.
