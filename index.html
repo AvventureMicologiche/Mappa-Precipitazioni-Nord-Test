@@ -4827,7 +4827,11 @@ var REGION_BOUNDS={
  */
 (function avanzoAlNord(){
   if(window.innerWidth<=900) return;
-  var MARGINE_SUD=45, LIMITE_NORD=49.10;
+  // 25 px sotto la stazione più a sud della Sicilia: un dito di mare, che
+  // basta a non farla sembrare tagliata. Ogni pixel risparmiato qui è un
+  // pixel guadagnato sull'Austria, quindi il valore è stato stretto fin dove
+  // reggeva all'occhio — non oltre.
+  var MARGINE_SUD=25, LIMITE_NORD=49.10;
   var latMin=90,latMax=-90;
   Object.keys(REGION_BOUNDS).forEach(function(rk){
     if(rk==='svizzera'||rk==='austria') return;   // la vista di apertura è l'Italia
