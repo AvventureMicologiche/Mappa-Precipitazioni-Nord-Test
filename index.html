@@ -5065,13 +5065,32 @@ document.getElementById('region-select').addEventListener('change', function(){
       if(zf<zt){ zt=zf; ct=bb.getCenter(); allargata=true; }   // non ci stava: si allarga e si ricentra
     }
     map.setView(ct,zt);
-    // Il fit centra sull'INTERO contenitore mappa, ma su telefono il terzo
-    // inferiore è coperto dal pannello dei risultati: la regione finiva
-    // appoggiata al bordo del pannello con mezza Germania sopra. Si alza di un
-    // po', così sta al centro della parte che si VEDE. Solo nel ramo allargato:
-    // le regioni con vista tarata a mano hanno già la compensazione dentro il
-    // centro scelto all'epoca, e non vanno toccate.
-    if(allargata) map.panBy([0,Math.round(map.getSize().y*0.14)],{animate:false});
+    // Il fit centra sull'INTERO contenitore mappa, ma su telefono il pannello
+    // dei risultati ne copre una fetta dal basso: la regione finiva appoggiata
+    // al bordo del pannello, o addirittura sotto. Si alza di METÀ della parte
+    // coperta, così torna al centro della striscia che si VEDE.
+    //
+    // La copertura si MISURA, non si stima: un primo tentativo col 14%
+    // dell'altezza spostava 110 px su un Pixel 9 dove ne servivano 240, perché
+    // Leaflet crede di avere ~800 px mentre la striscia libera ne è 315 (barra
+    // degli indirizzi, header, tendina e pannello si mangiano il resto).
+    //
+    // Solo nel ramo allargato: le regioni con vista tarata a mano hanno già la
+    // compensazione dentro il centro scelto all'epoca, e non vanno toccate.
+    if(allargata){
+      var mBox=document.getElementById('map').getBoundingClientRect(), coperto=0;
+      ['legend-panel','time-panel'].forEach(function(id){
+        var el=document.getElementById(id);
+        if(!el) return;
+        var st=getComputedStyle(el);
+        if(st.display==='none'||st.visibility==='hidden'||+st.opacity===0) return;
+        var r=el.getBoundingClientRect();
+        if(r.height<40) return;                       // chiuso o ridotto a maniglia
+        var ov=mBox.bottom-Math.max(r.top,mBox.top);  // quanto mangia dal basso
+        if(ov>coperto) coperto=ov;
+      });
+      if(coperto>20) map.panBy([0,Math.round(coperto/2)],{animate:false});
+    }
   }
   clearMarkers();
   expandRegion(rk).forEach(function(r){ setRegionBorder(r, function(){ addDefaultMarkersForRegion(r); }); });
