@@ -2056,6 +2056,73 @@ function buildGrid(data,rings,idwRad,gridRes){
   return pts;
 }
 
+/**
+ * Come buildGrid, ma A FETTE: lavora ~22 ms per volta e poi restituisce il
+ * controllo al browser, che così può dipingere. Stessa identica matematica —
+ * il corpo del doppio ciclo è copiato, non riscritto — cambia solo QUANDO si
+ * ferma.
+ *
+ * Perché serve: su una regione grande come l'Austria il ciclo sincrono teneva
+ * il thread bloccato **1,1 secondi** (misurato con PerformanceObserver sui
+ * longtask). In quel secondo la pagina è congelata: le tile appena scaricate
+ * non compaiono, il cursore non risponde, e l'utente vede una schermata ferma
+ * e grigia. È l'ultimo strato di un difetto che ne aveva quattro.
+ *
+ * `sessione` è la fotografia di loadSessionId al momento della partenza: se
+ * l'utente cambia periodo o regione mentre calcoliamo, il lavoro in corso va
+ * buttato — vale "l'ultimo clic vince", come per le richieste di rete.
+ */
+function buildGridAFette(data,rings,idwRad,gridRes,sessione,onFatto){
+  var rad=idwRad||IDW_RAD;
+  var GR=gridRes||activeGridRes||GRID_RES;
+  var lons=data.map(function(s){return s.lon;}),lats=data.map(function(s){return s.lat;});
+  var LON_MIN=Math.min.apply(null,lons)-0.5, LON_MAX=Math.max.apply(null,lons)+0.5;
+  var LAT_MIN=Math.min.apply(null,lats)-0.3, LAT_MAX=Math.max.apply(null,lats)+0.3;
+  var polys=rings.map(function(poly){
+    var r0=poly[0],xmn=Infinity,xmx=-Infinity,ymn=Infinity,ymx=-Infinity;
+    for(var k=0;k<r0.length;k++){var X=r0[k][0],Y=r0[k][1];if(X<xmn)xmn=X;if(X>xmx)xmx=X;if(Y<ymn)ymn=Y;if(Y>ymx)ymx=Y;}
+    return {poly:poly,bx0:xmn,bx1:xmx,by0:ymn,by1:ymx};
+  });
+  var pts=[], lat=LAT_MIN, FETTA=22;
+  function giro(){
+    if(sessione!==undefined && sessione!==loadSessionId) return;  // sorpassati: si molla
+    var t0=(window.performance&&performance.now)?performance.now():Date.now();
+    while(lat<=LAT_MAX){
+      for(var lon=LON_MIN;lon<=LON_MAX;lon+=GR){
+        var inside=false;
+        for(var pz=0;pz<polys.length;pz++){
+          var P=polys[pz];
+          if(lon<P.bx0||lon>P.bx1||lat<P.by0||lat>P.by1) continue;
+          if(pipGeo(lon,lat,P.poly[0])){
+            var hole=false;
+            for(var h=1;h<P.poly.length;h++){if(pipGeo(lon,lat,P.poly[h])){hole=true;break;}}
+            if(!hole){inside=true;break;}
+          }
+        }
+        if(!inside) continue;
+        var num=0,den=0,found=false;
+        for(var i=0;i<data.length;i++){
+          var dlat=lat-data[i].lat;
+          var dlon=(lon-data[i].lon)*Math.cos(lat*Math.PI/180);
+          var d2=dlat*dlat+dlon*dlon;
+          if(d2>rad*rad) continue;
+          found=true;
+          if(d2<0.000001){num=data[i].mm;den=1;break;}
+          var w=1/d2; num+=w*data[i].mm; den+=w;
+        }
+        if(!found) continue;
+        pts.push({lat:lat,lon:lon,mm:num/den});
+      }
+      lat+=GR;
+      var ora=(window.performance&&performance.now)?performance.now():Date.now();
+      if(ora-t0>FETTA) break;   // fiato al browser
+    }
+    if(lat<=LAT_MAX) setTimeout(giro,0);
+    else onFatto(pts);
+  }
+  giro();
+}
+
 function gridPxSize(){
   var gr=activeGridRes;
   var mpp=156543.03392*Math.cos(45.0*Math.PI/180)/Math.pow(2,map.getZoom());
@@ -3083,21 +3150,31 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
       if(area>0) fattore=Math.min(4.5,Math.max(fattore,1.5*Math.sqrt(area/AREA_RIF)));
       activeGridRes=GRID_RES*fattore;
       var idwData=(nReg>1&&dati.length>320)?selectUniform(dati,320):dati;
-      gridPoints=buildGrid(idwData,rings,idwR,activeGridRes);
-      drawGrid();
-      // Ridisegni di sicurezza: se il primo draw avviene con la mappa ancora
-      // in animazione (fit del periodo appena partito), celle e canvas restano
-      // sfalsati rispetto ai tile finché un moveend non corregge — e in alcuni
-      // casi l'evento non arriva (successo il 29/7: heatmap spostata a est di
-      // ~mezzo grado dopo Indietro + nuova analisi). A mappa ferma il redraw
-      // è idempotente e costa pochi ms.
-      setTimeout(drawGrid,700);
-      setTimeout(drawGrid,1600);
-      var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='✅ '+labelPeriodo;
-      osmerInlineDesktop(); // avviso Friuli inline accanto a "✅ Ieri" (solo desktop + Ieri)
-      if(typeof refreshSelectorStyles==='function') refreshSelectorStyles(); // via il riempimento: non deve coprire la heatmap
+      // Calcolo A FETTE: il ciclo restituisce il controllo al browser ogni
+      // ~22 ms, così la pagina non si congela mentre la griglia si costruisce.
+      // Sull'Austria il blocco unico era di 1,1 s. Il totale dura uguale, ma
+      // succede a mappa viva.
+      var _sess=loadSessionId;
+      buildGridAFette(idwData,rings,idwR,activeGridRes,_sess,function(pts){
+        if(_sess!==loadSessionId) return;   // l'utente ha già chiesto altro
+        gridPoints=pts;
+        drawGrid();
+        // Ridisegni di sicurezza: se il primo draw avviene con la mappa ancora
+        // in animazione (fit del periodo appena partito), celle e canvas restano
+        // sfalsati rispetto ai tile finché un moveend non corregge — e in alcuni
+        // casi l'evento non arriva (successo il 29/7: heatmap spostata a est di
+        // ~mezzo grado dopo Indietro + nuova analisi). A mappa ferma il redraw
+        // è idempotente e costa pochi ms.
+        setTimeout(drawGrid,700);
+        setTimeout(drawGrid,1600);
+        var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='✅ '+labelPeriodo;
+        osmerInlineDesktop(); // avviso Friuli inline accanto a "✅ Ieri" (solo desktop + Ieri)
+        if(typeof refreshSelectorStyles==='function') refreshSelectorStyles(); // via il riempimento: non deve coprire la heatmap
+        setLoading(false);
+      });
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   });
 }
 
