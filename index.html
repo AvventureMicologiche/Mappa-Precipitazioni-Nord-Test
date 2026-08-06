@@ -828,8 +828,11 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 
 <header>
   <div class="hdr-l">
-    <a href="https://avventuremicologiche.it" target="_blank" rel="noopener" title="Avventure Micologiche" onclick="try{gtag('event','click_home')}catch(e){}" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,0.12);color:#fff;text-decoration:none;flex-shrink:0;margin-right:2px;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <!-- Avatar al posto della casetta (6/8/2026, parità con la produzione): in
+         un sito-mappa la casetta si legge come "torna alla vista iniziale", non
+         come "vai su un altro sito". Da misurare su click_home / click_youtube. -->
+    <a href="https://avventuremicologiche.it" target="_blank" rel="noopener" title="Vai al sito Avventure Micologiche" onclick="try{gtag('event','click_home')}catch(e){}" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#f3efe6;text-decoration:none;flex-shrink:0;margin-right:2px;border:1.5px solid rgba(255,255,255,.85);box-sizing:border-box;overflow:hidden;">
+      <img src="archie-avatar.png" alt="Avventure Micologiche" style="width:100%;height:100%;object-fit:cover;display:block;">
     </a>
     <span style="font-size:18px">🌧</span>
     <div>
