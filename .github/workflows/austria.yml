@@ -15,7 +15,16 @@ on:
   # (verificato il 5/8: l'API era già alle 17:00 dello stesso giorno), ma il run
   # delle 03:10 UTC resta opportunistico — se le ore non bastano, MIN_ORE=20 evita
   # la scrittura parziale e ci pensa quello delle 05:30.
+  # Il cron di CHIUSURA (22:40 UTC = 00:40 italiane) è il più importante: il
+  # giorno solare italiano si chiude alle 22:00 UTC e l'API GeoSphere è quasi
+  # in tempo reale, quindi 40 minuti dopo il totale di ieri è già completo e
+  # definitivo. Senza, il primo run utile sarebbe quello delle 03:10 che coi
+  # ritardi di GitHub (40-70 min) diventa ~05:00 UTC: per tutta la notte e la
+  # prima mattina l'Austria risulterebbe SENZA "ieri" in mappa — la stessa
+  # finestra buia che il Trentino aveva col bug #19, chiusa allo stesso modo.
+  # Aggiunto il 6/8/2026 dopo che il buco si è visto dal vivo.
   schedule:
+    - cron: '40 22 * * *'
     - cron: '10 3 * * *'
     - cron: '30 5 * * *'
     - cron: '20 8 * * *'
