@@ -1806,11 +1806,42 @@ var initCenter=(screenW<=900)?[42.0,12.6]:[42.0,12.9];
 // dell'inquadratura multiregione, ZOOM_STEP). zoomDelta resta 0.5 → i pulsanti
 // +/- e la rotellina zoomano di 0,5 come prima (zoom manuale invariato).
 var map=L.map('map',{zoomSnap:0.25,zoomDelta:0.5}).setView(initCenter, initZoom);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+var baseTiles=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
   maxZoom:19,subdomains:'abc',
   crossOrigin:true, // necessario per esportare la mappa su canvas (immagine di condivisione)
   attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
+
+/**
+ * Esegue `cb` quando la mappa ha davvero DISEGNATO le tile della vista attuale.
+ *
+ * Serve perché buildGrid è sincrono e blocca il thread: se parte subito dopo il
+ * setView, Leaflet non fa in tempo a far comparire le tile appena scaricate
+ * (la dissolvenza gira su requestAnimationFrame, che durante il blocco non
+ * scatta) e l'utente vede una schermata GRIGIA — lo sfondo del contenitore.
+ * Si nota solo dove la vista salta su un'area mai caricata, cioè l'Austria.
+ * Prima si mostra la mappa, poi si calcola: il calcolo dura uguale, ma avviene
+ * sopra una mappa visibile invece che sopra il vuoto.
+ *
+ * `load` del tile layer scatta quando tutte le tile visibili sono pronte; i due
+ * requestAnimationFrame dopo servono a lasciar PAINTARE il fotogramma, perché
+ * l'evento arriva un attimo prima che il pixel sia a schermo. Il tetto di
+ * ATTESA_MAX evita di restare appesi se una tile non arriva mai (rete lenta,
+ * OSM che rifiuta): oltre quel tempo si calcola comunque, tornando al
+ * comportamento di prima invece di non disegnare nulla.
+ */
+function quandoMappaDisegnata(cb){
+  var ATTESA_MAX=1500, fatto=false;
+  function via(){
+    if(fatto) return; fatto=true;
+    baseTiles.off('load',via);
+    requestAnimationFrame(function(){ requestAnimationFrame(cb); });
+  }
+  baseTiles.on('load',via);
+  setTimeout(via,ATTESA_MAX);
+  // Se non c'è nulla in caricamento la mappa è già a posto: non aspettare.
+  if(!baseTiles.isLoading || !baseTiles.isLoading()) setTimeout(via,20);
+}
 
 // ─── Crediti delle fonti dati ──────────────────────────────────
 // Fino al 22 luglio 2026 sia il piè di pagina sia l'attribuzione Leaflet
@@ -2951,7 +2982,11 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
   // Avviso Friuli anche nel ramo "Nessuna pioggia": è proprio il caso del
   // ritardo OSMER (giorno appena chiuso non ancora pubblicato) in cui serve.
   if(typeof osmerInlineDesktop==='function') osmerInlineDesktop();
-  setTimeout(function(){
+  // PRIMA la mappa a schermo, POI il calcolo (6/8/2026). Qui c'era un
+  // setTimeout di 20 ms: troppo pochi perché Leaflet facesse comparire le tile
+  // della nuova vista, e buildGrid — sincrono — congelava subito il thread
+  // lasciando l'utente davanti a una schermata grigia. Vedi quandoMappaDisegnata.
+  quandoMappaDisegnata(function(){
     initCanvas();
     clearHeatmap();
     if(hasRain){
@@ -3002,7 +3037,7 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
       if(typeof refreshSelectorStyles==='function') refreshSelectorStyles(); // via il riempimento: non deve coprire la heatmap
     }
     setLoading(false);
-  },20);
+  });
 }
 
 // ─── Wrapper ARPA Lombardia → callback ───────────────────────
