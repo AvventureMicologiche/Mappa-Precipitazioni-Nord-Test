@@ -5059,11 +5059,19 @@ document.getElementById('region-select').addEventListener('change', function(){
       var lb=L.latLngBounds([[b[0][0],b[0][1]],[b[1][0],b[1][1]]]);
       bb=bb?bb.extend(lb):lb;
     });
+    var allargata=false;
     if(bb){
       var zf=map.getBoundsZoom(bb,false,L.point(14,14));
-      if(zf<zt){ zt=zf; ct=bb.getCenter(); }   // non ci stava: si allarga e si ricentra
+      if(zf<zt){ zt=zf; ct=bb.getCenter(); allargata=true; }   // non ci stava: si allarga e si ricentra
     }
     map.setView(ct,zt);
+    // Il fit centra sull'INTERO contenitore mappa, ma su telefono il terzo
+    // inferiore è coperto dal pannello dei risultati: la regione finiva
+    // appoggiata al bordo del pannello con mezza Germania sopra. Si alza di un
+    // po', così sta al centro della parte che si VEDE. Solo nel ramo allargato:
+    // le regioni con vista tarata a mano hanno già la compensazione dentro il
+    // centro scelto all'epoca, e non vanno toccate.
+    if(allargata) map.panBy([0,Math.round(map.getSize().y*0.14)],{animate:false});
   }
   clearMarkers();
   expandRegion(rk).forEach(function(r){ setRegionBorder(r, function(){ addDefaultMarkersForRegion(r); }); });
