@@ -19,7 +19,7 @@
 
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <meta name="description" content="Mappa interattiva delle precipitazioni in Italia e Svizzera con dati da stazioni meteo reali. Pianifica le tue uscite funghi.">
-  <meta property="og:title" content="Mappa Pluviometrica Italia + Svizzera | Avventure Micologiche">
+  <meta property="og:title" content="Mappa Pluviometrica Italia, Svizzera e Austria | Avventure Micologiche">
   <meta property="og:description" content="Mappa interattiva con dati meteo reali di Italia e Svizzera per pianificare ogni uscita. Trova le zone dove ha piovuto di più.">
   <!-- Anteprima rifatta il 3 agosto 2026 con la v6.0: ITALIA + SVIZZERA a 30
        giorni, 22 regioni e la Svizzera intera, 2960 stazioni, con header e
@@ -48,7 +48,7 @@
   <meta name="theme-color" content="#1b3f6e">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mappa Pluviometrica Italia + Svizzera</title>
+<title>Mappa Pluviometrica Italia, Svizzera e Austria</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -74,7 +74,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .hdr-soc{color:#fff;display:flex;line-height:0;text-decoration:none;opacity:.9;transition:opacity .15s;}
 .hdr-soc:hover{opacity:1;}
 .hdr-soc svg{width:20px;height:20px;fill:currentColor;}
-@media(max-width:600px){#hdr-yt{display:inline-flex;align-items:center;gap:5px;background:#e12b2b;color:#fff;font-size:12px;font-weight:600;padding:5px 9px;border-radius:7px;text-decoration:none;flex-shrink:0;line-height:1;}.ver-tag{display:none;}.hdr-socials{display:none;}#badge{display:none;}}
+@media(max-width:600px){#hdr-yt{display:inline-flex;align-items:center;gap:5px;background:#e12b2b;color:#fff;font-size:12px;font-weight:600;padding:5px 9px;border-radius:7px;text-decoration:none;flex-shrink:0;line-height:1;}.ver-tag{display:none;}.hdr-socials{display:none;}#badge{display:none;}.hdr-paesi{display:none;}}
 
 /* ── Selettore regioni nel pannello ── */
 .panel-region-selector{padding:4px 0 6px 0;}
@@ -837,7 +837,13 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     </a>
     <span style="font-size:18px">🌧</span>
     <div>
-      <h1>Mappa Pluviometrica Italia + Svizzera <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v6.0)</span></h1>
+      <!-- L'elenco dei paesi sta in un pezzo a sé perché sotto i 600px sparisce
+           (6/8/2026). Misurato headless: "Italia + Svizzera + Austria" fa
+           traboccare l'header di 62px a 360 di larghezza, 47 a 375 e 10 persino
+           su un Pixel 9 (412), spingendo fuori il tasto "Iscriviti"; e anche il
+           solo "+ Svizzera" traboccava già di 9px a 360. Su telefono resta
+           "Mappa Pluviometrica Italia", che entra anche a 320. -->
+      <h1>Mappa Pluviometrica<span class="hdr-paesi"> Italia · Svizzera · Austria</span> <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v6.0)</span></h1>
       <div class="hdr-sub" id="datehdr"></div>
     </div>
   </div>

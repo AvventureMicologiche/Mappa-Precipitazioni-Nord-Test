@@ -11,6 +11,20 @@ Mappa interattiva delle precipitazioni del Nord Italia per il canale YouTube "Av
 - **Repo prod:** github.com/AvventureMicologiche/Mappa-Precipitazioni-Nord
 - **Stack:** Leaflet 1.9.4, OpenStreetMap, Netlify (hosting + Functions), GitHub Actions (data collection)
 
+> ⚠️ **SUL SITO DI TEST IL CENTRO-SUD È FERMO AL 31 LUGLIO 2026, ED È VOLUTO.**
+> Alla migrazione Italia v5.0 (1/8) il centro-sud è passato in produzione e i cron
+> di `meteohub.yml` **qui** sono stati commentati (resta il solo `workflow_dispatch`).
+> Ma il sito di test legge i dati dal PROPRIO repo (`PILOT_DATA_BASE` → Nord-Test),
+> quindi per lui tutte e dieci le regioni MeteoHub si sono fermate quel giorno. In
+> produzione i cron girano e i dati ci sono: verificato il 6/8/2026, Molise/Sicilia/
+> Puglia all'ultimo file `2026-07-31` qui contro `2026-08-05` in prod.
+> **Non è un guasto e non c'è niente da riparare** — i dati veri stanno in produzione.
+> Se un giorno servisse provare il centro-sud da qui, la strada è una **seconda base
+> dati puntata alla prod per le sole regioni MeteoHub** (`PILOT_DATA_BASE` non basta:
+> la usano anche VdA, Friuli e Austria, che devono restare sul test). **NON riaccendere
+> i cron**: duplicherebbero quelli di produzione e ogni push è un deploy Netlify da
+> ~15 crediti, la voce che stiamo riducendo.
+
 ---
 
 > **Migrazione a produzione: la checklist è in [`MIGRAZIONE-v5.md`](MIGRAZIONE-v5.md).** Leggerla PRIMA di copiare qualsiasi cosa — contiene le trappole viste sul campo (le cartelle `data/` del Nord qui sono ferme a metà luglio: una copia in blocco cancellerebbe due settimane di dati veri in produzione) e il pezzo di lavoro che si dimentica, cioè estendere l'allarme via mail alle regioni MeteoHub.
