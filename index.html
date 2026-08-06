@@ -1830,6 +1830,63 @@ var baseTiles=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
  * OSM che rifiuta): oltre quel tempo si calcola comunque, tornando al
  * comportamento di prima invece di non disegnare nulla.
  */
+/**
+ * Scarica in anticipo le tile della vista in cui la mappa ATTERRERÀ.
+ *
+ * Il grigio residuo non è più calcolo: è il tempo di rete. Il `setView` del
+ * clic sul periodo rimuove tutte le tile e ne chiede di nuove, e finché non
+ * arrivano si vede lo sfondo del contenitore. Con le regioni italiane non si
+ * nota perché le tile della vista iniziale sono già in cache; l'Austria invece
+ * atterra su un'area mai scaricata.
+ *
+ * Qui si sfrutta il tempo morto: fra lo spuntare la regione e il cliccare il
+ * periodo passano secondi, e in quei secondi le tile possono già arrivare. Non
+ * si sposta niente e non si disegna niente — si chiedono le immagini al
+ * browser, che le mette nella sua cache; quando poi Leaflet le richiede, sono
+ * già lì. Se l'utente non clicca nessun periodo si sono scaricate ~45 immagini
+ * per niente: è il costo, e vale il tetto di MAX_TILE.
+ *
+ * `crossOrigin` deve combaciare con quello del tile layer, altrimenti il
+ * browser tiene due voci di cache separate e il precarico non serve a nulla.
+ */
+var _tilePrecaricate={};
+function precaricaTileDestinazione(regionKeys){
+  var MAX_TILE=90;
+  try{
+    if(!regionKeys||!regionKeys.length||typeof REGION_BOUNDS==='undefined') return;
+    var laMin=90,laMax=-90,loMin=180,loMax=-180,trovato=false;
+    regionKeys.forEach(function(rk){
+      var b=REGION_BOUNDS[rk]; if(!b) return;
+      trovato=true;
+      if(b[0][0]<laMin)laMin=b[0][0]; if(b[1][0]>laMax)laMax=b[1][0];
+      if(b[0][1]<loMin)loMin=b[0][1]; if(b[1][1]>loMax)loMax=b[1][1];
+    });
+    if(!trovato) return;
+    var lb=L.latLngBounds([[laMin,loMin],[laMax,loMax]]);
+    // stesso padding-pannelli del fit, così lo zoom stimato è quello vero
+    var pad=(window.innerWidth>900)?L.point(440,24):L.point(24,24);
+    var z=Math.round(map.getBoundsZoom(lb,false,pad));
+    if(!isFinite(z)||z<2||z>19) return;
+    var size=map.getSize(), cp=map.project(lb.getCenter(),z), lato=Math.pow(2,z);
+    var x0=Math.floor((cp.x-size.x/2)/256)-1, x1=Math.floor((cp.x+size.x/2)/256)+1;
+    var y0=Math.floor((cp.y-size.y/2)/256)-1, y1=Math.floor((cp.y+size.y/2)/256)+1;
+    var sub=['a','b','c'], n=0;
+    for(var x=x0;x<=x1;x++){
+      for(var y=y0;y<=y1;y++){
+        if(y<0||y>=lato) continue;
+        var xx=((x%lato)+lato)%lato;
+        var url='https://'+sub[Math.abs(xx+y)%3]+'.tile.openstreetmap.org/'+z+'/'+xx+'/'+y+'.png';
+        if(_tilePrecaricate[url]) continue;
+        _tilePrecaricate[url]=1;
+        if(++n>MAX_TILE) return;
+        var im=new Image();
+        im.crossOrigin='';   // come il tile layer: stessa voce di cache
+        im.src=url;
+      }
+    }
+  }catch(e){ /* il precarico è un di più: se fallisce non deve rompere nulla */ }
+}
+
 function quandoMappaDisegnata(cb){
   var ATTESA_MAX=1500, fatto=false;
   function via(){
@@ -4879,6 +4936,7 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
     var regions=getActiveRegions();
     updateOsmerNotice();
     if(typeof refreshSelectorStyles==='function') refreshSelectorStyles(); // evidenzia/spegni sul selettore mappa
+    precaricaTileDestinazione(regions);   // usa il tempo morto prima del clic sul periodo
     // Reset del disegno, poi ridisegna TUTTE le regioni attive insieme
     clearMarkers();
     clearHeatmap();
