@@ -1883,6 +1883,17 @@ var GRID_RES=0.009, IDW_RAD=0.15;
 // centinaia di migliaia di celle (buildGrid è sincrono e bloccherebbe il thread).
 // gridPxSize() lo usa così i quadrati del disegno restano allineati al passo.
 var activeGridRes=GRID_RES;
+// Area di riferimento in gradi quadrati per il passo della griglia (vedi il
+// blocco in renderMulti). NON è un numero scelto a occhio: 6,5 è il valore che
+// RIPRODUCE i fattori già tarati a mano, così nessuna vista italiana cambia.
+//   1 regione   (~3,0 gradi²)  → 1,5·√(3,0/6,5)  = 1,02  → vince il 1,5 tarato
+//   2 regioni   (~7,0)         → 1,56                    → vince l'1,7 tarato
+//   3 regioni   (~16,7)        → 2,40                    → pari al 2,4 tarato
+//   Austria sola (~20,2)       → 2,64                    → è QUI che serve
+// In pratica la formula dice la stessa cosa della tabella dove la tabella era
+// giusta, e continua a dirla dove la tabella non arrivava: una regione enorme
+// da sola. Il numero di regioni era un cattivo indicatore del lavoro.
+var AREA_RIF=6.5;
 
 function pipGeo(lon,lat,ring){
   var inside=false,n=ring.length;
@@ -2956,7 +2967,25 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
       // fuori = dettaglio fine invisibile). Anche a 1 regione un lieve coarsening
       // (×1,5) dimezza il point-in-polygon per cella — il costo dominante — con
       // resa praticamente identica (celle ~3px a video invece di ~2).
-      activeGridRes=GRID_RES*(nReg>=3?2.4:(nReg===2?1.7:1.5));
+      var fattore=(nReg>=3?2.4:(nReg===2?1.7:1.5));
+      // ...ma il numero di regioni è un cattivo indicatore del LAVORO: quello
+      // dipende dall'AREA coperta. L'Austria da sola copre ~20 gradi quadrati,
+      // sette volte Trentino+Alto Adige: stesso passo, sette volte le celle, e
+      // buildGrid — che è sincrono — ha congelato il thread per 2,44 s contro
+      // 0,37 s (misurato il 6/8/2026). In quei due secondi e mezzo Leaflet non
+      // riesce a far comparire le tile appena scaricate e la mappa resta GRIGIA:
+      // sembra un guasto, ed è la segnalazione da cui è partita l'indagine.
+      // Qui si aggiunge un pavimento proporzionale all'area, così le celle
+      // restano circa costanti. Il `max` protegge le regioni italiane, che
+      // conservano i fattori già tarati.
+      var laMin=90,laMax=-90,loMin=180,loMax=-180;
+      rings.forEach(function(poly){ poly.forEach(function(r){ r.forEach(function(pt){
+        if(pt[1]<laMin)laMin=pt[1]; if(pt[1]>laMax)laMax=pt[1];
+        if(pt[0]<loMin)loMin=pt[0]; if(pt[0]>loMax)loMax=pt[0];
+      });});});
+      var area=(laMax>laMin&&loMax>loMin)?(laMax-laMin)*(loMax-loMin):0;
+      if(area>0) fattore=Math.min(4.5,Math.max(fattore,1.5*Math.sqrt(area/AREA_RIF)));
+      activeGridRes=GRID_RES*fattore;
       var idwData=(nReg>1&&dati.length>320)?selectUniform(dati,320):dati;
       gridPoints=buildGrid(idwData,rings,idwR,activeGridRes);
       drawGrid();
