@@ -832,7 +832,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <!-- Avatar al posto della casetta (6/8/2026, parità con la produzione): in
          un sito-mappa la casetta si legge come "torna alla vista iniziale", non
          come "vai su un altro sito". Da misurare su click_home / click_youtube. -->
-    <a href="https://avventuremicologiche.it" target="_blank" rel="noopener" title="Vai al sito Avventure Micologiche" onclick="try{gtag('event','click_home')}catch(e){}" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#f3efe6;text-decoration:none;flex-shrink:0;margin-right:2px;border:1.5px solid rgba(255,255,255,.85);box-sizing:border-box;overflow:hidden;">
+    <a href="https://avventuremicologiche.it" target="_blank" rel="noopener" title="Vai al sito Avventure Micologiche" onclick="try{gtag('event','click_home',{pulsante:'archie-header'})}catch(e){}" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#f3efe6;text-decoration:none;flex-shrink:0;margin-right:2px;border:1.5px solid rgba(255,255,255,.85);box-sizing:border-box;overflow:hidden;">
       <img src="archie-avatar.png" alt="Avventure Micologiche" style="width:100%;height:100%;object-fit:cover;display:block;">
     </a>
     <span style="font-size:18px">🌧</span>
@@ -844,16 +844,16 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   <div id="badge"></div>
   <div class="hdr-r" style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
     <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener"
-       onclick="try{gtag('event','click_youtube')}catch(e){}"
+       onclick="try{gtag('event','click_youtube',{pulsante:'iscriviti-header'})}catch(e){}"
        id="hdr-yt" title="Iscriviti su YouTube" aria-label="Iscriviti su YouTube">
       <svg width="17" height="12" viewBox="0 0 42 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#fff"/><polygon points="16,7 16,23 31,15" fill="#e12b2b"/></svg>
       <span>Iscriviti</span>
     </a>
     <div class="hdr-socials">
-      <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" aria-label="YouTube" class="hdr-soc" onclick="try{gtag('event','click_youtube')}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg></a>
-      <a href="https://www.facebook.com/avventuremicologiche/" target="_blank" rel="noopener" aria-label="Facebook" class="hdr-soc" onclick="try{gtag('event','click_facebook')}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.41 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.32l-.53 3.5h-2.79V24C19.61 23.1 24 18.1 24 12.07z"/></svg></a>
-      <a href="https://www.instagram.com/avventuremicologiche/" target="_blank" rel="noopener" aria-label="Instagram" class="hdr-soc" onclick="try{gtag('event','click_instagram')}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
-      <a href="https://suno.com/@avventuremicologiche" target="_blank" rel="noopener" aria-label="Suno" class="hdr-soc" onclick="try{gtag('event','click_suno')}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></a>
+      <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" aria-label="YouTube" class="hdr-soc" onclick="try{gtag('event','click_youtube',{pulsante:'icona-social'})}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg></a>
+      <a href="https://www.facebook.com/avventuremicologiche/" target="_blank" rel="noopener" aria-label="Facebook" class="hdr-soc" onclick="try{gtag('event','click_facebook',{pulsante:'icona-social'})}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.41 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.32l-.53 3.5h-2.79V24C19.61 23.1 24 18.1 24 12.07z"/></svg></a>
+      <a href="https://www.instagram.com/avventuremicologiche/" target="_blank" rel="noopener" aria-label="Instagram" class="hdr-soc" onclick="try{gtag('event','click_instagram',{pulsante:'icona-social'})}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+      <a href="https://suno.com/@avventuremicologiche" target="_blank" rel="noopener" aria-label="Suno" class="hdr-soc" onclick="try{gtag('event','click_suno',{pulsante:'icona-social'})}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></a>
     </div>
   </div>
 </header>
@@ -896,7 +896,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
          contenuto resta pieno, così il pulsante rosso non risulta spento.
          Prima era opacity:.80 sull'intero elemento, che sbiadiva tutto. -->
     <a href="https://www.youtube.com/@avventuremicologiche" target="_blank"
-       onclick="try{gtag('event','click_youtube')}catch(e){}"
+       onclick="try{gtag('event','click_youtube',{pulsante:'box-desktop'})}catch(e){}"
        id="channel-logo">
       <img src="archie-avatar.png" alt="Archie" class="ch-ava">
       <div class="ch-txt">
@@ -959,11 +959,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <!-- Mobile: select dropdown -->
         <select id="region-select" class="region-select-mobile">
           <option value="">Tocca per scegliere la regione ▼</option>
+          <!-- Prima l'estero, poi le regioni italiane (ordine scelto il 6/8/2026) -->
+          <option value="austria">Austria (AT)</option>
+          <option value="svizzera">Svizzera (CH)</option>
           <option value="piemonte-vda">Piemonte-Valle d'Aosta</option>
           <option value="liguria">Liguria</option>
           <option value="lombardia">Lombardia</option>
-          <option value="svizzera">Svizzera (CH)</option>
-          <option value="austria">Austria (AT)</option>
           <option value="trentino-aa">Trentino-Alto Adige</option>
           <option value="veneto">Veneto</option>
           <option value="friuli">Friuli V.G.</option>
@@ -1042,7 +1043,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <div class="stat"><div class="sv" id="smn">–</div><div class="sl">Min</div></div>
       </div>
       <a href="https://www.youtube.com/@avventuremicologiche" target="_blank"
-         onclick="try{gtag('event','click_youtube')}catch(e){}"
+         onclick="try{gtag('event','click_youtube',{pulsante:'pillola-mobile'})}catch(e){}"
          id="channel-pill">
         <img src="archie-avatar.png" alt="Archie">
         <div class="cp-t">Archie ti aspetta su YouTube<small>Avventure Micologiche · iscriviti</small></div>
@@ -2673,9 +2674,64 @@ function centraRegioneInStriscia(){
     bb=bb?bb.extend(lb):lb;
   });
   if(!bb) return;
-  var cy=map.latLngToContainerPoint(bb.getCenter()).y; // centro regione oggi
-  var ty=(mBox.height-coperto)/2;                      // centro della striscia
-  var dy=Math.round(cy-ty);
+  // "Riempi la striscia" (6/8/2026, richiesta utente): gli zoom tarati a mano
+  // mostravano la regione piccola col contorno attorno, e da telefono si era
+  // costretti a zoomare a mano. Qui si alza lo zoom finché la regione riempie
+  // in ALTEZZA il 92% della striscia visibile oppure arriva al 135% della
+  // LARGHEZZA (un po' di debordo a dx/sx va bene: si scorre col dito) — quello
+  // che scatta prima. Per le regioni più alte della striscia lavora al
+  // contrario: le fa entrare. Idempotente: riapplicata, il fattore è ~1.
+  //
+  // La dimensione si prende dal DISEGNATO (i path nell'overlay-pane: confine
+  // più eventuali isole), non da REGION_BOUNDS: quella bbox è una tabella di
+  // servizio più stretta dei confini veri (Lombardia senza Livigno, Sicilia
+  // senza le isole) e usandola sola il confine sbordava sotto il pannello di
+  // 48-84px. Se il confine non è ancora stato scaricato (prima selezione a
+  // freddo) si ripiega sulla bbox: la chiamata all'apertura dei cumulati
+  // rifà la misura sul disegno vero.
+  function unioneDisegno(){
+    var top=Infinity,bot=-Infinity,lft=Infinity,rgt=-Infinity;
+    document.querySelectorAll('#map .leaflet-overlay-pane path').forEach(function(p){
+      var r=p.getBoundingClientRect();
+      if(r.width<4&&r.height<4) return;              // frammenti
+      if(r.top<top)top=r.top; if(r.bottom>bot)bot=r.bottom;
+      if(r.left<lft)lft=r.left; if(r.right>rgt)rgt=r.right;
+    });
+    if(!isFinite(top)) return null;
+    return {w:rgt-lft,h:bot-top,cx:(lft+rgt)/2-mBox.left,cy:(top+bot)/2-mBox.top};
+  }
+  var S=mBox.height-coperto;
+  var d=unioneDisegno(), w0,h0,c0;
+  if(d){ w0=d.w; h0=d.h; c0=map.containerPointToLatLng([d.cx,d.cy]); }
+  else{
+    var pNE=map.latLngToContainerPoint(bb.getNorthEast());
+    var pSW=map.latLngToContainerPoint(bb.getSouthWest());
+    w0=Math.abs(pNE.x-pSW.x); h0=Math.abs(pSW.y-pNE.y); c0=bb.getCenter();
+  }
+  if(w0>4&&h0>4){
+    // Quanto si può zoomare: LARGHEZZA quasi piena (5% di tolleranza) oppure
+    // 92% dell'altezza della striscia — il primo dei due che scatta. Il
+    // debordo laterale "tanto si scorre col dito" è stato provato (tetto a
+    // 1,35×) e SCARTATO su segnalazione: su una regione ad arco come la
+    // Liguria i due estremi tagliati sono terra vera (Imperia e La Spezia
+    // fuori). E non si può nemmeno distinguere l'arco dal blocco con la
+    // forma della bbox: il rettangolo della Liguria è 2:1 come la Svizzera,
+    // è il CONTENUTO che è diverso. Quindi niente tagli per nessuno: chi ha
+    // margine verticale (Svizzera, Emilia) si allarga comunque, le regioni
+    // "a nastro" restano allo zoom tarato. Arrotondamento per DIFETTO: il
+    // quarto di livello in più nei casi limite era il "troppo zoomata".
+    var f=Math.min(1.05*mBox.width/w0, 0.92*S/h0);
+    // La banda morta evita l'oscillazione fra le due chiamate (alla seconda
+    // i pallini delle stazioni allargano di poco la misura del disegnato).
+    if(f>1.09||f<0.85){
+      var z1=Math.floor((map.getZoom()+Math.log(f)/Math.LN2)*4)/4; // passo 0.25
+      if(z1!==map.getZoom()) map.setView(c0,z1,{animate:false});
+    }
+  }
+  // Ricentra nella striscia, rimisurando dopo lo zoom
+  var d2=unioneDisegno();
+  var cy=d2?d2.cy:map.latLngToContainerPoint(bb.getCenter()).y;
+  var dy=Math.round(cy-S/2);
   if(Math.abs(dy)>12) map.panBy([0,dy],{animate:false});
 }
 
@@ -5071,20 +5127,25 @@ document.getElementById('region-select').addEventListener('change', function(){
   document.getElementById('badge').textContent='';
   document.getElementById('datehdr').textContent='';
   var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
-  // Centra mappa
-  if(rk==='lombardia') map.setView([45.3, 9.85], 7.5);
-  else if(rk==='piemonte') map.setView([44.8, 7.9], 7.5);
-  else if(rk==='veneto') map.setView([45.5, 11.8], 7.5);
-  else if(rk==='liguria') map.setView([43.9, 8.8], window.innerWidth<=375 ? 7.25 : 7.75);
-  else if(rk==='emilia') map.setView([43.9, 11.0], 7.0);
-  else if(rk==='valledaosta') map.setView([45.6, 7.4], 8.5);
-  else if(rk==='friuli') map.setView([45.9, 13.2], 8.5);
-  else if(rk==='altoadige') map.setView([46.4, 11.4], 8);
-  else if(rk==='trentino') map.setView([45.9, 11.1], 8.5);
-  else if(rk==='toscana') map.setView([window.innerWidth<=375 ? 43.1 : 42.85, 11.0], 7.5);
-  else if(rk==='svizzera') map.setView([46.6, 8.3], window.innerWidth<=375 ? 6.5 : 6.75);
-  else if(rk==='piemonte-vda') map.setView([45.25, 7.55], 7.25);
-  else if(rk==='trentino-aa') map.setView([46.25, 11.3], 7.5);
+  // Centra mappa. SENZA animazione (6/8/2026): il volo animato era ancora in
+  // corso quando centraRegioneInStriscia misurava a 420ms — confine a metà
+  // scala e getZoom() già al valore d'arrivo, cioè spazzatura in ingresso
+  // (la Liguria usciva a zoom 8 invece di 7.75). Con la vista istantanea la
+  // misura trova la mappa ferma.
+  var NOA={animate:false};
+  if(rk==='lombardia') map.setView([45.3, 9.85], 7.5, NOA);
+  else if(rk==='piemonte') map.setView([44.8, 7.9], 7.5, NOA);
+  else if(rk==='veneto') map.setView([45.5, 11.8], 7.5, NOA);
+  else if(rk==='liguria') map.setView([43.9, 8.8], window.innerWidth<=375 ? 7.25 : 7.75, NOA);
+  else if(rk==='emilia') map.setView([43.9, 11.0], 7.0, NOA);
+  else if(rk==='valledaosta') map.setView([45.6, 7.4], 8.5, NOA);
+  else if(rk==='friuli') map.setView([45.9, 13.2], 8.5, NOA);
+  else if(rk==='altoadige') map.setView([46.4, 11.4], 8, NOA);
+  else if(rk==='trentino') map.setView([45.9, 11.1], 8.5, NOA);
+  else if(rk==='toscana') map.setView([window.innerWidth<=375 ? 43.1 : 42.85, 11.0], 7.5, NOA);
+  else if(rk==='svizzera') map.setView([46.6, 8.3], window.innerWidth<=375 ? 6.5 : 6.75, NOA);
+  else if(rk==='piemonte-vda') map.setView([45.25, 7.55], 7.25, NOA);
+  else if(rk==='trentino-aa') map.setView([46.25, 11.3], 7.5, NOA);
   // Centro-sud e regioni future: nessuna vista calibrata a mano nella catena
   // qui sopra → si usa centro/zoom della scheda regione (senza questo ramo la
   // mappa restava sull'Italia intera: successo su Android con la Basilicata).
@@ -5106,7 +5167,7 @@ document.getElementById('region-select').addEventListener('change', function(){
       var zf=map.getBoundsZoom(bb,false,L.point(14,14));
       if(zf<zt){ zt=zf; ct=bb.getCenter(); }   // non ci stava: si allarga e si ricentra
     }
-    map.setView(ct,zt);
+    map.setView(ct,zt,NOA);
   }
   clearMarkers();
   expandRegion(rk).forEach(function(r){ setRegionBorder(r, function(){ addDefaultMarkersForRegion(r); }); });
