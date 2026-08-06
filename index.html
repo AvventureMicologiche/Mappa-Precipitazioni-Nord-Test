@@ -1840,7 +1840,11 @@ function quandoMappaDisegnata(cb){
   baseTiles.on('load',via);
   setTimeout(via,ATTESA_MAX);
   // Se non c'è nulla in caricamento la mappa è già a posto: non aspettare.
-  if(!baseTiles.isLoading || !baseTiles.isLoading()) setTimeout(via,20);
+  // `_loading` è il flag interno di GridLayer (Leaflet non ne espone uno
+  // pubblico: `isLoading()` NON esiste, ci ero cascato). Se un domani sparisse,
+  // `undefined` fa cadere qui dentro e si torna al vecchio comportamento a
+  // 20 ms — cioè si perde il beneficio, non si rompe niente.
+  if(!baseTiles._loading) setTimeout(via,20);
 }
 
 // ─── Crediti delle fonti dati ──────────────────────────────────
