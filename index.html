@@ -5008,6 +5008,9 @@ document.getElementById('btn-funghi').addEventListener('click',function(){
   document.getElementById('datehdr').textContent=fmt(past23)+' – '+fmt(past16);
   loadData(past23,past16,label);
 });
+// Alzato a fine gestore, non appena calcolata la vista: vedi il commento
+// accanto a `_alzaSopraIlPannello=allargata`.
+var _alzaSopraIlPannello=false;
 // Select mobile regioni
 document.getElementById('region-select').addEventListener('change', function(){
   var rk = this.value;
@@ -5077,20 +5080,11 @@ document.getElementById('region-select').addEventListener('change', function(){
     //
     // Solo nel ramo allargato: le regioni con vista tarata a mano hanno già la
     // compensazione dentro il centro scelto all'epoca, e non vanno toccate.
-    if(allargata){
-      var mBox=document.getElementById('map').getBoundingClientRect(), coperto=0;
-      ['legend-panel','time-panel'].forEach(function(id){
-        var el=document.getElementById(id);
-        if(!el) return;
-        var st=getComputedStyle(el);
-        if(st.display==='none'||st.visibility==='hidden'||+st.opacity===0) return;
-        var r=el.getBoundingClientRect();
-        if(r.height<40) return;                       // chiuso o ridotto a maniglia
-        var ov=mBox.bottom-Math.max(r.top,mBox.top);  // quanto mangia dal basso
-        if(ov>coperto) coperto=ov;
-      });
-      if(coperto>20) map.panBy([0,Math.round(coperto/2)],{animate:false});
-    }
+    // La correzione va fatta DOPO, non qui: poche righe più sotto questo stesso
+    // gestore nasconde il pannello dei cumulati e apre quello del periodo, e
+    // quest'ultimo si apre con una transizione. Misurando adesso si misura il
+    // vuoto — è successo davvero, e l'Austria restava mezza sotto il pannello.
+    _alzaSopraIlPannello=allargata;
   }
   clearMarkers();
   expandRegion(rk).forEach(function(r){ setRegionBorder(r, function(){ addDefaultMarkersForRegion(r); }); });
@@ -5099,6 +5093,27 @@ document.getElementById('region-select').addEventListener('change', function(){
   if(window.innerWidth<=900){
     var tp=document.getElementById('time-panel');
     if(tp) tp.classList.add('open');
+  }
+  // Ora che i pannelli sono al loro posto, si può MISURARE quanto coprono e
+  // alzare la regione al centro della striscia davvero visibile. Il ritardo
+  // lascia finire la transizione di apertura del pannello periodo.
+  if(_alzaSopraIlPannello){
+    _alzaSopraIlPannello=false;
+    setTimeout(function(){
+      var mEl=document.getElementById('map'); if(!mEl) return;
+      var mBox=mEl.getBoundingClientRect(), coperto=0;
+      ['legend-panel','time-panel'].forEach(function(id){
+        var el=document.getElementById(id);
+        if(!el) return;
+        var st=getComputedStyle(el);
+        if(st.display==='none'||st.visibility==='hidden'||+st.opacity===0) return;
+        var r=el.getBoundingClientRect();
+        if(r.height<40) return;                        // chiuso, o ridotto a maniglia
+        var ov=mBox.bottom-Math.max(r.top,mBox.top);   // quanto mangia dal basso
+        if(ov>coperto) coperto=ov;
+      });
+      if(coperto>20) map.panBy([0,Math.round(coperto/2)],{animate:false});
+    },420);
   }
 });
 
