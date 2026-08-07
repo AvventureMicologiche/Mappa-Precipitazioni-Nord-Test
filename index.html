@@ -5728,10 +5728,44 @@ function captureMapBlob(scala){
     if(pan.c){
       try{ ctx.drawImage(pan.c,-mr.x,hdrH-mr.y,pan.c.width/S,pan.c.height/S); }catch(e){}
     }
+    // ── Marchio: striscia in fondo con l'indirizzo del sito ────────────────
+    // Perché (7/8/2026): il tasto Immagine è usato quasi quanto il tasto Link
+    // (17 contro 22 in un mese) e quelle foto girano nei gruppi WhatsApp, ma
+    // NON dicono da dove vengono — sul Piemonte-VdA cinque immagini condivise
+    // e ZERO aperture. La striscia ALLUNGA il canvas invece di coprirlo: non
+    // si perde né mappa né pannello. Il periodo è ripetuto qui perché in alto
+    // si perde se qualcuno ritaglia, e un'immagine senza date, dopo qualche
+    // giorno in un gruppo, non vuol più dire niente.
+    var conMarchio=(function(){
+      try{
+        var hB=26, fin=document.createElement('canvas');
+        fin.width=out.width; fin.height=out.height+Math.round(hB*S);
+        var f=fin.getContext('2d');
+        f.drawImage(out,0,0);
+        f.scale(S,S);
+        var Wp=out.width/S, Hp=out.height/S;
+        f.fillStyle='#1b3f6e'; f.fillRect(0,Hp,Wp,hB);
+        f.textBaseline='middle'; f.fillStyle='#fff';
+        f.font='600 13px system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
+        var sx='\uD83C\uDF27  precipitazioni.avventuremicologiche.it';
+        f.fillText(sx,12,Hp+hB/2+1);
+        var largSx=f.measureText(sx).width;
+        f.font='400 11.5px system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
+        var per=currentLabel?String(currentLabel).replace(/^[^A-Za-z0-9]+/,'').trim():'';
+        var dx=(per?per+' \u00b7 ':'')+'dati di stazione reali';
+        // Su telefono non c'è spazio per la riga di destra: si misura e si
+        // omette (a 390 punti finiva sopra l'indirizzo).
+        if(Wp-largSx-f.measureText(dx).width>60){
+          f.fillStyle='rgba(255,255,255,.75)';
+          f.fillText(dx,Wp-f.measureText(dx).width-12,Hp+hB/2+1);
+        }
+        return fin;
+      }catch(e){ return out; }   // il marchio non deve mai far fallire lo scatto
+    })();
     return new Promise(function(res,rej){
       // PNG, non JPEG: a qualità 0.92 il JPEG triplicava lo scarto dallo schermo
       // (1,37 → 3,89 su 255) e ammorbidiva scritte e cerchietti.
-      out.toBlob(function(b){ if(b) res(b); else rej(new Error('canvas vuoto')); },'image/png');
+      conMarchio.toBlob(function(b){ if(b) res(b); else rej(new Error('canvas vuoto')); },'image/png');
     });
   }).then(function(blob){
     // Vista dell'utente com'era prima dell'eventuale adattamento — sia in
