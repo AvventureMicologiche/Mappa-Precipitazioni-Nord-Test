@@ -45,7 +45,7 @@ const MIN_ORE     = 20;    // ore valide minime per accettare il totale di un gi
 const REPAIR_DAYS = 10;    // auto-riparazione fino a D-10 (gratis: l'archivio risponde)
 const BATCH       = 120;   // stazioni per richiesta (tiene corta la URL)
 const MIN_STAZ    = 100;   // sotto questa soglia non si scrive: anagrafe sospetta
-const RETENTION   = 365;
+const RETENTION   = 730;
 
 function getItalyOffset(date) {
   // Austria e Italia condividono lo stesso fuso (CET/CEST)

@@ -234,8 +234,8 @@ async function main() {
     mergeDay(dStr, stations);
   }
 
-  // ── Pulizia file > 365 giorni (retention finestra scorrevole) ──
-  const MAX_DAYS = 365;
+  // ── Pulizia file > 730 giorni (retention finestra scorrevole) ──
+  const MAX_DAYS = 730;
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - MAX_DAYS);
   const cutoffStr = cutoff.toISOString().substring(0, 10);

@@ -7,7 +7,7 @@ const fs   = require('fs');
 const path = require('path');
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'piemonte');
-const MAX_DAYS = 365;
+const MAX_DAYS = 730;
 const API_BASE = 'https://utility.arpa.piemonte.it/api_realtime';
 
 function getItalyOffset(date) {
@@ -209,7 +209,7 @@ async function main() {
   }
 
 
-  // ── Step 6: pulizia file > 365 giorni ────────────────────────
+  // ── Step 6: pulizia file > 730 giorni ────────────────────────
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - MAX_DAYS);
   const cutoffStr = cutoff.toISOString().substring(0, 10);

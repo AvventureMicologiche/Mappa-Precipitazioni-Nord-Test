@@ -10,7 +10,7 @@ const fs    = require('fs');
 const path  = require('path');
 
 const DATA_DIR  = path.join(__dirname, '..', '..', 'data', 'liguria');
-const MAX_DAYS  = 365;
+const MAX_DAYS  = 730;
 const OMIRL_BASE = 'https://omirl.regione.liguria.it/Omirl/rest';
 
 function getItalyOffset(date) {

@@ -9,7 +9,7 @@ const fs    = require('fs');
 const path  = require('path');
 
 const DATA_DIR  = path.join(__dirname, '..', '..', 'data', 'veneto');
-const MAX_DAYS  = 365;
+const MAX_DAYS  = 730;
 const BASE_URL  = 'https://meteo.arpa.veneto.it/meteo/dati_meteo/xml';
 
 function getItalyOffset(date) {

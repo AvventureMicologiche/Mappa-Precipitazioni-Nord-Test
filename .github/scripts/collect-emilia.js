@@ -9,7 +9,7 @@ const fs    = require('fs');
 const path  = require('path');
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'emilia');
-const MAX_DAYS = 365;
+const MAX_DAYS = 730;
 const API_URL  = 'https://apps.arpae.it/REST/meteo_giornalieri?max_results=1000';
 
 function getItalyOffset(date) {
