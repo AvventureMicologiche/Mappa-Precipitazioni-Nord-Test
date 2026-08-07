@@ -348,7 +348,7 @@ dataset — attribuzione «Fonte: GeoSphere Austria», voce in `fonti.html`.
 - YouTube "ISCRIVITI" button nel box canale (nascosto su mobile ≤600px)
 - Home icon nell'header
 - Pulsanti periodo: Ieri/7gg/10gg/15gg/20gg/30gg
-- "Piogge per funghi" (range 18-25 gg fa)
+- "Piogge per funghi" (range **15-21 gg fa** dal 7 agosto 2026; 16-23 dal 24 luglio, prima ancora 18-25)
 - Date personalizzate
 - Nota "I dati escludono la giornata odierna"
 - IDW_RAD: 0.15 per ≤24h, 0.35 per periodi più lunghi
