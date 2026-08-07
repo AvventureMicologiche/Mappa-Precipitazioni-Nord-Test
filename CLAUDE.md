@@ -119,7 +119,15 @@ CC BY 4.0, attribuzione «Fonte: MeteoSvizzera»). In mappa un solo bottone **"S
 
 ---
 
-## PILOTA AUSTRIA (dal 5 agosto 2026 — solo repo di test)
+## AUSTRIA — PROMOSSA IN PRODUZIONE IL 7 AGOSTO 2026
+
+> **Non e' piu' un pilota.** Dal 7/8/2026 l'Austria e' in produzione: dati, collector,
+> workflow e confine stanno anche nel repo prod, e la scheda di riferimento e' quella
+> nel CLAUDE.md di produzione. **Il collector di questo repo resta attivo**, come per la
+> Svizzera, perche' il sito di test legge l'Austria dal proprio `data/austria`.
+> Quello che segue e' la cronaca dello sviluppo, tenuta per contesto.
+
+### Come nacque (dal 5 agosto 2026)
 
 Espansione all'Austria con **GeoSphere Austria Data Hub** (ex ZAMG), `dataset.api.hub.geosphere.at`,
 dataset `klima-v2-1h`, parametro `rr`. **Licenza CC BY 4.0** verificata sulla pagina del
