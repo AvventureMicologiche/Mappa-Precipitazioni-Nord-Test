@@ -5469,10 +5469,12 @@ function buildShareUrl(){
   p.set('z',String(Math.round(map.getZoom()*100)/100));
   var c=map.getCenter();
   p.set('c',c.lat.toFixed(4)+','+c.lng.toFixed(4));
-  // Larghezza della mappa di CHI CONDIVIDE (7/8/2026): senza, chi riceve da
-  // telefono non puo' sapere quanta terra stavi guardando. Con questa, calcola
-  // lo zoom che gliene mostra la stessa porzione sul suo schermo.
-  p.set('w',String(Math.round(map.getSize().x)));
+  // Nota (7/8/2026): si era provato ad aggiungere `w`, la larghezza della mappa
+  // di chi condivide, per far vedere a chi riceve la STESSA PORZIONE di
+  // territorio adattando lo zoom. Provato dall'utente fra PC e telefono e
+  // SCARTATO: allargava di due livelli da PC a telefono e stringeva di due
+  // nell'altro verso. Chi condivide si aspetta la stessa SCALA, non la stessa
+  // area. Lo zoom viaggia grezzo.
   return location.origin+location.pathname+'?'+p.toString();
 }
 window.buildShareUrl=buildShareUrl;
@@ -5900,29 +5902,20 @@ if(_btnShot){
   whenLombardiaReady(function(){
     loadAllBorders(keys,function(){
       var z=parseFloat(q.get('z')),c=(q.get('c')||'').split(',').map(Number);
-      var wSorg=parseFloat(q.get('w'));
-      var vistaValida=(isFinite(z) && c.length===2 && isFinite(c[0]) && isFinite(c[1]));
-      // Lo zoom del mittente vale per la SUA finestra: applicato tale e quale a
-      // un telefono mostrerebbe un terzo di quello che lui vedeva. Sapendo
-      // quanto era larga la sua mappa (parametro `w`, dal 7/8/2026) si calcola
-      // lo zoom che fa vedere la STESSA porzione di territorio su questo
-      // schermo — dimezzare la larghezza vale esattamente un livello di zoom.
-      var zAdatto=z;
-      if(vistaValida && isFinite(wSorg) && wSorg>50){
-        zAdatto=Math.round((z-Math.log(wSorg/map.getSize().x)/Math.LN2)*4)/4;
-        zAdatto=Math.max(4,Math.min(18,zAdatto));
-      }
-      // I link VECCHI (senza `w`) restano com'erano: solo desktop. Su telefono
-      // non c'e' modo di sapere quanta terra mostravano, e applicare lo zoom
-      // grezzo sarebbe peggio del fit sulla regione.
-      var vistaDalLink=vistaValida && (window.innerWidth>900 || isFinite(wSorg));
+      // Zoom e centro si applicano TALI E QUALI, su qualunque schermo: chi
+      // riceve vede la mappa alla stessa scala di chi ha condiviso, centrata
+      // sullo stesso punto. Prima era limitato a >900px, e su telefono la vista
+      // condivisa veniva buttata via: il 69% del pubblico vedeva un'altra
+      // inquadratura. (Provata e scartata la compensazione sulla larghezza
+      // dello schermo: vedi la nota in buildShareUrl.)
+      var vistaDalLink=(isFinite(z) && c.length===2 && isFinite(c[0]) && isFinite(c[1]));
       // Il flag va alzato PRIMA di loadData (è lì dentro che parte il fit).
       if(vistaDalLink) _linkView=true;
       loadData(pastDate,nowDate,label);
       _linkView=false; // se loadData è uscito presto (isLoading), il flag non deve sopravvivere
       if(vistaDalLink){
         _vistaDaLink=true;   // su telefono protegge la vista da centraRegioneInStriscia
-        map.setView([c[0],c[1]],zAdatto,{animate:false});
+        map.setView([c[0],c[1]],z,{animate:false});
       } else if(window.innerWidth<=900){
         try{ fitMapToRegions(keys); }catch(e){}
       }
