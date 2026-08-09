@@ -119,6 +119,53 @@ CC BY 4.0, attribuzione «Fonte: MeteoSvizzera»). In mappa un solo bottone **"S
 
 ---
 
+## PILOTA FRANCIA (dal 9 agosto 2026 — solo repo di test)
+
+Sei dipartimenti di confine (74 Haute-Savoie, 73 Savoie, 38 Isère, 05 Hautes-Alpes,
+04 Alpes-de-H.-Provence, 06 Alpes-Maritimes) con **Météo-France, API Paquet
+Observations** (`public-api.meteofrance.fr/public/DPPaquetObs/v2`), Licence Ouverte
+2.0 Etalab, attribuzione «Météo-France». Studio completo delle fonti (e di tutte le
+alternative scartate: Infoclimat, ROMMA, NOAA, radar, Open-Meteo) in
+`francia-rapporto-fonti.md` nella cartella claudio.
+
+- **Collect:** `collect-francia-meteofrance.js` + `francia.yml` (4 run/giorno,
+  chiusura 22:50 UTC, sfalsati da Austria/Svizzera). Un pacchetto orario per
+  dipartimento = 6 richieste a giro, ~186 stazioni con `rr1` su 212 in anagrafe
+  (quote 2-2.277 m, PUBBLICATE → check-confini possibile con Piemonte/VdA).
+- ⚠️ **Serve la chiave**: secret `METEOFRANCE_API_KEY` (portale
+  portail-api.meteofrance.fr, account dell'utente, **scade il 9/8/2028** insieme
+  all'abbonamento). 401 improvvisi = chiave scaduta, si rigenera dal portale.
+- **RICETTA (validata il 9/8 PRIMA di scrivere il collector):** il RR giornaliero
+  francese è la finestra **06-06 UTC** (definizione ufficiale) — stessa trappola di
+  `rre150d0` e del Klimatag. Si sommano le ore `rr1` sul giorno solare italiano,
+  timestamp di FINE intervallo, finestra `(start, end]`, MIN_ORE=20 — identica a
+  Svizzera/Austria/OSMER. Quadratura contro il RR ufficiale consolidato: 38/38
+  esatte su giorno asciutto, 37/37 su giorno di pioggia (Tignes 12,4 al decimo);
+  convenzione fine-intervallo confermata su 856 giorni bagnati (99,8% contro 73,9%).
+- **Il pacchetto contiene ~5 giorni di ore** (misurato; la doc dice 24h):
+  auto-riparazione D-1..D-4 gratis. ⚠️ `id-departement` SENZA zero (5, non 05: 400),
+  ma gli id stazione lo tengono (05046001).
+- **Storico: 365+ giorni REALI dal primo giorno** — `backfill-francia-meteofrance.js`
+  (una tantum, 9/8): 369 giorni (1/8/2025→4/8/2026) dai CSV orari `BASE/HOR/H_<dip>`
+  di meteo.data.gouv.fr, stessa banca dati. Copertura invernale 158-188 (pluviometri
+  riscaldati), massimo storico 141,7 mm. Doppio canale CSV↔API sul 7/8: zero
+  divergenze su 186 stazioni. ⚠️ **SOLO il mirror S3 OVH**
+  (`meteofrance.s3.sbg.io.cloud.ovh.net`): `object.files.data.gouv.fr` è fermo a
+  giugno e il `last_modified` dell'API data.gouv mente.
+- **In mappa (9/8/2026):** regione `francia`, bottone/tendina «Francia (FR)», loader
+  gemello dell'austriaco, bordo TRATTEGGIATO (stato estero), esclusa dalla vista di
+  apertura, `REGION_ADJ` con valledaosta/piemonte/liguria/svizzera. NIENTE beta:
+  dati di stazione reali. Confine `francia-confine.geojson` = unione dei 6
+  dipartimenti (IGN via france-geojson, Licence Ouverte), semplificata a ~70 m,
+  3.021 vertici — ⚠️ il feature DEVE avere `properties.reg_name` (il filtro di
+  `setRegionBorder` cerca quello: senza, mappa senza confine e nessun errore).
+  Contromisura contata: 15 occorrenze chiave `francia` = 15 `austria`, agganci 1:1.
+- **Per la promozione a prod restano:** spostare data/collector/workflow/confine nel
+  repo prod + secret nella prod, `PILOT_DATA_BASE`, voce in `fonti.html` di prod,
+  allarme fonti esteso, decidere l'header (Italia · Svizzera · Austria · Francia?).
+
+---
+
 ## AUSTRIA — PROMOSSA IN PRODUZIONE IL 7 AGOSTO 2026
 
 > **Non e' piu' un pilota.** Dal 7/8/2026 l'Austria e' in produzione: dati, collector,
