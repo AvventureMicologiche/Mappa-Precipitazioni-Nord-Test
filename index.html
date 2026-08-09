@@ -1597,7 +1597,7 @@ var REGIONS = {
   puglia:     { name:'Puglia',      center:[40.88,16.72], zoom:7.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'puglia',     dataSource:'meteohub' },
   basilicata: { name:'Basilicata',  center:[40.49,16.07], zoom:8,   fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'basilicata', dataSource:'meteohub' },
   calabria:   { name:'Calabria',    center:[39.02,16.39], zoom:7.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'calabria',   dataSource:'meteohub' },
-  sicilia:    { name:'Sicilia',     center:[37.62,13.78], zoom:7,   fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'sicil',      dataSource:'meteohub' },
+  sicilia:    { name:'Sicilia',     center:[37.62,13.78], zoom:7,   fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'sicil',      dataSource:'meteohub', escludiSottoLat:36.3 },
   sardegna:   { name:'Sardegna',    center:[40.10, 8.96], zoom:7.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'sardegna',   dataSource:'meteohub' },
 
   // Abruzzo: nessun feed reale → Open-Meteo live (~40 punti), come erano VdA/Friuli
@@ -4638,6 +4638,35 @@ function loadGeoJSONUrl(url,cb){
 
 var regionBorders={}; // cache layer bordi per regione
 
+// ── Isole fuori quadro (9/8/2026, richiesta utente) ──
+// Le Pelagie (Lampedusa 35,5°N, Linosa, Lampione) stanno 200 km a sud della
+// Sicilia. Comprese nell'inquadratura spingevano l'isola in cima allo schermo
+// e la rimpicciolivano: su Android era il caso peggiore delle 21 voci, e sul
+// collaudo desktop del 9/8 la Sicilia risultava l'unica "rotta" (313px sotto
+// il bordo) — era Lampedusa, non un difetto della centratura.
+// NON si perde niente: su quelle isole non c'è NESSUNA stazione (la più a sud
+// della rete sta a 36,68°N, che è esattamente il limite sud di REGION_BOUNDS),
+// e senza stazioni la heatmap le avrebbe dipinte estrapolando dalla Sicilia a
+// 200 km di distanza, cioè inventando un dato.
+// ⚠️ Pantelleria (36,79°N) RESTA: lì una stazione c'è davvero, ed è anche il
+// limite ovest di REGION_BOUNDS. Per questo la soglia è 36,3 e non più alta.
+// Si scarta il POLIGONO intero, mai i singoli vertici: tagliare un'isola a
+// metà lascerebbe un contorno aperto.
+function scartaIsoleFuoriQuadro(feat,cfg){
+  var lim=cfg&&cfg.escludiSottoLat;
+  if(!lim||!feat||!feat.geometry||feat.geometry.type!=='MultiPolygon') return feat;
+  var tenuti=feat.geometry.coordinates.filter(function(poly){
+    var maxLat=-90;
+    poly[0].forEach(function(c){ if(c[1]>maxLat) maxLat=c[1]; });
+    return maxLat>=lim;
+  });
+  if(tenuti.length===feat.geometry.coordinates.length) return feat;
+  // COPIA, non modifica sul posto: il GeoJSON sta in cache (loadGeoJSONOnce) e
+  // lo leggono anche il selettore desktop e le altre regioni.
+  return {type:feat.type,properties:feat.properties,
+          geometry:{type:'MultiPolygon',coordinates:tenuti}};
+}
+
 function setRegionBorder(regionKey,cb){
   var cfg=REGIONS[regionKey]||REGIONS.lombardia;
   var filterField=cfg.geojsonFilterField||null;
@@ -4657,6 +4686,8 @@ function setRegionBorder(regionKey,cb){
       }
       if(fieldVal.indexOf(filter.toLowerCase())>=0) feat=f;
     });
+
+    feat=scartaIsoleFuoriQuadro(feat,cfg);   // Pelagie fuori: vedi sopra
 
     // Rimuovi SOLO il bordo di questa specifica regione se già esiste
     if(regionBorders[regionKey]){map.removeLayer(regionBorders[regionKey]);delete regionBorders[regionKey];}
@@ -4812,6 +4843,7 @@ function buildRegionSelector(){
         if(v.toLowerCase().indexOf(filter)>=0) feat=f;
       });
       if(!feat) return;
+      feat=scartaIsoleFuoriQuadro(feat,cfg);   // stesso contorno del bordo d'analisi
       var layer=L.geoJSON(feat,{style:selStyle(selIsOn(rk),rk)}).addTo(map);
       layer.on('click',function(e){ L.DomEvent.stopPropagation(e); toggleRegionFromMap(rk); });
       // lo SPEGNEVA invece di accenderlo (trovato dall'utente il 2/8): per lui
