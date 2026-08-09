@@ -933,7 +933,19 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <label class="rcheck-wrap"><input type="checkbox" id="chk-lombardia" value="lombardia"><span class="rcheck-box"></span><span class="rcheck-name">Lombardia</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-svizzera" value="svizzera"><span class="rcheck-box"></span><span class="rcheck-name">Svizzera (CH)</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-austria" value="austria"><span class="rcheck-box"></span><span class="rcheck-name">Austria (AT)</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia" value="francia"><span class="rcheck-box"></span><span class="rcheck-name">Francia (FR)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-aura" value="francia-aura"><span class="rcheck-box"></span><span class="rcheck-name">Alvernia-Rodano-Alpi (FR)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-bfc" value="francia-bfc"><span class="rcheck-box"></span><span class="rcheck-name">Borgogna-Franca Contea (FR)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-bretagna" value="francia-bretagna"><span class="rcheck-box"></span><span class="rcheck-name">Bretagna (FR)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-centro" value="francia-centro"><span class="rcheck-box"></span><span class="rcheck-name">Centro-Valle Loira (FR)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-corsica" value="francia-corsica"><span class="rcheck-box"></span><span class="rcheck-name">Corsica (FR)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-grandest" value="francia-grandest"><span class="rcheck-box"></span><span class="rcheck-name">Grand Est (FR)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-hdf" value="francia-hdf"><span class="rcheck-box"></span><span class="rcheck-name">Hauts-de-France (FR)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-idf" value="francia-idf"><span class="rcheck-box"></span><span class="rcheck-name">Île-de-France (FR)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-normandia" value="francia-normandia"><span class="rcheck-box"></span><span class="rcheck-name">Normandia (FR)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-naq" value="francia-naq"><span class="rcheck-box"></span><span class="rcheck-name">Nuova Aquitania (FR)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-occitania" value="francia-occitania"><span class="rcheck-box"></span><span class="rcheck-name">Occitania (FR)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-loira" value="francia-loira"><span class="rcheck-box"></span><span class="rcheck-name">Paesi della Loira (FR)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-provenza" value="francia-provenza"><span class="rcheck-box"></span><span class="rcheck-name">Provenza-Costa Azzurra (FR)</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-trentino-aa" value="trentino-aa"><span class="rcheck-box"></span><span class="rcheck-name">Trentino-A.A.</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-veneto" value="veneto"><span class="rcheck-box"></span><span class="rcheck-name">Veneto</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-friuli" value="friuli"><span class="rcheck-box"></span><span class="rcheck-name">Friuli V.G.</span></label>
@@ -968,7 +980,19 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <option value="">Tocca per scegliere la regione ▼</option>
           <!-- Prima l'estero, poi le regioni italiane (ordine scelto il 6/8/2026) -->
           <option value="austria">Austria (AT)</option>
-          <option value="francia">Francia (FR)</option>
+          <option value="francia-aura">Alvernia-Rodano-Alpi (FR)</option>
+          <option value="francia-bfc">Borgogna-Franca Contea (FR)</option>
+          <option value="francia-bretagna">Bretagna (FR)</option>
+          <option value="francia-centro">Centro-Valle Loira (FR)</option>
+          <option value="francia-corsica">Corsica (FR)</option>
+          <option value="francia-grandest">Grand Est (FR)</option>
+          <option value="francia-hdf">Hauts-de-France (FR)</option>
+          <option value="francia-idf">Île-de-France (FR)</option>
+          <option value="francia-normandia">Normandia (FR)</option>
+          <option value="francia-naq">Nuova Aquitania (FR)</option>
+          <option value="francia-occitania">Occitania (FR)</option>
+          <option value="francia-loira">Paesi della Loira (FR)</option>
+          <option value="francia-provenza">Provenza-Costa Azzurra (FR)</option>
           <option value="svizzera">Svizzera (CH)</option>
           <option value="piemonte-vda">Piemonte-Valle d'Aosta</option>
           <option value="liguria">Liguria</option>
@@ -1547,19 +1571,152 @@ var REGIONS = {
     stations: []
   },
 
-  // Francia, 6 dipartimenti di confine (pilota dal 9/8/2026): Meteo-France
-  // API Paquet Observations, ~186 stazioni orarie con 365+ giorni di storico
-  // REALE dal primo giorno (backfill dai CSV climatologici, stessa banca
-  // dati). Licence Ouverte 2.0 Etalab. Anagrafe da un file recente, come
-  // Svizzera e Austria. Confine IGN via france-geojson, unione dei 6
-  // dipartimenti semplificata a ~70 m.
-  francia: {
-    name: 'Francia',
-    center: [45.0, 6.2], zoom: 7,
+  // Francia intera nelle 13 régions ufficiali (9/8/2026, decisione utente:
+  // «un peccato fare solo una porzione»). Météo-France API Paquet Observations,
+  // ~1.700 stazioni orarie nazionali, una cartella dati e un confine per
+  // régione (IGN via france-geojson, ~70 m). Stessa architettura dell'Austria;
+  // dataDir = cartella sotto data/, usata da loader e anagrafe.
+
+  'francia-aura': {
+    name: 'Alvernia-Rodano-Alpi (FR)',
+    center: [45.4, 4.6], zoom: 7,
     fonte: 'Météo-France',
-    geojsonUrl: 'francia-confine.geojson',
-    geojsonFilter: 'francia',
+    geojsonUrl: 'francia-aura-confine.geojson',
+    geojsonFilter: 'francia-aura',
     dataSource: 'francia',
+    dataDir: 'francia-aura',
+    stations: []
+  },
+
+  'francia-bfc': {
+    name: 'Borgogna-Franca Contea (FR)',
+    center: [47.25, 5.0], zoom: 7.5,
+    fonte: 'Météo-France',
+    geojsonUrl: 'francia-bfc-confine.geojson',
+    geojsonFilter: 'francia-bfc',
+    dataSource: 'francia',
+    dataDir: 'francia-bfc',
+    stations: []
+  },
+
+  'francia-bretagna': {
+    name: 'Bretagna (FR)',
+    center: [48.1, -3.1], zoom: 7.5,
+    fonte: 'Météo-France',
+    geojsonUrl: 'francia-bretagna-confine.geojson',
+    geojsonFilter: 'francia-bretagna',
+    dataSource: 'francia',
+    dataDir: 'francia-bretagna',
+    stations: []
+  },
+
+  'francia-centro': {
+    name: 'Centro-Valle Loira (FR)',
+    center: [47.6, 1.6], zoom: 7.5,
+    fonte: 'Météo-France',
+    geojsonUrl: 'francia-centro-confine.geojson',
+    geojsonFilter: 'francia-centro',
+    dataSource: 'francia',
+    dataDir: 'francia-centro',
+    stations: []
+  },
+
+  'francia-corsica': {
+    name: 'Corsica (FR)',
+    center: [42.15, 9.1], zoom: 8,
+    fonte: 'Météo-France',
+    geojsonUrl: 'francia-corsica-confine.geojson',
+    geojsonFilter: 'francia-corsica',
+    dataSource: 'francia',
+    dataDir: 'francia-corsica',
+    stations: []
+  },
+
+  'francia-grandest': {
+    name: 'Grand Est (FR)',
+    center: [48.8, 5.8], zoom: 7,
+    fonte: 'Météo-France',
+    geojsonUrl: 'francia-grandest-confine.geojson',
+    geojsonFilter: 'francia-grandest',
+    dataSource: 'francia',
+    dataDir: 'francia-grandest',
+    stations: []
+  },
+
+  'francia-hdf': {
+    name: 'Hauts-de-France (FR)',
+    center: [49.95, 2.8], zoom: 7.5,
+    fonte: 'Météo-France',
+    geojsonUrl: 'francia-hdf-confine.geojson',
+    geojsonFilter: 'francia-hdf',
+    dataSource: 'francia',
+    dataDir: 'francia-hdf',
+    stations: []
+  },
+
+  'francia-idf': {
+    name: 'Île-de-France (FR)',
+    center: [48.7, 2.5], zoom: 8.5,
+    fonte: 'Météo-France',
+    geojsonUrl: 'francia-idf-confine.geojson',
+    geojsonFilter: 'francia-idf',
+    dataSource: 'francia',
+    dataDir: 'francia-idf',
+    stations: []
+  },
+
+  'francia-normandia': {
+    name: 'Normandia (FR)',
+    center: [49.1, -0.1], zoom: 7.5,
+    fonte: 'Météo-France',
+    geojsonUrl: 'francia-normandia-confine.geojson',
+    geojsonFilter: 'francia-normandia',
+    dataSource: 'francia',
+    dataDir: 'francia-normandia',
+    stations: []
+  },
+
+  'francia-naq': {
+    name: 'Nuova Aquitania (FR)',
+    center: [45.0, 0.4], zoom: 6.75,
+    fonte: 'Météo-France',
+    geojsonUrl: 'francia-naq-confine.geojson',
+    geojsonFilter: 'francia-naq',
+    dataSource: 'francia',
+    dataDir: 'francia-naq',
+    stations: []
+  },
+
+  'francia-occitania': {
+    name: 'Occitania (FR)',
+    center: [43.7, 2.2], zoom: 7,
+    fonte: 'Météo-France',
+    geojsonUrl: 'francia-occitania-confine.geojson',
+    geojsonFilter: 'francia-occitania',
+    dataSource: 'francia',
+    dataDir: 'francia-occitania',
+    stations: []
+  },
+
+  'francia-loira': {
+    name: 'Paesi della Loira (FR)',
+    center: [47.4, -0.85], zoom: 7.5,
+    fonte: 'Météo-France',
+    geojsonUrl: 'francia-loira-confine.geojson',
+    geojsonFilter: 'francia-loira',
+    dataSource: 'francia',
+    dataDir: 'francia-loira',
+    stations: []
+  },
+
+  'francia-provenza': {
+    name: 'Provenza-Costa Azzurra (FR)',
+    center: [44.05, 6.0], zoom: 7,
+    fonte: 'Météo-France',
+    geojsonUrl: 'francia-provenza-confine.geojson',
+    geojsonFilter: 'francia-provenza',
+    dataSource: 'francia',
+    dataDir: 'francia-provenza',
     stations: []
   },
 
@@ -2316,10 +2473,9 @@ var HIST_RAW_BY_REGION={
   'friuli-osmer':PILOT_DATA_BASE,
   'valledaosta-cf':PILOT_DATA_BASE,
   'svizzera':PILOT_DATA_BASE,  // pilota MeteoSwiss (il Ticino OASI resta su HIST_RAW prod)
-  'austria':PILOT_DATA_BASE,   // pilota GeoSphere Austria
-  'francia':PILOT_DATA_BASE    // pilota Meteo-France (6 dipartimenti)
+  'austria':PILOT_DATA_BASE    // pilota GeoSphere Austria
 };
-function histRawBase(region){ if(region&&region.indexOf('meteohub-')===0) return PILOT_DATA_BASE; return HIST_RAW_BY_REGION[region]||HIST_RAW; }
+function histRawBase(region){ if(region&&(region.indexOf('meteohub-')===0||region.indexOf('francia')===0)) return PILOT_DATA_BASE; return HIST_RAW_BY_REGION[region]||HIST_RAW; }
 // Piloti VdA-CF e Friuli-OSMER: lo storico è backfill Open-Meteo (stime, source
 // 'open-meteo-backfill-*') per i 60 giorni prima del primo dato reale + dati reali
 // di stazione, tutti sulle STESSE coordinate. Nessuno switch runtime: si legge
@@ -3193,7 +3349,7 @@ function loadData(pastDate,nowDate,labelPeriodo){
         onRegionDone(dati,'🟢 GeoSphere Austria',regionKey);
       });
     } else if(source==='francia'){
-      loadFranciaRegion(pastDate,nowDate,labelPeriodo,function(dati){
+      loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,function(dati){
         onRegionDone(dati,'🟢 Météo-France',regionKey);
       });
     } else if(source==='svizzera'){
@@ -4033,8 +4189,8 @@ function loadAustriaRegion(pastDate,nowDate,labelPeriodo,cb){
 // climatologici, stessa banca dati dell'API): il loader è il gemello di
 // quello austriaco, si legge sempre dai file.
 // ═══════════════════════════════════════════════════════════════
-function loadFranciaRegion(pastDate,nowDate,labelPeriodo,cb){
-  var FR_RAW=PILOT_DATA_BASE+'francia';
+function loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
+  var FR_RAW=PILOT_DATA_BASE+(REGIONS[regionKey].dataDir||regionKey);
   var rainTot={}, stMeta={};
   var dates=[];
   var d=new Date(pastDate.getTime());
@@ -4766,7 +4922,7 @@ function setRegionBorder(regionKey,cb){
         // Il tratteggio della Svizzera (confine di stato) resta anche sul bordo
         // disegnato durante l'analisi, così l'identità non sparisce coi dati.
         style:{color:'#1b3f6e',weight:1.5,opacity:0.6,fill:false,
-               dashArray:(regionKey==='svizzera'||regionKey==='austria'||regionKey==='francia')?'6 4':null}
+               dashArray:(regionKey==='svizzera'||regionKey==='austria'||regionKey.indexOf('francia')===0)?'6 4':null}
       }).addTo(map);
       regionBorders[regionKey]=layer;
 
@@ -4795,7 +4951,7 @@ function selStyle(on,rk){
   // respiro sincronizzato e l'header "Italia + Svizzera" bastava il tratteggio,
   // e niente tinte in mappa — verde e rosso sono già le "parole" della scala
   // pioggia.
-  var ch=(rk==='svizzera'||rk==='austria'||rk==='francia');   // stati esteri: bordo tratteggiato
+  var ch=(rk==='svizzera'||rk==='austria'||rk.indexOf('francia')===0);   // stati esteri: bordo tratteggiato
   if(on){
     // Con un'analisi visibile NIENTE riempimento (coprirebbe la heatmap):
     // resta il bordo marcato. fillOpacity 0 (non fill:false) così l'interno
@@ -4994,9 +5150,21 @@ var REGION_BOUNDS={
   // Austria (bbox nazionale BEV). Come la Svizzera è esclusa dalla vista di
   // apertura: entrerebbe da est allargando l'inquadratura su mezza Europa.
   austria:     [[46.37, 9.53],[49.02,17.16]],
-  // Francia: bbox dei 6 dipartimenti (confine IGN unito). Esclusa dalla
+  // Francia: bbox delle 13 régions (confini IGN). Tutte escluse dalla
   // vista di apertura come Svizzera e Austria.
-  francia:     [[43.48, 4.74],[46.41, 7.72]],
+  'francia-aura': [[44.12, 2.06],[46.8, 7.19]],
+  'francia-bfc': [[46.16, 2.85],[48.4, 7.14]],
+  'francia-bretagna': [[47.28, -5.14],[48.9, -1.02]],
+  'francia-centro': [[46.35, 0.05],[48.94, 3.13]],
+  'francia-corsica': [[41.33, 8.54],[43.03, 9.56]],
+  'francia-grandest': [[47.42, 3.38],[50.17, 8.23]],
+  'francia-hdf': [[48.84, 1.38],[51.09, 4.26]],
+  'francia-idf': [[48.12, 1.45],[49.24, 3.56]],
+  'francia-normandia': [[48.18, -1.95],[50.07, 1.8]],
+  'francia-naq': [[42.78, -1.79],[47.18, 2.61]],
+  'francia-occitania': [[42.33, -0.33],[45.05, 4.85]],
+  'francia-loira': [[46.27, -2.62],[48.57, 0.92]],
+  'francia-provenza': [[42.98, 4.23],[45.13, 7.72]],
   // Centro-sud (bounds dalle stazioni reali MeteoHub) + Abruzzo (Open-Meteo)
   marche:      [[42.74,12.13],[43.91,13.89]],
   umbria:      [[42.53,11.95],[43.52,13.19]],
@@ -5032,7 +5200,7 @@ var REGION_BOUNDS={
     // Stessa cosa per l'Austria (5/8/2026), e a maggior ragione: si spinge
     // fino a 17,2°E, quindi includerla trascinerebbe l'inquadratura verso est
     // fino all'Ungheria, con l'Italia schiacciata a sinistra.
-    if(rk==='svizzera'||rk==='austria'||rk==='francia') return;
+    if(rk==='svizzera'||rk==='austria'||rk.indexOf('francia')===0) return;
     var b=REGION_BOUNDS[rk];
     if(b[0][0]<latMin) latMin=b[0][0];
     if(b[1][0]>latMax) latMax=b[1][0];
@@ -5089,7 +5257,7 @@ var REGION_BOUNDS={
   var MARGINE_SUD=25, LIMITE_NORD=49.10;
   var latMin=90,latMax=-90;
   Object.keys(REGION_BOUNDS).forEach(function(rk){
-    if(rk==='svizzera'||rk==='austria'||rk==='francia') return;   // la vista di apertura è l'Italia
+    if(rk==='svizzera'||rk==='austria'||rk.indexOf('francia')===0) return;   // la vista di apertura è l'Italia
     var b=REGION_BOUNDS[rk];
     if(b[0][0]<latMin) latMin=b[0][0];
     if(b[1][0]>latMax) latMax=b[1][0];
@@ -5185,9 +5353,9 @@ function fitMapToRegions(regionKeys,factor){
 // Adiacenze (confini) tra le regioni selezionabili. Servono a individuare la
 // "regione di mezzo" in una terna: quella che confina con entrambe le altre.
 var REGION_ADJ={
-  valledaosta:['piemonte','svizzera','francia'],
-  piemonte:['valledaosta','lombardia','liguria','svizzera','francia'],
-  liguria:['piemonte','emilia','toscana','francia'],
+  valledaosta:['piemonte','svizzera','francia-aura'],
+  piemonte:['valledaosta','lombardia','liguria','svizzera','francia-aura','francia-provenza'],
+  liguria:['piemonte','emilia','toscana','francia-provenza'],
   lombardia:['piemonte','emilia','veneto','trentino','svizzera'],
   emilia:['lombardia','liguria','toscana','veneto'],
   toscana:['liguria','emilia','umbria','marche','lazio'],
@@ -5195,9 +5363,21 @@ var REGION_ADJ={
   trentino:['lombardia','veneto','altoadige'],
   altoadige:['trentino','veneto','svizzera','austria'],
   friuli:['veneto','austria'],
-  svizzera:['valledaosta','piemonte','lombardia','altoadige','austria','francia'],
+  svizzera:['valledaosta','piemonte','lombardia','altoadige','austria','francia-aura','francia-bfc','francia-grandest'],
   austria:['svizzera','altoadige','veneto','friuli'],
-  francia:['valledaosta','piemonte','liguria','svizzera'],
+  'francia-aura':['valledaosta','piemonte','svizzera','francia-provenza','francia-occitania','francia-naq','francia-centro','francia-bfc'],
+  'francia-provenza':['liguria','piemonte','francia-aura','francia-occitania'],
+  'francia-occitania':['francia-provenza','francia-aura','francia-naq'],
+  'francia-naq':['francia-occitania','francia-aura','francia-centro','francia-loira'],
+  'francia-centro':['francia-naq','francia-aura','francia-bfc','francia-idf','francia-normandia','francia-loira'],
+  'francia-bfc':['svizzera','francia-aura','francia-centro','francia-idf','francia-grandest'],
+  'francia-grandest':['svizzera','francia-bfc','francia-idf','francia-hdf'],
+  'francia-idf':['francia-centro','francia-bfc','francia-grandest','francia-hdf','francia-normandia'],
+  'francia-hdf':['francia-idf','francia-grandest','francia-normandia'],
+  'francia-normandia':['francia-hdf','francia-idf','francia-centro','francia-loira','francia-bretagna'],
+  'francia-loira':['francia-bretagna','francia-normandia','francia-centro','francia-naq'],
+  'francia-bretagna':['francia-loira','francia-normandia'],
+  'francia-corsica':['sardegna','francia-provenza'],
   umbria:['toscana','marche','lazio','abruzzo'],
   marche:['emilia','toscana','umbria','abruzzo','lazio'],
   lazio:['toscana','umbria','abruzzo','molise','campania'],
@@ -5208,7 +5388,7 @@ var REGION_ADJ={
   basilicata:['campania','puglia','calabria'],
   calabria:['basilicata','sicilia'],
   sicilia:['calabria'],
-  sardegna:[]
+  sardegna:['francia-corsica']
 };
 // La regione della terna che confina con entrambe le altre. Se la terna non è
 // contigua (nessuna confina con le altre due), ripiega sulla regione il cui
@@ -6201,11 +6381,12 @@ function loadAustriaStations(cb){
       .catch(function(){ idx++; attempt(); });
   })();
 }
-// Francia: anagrafe da un file recente, gemella di quella austriaca.
-var franciaStationsCache=null;
-function loadFranciaStations(cb){
-  if(franciaStationsCache){ cb(franciaStationsCache); return; }
-  var RAW=PILOT_DATA_BASE+'francia';
+// Francia: anagrafe da un file recente, gemella di quella austriaca ma
+// con cache PER régione (13 cartelle indipendenti).
+var franciaStationsCache={};
+function loadFranciaStations(regionKey,cb){
+  if(franciaStationsCache[regionKey]){ cb(franciaStationsCache[regionKey]); return; }
+  var RAW=PILOT_DATA_BASE+(REGIONS[regionKey].dataDir||regionKey);
   var tries=[], now=new Date();
   for(var i=1;i<=6;i++){ var d=new Date(now.getTime()-i*86400000); tries.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')); }
   var idx=0;
@@ -6214,7 +6395,7 @@ function loadFranciaStations(cb){
     fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
       .then(function(data){
         var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FR'};});
-        franciaStationsCache=st; cb(st);
+        franciaStationsCache[regionKey]=st; cb(st);
       })
       .catch(function(){ idx++; attempt(); });
   })();
@@ -6239,7 +6420,7 @@ function addDefaultMarkersForRegion(regionKey){
   // Francia: idem — e questo ramo è ESATTAMENTE quello che mancò all'Austria
   // alla promozione del 7/8/2026 (pallini assenti, nessun errore).
   if(cfg && cfg.dataSource==='francia'){
-    loadFranciaStations(function(st){ drawDefaultMarkers(st,cfg); });
+    loadFranciaStations(regionKey,function(st){ drawDefaultMarkers(st,cfg); });
     return;
   }
   var stazioni=(regionKey==='lombardia')?(ARPA_STATIONS||LOMBARDIA_STATIONS):((cfg&&cfg.stations)?cfg.stations:[]);

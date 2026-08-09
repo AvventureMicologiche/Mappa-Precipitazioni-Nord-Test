@@ -119,50 +119,50 @@ CC BY 4.0, attribuzione «Fonte: MeteoSvizzera»). In mappa un solo bottone **"S
 
 ---
 
-## PILOTA FRANCIA (dal 9 agosto 2026 — solo repo di test)
+## PILOTA FRANCIA INTERA (dal 9 agosto 2026 — solo repo di test)
 
-Sei dipartimenti di confine (74 Haute-Savoie, 73 Savoie, 38 Isère, 05 Hautes-Alpes,
-04 Alpes-de-H.-Provence, 06 Alpes-Maritimes) con **Météo-France, API Paquet
-Observations** (`public-api.meteofrance.fr/public/DPPaquetObs/v2`), Licence Ouverte
-2.0 Etalab, attribuzione «Météo-France». Studio completo delle fonti (e di tutte le
-alternative scartate: Infoclimat, ROMMA, NOAA, radar, Open-Meteo) in
-`francia-rapporto-fonti.md` nella cartella claudio.
+**Tutta la Francia metropolitana nelle 13 régions ufficiali** (decisione utente del
+9/8 sera: «un peccato fare solo una porzione» — il primo pilota copriva i soli 6
+dipartimenti di confine). Fonte: **Météo-France, API Paquet Observations**
+(`public-api.meteofrance.fr/public/DPPaquetObs/v2`), Licence Ouverte 2.0 Etalab.
+Studio fonti e alternative scartate in `francia-rapporto-fonti.md` (cartella claudio).
 
 - **Collect:** `collect-francia-meteofrance.js` + `francia.yml` (4 run/giorno,
-  chiusura 22:50 UTC, sfalsati da Austria/Svizzera). Un pacchetto orario per
-  dipartimento = 6 richieste a giro, ~186 stazioni con `rr1` su 212 in anagrafe
-  (quote 2-2.277 m, PUBBLICATE → check-confini possibile con Piemonte/VdA).
-- ⚠️ **Serve la chiave**: secret `METEOFRANCE_API_KEY` (portale
-  portail-api.meteofrance.fr, account dell'utente, **scade il 9/8/2028** insieme
-  all'abbonamento). 401 improvvisi = chiave scaduta, si rigenera dal portale.
-- **RICETTA (validata il 9/8 PRIMA di scrivere il collector):** il RR giornaliero
-  francese è la finestra **06-06 UTC** (definizione ufficiale) — stessa trappola di
-  `rre150d0` e del Klimatag. Si sommano le ore `rr1` sul giorno solare italiano,
-  timestamp di FINE intervallo, finestra `(start, end]`, MIN_ORE=20 — identica a
-  Svizzera/Austria/OSMER. Quadratura contro il RR ufficiale consolidato: 38/38
-  esatte su giorno asciutto, 37/37 su giorno di pioggia (Tignes 12,4 al decimo);
-  convenzione fine-intervallo confermata su 856 giorni bagnati (99,8% contro 73,9%); estesa il 9/8 sera a TUTTI E SEI i dipartimenti, intero 2026: **9.763 giorni bagnati, 99,6% esatti entro 0,2 mm** (per dipartimento 99,2-99,8%).
-- **Il pacchetto contiene ~5 giorni di ore** (misurato; la doc dice 24h):
-  auto-riparazione D-1..D-4 gratis. ⚠️ `id-departement` SENZA zero (5, non 05: 400),
-  ma gli id stazione lo tengono (05046001).
-- **Storico: 365+ giorni REALI dal primo giorno** — `backfill-francia-meteofrance.js`
-  (una tantum, 9/8): 369 giorni (1/8/2025→4/8/2026) dai CSV orari `BASE/HOR/H_<dip>`
-  di meteo.data.gouv.fr, stessa banca dati. Copertura invernale 158-188 (pluviometri
-  riscaldati), massimo storico 141,7 mm. Doppio canale CSV↔API sul 7/8: zero
-  divergenze su 186 stazioni. ⚠️ **SOLO il mirror S3 OVH**
-  (`meteofrance.s3.sbg.io.cloud.ovh.net`): `object.files.data.gouv.fr` è fermo a
-  giugno e il `last_modified` dell'API data.gouv mente.
-- **In mappa (9/8/2026):** regione `francia`, bottone/tendina «Francia (FR)», loader
-  gemello dell'austriaco, bordo TRATTEGGIATO (stato estero), esclusa dalla vista di
-  apertura, `REGION_ADJ` con valledaosta/piemonte/liguria/svizzera. NIENTE beta:
-  dati di stazione reali. Confine `francia-confine.geojson` = unione dei 6
-  dipartimenti (IGN via france-geojson, Licence Ouverte), semplificata a ~70 m,
-  3.021 vertici — ⚠️ il feature DEVE avere `properties.reg_name` (il filtro di
-  `setRegionBorder` cerca quello: senza, mappa senza confine e nessun errore).
-  Contromisura contata: 15 occorrenze chiave `francia` = 15 `austria`, agganci 1:1.
-- **Per la promozione a prod restano:** spostare data/collector/workflow/confine nel
-  repo prod + secret nella prod, `PILOT_DATA_BASE`, voce in `fonti.html` di prod,
-  allarme fonti esteso, decidere l'header (Italia · Svizzera · Austria · Francia?).
+  chiusura 22:50 UTC). **95 pacchetti dipartimento** per giro (~5-6 minuti, dentro i
+  100 req/min), **1.818 stazioni in anagrafe, ~1.700 con `rr1`**, una cartella
+  `data/francia-<régione>` e una voce in mappa ciascuna. Le 13: aura (Alvernia-
+  Rodano-Alpi, 344 staz.), provenza (149), occitania (247), naq (211), grandest
+  (179), bfc (139), centro (99), normandia (81), loira (82), bretagna (77), hdf
+  (68), idf (45), corsica (53). Nessuna supera l'Austria come area: griglia
+  heatmap e inquadratura telefono reggono senza ritocchi.
+- ⚠️ **Chiave**: secret `METEOFRANCE_API_KEY` (account utente sul portale, **scade
+  il 9/8/2028**). 401 improvvisi = chiave. ⚠️ `id-departement` SENZA zero (5, non
+  05); la **Corsica è `20` unico** (2A/2B non esistono, nemmeno negli id stazione).
+- **RICETTA (validata PRIMA del collector):** RR giornaliero francese = finestra
+  06-06 UTC ufficiale → somma ore `rr1` sul giorno solare italiano, timestamp di
+  FINE intervallo, `(start, end]`, MIN_ORE=20 — identica a Svizzera/Austria/OSMER.
+  Quadratura contro il RR ufficiale: **99,6% esatta entro 0,2 mm su 9.763 giorni
+  bagnati** (6 dip. alpini, intero 2026); convenzione confermata 99,8% vs 73,9%.
+  Il pacchetto contiene **~5 giorni** di ore (doc dice 24h): riparazione D-1..D-4.
+- **Storico: 369 giorni REALI** (1/8/2025→4/8/2026) — `backfill-francia-meteofrance.js`
+  (una tantum, ~1 GB dai CSV orari `BASE/HOR`): ~4.790 file, 18 giorni-régione
+  saltati per poche stazioni (tutti nelle régions piccole). ⚠️ **SOLO il mirror S3
+  OVH**: `object.files.data.gouv.fr` è fermo a giugno e `last_modified` mente.
+- **In mappa:** 13 voci «… (FR)», `dataSource:'francia'` condiviso + `dataDir`
+  per cartella; loader e anagrafe parametrizzati per régione (cache per chiave);
+  bordo tratteggiato e esclusione dalla vista di apertura **a prefisso**
+  (`rk.indexOf('francia')===0`); `REGION_ADJ` completa fra régions e verso
+  valledaosta/piemonte/liguria/svizzera, più **Corsica↔Sardegna** (si selezionano
+  insieme). Confini: 13 file `francia-<x>-confine.geojson` (IGN via france-geojson,
+  ~70 m, 30-143 KB) — ⚠️ ogni feature DEVE avere `properties.reg_name`.
+- **Collaudo (9/8):** provenza/aura/corsica mobile a 0 vertici fuori; vista
+  apertura invariata; Corsica+Sardegna ok (la Sardegna qui è vuota SOLO perché il
+  centro-sud del test è congelato al 31/7 — in prod avrà i dati). **Residuo noto:
+  Bretagna 104% di larghezza** (~7px per lato oltre i bordi, dentro la banda morta
+  della centratura): accettato, è la régione più lontana dal pubblico.
+- **Per la promozione a prod:** cartelle dati + collector + workflow + 13 confini
+  + secret nel repo prod, `PILOT_DATA_BASE`, voce `fonti.html` prod, allarme fonti
+  esteso, header da decidere.
 
 ---
 
