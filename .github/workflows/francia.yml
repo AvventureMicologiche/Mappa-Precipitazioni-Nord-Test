@@ -6,8 +6,10 @@ on:
         description: 'Data da raccogliere (YYYY-MM-DD, lascia vuoto per ieri+altroieri)'
         required: false
         default: ''
-  # PILOTA Francia (Météo-France, API Paquet Observations) — dal 9 agosto 2026,
-  # solo repo di test. Sei dipartimenti di confine, ~186 stazioni orarie.
+  # PILOTA Francia INTERA (Météo-France, API Paquet Observations) — dal 9
+  # agosto 2026, solo repo di test. Le 13 régions metropolitane, 95 pacchetti
+  # dipartimento (la Corsica è id 20 unico), ~1.700 stazioni orarie, una
+  # cartella data/francia-<régione> ciascuna. Un run dura ~5-6 minuti.
   # Ogni run raccoglie ieri + altroieri e auto-ripara D-3..D-4 se mancanti o
   # corti: il pacchetto orario contiene ~5 giorni (misurato, la doc dice 24h),
   # quindi la riparazione non costa niente. Oltre D-4 serve DPClim (manuale).
