@@ -1,0 +1,71 @@
+name: Francia
+on:
+  workflow_dispatch:
+    inputs:
+      date_override:
+        description: 'Data da raccogliere (YYYY-MM-DD, lascia vuoto per ieri+altroieri)'
+        required: false
+        default: ''
+  # PILOTA Francia (Météo-France, API Paquet Observations) — dal 9 agosto 2026,
+  # solo repo di test. Sei dipartimenti di confine, ~186 stazioni orarie.
+  # Ogni run raccoglie ieri + altroieri e auto-ripara D-3..D-4 se mancanti o
+  # corti: il pacchetto orario contiene ~5 giorni (misurato, la doc dice 24h),
+  # quindi la riparazione non costa niente. Oltre D-4 serve DPClim (manuale).
+  # Il cron di CHIUSURA (22:50 UTC = 00:50 italiane) è il più importante: il
+  # giorno solare italiano si chiude alle 22:00 UTC e l'API pubblica ogni ora
+  # 10 minuti dopo l'ora tonda, quindi a quell'ora il totale di ieri è già
+  # completo e definitivo — stessa logica del cron austriaco delle 22:40, che
+  # ha passato il collaudo del 9/8. Orari sfalsati da Austria (x:40) e
+  # Svizzera per non accavallare i push sullo stesso repo.
+  # ⚠️ Serve il secret METEOFRANCE_API_KEY (chiave del portale
+  # portail-api.meteofrance.fr, scade il 9/8/2028): senza, il collector esce
+  # subito con errore esplicito.
+  schedule:
+    - cron: '50 22 * * *'
+    - cron: '25 3 * * *'
+    - cron: '45 5 * * *'
+    - cron: '25 13 * * *'
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Raccoglie dati Francia (Météo-France)
+        id: collect
+        run: node .github/scripts/collect-francia-meteofrance.js
+        env:
+          METEOFRANCE_API_KEY: ${{ secrets.METEOFRANCE_API_KEY }}
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+        continue-on-error: true
+      - name: Retry 1
+        if: steps.collect.outcome == 'failure'
+        run: sleep 30 && node .github/scripts/collect-francia-meteofrance.js
+        env:
+          METEOFRANCE_API_KEY: ${{ secrets.METEOFRANCE_API_KEY }}
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+        continue-on-error: true
+      - name: Retry 2
+        if: steps.collect.outcome == 'failure'
+        run: sleep 60 && node .github/scripts/collect-francia-meteofrance.js
+        env:
+          METEOFRANCE_API_KEY: ${{ secrets.METEOFRANCE_API_KEY }}
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+      - name: Commit e push
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@bot.com"
+          mkdir -p data/francia
+          git add data/francia/
+          git diff --staged --quiet || git commit -m "francia $(date -u +%Y-%m-%d)"
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push; then ok=1; break; fi
+            echo "Push fallito (tentativo $i/5), retry tra 10s..."
+            sleep 10
+          done
+          [ "$ok" = "1" ] || { echo "Push fallito dopo 5 tentativi"; exit 1; }
