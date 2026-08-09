@@ -141,7 +141,7 @@ alternative scartate: Infoclimat, ROMMA, NOAA, radar, Open-Meteo) in
   timestamp di FINE intervallo, finestra `(start, end]`, MIN_ORE=20 — identica a
   Svizzera/Austria/OSMER. Quadratura contro il RR ufficiale consolidato: 38/38
   esatte su giorno asciutto, 37/37 su giorno di pioggia (Tignes 12,4 al decimo);
-  convenzione fine-intervallo confermata su 856 giorni bagnati (99,8% contro 73,9%).
+  convenzione fine-intervallo confermata su 856 giorni bagnati (99,8% contro 73,9%); estesa il 9/8 sera a TUTTI E SEI i dipartimenti, intero 2026: **9.763 giorni bagnati, 99,6% esatti entro 0,2 mm** (per dipartimento 99,2-99,8%).
 - **Il pacchetto contiene ~5 giorni di ore** (misurato; la doc dice 24h):
   auto-riparazione D-1..D-4 gratis. ⚠️ `id-departement` SENZA zero (5, non 05: 400),
   ma gli id stazione lo tengono (05046001).
