@@ -119,7 +119,15 @@ CC BY 4.0, attribuzione «Fonte: MeteoSvizzera»). In mappa un solo bottone **"S
 
 ---
 
-## PILOTA FRANCIA INTERA (dal 9 agosto 2026 — solo repo di test)
+## FRANCIA — PROMOSSA IN PRODUZIONE IL 10 AGOSTO 2026
+
+> **Non è più un pilota.** Dati, collector, workflow, confini e secret stanno anche
+> nel repo prod (v7.0, header «Italia · Svizzera · Austria · Francia»); la scheda di
+> riferimento è nel CLAUDE.md di produzione. **Il collector di questo repo resta
+> attivo**, come Svizzera e Austria: il sito di test legge dalle proprie cartelle.
+> Sotto, la cronaca dello sviluppo (9/8/2026), tenuta per contesto.
+
+### Come nacque (9 agosto 2026 — pilota di un giorno)
 
 **Tutta la Francia metropolitana nelle 13 régions ufficiali** (decisione utente del
 9/8 sera: «un peccato fare solo una porzione» — il primo pilota copriva i soli 6
