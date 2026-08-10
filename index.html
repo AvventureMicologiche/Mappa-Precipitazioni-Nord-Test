@@ -18,9 +18,9 @@
   </script>
 
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <meta name="description" content="Mappa interattiva delle precipitazioni in Italia e Svizzera con dati da stazioni meteo reali. Pianifica le tue uscite funghi.">
-  <meta property="og:title" content="Mappa Pluviometrica Italia, Svizzera e Austria | Avventure Micologiche">
-  <meta property="og:description" content="Mappa interattiva con dati meteo reali di Italia e Svizzera per pianificare ogni uscita. Trova le zone dove ha piovuto di più.">
+  <meta name="description" content="Mappa interattiva delle precipitazioni in Italia, Svizzera, Austria e Francia con dati da stazioni meteo reali. Pianifica le tue uscite funghi.">
+  <meta property="og:title" content="Mappa Pluviometrica Italia, Svizzera, Austria e Francia | Avventure Micologiche">
+  <meta property="og:description" content="Mappa interattiva con dati meteo reali di Italia, Svizzera, Austria e Francia per pianificare ogni uscita. Trova le zone dove ha piovuto di più.">
   <!-- Anteprima rifatta il 3 agosto 2026 con la v6.0: ITALIA + SVIZZERA a 30
        giorni, 22 regioni e la Svizzera intera, 2960 stazioni, con header e
        pannelli. Ricetta: pagina locale usa-e-getta (copia dell'index con il
@@ -48,7 +48,7 @@
   <meta name="theme-color" content="#1b3f6e">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mappa Pluviometrica Italia, Svizzera e Austria</title>
+<title>Mappa Pluviometrica Italia, Svizzera, Austria e Francia</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -843,7 +843,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
            su un Pixel 9 (412), spingendo fuori il tasto "Iscriviti"; e anche il
            solo "+ Svizzera" traboccava già di 9px a 360. Su telefono resta
            "Mappa Pluviometrica Italia", che entra anche a 320. -->
-      <h1>Mappa Pluviometrica<span class="hdr-paesi"> Italia · Svizzera · Austria</span> <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v6.0)</span></h1>
+      <h1>Mappa Pluviometrica<span class="hdr-paesi"> Italia · Svizzera · Austria · Francia</span> <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v7.0)</span></h1>
       <div class="hdr-sub" id="datehdr"></div>
     </div>
   </div>
@@ -895,7 +895,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       <div class="sh-fonte" id="sh-fonte"></div>
     </div>
     <div class="fonte-tag" id="fonte-tag">Fonte: —</div>
-    <div id="beta-note">🧪 Centro-Sud in fase di test: dati MeteoHub in validazione</div>
+    <div id="beta-note">🧪 Sicilia e Lazio in fase di test: dati MeteoHub in validazione</div>
 
     <!-- Box canale YouTube — desktop, in basso a destra.
          Filigrana: lo SFONDO è semitrasparente (si intravede la mappa) ma il
@@ -951,17 +951,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <label class="rcheck-wrap"><input type="checkbox" id="chk-friuli" value="friuli"><span class="rcheck-box"></span><span class="rcheck-name">Friuli V.G.</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-emilia" value="emilia"><span class="rcheck-box"></span><span class="rcheck-name">Emilia-R.</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-toscana" value="toscana"><span class="rcheck-box"></span><span class="rcheck-name">Toscana</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-umbria" value="umbria"><span class="rcheck-box"></span><span class="rcheck-name">Umbria <sup class="beta-tag">beta</sup></span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-marche" value="marche"><span class="rcheck-box"></span><span class="rcheck-name">Marche <sup class="beta-tag">beta</sup></span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-umbria" value="umbria"><span class="rcheck-box"></span><span class="rcheck-name">Umbria</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-marche" value="marche"><span class="rcheck-box"></span><span class="rcheck-name">Marche</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-lazio" value="lazio"><span class="rcheck-box"></span><span class="rcheck-name">Lazio <sup class="beta-tag">beta</sup></span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-abruzzo" value="abruzzo"><span class="rcheck-box"></span><span class="rcheck-name">Abruzzo</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-molise" value="molise"><span class="rcheck-box"></span><span class="rcheck-name">Molise <sup class="beta-tag">beta</sup></span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-campania" value="campania"><span class="rcheck-box"></span><span class="rcheck-name">Campania <sup class="beta-tag">beta</sup></span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-puglia" value="puglia"><span class="rcheck-box"></span><span class="rcheck-name">Puglia <sup class="beta-tag">beta</sup></span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-basilicata" value="basilicata"><span class="rcheck-box"></span><span class="rcheck-name">Basilicata <sup class="beta-tag">beta</sup></span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-calabria" value="calabria"><span class="rcheck-box"></span><span class="rcheck-name">Calabria <sup class="beta-tag">beta</sup></span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-molise" value="molise"><span class="rcheck-box"></span><span class="rcheck-name">Molise</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-campania" value="campania"><span class="rcheck-box"></span><span class="rcheck-name">Campania</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-puglia" value="puglia"><span class="rcheck-box"></span><span class="rcheck-name">Puglia</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-basilicata" value="basilicata"><span class="rcheck-box"></span><span class="rcheck-name">Basilicata</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-calabria" value="calabria"><span class="rcheck-box"></span><span class="rcheck-name">Calabria</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-sicilia" value="sicilia"><span class="rcheck-box"></span><span class="rcheck-name">Sicilia <sup class="beta-tag">beta</sup></span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-sardegna" value="sardegna"><span class="rcheck-box"></span><span class="rcheck-name">Sardegna <sup class="beta-tag">beta</sup></span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-sardegna" value="sardegna"><span class="rcheck-box"></span><span class="rcheck-name">Sardegna</span></label>
           <!-- Checkbox INDIVIDUALI (mai visibili): stato per la selezione da mappa
                su desktop, dove i combo Piemonte-VdA / Trentino-A.A. non esistono
                e ogni regione si clicca da sola. La tendina mobile continua a
@@ -1002,17 +1002,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <option value="friuli">Friuli V.G.</option>
           <option value="emilia">Emilia Romagna</option>
           <option value="toscana">Toscana</option>
-          <option value="umbria">Umbria (beta)</option>
-          <option value="marche">Marche (beta)</option>
+          <option value="umbria">Umbria</option>
+          <option value="marche">Marche</option>
           <option value="lazio">Lazio (beta)</option>
           <option value="abruzzo">Abruzzo</option>
-          <option value="molise">Molise (beta)</option>
-          <option value="campania">Campania (beta)</option>
-          <option value="puglia">Puglia (beta)</option>
-          <option value="basilicata">Basilicata (beta)</option>
-          <option value="calabria">Calabria (beta)</option>
+          <option value="molise">Molise</option>
+          <option value="campania">Campania</option>
+          <option value="puglia">Puglia</option>
+          <option value="basilicata">Basilicata</option>
+          <option value="calabria">Calabria</option>
           <option value="sicilia">Sicilia (beta)</option>
-          <option value="sardegna">Sardegna (beta)</option>
+          <option value="sardegna">Sardegna</option>
         </select>
       </div>
     </div>
@@ -3398,10 +3398,13 @@ function renderMulti(allData, labelPeriodo, fontiArr, _retry){
   document.getElementById('fonte-tag').textContent='Fonte: '+fonteStr;
   lastUsedFonte=fonteStr;
 
-  // Pillola "fase di test": visibile solo se tra le regioni disegnate
-  // ce n'e' almeno una su dati MeteoHub (Centro-Sud in validazione).
+  // Pillola "fase di test": dal 10/8/2026 il beta e' PER-REGIONE, non per
+  // fonte. Otto reti MeteoHub sono uscite dal beta (30 giorni di registro
+  // buchi: 5 mai colpite, 3 con un solo evento vecchio e gia' coperto);
+  // restano in validazione Sicilia (3 eventi) e Lazio (2), ultimo il 3/8.
+  var BETA_REGIONS=['sicilia','lazio'];
   var betaAttivo=regions.some(function(rk){
-    return REGIONS[rk]&&REGIONS[rk].dataSource==='meteohub';
+    return BETA_REGIONS.indexOf(rk)>=0;
   });
   document.getElementById('beta-note').style.display=betaAttivo?'block':'none';
 
