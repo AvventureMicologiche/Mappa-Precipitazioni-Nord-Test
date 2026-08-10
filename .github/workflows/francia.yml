@@ -61,8 +61,7 @@ jobs:
         run: |
           git config user.name "bot"
           git config user.email "bot@bot.com"
-          mkdir -p data/francia
-          git add data/francia/
+          git add 'data/francia-*/'
           git diff --staged --quiet || git commit -m "francia $(date -u +%Y-%m-%d)"
           ok=0
           for i in 1 2 3 4 5; do
