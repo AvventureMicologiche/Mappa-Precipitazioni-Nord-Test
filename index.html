@@ -364,12 +364,30 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .sh-note{font-size:9px;color:#666;margin-top:5px}
 .sh-fonte{font-size:9px;color:#555;margin-top:5px;padding-top:5px;border-top:1px solid #333}
 .sh-load{font-size:11px;color:#888;padding:18px 0;text-align:center}
+/* Schede del pannello stazione: Pioggia / Temperatura / Vento (10/8/2026).
+   I bottoni stanno FUORI da sh-body, così sopravvivono ai re-render del corpo. */
+.sh-tabs{display:flex;gap:4px;margin:7px 0 5px}
+.sh-tab{flex:1;font-size:10px;padding:4px 0;border-radius:4px;background:#2a2a2a;
+  color:#999;border:1px solid #3a3a3a;cursor:pointer;font-family:inherit;text-align:center}
+.sh-tab.on{background:#31465c;color:#fff;border-color:#5d83a8;font-weight:600}
+.sh-tab:hover:not(.on){color:#ccc;border-color:#555}
+/* Grafico a linee: stessa area delle barre, SVG che si stira col contenitore */
+.sh-lines{height:60px;position:relative;z-index:1}
+.sh-lines svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.sh-lines polyline{fill:none;stroke-width:1.6;vector-effect:non-scaling-stroke;
+  stroke-linejoin:round;stroke-linecap:round}
+/* Colonnine trasparenti sopra le linee: servono solo al tooltip del giorno */
+.sh-hits{position:absolute;inset:0;display:flex;gap:2px;z-index:2}
+.sh-hits div{flex:1}
+.sh-leg{display:flex;gap:10px;font-size:9px;color:#999;margin-top:4px}
+.sh-leg i{display:inline-block;width:10px;height:2px;border-radius:1px;vertical-align:middle;margin-right:3px}
 @media(max-width:600px){
   /* Su schermi piccoli il pannello si aggancia in basso a tutta larghezza.
      Il "bottom" lo calcola histPosition() in base all'altezza della legenda
      (fixed, stesso z-index): la barra dei cumulati deve restare visibile. */
   #st-history{position:fixed;width:auto;left:8px!important;right:8px;top:auto!important;}
   #st-history .sh-bars{height:46px}
+  #st-history .sh-lines{height:46px}
   #st-history .sh-nome{padding-bottom:4px;margin-bottom:4px}
   #st-history .sh-big{margin-bottom:2px}
   #st-history .sh-per{margin-top:5px}
@@ -891,6 +909,11 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       <div class="sh-row"><span>Quota</span><b id="sh-quota"></b></div>
       <div class="sh-row"><span>Ranking</span><b id="sh-rank"></b></div>
       <div class="sh-per" id="sh-per"></div>
+      <div class="sh-tabs">
+        <button class="sh-tab on" data-t="mm">💧 Pioggia</button>
+        <button class="sh-tab" data-t="t">🌡 Temp</button>
+        <button class="sh-tab" data-t="v">💨 Vento</button>
+      </div>
       <div id="sh-body"></div>
       <div class="sh-fonte" id="sh-fonte"></div>
     </div>
@@ -2507,13 +2530,16 @@ function histColor(v){
   return '#639922';
 }
 
-// Serie giornaliera da file JSON del repo (tutte le regioni tranne Lombardia)
+// Serie giornaliera da file JSON del repo (tutte le regioni tranne Lombardia).
+// Ogni voce della serie è un OGGETTO {mm, t, w}: t=[min,max] °C e w=[media,
+// raffica] km/h esistono solo dove il collector li scrive (per ora Austria) —
+// altrove restano null e le schede Temp/Vento dicono "non disponibile".
 function histFromFiles(region,station,days,cb){
   function assemble(){
     var out={};
     days.forEach(function(ds){
       var m=histFileCache[region+'/'+ds];
-      if(m&&typeof m[station.n]==='number') out[ds]=m[station.n];
+      if(m&&m[station.n]) out[ds]=m[station.n];
     });
     cb(out);
   }
@@ -2525,7 +2551,9 @@ function histFromFiles(region,station,days,cb){
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
       .then(function(d){
         var m={};
-        if(d&&d.stations) d.stations.forEach(function(s){m[s.n]=s.mm||0;});
+        if(d&&d.stations) d.stations.forEach(function(s){
+          m[s.n]={mm:(typeof s.mm==='number')?s.mm:0,t:s.t||null,w:s.w||null};
+        });
         histFileCache[region+'/'+ds]=m;
       })
       .catch(function(){histFileCache[region+'/'+ds]={};}) // giorno mancante: non ritentare
@@ -2552,7 +2580,8 @@ function histFromLombardia(station,days,cb){
       (rows||[]).forEach(function(r){
         var v=Math.round((parseFloat(r.s)||0)*10)/10;
         if(v>500) v=0; // stessa sanity check della mappa
-        out[(r.g||'').substring(0,10)]=v;
+        // stessa forma a oggetto di histFromFiles (Socrata dà solo la pioggia)
+        out[(r.g||'').substring(0,10)]={mm:v,t:null,w:null};
       });
       histLombCache[key]=out;
       cb(out);
@@ -2560,14 +2589,41 @@ function histFromLombardia(station,days,cb){
     .catch(function(){cb(out);});
 }
 
-function histRender(station,regionKey,days,serie,selFrom,selTo,periodoLungo){
-  var body=document.getElementById('sh-body');
-  var vals=days.map(function(ds){return (typeof serie[ds]==='number')?serie[ds]:null;});
-  var known=vals.filter(function(v){return v!==null;});
-  if(!known.length){
-    body.innerHTML='<div class="sh-load">Storico non disponibile per questa stazione.</div>';
-    return;
+// ── Schede del pannello: 'mm' barre pioggia, 't' linee min/max, 'v' linee vento.
+// histTab è la scheda attiva e si ricorda tra una stazione e l'altra;
+// histCurrent tiene gli argomenti dell'ultimo render, così il cambio scheda
+// ridisegna dalla serie già scaricata senza nuove fetch.
+var histTab='mm';
+var histCurrent=null;
+// Da quando esistono t/w nei file (inizio del backfill): prima di questa data
+// le linee restano vuote per costruzione, e la nota lo dice.
+var METEO_HIST_FROM={austria:'2026-07-01'};
+
+function histAsseX(days){
+  var h='<div class="sh-x">';
+  days.forEach(function(ds,i){
+    h+='<span>'+((i%3===0)?ds.substring(8,10):'')+'</span>';
+  });
+  return h+'</div>';
+}
+
+function histNote(regionKey,days,periodoLungo){
+  var note=[];
+  if(periodoLungo) note.push('grafico: ultimi 30 giorni del periodo');
+  if(histTab==='mm'){
+    if(HIST_REAL_FROM[regionKey]) note.push('storico dal '+HIST_REAL_FROM[regionKey].split('-').reverse().join('/'));
+  }else{
+    var da=METEO_HIST_FROM[regionKey];
+    if(da&&days[0]<da) note.push('temperatura e vento dal '+da.split('-').reverse().join('/'));
   }
+  return note.length?'<div class="sh-note">'+note.join(' · ')+'</div>':'';
+}
+
+// Barre della pioggia (la scheda storica di sempre)
+function histRenderPioggia(days,serie,selFrom,selTo){
+  var vals=days.map(function(ds){return serie[ds]?serie[ds].mm:null;});
+  var known=vals.filter(function(v){return v!==null;});
+  if(!known.length) return null;
   var max=Math.max.apply(null,known);
   var scale=Math.max(max,4); // evita barre enormi con pioggia minima
   // linee guida: due tacche tonde sotto il massimo
@@ -2589,16 +2645,85 @@ function histRender(station,regionKey,days,serie,selFrom,selTo,periodoLungo){
     var lbl=(v===null)?'dato non disponibile':(v+' mm');
     h+='<div class="sh-bar" style="height:'+hh+'%;background:'+col+'" title="'+ds+' · '+lbl+'"></div>';
   });
-  h+='</div></div><div class="sh-x">';
-  days.forEach(function(ds,i){
-    h+='<span>'+((i%3===0)?ds.substring(8,10):'')+'</span>';
+  h+='</div></div>'+histAsseX(days);
+  return h;
+}
+
+// Linee di temperatura ('t': [min,max] °C) o vento ('v': [media,raffica] km/h).
+// I giorni senza dato interrompono la linea (segmenti separati), come le barre
+// spente della pioggia. Un giorno isolato si disegna come trattino corto.
+function histRenderLinee(days,serie,tipo){
+  var a=[],b=[]; // a = linea "alta" (max / raffica), b = linea "bassa" (min / media)
+  days.forEach(function(ds){
+    var o=serie[ds],arr=o&&(tipo==='t'?o.t:o.w);
+    b.push(arr&&typeof arr[0]==='number'?arr[0]:null);
+    a.push(arr&&typeof arr[1]==='number'?arr[1]:null);
   });
-  h+='</div>';
-  var note=[];
-  if(periodoLungo) note.push('grafico: ultimi 30 giorni del periodo');
-  if(HIST_REAL_FROM[regionKey]) note.push('storico dal '+HIST_REAL_FROM[regionKey].split('-').reverse().join('/'));
-  if(note.length) h+='<div class="sh-note">'+note.join(' · ')+'</div>';
-  body.innerHTML=h;
+  var known=a.concat(b).filter(function(v){return v!==null;});
+  if(!known.length) return null;
+  var mult=(tipo==='t')?5:20;
+  var lo=(tipo==='t')?Math.floor(Math.min.apply(null,known)/mult)*mult:0;
+  var hi=Math.ceil(Math.max.apply(null,known)/mult)*mult;
+  if(hi===lo) hi=lo+mult;
+  var ticks=[];
+  for(var t=lo+mult;t<hi;t+=mult) ticks.push(t);
+  while(ticks.length>3) ticks=ticks.filter(function(_,i){return i%2===1;});
+
+  function segmenti(vals){
+    var segs=[],cur=[];
+    vals.forEach(function(v,i){
+      if(v===null){if(cur.length)segs.push(cur);cur=[];return;}
+      var x=(vals.length===1)?50:i*(100/(vals.length-1));
+      var y=100-(v-lo)/(hi-lo)*100;
+      if(cur.length===0&&(i===vals.length-1||vals[i+1]===null))
+        cur.push((x-0.8).toFixed(2)+','+y.toFixed(2)); // giorno isolato → trattino
+      cur.push(x.toFixed(2)+','+y.toFixed(2));
+    });
+    if(cur.length)segs.push(cur);
+    return segs;
+  }
+  var colA=(tipo==='t')?'#ff8a65':'#ffd54f';
+  var colB=(tipo==='t')?'#7ec8f8':'#a5d6a7';
+  var h='<div class="sh-unit">'+((tipo==='t')?'°C':'km/h')+'</div><div class="sh-plot">';
+  ticks.forEach(function(tk){
+    h+='<div class="sh-grid" style="bottom:'+Math.round((tk-lo)/(hi-lo)*100)+'%"><span>'+tk+'</span></div>';
+  });
+  h+='<div class="sh-lines"><svg viewBox="0 0 100 100" preserveAspectRatio="none">';
+  [[a,colA],[b,colB]].forEach(function(sc){
+    segmenti(sc[0]).forEach(function(seg){
+      h+='<polyline points="'+seg.join(' ')+'" stroke="'+sc[1]+'"/>';
+    });
+  });
+  h+='</svg><div class="sh-hits">';
+  days.forEach(function(ds,i){
+    var lbl;
+    if(tipo==='t') lbl=(b[i]===null&&a[i]===null)?'dato non disponibile':('min '+b[i]+'° · max '+a[i]+'°');
+    else lbl=(b[i]===null&&a[i]===null)?'dato non disponibile':('media '+b[i]+' · raffica '+(a[i]===null?'—':a[i])+' km/h');
+    h+='<div title="'+ds+' · '+lbl+'"></div>';
+  });
+  h+='</div></div></div>'+histAsseX(days);
+  h+='<div class="sh-leg">'+
+     '<span><i style="background:'+colA+'"></i>'+((tipo==='t')?'massima':'raffica max')+'</span>'+
+     '<span><i style="background:'+colB+'"></i>'+((tipo==='t')?'minima':'media')+'</span></div>';
+  return h;
+}
+
+function histRender(station,regionKey,days,serie,selFrom,selTo,periodoLungo){
+  histCurrent={station:station,regionKey:regionKey,days:days,serie:serie,
+               selFrom:selFrom,selTo:selTo,periodoLungo:periodoLungo};
+  document.querySelectorAll('#st-history .sh-tab').forEach(function(b){
+    b.classList.toggle('on',b.getAttribute('data-t')===histTab);
+  });
+  var body=document.getElementById('sh-body');
+  var h;
+  if(histTab==='mm') h=histRenderPioggia(days,serie,selFrom,selTo);
+  else h=histRenderLinee(days,serie,histTab);
+  if(h===null){
+    var cosa=(histTab==='t')?'Temperatura non disponibile':(histTab==='v')?'Vento non disponibile':'Storico non disponibile';
+    body.innerHTML='<div class="sh-load">'+cosa+' per questa stazione.</div>';
+    return;
+  }
+  body.innerHTML=h+histNote(regionKey,days,periodoLungo);
 }
 
 function histPosition(mx,my){
@@ -2706,6 +2831,24 @@ function fmtBreve(d){
 }
 
 document.getElementById('sh-close').addEventListener('click',closeStationHistory);
+// Cambio scheda: ridisegna dalla serie già in memoria, nessuna nuova fetch.
+// La scelta resta per le stazioni successive (chi guarda il vento lo guarda
+// su più stazioni di fila).
+// ⚠️ Il pannello vive DENTRO il contenitore Leaflet: senza questo blocco il
+// click sul bottone risale fino a map.on('click') che chiude il pannello —
+// il grafico cambiava e un istante dopo spariva tutto (trovato al collaudo
+// headless del 10/8: subito=none). disableClickPropagation ferma anche
+// dblclick e mousedown, così due click veloci non zoomano la mappa.
+if(window.L&&L.DomEvent) L.DomEvent.disableClickPropagation(document.querySelector('#st-history .sh-tabs'));
+document.querySelectorAll('#st-history .sh-tab').forEach(function(b){
+  b.addEventListener('click',function(){
+    var t=b.getAttribute('data-t');
+    if(t===histTab) return;
+    histTab=t;
+    if(histCurrent) histRender(histCurrent.station,histCurrent.regionKey,histCurrent.days,
+      histCurrent.serie,histCurrent.selFrom,histCurrent.selTo,histCurrent.periodoLungo);
+  });
+});
 // Col mouse dentro al pannello non si chiude (serve per leggerlo e per il
 // tooltip dei valori sulle singole barre)
 histEl.addEventListener('mouseenter',function(){if(histHideT)clearTimeout(histHideT);});

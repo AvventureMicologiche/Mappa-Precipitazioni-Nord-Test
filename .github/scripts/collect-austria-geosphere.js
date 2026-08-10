@@ -24,6 +24,16 @@
  *     quella di Svizzera e OSMER Friuli.
  *  3. MIN_ORE=20 su 24, come per le altre fonti orarie.
  *
+ * TEMPERATURA E VENTO (dal 10/8/2026 — pilota grafici stazione):
+ *  la stessa richiesta porta anche `tl` (temperatura 2m, °C), `ff` (vento medio,
+ *  m/s) e `ffx` (raffica, m/s) — zero chiamate in più. Per ogni stazione-giorno
+ *  si scrivono due campi compatti, presenti solo se le ore valide sono ≥ MIN_ORE:
+ *    t: [min, max]        °C sul giorno solare italiano
+ *    w: [media, raffica]  km/h (conversione ×3,6 dal m/s della fonte)
+ *  Le stazioni senza termometro/anemometro semplicemente non hanno il campo,
+ *  e il pannello mostra «non disponibile». Niente merge min/max fra run: ogni
+ *  run ricalcola il giorno INTERO dalle ore, quindi l'ultimo scrive tutto.
+ *
  * VANTAGGI rispetto agli altri collector:
  *  - una sola richiesta copre TUTTE le stazioni insieme (non una per stazione
  *    come Liguria o Svizzera): niente batch da 199 chiamate;
@@ -211,26 +221,42 @@ async function main() {
 
   for (let i = 0; i < stations.length; i += BATCH) {
     const gruppo = stations.slice(i, i + BATCH);
-    const url = `${API}?parameters=rr&start=${iso(minStart + 3600000)}&end=${iso(maxEnd)}` +
+    const url = `${API}?parameters=rr,tl,ff,ffx&start=${iso(minStart + 3600000)}&end=${iso(maxEnd)}` +
                 `&station_ids=${gruppo.map(s => s.id).join(',')}&output_format=geojson`;
     const j = await getJson(url);
     const ts = (j.timestamps || []).map(t => Date.parse(t));
     for (const f of (j.features || [])) {
       const id = String(f.properties.station);
       const st = byId[id];
-      const dati = f.properties.parameters && f.properties.parameters.rr && f.properties.parameters.rr.data;
+      const P  = f.properties.parameters || {};
+      const dati = P.rr && P.rr.data;
       if (!st || !dati) continue;
+      const dTl  = (P.tl  && P.tl.data)  || [];
+      const dFf  = (P.ff  && P.ff.data)  || [];
+      const dFfx = (P.ffx && P.ffx.data) || [];
       for (const w of windows) {
         let sum = 0, n = 0;
+        let tmin = Infinity, tmax = -Infinity, nT = 0;
+        let ffSum = 0, nFF = 0, fxMax = -Infinity, nFX = 0;
         for (let k = 0; k < ts.length; k++) {
+          if (!(ts[k] > w.start && ts[k] <= w.end)) continue;
           const v = dati[k];
-          if (v == null) continue;
-          if (ts[k] > w.start && ts[k] <= w.end) { sum += v; n++; }
+          if (v != null) { sum += v; n++; }
+          const vt = dTl[k];   // sanity: fuori da [-45,50] °C è un glitch di sensore
+          if (vt != null && vt >= -45 && vt <= 50) { if (vt < tmin) tmin = vt; if (vt > tmax) tmax = vt; nT++; }
+          const vf = dFf[k];   // 60 m/s = 216 km/h di vento MEDIO orario: irreale
+          if (vf != null && vf >= 0 && vf < 60) { ffSum += vf; nFF++; }
+          const vx = dFfx[k];  // 90 m/s = 324 km/h di raffica: irreale anche in cresta
+          if (vx != null && vx >= 0 && vx < 90) { if (vx > fxMax) fxMax = vx; nFX++; }
         }
         if (n < MIN_ORE) continue;
         const mm = Math.round(sum * 10) / 10;
         if (mm < 0 || mm > 500) continue;   // valore implausibile: si scarta
-        perDay[w.dateStr].push({ id: st.id, n: st.n, lat: st.lat, lon: st.lon, q: st.q, p: st.p, mm });
+        const rec = { id: st.id, n: st.n, lat: st.lat, lon: st.lon, q: st.q, p: st.p, mm };
+        if (nT >= MIN_ORE)  rec.t = [Math.round(tmin * 10) / 10, Math.round(tmax * 10) / 10];
+        if (nFF >= MIN_ORE) rec.w = [Math.round(ffSum / nFF * 3.6 * 10) / 10,
+                                     nFX > 0 ? Math.round(fxMax * 3.6 * 10) / 10 : null];
+        perDay[w.dateStr].push(rec);
       }
     }
     console.log(`  batch ${i / BATCH + 1}/${Math.ceil(stations.length / BATCH)}: ${gruppo.length} stazioni`);
