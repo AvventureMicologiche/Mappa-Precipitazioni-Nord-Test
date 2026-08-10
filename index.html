@@ -978,21 +978,14 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <!-- Mobile: select dropdown -->
         <select id="region-select" class="region-select-mobile">
           <option value="">Tocca per scegliere la regione ▼</option>
-          <!-- Prima l'estero, poi le regioni italiane (ordine scelto il 6/8/2026) -->
+          <!-- Prima l'estero, poi le regioni italiane (ordine scelto il 6/8/2026).
+               Le 13 régions francesi NON stanno qui: allungavano la tendina e
+               spingevano le regioni italiane troppo in fondo (segnalato il
+               10/8/2026). La voce "Francia ▸" apre un SOTTOMENU: il change
+               handler ripopola la select con le régions (OPZIONI_FRANCIA) e
+               "← Tutte le regioni" riporta alla lista principale. -->
           <option value="austria">Austria (AT)</option>
-          <option value="francia-aura">Alvernia-Rodano-Alpi (FR)</option>
-          <option value="francia-bfc">Borgogna-Franca Contea (FR)</option>
-          <option value="francia-bretagna">Bretagna (FR)</option>
-          <option value="francia-centro">Centro-Valle Loira (FR)</option>
-          <option value="francia-corsica">Corsica (FR)</option>
-          <option value="francia-grandest">Grand Est (FR)</option>
-          <option value="francia-hdf">Hauts-de-France (FR)</option>
-          <option value="francia-idf">Île-de-France (FR)</option>
-          <option value="francia-normandia">Normandia (FR)</option>
-          <option value="francia-naq">Nuova Aquitania (FR)</option>
-          <option value="francia-occitania">Occitania (FR)</option>
-          <option value="francia-loira">Paesi della Loira (FR)</option>
-          <option value="francia-provenza">Provenza-Costa Azzurra (FR)</option>
+          <option value="__francia">Francia (FR) ▸</option>
           <option value="svizzera">Svizzera (CH)</option>
           <option value="piemonte-vda">Piemonte-Valle d'Aosta</option>
           <option value="liguria">Liguria</option>
@@ -1996,8 +1989,12 @@ if(screenW<=480){
 } else {
   initZoom = 6.25;
 }
-// Vista sull'Italia intera (dalle Alpi alla Sicilia)
-var initCenter=(screenW<=900)?[42.0,12.6]:[42.0,12.9];
+// Vista sull'Italia intera (dalle Alpi alla Sicilia). Su desktop il centro è
+// spostato a ovest (12,9→8,6 il 10/8/2026): l'Italia scivola a destra di
+// ~230px e la Francia occupa la fascia tra i pannelli e le Alpi; a destra si
+// perdono solo i Balcani. La Puglia resta comoda (Salento a ~440px dal bordo
+// a 1920). Mobile invariato: a zoom 5,5 l'Italia riempie già la larghezza.
+var initCenter=(screenW<=900)?[42.0,12.6]:[42.0,8.6];
 // zoomSnap 0.25: permette livelli di zoom a quarti (serve al controllo fine
 // dell'inquadratura multiregione, ZOOM_STEP). zoomDelta resta 0.5 → i pulsanti
 // +/- e la rotellina zoomano di 0,5 come prima (zoom manuale invariato).
@@ -5215,7 +5212,11 @@ var REGION_BOUNDS={
   var panelPx=isDesk?420:0;
   var z=map.getBoundsZoom(lb,false,L.point((panelPx/2)+30,70));
   if(z>=initZoom) return;   // ci sta già dentro: vista invariata
-  var shift=panelPx/2;
+  // +230px oltre la metà pannelli (10/8/2026): l'Italia scivola a destra e la
+  // Francia si vede di più anche sulle finestre basse, dove questo fit
+  // sostituisce l'initCenter di apertura. Il cap maxShift qui sotto resta e
+  // sulle finestre strette riduce lo spostamento senza mai tagliare l'Italia.
+  var shift=panelPx/2+(isDesk?230:0);
   if(isDesk){
     var nw=map.project(lb.getNorthWest(),z), se=map.project(lb.getSouthEast(),z);
     var maxShift=Math.max(0,(map.getSize().x-Math.abs(se.x-nw.x))/2-10);
@@ -5435,10 +5436,40 @@ document.getElementById('btn-funghi').addEventListener('click',function(){
   document.getElementById('datehdr').textContent=fmt(past21)+' – '+fmt(past15);
   loadData(past21,past15,label);
 });
-// Select mobile regioni
+// Select mobile regioni — a DUE LIVELLI dal 10/8/2026: le 13 régions francesi
+// stanno in un sottomenu (voce "Francia ▸"), se no la tendina spingeva le
+// regioni italiane troppo in fondo. La lista principale è quella nell'HTML,
+// fotografata qui al caricamento; il sottomenu vive solo in questa stringa.
+var OPZIONI_PRINCIPALI=document.getElementById('region-select').innerHTML;
+var OPZIONI_FRANCIA=
+  '<option value="">Francia — tocca la régione ▼</option>'+
+  '<option value="__indietro">← Tutte le regioni</option>'+
+  '<option value="francia-aura">Alvernia-Rodano-Alpi</option>'+
+  '<option value="francia-bfc">Borgogna-Franca Contea</option>'+
+  '<option value="francia-bretagna">Bretagna</option>'+
+  '<option value="francia-centro">Centro-Valle Loira</option>'+
+  '<option value="francia-corsica">Corsica</option>'+
+  '<option value="francia-grandest">Grand Est</option>'+
+  '<option value="francia-hdf">Hauts-de-France</option>'+
+  '<option value="francia-idf">Île-de-France</option>'+
+  '<option value="francia-normandia">Normandia</option>'+
+  '<option value="francia-naq">Nuova Aquitania</option>'+
+  '<option value="francia-occitania">Occitania</option>'+
+  '<option value="francia-loira">Paesi della Loira</option>'+
+  '<option value="francia-provenza">Provenza-Costa Azzurra</option>';
 document.getElementById('region-select').addEventListener('change', function(){
   var rk = this.value;
   if(!rk) return;
+  // Navigazione del sottomenu Francia: si ripopola la tendina e la si riapre
+  // subito dove il browser lo permette (showPicker: Chrome/Android recenti;
+  // altrove serve un secondo tocco — accettabile). Nessuna regione cambia.
+  if(rk==='__francia'||rk==='__indietro'){
+    this.innerHTML=(rk==='__francia')?OPZIONI_FRANCIA:OPZIONI_PRINCIPALI;
+    this.value='';
+    var sel=this;
+    try{ setTimeout(function(){ try{ sel.showPicker(); }catch(e){} },0); }catch(e){}
+    return;
+  }
   _vistaUtente=false; _vistaDaLink=false;   // nuova regione: si riparte dall'inquadratura automatica
   // Deseleziona tutti i checkbox
   document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){
