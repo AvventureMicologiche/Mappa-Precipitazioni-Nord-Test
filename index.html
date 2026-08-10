@@ -4080,6 +4080,17 @@ function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
 // ─── ARPA Emilia Romagna (file storici da GitHub) ───────────────
 function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
   var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/emilia';
+  // Le 8 stazioni che l'ARPAE ospita in provincia di GENOVA: sono le "gemelle",
+  // gli stessi pluviometri che OMIRL pubblica in data/liguria a meno di 600 m.
+  // Fuori dal rendering Emilia per due motivi: con Emilia e Liguria insieme
+  // venivano disegnate e pesate due volte nell'IDW, e su Alpe Gorreto il feed
+  // ARPAE ha dato 0 invece di "dato assente" per quattro giorni (29/6→2/7/2026,
+  // 90 mm spariti mentre OMIRL misurava 50,8 · 28,2 · 9,8 · 1,1).
+  // I file data/emilia restano intatti: servono da verifica ai check periodici.
+  // ⚠️ Sta QUI e non solo in prod apposta (10/8/2026): quando c'era solo in
+  // produzione, la promozione della Francia ha copiato l'index dal test e l'ha
+  // cancellato senza che nessuno se ne accorgesse.
+  var EMILIA_ESCLUSE={'5317':1,'5565':1,'5566':1,'5561':1,'5568':1,'3080':1,'3077':1,'12307':1};
   function _fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
 
   var todayStr=_fmt(new Date());
@@ -4119,6 +4130,7 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
       .then(function(data){
         if(data&&data.stations){
           data.stations.forEach(function(s){
+            if(s.id&&EMILIA_ESCLUSE[String(s.id)]) return;   // gemelle liguri: le porta OMIRL
             var key=s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
