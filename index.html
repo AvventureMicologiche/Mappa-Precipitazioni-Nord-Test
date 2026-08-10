@@ -2652,6 +2652,9 @@ function histRenderPioggia(days,serie,selFrom,selTo){
 // Linee di temperatura ('t': [min,max] °C) o vento ('v': [media,raffica] km/h).
 // I giorni senza dato interrompono la linea (segmenti separati), come le barre
 // spente della pioggia. Un giorno isolato si disegna come trattino corto.
+// ⚠️ Il VENTO disegna la SOLA media (10/8, decisione utente): la raffica in
+// scala schiacciava la media sul fondo rendendola illeggibile. La raffica
+// resta nel tooltip del giorno e nei file (campo w[1]), non nel grafico.
 function histRenderLinee(days,serie,tipo){
   var a=[],b=[]; // a = linea "alta" (max / raffica), b = linea "bassa" (min / media)
   days.forEach(function(ds){
@@ -2659,9 +2662,9 @@ function histRenderLinee(days,serie,tipo){
     b.push(arr&&typeof arr[0]==='number'?arr[0]:null);
     a.push(arr&&typeof arr[1]==='number'?arr[1]:null);
   });
-  var known=a.concat(b).filter(function(v){return v!==null;});
+  var known=((tipo==='t')?a.concat(b):b).filter(function(v){return v!==null;});
   if(!known.length) return null;
-  var mult=(tipo==='t')?5:20;
+  var mult=5;
   var lo=(tipo==='t')?Math.floor(Math.min.apply(null,known)/mult)*mult:0;
   var hi=Math.ceil(Math.max.apply(null,known)/mult)*mult;
   if(hi===lo) hi=lo+mult;
@@ -2682,14 +2685,14 @@ function histRenderLinee(days,serie,tipo){
     if(cur.length)segs.push(cur);
     return segs;
   }
-  var colA=(tipo==='t')?'#ff8a65':'#ffd54f';
-  var colB=(tipo==='t')?'#7ec8f8':'#a5d6a7';
+  var colA='#ff8a65';
+  var colB=(tipo==='t')?'#7ec8f8':'#ffd54f';
   var h='<div class="sh-unit">'+((tipo==='t')?'°C':'km/h')+'</div><div class="sh-plot">';
   ticks.forEach(function(tk){
     h+='<div class="sh-grid" style="bottom:'+Math.round((tk-lo)/(hi-lo)*100)+'%"><span>'+tk+'</span></div>';
   });
   h+='<div class="sh-lines"><svg viewBox="0 0 100 100" preserveAspectRatio="none">';
-  [[a,colA],[b,colB]].forEach(function(sc){
+  ((tipo==='t')?[[a,colA],[b,colB]]:[[b,colB]]).forEach(function(sc){
     segmenti(sc[0]).forEach(function(seg){
       h+='<polyline points="'+seg.join(' ')+'" stroke="'+sc[1]+'"/>';
     });
@@ -2702,9 +2705,13 @@ function histRenderLinee(days,serie,tipo){
     h+='<div title="'+ds+' · '+lbl+'"></div>';
   });
   h+='</div></div></div>'+histAsseX(days);
-  h+='<div class="sh-leg">'+
-     '<span><i style="background:'+colA+'"></i>'+((tipo==='t')?'massima':'raffica max')+'</span>'+
-     '<span><i style="background:'+colB+'"></i>'+((tipo==='t')?'minima':'media')+'</span></div>';
+  if(tipo==='t')
+    h+='<div class="sh-leg">'+
+       '<span><i style="background:'+colA+'"></i>massima</span>'+
+       '<span><i style="background:'+colB+'"></i>minima</span></div>';
+  else
+    h+='<div class="sh-leg"><span><i style="background:'+colB+'"></i>media giornaliera'+
+       '</span><span>raffiche nel dettaglio dei giorni</span></div>';
   return h;
 }
 
