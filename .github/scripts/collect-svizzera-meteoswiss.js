@@ -30,6 +30,17 @@
  * (~50 stazioni contro le 19 di MeteoSwiss sul cantone — vedi CLAUDE.md).
  * Le 3 stazioni del Liechtenstein (FL) restano: fuori dal confine ma utili
  * all'IDW della valle del Reno, come le 5 Veneto per il Friuli.
+ *
+ * TEMPERATURA E VENTO (dall'11/8/2026 — pilota grafici stazione):
+ * dagli STESSI CSV già scaricati si leggono anche, dove presenti (solo rete
+ * SMN completa, ~160 stazioni; le solo-pioggia hanno il CSV a 3 colonne):
+ *   tre200hn / tre200hx  → minima e massima VERE dentro l'ora (meglio della
+ *                          media oraria: il minimo notturno non si perde)
+ *   fkl010h0 / fkl010h1  → vento medio e raffica in m/s (×3,6 → km/h; la
+ *                          controprova è nelle colonne fu3010h* già in km/h)
+ * Campi scritti per stazione-giorno, solo con ore valide ≥ MIN_ORE:
+ *   t: [min, max] °C   ·   w: [media, raffica] km/h
+ * Ogni run ricalcola il giorno intero dalle ore → nessun merge min/max fra run.
  */
 
 const https = require('https');
@@ -115,7 +126,11 @@ function parseTs(s) {
   return Date.UTC(+m[3], +m[2] - 1, +m[1], +m[4], +m[5]);
 }
 
-/** Estrae [ [msUTC, mm], ... ] dalla colonna rre150h0 di un CSV orario. */
+/**
+ * Estrae [ [msUTC, mm, tn, tx, ff, fx], ... ] da un CSV orario: pioggia
+ * rre150h0 (obbligatoria: senza, la riga si scarta) più, dove il CSV le ha
+ * (solo rete SMN), tre200hn/hx (°C) e fkl010h0/h1 (m/s) — null se assenti.
+ */
 function parseHourly(buf) {
   const text = buf.toString('utf8');
   const lines = text.trim().split(/\r?\n/);
@@ -123,6 +138,15 @@ function parseHourly(buf) {
   const iTs = head.indexOf('reference_timestamp');
   const iV  = head.indexOf('rre150h0');
   if (iTs < 0 || iV < 0) return null;
+  const iTn = head.indexOf('tre200hn'), iTx = head.indexOf('tre200hx');
+  const iFf = head.indexOf('fkl010h0'), iFx = head.indexOf('fkl010h1');
+  const num = (c, i) => {
+    if (i < 0) return null;
+    const raw = c[i];
+    if (raw === '' || raw === undefined) return null;
+    const v = parseFloat(raw);
+    return isNaN(v) ? null : v;
+  };
   const out = [];
   for (let i = 1; i < lines.length; i++) {
     const c = lines[i].split(';');
@@ -132,7 +156,7 @@ function parseHourly(buf) {
     if (raw === '' || raw === undefined) continue;
     const v = parseFloat(raw);
     if (isNaN(v) || v < 0) continue;
-    out.push([t, v]);
+    out.push([t, v, num(c, iTn), num(c, iTx), num(c, iFf), num(c, iFx)]);
   }
   return out;
 }
@@ -206,12 +230,28 @@ async function collectStation(st, windows, maxEnd) {
   const res = {};
   for (const w of windows) {
     let sum = 0, n = 0;
-    for (const [t, v] of rows) {
-      if (t > w.start && t <= w.end) { sum += v; n++; }
+    let tmin = Infinity, tmax = -Infinity, nT = 0;
+    let ffSum = 0, nFF = 0, fxMax = -Infinity, nFX = 0;
+    for (const [t, v, tn, tx, ff, fx] of rows) {
+      if (!(t > w.start && t <= w.end)) continue;
+      sum += v; n++;
+      // sanity come per l'Austria: fuori da [-45,50] °C o vento medio ≥60 m/s = glitch
+      if (tn != null && tn >= -45 && tn <= 50) { if (tn < tmin) tmin = tn; nT++; }
+      if (tx != null && tx >= -45 && tx <= 50) { if (tx > tmax) tmax = tx; }
+      if (ff != null && ff >= 0 && ff < 60) { ffSum += ff; nFF++; }
+      if (fx != null && fx >= 0 && fx < 90) { if (fx > fxMax) fxMax = fx; nFX++; }
     }
     if (n >= MIN_ORE) {
       const mm = Math.round(sum * 10) / 10;
-      if (mm >= 0 && mm <= 500) res[w.dateStr] = mm;
+      if (mm >= 0 && mm <= 500) {
+        const rec = { mm };
+        if (nT >= MIN_ORE && tmax > -Infinity)
+          rec.t = [Math.round(tmin * 10) / 10, Math.round(tmax * 10) / 10];
+        if (nFF >= MIN_ORE)
+          rec.w = [Math.round(ffSum / nFF * 3.6 * 10) / 10,
+                   nFX > 0 ? Math.round(fxMax * 3.6 * 10) / 10 : null];
+        res[w.dateStr] = rec;
+      }
     }
   }
   return res;
@@ -292,7 +332,11 @@ async function main() {
       done++;
       if (!res) continue;
       for (const dateStr of Object.keys(res)) {
-        perDay[dateStr].push({ id: st.abbr, n: st.name, lat: st.lat, lon: st.lon, q: st.q, p: st.canton, mm: res[dateStr] });
+        const r = res[dateStr]; // {mm, t?, w?} — vedi collectStation
+        const rec = { id: st.abbr, n: st.name, lat: st.lat, lon: st.lon, q: st.q, p: st.canton, mm: r.mm };
+        if (r.t) rec.t = r.t;
+        if (r.w) rec.w = r.w;
+        perDay[dateStr].push(rec);
       }
     }
     process.stdout.write(`  ${done}/${stations.length} stazioni\r`);
