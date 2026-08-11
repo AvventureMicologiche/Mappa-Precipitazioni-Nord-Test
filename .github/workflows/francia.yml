@@ -22,11 +22,18 @@ on:
   # ⚠️ Serve il secret METEOFRANCE_API_KEY (chiave del portale
   # portail-api.meteofrance.fr, scade il 9/8/2028): senza, il collector esce
   # subito con errore esplicito.
+  # ⚠️ ORARI SFALSATI DALLA PRODUZIONE (11/8/2026). Dalla promozione del 10/8 i
+  # due repo giravano AGLI STESSI MINUTI con la STESSA chiave API: ~190 richieste
+  # in pochi minuti contro il tetto di 100/min di Météo-France → HTTP 429, tre
+  # run falliti di fila su entrambi (14:34, 23:20, 04:43), retry compresi perché
+  # anche quelli partivano in sincrono. Gli orari qui sotto stanno ad almeno 75
+  # minuti da ogni cron prod (50 22 / 25 3 / 45 5 / 25 13) IN ENTRAMBE le
+  # direzioni, perché i cron di GitHub slittano in avanti fino a ~70 minuti.
+  # Al test bastano 3 run: il pacchetto tiene ~5 giorni, D-1..D-4 si riparano.
   schedule:
-    - cron: '50 22 * * *'
-    - cron: '25 3 * * *'
-    - cron: '45 5 * * *'
-    - cron: '25 13 * * *'
+    - cron: '0 1 * * *'
+    - cron: '0 8 * * *'
+    - cron: '0 16 * * *'
 permissions:
   contents: write
 jobs:
