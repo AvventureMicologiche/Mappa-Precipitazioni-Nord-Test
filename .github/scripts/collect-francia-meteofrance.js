@@ -18,6 +18,14 @@
  *     alpini, intero 2026.
  *  3. MIN_ORE=20 su 24, come per le altre fonti orarie.
  *
+ * TEMPERATURA E VENTO (dall'11/8/2026 — pilota grafici stazione):
+ * dagli stessi pacchetti si leggono anche `t`/`tn`/`tx` (⚠️ in KELVIN: si
+ * normalizza — un valore >100 è K e si sottrae 273,15) e `ff`/`fxi` (m/s
+ * ×3,6 → km/h). Campi per stazione-giorno, solo con ore ≥ MIN_ORE:
+ *   t: [min, max] °C   ·   w: [media, raffica] km/h
+ * Colonne lette in modo difensivo (assenti → campo assente). Il backfill dei
+ * 45 giorni è di backfill-meteo-francia.js (mirror S3, colonne TN/TX/FF/FXI).
+ *
  * NOTE OPERATIVE:
  *  - CHIAVE obbligatoria (env METEOFRANCE_API_KEY, secret GitHub): scade il
  *    9/8/2028 col nostro abbonamento. 401 improvvisi = chiave, si rigenera.
@@ -235,22 +243,55 @@ async function main() {
     const reg = REGIONE_DI[dip];
     const righe = parseCsv(await getCsv(`${API}/paquet/horaire?id-departement=${parseInt(dip, 10)}&format=csv`));
     const ore = {};
+    // Kelvin → °C se serve (il pacchetto pubblica t in K, il mirror in °C)
+    const gradi = raw => {
+      if (raw === '' || raw === undefined) return null;
+      const v = parseFloat(raw);
+      if (isNaN(v)) return null;
+      return v > 100 ? Math.round((v - 273.15) * 10) / 10 : v;
+    };
+    const metri = raw => {
+      if (raw === '' || raw === undefined) return null;
+      const v = parseFloat(raw);
+      return isNaN(v) ? null : v;
+    };
     for (const r of righe) {
       if (r.rr1 === '' || r.rr1 === undefined) continue;
       const ts = Date.parse(r.validity_time);
       if (!isFinite(ts)) continue;
-      (ore[r.geo_id_insee] = ore[r.geo_id_insee] || []).push([ts, parseFloat(r.rr1)]);
+      const t = gradi(r.t);
+      const tlo = gradi(r.tn) != null ? gradi(r.tn) : t;   // min nell'ora, ripiego sull'istantanea
+      const thi = gradi(r.tx) != null ? gradi(r.tx) : t;
+      const ff = metri(r.ff);
+      const fx = metri(r.fxi) != null ? metri(r.fxi) : metri(r.fxy);
+      (ore[r.geo_id_insee] = ore[r.geo_id_insee] || []).push([ts, parseFloat(r.rr1), tlo, thi, ff, fx]);
     }
     for (const id of Object.keys(ore)) {
       const st = byId[id];
       if (!st) { ignote++; continue; }
       for (const w of windows) {
         let sum = 0, n = 0;
-        for (const [ts, v] of ore[id]) if (ts > w.start && ts <= w.end && isFinite(v)) { sum += v; n++; }
+        let tmin = Infinity, tmax = -Infinity, nT = 0;
+        let ffSum = 0, nFF = 0, fxMax = -Infinity, nFX = 0;
+        for (const [ts, v, tlo, thi, ff, fx] of ore[id]) {
+          if (!(ts > w.start && ts <= w.end)) continue;
+          if (isFinite(v)) { sum += v; n++; }
+          // sanity come Austria/Svizzera: fuori da [-45,50] °C o medio ≥60 m/s = glitch
+          if (tlo != null && tlo >= -45 && tlo <= 50) { if (tlo < tmin) tmin = tlo; nT++; }
+          if (thi != null && thi >= -45 && thi <= 50) { if (thi > tmax) tmax = thi; }
+          if (ff != null && ff >= 0 && ff < 60) { ffSum += ff; nFF++; }
+          if (fx != null && fx >= 0 && fx < 90) { if (fx > fxMax) fxMax = fx; nFX++; }
+        }
         if (n < MIN_ORE) continue;
         const mm = Math.round(sum * 10) / 10;
         if (mm < 0 || mm > 500) continue;
-        perRegDay[reg.key][w.dateStr].push({ id: st.id, n: st.n, lat: st.lat, lon: st.lon, q: st.q, p: st.p, mm });
+        const rec = { id: st.id, n: st.n, lat: st.lat, lon: st.lon, q: st.q, p: st.p, mm };
+        if (nT >= MIN_ORE && tmax > -Infinity)
+          rec.t = [Math.round(tmin * 10) / 10, Math.round(tmax * 10) / 10];
+        if (nFF >= MIN_ORE)
+          rec.w = [Math.round(ffSum / nFF * 3.6 * 10) / 10,
+                   nFX > 0 ? Math.round(fxMax * 3.6 * 10) / 10 : null];
+        perRegDay[reg.key][w.dateStr].push(rec);
       }
     }
     fatti++;
@@ -269,7 +310,8 @@ async function main() {
       if (writeDay(r.key, w.dateStr, perRegDay[r.key][w.dateStr], minStaz)) { scritti++; tot = perRegDay[r.key][w.dateStr].length; }
     }
     pulizia(r.key);
-    console.log(`  ${r.nome}: ~${tot} stazioni/giorno (anagrafe ${anagrafePerReg[r.key] || 0})`);
+    const conT = (perRegDay[r.key][windows[0].dateStr] || []).filter(s => s.t).length;
+    console.log(`  ${r.nome}: ~${tot} stazioni/giorno (anagrafe ${anagrafePerReg[r.key] || 0}, con temperatura ${conT})`);
   }
   console.log(`=== fine: ${scritti}/${attesi} file scritti ===`);
   if (scritti === 0) process.exit(1);
