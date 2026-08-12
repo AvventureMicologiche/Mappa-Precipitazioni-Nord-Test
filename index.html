@@ -869,7 +869,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
            su un Pixel 9 (412), spingendo fuori il tasto "Iscriviti"; e anche il
            solo "+ Svizzera" traboccava già di 9px a 360. Su telefono resta
            "Mappa Pluviometrica Italia", che entra anche a 320. -->
-      <h1>Mappa Pluviometrica<span class="hdr-paesi"> Italia · Svizzera · Austria · Francia</span> <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v7.0)</span></h1>
+      <h1>Mappa Pluviometrica<span class="hdr-paesi"> Italia · Svizzera · Austria · Francia · Slovenia</span> <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v8.0)</span></h1>
       <div class="hdr-sub" id="datehdr"></div>
     </div>
   </div>
@@ -2521,6 +2521,29 @@ function hideTooltip(){tooltip.style.display='none';}
 // gli ultimi 30 (il totale in alto resta quello dell'intero periodo).
 // ═══════════════════════════════════════════════════════════════
 var HIST_DAYS=30;
+
+// ── Badge ed elenco dei paesi si danno il cambio (12/8/2026) ─────────
+// I due occupano lo STESSO spazio nell'header e non devono mai convivere: a
+// riposo si leggono le nazioni coperte, appena parte un'analisi il badge le
+// sostituisce con stazioni e fonte, e tornando indietro riappaiono.
+//
+// PERCHE' COSI'. Il badge e' centrato in posizione assoluta e passa SOPRA il
+// titolo: con l'elenco lungo si sovrapponevano gia' da 910px di larghezza, e
+// da 1063 con piu' reti selezionate (misurato, badge «161 stazioni · ARSO
+// Slovenia + ARPA OSMER FVG + ARPA Veneto» = 306px). Il difetto esisteva gia'
+// PRIMA della Slovenia — a 999px — e nessuna soglia lo chiudeva, perche' il
+// badge cambia larghezza con la regione scelta e il punto di rottura si
+// sposta mentre navighi. Alternandoli, la larghezza minima non e' piu' la
+// SOMMA dei due ma il piu' largo dei due: nessuna media query da tarare.
+//
+// Su schermo stretto l'elenco resta nascosto dalla media query dei 600px:
+// rimettendo display:'' si torna alla regola CSS, non a "visibile sempre".
+function setBadge(testo){
+  var b=document.getElementById('badge');
+  if(b) b.textContent=testo||'';
+  var p=document.querySelector('.hdr-paesi');
+  if(p) p.style.display=testo?'none':'';
+}
 var HIST_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
 // Override base-URL per lo storico di alcune "regioni" logiche: il dato OSMER
 // del Friuli sta nel repo di TEST (pilota), non in produzione.
@@ -3722,7 +3745,7 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
   document.getElementById('smx').textContent=Math.round(mx*10)/10;
   document.getElementById('sav').textContent=av;
   document.getElementById('smn').textContent=Math.round(mn*10)/10;
-  document.getElementById('badge').textContent=dati.length+' stazioni · '+fonte;
+  setBadge(dati.length+' stazioni · '+fonte);
   document.getElementById('leg-title').textContent='mm cumulati ('+labelPeriodo+')';
   document.getElementById('legend-panel').style.display='block';
   showLegendMobile();
@@ -5444,7 +5467,7 @@ function resetToStart(){
   clearMarkers(); clearHeatmap();
   document.getElementById('legend-panel').style.display='none';
   hideLegendMobile();
-  document.getElementById('badge').textContent='';
+  setBadge('');
   document.getElementById('datehdr').textContent='';
   var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
   document.querySelectorAll('.tp-btn,.tp-custom-btn').forEach(function(b){b.classList.remove('active');});
@@ -5835,7 +5858,7 @@ document.getElementById('region-select').addEventListener('change', function(){
   clearMarkers(); clearHeatmap();
   document.getElementById('legend-panel').style.display='none';
   hideLegendMobile();
-  document.getElementById('badge').textContent='';
+  setBadge('');
   document.getElementById('datehdr').textContent='';
   var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
   // Centra mappa. SENZA animazione (6/8/2026): il volo animato era ancora in
@@ -5920,7 +5943,7 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
     clearHeatmap();
     document.getElementById('legend-panel').style.display='none';
     hideLegendMobile();
-    document.getElementById('badge').textContent='';
+    setBadge('');
     var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
     // Zoom in DUE TEMPI (27/7): alla selezione ci si avvicina a METÀ strada
     // (factor 0.5 — le altre regioni restano cliccabili), il fit completo
