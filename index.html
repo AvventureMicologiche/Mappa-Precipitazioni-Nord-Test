@@ -967,6 +967,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <label class="rcheck-wrap"><input type="checkbox" id="chk-lombardia" value="lombardia"><span class="rcheck-box"></span><span class="rcheck-name">Lombardia</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-svizzera" value="svizzera"><span class="rcheck-box"></span><span class="rcheck-name">Svizzera (CH)</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-austria" value="austria"><span class="rcheck-box"></span><span class="rcheck-name">Austria (AT)</span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-slovenia" value="slovenia"><span class="rcheck-box"></span><span class="rcheck-name">Slovenia (SI)</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-aura" value="francia-aura"><span class="rcheck-box"></span><span class="rcheck-name">Alvernia-Rodano-Alpi (FR)</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-bfc" value="francia-bfc"><span class="rcheck-box"></span><span class="rcheck-name">Borgogna-Franca Contea (FR)</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-francia-bretagna" value="francia-bretagna"><span class="rcheck-box"></span><span class="rcheck-name">Bretagna (FR)</span></label>
@@ -1025,6 +1026,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
                togliere alla sola voce Indietro senza sostituire la select con
                un menu custom. -->
           <option value="austria">Austria (AT)</option>
+          <option value="slovenia">Slovenia (SI)</option>
           <option value="__francia">Francia (FR) ▸</option>
           <option value="svizzera">Svizzera (CH)</option>
           <option value="piemonte-vda">Piemonte-Valle d'Aosta</option>
@@ -1603,6 +1605,24 @@ var REGIONS = {
     geojsonUrl: 'austria-confine.geojson',
     geojsonFilter: 'austria',
     dataSource: 'austria',
+    stations: []
+  },
+
+  // Slovenia — ARSO, archivio mezz'orario delle stazioni automatiche (pilota
+  // dal 12/8/2026). ~115 stazioni al giorno su 124 in anagrafe, con QUOTA.
+  // Le marche temporali sono in CET fisso e indicano la FINE della mezz'ora:
+  // le misure che lo dimostrano stanno nel collector.
+  // L'archivio pubblica con ~34 ore di ritardo, quindi il giorno piu recente
+  // e sempre l'altroieri e la voce "Ieri" per la Slovenia resta vuota: e
+  // voluto, un totale parziale sembrerebbe una giornata asciutta.
+  // Confine OSM/Nominatim semplificato a ~70 m (ODbL, dichiarato in fonti).
+  slovenia: {
+    name: 'Slovenia',
+    center: [46.15, 14.9], zoom: 8,
+    fonte: 'ARSO Slovenia',
+    geojsonUrl: 'slovenia-confine.geojson',
+    geojsonFilter: 'slovenia',
+    dataSource: 'slovenia',
     stations: []
   },
 
@@ -2512,7 +2532,8 @@ var HIST_RAW_BY_REGION={
   'friuli-osmer':PILOT_DATA_BASE,
   'valledaosta-cf':PILOT_DATA_BASE,
   'svizzera':PILOT_DATA_BASE,  // pilota MeteoSwiss (il Ticino OASI resta su HIST_RAW prod)
-  'austria':PILOT_DATA_BASE    // pilota GeoSphere Austria
+  'austria':PILOT_DATA_BASE,   // pilota GeoSphere Austria
+  'slovenia':PILOT_DATA_BASE   // pilota ARSO Slovenia
 };
 function histRawBase(region){ if(region&&(region.indexOf('meteohub-')===0||region.indexOf('francia')===0)) return PILOT_DATA_BASE; return HIST_RAW_BY_REGION[region]||HIST_RAW; }
 // Piloti VdA-CF e Friuli-OSMER: lo storico è backfill Open-Meteo (stime, source
@@ -2610,7 +2631,7 @@ var histTab='mm';
 var histCurrent=null;
 // Da quando esistono t/w nei file (inizio del backfill): prima di questa data
 // le linee restano vuote per costruzione, e la nota lo dice.
-var METEO_HIST_FROM={austria:'2026-07-01'};
+var METEO_HIST_FROM={austria:'2026-07-01',slovenia:'2026-06-27'};
 
 function histAsseX(days){
   var h='<div class="sh-x">';
@@ -3513,6 +3534,10 @@ function loadData(pastDate,nowDate,labelPeriodo){
       loadAustriaRegion(pastDate,nowDate,labelPeriodo,function(dati){
         onRegionDone(dati,'🟢 GeoSphere Austria',regionKey);
       });
+    } else if(source==='slovenia'){
+      loadSloveniaRegion(pastDate,nowDate,labelPeriodo,function(dati){
+        onRegionDone(dati,'🟢 ARSO Slovenia',regionKey);
+      });
     } else if(source==='francia'){
       loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,function(dati){
         onRegionDone(dati,'🟢 Météo-France',regionKey);
@@ -4372,6 +4397,50 @@ function loadAustriaRegion(pastDate,nowDate,labelPeriodo,cb){
   });
 }
 
+// SLOVENIA — ARSO, archivio mezz'orario (pilota dal 12/8/2026).
+// Fonte unica e storico REALE dal primo giorno: gemello del loader austriaco.
+// ═══════════════════════════════════════════════════════════════
+function loadSloveniaRegion(pastDate,nowDate,labelPeriodo,cb){
+  var SI_RAW=PILOT_DATA_BASE+'slovenia';
+  var rainTot={}, stMeta={};
+  var dates=[];
+  var d=new Date(pastDate.getTime());
+  while(d<=nowDate){
+    var y=d.getFullYear(),mo=String(d.getMonth()+1).padStart(2,'0'),dy=String(d.getDate()).padStart(2,'0');
+    dates.push(y+'-'+mo+'-'+dy);
+    d.setDate(d.getDate()+1);
+  }
+  var pending=dates.length;
+  if(pending===0){cb([]);return;}
+  dates.forEach(function(dateStr){
+    fetch(SI_RAW+'/'+dateStr+'.json')
+      .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(usaGiorno)
+      .then(function(data){
+        if(data.stations){
+          data.stations.forEach(function(s){
+            var key=s.id||s.n;
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'SI'};
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+          });
+        }
+      })
+      .catch(function(){})
+      .finally(function(){
+        pending--;
+        if(pending>0) return;
+        var full=Object.keys(rainTot).map(function(key){
+          var s=stMeta[key];if(!s)return null;
+          var mm=rainTot[key]||0;
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'SI',mm:mm<0.5?0:Math.round(mm*10)/10};
+        }).filter(Boolean);
+        if(full.length<5){cb([]);return;}
+        full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
+        cb(full);
+      });
+  });
+}
+
 // FRANCIA — Météo-France, 6 dipartimenti di confine (pilota dal 9/8/2026).
 // Fonte unica e storico REALE dal primo giorno (backfill dai CSV
 // climatologici, stessa banca dati dell'API): il loader è il gemello di
@@ -5110,7 +5179,7 @@ function setRegionBorder(regionKey,cb){
         // Il tratteggio della Svizzera (confine di stato) resta anche sul bordo
         // disegnato durante l'analisi, così l'identità non sparisce coi dati.
         style:{color:'#1b3f6e',weight:1.5,opacity:0.6,fill:false,
-               dashArray:(regionKey==='svizzera'||regionKey==='austria'||regionKey.indexOf('francia')===0)?'6 4':null}
+               dashArray:(regionKey==='svizzera'||regionKey==='austria'||regionKey==='slovenia'||regionKey.indexOf('francia')===0)?'6 4':null}
       }).addTo(map);
       regionBorders[regionKey]=layer;
 
@@ -5139,7 +5208,7 @@ function selStyle(on,rk){
   // respiro sincronizzato e l'header "Italia + Svizzera" bastava il tratteggio,
   // e niente tinte in mappa — verde e rosso sono già le "parole" della scala
   // pioggia.
-  var ch=(rk==='svizzera'||rk==='austria'||rk.indexOf('francia')===0);   // stati esteri: bordo tratteggiato
+  var ch=(rk==='svizzera'||rk==='austria'||rk==='slovenia'||rk.indexOf('francia')===0);   // stati esteri: bordo tratteggiato
   if(on){
     // Con un'analisi visibile NIENTE riempimento (coprirebbe la heatmap):
     // resta il bordo marcato. fillOpacity 0 (non fill:false) così l'interno
@@ -5338,6 +5407,7 @@ var REGION_BOUNDS={
   // Austria (bbox nazionale BEV). Come la Svizzera è esclusa dalla vista di
   // apertura: entrerebbe da est allargando l'inquadratura su mezza Europa.
   austria:     [[46.37, 9.53],[49.02,17.16]],
+  slovenia:    [[45.42,13.37],[46.88,16.60]],
   // Francia: bbox delle 13 régions (confini IGN). Tutte escluse dalla
   // vista di apertura come Svizzera e Austria.
   'francia-aura': [[44.12, 2.06],[46.8, 7.19]],
@@ -5388,7 +5458,7 @@ var REGION_BOUNDS={
     // Stessa cosa per l'Austria (5/8/2026), e a maggior ragione: si spinge
     // fino a 17,2°E, quindi includerla trascinerebbe l'inquadratura verso est
     // fino all'Ungheria, con l'Italia schiacciata a sinistra.
-    if(rk==='svizzera'||rk==='austria'||rk.indexOf('francia')===0) return;
+    if(rk==='svizzera'||rk==='austria'||rk==='slovenia'||rk.indexOf('francia')===0) return;
     var b=REGION_BOUNDS[rk];
     if(b[0][0]<latMin) latMin=b[0][0];
     if(b[1][0]>latMax) latMax=b[1][0];
@@ -5449,7 +5519,7 @@ var REGION_BOUNDS={
   var MARGINE_SUD=25, LIMITE_NORD=49.10;
   var latMin=90,latMax=-90;
   Object.keys(REGION_BOUNDS).forEach(function(rk){
-    if(rk==='svizzera'||rk==='austria'||rk.indexOf('francia')===0) return;   // la vista di apertura è l'Italia
+    if(rk==='svizzera'||rk==='austria'||rk==='slovenia'||rk.indexOf('francia')===0) return;   // la vista di apertura è l'Italia
     var b=REGION_BOUNDS[rk];
     if(b[0][0]<latMin) latMin=b[0][0];
     if(b[1][0]>latMax) latMax=b[1][0];
@@ -5554,9 +5624,10 @@ var REGION_ADJ={
   veneto:['lombardia','emilia','trentino','altoadige','friuli','austria'],
   trentino:['lombardia','veneto','altoadige'],
   altoadige:['trentino','veneto','svizzera','austria'],
-  friuli:['veneto','austria'],
+  friuli:['veneto','austria','slovenia'],
   svizzera:['valledaosta','piemonte','lombardia','altoadige','austria','francia-aura','francia-bfc','francia-grandest'],
-  austria:['svizzera','altoadige','veneto','friuli'],
+  austria:['svizzera','altoadige','veneto','friuli','slovenia'],
+  slovenia:['austria','friuli'],
   'francia-aura':['valledaosta','piemonte','svizzera','francia-provenza','francia-occitania','francia-naq','francia-centro','francia-bfc'],
   'francia-provenza':['liguria','piemonte','francia-aura','francia-occitania'],
   'francia-occitania':['francia-provenza','francia-aura','francia-naq'],
@@ -6603,6 +6674,25 @@ function loadAustriaStations(cb){
       .catch(function(){ idx++; attempt(); });
   })();
 }
+// Slovenia: stessa ricetta dell'Austria, ma con piu riserva sui giorni: qui
+// l'archivio ha ~34 ore di ritardo e il file di ieri non esiste mai.
+var sloveniaStationsCache=null;
+function loadSloveniaStations(cb){
+  if(sloveniaStationsCache){ cb(sloveniaStationsCache); return; }
+  var RAW=PILOT_DATA_BASE+'slovenia';
+  var tries=[], now=new Date();
+  for(var i=2;i<=8;i++){ var d=new Date(now.getTime()-i*86400000); tries.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')); }
+  var idx=0;
+  (function attempt(){
+    if(idx>=tries.length){ cb([]); return; }
+    fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
+      .then(function(data){
+        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'SI'};});
+        sloveniaStationsCache=st; cb(st);
+      })
+      .catch(function(){ idx++; attempt(); });
+  })();
+}
 // Francia: anagrafe da un file recente, gemella di quella austriaca ma
 // con cache PER régione (13 cartelle indipendenti).
 var franciaStationsCache={};
@@ -6637,6 +6727,11 @@ function addDefaultMarkersForRegion(regionKey){
   // Austria: come MeteoHub e Svizzera, nessuna lista stations statica.
   if(cfg && cfg.dataSource==='austria'){
     loadAustriaStations(function(st){ drawDefaultMarkers(st,cfg); });
+    return;
+  }
+  // Slovenia: idem.
+  if(cfg && cfg.dataSource==='slovenia'){
+    loadSloveniaStations(function(st){ drawDefaultMarkers(st,cfg); });
     return;
   }
   // Francia: idem — e questo ramo è ESATTAMENTE quello che mancò all'Austria

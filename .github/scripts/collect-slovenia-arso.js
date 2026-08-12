@@ -78,6 +78,12 @@ const MIN_MEZZORE = 40;         // su 48
 const GIORNI_INDIETRO = Number(process.env.GIORNI_INDIETRO || 8);
 const DATA_OVERRIDE = process.env.DATA_OVERRIDE || '';
 const PAUSA_MS = Number(process.env.PAUSA_MS || 250);
+// SOLO_PIOGGIA=1 chiede il solo parametro 26. Serve al backfill lungo: chiedendo
+// anche la temperatura la serie passa da 30 a 10 minuti e la stessa chiamata
+// costa 12 secondi invece di 1,4 (misurato il 12/8 su 60 giorni). La pioggia va
+// quindi indietro un anno, temperatura e vento solo sulle ultime settimane —
+// come per tutte le altre reti (vedi METEO_HIST_FROM in index.html).
+const SOLO_PIOGGIA = process.env.SOLO_PIOGGIA === "1";
 
 // ora italiana: +2 fra l'ultima domenica di marzo e l'ultima di ottobre
 function offsetItalia(d) {
@@ -125,7 +131,8 @@ async function anagrafe() {
  * Ritorna { idStazione: { minutiDal1800: {mm,tmin,tmax,ff,fx} } }.
  */
 async function scaricaCoppia(ids, d1, d2) {
-  const url = `${BASE}/data.xml?lang=si&vars=26,16,17,21,24&group=halfhourlyData0`
+  const vars = SOLO_PIOGGIA ? '26' : '26,16,17,21,24';
+  const url = `${BASE}/data.xml?lang=si&vars=${vars}&group=halfhourlyData0`
             + `&type=halfhourly&id=${ids.join(',')}&d1=${d1}&d2=${d2}`;
   const txt = await chiedi(url);
 

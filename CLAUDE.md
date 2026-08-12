@@ -228,7 +228,7 @@ dataset — attribuzione «Fonte: GeoSphere Austria», voce in `fonti.html`.
   bug #18 in produzione (Alto Adige 30/7/2026, coda cumulata del 29), dando le stazioni di
   confine a 0 e l'Austria intera a 41 mm su 269. **È la prima volta che una rete estera fa da
   controllo a una nostra regione.**
-- **Slovenia — SCARTATA il 5/8/2026, non riproporre.** ARSO pubblica 105 stazioni automatiche
+- **Slovenia — bocciata il 5/8/2026, VERDETTO RIBALTATO il 12/8** (vedi sezione dedicata in fondo). Quel giorno si guardò solo `rr_val` e si concluse così: ARSO pubblica 105 stazioni automatiche
   con coordinate, ma `rr_val` è la pioggia degli **ultimi 10 minuti** (`rrHh`=0,1666) e solo
   l'ultima lettura: per un giorno servirebbero 144 run. È il bug #11 della Liguria. L'archivio
   non è raggiungibile (endpoint statici 404, l'app `webmet` ha URL offuscati) e il dataset del
@@ -448,3 +448,114 @@ Ogni ~5 giorni verificare:
 4. Workflow tutti verdi
 5. Confronto puntuale con fonti ufficiali (cfr.toscana.it, omirl.regione.liguria.it, apps.arpae.it)
 6. **Nessun file giornaliero identico a quello del giorno precedente** (confronto stazione per stazione, non solo del totale): è la firma comune dei bug #17, #18 e #19 — pioggia di ieri trascinata sul giorno dopo. Quando salta fuori, confrontare sempre con l'API interrogata in diretta prima di concludere.
+
+
+---
+
+## PILOTA SLOVENIA (dal 12 agosto 2026 — solo repo di test)
+
+**ARSO** (Agencija Republike Slovenije za okolje), archivio mezz'orario ufficiale
+delle stazioni automatiche. Licenza: riuso libero con **citazione obbligatoria
+«Vir: ARSO»** (art. 14 della legge sul servizio meteorologico statale, UL RS
+60/17) — voce già in `fonti.html`.
+
+> ⚠️ **La bocciatura del 5/8 era sbagliata, ma per un motivo istruttivo.** Quel
+> giorno si guardò il solo campo `rr_val` del feed live (pioggia degli ultimi 10
+> minuti, il bug #11 della Liguria) e si concluse che l'archivio era
+> irraggiungibile. Due errori: nello stesso XML ci sono anche `tp_1h/12h/24h`, e
+> soprattutto **l'endpoint principale in HTTP risponde vuoto, in HTTPS risponde**.
+> Regola generale: prima di dichiarare morta una fonte, provare l'HTTPS.
+
+### Come si entra (gli endpoint, che non sono documentati)
+- **Anagrafe**: `webmet/archive/locations.xml?lang=si&vars=26&group=halfhourlyData0&type=4&d1=&d2=`
+  → **124 stazioni automatiche con id, nome, lat/lon e QUOTA**. Il parametro che
+  sblocca tutto è **`type=4`** (stazioni automatiche): senza, risponde
+  `points:{}` e sembra un vicolo cieco.
+- **Dati**: `webmet/archive/data.xml?vars=26,16,17,21,24&group=halfhourlyData0&type=halfhourly&id=A,B&d1=&d2=`
+  → pioggia (26), T min/max (16/17), vento medio e raffica (21/24) in **una sola
+  richiesta**. **Massimo 2 stazioni per chiamata** (`max:2` nei settings), ma
+  **intervalli di giorni illimitati**: 62 chiamate coprono il paese per quanti
+  giorni si vuole.
+- ⚠️ Gli **errori 500 di Cocoon sono la documentazione**: dicono in chiaro quale
+  parametro manca («parameter id (id postaj)», «column halfhourly does not
+  exist»). È così che si è trovata la combinazione giusta.
+
+### La ricetta, e la trappola che l'ha decisa
+Le marche temporali sono in **CET FISSO (UTC+1), senza ora legale, e indicano la
+FINE della mezz'ora**. Dandole per «ora locale» si sbaglierebbe di un'ora tutta
+l'estate. Misurato con la **correlazione oraria transfrontaliera contro
+l'Austria**, di cui la convenzione è già accertata, su tre coppie:
+
+| coppia | distanza | dislivello |
+|---|---|---|
+| Mežica ↔ Feistritz ob Bleiburg | 8,1 km | 54 m |
+| Sotinski breg ↔ Bad Gleichenberg | 10,5 km | 146 m |
+| Logarska Dolina ↔ Bad Eisenkappel | 11,2 km | 153 m |
+
+D'estate vince **−60 min** (r 0,786 / 0,726 / 0,547) ma **−90 è a un soffio**, e le
+due letture coerenti sono «CET fisso + fine» e «ora locale + inizio». ⚠️ **Il test
+che scioglie il dubbio è rifare la misura d'INVERNO**, quando l'ora legale non
+c'è: con «ora locale» lo sfasamento sarebbe dovuto passare a −30, invece **resta
+−60** (r 0,914 e 0,916). Due stagioni, stessa risposta.
+
+Conseguenza: il «giorno» dell'archivio (00:00→23:30) è il giorno CET e **d'estate
+non è il giorno solare italiano** — servono sempre **due giornate d'archivio per
+un giorno italiano**, come per l'OSMER Friuli. `MIN_MEZZORE=40` su 48.
+
+**Validazione del prodotto finito**: correlazione GIORNALIERA con l'Austria sulle
+tre coppie, 29 giorni — **lag 0 = 0,975 / 0,852 / 0,887**, lag ±1 fra −0,11 e
++0,04. I giorni cadono esattamente dove devono.
+
+### Ritardo di pubblicazione ~34 ore — il limite vero
+Misurato il 12/8 su 12 stazioni: **D-2 e più vecchi completi (48/48 su tutte),
+IERI fermo a 15 mezz'ore (07:00 CET), OGGI vuoto**, uguale per tutte insieme.
+Non è un guasto: è il ritmo della piattaforma. Il collector **parte da D-2 e non
+scrive mai un giorno incompleto** — un parziale in mappa sembrerebbe una giornata
+asciutta, che è peggio di un buco.
+**In mappa la Slovenia quindi non ha «Ieri»**: verificato, mostra «⚠️ Nessun dato
+per questo periodo» senza errori. Per la finestra funghi (15-21 giorni fa) e per
+7/10/15/20/30 giorni non cambia nulla. Se un giorno servisse anche «Ieri», la
+strada è il **modello Ticino** (valore provvisorio dal feed live
+`observationAms_si_latest.xml`, poi sovrascritto dall'archivio) — ma è la
+famiglia di meccanismi dei bug #17/#18/#19: non appenderlo a un run a orario
+critico.
+
+### Impianto
+- **Collect**: `collect-slovenia-arso.js` + `slovenia.yml` (2 run/giorno, 06:25 e
+  14:25 UTC; niente cron di chiusura, non servirebbe a nulla col ritardo di 34h).
+  Ogni run ricostruisce D-2..D-9: le query storiche rispondono su qualsiasi data,
+  quindi **auto-riparazione gratuita** come Svizzera, Austria e OASI.
+- **Backfill**: `backfill-slovenia-arso.js` (una tantum, in locale). Lancia il
+  collector vero a blocchi, così la ricetta sta in un posto solo.
+  ⚠️ **`SOLO_PIOGGIA=1` per il backfill lungo**: chiedendo anche la temperatura la
+  serie passa da 30 a 10 minuti e la stessa chiamata costa **12 secondi invece di
+  1,4** (misurato su 60 giorni). Quindi **pioggia un anno indietro, t/w solo sulle
+  ultime settimane** — come tutte le altre reti (`METEO_HIST_FROM`).
+- **In mappa**: `dataSource:'slovenia'`, `loadSloveniaRegion` (gemello di quello
+  austriaco), `loadSloveniaStations` per i pallini di default — ⚠️ **e il ramo in
+  `addDefaultMarkersForRegion`, che è esattamente quello dimenticato all'Austria
+  il 7/8**. Bordo tratteggiato ed esclusione dalla vista di apertura come gli
+  altri esteri. `REGION_ADJ`: slovenia ↔ austria/friuli.
+- **Confine**: `slovenia-confine.geojson`, da OpenStreetMap via Nominatim,
+  semplificato Douglas-Peucker 56.648→2.660 vertici (~70 m), 52 KB.
+  ⚠️ **ODbL**, diversa dalla licenza dei dati: il nostro file è una
+  semplificazione e resta ODbL, dichiarato in `fonti.html` (stesso caso del
+  confine austriaco CC BY-SA).
+  ⚠️ **Trappola del Douglas-Peucker su anelli CHIUSI**: primo e ultimo punto
+  coincidono, la retta di riferimento degenera e sopravvivono **due punti**. Va
+  spezzato in due catene aperte usando come secondo estremo il punto più lontano
+  dal primo.
+
+### Collaudo (12/8, sito servito in locale)
+Slovenia sola: 114 stazioni, max 87,3 mm, heatmap disegnata, chip e crediti
+«ARSO Slovenia», zero errori. Slovenia + Friuli: **160 stazioni**, crediti uniti,
+e la heatmap **attraversa il confine senza gradini**. «Ieri»: vuoto pulito.
+⚠️ **Il sito va servito via HTTP anche solo per provarlo**: aperto da `file://`
+Chrome blocca il fetch dei GeoJSON, tutti i confini falliscono e la heatmap non
+compare — sembra un difetto del codice e non lo è (`python -m http.server`).
+
+### Da fare per la promozione a prod
+Spostare `data/slovenia` + collector + workflow + confine nel repo prod,
+`PILOT_DATA_BASE`, voce in `fonti.html` di produzione, `check-fonti.js` esteso
+(soglia generosa: col ritardo di 34h il file di ieri non esiste MAI, quindi la
+soglia va almeno a 4 giorni), e decidere se l'header diventa «… e Slovenia».
