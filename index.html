@@ -987,14 +987,14 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <label class="rcheck-wrap"><input type="checkbox" id="chk-toscana" value="toscana"><span class="rcheck-box"></span><span class="rcheck-name">Toscana</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-umbria" value="umbria"><span class="rcheck-box"></span><span class="rcheck-name">Umbria</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-marche" value="marche"><span class="rcheck-box"></span><span class="rcheck-name">Marche</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-lazio" value="lazio"><span class="rcheck-box"></span><span class="rcheck-name">Lazio <sup class="beta-tag">beta</sup></span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-lazio" value="lazio"><span class="rcheck-box"></span><span class="rcheck-name">Lazio</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-abruzzo" value="abruzzo"><span class="rcheck-box"></span><span class="rcheck-name">Abruzzo</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-molise" value="molise"><span class="rcheck-box"></span><span class="rcheck-name">Molise</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-campania" value="campania"><span class="rcheck-box"></span><span class="rcheck-name">Campania</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-puglia" value="puglia"><span class="rcheck-box"></span><span class="rcheck-name">Puglia</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-basilicata" value="basilicata"><span class="rcheck-box"></span><span class="rcheck-name">Basilicata</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-calabria" value="calabria"><span class="rcheck-box"></span><span class="rcheck-name">Calabria</span></label>
-          <label class="rcheck-wrap"><input type="checkbox" id="chk-sicilia" value="sicilia"><span class="rcheck-box"></span><span class="rcheck-name">Sicilia <sup class="beta-tag">beta</sup></span></label>
+          <label class="rcheck-wrap"><input type="checkbox" id="chk-sicilia" value="sicilia"><span class="rcheck-box"></span><span class="rcheck-name">Sicilia</span></label>
           <label class="rcheck-wrap"><input type="checkbox" id="chk-sardegna" value="sardegna"><span class="rcheck-box"></span><span class="rcheck-name">Sardegna</span></label>
           <!-- Checkbox INDIVIDUALI (mai visibili): stato per la selezione da mappa
                su desktop, dove i combo Piemonte-VdA / Trentino-A.A. non esistono
@@ -1037,14 +1037,14 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <option value="toscana">Toscana</option>
           <option value="umbria">Umbria</option>
           <option value="marche">Marche</option>
-          <option value="lazio">Lazio (beta)</option>
+          <option value="lazio">Lazio</option>
           <option value="abruzzo">Abruzzo</option>
           <option value="molise">Molise</option>
           <option value="campania">Campania</option>
           <option value="puglia">Puglia</option>
           <option value="basilicata">Basilicata</option>
           <option value="calabria">Calabria</option>
-          <option value="sicilia">Sicilia (beta)</option>
+          <option value="sicilia">Sicilia</option>
           <option value="sardegna">Sardegna</option>
         </select>
       </div>
@@ -3564,10 +3564,18 @@ function renderMulti(allData, labelPeriodo, fontiArr, _retry){
   lastUsedFonte=fonteStr;
 
   // Pillola "fase di test": dal 10/8/2026 il beta e' PER-REGIONE, non per
-  // fonte. Otto reti MeteoHub sono uscite dal beta (30 giorni di registro
-  // buchi: 5 mai colpite, 3 con un solo evento vecchio e gia' coperto);
-  // restano in validazione Sicilia (3 eventi) e Lazio (2), ultimo il 3/8.
-  var BETA_REGIONS=['sicilia','lazio'];
+  // fonte. LISTA VUOTA dal 12/8/2026 — ultime due uscite, Sicilia e Lazio.
+  // Il criterio e' sempre il registro buchi (analizza-buchi-meteohub.js), e
+  // il 12/8 diceva il contrario di quello che il badge dichiarava: Sicilia e
+  // Lazio pulite da NOVE giorni (ultimo evento il 3/8) mentre Puglia e
+  // Basilicata, gia' fuori dal beta, avevano bucato due giorni prima (10/8).
+  // Tenere il marchio addosso alle due piu' pulite era dire il falso.
+  // Scartata l'alternativa (rimettere in beta Puglia e Basilicata): sono casi
+  // rari, la mappa dichiara gia' la fonte quando mostra stime, e l'avviso
+  // serve solo quando non c'e' proprio niente da mostrare.
+  // La rete di sicurezza resta INTATTA: registro, gapfill, allarme via mail.
+  // Per riaccendere il beta su una rete basta rimetterla in questa lista.
+  var BETA_REGIONS=[];
   var betaAttivo=regions.some(function(rk){
     return BETA_REGIONS.indexOf(rk)>=0;
   });
