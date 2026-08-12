@@ -1,0 +1,74 @@
+name: Slovenia
+on:
+  workflow_dispatch:
+    inputs:
+      giorni_indietro:
+        description: 'Quanti giorni indietro ricostruire (default 8; si parte sempre da D-2)'
+        required: false
+        default: ''
+      data_override:
+        description: 'Giorni precisi da rifare, separati da virgola (YYYY-MM-DD)'
+        required: false
+        default: ''
+  # PILOTA Slovenia (ARSO, archivio mezz'orario) — dal 12 agosto 2026, solo repo di test.
+  #
+  # NIENTE cron di chiusura a mezzanotte, a differenza di Austria e Svizzera: qui
+  # non servirebbe a nulla. L'archivio ARSO pubblica con circa 34 ORE di ritardo
+  # (misurato il 12/8 su 12 stazioni: D-2 completo 48/48 su tutte, IERI fermo a 15
+  # mezz'ore, OGGI vuoto), quindi il giorno piu recente ottenibile e sempre D-2 e
+  # non c'e nessun momento della notte in cui convenga correre.
+  #
+  # Due run al giorno bastano: ogni run ricostruisce D-2..D-9 e le query storiche
+  # rispondono su qualsiasi data, quindi un run fallito non perde mai dati — la
+  # stessa auto-riparazione gratuita di Svizzera, Austria e OASI. Il secondo run
+  # serve solo a coprire il primo se GitHub lo salta.
+  #
+  # Orari scelti liberi da tutti gli altri workflow di questo repo, per non
+  # accavallare i push sullo stesso branch.
+  schedule:
+    - cron: '25 6 * * *'
+    - cron: '25 14 * * *'
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Raccoglie dati Slovenia (ARSO)
+        id: collect
+        run: node .github/scripts/collect-slovenia-arso.js
+        env:
+          GIORNI_INDIETRO: ${{ inputs.giorni_indietro }}
+          DATA_OVERRIDE: ${{ inputs.data_override }}
+        continue-on-error: true
+      - name: Retry 1
+        if: steps.collect.outcome == 'failure'
+        run: sleep 30 && node .github/scripts/collect-slovenia-arso.js
+        env:
+          GIORNI_INDIETRO: ${{ inputs.giorni_indietro }}
+          DATA_OVERRIDE: ${{ inputs.data_override }}
+        continue-on-error: true
+      - name: Retry 2
+        if: steps.collect.outcome == 'failure'
+        run: sleep 60 && node .github/scripts/collect-slovenia-arso.js
+        env:
+          GIORNI_INDIETRO: ${{ inputs.giorni_indietro }}
+          DATA_OVERRIDE: ${{ inputs.data_override }}
+      - name: Commit e push
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@bot.com"
+          mkdir -p data/slovenia
+          git add data/slovenia/
+          git diff --staged --quiet || git commit -m "slovenia $(date -u +%Y-%m-%d)"
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push; then ok=1; break; fi
+            echo "Push fallito (tentativo $i/5), retry tra 10s..."
+            sleep 10
+          done
+          [ "$ok" = "1" ] || { echo "Push fallito dopo 5 tentativi"; exit 1; }
