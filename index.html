@@ -3442,6 +3442,25 @@ function loadOpenMeteo(stations,pastDate,nowDate,labelPeriodo,badgePrefix){
 // lavorano sulle regioni vere senza sapere nulla dei combo.
 var COMBO_REGIONS={ 'piemonte-vda':['piemonte','valledaosta'], 'trentino-aa':['trentino','altoadige'] };
 function expandRegion(v){ return COMBO_REGIONS[v]||[v]; }
+// Le regioni COME LE HA SCELTE L'UTENTE, senza espandere le combinate: serve
+// alla STATISTICA, mentre per CARICARE i dati serve l'elenco espanso di
+// getActiveRegions(). Le due convivono e non vanno confuse.
+// ⚠️ STORIA: introdotta il 5/8/2026 (commit 2a1b38a5) perche' chi condivideva
+// avendo scelto «Piemonte-VdA» finiva in GA4 come 'piemonte,valledaosta'.
+// CANCELLATA senza accorgersene il 10/8 dalla promozione della Francia
+// (3e74625e), quella che copio' index.html in blocco dal repo di test — la
+// STESSA che si mangio' EMILIA_ESCLUSE. Di quella ci si accorse subito, di
+// questa no, perche' si vedeva solo in GA4: dal 10/8 al 13/8 le condivisioni
+// sono tornate a registrarsi espanse, spaccando in due il conteggio di
+// Piemonte-VdA e Trentino-AA. Rimessa il 13/8/2026, e stavolta ANCHE nel repo
+// di test, cosi' la prossima copia in blocco non puo' ricancellarla.
+function getSelectedValues(){
+  var v=[];
+  document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){
+    if(cb.checked) v.push(cb.value);
+  });
+  return v;
+}
 function getActiveRegions(){
   var active=[];
   document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){
@@ -3496,8 +3515,12 @@ function loadData(pastDate,nowDate,labelPeriodo){
     return;
   }
 
-  // Statistica analisi per regione (Google Analytics)
-  try{ regions.forEach(function(r){ gtag('event', 'analisi_regione', { regione: r }); }); }catch(e){}
+  // Statistica analisi per regione (Google Analytics). LE SCELTE, non le
+  // espanse: chi analizza «Piemonte-VdA» deve contare UN evento 'piemonte-vda',
+  // non due ('piemonte' e 'valledaosta') che gonfiano il totale e spaccano la
+  // dimensione Regioni in due voci. Terza vittima della copia in blocco del
+  // 10/8 (3e74625e), insieme a EMILIA_ESCLUSE e ai due eventi di condivisione.
+  try{ getSelectedValues().forEach(function(v){ gtag('event', 'analisi_regione', { regione: v }); }); }catch(e){}
 
   isLoading=true;
   loadSessionId++; // invalida tutte le richieste precedenti
@@ -6516,7 +6539,7 @@ if(_btnShare){
   _btnShare.addEventListener('click',function(){
     var url=buildShareUrl();
     if(!url) return;
-    try{gtag('event','share_map',{regioni:getActiveRegions().join(',')})}catch(e){}
+    try{gtag('event','share_map',{regioni:getSelectedValues().join(',')})}catch(e){}
     if(isTouchShare()){
       // Solo il link, senza descrizione: l'anteprima la mette l'app di chat.
       navigator.share({url:url}).catch(function(){});
@@ -6536,7 +6559,7 @@ if(_btnShot){
     if(getActiveRegions().length===0||!currentPast) return;
     // Contatore GA come share_map: si conta il click, non l'esito (la
     // condivisione nativa non dice se l'utente ha poi annullato il menu).
-    try{gtag('event','share_image',{regioni:getActiveRegions().join(',')})}catch(e){}
+    try{gtag('event','share_image',{regioni:getSelectedValues().join(',')})}catch(e){}
     var old=_btnShot.dataset.label;
     _btnShot.disabled=true;_btnShot.textContent='⏳';
     var fine=function(esito){
