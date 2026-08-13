@@ -550,6 +550,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      senza dati non leggeva niente e sembrava che il sito non rispondesse.
      Compare solo quando c'è davvero un problema e costa 26px in altezza. */
   #tp-status{font-size:13px !important;line-height:1.3 !important;}
+  /* Gli avvisi seguono la riga di stato quando rimpicciolisce. */
+  #ieri-notice,#osmer-notice{font-size:13px !important;line-height:1.3 !important;}
   #time-panel .tp-content{padding-top:5px !important;}
 }
 
@@ -1082,7 +1084,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <div class="tp-custom-btn tp-funghi-btn" id="btn-funghi"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAC6ElEQVR42m2TPWxTVxTHz7nvvveuE8cmtuNgG8cGQhEfgRCGBqlFqAtDVTGwsMOKOnTpUFUdq6pjhmYoDEhVVQnxIb6UABKIqoWUqFUpBNpA3IKdBD+C46R+ee/eczo8KwmoZ/7/7l/63XOQmWF1mADFbH3h9tWLT+7f9hsvVSJdHhh+7/BH5WIeAJgZEQEA2xgzM4MQ3337zdjol+xVilnVqdzQmGaLmnZ6z5ETxz/5TElkBkRsY0QGhPXVpycnTo30pqGwKbMhkQi1EYiWANbB1F/V+PDRL0a/dyxEFAIAyBghrLNnTt07PVLqs4VrubYTBAGRMUavBDpga8/AttbE2TMjXwthMRESEQIs+8HHh3cpr4IuIHNfPtuhlDHEAMRMRASo0DxasD4/92tvJiWYCBCfTD1qvZhmo5sN3Vg0U09r03/PeguLzUZDt5ZdpJgEW8WUX//j/l0AkJGZTDr1WqWTW7cWCuWQ8Xmt3lPMLQd+p2svvfa8ymMnaOa7VtAEK/6/bZOR1ouXLv0++WNPKr7YaFpS9m/eFIsnDxz8YKbyfHJiMpvqGj//w4M7N0fHfyuVSm2TETk3O1epzFy5fCGXsuOdnbv37i9v6Z9/OT8+dmvf0FB1bj6dLRw6+D4zy+ifEZGIejf29mSzP98ZSyZjwCKR3EDMUsrilv6BoeF3O2ICMSoQaxvCzMw3ro9pv2lZtm3bjqu01l3xuA5aHTElEIgocrGGCSEQcfrPh5lMdxiGtutKKQ2R6yrbwmqtBoARs4ZF1c2l5aVFL6aU1lq5ypISmBkgmYi/qtej2BtYNK88j40GRCnt0uZ+aL/Njuv4fmt98g2MmQGIiXbs2tuzMWe0jnyFgXZc9T9YtNO5fC4kK5cvvLNjZxiGiCillFJUZ+f7SqUo9nYbM7uO8+GRY0//8Wq1KiIAsN9qXbt2o1jenuruXtW47t7WiXk2M/PL3Z8AjC1lqGnb9p2Dg4OrBxrNfxMWeekz+THZAAAAAElFTkSuQmCC" style="width:18px;height:18px;vertical-align:middle;margin-right:5px;">Piogge per funghi <span style="font-size:13px;opacity:.8">(range 15-21 gg fa)</span></div>
         <a href="https://youtu.be/fvsBZJ_Ylf4" target="_blank" rel="noopener" id="faq-funghi"
            onclick="try{gtag('event','click_youtube',{pulsante:'faq-mobile'})}catch(e){}">FAQ video</a>
-        <div id="osmer-notice" style="display:none;margin-top:6px;font-size:12.5px;line-height:1.35;color:#1b3f6e;">ℹ️ <b>Friuli</b>: alcune stazioni possono avere ritardi fino a 48h.</div>
+
         <div id="custom-box">
           <div class="cd-lbl">Data inizio</div>
           <input type="date" class="cd-inp" id="cd-from">
@@ -1111,6 +1113,19 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <div class="stat"><div class="sv" id="sav">–</div><div class="sl">Media</div></div>
         <div class="stat"><div class="sv" id="smn">–</div><div class="sl">Min</div></div>
       </div>
+      <!-- Avvisi, QUI e non nel pannello periodo (13/8/2026). Sul telefono il
+           pannello periodo e' un bottom sheet collassato a 44px (z-index 2000)
+           e appena l'analisi riesce la LEGENDA gli sale sopra (z-index 2100):
+           un avviso messo la' dentro non lo vede nessuno. La legenda invece
+           compare esattamente quando ci sono numeri da qualificare, ed e' il
+           pannello che l'utente ha davanti. Stanno sotto le statistiche
+           perche' e' quei numeri che vanno presi con le pinze.
+           Quando l'analisi finisce a vuoto la legenda non si apre: in quel
+           caso l'avviso prende il posto della riga di stato, che li' e'
+           visibile perche' il pannello e' aperto (l'utente ha appena toccato
+           un periodo). -->
+      <div id="ieri-notice" style="display:none;margin-top:8px;font-size:14px;font-weight:600;line-height:1.3;color:#cc0000;"></div>
+      <div id="osmer-notice" style="display:none;margin-top:6px;font-size:14px;font-weight:600;line-height:1.3;color:#cc0000;">⚠️ <b>Friuli</b>: possibili ritardi fino a 48h</div>
       <a href="https://www.youtube.com/@avventuremicologiche" target="_blank"
          onclick="try{gtag('event','click_youtube',{pulsante:'pillola-mobile'})}catch(e){}"
          id="channel-pill">
@@ -3472,30 +3487,107 @@ function getActiveRegions(){
 //  - DESKTOP (>900px): testo inline accanto a "✅ Ieri" (solo periodo Ieri).
 //  - MOBILE  (≤900px): box giallo sotto "Piogge per funghi", visibile da quando
 //    si sceglie Friuli fino al primo click su un periodo (poi lo copre la scala).
+// Avviso Friuli. Fino al 13/8/2026 aveva DUE vesti diverse — scritta di 11px
+// azzurra in riga accanto al «✅» sul desktop, riquadro di 12,5px sul telefono —
+// e nessuna delle due somigliava agli altri avvisi del sito. Ora e' uno solo,
+// nello stesso posto e con lo stesso vestito di «dati di ieri non pervenuti» e
+// di «Seleziona prima una regione!»: riga propria sotto lo stato, 14px
+// grassetto rosso. Sparisce anche il ramo sulla larghezza dello schermo, che
+// era l'unica ragione per cui esistevano due meccanismi.
 function osmerInlineDesktop(){
-  var ts=document.getElementById('tp-status');
   var old=document.getElementById('osmer-notice-inline');
-  if(old) old.remove();
-  var show=(window.innerWidth>900 && getActiveRegions().indexOf('friuli')>=0 && currentLabel==='Ieri');
-  if(show && ts){
-    var s=document.createElement('span');
-    s.id='osmer-notice-inline';
-    s.style.cssText='margin-left:8px;font-size:11px;font-weight:400;color:#1b3f6e;white-space:nowrap;';
-    s.innerHTML='· ℹ️ <b>Friuli</b>: possibili ritardi fino a 48h';
-    ts.appendChild(s);
-  }
+  if(old) old.remove();   // ripulisce la vecchia scritta in riga, se una pagina aperta l'aveva gia'
+  var n=document.getElementById('osmer-notice');
+  if(!n) return;
+  var mostra=(getActiveRegions().indexOf('friuli')>=0 && currentLabel==='Ieri');
+  n.style.display=mostra?'block':'none';
+  if(typeof positionPanels==='function') positionPanels();
 }
+// ── «Dati di ieri al momento non pervenuti» (13/8/2026) ──────────────
+// PERCHE' ESISTE. La Slovenia pubblica con ~34 ore di ritardo, quindi il file
+// di IERI non esiste MAI. Con «Ieri» il sito lo diceva a modo suo (messaggio
+// rosso generico, senza nome ne' motivo), ma con 7/10/15/20/30 giorni lo
+// ignorava IN SILENZIO: il loader scarta i 404 e stampa «MM CUMULATI (7
+// GIORNI)» sommandone sei. Un totale corto di un giorno con l'etichetta del
+// giorno pieno, e nessun modo per l'utente di accorgersene — su una mappa per
+// funghi l'ultimo giorno e' fra i piu' importanti. La finestra «Piogge per
+// funghi» non e' toccata: finisce 15 giorni fa, non arriva a ieri.
+//
+// NON SI DEDUCE DALLA REGIONE, SI VERIFICA IL FILE. Cosi' l'avviso e' vero
+// anche il giorno in cui a incepparsi fosse il Piemonte, e sparisce da solo
+// se un domani ARSO accelerasse: nessun elenco da tenere aggiornato a mano.
+function dirDatiRegione(rk){
+  var cfg=REGIONS[rk];
+  if(cfg&&cfg.dataSource==='meteohub') return ['meteohub-'+rk];
+  if(rk==='friuli') return ['friuli-osmer'];
+  if(rk==='valledaosta') return ['valledaosta-cf'];
+  if(rk==='svizzera') return ['svizzera','ticino'];  // due fonti sotto un bottone
+  return [rk];
+}
+var _ieriCache={};
+// true se ALMENO una delle cartelle della regione ha il giorno chiesto.
+function regioneHaIlGiorno(rk,giorno,cb){
+  var dirs=dirDatiRegione(rk), restanti=dirs.length, trovato=false;
+  dirs.forEach(function(d){
+    var url=histRawBase(d)+d+'/'+giorno+'.json';
+    var fine=function(ok){ if(ok) trovato=true; if(--restanti===0) cb(trovato); };
+    if(_ieriCache[url]!==undefined){ fine(_ieriCache[url]); return; }
+    fetch(url).then(function(r){ _ieriCache[url]=r.ok; fine(r.ok); })
+              .catch(function(){ _ieriCache[url]=false; fine(false); });
+  });
+}
+// Reti con un ritardo di pubblicazione NOTO e strutturale: per loro il file di
+// ieri non c'e' MAI, e non e' un guasto — arriva il giorno dopo. Va detto, se no
+// l'utente torna a controllare ogni ora una cosa che non puo' cambiare.
+// ⚠️ Solo qui dentro si puo' promettere «in arrivo»: per una rete che si e'
+// inceppata sarebbe una bugia, perche' quel giorno potrebbe non arrivare mai.
+var RITARDO_NOTO={slovenia:'36h'};
+function aggiornaAvvisoIeri(){
+  var box=document.getElementById('ieri-notice');
+  if(box){ box.style.display='none'; box.innerHTML=''; }
+  if(!currentNow) return;
+  // parla di IERI: ha senso solo se la finestra ci arriva
+  var ieri=new Date(); ieri.setDate(ieri.getDate()-1);
+  var ieriStr=fmtISOLocal(ieri);
+  if(fmtISOLocal(currentNow)!==ieriStr) return;
+  var regioni=getActiveRegions(); if(!regioni.length) return;
+  var restanti=regioni.length, noti=[], imprevisti=[], ritardo='36h';
+  regioni.forEach(function(rk){
+    regioneHaIlGiorno(rk,ieriStr,function(ok){
+      if(!ok){
+        var nome=(REGIONS[rk]&&REGIONS[rk].name)||rk;
+        if(RITARDO_NOTO[rk]){ ritardo=RITARDO_NOTO[rk]; noti.push(nome); }
+        else imprevisti.push(nome);
+      }
+      if(--restanti>0 || (!noti.length && !imprevisti.length)) return;
+      // una regione sola: il nome non serve, si sa gia' di chi si parla
+      var chi=function(l){ return (regioni.length===1)?'':('<b>'+l.join(', ')+'</b>: '); };
+      var righe=[];
+      // «non incluso» e non «non pervenuto»: parla del TOTALE che si sta
+      // guardando, che e' corto di un giorno anche su 7/30 giorni.
+      if(noti.length) righe.push('⚠️ '+chi(noti)+'ieri non incluso, in arrivo ('+ritardo+')');
+      if(imprevisti.length) righe.push('⚠️ '+chi(imprevisti)+'dati di ieri non pervenuti');
+      var ts=document.getElementById('tp-status');
+      // Analisi finita a vuoto: si SOSTITUISCE il generico «Nessun dato per
+      // questo periodo», che non dice ne' chi ne' perche'.
+      if(ts && ts.className==='error'){ ts.innerHTML=righe.join(' · '); return; }
+      if(box){
+        box.innerHTML=righe.join('<br>');
+        box.style.display='block';
+        if(typeof positionPanels==='function') positionPanels();
+      }
+    });
+  });
+}
+
 function osmerMobileHide(){
   var n=document.getElementById('osmer-notice');
   if(n) n.style.display='none';
   if(typeof positionPanels==='function') positionPanels();
 }
 function updateOsmerNotice(){
-  osmerInlineDesktop();
-  // Ramo mobile: box sotto i funghi, mostrato alla selezione di Friuli.
-  var n=document.getElementById('osmer-notice');
-  if(n) n.style.display=(window.innerWidth<=900 && getActiveRegions().indexOf('friuli')>=0)?'block':'none';
-  if(typeof positionPanels==='function') positionPanels(); // riposiziona la legenda sotto il pannello cresciuto
+  aggiornaAvvisoIeri();   // si spegne da solo quando currentNow torna null
+  osmerInlineDesktop();   // unico avviso Friuli, stesso vestito degli altri
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -3583,6 +3675,7 @@ function loadData(pastDate,nowDate,labelPeriodo){
       // messaggio contraddittorio. Testo accorciato per stare su una riga
       // anche sugli schermi da 375px, dove ora è visibile.
       var _ts=document.getElementById('tp-status');_ts.className='error';_ts.textContent='⚠️ Nessun dato per questo periodo';
+      aggiornaAvvisoIeri();   // se il motivo e' il file di ieri, lo dice al posto del generico
       return;
     }
     renderMulti(allData,labelPeriodo,allFonti);
@@ -3769,6 +3862,10 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
   document.getElementById('sav').textContent=av;
   document.getElementById('smn').textContent=Math.round(mn*10)/10;
   setBadge(dati.length+' stazioni · '+fonte);
+  // L'avviso esce INSIEME ai numeri, non alla fine del calcolo della griglia:
+  // la legenda compare subito, e per qualche secondo l'utente leggerebbe quei
+  // numeri senza sapere che un giorno manca.
+  aggiornaAvvisoIeri();
   document.getElementById('leg-title').textContent='mm cumulati ('+labelPeriodo+')';
   document.getElementById('legend-panel').style.display='block';
   showLegendMobile();
@@ -3838,6 +3935,7 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
         setTimeout(drawGrid,1600);
         var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='✅ '+labelPeriodo;
         osmerInlineDesktop(); // avviso Friuli inline accanto a "✅ Ieri" (solo desktop + Ieri)
+        aggiornaAvvisoIeri(); // e l'avviso «dati di ieri», per chi non ce li ha
         if(typeof refreshSelectorStyles==='function') refreshSelectorStyles(); // via il riempimento: non deve coprire la heatmap
         setLoading(false);
       });
