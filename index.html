@@ -1080,6 +1080,22 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <div class="tp-btn" data-type="d" data-val="20">20 giorni</div>
           <div class="tp-btn" data-type="d" data-val="30">30 giorni</div>
         </div>
+        <!-- Riga di stato e rotella: QUI, attaccate ai bottoni (13/8/2026).
+             Stavano in FONDO al pannello, sotto il link «FAQ video» e sotto il
+             riquadro delle date personalizzate. Sul telefono #time-panel e'
+             alto 40vh: 344px di contenuto dentro 302px visibili, e gli ultimi
+             42px — cioe' proprio questi due — restavano nello scroll. Li' dentro
+             finisce OGNI risposta del sito: «Calcolo mappa…», «Seleziona prima
+             una regione!», «Nessun dato per questo periodo» e l'avviso sui dati
+             di ieri. Sotto i ~870px di altezza CSS — cioe' su quasi tutti i
+             telefoni — toccare un periodo non dava NESSUNA risposta visibile.
+             Non basta metterle sopra il FAQ: li' avanzavano 6px di margine, e
+             un messaggio andato a capo tornava fuori dal bordo. Attaccate ai
+             bottoni sono in cima al contenuto, cioe' nel punto che nessuna
+             altezza di schermo puo' tagliare; a scorrere via resta il FAQ, che
+             e' l'unica cosa qui dentro che puo' aspettare. -->
+        <div id="tp-status"></div>
+        <div id="tp-spinner"><div class="mini-spin"></div><span>Caricamento…</span></div>
         <div class="tp-custom-btn" id="btn-custom">📅 Date personalizzate</div>
         <div class="tp-custom-btn tp-funghi-btn" id="btn-funghi"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAC6ElEQVR42m2TPWxTVxTHz7nvvveuE8cmtuNgG8cGQhEfgRCGBqlFqAtDVTGwsMOKOnTpUFUdq6pjhmYoDEhVVQnxIb6UABKIqoWUqFUpBNpA3IKdBD+C46R+ee/eczo8KwmoZ/7/7l/63XOQmWF1mADFbH3h9tWLT+7f9hsvVSJdHhh+7/BH5WIeAJgZEQEA2xgzM4MQ3337zdjol+xVilnVqdzQmGaLmnZ6z5ETxz/5TElkBkRsY0QGhPXVpycnTo30pqGwKbMhkQi1EYiWANbB1F/V+PDRL0a/dyxEFAIAyBghrLNnTt07PVLqs4VrubYTBAGRMUavBDpga8/AttbE2TMjXwthMRESEQIs+8HHh3cpr4IuIHNfPtuhlDHEAMRMRASo0DxasD4/92tvJiWYCBCfTD1qvZhmo5sN3Vg0U09r03/PeguLzUZDt5ZdpJgEW8WUX//j/l0AkJGZTDr1WqWTW7cWCuWQ8Xmt3lPMLQd+p2svvfa8ymMnaOa7VtAEK/6/bZOR1ouXLv0++WNPKr7YaFpS9m/eFIsnDxz8YKbyfHJiMpvqGj//w4M7N0fHfyuVSm2TETk3O1epzFy5fCGXsuOdnbv37i9v6Z9/OT8+dmvf0FB1bj6dLRw6+D4zy+ifEZGIejf29mSzP98ZSyZjwCKR3EDMUsrilv6BoeF3O2ICMSoQaxvCzMw3ro9pv2lZtm3bjqu01l3xuA5aHTElEIgocrGGCSEQcfrPh5lMdxiGtutKKQ2R6yrbwmqtBoARs4ZF1c2l5aVFL6aU1lq5ypISmBkgmYi/qtej2BtYNK88j40GRCnt0uZ+aL/Njuv4fmt98g2MmQGIiXbs2tuzMWe0jnyFgXZc9T9YtNO5fC4kK5cvvLNjZxiGiCillFJUZ+f7SqUo9nYbM7uO8+GRY0//8Wq1KiIAsN9qXbt2o1jenuruXtW47t7WiXk2M/PL3Z8AjC1lqGnb9p2Dg4OrBxrNfxMWeekz+THZAAAAAElFTkSuQmCC" style="width:18px;height:18px;vertical-align:middle;margin-right:5px;">Piogge per funghi <span style="font-size:13px;opacity:.8">(range 15-21 gg fa)</span></div>
         <a href="https://youtu.be/fvsBZJ_Ylf4" target="_blank" rel="noopener" id="faq-funghi"
@@ -1092,8 +1108,6 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <input type="date" class="cd-inp" id="cd-to">
           <button class="cd-go" id="cd-apply">Applica</button>
         </div>
-        <div id="tp-status"></div>
-        <div id="tp-spinner"><div class="mini-spin"></div><span>Caricamento…</span></div>
       </div>
     </div>
 
@@ -3551,6 +3565,16 @@ function aggiornaAvvisoIeri(){
   var ieriStr=fmtISOLocal(ieri);
   if(fmtISOLocal(currentNow)!==ieriStr) return;
   var regioni=getActiveRegions(); if(!regioni.length) return;
+  var nSelezionate=regioni.length;   // quante ne ha scelte l'utente, prima del filtro qui sotto
+  // L'Abruzzo i file giornalieri non li legge: e' l'unica regione a stime
+  // Open-Meteo, i dati li chiede all'API sul momento. Cercare
+  // data/abruzzo/<ieri>.json vuol dire trovare un 404 TUTTI i giorni e gridare
+  // al dato mancante sopra una mappa che i dati ce li ha — un falso allarme
+  // quotidiano. Si controlla solo chi quei file li usa davvero.
+  regioni=regioni.filter(function(rk){
+    return !(REGIONS[rk]&&REGIONS[rk].dataSource==='open_meteo');
+  });
+  if(!regioni.length) return;
   var restanti=regioni.length, noti=[], imprevisti=[], ritardo='36h';
   regioni.forEach(function(rk){
     regioneHaIlGiorno(rk,ieriStr,function(ok){
@@ -3561,7 +3585,7 @@ function aggiornaAvvisoIeri(){
       }
       if(--restanti>0 || (!noti.length && !imprevisti.length)) return;
       // una regione sola: il nome non serve, si sa gia' di chi si parla
-      var chi=function(l){ return (regioni.length===1)?'':('<b>'+l.join(', ')+'</b>: '); };
+      var chi=function(l){ return (nSelezionate===1)?'':('<b>'+l.join(', ')+'</b>: '); };
       var righe=[];
       // «non incluso» e non «non pervenuto»: parla del TOTALE che si sta
       // guardando, che e' corto di un giorno anche su 7/30 giorni.
@@ -3589,6 +3613,39 @@ function updateOsmerNotice(){
   aggiornaAvvisoIeri();   // si spegne da solo quando currentNow torna null
   osmerInlineDesktop();   // unico avviso Friuli, stesso vestito degli altri
 }
+
+// ── Rete di sicurezza: il messaggio deve VEDERSI (13/8/2026) ───────
+// La riga di stato adesso e' in cima al contenuto del pannello (vedi il
+// commento nell'HTML), quindi in condizioni normali si vede sempre: misurato
+// da 360x640 a 412x915, il margine dal bordo non scende mai sotto i 100px,
+// anche con l'avviso su due righe. Questa resta la rete per il caso strano —
+// carattere ingrandito dalle impostazioni di sistema, messaggio lunghissimo,
+// schermo che non abbiamo previsto — e fa le due cose nell'ordine giusto:
+// prima toglie di mezzo il link «FAQ video», che e' l'unica cosa qui dentro
+// che puo' aspettare, poi, se ancora non basta, porta la riga in vista con lo
+// scroll del pannello. Il FAQ torna da solo appena il messaggio sparisce o si
+// cambia periodo: e' l'osservatore a rimetterlo, non serve ricordarselo.
+function tenereVisibileLoStato(){
+  var st=document.getElementById('tp-status');
+  var faq=document.getElementById('faq-funghi');
+  var pan=document.getElementById('time-panel');
+  if(!st||!faq||!pan) return;
+  faq.style.display='';                       // si riparte sempre dal FAQ al suo posto
+  if(!(st.textContent||'').trim()) return;    // nessun messaggio: niente da salvare
+  var p=pan.getBoundingClientRect();
+  if(st.getBoundingClientRect().bottom<=p.bottom-2) return;   // si vede gia'
+  faq.style.display='none';                   // 1) via il FAQ
+  var b=st.getBoundingClientRect();
+  if(b.bottom>p.bottom-2) pan.scrollTop+=(b.bottom-(p.bottom-2));  // 2) e se serve, in vista
+}
+// Un osservatore, non una chiamata copiata nei quattordici punti che scrivono
+// in #tp-status: cosi' vale anche per i messaggi che aggiungeremo domani.
+(function(){
+  var st=document.getElementById('tp-status');
+  if(!st||typeof MutationObserver!=='function') return;
+  new MutationObserver(tenereVisibileLoStato).observe(st,{childList:true,characterData:true,subtree:true});
+  window.addEventListener('resize',tenereVisibileLoStato);
+})();
 
 // ═══════════════════════════════════════════════════════════════
 // DISPATCHER: carica dati per tutte le regioni attive
