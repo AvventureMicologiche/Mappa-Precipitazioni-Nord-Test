@@ -653,7 +653,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     box-shadow:0 -4px 20px rgba(0,0,0,.25) !important;
     padding:0 14px 12px !important;
     z-index:2000 !important;
-    max-height:40vh;
+    /* 46vh e non 40 (13/8/2026). A 40vh il pannello era piu' corto del suo
+       contenuto e la coda restava nello scroll: 302px per 344 a 393x760,
+       254 per 288 a 360x640. Prima ci finiva la riga di stato (nessuna
+       risposta visibile a un tocco), poi il link «FAQ video», che i dati
+       GA4 danno come l'elemento piu' cliccato del sito: 16 clic in tre
+       giorni, contro 1,3 al giorno dell'Iscriviti in header.
+       NON e' una soglia da tarare: max-height e' un tetto, non un'altezza.
+       A 46vh il pannello arriva a 347px, il contenuto ne chiede 344 e si
+       ferma li'; a 48 e a 50vh il risultato e' identico. Se un domani si
+       aggiunge una riga al pannello, questo tetto va rialzato. */
+    max-height:46vh;
     overflow-y:auto;
     transform:translateY(calc(100% - 44px));
     transition:transform .28s cubic-bezier(.4,0,.2,1);
@@ -1085,7 +1095,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <!-- Riga di stato e rotella: QUI, sotto «Piogge per funghi» e sopra il
              link «FAQ video» (13/8/2026). Stavano in FONDO al pannello, dopo il
              FAQ e dopo il riquadro delle date personalizzate. Su telefono
-             #time-panel e' alto 40vh: 344px di contenuto dentro 302px visibili,
+             #time-panel era alto 40vh: 344px di contenuto dentro 302px visibili,
              e gli ultimi 42px — cioe' proprio questi due — restavano nello
              scroll. Li' dentro finisce OGNI risposta del sito: «Calcolo mappa…»,
              «Seleziona prima una regione!», «Nessun dato per questo periodo» e
