@@ -314,13 +314,13 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 #leg-back-btn{display:none;}
 .grad{height:13px;border-radius:4px;margin-bottom:4px;
   background:-webkit-linear-gradient(left,
-    #ffffff 0%,#ffffff 5%,#deeefc 8%,#c4e0fa 12%,#6496f0 15%,
+    #ffffff 0%,#ffffff 2%,#e4f1fd 5%,#badcfa 12%,#6496f0 15%,
     #326edc 20%,#00b4c8 28%,#00b450 35%,#008c28 42%,
     #78c800 49%,#dcE600 55%,#ffb400 61%,#ff7800 67%,
     #f03200 73%,#b40000 79%,#8c00b4 85%,#c864dc 90%,
     #f0aaf0 95%,#ffdcff 100%);
   background:linear-gradient(to right,
-    #ffffff 0%,#ffffff 5%,#deeefc 8%,#c4e0fa 12%,#6496f0 15%,
+    #ffffff 0%,#ffffff 2%,#e4f1fd 5%,#badcfa 12%,#6496f0 15%,
     #326edc 20%,#00b4c8 28%,#00b450 35%,#008c28 42%,
     #78c800 49%,#dcE600 55%,#ffb400 61%,#ff7800 67%,
     #f03200 73%,#b40000 79%,#8c00b4 85%,#c864dc 90%,
@@ -2049,9 +2049,9 @@ var STOPS=[
   // PROVA 16/8/2026 (test): sotto i 5 mm la mappa resta trasparente, fra 5 e
   // 20 un azzurro tenue. Prima colorava gia' da 0,1 mm e a 5 mm era gia'
   // azzurro pieno: 7 mm in due settimane sembravano 20.
-  {v:5,   r:255,g:255,b:255},
-  {v:8,   r:222,g:238,b:252},
-  {v:12,  r:196,g:224,b:250},
+  {v:2,   r:255,g:255,b:255},
+  {v:5,   r:228,g:241,b:253},
+  {v:12,  r:186,g:220,b:250},
   {v:20,  r:50, g:110,b:220},
   {v:40,  r:0,  g:180,b:200},
   {v:60,  r:0,  g:180,b:80 },
@@ -2068,7 +2068,7 @@ var STOPS=[
   {v:500, r:255,g:220,b:255}
 ];
 // Soglia minima per mostrare colore — sotto 0.3mm = trasparente
-var MIN_MM_DISPLAY=5;      // PROVA 16/8: era 0.1 — sotto i 5 mm trasparente
+var MIN_MM_DISPLAY=2;      // PROVA 16/8: era 0.1 — sotto i 2 mm trasparente (era 5, troppo: Chiari 7 e Crema 7 sparivano)
 function mmToRGB(mm){
   var v=Math.max(0,Math.min(mm,400));
   for(var i=1;i<STOPS.length;i++){
@@ -2476,7 +2476,7 @@ function drawGrid(){
     // Sotto soglia: trasparente. Tra soglia e 2mm: fade-in graduale
     var fa=a;
     if(g.mm<MIN_MM_DISPLAY){continue;}
-    else if(g.mm<8.0){fa=Math.round(a*(g.mm-MIN_MM_DISPLAY)/(8.0-MIN_MM_DISPLAY));}   // sfumatura 5→8 (era 0.1→2)
+    else if(g.mm<5.0){fa=Math.round(a*(g.mm-MIN_MM_DISPLAY)/(5.0-MIN_MM_DISPLAY));}   // sfumatura 2→5 (era 0.1→2)
     var xa=Math.max(0,x0),xb=Math.min(W,x1),ya=Math.max(0,y0),yb=Math.min(H,y1);
     for(var y=ya;y<yb;y++){var row=y*W*4+xa*4;for(var x=xa;x<xb;x++){px[row]=r;px[row+1]=g2;px[row+2]=b;px[row+3]=fa;row+=4;}}
   }
