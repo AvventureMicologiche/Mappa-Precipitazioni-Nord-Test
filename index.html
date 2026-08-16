@@ -314,13 +314,13 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 #leg-back-btn{display:none;}
 .grad{height:13px;border-radius:4px;margin-bottom:4px;
   background:-webkit-linear-gradient(left,
-    #ffffff 0%,#d2e6ff 5%,#a0c8ff 10%,#6496f0 15%,
+    #ffffff 0%,#ffffff 5%,#deeefc 8%,#c4e0fa 12%,#6496f0 15%,
     #326edc 20%,#00b4c8 28%,#00b450 35%,#008c28 42%,
     #78c800 49%,#dcE600 55%,#ffb400 61%,#ff7800 67%,
     #f03200 73%,#b40000 79%,#8c00b4 85%,#c864dc 90%,
     #f0aaf0 95%,#ffdcff 100%);
   background:linear-gradient(to right,
-    #ffffff 0%,#d2e6ff 5%,#a0c8ff 10%,#6496f0 15%,
+    #ffffff 0%,#ffffff 5%,#deeefc 8%,#c4e0fa 12%,#6496f0 15%,
     #326edc 20%,#00b4c8 28%,#00b450 35%,#008c28 42%,
     #78c800 49%,#dcE600 55%,#ffb400 61%,#ff7800 67%,
     #f03200 73%,#b40000 79%,#8c00b4 85%,#c864dc 90%,
@@ -2046,11 +2046,12 @@ function selectUniform(stazioni, maxTotal){
 // ═══════════════════════════════════════════════════════════════
 var STOPS=[
   {v:0,   r:255,g:255,b:255},
-  {v:0.5, r:220,g:240,b:255},
-  {v:1,   r:190,g:225,b:255},
-  {v:2,   r:160,g:210,b:255},
-  {v:5,   r:110,g:180,b:255},
-  {v:10,  r:100,g:160,b:240},
+  // PROVA 16/8/2026 (test): sotto i 5 mm la mappa resta trasparente, fra 5 e
+  // 20 un azzurro tenue. Prima colorava gia' da 0,1 mm e a 5 mm era gia'
+  // azzurro pieno: 7 mm in due settimane sembravano 20.
+  {v:5,   r:255,g:255,b:255},
+  {v:8,   r:222,g:238,b:252},
+  {v:12,  r:196,g:224,b:250},
   {v:20,  r:50, g:110,b:220},
   {v:40,  r:0,  g:180,b:200},
   {v:60,  r:0,  g:180,b:80 },
@@ -2067,7 +2068,7 @@ var STOPS=[
   {v:500, r:255,g:220,b:255}
 ];
 // Soglia minima per mostrare colore — sotto 0.3mm = trasparente
-var MIN_MM_DISPLAY=0.1;
+var MIN_MM_DISPLAY=5;      // PROVA 16/8: era 0.1 — sotto i 5 mm trasparente
 function mmToRGB(mm){
   var v=Math.max(0,Math.min(mm,400));
   for(var i=1;i<STOPS.length;i++){
@@ -2282,6 +2283,13 @@ function clearHeatmap(){
 }
 
 var GRID_RES=0.009, IDW_RAD=0.15;
+// PROVA 16/8/2026 (test) — VETO LOCALE. Se la stazione piu' vicina a un punto
+// e' entro VETO_KM ed e' praticamente a zero, quel punto e' zero: la media IDW
+// non puo' "prestargli" i mm di un temporale a 20 km. Nasce dai cerchi rossi
+// dell'utente su Bergamo-Brescia (11 stazioni a 0 su 24, eppure tutto azzurro:
+// media fra dieci zeri e cinque temporali = 3-5 mm). Tocca SOLO i punti con
+// una stazione a zero a portata di mano; montagna identica al centesimo.
+var VETO_KM=6, VETO_MM=1, VETO_D2=(VETO_KM/111)*(VETO_KM/111);
 // Passo EFFETTIVO della griglia: in multiregione la vista è zoomata fuori e il
 // dettaglio fine non si vede, quindi render() lo ingrandisce per non calcolare
 // centinaia di migliaia di celle (buildGrid è sincrono e bloccherebbe il thread).
@@ -2351,18 +2359,20 @@ function buildGrid(data,rings,idwRad,gridRes){
         }
       }
       if(!inside) continue;
-      var num=0,den=0,found=false;
+      var num=0,den=0,found=false,dMin=Infinity,mmMin=0;
       for(var i=0;i<dataForIDW.length;i++){
         var dlat=lat-dataForIDW[i].lat;
         var dlon=(lon-dataForIDW[i].lon)*Math.cos(lat*Math.PI/180);
         var d2=dlat*dlat+dlon*dlon;
         if(d2>rad*rad) continue;
         found=true;
+        if(d2<dMin){dMin=d2;mmMin=dataForIDW[i].mm;}
         if(d2<0.000001){num=dataForIDW[i].mm;den=1;break;}
         var w=1/d2; num+=w*dataForIDW[i].mm; den+=w;
       }
       if(!found) continue;
-      pts.push({lat:lat,lon:lon,mm:num/den});
+      // veto locale (vedi VETO_KM): stazione vicina a zero => punto a zero
+      pts.push({lat:lat,lon:lon,mm:(dMin<=VETO_D2&&mmMin<VETO_MM)?0:num/den});
     }
   }
   return pts;
@@ -2412,18 +2422,20 @@ function buildGridAFette(data,rings,idwRad,gridRes,sessione,onFatto){
           }
         }
         if(!inside) continue;
-        var num=0,den=0,found=false;
+        var num=0,den=0,found=false,dMin=Infinity,mmMin=0;
         for(var i=0;i<data.length;i++){
           var dlat=lat-data[i].lat;
           var dlon=(lon-data[i].lon)*Math.cos(lat*Math.PI/180);
           var d2=dlat*dlat+dlon*dlon;
           if(d2>rad*rad) continue;
           found=true;
+          if(d2<dMin){dMin=d2;mmMin=data[i].mm;}
           if(d2<0.000001){num=data[i].mm;den=1;break;}
           var w=1/d2; num+=w*data[i].mm; den+=w;
         }
         if(!found) continue;
-        pts.push({lat:lat,lon:lon,mm:num/den});
+        // veto locale: stessa regola di buildGrid (le due copie devono restare gemelle)
+        pts.push({lat:lat,lon:lon,mm:(dMin<=VETO_D2&&mmMin<VETO_MM)?0:num/den});
       }
       lat+=GR;
       var ora=(window.performance&&performance.now)?performance.now():Date.now();
@@ -2464,7 +2476,7 @@ function drawGrid(){
     // Sotto soglia: trasparente. Tra soglia e 2mm: fade-in graduale
     var fa=a;
     if(g.mm<MIN_MM_DISPLAY){continue;}
-    else if(g.mm<2.0){fa=Math.round(a*(g.mm-MIN_MM_DISPLAY)/(2.0-MIN_MM_DISPLAY));}
+    else if(g.mm<8.0){fa=Math.round(a*(g.mm-MIN_MM_DISPLAY)/(8.0-MIN_MM_DISPLAY));}   // sfumatura 5→8 (era 0.1→2)
     var xa=Math.max(0,x0),xb=Math.min(W,x1),ya=Math.max(0,y0),yb=Math.min(H,y1);
     for(var y=ya;y<yb;y++){var row=y*W*4+xa*4;for(var x=xa;x<xb;x++){px[row]=r;px[row+1]=g2;px[row+2]=b;px[row+3]=fa;row+=4;}}
   }
