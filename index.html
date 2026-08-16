@@ -2234,6 +2234,7 @@ var regionRings    = {};   // cache GeoJSON per regione
 var regionBorder   = null; // layer Leaflet confine attivo
 var activeMarkers  = [];
 var gridPoints     = [];
+var gridRings      = [];   // anelli della/e regione/i dell'ultima griglia: drawGrid ci ritaglia la sfumatura
 var cvs=null, heatCtx=null, drawTimer=null;
 var heatOpacity    = 0.70;
 var totalStations  = 0;
@@ -2457,30 +2458,58 @@ function drawGrid(){
   if(!cvs||!heatCtx||gridPoints.length===0) return;
   var size=map.getSize();
   cvs.width=size.x; cvs.height=size.y;
-  // Resetta transform e ricalcola posizione corretta
   cvs.style.transform='';
   var tl=map.containerPointToLayerPoint([0,0]);
   cvs.style.transform='translate('+tl.x+'px,'+tl.y+'px)';
   heatCtx.clearRect(0,0,size.x,size.y);
-  var sq=gridPxSize(),a=Math.round(heatOpacity*255),half=sq/2;
-  var imgData=heatCtx.createImageData(size.x,size.y);
-  var px=imgData.data,W=size.x,H=size.y;
-  for(var i=0;i<gridPoints.length;i++){
-    var g=gridPoints[i];
-    var pt=map.latLngToContainerPoint(L.latLng(g.lat,g.lon));
-    var x0=Math.round(pt.x-half),y0=Math.round(pt.y-half);
-    var x1=x0+sq,y1=y0+sq;
-    if(x1<0||y1<0||x0>=W||y0>=H) continue;
-    var rgb=mmToRGB(g.mm);
-    var r=rgb[0],g2=rgb[1],b=rgb[2];
-    // Sotto soglia: trasparente. Tra soglia e 2mm: fade-in graduale
-    var fa=a;
-    if(g.mm<MIN_MM_DISPLAY){continue;}
-    else if(g.mm<5.0){fa=Math.round(a*(g.mm-MIN_MM_DISPLAY)/(5.0-MIN_MM_DISPLAY));}   // sfumatura 2→5 (era 0.1→2)
-    var xa=Math.max(0,x0),xb=Math.min(W,x1),ya=Math.max(0,y0),yb=Math.min(H,y1);
-    for(var y=ya;y<yb;y++){var row=y*W*4+xa*4;for(var x=xa;x<xb;x++){px[row]=r;px[row+1]=g2;px[row+2]=b;px[row+3]=fa;row+=4;}}
+  // PROVA 16/8/2026 (test) — SFUMATURA. Prima ogni cella era un quadrato di
+  // colore piatto steso pixel per pixel: una griglia, non una superficie. Con
+  // l'azzurro uniforme intorno non si notava; col bianco della pianura a zero
+  // i quadretti da 2,4 km (3 regioni) saltano all'occhio anche a zoom normale.
+  // Ora: si dipinge un canvas PICCOLO con UN PIXEL PER CELLA e lo si stende
+  // ingrandito con drawImage + imageSmoothingEnabled: l'interpolazione
+  // bilineare la fa il browser. Il calcolo (buildGrid, veto, scala) non
+  // cambia di una virgola: cambia solo come si stende il colore.
+  var GR=activeGridRes;
+  // griglia lat/lon -> indici interi di cella
+  var latMin=Infinity,latMax=-Infinity,lonMin=Infinity,lonMax=-Infinity;
+  for(var i=0;i<gridPoints.length;i++){var g=gridPoints[i];
+    if(g.lat<latMin)latMin=g.lat;if(g.lat>latMax)latMax=g.lat;if(g.lon<lonMin)lonMin=g.lon;if(g.lon>lonMax)lonMax=g.lon;}
+  var nx=Math.round((lonMax-lonMin)/GR)+1, ny=Math.round((latMax-latMin)/GR)+1;
+  if(nx<1||ny<1||nx*ny>4e6) return;
+  var small=drawGrid._small||(drawGrid._small=document.createElement('canvas'));
+  small.width=nx; small.height=ny;
+  var sc=small.getContext('2d'); var img=sc.createImageData(nx,ny); var px=img.data;
+  var a=Math.round(heatOpacity*255);
+  for(var k=0;k<gridPoints.length;k++){var q=gridPoints[k];
+    if(q.mm<MIN_MM_DISPLAY) continue;
+    var fa=a; if(q.mm<5.0){fa=Math.round(a*(q.mm-MIN_MM_DISPLAY)/(5.0-MIN_MM_DISPLAY));}   // sfumatura 2->5
+    var cx=Math.round((q.lon-lonMin)/GR), cy=(ny-1)-Math.round((q.lat-latMin)/GR);   // riga 0 = nord
+    if(cx<0||cx>=nx||cy<0||cy>=ny) continue;
+    var rgb=mmToRGB(q.mm), o=(cy*nx+cx)*4;
+    px[o]=rgb[0];px[o+1]=rgb[1];px[o+2]=rgb[2];px[o+3]=fa;}
+  sc.putImageData(img,0,0);
+  // rettangolo a schermo coperto dalla griglia: dal centro della prima cella
+  // al centro dell'ultima, piu' mezza cella per lato
+  var pNW=map.latLngToContainerPoint(L.latLng(latMax+GR/2,lonMin-GR/2));
+  var pSE=map.latLngToContainerPoint(L.latLng(latMin-GR/2,lonMax+GR/2));
+  // Ritaglio sul confine: la sfumatura bilineare mescola anche verso l'esterno
+  // (trasparente) e il colore "usciva" di mezza cella dalla regione. Con il
+  // clip sui poligoni il bordo torna netto e la sfumatura resta dentro.
+  heatCtx.save();
+  if(gridRings&&gridRings.length){
+    heatCtx.beginPath();
+    for(var rI=0;rI<gridRings.length;rI++){var poly=gridRings[rI];
+      for(var hI=0;hI<poly.length;hI++){var ring=poly[hI];
+        for(var vI=0;vI<ring.length;vI++){var pp=map.latLngToContainerPoint(L.latLng(ring[vI][1],ring[vI][0]));
+          if(vI===0)heatCtx.moveTo(pp.x,pp.y);else heatCtx.lineTo(pp.x,pp.y);}
+        heatCtx.closePath();}}
+    heatCtx.clip('evenodd');   // evenodd: i buchi (es. enclave) restano fuori
   }
-  heatCtx.putImageData(imgData,0,0);
+  heatCtx.imageSmoothingEnabled=true;
+  try{heatCtx.imageSmoothingQuality='high';}catch(e){}
+  heatCtx.drawImage(small,0,0,nx,ny,pNW.x,pNW.y,pSE.x-pNW.x,pSE.y-pNW.y);
+  heatCtx.restore();
   cvs.style.opacity='1';
 }
 
@@ -4006,7 +4035,7 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
       var _sess=loadSessionId;
       buildGridAFette(idwData,rings,idwR,activeGridRes,_sess,function(pts){
         if(_sess!==loadSessionId) return;   // l'utente ha già chiesto altro
-        gridPoints=pts;
+        gridPoints=pts; gridRings=rings;
         drawGrid();
         // Ridisegni di sicurezza: se il primo draw avviene con la mappa ancora
         // in animazione (fit del periodo appena partito), celle e canvas restano
