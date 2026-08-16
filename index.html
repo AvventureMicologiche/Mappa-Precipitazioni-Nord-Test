@@ -4027,7 +4027,18 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
       var area=(laMax>laMin&&loMax>loMin)?(laMax-laMin)*(loMax-loMin):0;
       if(area>0) fattore=Math.min(4.5,Math.max(fattore,1.5*Math.sqrt(area/AREA_RIF)));
       activeGridRes=GRID_RES*fattore;
-      var idwData=(nReg>1&&dati.length>320)?selectUniform(dati,320):dati;
+      // La heatmap usa TUTTE le stazioni. Fino al 16/8/2026 qui c'era
+      //   idwData=(nReg>1&&dati.length>320)?selectUniform(dati,320):dati
+      // cioe' in multiregione sopra 320 stazioni il colore veniva calcolato su
+      // un CAMPIONE (max 6 per casella di una griglia 10x8, scelte per
+      // coordinate e non per mm) mentre i pallini mostravano tutte le stazioni.
+      // Effetto misurato su Austria+Alto Adige+Veneto a 30 gg (513 stazioni,
+      // 242 usate, 271 scartate): sotto Kleinzicken (28,9 mm) l'IDW faceva 14,8
+      // perche' Kleinzicken, Bernstein, Hartberg e Kroisegg erano state scartate
+      // e comandava Rechnitz (12). Tooltip 29, colore da 15: un utente l'ha
+      // visto. Il campionamento era nato il 6/8 per non bloccare il thread,
+      // ma da quando la griglia si calcola A FETTE non serve piu' a niente.
+      var idwData=dati;
       // Calcolo A FETTE: il ciclo restituisce il controllo al browser ogni
       // ~22 ms, così la pagina non si congela mentre la griglia si costruisce.
       // Sull'Austria il blocco unico era di 1,1 s. Il totale dura uguale, ma
