@@ -23,8 +23,27 @@
  *
  * Vengono escluse le stazioni gestite da ARPA Lombardia / ARPA Piemonte presenti
  * in OASI: quelle zone sono già coperte dai nostri collector regionali.
+ * Dall'11/8/2026 sono escluse anche le 9 stazioni di PROPRIETÀ MeteoSvizzera
+ * (Cadenazzo, Cevio, Comprovasco, Locarno, Lugano, Piotta, Robiei,
+ * S.Bernardino, Stabio): le condizioni d'uso OASI vietano di ripubblicarne i
+ * dati grezzi. Le stesse identiche stazioni fisiche arrivano ora dal collector
+ * MeteoSwiss OGD (CC BY, whitelist TI_SMN_DA_OASI) nella cartella
+ * data/svizzera; lo storico in data/ticino è stato ripulito lo stesso giorno
+ * (script una tantum migra-ti-smn-da-oasi-a-ogd.js).
  *
  * Licenza dati OASI: uso e pubblicazione liberi citando la fonte (oasi.ti.ch).
+ *
+ * TEMPERATURA E VENTO (dall'11/8/2026 — grafici stazione):
+ * dagli stessi endpoint, parametri `T` (°C), `WS` e `WSgust` (m/s ×3,6) a
+ * letture da 10 minuti (resolution=h) → t: [min,max] °C · w: [media,raffica]
+ * km/h, scritti solo con ore coperte ≥ MIN_ORE_METEO. Censimento 11/8: 15
+ * stazioni con T, 7 anche col vento; le pluvio UCA non hanno altri sensori.
+ * ⚠️ Le stazioni di proprietà MeteoSvizzera si SALTANO: le condizioni d'uso
+ * OASI vietano di ripubblicare i dati grezzi MeteoSvizzera (per quelle, la
+ * strada pulita è MeteoSwiss OGD, CC BY). Se T non dà righe si saltano anche
+ * WS/WSgust: al censimento nessuna stazione aveva il vento senza termometro.
+ * Tutta la parte meteo sta in un try per giorno: un suo guasto non tocca
+ * mai la raccolta pioggia.
  */
 
 const https = require('https');
@@ -145,6 +164,74 @@ async function collectDay(stations, dateStr) {
   return out;
 }
 
+// ── Temperatura e vento (letture 10 min, resolution=h) ───────────────
+const MIN_ORE_METEO = 20;
+
+/** Righe {hh, v} del giorno dateStr da un CSV OASI a 10 minuti. */
+function parseOasiOre(csv, dateStr) {
+  const out = [];
+  for (const line of csv.split('\n')) {
+    const t = line.trim();
+    if (!t || t.startsWith('#') || t.startsWith('data;')) continue;
+    const parts = t.split(';');
+    if (parts.length < 2) continue;
+    const m = parts[0].match(/^(\d{2})\.(\d{2})\.(\d{4}) (\d{2})/);
+    if (!m || `${m[3]}-${m[2]}-${m[1]}` !== dateStr) continue;
+    const v = parseFloat(parts[1]);
+    if (!isNaN(v)) out.push({ hh: m[4], v });
+  }
+  return out;
+}
+
+async function fetchMeteoParam(code, param, dateStr) {
+  const url = `${BASE_URL}/measure/csv?domain=meteo&resolution=h&parameter=${param}`
+            + `&from=${dateStr}&to=${dateStr}&location=${encodeURIComponent(code)}`;
+  return parseOasiOre(await fetchRaw(url), dateStr);
+}
+
+const oreDi = rows => new Set(rows.map(r => r.hh)).size;
+
+/** Aggiunge t/w ai record del giorno (records = output di collectDay). */
+async function aggiungiMeteoOasi(stations, records, dateStr) {
+  const byId = new Map(records.map(r => [r.id, r]));
+  let conT = 0, conW = 0;
+  for (const s of stations) {
+    // Licenza OASI: i dati grezzi MeteoSvizzera non si possono ripubblicare
+    if (s.owner === 'MeteoSvizzera') continue;
+    const rec = byId.get(s.code);
+    if (!rec) continue;
+    try {
+      const vT = (await fetchMeteoParam(s.code, 'T', dateStr)).filter(r => r.v >= -45 && r.v <= 50);
+      if (!vT.length) { await sleep(80); continue; } // niente termometro → niente altri sensori (censimento 11/8)
+      if (oreDi(vT) >= MIN_ORE_METEO) {
+        rec.t = [Math.round(Math.min(...vT.map(r => r.v)) * 10) / 10,
+                 Math.round(Math.max(...vT.map(r => r.v)) * 10) / 10];
+        conT++;
+      }
+      const vWS = (await fetchMeteoParam(s.code, 'WS', dateStr)).filter(r => r.v >= 0 && r.v < 60);
+      if (oreDi(vWS) >= MIN_ORE_METEO) {
+        const media = vWS.reduce((a, r) => a + r.v, 0) / vWS.length;
+        const vGU = (await fetchMeteoParam(s.code, 'WSgust', dateStr)).filter(r => r.v >= 0 && r.v < 90);
+        rec.w = [Math.round(media * 3.6 * 10) / 10,
+                 vGU.length ? Math.round(Math.max(...vGU.map(r => r.v)) * 3.6 * 10) / 10 : null];
+        conW++;
+      }
+      await sleep(120);
+    } catch (e) {
+      console.warn(`  Warn meteo ${s.code}: ${e.message}`);
+    }
+  }
+  console.log(`  Meteo t/w ${dateStr}: ${conT} stazioni con temperatura, ${conW} col vento`);
+}
+
+/** collectDay + arricchimento t/w, con la pioggia sempre al riparo. */
+async function collectDayConMeteo(stations, dateStr) {
+  const out = await collectDay(stations, dateStr);
+  try { await aggiungiMeteoOasi(stations, out, dateStr); }
+  catch (e) { console.warn('  Warn: meteo t/w saltato per ' + dateStr + ': ' + e.message); }
+  return out;
+}
+
 function writeDay(dateStr, stations) {
   if (stations.length < 10) {
     console.warn(`  ${dateStr}: solo ${stations.length} stazioni, salto la scrittura per non degradare il file esistente`);
@@ -170,7 +257,12 @@ async function main() {
   const locs = JSON.parse(await fetchRaw(`${BASE_URL}/locations?domain=meteo`));
 
   const stations = locs
-    .filter(l => !((l.simpleOwner || l.owner || '').toUpperCase().includes('ARPA')))
+    .filter(l => {
+      const o = (l.simpleOwner || l.owner || '');
+      // ARPA: zone già coperte dai nostri collector. MeteoSvizzera: licenza
+      // OASI (vedi intestazione) — quelle stazioni arrivano da MeteoSwiss OGD.
+      return !o.toUpperCase().includes('ARPA') && o !== 'MeteoSvizzera';
+    })
     .map(l => {
       const c = l.coordinates || {};
       if (typeof c.x !== 'number' || typeof c.y !== 'number') return null;
@@ -178,6 +270,7 @@ async function main() {
       return {
         code: l.code,
         name: l.name,
+        owner: l.simpleOwner || l.owner || '',
         lat: Math.round(w.lat * 10000) / 10000,
         lon: Math.round(w.lon * 10000) / 10000,
         q:   Math.round(c.z || 0)
@@ -193,7 +286,7 @@ async function main() {
   if (process.env.DATE_OVERRIDE && process.env.DATE_OVERRIDE.trim()) {
     const dStr = process.env.DATE_OVERRIDE.trim();
     console.log(`  Raccolgo ${dStr} (DATE_OVERRIDE)...`);
-    writeDay(dStr, await collectDay(stations, dStr));
+    writeDay(dStr, await collectDayConMeteo(stations, dStr));
   } else {
     const now = new Date();
     const italyNow = new Date(now.getTime() + getItalyOffset(now) * 3600000);
@@ -203,10 +296,10 @@ async function main() {
     const dayBeforeStr  = fmtDate(new Date(noon - 48 * 3600000));
 
     console.log(`  Raccolgo ieri (${yesterdayStr})...`);
-    writeDay(yesterdayStr, await collectDay(stations, yesterdayStr));
+    writeDay(yesterdayStr, await collectDayConMeteo(stations, yesterdayStr));
 
     console.log(`  Consolido l'altroieri (${dayBeforeStr})...`);
-    writeDay(dayBeforeStr, await collectDay(stations, dayBeforeStr));
+    writeDay(dayBeforeStr, await collectDayConMeteo(stations, dayBeforeStr));
 
     // ── Auto-riparazione: recupera dall'archivio OASI eventuali giorni
     // mancanti negli ultimi 7 (es. run falliti per piu' giorni di fila).
@@ -221,7 +314,7 @@ async function main() {
       }
       if (needsRepair) {
         console.log(`  Auto-riparazione: recupero ${dStr} dall'archivio...`);
-        writeDay(dStr, await collectDay(stations, dStr));
+        writeDay(dStr, await collectDayConMeteo(stations, dStr));
       }
     }
   }

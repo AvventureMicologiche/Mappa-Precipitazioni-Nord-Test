@@ -87,18 +87,31 @@ async function main() {
     throw new Error('Nessun dato ricevuto da getValoriAggregatiGiornoJson');
   }
 
-  // Prova prima con la data richiesta, poi con la più recente disponibile
+  // Meteotrentino pubblica l'aggregato giornaliero solo a giornata conclusa:
+  // durante il giorno i record per `dateStr` non esistono ancora. Prima si
+  // ripiegava sul "giorno più recente disponibile", scrivendo i dati di IERI
+  // dentro il file di OGGI; il file veniva poi corretto solo dal primo run del
+  // mattino successivo, e nel frattempo la mappa mostrava come "ieri" i dati
+  // dell'altro ieri. Ora si salta il salvataggio di oggi e si aggiorna solo ieri.
   let todayRecords = records.filter(r => r.giorno && r.giorno.startsWith(dateStr));
   console.log(`  Record per ${dateStr}: ${todayRecords.length}`);
 
   if (todayRecords.length < 5) {
-    // Usa il giorno più recente disponibile nell'API
-    const dates = [...new Set(records.map(r => r.giorno ? r.giorno.substring(0,10) : null).filter(Boolean))].sort();
-    const latestDate = dates[dates.length - 1];
-    console.log(`  Provo con data più recente disponibile: ${latestDate}`);
-    todayRecords = records.filter(r => r.giorno && r.giorno.startsWith(latestDate));
-    console.log(`  Record per ${latestDate}: ${todayRecords.length}`);
-    if (todayRecords.length < 5) throw new Error(`Troppo pochi record: ${todayRecords.length}`);
+    console.log(`  Nessun aggregato pubblicato per ${dateStr}: salto il salvataggio di oggi.`);
+    todayRecords = [];
+  }
+
+  // Temperatura (11/8/2026 — grafici stazione): Minima/Massima sono aggregati
+  // ufficiali GIÀ nella stessa risposta, zero richieste extra. Il vento c'è
+  // solo come raffica (vento_max) SENZA media: il grafico disegna la media,
+  // quindi non si scrive niente — da riconsiderare se l'API pubblicasse anche
+  // la media. Sanity come le altre reti: t in [-45,50] °C.
+  function estraiMeteoTrn(r) {
+    const out = {};
+    const tn = parseFloat(r.Minima), tx = parseFloat(r.Massima);
+    if (!isNaN(tn) && !isNaN(tx) && tn >= -45 && tx <= 50 && tn <= tx)
+      out.t = [Math.round(tn * 10) / 10, Math.round(tx * 10) / 10];
+    return out;
   }
 
   // Assembla stazioni
@@ -108,7 +121,7 @@ async function main() {
     if (mm === null || mm === undefined || isNaN(parseFloat(mm))) return null;
     const meta = stMeta[id];
     if (!meta || !meta.lat || !meta.lon) return null;
-    return {
+    const rec = {
       id,
       n:   meta.n,
       lat: meta.lat,
@@ -117,6 +130,8 @@ async function main() {
       p:   meta.p,
       mm:  Math.round(parseFloat(mm) * 10) / 10
     };
+    Object.assign(rec, estraiMeteoTrn(r));
+    return rec;
   }).filter(Boolean);
 
   console.log(`  Stazioni con dati: ${stations.length}`);
@@ -151,7 +166,9 @@ async function main() {
           if (mm === null || mm === undefined || isNaN(parseFloat(mm))) return null;
           const meta = stMeta[id];
           if (!meta || !meta.lat || !meta.lon) return null;
-          return { id, n: meta.n, lat: meta.lat, lon: meta.lon, q: meta.q, p: meta.p, mm: Math.round(parseFloat(mm) * 10) / 10 };
+          const _rec = { id, n: meta.n, lat: meta.lat, lon: meta.lon, q: meta.q, p: meta.p, mm: Math.round(parseFloat(mm) * 10) / 10 };
+          Object.assign(_rec, estraiMeteoTrn(r));
+          return _rec;
         }).filter(Boolean);
         if (_yStations.length >= 10) {
           const _yFile = path.join(DATA_DIR, `${_yDate}.json`);
@@ -161,6 +178,22 @@ async function main() {
       }
     } catch(e) { console.warn('Warn aggiornamento ieri: ' + e.message); }
   }
+
+  // ── Pulizia file > 730 giorni (retention finestra scorrevole) ──
+  const MAX_DAYS = 730;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - MAX_DAYS);
+  const cutoffStr = cutoff.toISOString().substring(0, 10);
+  let deleted = 0;
+  fs.readdirSync(DATA_DIR)
+    .filter(function(f) { return /^\d{4}-\d{2}-\d{2}\.json$/.test(f); })
+    .forEach(function(f) {
+      if (f.replace('.json', '') < cutoffStr) {
+        fs.unlinkSync(path.join(DATA_DIR, f));
+        deleted++;
+      }
+    });
+  if (deleted > 0) console.log('Pulizia retention: ' + deleted + ' file oltre i ' + MAX_DAYS + ' giorni eliminati');
 }
 
 main().catch(e => { console.error('❌', e.message); process.exit(1); });

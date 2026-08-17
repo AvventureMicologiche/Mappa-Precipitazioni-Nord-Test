@@ -38,6 +38,16 @@ const HOST     = 'presidi2.regione.vda.it';
 const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'valledaosta-cf');
 const PRID_PIOGGIA = 93;
 const GIORNI_FINESTRA = 7;   // ieri + auto-riparazione della settimana
+// Temperatura e vento (11/8/2026 — grafici stazione): stessa piattaforma,
+// aggr:'hh' → valori ORARI di tutti i parametri in una chiamata per stazione
+// (la seconda del run). prid 1 = Temperatura (°C), prid 10 = Velocità Vento
+// Vett. — in m/s → ×3,6 (validato l'11/8 contro Open-Meteo: Aosta Mont-Fleury
+// rapporto 3,81 ≈ 3,6; Donnas più alto del modello ma è la porta del föhn).
+// Nessuna raffica → w:[media, null]. Ore coperte ≥ MIN_ORE_METEO, sanity
+// t in [-45,50] °C, vento <60 m/s. Tutta la parte meteo sta in try.
+const PRID_TEMP  = 1;
+const PRID_VENTO = 10;
+const MIN_ORE_METEO = 20;
 
 function getItalyOffset(date) {
   const year = date.getUTCFullYear();
@@ -146,7 +156,8 @@ async function main() {
   // 3) Una chiamata per stazione: valori giornalieri del parametro pioggia
   //    dayMap[dateStr] = [ {stazione+mm}, ... ]
   const dayMap = {};
-  targetDays.forEach(d => dayMap[d] = []);
+  const meteoByDay = {};   // dStr → { id_record → {t?, w?} }
+  targetDays.forEach(d => { dayMap[d] = []; meteoByDay[d] = {}; });
   let okStazioni = 0;
 
   const BATCH = 6;
@@ -170,10 +181,42 @@ async function main() {
       } catch (e) {
         // stazione singola fallita: non blocca le altre
       }
+      // t/w dagli orari: seconda chiamata, fallimento innocuo per la pioggia
+      try {
+        const rh = await post('/str_dataview_get_allparams_data', sess, { id: st.id, aggr: 'hh', from, to });
+        const perDay = {}; // dStr → {temps:[], venti:[]}
+        for (const prid of [PRID_TEMP, PRID_VENTO]) {
+          const p = (rh.data || []).find(x => x.parameter_id === prid);
+          if (!p || !Array.isArray(p.station_param_values)) continue;
+          for (const [ts, val] of p.station_param_values) {
+            if (typeof val !== 'number') continue;
+            const dStr = fmtDate(new Date(ts + getItalyOffset(new Date(ts)) * 3600000));
+            if (!targetSet.has(dStr)) continue;
+            const acc = perDay[dStr] = perDay[dStr] || { temps: [], venti: [] };
+            if (prid === PRID_TEMP && val >= -45 && val <= 50) acc.temps.push(val);
+            if (prid === PRID_VENTO && val >= 0 && val < 60) acc.venti.push(val);
+          }
+        }
+        Object.keys(perDay).forEach(dStr => {
+          const a = perDay[dStr], m = {};
+          if (a.temps.length >= MIN_ORE_METEO)
+            m.t = [Math.round(Math.min(...a.temps) * 10) / 10, Math.round(Math.max(...a.temps) * 10) / 10];
+          if (a.venti.length >= MIN_ORE_METEO)
+            m.w = [Math.round(a.venti.reduce((x, v) => x + v, 0) / a.venti.length * 3.6 * 10) / 10, null];
+          if (m.t || m.w) meteoByDay[dStr][`cf_vda_${st.id}`] = m;
+        });
+      } catch (e) { /* meteo di una stazione fallito: pioggia intatta */ }
     }));
     await sleep(400);
   }
   console.log(`  Stazioni con dati: ${okStazioni}/${anagrafica.length}`);
+  // aggancia t/w ai record del giorno
+  targetDays.forEach(dStr => {
+    dayMap[dStr].forEach(rec => {
+      const m = meteoByDay[dStr][rec.id];
+      if (m) Object.assign(rec, m);
+    });
+  });
 
   // 4) Scrittura per giorno (l'ultima lettura vince: sovrascrive il file)
   let scritti = 0;

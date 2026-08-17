@@ -33,6 +33,26 @@ function getTargetDate() {
   return italy.toISOString().substring(0, 10);
 }
 
+// Temperatura e vento (11/8/2026 — grafici stazione): aggregati giornalieri
+// GIÀ pronti nella stessa risposta ARPAE, zero richieste extra.
+// t: [min,max] °C · w: [media,raffica] km/h (l'API dà m/s → ×3,6; raffica
+// null se la stazione non ha il sensore). Sanity come Svizzera/Austria:
+// t in [-45,50] °C, vento medio <60 m/s, raffica <90 m/s.
+function estraiMeteo(day) {
+  const num = v => { const x = parseFloat(v); return isNaN(x) ? null : x; };
+  const tn = num(day.temperatura_minima_giornaliera_2m);
+  const tx = num(day.temperatura_massima_giornaliera_2m);
+  const ff = num(day.velocita_vento_media_giornaliera_10m);
+  const fx = num(day.massima_raffica_vento_giornaliera_10m);
+  const out = {};
+  if (tn != null && tx != null && tn >= -45 && tx <= 50 && tn <= tx)
+    out.t = [Math.round(tn * 10) / 10, Math.round(tx * 10) / 10];
+  if (ff != null && ff >= 0 && ff < 60)
+    out.w = [Math.round(ff * 3.6 * 10) / 10,
+             (fx != null && fx >= 0 && fx < 90) ? Math.round(fx * 3.6 * 10) / 10 : null];
+  return out;
+}
+
 function fetchJSON(url) {
   return new Promise((resolve, reject) => {
     https.get(url, { headers: { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0' } }, (res) => {
@@ -104,7 +124,7 @@ async function main() {
         if (!isNaN(val) && val >= 0 && val < 500) mm = Math.round(val * 10) / 10;
       }
 
-      output.push({
+      const rec = {
         id:  s._id,
         n:   ana.nome || '—',
         lat: Math.round(lat * 10000) / 10000,
@@ -112,7 +132,9 @@ async function main() {
         q:   ana.altitudine || 0,
         p:   ana.provincia || '—',
         mm
-      });
+      };
+      if (dayData && dayData['0000']) Object.assign(rec, estraiMeteo(dayData['0000']));
+      output.push(rec);
       ok++;
     } catch(e) {
       skip++;
@@ -181,7 +203,9 @@ async function main() {
             const v=parseFloat(dd['0000'].precipitazione_cumulata_giornaliera);
             if(!isNaN(v)&&v>=0&&v<500) mm=Math.round(v*10)/10;
           }
-          _out.push({id:s._id,n:ana.nome||'—',lat:Math.round(lat*10000)/10000,lon:Math.round(lon*10000)/10000,q:ana.altitudine||0,p:ana.provincia||'—',mm});
+          const _rec={id:s._id,n:ana.nome||'—',lat:Math.round(lat*10000)/10000,lon:Math.round(lon*10000)/10000,q:ana.altitudine||0,p:ana.provincia||'—',mm};
+          if(dd&&dd['0000']) Object.assign(_rec,estraiMeteo(dd['0000']));
+          _out.push(_rec);
         } catch(e) {}
       });
       if (_out.length >= 10) {

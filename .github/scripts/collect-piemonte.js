@@ -48,6 +48,40 @@ async function fetchJSON(url, retries = 3) {
   throw new Error('fetch fallito dopo ' + retries + ' tentativi');
 }
 
+// Temperatura e vento (11/8/2026 — grafici stazione): gli STESSI record orari
+// della pioggia portano anche air_temperature, wind e gust_of_wind — zero
+// richieste extra. ⚠️ wind/gust sono GIÀ in km/h (validato l'11/8 contro
+// Open-Meteo su stazioni di pianura: rapporto ~0,9; fosse m/s sarebbe ~3,6).
+// t: [min,max] °C · w: [media,raffica] km/h, solo con ore valide ≥ MIN_ORE_METEO.
+// Sanity: t in [-45,50] °C; vento medio <216 km/h, raffica <324 (gli stessi
+// tetti 60/90 m/s delle altre reti, espressi in km/h).
+const MIN_ORE_METEO = 20;
+function aggregaMeteoPie(records) {
+  const acc = {};
+  records.forEach(m => {
+    const id = m.station_code;
+    if (!id) return;
+    const a = acc[id] = acc[id] || { tmin: Infinity, tmax: -Infinity, nT: 0, ffSum: 0, nFF: 0, fxMax: -Infinity, nFX: 0 };
+    const t = parseFloat(m.air_temperature);
+    if (!isNaN(t) && t >= -45 && t <= 50) { if (t < a.tmin) a.tmin = t; if (t > a.tmax) a.tmax = t; a.nT++; }
+    const ff = parseFloat(m.wind);
+    if (!isNaN(ff) && ff >= 0 && ff < 216) { a.ffSum += ff; a.nFF++; }
+    const fx = parseFloat(m.gust_of_wind);
+    if (!isNaN(fx) && fx >= 0 && fx < 324) { if (fx > a.fxMax) a.fxMax = fx; a.nFX++; }
+  });
+  const out = {};
+  Object.keys(acc).forEach(id => {
+    const a = acc[id], m = {};
+    if (a.nT >= MIN_ORE_METEO && a.tmax > -Infinity)
+      m.t = [Math.round(a.tmin * 10) / 10, Math.round(a.tmax * 10) / 10];
+    if (a.nFF >= MIN_ORE_METEO)
+      m.w = [Math.round(a.ffSum / a.nFF * 10) / 10,
+             a.nFX > 0 ? Math.round(a.fxMax * 10) / 10 : null];
+    if (m.t || m.w) out[id] = m;
+  });
+  return out;
+}
+
 async function main() {
   const targetDate = getTargetDate();
   console.log('\n=== Raccolta dati Piemonte per ' + targetDate + ' ===\n');
@@ -102,6 +136,7 @@ async function main() {
   });
   // Arrotonda a 1 decimale
   Object.keys(rainMap).forEach(id => { rainMap[id] = Math.round(rainMap[id] * 10) / 10; });
+  const meteoMap = aggregaMeteoPie(allMisure);
 
   // ── Step 4: costruisci output ─────────────────────────────────
   const output = [];
@@ -117,7 +152,7 @@ async function main() {
     let mm = rainMap[id];
     if (mm > 300) mm = 0; // cap anomalie
 
-    output.push({
+    const rec = {
       id:  id,
       n:   s.name || id,
       lat: Math.round(lat * 10000) / 10000,
@@ -125,7 +160,9 @@ async function main() {
       q:   parseInt(s.altitude || 0) || 0,
       p:   s.province || '—',
       mm:  Math.round(mm * 10) / 10
-    });
+    };
+    if (meteoMap[id]) Object.assign(rec, meteoMap[id]);
+    output.push(rec);
   });
 
   console.log('  Stazioni con dati: ' + output.length);
@@ -170,6 +207,7 @@ async function main() {
         // sum(cum_rain_1h) per stazione
         const _rm = {};
         _mY.forEach(m => { const id=m.station_code; if(!id) return; const v=parseFloat(m.cum_rain_1h); if(isNaN(v)||v<0) return; _rm[id]=(_rm[id]||0)+v; });
+        const _meteo = aggregaMeteoPie(_mY);
 
         const _out = [];
         Object.keys(_rm).forEach(id => {
@@ -178,7 +216,9 @@ async function main() {
           if(isNaN(lat)||isNaN(lon)) return;
           if(lat<43.8||lat>46.5||lon<6.6||lon>9.3) return;
           let mm=Math.round(_rm[id]*10)/10; if(mm>300) mm=0;
-          _out.push({id,n:s.name||id,lat:Math.round(lat*10000)/10000,lon:Math.round(lon*10000)/10000,q:parseInt(s.altitude||0)||0,p:s.province||'—',mm});
+          const _rec={id,n:s.name||id,lat:Math.round(lat*10000)/10000,lon:Math.round(lon*10000)/10000,q:parseInt(s.altitude||0)||0,p:s.province||'—',mm};
+          if(_meteo[id]) Object.assign(_rec,_meteo[id]);
+          _out.push(_rec);
         });
 
         if (_out.length >= 5) {

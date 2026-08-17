@@ -1,2 +1,5 @@
 # Local Netlify folder
 .netlify
+
+# Messaggio di allarme costruito al volo da check-fonti.js (non va nel repo)
+alert-mail.eml

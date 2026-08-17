@@ -92,6 +92,59 @@ function utcWindowForItalianDay(dateStr) {
   return { qFrom: fmtQ(start), qTo: fmtQ(end), refFrom: fmtRef(start), refTo: fmtRef(end) };
 }
 
+// Temperatura e vento (11/8/2026 — grafici stazione): prodotti B12101
+// (temperatura, ⚠️ in KELVIN → v>100 ? v-273,15, come la Francia), B11002
+// (vento medio, m/s → ×3,6) e B11041 (raffica, m/s — poche stazioni, null
+// dove manca). Tre query in più per (rete, giorno); stazione identificata
+// dallo stesso id lat_lon della pioggia. Serie più fitta per prodotto (come
+// per B13011); completezza in ORE COPERTE ≥ MIN_ORE_METEO. Tutto in un try:
+// un guasto delle query meteo non tocca mai la pioggia.
+const MIN_ORE_METEO = 20;
+async function collectMeteoHub(netCfg, w) {
+  const out = {};   // id → {t?, w?}
+  const fetchProd = async prod => {
+    const q = `reftime: >=${w.qFrom},<=${w.qTo};product:${prod};license:CCBY_COMPLIANT`;
+    const url = `${BASE_URL}?networks=${encodeURIComponent(netCfg.net)}&q=${encodeURIComponent(q)}`;
+    const raw = await fetchJSON(url);
+    const perId = {};
+    for (const entry of (raw.data || [])) {
+      const stat = entry.stat || {};
+      if (typeof stat.lat !== 'number' || typeof stat.lon !== 'number') continue;
+      let best = null;
+      for (const pr of (entry.prod || [])) {
+        if (pr.var !== prod || !Array.isArray(pr.val)) continue;
+        if (!best || pr.val.length > best.val.length) best = pr;
+      }
+      if (!best) continue;
+      const vals = best.val.filter(v => v.ref > w.refFrom && v.ref <= w.refTo && typeof v.val === 'number');
+      if (!vals.length) continue;
+      perId[`${stat.lat.toFixed(5)}_${stat.lon.toFixed(5)}`] = vals;
+    }
+    return perId;
+  };
+  const oreDi = vals => new Set(vals.map(v => (v.ref || '').slice(11, 13))).size;
+
+  const temp = await fetchProd('B12101');
+  Object.keys(temp).forEach(id => {
+    const vals = temp[id].map(v => v.val > 100 ? v.val - 273.15 : v.val).filter(v => v >= -45 && v <= 50);
+    if (vals.length && oreDi(temp[id]) >= MIN_ORE_METEO)
+      (out[id] = out[id] || {}).t = [Math.round(Math.min(...vals) * 10) / 10,
+                                     Math.round(Math.max(...vals) * 10) / 10];
+  });
+  await sleep(500);
+  const vento = await fetchProd('B11002');
+  const raffica = await fetchProd('B11041');
+  Object.keys(vento).forEach(id => {
+    const vals = vento[id].map(v => v.val).filter(v => v >= 0 && v < 60);
+    if (!vals.length || oreDi(vento[id]) < MIN_ORE_METEO) return;
+    const media = vals.reduce((a, v) => a + v, 0) / vals.length;
+    const gu = (raffica[id] || []).map(v => v.val).filter(v => v >= 0 && v < 90);
+    (out[id] = out[id] || {}).w = [Math.round(media * 3.6 * 10) / 10,
+                                   gu.length ? Math.round(Math.max(...gu) * 3.6 * 10) / 10 : null];
+  });
+  return out;
+}
+
 async function collectDay(netCfg, dateStr) {
   const w = utcWindowForItalianDay(dateStr);
   const q = `reftime: >=${w.qFrom},<=${w.qTo};product:B13011;license:CCBY_COMPLIANT`;
@@ -129,6 +182,11 @@ async function collectDay(netCfg, dateStr) {
       mm
     });
   }
+  // t/w: un guasto qui non deve mai far fallire la pioggia
+  try {
+    const meteo = await collectMeteoHub(netCfg, w);
+    out.forEach(rec => { if (meteo[rec.id]) Object.assign(rec, meteo[rec.id]); });
+  } catch (e) { console.warn(`  Warn meteo ${netCfg.net}: ${e.message}`); }
   return out;
 }
 

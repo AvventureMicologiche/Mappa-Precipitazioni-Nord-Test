@@ -54,12 +54,16 @@ const COLLECTIONS = [
   { id: 'ch.meteoschweiz.ogd-smn-precip', prefix: 'ogd-smn-precip' },
 ];
 const MIN_ORE     = 20;   // ore valide minime per accettare il totale di un giorno
-// OASI copre anche il Moesano grigionese, non solo il Canton Ticino: la
-// S. Bernardino di MeteoSwiss è la STESSA stazione già pubblicata da OASI
-// (distanza 0.01 km, valori identici — verificato il 3/8/2026, unico doppione
-// sotto i 2 km su 260×47 coppie). Il filtro canton!=TI non la vede perché
-// il paese sta in Canton Grigioni.
-const SVIZZERA_ESCLUSE = ['SBE'];
+// Il Ticino resta di OASI (~50 stazioni contro le ~19 MeteoSwiss), TRANNE le
+// 9 stazioni SMN che OASI ospita ma che sono di PROPRIETÀ MeteoSvizzera: le
+// condizioni d'uso OASI vietano di ripubblicarne i grezzi, quindi dall'11/8/2026
+// si prendono direttamente da qui (OGD, CC BY) e si escludono dal collector
+// Ticino. Sono le stesse identiche stazioni fisiche: nessun cambio di densità.
+// SBE (S. Bernardino, Moesano GR) era già stata esclusa come doppione OASI il
+// 3/8 — ora rientra da questa parte, e la gemella OASI meteo_38 è uscita.
+// ⚠️ Whitelist volutamente chiusa: la rete SMN in TI ha anche BIA/CIM/GEN e la
+// rete precip altre 7 — NON si aggiungono senza un check doppioni contro OASI.
+const TI_SMN_DA_OASI = ['MAG', 'CEV', 'COM', 'OTL', 'LUG', 'PIO', 'ROE', 'SBE', 'SBO'];
 const CONCURRENCY = 8;    // stazioni in parallelo (stile Liguria)
 const REPAIR_DAYS = 10;   // auto-riparazione fino a D-10
 
@@ -187,8 +191,8 @@ async function buildStationList() {
     for (const r of parseCsv(metaBuf, true)) {
       const abbr = r.station_abbr;
       if (!abbr || seen.has(abbr) || !active.has(abbr)) continue;
-      if (r.station_canton === 'TI') continue; // coperto da OASI
-      if (SVIZZERA_ESCLUSE.includes(abbr)) continue; // doppioni OASI fuori dal TI
+      // TI coperto da OASI, tranne le 9 SMN di proprietà MeteoSvizzera (licenza)
+      if (r.station_canton === 'TI' && !TI_SMN_DA_OASI.includes(abbr)) continue;
       const lat = parseFloat(r.station_coordinates_wgs84_lat);
       const lon = parseFloat(r.station_coordinates_wgs84_lon);
       if (isNaN(lat) || isNaN(lon)) continue;

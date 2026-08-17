@@ -9,7 +9,6 @@
 [build]
   publish = "."
   # Salta la build se il commit non ha toccato niente di pubblicato.
-  # Copia della regola di produzione, tenuta allineata (5/8/2026).
   #
   # Si elenca cosa si IGNORA, mai cosa conta: prima la regola elencava i file
   # che DEVONO far ripubblicare (index.html e netlify/), e il 22 luglio 2026
@@ -17,20 +16,24 @@
   # Una dimenticanza nella lista di cosa si ignora costa un deploy inutile,
   # una dimenticanza nella lista di cosa conta costa una modifica invisibile.
   #
-  #  - data/       i collector scrivono decine di commit al giorno;
-  #  - .github/    workflow e script girano su GitHub Actions, non sono il sito;
-  #  - *.md        documentazione (CLAUDE.md, MIGRAZIONE-v5.md, README).
+  # Cosa si ignora e perche':
+  #  - data/       i collector scrivono decine di commit al giorno, e il sito
+  #                legge quei file dal raw di GitHub, non da qui;
+  #  - .github/    workflow e script dei collector girano su GitHub Actions,
+  #                non fanno parte del sito pubblicato;
+  #  - *.md        documentazione (CLAUDE.md, README, checklist di migrazione).
   #
-  # Sul consumo Netlify i deploy sono il 98% dei crediti (~15 l'uno), e su nove
-  # deploy consecutivi di produzione SETTE erano documentazione o script.
+  # Misurato il 5/8/2026 sul consumo Netlify: i deploy erano il 98% dei crediti
+  # (1.005 su 1.024, ~15 crediti l'uno) e su nove deploy consecutivi SETTE
+  # erano di documentazione o di script dei collector — roba che non cambia di
+  # una virgola il sito pubblicato. Le due esclusioni qui sotto li azzerano.
   #
-  # ⚠️ NON usare `HEAD^ HEAD`: guarda solo l'ULTIMO commit. Il 9/8/2026 in
-  # PRODUZIONE un push di tre commit (due su index.html + CLAUDE.md in cima) e'
-  # stato annullato perche' la regola ha esaminato solo il commit del CLAUDE.md
-  # — la correzione e' rimasta su GitHub senza mai arrivare sul sito. Coi
-  # collector non si era mai visto: pushano un commit alla volta.
-  # CACHED_COMMIT_REF..COMMIT_REF e' l'intervallo INTERO dall'ultimo deploy
-  # pubblicato a questo, ed e' quello che Netlify stessa usa nella sua regola di
-  # default. Il ripiego HEAD^/HEAD serve solo se le variabili mancassero
-  # (build manuale da CLI).
+  # ⚠️ NON usare `HEAD^ HEAD`: guarda solo l'ULTIMO commit. Il 9/8/2026 un push
+  # di tre commit (due su index.html + CLAUDE.md in cima) e' stato annullato
+  # perche' la regola ha esaminato solo il commit del CLAUDE.md — la corsa dei
+  # 50ms e' rimasta su GitHub senza mai arrivare sul sito. Coi collector non si
+  # era mai visto: pushano un commit alla volta. CACHED_COMMIT_REF..COMMIT_REF
+  # e' l'intervallo INTERO dall'ultimo deploy pubblicato a questo, ed e' quello
+  # che Netlify stessa usa nella sua regola di default. Il ripiego HEAD^/HEAD
+  # serve solo se le variabili mancassero (build manuale da CLI).
   ignore = "git diff --quiet ${CACHED_COMMIT_REF:-HEAD^} ${COMMIT_REF:-HEAD} -- . ':(exclude)data' ':(exclude).github' ':(exclude)*.md'"

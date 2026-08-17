@@ -41,7 +41,9 @@ const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'friuli-osmer');
 // riscaricando i giorni vecchi guadagnavano stazioni, i recenti oscillavano per
 // i timeout — il vecchio last-write-wins su finestra di 2 giorni li peggiorava
 // (es. 23/7 sceso da 39 a 32 stazioni).
-const GIORNI_WINDOW = 7;    // giorni indietro riscaricati sempre (finestra di riempimento)
+// Finestra sovrascrivibile da env (GIORNI_FINESTRA=45 per il backfill t/w
+// dell'11/8/2026: l'archivio OSMER risponde su qualsiasi giorno passato).
+const GIORNI_WINDOW = parseInt(process.env.GIORNI_FINESTRA || '7', 10);
 const MIN_ORE = 20;         // completezza minima (ore valide) per accettare una stazione
 const MIN_STAZIONI = 8;     // sotto questa soglia il giorno non si scrive
 
@@ -117,14 +119,34 @@ function parseHourly(bodyStr) {
   const hc = header.findIndex(c => /ora/i.test(c));
   const pc = header.findIndex(c => /pioggia|precip/i.test(c));
   if (hc < 0 || pc < 0) return null;
+  // Colonne t/w (11/8/2026 — grafici stazione): stesso CSV, zero richieste
+  // extra. "Temp. °C", "Vento med km/h", "Vento max km/h" — vento GIÀ km/h.
+  const tc  = header.findIndex(c => /^temp/i.test(c.trim()));
+  const vmc = header.findIndex(c => /vento med/i.test(c));
+  const vxc = header.findIndex(c => /vento max/i.test(c));
+  const num = (c, i) => {
+    if (i < 0 || c.length <= i) return null;
+    const v = c[i];
+    if (!v || v === '-') return null;
+    const f = parseFloat(v);
+    return isNaN(f) ? null : f;
+  };
   const hours = {};
   for (const line of csv.slice(1)) {
     const c = line.split(';');
     if (c.length <= Math.max(hc, pc)) continue;
     const h = parseInt(c[hc], 10);
     if (isNaN(h) || h < 1 || h > 24) continue;
+    const rec = {};
     const v = c[pc];
-    if (v && v !== '-') { const f = parseFloat(v); if (!isNaN(f)) hours[h] = f; }
+    if (v && v !== '-') { const f = parseFloat(v); if (!isNaN(f)) rec.mm = f; }
+    const t = num(c, tc);
+    if (t !== null && t >= -45 && t <= 50) rec.t = t;
+    const vm = num(c, vmc);
+    if (vm !== null && vm >= 0 && vm < 216) rec.vm = vm;   // km/h
+    const vx = num(c, vxc);
+    if (vx !== null && vx >= 0 && vx < 324) rec.vx = vx;
+    if (rec.mm !== undefined || rec.t !== undefined || rec.vm !== undefined) hours[h] = rec;
   }
   return hours;
 }
@@ -135,11 +157,33 @@ function parseHourly(bodyStr) {
 function localDayTotal(prevHours, curHours, offset) {
   const B = 24 - offset;
   let sum = 0, valid = 0;
-  for (let h = B + 1; h <= 24; h++) { if (prevHours && prevHours[h] != null) { sum += prevHours[h]; valid++; } }
-  for (let h = 1; h <= B; h++)      { if (curHours  && curHours[h]  != null) { sum += curHours[h];  valid++; } }
+  for (let h = B + 1; h <= 24; h++) { if (prevHours && prevHours[h] && prevHours[h].mm != null) { sum += prevHours[h].mm; valid++; } }
+  for (let h = 1; h <= B; h++)      { if (curHours  && curHours[h]  && curHours[h].mm  != null) { sum += curHours[h].mm;  valid++; } }
   if (valid < MIN_ORE) return null;
   const mm = Math.round(sum * 10) / 10;
   return (mm < 0 || mm > 500) ? null : mm;
+}
+
+/** t/w del giorno solare italiano dalle stesse mappe orarie → {t?, w?}. */
+function localDayMeteo(prevHours, curHours, offset) {
+  const B = 24 - offset;
+  const temps = [], vm = [], vx = [];
+  const raccogli = (hours, h) => {
+    const r = hours && hours[h];
+    if (!r) return;
+    if (r.t  != null) temps.push(r.t);
+    if (r.vm != null) vm.push(r.vm);
+    if (r.vx != null) vx.push(r.vx);
+  };
+  for (let h = B + 1; h <= 24; h++) raccogli(prevHours, h);
+  for (let h = 1; h <= B; h++)      raccogli(curHours, h);
+  const out = {};
+  if (temps.length >= MIN_ORE)
+    out.t = [Math.round(Math.min(...temps) * 10) / 10, Math.round(Math.max(...temps) * 10) / 10];
+  if (vm.length >= MIN_ORE)
+    out.w = [Math.round(vm.reduce((a, v) => a + v, 0) / vm.length * 10) / 10,
+             vx.length ? Math.round(Math.max(...vx) * 10) / 10 : null];
+  return out;
 }
 
 /** Scarica e parsa la serie oraria (UTC) di una stazione per una data UTC. */
@@ -229,7 +273,9 @@ async function main() {
     for (const st of stazioni) {
       const mm = localDayTotal(cache[`${st.val}|${pd}`], cache[`${st.val}|${dStr}`], offset);
       if (mm === null) continue;
-      stations.push({ id: `osmer_${st.val.split('@')[0]}`, n: st.n, lat: Math.round(st.lat * 10000) / 10000, lon: Math.round(st.lon * 10000) / 10000, q: 0, p: 'FVG', mm });
+      const rec = { id: `osmer_${st.val.split('@')[0]}`, n: st.n, lat: Math.round(st.lat * 10000) / 10000, lon: Math.round(st.lon * 10000) / 10000, q: 0, p: 'FVG', mm };
+      try { Object.assign(rec, localDayMeteo(cache[`${st.val}|${pd}`], cache[`${st.val}|${dStr}`], offset)); } catch(e) {}
+      stations.push(rec);
     }
     mergeDay(dStr, stations);
   }

@@ -1,5 +1,7 @@
 # Mappa Precipitazioni Nord Italia — CLAUDE.md (REPO DI TEST)
 
+> **Allineamento a produzione del 17 agosto 2026.** `index.html`, `fonti.html`, `netlify.toml`, `.gitignore` e tutti gli script in `.github/scripts` sono stati ricopiati da prod. Nell'`index.html` restano diverse SOLO quattro righe: `og:image`, `twitter:image` (dominio test), `PILOT_DATA_BASE` e il `GITHUB_RAW` della Lombardia (repo Nord-Test). Il veto graduale provato il 16/8 e' stato scartato (resta nel commit `9361f354`); in test come in prod vale il veto secco a 6 km. Aggiunto `robots.txt` con `Disallow: /` (il sito di test non deve essere indicizzato come doppione). I workflow NON sono stati copiati: il test continua a raccogliere da solo solo i piloti + Lombardia e legge il resto da prod. Regola per il futuro: **prod e' la base, il test = prod + quelle quattro righe.**
+
 > **Questo è il repo di TEST.** Ambiente di sperimentazione, sito `avventurepluvio-test.netlify.app`. Deploya da GitHub in automatico dal 22 luglio 2026 (build saltata sui commit di soli `data/`). L'`index.html` è tenuto allineato a produzione (stesso file), e i crediti/GA si comportano come lì grazie al controllo sull'hostname. Il resto di questo CLAUDE.md è una copia della documentazione di produzione, tenuta qui per contesto; la sezione **PILOTA MeteoHub** qui sotto è invece specifica del test.
 
 ## Progetto

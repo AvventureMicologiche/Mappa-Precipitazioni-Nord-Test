@@ -18,9 +18,9 @@
   </script>
 
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <meta name="description" content="Mappa interattiva delle precipitazioni in Italia, Svizzera, Austria e Francia con dati da stazioni meteo reali. Pianifica le tue uscite funghi.">
-  <meta property="og:title" content="Mappa Pluviometrica Italia, Svizzera, Austria e Francia | Avventure Micologiche">
-  <meta property="og:description" content="Mappa interattiva con dati meteo reali di Italia, Svizzera, Austria e Francia per pianificare ogni uscita. Trova le zone dove ha piovuto di più.">
+  <meta name="description" content="Mappa interattiva delle precipitazioni in Italia, Svizzera, Austria, Francia e Slovenia con dati da stazioni meteo reali. Pianifica le tue uscite funghi.">
+  <meta property="og:title" content="Mappa Pluviometrica Italia, Svizzera, Austria, Francia e Slovenia | Avventure Micologiche">
+  <meta property="og:description" content="Mappa interattiva con dati meteo reali di Italia, Svizzera, Austria, Francia e Slovenia per pianificare ogni uscita. Trova le zone dove ha piovuto di più.">
   <!-- Anteprima rifatta il 3 agosto 2026 con la v6.0: ITALIA + SVIZZERA a 30
        giorni, 22 regioni e la Svizzera intera, 2960 stazioni, con header e
        pannelli. Ricetta: pagina locale usa-e-getta (copia dell'index con il
@@ -35,7 +35,14 @@
        formato giusto. Il ?v= serve a far riscaricare l'immagine ai social,
        che la tengono in cache per URL e altrimenti mostrerebbero la vecchia.
        NB: nel repo di TEST l'URL punta al dominio di test (per provare
-       l'anteprima); in produzione è il dominio vero. -->
+       l'anteprima); in produzione è il dominio vero. ►► RIMESSO A POSTO IL
+       12/8/2026: da quando l'anteprima è stata rifatta (3 agosto) questi due
+       meta erano rimasti puntati al dominio di TEST anche qui in prod, cioè
+       ogni link condiviso faceva scaricare ai social l'immagine dal sito
+       sbagliato. Il file è identico sui due domini (222.682 byte, verificato
+       con una HEAD prima di spostare), quindi l'anteprima non cambia aspetto:
+       cambia solo chi la serve. Il ?v= resta com'era — il dominio nuovo è
+       comunque un URL nuovo per la cache dei social. -->
   <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg?v=20260803">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -48,7 +55,7 @@
   <meta name="theme-color" content="#1b3f6e">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mappa Pluviometrica Italia, Svizzera, Austria e Francia</title>
+<title>Mappa Pluviometrica Italia, Svizzera, Austria, Francia e Slovenia</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -81,8 +88,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    funghi", che infatti compare solo alla stessa soglia. */
 #hdr-faq{display:inline-flex;align-items:center;background:#e12b2b;color:#fff;font-size:12px;font-weight:600;padding:6px 11px;border-radius:7px;text-decoration:none;line-height:1;white-space:nowrap;margin-left:4px;}
 #hdr-faq:hover{background:#f4433a;}
-#faq-funghi{display:none;}
-@media(max-width:600px){#hdr-yt{display:inline-flex;align-items:center;gap:5px;background:#e12b2b;color:#fff;font-size:12px;font-weight:600;padding:5px 9px;border-radius:7px;text-decoration:none;flex-shrink:0;line-height:1;}.ver-tag{display:none;}.hdr-socials{display:none;}#badge{display:none;}.hdr-paesi{display:none;}#faq-funghi{display:block;text-align:center;margin:12px 0 2px;color:#1b3f6e;font-size:16px;font-weight:600;text-decoration:none;}}
+#tp-links{display:none;}   /* la coppia FAQ + feedback: solo mobile */
+@media(max-width:600px){#hdr-yt{display:inline-flex;align-items:center;gap:5px;background:#e12b2b;color:#fff;font-size:12px;font-weight:600;padding:5px 9px;border-radius:7px;text-decoration:none;flex-shrink:0;line-height:1;}.ver-tag{display:none;}.hdr-socials{display:none;}#badge{display:none;}.hdr-paesi{display:none;}#tp-links{display:flex;justify-content:center;align-items:center;gap:44px;margin:12px 0 2px;}#tp-links a{color:#1b3f6e;font-size:16px;font-weight:600;text-decoration:none;white-space:nowrap;}}
 
 /* ── Selettore regioni nel pannello ── */
 .panel-region-selector{padding:4px 0 6px 0;}
@@ -550,7 +557,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      senza dati non leggeva niente e sembrava che il sito non rispondesse.
      Compare solo quando c'è davvero un problema e costa 26px in altezza. */
   #tp-status{font-size:13px !important;line-height:1.3 !important;}
-  /* Gli avvisi seguono la riga di stato quando rimpicciolisce. */
+  /* Gli avvisi seguono la riga di stato: senza questa riga restavano a 14px
+     mentre lo stato scendeva a 13, e si vedeva. */
   #ieri-notice,#osmer-notice{font-size:13px !important;line-height:1.3 !important;}
   #time-panel .tp-content{padding-top:5px !important;}
 }
@@ -1110,11 +1118,16 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
              i funghi tengono 35-43px di margine e la risposta arriva dove uno la
              cerca. Il margine della riga e' stretto (6px a 393x760, 17px a
              360x640): a tenerla dentro quando il messaggio va a capo ci pensa
-             tenereVisibileLoStato(), che toglie di mezzo il FAQ. -->
+             tenereVisibileLoStato(), che toglie di mezzo la riga FAQ + feedback. -->
         <div id="tp-status"></div>
         <div id="tp-spinner"><div class="mini-spin"></div><span>Caricamento…</span></div>
-        <a href="https://youtu.be/fvsBZJ_Ylf4" target="_blank" rel="noopener" id="faq-funghi"
-           onclick="try{gtag('event','click_youtube',{pulsante:'faq-mobile'})}catch(e){}">FAQ video</a>
+        <div id="tp-links">
+          <a href="https://youtu.be/fvsBZJ_Ylf4" target="_blank" rel="noopener" id="faq-funghi"
+             onclick="try{gtag('event','click_youtube',{pulsante:'faq-mobile'})}catch(e){}">FAQ video</a>
+          <a href="/fonti.html#feedback" id="tp-feedback"
+             onclick="try{gtag('event','click_feedback',{pulsante:'mappa-mobile'})}catch(e){}">invia feedback</a>
+        </div>
+
 
         <div id="custom-box">
           <div class="cd-lbl">Data inizio</div>
@@ -1175,6 +1188,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   © 2024-2026 <a href="https://avventuremicologiche.it" target="_blank" rel="noopener">Avventure Micologiche</a> ·
   Dati: <span id="fonte-dati">agenzie regionali</span> ·
   <a href="/fonti.html">Fonti e licenze</a> ·
+  <a href="/fonti.html#feedback" onclick="try{gtag('event','click_feedback',{pulsante:'mappa-footer'})}catch(e){}">Feedback e contatti</a> ·
   Mappa: <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap</a>
 </div>
 
@@ -1653,7 +1667,8 @@ var REGIONS = {
   },
 
   // Slovenia — ARSO, archivio mezz'orario delle stazioni automatiche (pilota
-  // dal 12/8/2026). ~115 stazioni al giorno su 124 in anagrafe, con QUOTA.
+  // sul test e in produzione il 12/8/2026). ~115 stazioni al giorno su 124 in
+  // anagrafe, con QUOTA, e 365 giorni di storico REALE dall'11/8/2025.
   // Le marche temporali sono in CET fisso e indicano la FINE della mezz'ora:
   // le misure che lo dimostrano stanno nel collector.
   // L'archivio pubblica con ~34 ore di ritardo, quindi il giorno piu recente
@@ -2046,7 +2061,7 @@ function selectUniform(stazioni, maxTotal){
 // ═══════════════════════════════════════════════════════════════
 var STOPS=[
   {v:0,   r:255,g:255,b:255},
-  // PROVA 16/8/2026 (test): sotto i 5 mm la mappa resta trasparente, fra 5 e
+  // 16/8/2026: sotto i 2 mm la mappa resta trasparente, fra 5 e
   // 20 un azzurro tenue. Prima colorava gia' da 0,1 mm e a 5 mm era gia'
   // azzurro pieno: 7 mm in due settimane sembravano 20.
   {v:2,   r:255,g:255,b:255},
@@ -2068,7 +2083,7 @@ var STOPS=[
   {v:500, r:255,g:220,b:255}
 ];
 // Soglia minima per mostrare colore — sotto 0.3mm = trasparente
-var MIN_MM_DISPLAY=2;      // PROVA 16/8: era 0.1 — sotto i 2 mm trasparente (era 5, troppo: Chiari 7 e Crema 7 sparivano)
+var MIN_MM_DISPLAY=2;      // 16/8/2026: era 0.1 — sotto i 2 mm trasparente
 function mmToRGB(mm){
   var v=Math.max(0,Math.min(mm,400));
   for(var i=1;i<STOPS.length;i++){
@@ -2284,19 +2299,13 @@ function clearHeatmap(){
 }
 
 var GRID_RES=0.009, IDW_RAD=0.15;
-// PROVA 16/8/2026 (test) — VETO LOCALE. Se la stazione piu' vicina a un punto
+// 16/8/2026 — VETO LOCALE. Se la stazione piu' vicina a un punto
 // e' entro VETO_KM ed e' praticamente a zero, quel punto e' zero: la media IDW
 // non puo' "prestargli" i mm di un temporale a 20 km. Nasce dai cerchi rossi
 // dell'utente su Bergamo-Brescia (11 stazioni a 0 su 24, eppure tutto azzurro:
 // media fra dieci zeri e cinque temporali = 3-5 mm). Tocca SOLO i punti con
 // una stazione a zero a portata di mano; montagna identica al centesimo.
 var VETO_KM=6, VETO_MM=1, VETO_D2=(VETO_KM/111)*(VETO_KM/111);
-// PROVA 16/8/2026 sera (test) — VETO GRADUALE, da confrontare col secco in prod.
-// Il secco fa: stazione a zero entro 6 km => punto a 0, e a 6,1 km riprende la
-// media. Bordo netto (l'utente lo vede «isolare le zone dei temporali»). Il
-// graduale: entro VETO_R1 lo zero comanda al 100%; da R1 a R2 il suo peso
-// cala linearmente; oltre R2 non conta. Il fattore moltiplica il valore IDW.
-var VETO_R1_KM=3, VETO_R2_KM=8;
 // Passo EFFETTIVO della griglia: in multiregione la vista è zoomata fuori e il
 // dettaglio fine non si vede, quindi render() lo ingrandisce per non calcolare
 // centinaia di migliaia di celle (buildGrid è sincrono e bloccherebbe il thread).
@@ -2334,13 +2343,6 @@ function inRegion(lon,lat,rings){
   return false;
 }
 
-function fattoreVeto(dMin2,mmMin){
-  if(mmMin>=VETO_MM) return 1;                    // la piu' vicina e' bagnata: nessun veto
-  var km=Math.sqrt(dMin2)*111;
-  if(km<=VETO_R1_KM) return 0;                    // zero pieno
-  if(km>=VETO_R2_KM) return 1;                    // fuori portata
-  return (km-VETO_R1_KM)/(VETO_R2_KM-VETO_R1_KM); // rampa 3->8 km
-}
 function buildGrid(data,rings,idwRad,gridRes){
   var rad=idwRad||IDW_RAD;
   var GR=gridRes||activeGridRes||GRID_RES;
@@ -2386,7 +2388,7 @@ function buildGrid(data,rings,idwRad,gridRes){
       }
       if(!found) continue;
       // veto locale (vedi VETO_KM): stazione vicina a zero => punto a zero
-      pts.push({lat:lat,lon:lon,mm:(num/den)*fattoreVeto(dMin,mmMin)});   // graduale (era secco a 6 km)
+      pts.push({lat:lat,lon:lon,mm:(dMin<=VETO_D2&&mmMin<VETO_MM)?0:num/den});
     }
   }
   return pts;
@@ -2449,7 +2451,7 @@ function buildGridAFette(data,rings,idwRad,gridRes,sessione,onFatto){
         }
         if(!found) continue;
         // veto locale: stessa regola di buildGrid (le due copie devono restare gemelle)
-        pts.push({lat:lat,lon:lon,mm:(num/den)*fattoreVeto(dMin,mmMin)});   // graduale (era secco a 6 km)
+        pts.push({lat:lat,lon:lon,mm:(dMin<=VETO_D2&&mmMin<VETO_MM)?0:num/den});
       }
       lat+=GR;
       var ora=(window.performance&&performance.now)?performance.now():Date.now();
@@ -2475,7 +2477,7 @@ function drawGrid(){
   var tl=map.containerPointToLayerPoint([0,0]);
   cvs.style.transform='translate('+tl.x+'px,'+tl.y+'px)';
   heatCtx.clearRect(0,0,size.x,size.y);
-  // PROVA 16/8/2026 (test) — SFUMATURA. Prima ogni cella era un quadrato di
+  // 16/8/2026 — SFUMATURA. Prima ogni cella era un quadrato di
   // colore piatto steso pixel per pixel: una griglia, non una superficie. Con
   // l'azzurro uniforme intorno non si notava; col bianco della pianura a zero
   // i quadretti da 2,4 km (3 regioni) saltano all'occhio anche a zoom normale.
@@ -2646,7 +2648,7 @@ var HIST_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Preci
 // Override base-URL per lo storico di alcune "regioni" logiche: il dato OSMER
 // del Friuli sta nel repo di TEST (pilota), non in produzione.
 // Repo dei dati dei piloti VdA-CF e Friuli-OSMER. Finché non si promuove, i file
-// stanno nel repo di TEST. ►► PROMOZIONE A PROD: cambiare Nord-Test → Nord in questa
+// (promozione fatta il 10/8/2026: qui in prod gli URL puntano già a Nord)
 // UNICA riga (e spostare data/valledaosta-cf + data/friuli-osmer nel repo prod). ◄◄
 var PILOT_DATA_BASE='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord-Test/main/data/';
 var HIST_RAW_BY_REGION={
@@ -2675,7 +2677,7 @@ var histHoverT=null,histHideT=null;
 // Cache dei file giorno già scaricati (chiave regione/data → nome stazione: mm):
 // ogni file contiene TUTTE le stazioni della regione, quindi dopo la prima
 // stazione le successive non scaricano più nulla.
-var histFileCache={},histLombCache={};
+var histFileCache={};
 
 function histColor(v){
   if(v<=0) return '#3d3d3d';
@@ -2687,8 +2689,8 @@ function histColor(v){
 
 // Serie giornaliera da file JSON del repo (tutte le regioni tranne Lombardia).
 // Ogni voce della serie è un OGGETTO {mm, t, w}: t=[min,max] °C e w=[media,
-// raffica] km/h esistono solo dove il collector li scrive (per ora Austria) —
-// altrove restano null e le schede Temp/Vento dicono "non disponibile".
+// raffica] km/h esistono solo dove il collector li scrive — altrove restano
+// null e le schede Temp/Vento dicono "non disponibile".
 function histFromFiles(region,station,days,cb){
   function assemble(){
     var out={};
@@ -2716,33 +2718,11 @@ function histFromFiles(region,station,days,cb){
   });
 }
 
-// Lombardia: nessun file storico nel repo, ma Socrata sa raggruppare per
-// giorno → 30 totali giornalieri di UNA stazione in una sola chiamata.
-function histFromLombardia(station,days,cb){
-  if(!station.idsensore||!days.length){cb({});return;}
-  var key=station.idsensore+'|'+days[0]+'|'+days[days.length-1];
-  if(histLombCache[key]){cb(histLombCache[key]);return;}
-  var out={};
-  var where="idsensore='"+station.idsensore+"' AND data between '"
-    +days[0]+"T00:00:00' and '"+days[days.length-1]+"T23:59:59' AND valore >= 0";
-  var url='/.netlify/functions/arpa?endpoint=647i-nhxk.json'
-    +'&$select='+encodeURIComponent('date_trunc_ymd(data) as g, sum(valore) as s')
-    +'&$where='+encodeURIComponent(where)
-    +'&$group=g&$order=g&$limit=100';
-  fetch(url)
-    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-    .then(function(rows){
-      (rows||[]).forEach(function(r){
-        var v=Math.round((parseFloat(r.s)||0)*10)/10;
-        if(v>500) v=0; // stessa sanity check della mappa
-        // stessa forma a oggetto di histFromFiles (Socrata dà solo la pioggia)
-        out[(r.g||'').substring(0,10)]={mm:v,t:null,w:null};
-      });
-      histLombCache[key]=out;
-      cb(out);
-    })
-    .catch(function(){cb(out);});
-}
+// Lombardia: dall'11/8/2026 anche il grafico storico legge i FILE del repo
+// (histFromFiles) come tutte le altre regioni — era l'ultima cosa live su
+// Socrata, e i file (che esistono da gennaio) ora portano anche t/w.
+// La vecchia histFromLombardia (query Socrata via Netlify function) è stata
+// rimossa qui; la function /arpa resta in uso per l'anagrafe della mappa.
 
 // ── Schede del pannello: 'mm' barre pioggia, 't' linee min/max, 'v' linee vento.
 // histTab è la scheda attiva e si ricorda tra una stazione e l'altra;
@@ -2751,8 +2731,27 @@ function histFromLombardia(station,days,cb){
 var histTab='mm';
 var histCurrent=null;
 // Da quando esistono t/w nei file (inizio del backfill): prima di questa data
-// le linee restano vuote per costruzione, e la nota lo dice.
-var METEO_HIST_FROM={austria:'2026-07-01',slovenia:'2026-06-27'};
+// le linee restano vuote per costruzione, e la nota lo dice. Le date sono
+// quelle dei backfill di PROD (11/8/2026); la chiave svizzera copre anche il
+// Ticino OASI (stessa data, e il regionKey delle stazioni ticinesi è svizzera).
+var METEO_HIST_FROM={austria:'2026-07-02',slovenia:'2026-06-27',
+  svizzera:'2026-06-27',francia:'2026-06-27',
+  altoadige:'2026-06-27',emilia:'2026-07-27',
+  lombardia:'2026-06-28',liguria:'2026-07-28',piemonte:'2026-08-09',
+  // terza ondata (11/8 sera): trentino solo temperatura (l'API ha la sola
+  // raffica, senza media il grafico non disegna); veneto ~2 gg di finestra XML;
+  // meteohub sud ~8 gg di finestra API (stessa data per le 10 reti)
+  trentino:'2026-08-05',veneto:'2026-08-09',valledaosta:'2026-06-27',friuli:'2026-06-27',
+  // Toscana (aggiunta il 12/8/2026, era l'unica chiave che mancava). Il SIR e'
+  // live-only, quindi la temperatura esiste solo dal primo giorno in cui
+  // l'abbiamo raccolta: 10/8, 251 stazioni (il 9 erano zero). ⚠️ Senza questa
+  // voce il pannello, guardando luglio, diceva «questa stazione non misura la
+  // temperatura» — FALSO: il SIR la misura, siamo noi a non averla. Il vento
+  // invece su SIR non esiste davvero e resta senza data.
+  toscana:'2026-08-10',
+  marche:'2026-08-03',umbria:'2026-08-03',lazio:'2026-08-03',campania:'2026-08-03',
+  puglia:'2026-08-03',calabria:'2026-08-03',sicilia:'2026-08-03',sardegna:'2026-08-03',
+  basilicata:'2026-08-03',molise:'2026-08-03'};
 
 function histAsseX(days){
   var h='<div class="sh-x">';
@@ -2768,7 +2767,8 @@ function histNote(regionKey,days,periodoLungo){
   if(histTab==='mm'){
     if(HIST_REAL_FROM[regionKey]) note.push('storico dal '+HIST_REAL_FROM[regionKey].split('-').reverse().join('/'));
   }else{
-    var da=METEO_HIST_FROM[regionKey];
+    // le 13 régions francesi condividono la data: chiave unica 'francia'
+    var da=METEO_HIST_FROM[regionKey]||(regionKey&&regionKey.indexOf('francia')===0?METEO_HIST_FROM.francia:null);
     if(da&&days[0]<da) note.push('temperatura e vento dal '+da.split('-').reverse().join('/'));
   }
   return note.length?'<div class="sh-note">'+note.join(' · ')+'</div>':'';
@@ -2960,7 +2960,7 @@ function histMessaggioVuoto(region,region2,station,days){
   return ora;
 }
 
-function histRender(station,regionKey,days,serie,selFrom,selTo,periodoLungo,histRegion){
+function histRender(station,regionKey,days,serie,selFrom,selTo,periodoLungo,histRegion){
   histCurrent={station:station,regionKey:regionKey,days:days,serie:serie,
                selFrom:selFrom,selTo:selTo,periodoLungo:periodoLungo,histRegion:histRegion};
   document.querySelectorAll('#st-history .sh-tab').forEach(function(b){
@@ -3073,8 +3073,7 @@ function openStationHistory(s,rank,mx,my){
     histRender(s,regionKey,days,serie,selFrom,selTo,periodoLungo,histRegion);
     histPosition(mx,my);
   }
-  if(regionKey==='lombardia') histFromLombardia(s,days,done);
-  else histFromFiles(histRegion,s,days,done);
+  histFromFiles(histRegion,s,days,done);
 }
 
 function fmtBreve(d){
@@ -3695,14 +3694,15 @@ function updateOsmerNotice(){
 // rimetterlo, non serve ricordarselo da nessuna parte.
 function tenereVisibileLoStato(){
   var st=document.getElementById('tp-status');
-  var faq=document.getElementById('faq-funghi');
+  var faq=document.getElementById('tp-links');   // la COPPIA: nascondere il solo
+                                                 // FAQ non libererebbe piu' la riga
   var pan=document.getElementById('time-panel');
   if(!st||!faq||!pan) return;
-  faq.style.display='';                       // si riparte sempre dal FAQ al suo posto
+  faq.style.display='';                       // si riparte sempre dalla coppia al suo posto
   if(!(st.textContent||'').trim()) return;    // nessun messaggio: niente da salvare
   var p=pan.getBoundingClientRect();
   if(st.getBoundingClientRect().bottom<=p.bottom-2) return;   // si vede gia'
-  faq.style.display='none';                   // 1) via il FAQ
+  faq.style.display='none';                   // 1) via la riga FAQ + feedback
   var b=st.getBoundingClientRect();
   if(b.bottom>p.bottom-2) pan.scrollTop+=(b.bottom-(p.bottom-2));  // 2) e se serve, in vista
 }
@@ -3988,8 +3988,10 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
   document.getElementById('smn').textContent=Math.round(mn*10)/10;
   setBadge(dati.length+' stazioni · '+fonte);
   // L'avviso esce INSIEME ai numeri, non alla fine del calcolo della griglia:
-  // la legenda compare subito, e per qualche secondo l'utente leggerebbe quei
-  // numeri senza sapere che un giorno manca.
+  // la legenda con «160 stazioni · 87,3 max» compare subito, e per qualche
+  // secondo l'utente leggerebbe quei numeri senza sapere che un giorno manca.
+  // (Prima non si poteva: l'avviso stava in #tp-status, che veniva riscritto
+  //  subito dopo con «Calcolo mappa…» e se lo portava via. Ora vive nella legenda.)
   aggiornaAvvisoIeri();
   document.getElementById('leg-title').textContent='mm cumulati ('+labelPeriodo+')';
   document.getElementById('legend-panel').style.display='block';
@@ -4071,7 +4073,7 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
         setTimeout(drawGrid,1600);
         var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='✅ '+labelPeriodo;
         osmerInlineDesktop(); // avviso Friuli inline accanto a "✅ Ieri" (solo desktop + Ieri)
-        aggiornaAvvisoIeri(); // e l'avviso «dati di ieri», per chi non ce li ha
+        aggiornaAvvisoIeri(); // e l'avviso «dati di ieri non pervenuti», per chi non ce li ha
         if(typeof refreshSelectorStyles==='function') refreshSelectorStyles(); // via il riempimento: non deve coprire la heatmap
         setLoading(false);
       });
@@ -4651,12 +4653,8 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
   // gli stessi pluviometri che OMIRL pubblica in data/liguria a meno di 600 m.
   // Fuori dal rendering Emilia per due motivi: con Emilia e Liguria insieme
   // venivano disegnate e pesate due volte nell'IDW, e su Alpe Gorreto il feed
-  // ARPAE ha dato 0 invece di "dato assente" per quattro giorni (29/6→2/7/2026,
-  // 90 mm spariti mentre OMIRL misurava 50,8 · 28,2 · 9,8 · 1,1).
+  // ARPAE ha dato 0 invece di "dato assente" per quattro giorni (29/6→2/7/2026).
   // I file data/emilia restano intatti: servono da verifica ai check periodici.
-  // ⚠️ Sta QUI e non solo in prod apposta (10/8/2026): quando c'era solo in
-  // produzione, la promozione della Francia ha copiato l'index dal test e l'ha
-  // cancellato senza che nessuno se ne accorgesse.
   var EMILIA_ESCLUSE={'5317':1,'5565':1,'5566':1,'5561':1,'5568':1,'3080':1,'3077':1,'12307':1};
   function _fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
 
@@ -4769,7 +4767,7 @@ function loadAustriaRegion(pastDate,nowDate,labelPeriodo,cb){
   });
 }
 
-// SLOVENIA — ARSO, archivio mezz'orario (pilota dal 12/8/2026).
+// SLOVENIA — ARSO, archivio mezz'orario (in produzione dal 12/8/2026).
 // Fonte unica e storico REALE dal primo giorno: gemello del loader austriaco.
 // ═══════════════════════════════════════════════════════════════
 function loadSloveniaRegion(pastDate,nowDate,labelPeriodo,cb){

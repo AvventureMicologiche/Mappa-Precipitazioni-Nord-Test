@@ -4,6 +4,14 @@
  * Restituisce serie temporale oraria per ~69 ore.
  * Series 0 = incremento orario, Series 1 = cumulativo.
  * Strategia: sum(Series 0) per le ore di ieri = totale giornaliero esatto.
+ *
+ * TEMPERATURA E VENTO (dall'11/8/2026 — grafici stazione):
+ * stessi shortCode, endpoint /charts/{code}/Termo (185 stazioni: serie
+ * media/min/max ogni 30', ~15 giorni) e /charts/{code}/Vento (57 stazioni:
+ * velocità + raffica, GIÀ in km/h — validato l'11/8 contro Open-Meteo su
+ * stazioni basse, rapporto ~0,9; fosse m/s sarebbe ~3,6).
+ * t: [min,max] °C · w: [media,raffica] km/h, solo con ore coperte ≥ MIN_ORE.
+ * Tutta la parte meteo sta in un try: un suo guasto non tocca la pioggia.
  */
 const https = require('https');
 const fs    = require('fs');
@@ -55,6 +63,68 @@ async function fetchWithRetry(url, retries) {
       await new Promise(function(r) { setTimeout(r, 1000); });
     }
   }
+}
+
+// ── Temperatura e vento dai charts OMIRL ─────────────────────────────
+var MIN_ORE_METEO = 20;
+
+function oreCoperte(punti, startMs, endMs) {
+  var ore = {};
+  punti.forEach(function(p) { if (p[0] >= startMs && p[0] < endMs && p[1] != null) ore[Math.floor((p[0] - startMs) / 3600000)] = 1; });
+  return Object.keys(ore).length;
+}
+function valoriIn(punti, startMs, endMs, lo, hi) {
+  return punti.filter(function(p) { return p[0] >= startMs && p[0] < endMs && p[1] != null && p[1] >= lo && p[1] <= hi; })
+              .map(function(p) { return p[1]; });
+}
+
+/** Aggiunge t/w ai record del giorno (byId: shortCode → record del file). */
+async function aggiungiMeteoLiguria(byId, dayStartMs, dayEndMs) {
+  var termo = await fetchWithRetry(OMIRL_BASE + '/stations/Termo');
+  var vento = await fetchWithRetry(OMIRL_BASE + '/stations/Vento');
+  var codsT = termo.map(function(s) { return s.shortCode; }).filter(function(c) { return byId[c]; });
+  var codsV = vento.map(function(s) { return s.shortCode; }).filter(function(c) { return byId[c]; });
+  var conT = 0, conW = 0;
+
+  for (var i = 0; i < codsT.length; i += 10) {
+    var batch = codsT.slice(i, i + 10);
+    var res = await Promise.all(batch.map(function(code) {
+      return fetchWithRetry(OMIRL_BASE + '/charts/' + code + '/Termo').then(function(ch) {
+        var ds = ch.dataSeries || [];
+        // serie 0 = media 30', 1 = minima, 2 = massima
+        var med = (ds[0] && ds[0].data) || [], mn = (ds[1] && ds[1].data) || [], mx = (ds[2] && ds[2].data) || [];
+        if (oreCoperte(med, dayStartMs, dayEndMs) < MIN_ORE_METEO) return null;
+        var mins = valoriIn(mn.length ? mn : med, dayStartMs, dayEndMs, -45, 50);
+        var maxs = valoriIn(mx.length ? mx : med, dayStartMs, dayEndMs, -45, 50);
+        if (!mins.length || !maxs.length) return null;
+        return { code: code, t: [Math.round(Math.min.apply(null, mins) * 10) / 10,
+                                 Math.round(Math.max.apply(null, maxs) * 10) / 10] };
+      }).catch(function() { return null; });
+    }));
+    res.forEach(function(r) { if (r) { byId[r.code].t = r.t; conT++; } });
+    await new Promise(function(r) { setTimeout(r, 400); });
+  }
+
+  for (var j = 0; j < codsV.length; j += 10) {
+    var batchV = codsV.slice(j, j + 10);
+    var resV = await Promise.all(batchV.map(function(code) {
+      return fetchWithRetry(OMIRL_BASE + '/charts/' + code + '/Vento').then(function(ch) {
+        var ds = ch.dataSeries || [];
+        // serie 0 = velocità, 1 = raffica (km/h)
+        var vel = (ds[0] && ds[0].data) || [], raf = (ds[1] && ds[1].data) || [];
+        if (oreCoperte(vel, dayStartMs, dayEndMs) < MIN_ORE_METEO) return null;
+        var vv = valoriIn(vel, dayStartMs, dayEndMs, 0, 216);
+        if (!vv.length) return null;
+        var rr = valoriIn(raf, dayStartMs, dayEndMs, 0, 324);
+        var media = vv.reduce(function(a, v) { return a + v; }, 0) / vv.length;
+        return { code: code, w: [Math.round(media * 10) / 10,
+                                 rr.length ? Math.round(Math.max.apply(null, rr) * 10) / 10 : null] };
+      }).catch(function() { return null; });
+    }));
+    resV.forEach(function(r) { if (r) { byId[r.code].w = r.w; conW++; } });
+    await new Promise(function(r) { setTimeout(r, 400); });
+  }
+  console.log('  Meteo t/w: ' + conT + ' stazioni con temperatura, ' + conW + ' col vento');
 }
 
 async function main() {
@@ -128,6 +198,13 @@ async function main() {
   }
 
   console.log('  OK: ' + ok + ', fallite: ' + fail + ', con pioggia: ' + withRain);
+
+  // Temperatura e vento: in un try, la pioggia non deve mai risentirne
+  try {
+    var byId = {};
+    output.forEach(function(s) { byId[s.id] = s; });
+    await aggiungiMeteoLiguria(byId, dayStartMs, dayEndMs);
+  } catch(e) { console.warn('  Warn: meteo t/w saltato: ' + e.message); }
 
   if (output.length < 10) {
     console.error('Troppo poche stazioni, uscita senza salvare.');

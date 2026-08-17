@@ -63,6 +63,42 @@ function getCDATA(xml, tag) {
   return m ? m[1].trim() : null;
 }
 
+// Temperatura e vento (11/8/2026 — grafici stazione): gli STESSI XML di
+// stazione portano sensori TEMP (°C, letture ogni 30') e VVENTO (m/s → ×3,6;
+// nessuna raffica → w[1] = null) — zero richieste extra. Ore coperte ≥ 20
+// come le altre reti; sanity t in [-45,50], vento medio <60 m/s.
+// ⚠️ la regex dei DATI qui ammette il segno meno: le temperature possono
+// essere negative (quella della pioggia no, e resta con [\d.]+).
+const MIN_ORE_METEO = 20;
+function estraiMeteoVen(xml, prefix) {
+  const out = {};
+  const sReg = /<SENSORE>([\s\S]*?)<\/SENSORE>/g;
+  let sm;
+  while ((sm = sReg.exec(xml)) !== null) {
+    const sens = sm[1];
+    const type = getTag(sens, 'TYPE');
+    if (type !== 'TEMP' && type !== 'VVENTO') continue;
+    const dReg = /<DATI ISTANTE="(\d{12})"><VM>(-?[\d.]+)<\/VM><\/DATI>/g;
+    let dm;
+    const vals = [], ore = new Set();
+    while ((dm = dReg.exec(sens)) !== null) {
+      if (!dm[1].startsWith(prefix)) continue;
+      const v = parseFloat(dm[2]);
+      if (isNaN(v)) continue;
+      if (type === 'TEMP' && (v < -45 || v > 50)) continue;
+      if (type === 'VVENTO' && (v < 0 || v >= 60)) continue;
+      vals.push(v);
+      ore.add(dm[1].slice(8, 10));
+    }
+    if (ore.size < MIN_ORE_METEO) continue;
+    if (type === 'TEMP')
+      out.t = [Math.round(Math.min(...vals) * 10) / 10, Math.round(Math.max(...vals) * 10) / 10];
+    else
+      out.w = [Math.round(vals.reduce((a, v) => a + v, 0) / vals.length * 3.6 * 10) / 10, null];
+  }
+  return out;
+}
+
 async function main() {
   const targetDate = getTargetDate();
   console.log(`\n=== Raccolta dati Veneto per ${targetDate} ===\n`);
@@ -128,7 +164,7 @@ async function main() {
           // Usa max dei valori cumulativi (più robusto al reset del sensore)
           if (vals.length >= 1) mm = Math.max(...vals);
           if (mm > 300) mm = 0;
-          output.push({
+          const rec = {
             id:  s.id,
             n:   s.nome,
             lat: Math.round(s.lat * 10000) / 10000,
@@ -136,7 +172,9 @@ async function main() {
             q:   s.quota,
             p:   s.prov,
             mm:  Math.round(mm * 10) / 10
-          });
+          };
+          try { Object.assign(rec, estraiMeteoVen(xml, targetPrefix)); } catch(e) {}
+          output.push(rec);
           ok++;
           break;
         }
@@ -186,7 +224,9 @@ async function main() {
               let mm=0;
               if(vals.length>=1) mm=Math.max(...vals);
               if(mm>300) mm=0;
-              _out.push({id:s.id,n:s.nome,lat:Math.round(s.lat*10000)/10000,lon:Math.round(s.lon*10000)/10000,q:s.quota,p:s.prov,mm:Math.round(mm*10)/10});
+              const _rec={id:s.id,n:s.nome,lat:Math.round(s.lat*10000)/10000,lon:Math.round(s.lon*10000)/10000,q:s.quota,p:s.prov,mm:Math.round(mm*10)/10};
+              try { Object.assign(_rec, estraiMeteoVen(xml, _yPrefix)); } catch(e) {}
+              _out.push(_rec);
               break;
             }
           } catch(e) {}
