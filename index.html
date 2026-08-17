@@ -2291,6 +2291,12 @@ var GRID_RES=0.009, IDW_RAD=0.15;
 // media fra dieci zeri e cinque temporali = 3-5 mm). Tocca SOLO i punti con
 // una stazione a zero a portata di mano; montagna identica al centesimo.
 var VETO_KM=6, VETO_MM=1, VETO_D2=(VETO_KM/111)*(VETO_KM/111);
+// PROVA 16/8/2026 sera (test) — VETO GRADUALE, da confrontare col secco in prod.
+// Il secco fa: stazione a zero entro 6 km => punto a 0, e a 6,1 km riprende la
+// media. Bordo netto (l'utente lo vede «isolare le zone dei temporali»). Il
+// graduale: entro VETO_R1 lo zero comanda al 100%; da R1 a R2 il suo peso
+// cala linearmente; oltre R2 non conta. Il fattore moltiplica il valore IDW.
+var VETO_R1_KM=3, VETO_R2_KM=8;
 // Passo EFFETTIVO della griglia: in multiregione la vista è zoomata fuori e il
 // dettaglio fine non si vede, quindi render() lo ingrandisce per non calcolare
 // centinaia di migliaia di celle (buildGrid è sincrono e bloccherebbe il thread).
@@ -2328,6 +2334,13 @@ function inRegion(lon,lat,rings){
   return false;
 }
 
+function fattoreVeto(dMin2,mmMin){
+  if(mmMin>=VETO_MM) return 1;                    // la piu' vicina e' bagnata: nessun veto
+  var km=Math.sqrt(dMin2)*111;
+  if(km<=VETO_R1_KM) return 0;                    // zero pieno
+  if(km>=VETO_R2_KM) return 1;                    // fuori portata
+  return (km-VETO_R1_KM)/(VETO_R2_KM-VETO_R1_KM); // rampa 3->8 km
+}
 function buildGrid(data,rings,idwRad,gridRes){
   var rad=idwRad||IDW_RAD;
   var GR=gridRes||activeGridRes||GRID_RES;
@@ -2373,7 +2386,7 @@ function buildGrid(data,rings,idwRad,gridRes){
       }
       if(!found) continue;
       // veto locale (vedi VETO_KM): stazione vicina a zero => punto a zero
-      pts.push({lat:lat,lon:lon,mm:(dMin<=VETO_D2&&mmMin<VETO_MM)?0:num/den});
+      pts.push({lat:lat,lon:lon,mm:(num/den)*fattoreVeto(dMin,mmMin)});   // graduale (era secco a 6 km)
     }
   }
   return pts;
@@ -2436,7 +2449,7 @@ function buildGridAFette(data,rings,idwRad,gridRes,sessione,onFatto){
         }
         if(!found) continue;
         // veto locale: stessa regola di buildGrid (le due copie devono restare gemelle)
-        pts.push({lat:lat,lon:lon,mm:(dMin<=VETO_D2&&mmMin<VETO_MM)?0:num/den});
+        pts.push({lat:lat,lon:lon,mm:(num/den)*fattoreVeto(dMin,mmMin)});   // graduale (era secco a 6 km)
       }
       lat+=GR;
       var ora=(window.performance&&performance.now)?performance.now():Date.now();
