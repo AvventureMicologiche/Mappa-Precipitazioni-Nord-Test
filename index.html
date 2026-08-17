@@ -2693,11 +2693,14 @@ var TETTO_RAW_MS=6000, INTERRUTTORE=3;
 // finito, e prende il posto della riga di stato quando l'analisi finisce a vuoto.
 function notaArchivio(){
   if(!_archivio.falliti) return;
+  var ts=document.getElementById('tp-status');
+  // Analisi finita a vuoto: il motivo e' l'archivio, e prende il posto della riga di stato.
+  if(ts && ts.className==='error'){ ts.textContent='⚠️ Archivio dati (GitHub) non raggiungibile in questo momento: non dipende da te, riprova tra qualche minuto'; return; }
+  // Analisi riuscita: si dice da dove vengono i dati e che qualche giorno puo' mancare
+  // (raw a singhiozzo senza riserva utile, o riserva ferma all'ultimo deploy).
   var msg=_archivio.riservaOk
     ? '⚠️ Archivio dati (GitHub) non raggiungibile: dati dalla copia del sito, gli ultimi giorni possono mancare'
-    : '⚠️ Archivio dati (GitHub) non raggiungibile in questo momento: non dipende da te, riprova tra qualche minuto';
-  var ts=document.getElementById('tp-status');
-  if(ts && ts.className==='error'){ ts.textContent=msg; return; }
+    : '⚠️ Archivio dati (GitHub) instabile: alcuni giorni possono mancare, riprova più tardi';
   var n=document.getElementById('archivio-notice');
   if(n){ n.textContent=msg; n.style.display='block'; if(typeof positionPanels==='function') positionPanels(); }
 }
