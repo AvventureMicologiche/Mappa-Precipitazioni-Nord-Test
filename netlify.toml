@@ -37,3 +37,11 @@
   # che Netlify stessa usa nella sua regola di default. Il ripiego HEAD^/HEAD
   # serve solo se le variabili mancassero (build manuale da CLI).
   ignore = "git diff --quiet ${CACHED_COMMIT_REF:-HEAD^} ${COMMIT_REF:-HEAD} -- . ':(exclude)data' ':(exclude).github' ':(exclude)*.md'"
+
+# 17/8/2026: i file dati sono pubblici e servono anche come RISERVA dell'archivio
+# GitHub per l'altro sito (il test legge i dati di prod, e i piloti viceversa):
+# senza questo header il browser blocca la lettura da un altro dominio.
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"

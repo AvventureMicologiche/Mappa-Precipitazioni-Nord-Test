@@ -1167,6 +1167,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
            visibile perche' il pannello e' aperto (l'utente ha appena toccato
            un periodo). -->
       <div id="ieri-notice" style="display:none;margin-top:8px;font-size:14px;font-weight:600;line-height:1.3;color:#cc0000;"></div>
+      <div id="archivio-notice" style="display:none;margin-top:8px;font-size:14px;font-weight:600;line-height:1.3;color:#cc0000;"></div>
       <div id="osmer-notice" style="display:none;margin-top:6px;font-size:14px;font-weight:600;line-height:1.3;color:#cc0000;">⚠️ <b>Friuli</b>: possibili ritardi fino a 48h</div>
       <a href="https://www.youtube.com/@avventuremicologiche" target="_blank"
          onclick="try{gtag('event','click_youtube',{pulsante:'pillola-mobile'})}catch(e){}"
@@ -1205,7 +1206,7 @@ var REGIONS = {
     name: 'Lombardia',
     center: [45.65, 9.85], zoom: 8,
     fonte: 'ARPA Lombardia (Socrata live)',
-    geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson',
+    geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'lombar',
     dataSource: 'arpa_lombardia',
     // Stazioni reali con coordinate (usate anche per Open-Meteo fallback)
@@ -1222,7 +1223,7 @@ var REGIONS = {
     name: 'Piemonte',
     center: [44.9, 7.9], zoom: 8,
     fonte: 'ARPA Piemonte (live)',
-    geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson',
+    geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'piemon',
     dataSource: 'arpa_piemonte',
     stations: [
@@ -1304,7 +1305,7 @@ var REGIONS = {
     name: 'Veneto',
     center: [45.6, 11.8], zoom: 8,
     fonte: 'ARPAV (XML live)',
-    geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson',
+    geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'veneto',
     dataSource: 'arpa_veneto',
     stations: [
@@ -1376,7 +1377,7 @@ var REGIONS = {
     name: 'Liguria',
     center: [44.3, 8.3], zoom: 9,
     fonte: 'ARPA Liguria (OMIRL)',
-    geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson',
+    geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'ligur',
     dataSource: 'arpa_liguria',
     stations: [
@@ -1417,7 +1418,7 @@ var REGIONS = {
     name: 'Emilia-Romagna',
     center: [44.5, 11.0], zoom: 8,
     fonte: 'ARPAE Emilia-Romagna',
-    geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson',
+    geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'emilia',
     dataSource: 'arpa_emilia',
     stations: [
@@ -1458,7 +1459,7 @@ var REGIONS = {
     name: "Valle d'Aosta",
     center: [45.73, 7.4], zoom: 8.5,
     fonte: 'Centro Funzionale VdA',
-    geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson',
+    geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'aosta',
     dataSource: 'cf_valledaosta',
     stations: [
@@ -1512,7 +1513,7 @@ var REGIONS = {
     name: 'Friuli V.G.',
     center: [46.05, 13.2], zoom: 8.5,
     fonte: 'ARPA OSMER FVG',
-    geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson',
+    geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'friuli',
     dataSource: 'osmer_fvg',
     stations: [
@@ -1538,7 +1539,7 @@ var REGIONS = {
     name: 'Alto Adige',
     center: [46.65, 11.4], zoom: 8,
     fonte: 'Meteo Alto Adige',
-    geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_provinces.geojson',
+    geojson: '/italia-province-tn-bz-confine.geojson',
     geojsonFilter: 'Bolzano',
     geojsonFilterField: 'prov_name',
     dataSource: 'meteo_altoadige',
@@ -1580,7 +1581,7 @@ var REGIONS = {
     name: 'Trentino',
     center: [45.9, 11.1], zoom: 8.5,
     fonte: 'Meteotrentino',
-    geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_provinces.geojson',
+    geojson: '/italia-province-tn-bz-confine.geojson',
     geojsonFilter: 'Trento',
     geojsonFilterField: 'prov_name',
     dataSource: 'meteotrentino',
@@ -1838,7 +1839,7 @@ var REGIONS = {
     name: 'Toscana',
     center: [43.3, 11.2], zoom: 8,
     fonte: 'SIR Toscana',
-    geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson',
+    geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'toscan',
     dataSource: 'cfr_toscana',
     stations: [
@@ -1878,23 +1879,23 @@ var REGIONS = {
   // ───────── CENTRO-SUD (MeteoHub / Agenzia ItaliaMeteo) — pilota, repo TEST ─────────
   // Un solo loader generico (loadMeteoHubRegion) legge data/meteohub-<regione> dal
   // repo test (backfill Open-Meteo + reale, già nei file). Niente lista stations.
-  marche:     { name:'Marche',      center:[43.32,13.01], zoom:8.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'marche',     dataSource:'meteohub' },
-  umbria:     { name:'Umbria',      center:[43.02,12.57], zoom:8.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'umbria',     dataSource:'meteohub' },
-  lazio:      { name:'Lazio',       center:[41.85,12.75], zoom:8,   fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'lazio',      dataSource:'meteohub' },
-  molise:     { name:'Molise',      center:[41.71,14.56], zoom:8.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'molise',     dataSource:'meteohub' },
-  campania:   { name:'Campania',    center:[40.76,14.77], zoom:8,   fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'campania',   dataSource:'meteohub' },
-  puglia:     { name:'Puglia',      center:[40.88,16.72], zoom:7.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'puglia',     dataSource:'meteohub' },
-  basilicata: { name:'Basilicata',  center:[40.49,16.07], zoom:8,   fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'basilicata', dataSource:'meteohub' },
-  calabria:   { name:'Calabria',    center:[39.02,16.39], zoom:7.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'calabria',   dataSource:'meteohub' },
-  sicilia:    { name:'Sicilia',     center:[37.62,13.78], zoom:7,   fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'sicil',      dataSource:'meteohub', escludiSottoLat:36.3 },
-  sardegna:   { name:'Sardegna',    center:[40.10, 8.96], zoom:7.5, fonte:'MeteoHub', geojson:'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson', geojsonFilter:'sardegna',   dataSource:'meteohub' },
+  marche:     { name:'Marche',      center:[43.32,13.01], zoom:8.5, fonte:'MeteoHub', geojson:'/italia-regioni-confine.geojson', geojsonFilter:'marche',     dataSource:'meteohub' },
+  umbria:     { name:'Umbria',      center:[43.02,12.57], zoom:8.5, fonte:'MeteoHub', geojson:'/italia-regioni-confine.geojson', geojsonFilter:'umbria',     dataSource:'meteohub' },
+  lazio:      { name:'Lazio',       center:[41.85,12.75], zoom:8,   fonte:'MeteoHub', geojson:'/italia-regioni-confine.geojson', geojsonFilter:'lazio',      dataSource:'meteohub' },
+  molise:     { name:'Molise',      center:[41.71,14.56], zoom:8.5, fonte:'MeteoHub', geojson:'/italia-regioni-confine.geojson', geojsonFilter:'molise',     dataSource:'meteohub' },
+  campania:   { name:'Campania',    center:[40.76,14.77], zoom:8,   fonte:'MeteoHub', geojson:'/italia-regioni-confine.geojson', geojsonFilter:'campania',   dataSource:'meteohub' },
+  puglia:     { name:'Puglia',      center:[40.88,16.72], zoom:7.5, fonte:'MeteoHub', geojson:'/italia-regioni-confine.geojson', geojsonFilter:'puglia',     dataSource:'meteohub' },
+  basilicata: { name:'Basilicata',  center:[40.49,16.07], zoom:8,   fonte:'MeteoHub', geojson:'/italia-regioni-confine.geojson', geojsonFilter:'basilicata', dataSource:'meteohub' },
+  calabria:   { name:'Calabria',    center:[39.02,16.39], zoom:7.5, fonte:'MeteoHub', geojson:'/italia-regioni-confine.geojson', geojsonFilter:'calabria',   dataSource:'meteohub' },
+  sicilia:    { name:'Sicilia',     center:[37.62,13.78], zoom:7,   fonte:'MeteoHub', geojson:'/italia-regioni-confine.geojson', geojsonFilter:'sicil',      dataSource:'meteohub', escludiSottoLat:36.3 },
+  sardegna:   { name:'Sardegna',    center:[40.10, 8.96], zoom:7.5, fonte:'MeteoHub', geojson:'/italia-regioni-confine.geojson', geojsonFilter:'sardegna',   dataSource:'meteohub' },
 
   // Abruzzo: nessun feed reale → Open-Meteo live (~40 punti), come erano VdA/Friuli
   abruzzo: {
     name: 'Abruzzo',
     center: [42.30, 13.85], zoom: 8.5,
     fonte: 'stime Open-Meteo',
-    geojson: 'https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson',
+    geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'abruzz',
     dataSource: 'open_meteo',
     stations: [
@@ -2644,6 +2645,63 @@ function setBadge(testo){
   var p=document.querySelector('.hdr-paesi');
   if(p) p.style.display=testo?'none':'';
 }
+// ── Riserva per l'archivio dati (17/8/2026) ──────────────────────────────
+// Tutti i file giornalieri arrivano da raw.githubusercontent.com. Il 17/8/2026
+// GitHub ha risposto 429 a tutti per ore e la mappa e' rimasta muta: l'unico
+// messaggio era il timeout dopo 30 s, che sembra colpa del telefono.
+// Netlify pubblica anche data/ a ogni deploy: gli stessi file, dallo stesso
+// dominio del sito, fino all'ultimo deploy (dopo, 404). Quindi: se raw
+// risponde male (429/5xx o rete), lo STESSO percorso si riprova sulla copia
+// del sito. Il 404 di raw passa com'e' (un giorno mancante e' normale).
+// jsdelivr e' stato provato e SCARTATO: per i file che non ha in cache va a
+// chiederli a GitHub, e con GitHub giu' risponde 404 dopo 20-45 secondi.
+// I contatori servono all'avviso automatico (notaArchivio): l'utente deve
+// sapere che il problema e' a monte e che gli ultimi giorni possono mancare.
+var _RAW_PREFIX='https://raw.githubusercontent.com/AvventureMicologiche/';
+var _RISERVA_DATI={'Mappa-Precipitazioni-Nord':'https://precipitazioni.avventuremicologiche.it',
+                   'Mappa-Precipitazioni-Nord-Test':'https://avventurepluvio-test.netlify.app'};
+var _archivio={falliti:0,riservaOk:0,riservaKo:0,
+  reset:function(){this.falliti=0;this.riservaOk=0;this.riservaKo=0;
+    var n=document.getElementById('archivio-notice'); if(n){n.style.display='none';n.textContent='';}}};
+// Raw in errore risponde LENTO (misurato il 17/8: 4-31 s per un 429/503):
+// senza tetto la riserva arriverebbe dopo il timeout di sicurezza. Quindi:
+// tetto di TETTO_RAW_MS sulla richiesta a raw, e dopo INTERRUTTORE fallimenti
+// nello stesso caricamento si va dritti alla riserva senza piu' provare raw
+// (i contatori si azzerano a ogni loadData, quindi al caricamento dopo si
+// riprova GitHub: appena torna, si torna a lui da soli).
+var TETTO_RAW_MS=6000, INTERRUTTORE=3;
+(function(){
+  var _fetch=window.fetch.bind(window);
+  window.fetch=function(u,o){
+    if(typeof u!=='string'||u.indexOf(_RAW_PREFIX)!==0) return _fetch(u,o);
+    var m=u.substring(_RAW_PREFIX.length).match(/^([^\/]+)\/main\/(.+)$/);
+    var dom=m&&_RISERVA_DATI[m[1]];
+    if(!dom) return _fetch(u,o);
+    var ripiega=function(){
+      _archivio.falliti++;
+      return _fetch(dom+'/'+m[2],o).then(function(r2){ if(r2.ok)_archivio.riservaOk++; else _archivio.riservaKo++; return r2; });
+    };
+    if(_archivio.falliti>=INTERRUTTORE) return ripiega();
+    return new Promise(function(resolve){
+      var chiuso=false, t=setTimeout(function(){ if(chiuso)return; chiuso=true; resolve(ripiega()); }, TETTO_RAW_MS);
+      _fetch(u,o).then(function(r){ if(chiuso)return; chiuso=true; clearTimeout(t); resolve((r.ok||r.status===404)?r:ripiega()); },
+                       function(){ if(chiuso)return; chiuso=true; clearTimeout(t); resolve(ripiega()); });
+    });
+  };
+})();
+// L'avviso: si scrive sotto le statistiche (come ieri-notice) a caricamento
+// finito, e prende il posto della riga di stato quando l'analisi finisce a vuoto.
+function notaArchivio(){
+  if(!_archivio.falliti) return;
+  var msg=_archivio.riservaOk
+    ? '⚠️ Archivio dati (GitHub) non raggiungibile: dati dalla copia del sito, gli ultimi giorni possono mancare'
+    : '⚠️ Archivio dati (GitHub) non raggiungibile in questo momento: non dipende da te, riprova tra qualche minuto';
+  var ts=document.getElementById('tp-status');
+  if(ts && ts.className==='error'){ ts.textContent=msg; return; }
+  var n=document.getElementById('archivio-notice');
+  if(n){ n.textContent=msg; n.style.display='block'; if(typeof positionPanels==='function') positionPanels(); }
+}
+
 var HIST_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
 // Override base-URL per lo storico di alcune "regioni" logiche: il dato OSMER
 // del Friuli sta nel repo di TEST (pilota), non in produzione.
@@ -3662,6 +3720,9 @@ function aggiornaAvvisoIeri(){
       var ts=document.getElementById('tp-status');
       // Analisi finita a vuoto: si SOSTITUISCE il generico «Nessun dato per
       // questo periodo», che non dice ne' chi ne' perche'.
+      // Se GitHub non rispondeva e la riserva non ha dato nulla, il motivo e' quello e
+      // lo dice gia' notaArchivio(): un «dati di ieri non pervenuti» qui sarebbe falso.
+      if(ts && ts.className==='error' && _archivio.falliti && !_archivio.riservaOk) return;
       if(ts && ts.className==='error'){ ts.innerHTML=righe.join(' · '); return; }
       if(box){
         box.innerHTML=righe.join('<br>');
@@ -3745,6 +3806,7 @@ function loadData(pastDate,nowDate,labelPeriodo){
   // Caricamento chiesto dall'utente → il budget della riprova automatica si
   // rinnova. Se invece è la riprova stessa, il budget resta consumato.
   if(_retryCall){ _retryCall=false; } else { _autoRetryUsed=false; }
+  _archivio.reset();   // contatori della riserva archivio: nuovi a ogni caricamento
   currentPast=pastDate; currentNow=nowDate; currentLabel=labelPeriodo;
   // Su un giorno solo le stime non si usano (vedi usaGiorno).
   _periodoUnGiorno=(fmtISOLocal(pastDate)===fmtISOLocal(nowDate));
@@ -3801,6 +3863,7 @@ function loadData(pastDate,nowDate,labelPeriodo){
       // anche sugli schermi da 375px, dove ora è visibile.
       var _ts=document.getElementById('tp-status');_ts.className='error';_ts.textContent='⚠️ Nessun dato per questo periodo';
       aggiornaAvvisoIeri();   // se il motivo e' il file di ieri, lo dice al posto del generico
+      notaArchivio();         // se il motivo e' GitHub che non risponde, lo dice (vince sull'altro)
       return;
     }
     renderMulti(allData,labelPeriodo,allFonti);
@@ -3826,7 +3889,9 @@ function loadData(pastDate,nowDate,labelPeriodo){
         return;
       }
       var _ts=document.getElementById('tp-status');_ts.className='error';
-      _ts.textContent='⚠️ Caricamento timeout — riprova';
+      _ts.textContent=_archivio.falliti
+        ? '⚠️ L\'archivio dati (GitHub) non risponde: non dipende da te, riprova tra qualche minuto'
+        : '⚠️ Caricamento timeout — riprova';
     }
   }, 30000);
 
@@ -4074,6 +4139,7 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
         var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='✅ '+labelPeriodo;
         osmerInlineDesktop(); // avviso Friuli inline accanto a "✅ Ieri" (solo desktop + Ieri)
         aggiornaAvvisoIeri(); // e l'avviso «dati di ieri non pervenuti», per chi non ce li ha
+        notaArchivio();       // e, se GitHub non rispondeva, da dove vengono i dati
         if(typeof refreshSelectorStyles==='function') refreshSelectorStyles(); // via il riempimento: non deve coprire la heatmap
         setLoading(false);
       });
@@ -5456,8 +5522,14 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
 }
 
 // ═══════════════════════════════════════════════════════════════
-var GEOJSON_URL='https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson';
-var GEOJSON_PROVINCE_URL='https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_provinces.geojson';
+// 17/8/2026: i confini italiani stanno NEL REPO (italia-regioni-confine.geojson,
+// copia di openpolis/geojson-italy limits_IT_regions; le province ridotte a
+// Trento e Bolzano). Prima si scaricavano da raw.githubusercontent.com a ogni
+// visita: nell'incidente GitHub del 17/8 (429 su raw per tutti) le regioni
+// italiane sono sparite dalla mappa mentre le estere, coi GeoJSON nel repo,
+// reggevano. Erano l'unico pezzo vitale del sito preso da un repo altrui.
+var GEOJSON_URL='/italia-regioni-confine.geojson';
+var GEOJSON_PROVINCE_URL='/italia-province-tn-bz-confine.geojson';
 var geojsonCache=null;
 var geojsonProvinceCache=null;
 
