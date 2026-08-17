@@ -13,6 +13,8 @@ on:
     - cron: '0 12 * * *'
     - cron: '0 16 * * *'
     - cron: '0 20 * * *'
+permissions:
+  contents: write
 jobs:
   run:
     runs-on: ubuntu-latest
