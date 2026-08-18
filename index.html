@@ -2661,43 +2661,73 @@ function setBadge(testo){
 var _RAW_PREFIX='https://raw.githubusercontent.com/AvventureMicologiche/';
 var _RISERVA_DATI={'Mappa-Precipitazioni-Nord':'https://precipitazioni.avventuremicologiche.it',
                    'Mappa-Precipitazioni-Nord-Test':'https://avventurepluvio-test.netlify.app'};
-var _archivio={falliti:0,riservaOk:0,riservaKo:0,
-  reset:function(){this.falliti=0;this.riservaOk=0;this.riservaKo=0;
+var _archivio={falliti:0,errori:0,scorta:0,riservaOk:0,riservaKo:0,
+  reset:function(){this.falliti=0;this.errori=0;this.scorta=0;this.riservaOk=0;this.riservaKo=0;
     var n=document.getElementById('archivio-notice'); if(n){n.style.display='none';n.textContent='';}}};
 // Raw in errore risponde LENTO (misurato il 17/8: 4-31 s per un 429/503):
 // senza tetto la riserva arriverebbe dopo il timeout di sicurezza. Quindi:
-// tetto di TETTO_RAW_MS sulla richiesta a raw, e dopo INTERRUTTORE fallimenti
-// nello stesso caricamento si va dritti alla riserva senza piu' provare raw
-// (i contatori si azzerano a ogni loadData, quindi al caricamento dopo si
-// riprova GitHub: appena torna, si torna a lui da soli).
-var TETTO_RAW_MS=6000, INTERRUTTORE=3;
+// tetto di TETTO_RAW_MS sulla richiesta a raw, e dopo INTERRUTTORE errori VERI
+// (429/5xx/rete, non i timeout) nello stesso caricamento si va dritti alla
+// riserva senza piu' provare raw (i contatori si azzerano a ogni loadData,
+// quindi al caricamento dopo si riprova GitHub: appena torna, si torna a lui).
+// ── Richiesta di scorta (18/8/2026) ──
+// Misurato su prod, 3 regioni x 30 gg (~120 file in raffica): OGNI volta 2-3 file
+// prendono un 429 vero da raw (limite per IP sulle raffiche, e il 429 arriva dopo
+// 4-9 s) e 1-3 superano i 6 s. Tutti gli altri arrivano in 50-500 ms. L'analisi
+// finisce quando arriva l'ultimo file, quindi quel 2% costava 6,3 s a ogni analisi
+// invece di ~1,5. Rimedio: se raw non ha risposto entro SCORTA_MS si lancia IN
+// PARALLELO la stessa richiesta alla copia del sito e vince chi arriva prima
+// (la copia risponde in ~300 ms). Un giorno FRESCO (ultimi GIORNI_FRESCHI) non
+// ha scorta: la copia si aggiorna solo ai deploy e potrebbe essere vecchia — per
+// lui la copia vale solo se raw fallisce davvero, e l'interruttore non lo tocca.
+// Prima del 17/8 il 429 c'era uguale: il sito aspettava 4-9 s e poi BUTTAVA il
+// giorno (r.ok falso → catch). La riserva l'ha reso visibile, non l'ha creato.
+var TETTO_RAW_MS=6000, SCORTA_MS=1500, INTERRUTTORE=8, GIORNI_FRESCHI=2;
 (function(){
   var _fetch=window.fetch.bind(window);
+  function giornoFresco(path){
+    var m=path.match(/(\d{4}-\d{2}-\d{2})\.json$/); if(!m) return false;
+    var d=new Date(m[1]+'T12:00:00');
+    return (Date.now()-d.getTime()) < (GIORNI_FRESCHI+1)*86400000;
+  }
   window.fetch=function(u,o){
     if(typeof u!=='string'||u.indexOf(_RAW_PREFIX)!==0) return _fetch(u,o);
     var m=u.substring(_RAW_PREFIX.length).match(/^([^\/]+)\/main\/(.+)$/);
     var dom=m&&_RISERVA_DATI[m[1]];
     if(!dom) return _fetch(u,o);
-    var ripiega=function(){
-      _archivio.falliti++;
-      return _fetch(dom+'/'+m[2],o).then(function(r2){ if(r2.ok)_archivio.riservaOk++; else _archivio.riservaKo++; return r2; });
-    };
-    if(_archivio.falliti>=INTERRUTTORE) return ripiega();
+    var fresco=giornoFresco(m[2]);
+    var contaCopia=function(p){ return p.then(function(r2){ if(r2.ok)_archivio.riservaOk++; else _archivio.riservaKo++; return r2; },
+                                            function(e){ _archivio.riservaKo++; throw e; }); };
+    var copia=function(){ return _fetch(dom+'/'+m[2],o); };
+    if(_archivio.errori>=INTERRUTTORE && !fresco){ _archivio.falliti++; return contaCopia(copia()); }
     return new Promise(function(resolve){
-      var chiuso=false, t=setTimeout(function(){ if(chiuso)return; chiuso=true; resolve(ripiega()); }, TETTO_RAW_MS);
-      _fetch(u,o).then(function(r){ if(chiuso)return; chiuso=true; clearTimeout(t); resolve((r.ok||r.status===404)?r:ripiega()); },
-                       function(){ if(chiuso)return; chiuso=true; clearTimeout(t); resolve(ripiega()); });
+      var chiuso=false, scortaP=null, tS=null, tT=null;
+      var fine=function(p){ if(chiuso)return; chiuso=true; clearTimeout(tS); clearTimeout(tT); resolve(p); };
+      // raw ha fallito (errore vero o tetto): si usa la scorta se gia' in volo, altrimenti si parte ora
+      var ripiega=function(errore){ _archivio.falliti++; if(errore)_archivio.errori++; fine(contaCopia(scortaP||copia())); };
+      if(!fresco) tS=setTimeout(function(){ if(chiuso)return;
+        scortaP=copia();
+        scortaP.then(function(r2){ if(!chiuso && r2.ok){ _archivio.scorta++; fine(r2); } }, function(){});
+      }, SCORTA_MS);
+      tT=setTimeout(function(){ ripiega(false); }, TETTO_RAW_MS);
+      _fetch(u,o).then(function(r){ if(chiuso)return; if(r.ok||r.status===404) fine(r); else ripiega(true); },
+                       function(){ if(chiuso)return; ripiega(true); });
     });
   };
 })();
 // L'avviso: si scrive sotto le statistiche (come ieri-notice) a caricamento
 // finito, e prende il posto della riga di stato quando l'analisi finisce a vuoto.
+// Dal 18/8: parla SOLO se manca davvero qualcosa (copia senza il file, o analisi a
+// vuoto). Se la copia ha coperto tutto la mappa e' completa e non c'e' niente da
+// dire all'utente: resta una riga in console per chi misura.
 function notaArchivio(){
-  if(!_archivio.falliti) return;
+  if(!_archivio.falliti && !_archivio.scorta) return;
+  if(window.console&&console.info) console.info('[archivio] raw falliti '+_archivio.falliti+' (errori veri '+_archivio.errori+'), scorta vinta '+_archivio.scorta+', copia ok '+_archivio.riservaOk+' ko '+_archivio.riservaKo);
   var ts=document.getElementById('tp-status');
   // Analisi finita a vuoto: il motivo e' l'archivio, e prende il posto della riga di stato.
-  if(ts && ts.className==='error'){ ts.textContent='⚠️ Archivio dati (GitHub) non raggiungibile in questo momento: non dipende da te, riprova tra qualche minuto'; return; }
-  // Analisi riuscita: si dice da dove vengono i dati e che qualche giorno puo' mancare
+  if(ts && ts.className==='error'){ if(_archivio.falliti) ts.textContent='⚠️ Archivio dati (GitHub) non raggiungibile in questo momento: non dipende da te, riprova tra qualche minuto'; return; }
+  if(!_archivio.riservaKo) return;   // la copia ha coperto tutto: silenzio
+  // Analisi riuscita ma qualche file non c'era neanche nella copia: si dice che qualche giorno puo' mancare
   // (raw a singhiozzo senza riserva utile, o riserva ferma all'ultimo deploy).
   var msg=_archivio.riservaOk
     ? '⚠️ Archivio dati (GitHub) non raggiungibile: dati dalla copia del sito, gli ultimi giorni possono mancare'
