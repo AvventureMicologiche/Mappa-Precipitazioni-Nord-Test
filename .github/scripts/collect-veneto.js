@@ -64,7 +64,8 @@ function getCDATA(xml, tag) {
 }
 
 // Temperatura e vento (11/8/2026 — grafici stazione): gli STESSI XML di
-// stazione portano sensori TEMP (°C, letture ogni 30') e VVENTO (m/s → ×3,6;
+// stazione portano sensori TEMP (°C, letture ogni 30'), UMID (%, ogni 30',
+// dal 18/8/2026 → u:[min,max]) e VVENTO (m/s → ×3,6;
 // nessuna raffica → w[1] = null) — zero richieste extra. Ore coperte ≥ 20
 // come le altre reti; sanity t in [-45,50], vento medio <60 m/s.
 // ⚠️ la regex dei DATI qui ammette il segno meno: le temperature possono
@@ -77,7 +78,7 @@ function estraiMeteoVen(xml, prefix) {
   while ((sm = sReg.exec(xml)) !== null) {
     const sens = sm[1];
     const type = getTag(sens, 'TYPE');
-    if (type !== 'TEMP' && type !== 'VVENTO') continue;
+    if (type !== 'TEMP' && type !== 'VVENTO' && type !== 'UMID') continue;   // UMID: umidita' relativa a 2m, % (dal 18/8/2026)
     const dReg = /<DATI ISTANTE="(\d{12})"><VM>(-?[\d.]+)<\/VM><\/DATI>/g;
     let dm;
     const vals = [], ore = new Set();
@@ -87,12 +88,15 @@ function estraiMeteoVen(xml, prefix) {
       if (isNaN(v)) continue;
       if (type === 'TEMP' && (v < -45 || v > 50)) continue;
       if (type === 'VVENTO' && (v < 0 || v >= 60)) continue;
+      if (type === 'UMID' && (v < 0 || v > 100)) continue;
       vals.push(v);
       ore.add(dm[1].slice(8, 10));
     }
     if (ore.size < MIN_ORE_METEO) continue;
     if (type === 'TEMP')
       out.t = [Math.round(Math.min(...vals) * 10) / 10, Math.round(Math.max(...vals) * 10) / 10];
+    else if (type === 'UMID')
+      out.u = [Math.round(Math.min(...vals)), Math.round(Math.max(...vals))];
     else
       out.w = [Math.round(vals.reduce((a, v) => a + v, 0) / vals.length * 3.6 * 10) / 10, null];
   }

@@ -92,6 +92,8 @@ async function main() {
         .filter(r => r.v >= -45 && r.v <= 50);
       if (!vT.length) { await sleep(100); continue; } // niente termometro → niente altri sensori
       conSensori++;
+      const vU = (await fetchParam(s.code, 'RH', giorni[0], giorni[giorni.length - 1]))   // umidita' relativa % (18/8/2026)
+        .filter(r => r.v >= 0 && r.v <= 100);
       const vWS = (await fetchParam(s.code, 'WS', giorni[0], giorni[giorni.length - 1]))
         .filter(r => r.v >= 0 && r.v < 60);
       const vGU = vWS.length
@@ -111,7 +113,10 @@ async function main() {
           m.w = [Math.round(media * 3.6 * 10) / 10,
                  gG.length ? Math.round(Math.max(...gG.map(r => r.v)) * 3.6 * 10) / 10 : null];
         }
-        if (m.t || m.w) meteo[g][s.code] = m;
+        const uG = vU.filter(r => r.day === g);
+        if (oreDi(uG) >= MIN_ORE)
+          m.u = [Math.round(Math.min(...uG.map(r => r.v))), Math.round(Math.max(...uG.map(r => r.v)))];
+        if (m.t || m.w || m.u) meteo[g][s.code] = m;
       });
       await sleep(150);
       process.stdout.write(`  ${s.name}: ok\n`);
@@ -131,6 +136,7 @@ async function main() {
       if (!m) return;
       if (m.t) s.t = m.t;
       if (m.w) s.w = m.w;
+      if (m.u) s.u = m.u;
       toccate++;
     });
     if (toccate > 0) { fs.writeFileSync(f, JSON.stringify(data)); fileOk++; stazGiorno += toccate; }

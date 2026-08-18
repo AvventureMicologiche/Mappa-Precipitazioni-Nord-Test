@@ -124,6 +124,7 @@ function parseHourly(bodyStr) {
   const tc  = header.findIndex(c => /^temp/i.test(c.trim()));
   const vmc = header.findIndex(c => /vento med/i.test(c));
   const vxc = header.findIndex(c => /vento max/i.test(c));
+  const uc  = header.findIndex(c => /umidit/i.test(c));   // "Umidita' %" (dal 18/8/2026)
   const num = (c, i) => {
     if (i < 0 || c.length <= i) return null;
     const v = c[i];
@@ -146,7 +147,9 @@ function parseHourly(bodyStr) {
     if (vm !== null && vm >= 0 && vm < 216) rec.vm = vm;   // km/h
     const vx = num(c, vxc);
     if (vx !== null && vx >= 0 && vx < 324) rec.vx = vx;
-    if (rec.mm !== undefined || rec.t !== undefined || rec.vm !== undefined) hours[h] = rec;
+    const u = num(c, uc);
+    if (u !== null && u >= 0 && u <= 100) rec.u = u;
+    if (rec.mm !== undefined || rec.t !== undefined || rec.vm !== undefined || rec.u !== undefined) hours[h] = rec;
   }
   return hours;
 }
@@ -164,14 +167,15 @@ function localDayTotal(prevHours, curHours, offset) {
   return (mm < 0 || mm > 500) ? null : mm;
 }
 
-/** t/w del giorno solare italiano dalle stesse mappe orarie → {t?, w?}. */
+/** t/w/u del giorno solare italiano dalle stesse mappe orarie → {t?, w?, u?}. */
 function localDayMeteo(prevHours, curHours, offset) {
   const B = 24 - offset;
-  const temps = [], vm = [], vx = [];
+  const temps = [], vm = [], vx = [], um = [];
   const raccogli = (hours, h) => {
     const r = hours && hours[h];
     if (!r) return;
     if (r.t  != null) temps.push(r.t);
+    if (r.u  != null) um.push(r.u);
     if (r.vm != null) vm.push(r.vm);
     if (r.vx != null) vx.push(r.vx);
   };
@@ -183,6 +187,8 @@ function localDayMeteo(prevHours, curHours, offset) {
   if (vm.length >= MIN_ORE)
     out.w = [Math.round(vm.reduce((a, v) => a + v, 0) / vm.length * 10) / 10,
              vx.length ? Math.round(Math.max(...vx) * 10) / 10 : null];
+  if (um.length >= MIN_ORE)
+    out.u = [Math.round(Math.min(...um)), Math.round(Math.max(...um))];
   return out;
 }
 

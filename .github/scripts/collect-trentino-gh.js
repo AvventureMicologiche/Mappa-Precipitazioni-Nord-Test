@@ -49,6 +49,75 @@ function fetchJSON(url) {
   });
 }
 
+function fetchText(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, { headers: { 'Accept': '*/*', 'User-Agent': 'Mozilla/5.0 (compatible; MappaPluvio/1.0)' } }, res => {
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => res.statusCode === 200 ? resolve(data) : reject(new Error(`HTTP ${res.statusCode}`)));
+    }).on('error', reject);
+  });
+}
+
+// ── Umidita' e vento MEDIO di ieri (18/8/2026) ──────────────────────────────
+// L'aggregato giornaliero non ha ne' l'umidita' ne' la media del vento (solo
+// vento_max), e ultimiDatiStazione da' UN valore di umidita'. Ma
+// getLastDataOfMeteoStation?codice=Txxxx restituisce, per ieri e oggi, le
+// serie a 15 minuti: relative_humidity_list (%), wind_list con speed_value
+// (media, m/s) e windgust (m/s), temperature_list. Inventario: 43 stazioni su
+// 111 con l'igrometro (sensoriStazioniGeoJson). Quindi, dopo aver scritto il
+// file di ieri, una chiamata per stazione (~110, in gruppi di 6) aggiunge
+// u:[min,max] e w:[media,raffica] km/h dove le ore coperte sono ≥ 20.
+// ⚠️ Le date portano "+01" FISSO (CET, come ARSO): d'estate il giorno solare
+// italiano e' spostato di un'ora, si converte via getItalyOffset. Le ultime
+// ore dell'altro ieri (23:00-23:45 +01) mancano dalla finestra: costa 4
+// quarti d'ora su 96, sotto la soglia di attenzione. Tutto dentro un try:
+// un guasto qui non tocca la pioggia.
+const LAST_URL = 'https://dati.meteotrentino.it/service.asmx/getLastDataOfMeteoStation?codice=';
+const MIN_ORE_METEO = 20;
+function serieGiorno(xml, blocco, tagVal, giorno) {
+  const m = xml.match(new RegExp('<' + blocco + '>([\\s\\S]*?)</' + blocco + '>'));
+  if (!m) return [];
+  const out = [];
+  const re = new RegExp('<date>([^<]+)</date>[\\s\\S]*?<' + tagVal + '>([^<]*)</' + tagVal + '>', 'g');
+  let r;
+  while ((r = re.exec(m[1])) !== null) {
+    const d = new Date(r[1].replace(/([+-]\d{2})$/, '$1:00'));
+    if (isNaN(d)) continue;
+    const loc = new Date(d.getTime() + getItalyOffset(d) * 3600000);
+    const g = loc.getUTCFullYear() + '-' + String(loc.getUTCMonth() + 1).padStart(2, '0') + '-' + String(loc.getUTCDate()).padStart(2, '0');
+    if (g !== giorno) continue;
+    const v = parseFloat(r[2]);
+    if (!isNaN(v)) out.push({ hh: loc.getUTCHours(), v });
+  }
+  return out;
+}
+const oreDi = rows => new Set(rows.map(r => r.hh)).size;
+async function arricchisciMeteoIeri(giorno, file) {
+  if (!fs.existsSync(file)) return;
+  const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+  let conU = 0, conW = 0;
+  const staz = data.stations || [];
+  for (let i = 0; i < staz.length; i += 6) {
+    await Promise.all(staz.slice(i, i + 6).map(async s => {
+      try {
+        const xml = await fetchText(LAST_URL + encodeURIComponent(s.id));
+        const u = serieGiorno(xml, 'relative_humidity_list', 'value', giorno).filter(r => r.v >= 0 && r.v <= 100);
+        if (oreDi(u) >= MIN_ORE_METEO) { s.u = [Math.round(Math.min(...u.map(r => r.v))), Math.round(Math.max(...u.map(r => r.v)))]; conU++; }
+        const ws = serieGiorno(xml, 'wind_list', 'speed_value', giorno).filter(r => r.v >= 0 && r.v < 60);
+        if (oreDi(ws) >= MIN_ORE_METEO) {
+          const gu = serieGiorno(xml, 'wind_list', 'windgust', giorno).filter(r => r.v >= 0 && r.v < 90);
+          s.w = [Math.round(ws.reduce((a, r) => a + r.v, 0) / ws.length * 3.6 * 10) / 10,
+                 gu.length ? Math.round(Math.max(...gu.map(r => r.v)) * 3.6 * 10) / 10 : null];
+          conW++;
+        }
+      } catch (e) { /* stazione singola: pioggia intatta */ }
+    }));
+  }
+  fs.writeFileSync(file, JSON.stringify(data));
+  console.log(`  Meteo u/w di ${giorno}: ${conU} stazioni con umidita', ${conW} col vento`);
+}
+
 async function main() {
   console.log('=== collect-trentino-gh avviato ===');
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -177,6 +246,12 @@ async function main() {
         }
       }
     } catch(e) { console.warn('Warn aggiornamento ieri: ' + e.message); }
+    try { await arricchisciMeteoIeri(_yDate, path.join(DATA_DIR, `${_yDate}.json`)); }
+    catch(e) { console.warn('Warn meteo u/w ieri: ' + e.message); }
+  } else {
+    // prova a mano: DATE_OVERRIDE=ieri arricchisce quel giorno (l'endpoint copre solo ieri e oggi)
+    try { await arricchisciMeteoIeri(dateStr, path.join(DATA_DIR, `${dateStr}.json`)); }
+    catch(e) { console.warn('Warn meteo u/w: ' + e.message); }
   }
 
   // ── Pulizia file > 730 giorni (retention finestra scorrevole) ──

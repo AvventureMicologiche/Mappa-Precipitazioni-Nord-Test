@@ -98,16 +98,17 @@ async function main() {
     try {
       const rh = await post('/str_dataview_get_allparams_data', { id: st.marker_id, aggr: 'hh', from, to });
       const perDay = {};
-      for (const prid of [1, 10]) {
+      for (const prid of [1, 10, 2]) {   // 2 = umidita' relativa (18/8/2026)
         const p = (rh.data || []).find(x => x.parameter_id === prid);
         if (!p || !Array.isArray(p.station_param_values)) continue;
         for (const [ts, val] of p.station_param_values) {
           if (typeof val !== 'number') continue;
           const dStr = fmtDate(new Date(ts + getItalyOffset(new Date(ts)) * 3600000));
           if (!targetSet.has(dStr)) continue;
-          const acc = perDay[dStr] = perDay[dStr] || { temps: [], venti: [] };
+          const acc = perDay[dStr] = perDay[dStr] || { temps: [], venti: [], umid: [] };
           if (prid === 1 && val >= -45 && val <= 50) acc.temps.push(val);
           if (prid === 10 && val >= 0 && val < 60) acc.venti.push(val);
+          if (prid === 2 && val >= 0 && val <= 100) acc.umid.push(val);
         }
       }
       Object.keys(perDay).forEach(dStr => {
@@ -116,7 +117,8 @@ async function main() {
           m.t = [Math.round(Math.min(...a.temps) * 10) / 10, Math.round(Math.max(...a.temps) * 10) / 10];
         if (a.venti.length >= MIN_ORE)
           m.w = [Math.round(a.venti.reduce((x, v) => x + v, 0) / a.venti.length * 3.6 * 10) / 10, null];
-        if (m.t || m.w) meteo[dStr][`cf_vda_${st.marker_id}`] = m;
+        if (a.umid.length >= MIN_ORE) m.u = [Math.round(Math.min(...a.umid)), Math.round(Math.max(...a.umid))];
+        if (m.t || m.w || m.u) meteo[dStr][`cf_vda_${st.marker_id}`] = m;
       });
     } catch (e) { falliti++; }
     done++;
@@ -136,6 +138,7 @@ async function main() {
       if (!m) return;
       if (m.t) s.t = m.t;
       if (m.w) s.w = m.w;
+      if (m.u) s.u = m.u;
       toccate++;
     });
     if (toccate > 0) { fs.writeFileSync(f, JSON.stringify(data)); fileOk++; stazGiorno += toccate; }

@@ -47,6 +47,7 @@ const GIORNI_FINESTRA = 7;   // ieri + auto-riparazione della settimana
 // t in [-45,50] °C, vento <60 m/s. Tutta la parte meteo sta in try.
 const PRID_TEMP  = 1;
 const PRID_VENTO = 10;
+const PRID_UMID  = 2;    // Umidita' relativa (%), medie orarie (dal 18/8/2026) → u:[min,max]
 const MIN_ORE_METEO = 20;
 
 function getItalyOffset(date) {
@@ -185,16 +186,17 @@ async function main() {
       try {
         const rh = await post('/str_dataview_get_allparams_data', sess, { id: st.id, aggr: 'hh', from, to });
         const perDay = {}; // dStr → {temps:[], venti:[]}
-        for (const prid of [PRID_TEMP, PRID_VENTO]) {
+        for (const prid of [PRID_TEMP, PRID_VENTO, PRID_UMID]) {
           const p = (rh.data || []).find(x => x.parameter_id === prid);
           if (!p || !Array.isArray(p.station_param_values)) continue;
           for (const [ts, val] of p.station_param_values) {
             if (typeof val !== 'number') continue;
             const dStr = fmtDate(new Date(ts + getItalyOffset(new Date(ts)) * 3600000));
             if (!targetSet.has(dStr)) continue;
-            const acc = perDay[dStr] = perDay[dStr] || { temps: [], venti: [] };
+            const acc = perDay[dStr] = perDay[dStr] || { temps: [], venti: [], umid: [] };
             if (prid === PRID_TEMP && val >= -45 && val <= 50) acc.temps.push(val);
             if (prid === PRID_VENTO && val >= 0 && val < 60) acc.venti.push(val);
+            if (prid === PRID_UMID && val >= 0 && val <= 100) acc.umid.push(val);
           }
         }
         Object.keys(perDay).forEach(dStr => {
@@ -203,7 +205,9 @@ async function main() {
             m.t = [Math.round(Math.min(...a.temps) * 10) / 10, Math.round(Math.max(...a.temps) * 10) / 10];
           if (a.venti.length >= MIN_ORE_METEO)
             m.w = [Math.round(a.venti.reduce((x, v) => x + v, 0) / a.venti.length * 3.6 * 10) / 10, null];
-          if (m.t || m.w) meteoByDay[dStr][`cf_vda_${st.id}`] = m;
+          if (a.umid.length >= MIN_ORE_METEO)
+            m.u = [Math.round(Math.min(...a.umid)), Math.round(Math.max(...a.umid))];
+          if (m.t || m.w || m.u) meteoByDay[dStr][`cf_vda_${st.id}`] = m;
         });
       } catch (e) { /* meteo di una stazione fallito: pioggia intatta */ }
     }));

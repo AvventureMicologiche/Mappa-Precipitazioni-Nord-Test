@@ -34,7 +34,7 @@
  * Licenza dati OASI: uso e pubblicazione liberi citando la fonte (oasi.ti.ch).
  *
  * TEMPERATURA E VENTO (dall'11/8/2026 — grafici stazione):
- * dagli stessi endpoint, parametri `T` (°C), `WS` e `WSgust` (m/s ×3,6) a
+ * dagli stessi endpoint, parametri `T` (°C), `RH` (%, dal 18/8/2026), `WS` e `WSgust` (m/s ×3,6) a
  * letture da 10 minuti (resolution=h) → t: [min,max] °C · w: [media,raffica]
  * km/h, scritti solo con ore coperte ≥ MIN_ORE_METEO. Censimento 11/8: 15
  * stazioni con T, 7 anche col vento; le pluvio UCA non hanno altri sensori.
@@ -194,7 +194,7 @@ const oreDi = rows => new Set(rows.map(r => r.hh)).size;
 /** Aggiunge t/w ai record del giorno (records = output di collectDay). */
 async function aggiungiMeteoOasi(stations, records, dateStr) {
   const byId = new Map(records.map(r => [r.id, r]));
-  let conT = 0, conW = 0;
+  let conT = 0, conW = 0, conU = 0;
   for (const s of stations) {
     // Licenza OASI: i dati grezzi MeteoSvizzera non si possono ripubblicare
     if (s.owner === 'MeteoSvizzera') continue;
@@ -207,6 +207,13 @@ async function aggiungiMeteoOasi(stations, records, dateStr) {
         rec.t = [Math.round(Math.min(...vT.map(r => r.v)) * 10) / 10,
                  Math.round(Math.max(...vT.map(r => r.v)) * 10) / 10];
         conT++;
+      }
+      // Umidita' relativa (dal 18/8/2026): parametro OASI `RH` (%), stesse letture
+      // da 10 minuti di T; solo dove c'e' il termometro (RH sta sullo stesso sensore)
+      const vU = (await fetchMeteoParam(s.code, 'RH', dateStr)).filter(r => r.v >= 0 && r.v <= 100);
+      if (oreDi(vU) >= MIN_ORE_METEO) {
+        rec.u = [Math.round(Math.min(...vU.map(r => r.v))), Math.round(Math.max(...vU.map(r => r.v)))];
+        conU++;
       }
       const vWS = (await fetchMeteoParam(s.code, 'WS', dateStr)).filter(r => r.v >= 0 && r.v < 60);
       if (oreDi(vWS) >= MIN_ORE_METEO) {
@@ -221,7 +228,7 @@ async function aggiungiMeteoOasi(stations, records, dateStr) {
       console.warn(`  Warn meteo ${s.code}: ${e.message}`);
     }
   }
-  console.log(`  Meteo t/w ${dateStr}: ${conT} stazioni con temperatura, ${conW} col vento`);
+  console.log(`  Meteo t/w/u ${dateStr}: ${conT} stazioni con temperatura, ${conW} col vento, ${conU} con umidita'`);
 }
 
 /** collectDay + arricchimento t/w, con la pioggia sempre al riparo. */

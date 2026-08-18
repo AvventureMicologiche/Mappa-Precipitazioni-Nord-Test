@@ -44,6 +44,12 @@
  *
  * TEMPERATURA E VENTO: arrivano nella STESSA richiesta (parametri 16/17 =
  * min/max T, 21 = vento medio m/s, 24 = raffica m/s) — zero chiamate in piu.
+ * UMIDITA' (dal 18/8/2026): parametri 19/20 = min/max umidita' relativa (%)
+ * dell'intervallo, stessa famiglia di 16/17; costo misurato +0,5 s a chiamata
+ * (1,6 → 2,1 s su 2 stazioni × 9 giorni). Campo `u:[min,max]`, soglia ≥120
+ * intervalli su 144 (le «20 ore valide» delle altre reti), sanity 0-100.
+ * ⚠️ La serie e' a 10 MINUTI (non mezz'ore) quando si chiede la temperatura:
+ * per l'umidita' si contano gli intervalli, non le mezz'ore.
  *   t: [min, max]        gradi C sul giorno solare italiano
  *   w: [media, raffica]  km/h (x3,6 dal m/s della fonte)
  *
@@ -128,10 +134,10 @@ async function anagrafe() {
 
 /**
  * Scarica una coppia di stazioni su un intervallo di giorni d'archivio (CET).
- * Ritorna { idStazione: { minutiDal1800: {mm,tmin,tmax,ff,fx} } }.
+ * Ritorna { idStazione: { minutiDal1800: {mm,tmin,tmax,ff,fx,umin,umax} } }.
  */
 async function scaricaCoppia(ids, d1, d2) {
-  const vars = SOLO_PIOGGIA ? '26' : '26,16,17,21,24';
+  const vars = SOLO_PIOGGIA ? '26' : '26,16,17,21,24,19,20';
   const url = `${BASE}/data.xml?lang=si&vars=${vars}&group=halfhourlyData0`
             + `&type=halfhourly&id=${ids.join(',')}&d1=${d1}&d2=${d2}`;
   const txt = await chiedi(url);
@@ -139,7 +145,8 @@ async function scaricaCoppia(ids, d1, d2) {
   // il server riordina i parametri: la mappa pN -> pid si legge dalla risposta
   const perPid = {};
   for (const m of txt.matchAll(/(p\d+):\{\s*pid:"(\d+)"/g)) perPid[m[2]] = m[1];
-  const campo = { mm: perPid['26'], tmin: perPid['16'], tmax: perPid['17'], ff: perPid['21'], fx: perPid['24'] };
+  const campo = { mm: perPid['26'], tmin: perPid['16'], tmax: perPid['17'], ff: perPid['21'], fx: perPid['24'],
+                  umin: perPid['19'], umax: perPid['20'] };
 
   // ogni stazione e un blocco `_<id>:{ _<minuti>:{...}, ... }`: si taglia il
   // testo sugli inizi di blocco, cosi non serve una regex ricorsiva
@@ -177,6 +184,7 @@ function giornoItaliano(serie, giorno) {
   const fine = d1.getTime() - offsetItalia(d1) * 3600e3;
 
   let mm = 0, nMm = 0, tmin = null, tmax = null, ff = 0, nFf = 0, fx = null;
+  let umin = null, umax = null, nU = 0;
   for (const [k, r] of Object.entries(serie)) {
     const eUTC = E1800 + (+k - 60) * 60000;
     if (eUTC <= inizio || eUTC > fine) continue;
@@ -185,11 +193,17 @@ function giornoItaliano(serie, giorno) {
     if (r.tmax != null) tmax = tmax == null ? r.tmax : Math.max(tmax, r.tmax);
     if (r.ff != null) { ff += r.ff; nFf++; }
     if (r.fx != null) fx = fx == null ? r.fx : Math.max(fx, r.fx);
+    if (r.umin != null && r.umax != null && r.umin >= 0 && r.umax <= 100) {
+      umin = umin == null ? r.umin : Math.min(umin, r.umin);
+      umax = umax == null ? r.umax : Math.max(umax, r.umax);
+      nU++;
+    }
   }
   if (nMm < MIN_MEZZORE) return null;          // giorno incompleto: non si scrive
   const rec = { mm: Math.round(mm * 10) / 10 };
   if (tmin != null && tmax != null) rec.t = [Math.round(tmin * 10) / 10, Math.round(tmax * 10) / 10];
   if (nFf >= MIN_MEZZORE) rec.w = [Math.round(ff / nFf * 3.6 * 10) / 10, fx == null ? null : Math.round(fx * 3.6 * 10) / 10];
+  if (nU >= 120 && umin != null) rec.u = [Math.round(umin), Math.round(umax)];   // 120 intervalli da 10' = 20 ore
   return rec;
 }
 
@@ -247,12 +261,12 @@ async function main() {
       righe.push({ id: String(s.id), n: s.n, lat: s.lat, lon: s.lon, q: s.q, ...rec });
     }
     if (righe.length < 20) { console.log(`  ${g}: solo ${righe.length} stazioni complete -> NON scritto`); continue; }
-    const conT = righe.filter(r => r.t).length, conW = righe.filter(r => r.w).length;
+    const conT = righe.filter(r => r.t).length, conW = righe.filter(r => r.w).length, conU = righe.filter(r => r.u).length;
     fs.writeFileSync(path.join(DATA_DIR, `${g}.json`), JSON.stringify({
       date: g, collected: new Date().toISOString(), source: 'arso-slovenia',
       count: righe.length, stations: righe,
     }));
-    console.log(`  ${g}: ${righe.length} stazioni (t su ${conT}, vento su ${conW}), max ${Math.max(...righe.map(r => r.mm)).toFixed(1)} mm`);
+    console.log(`  ${g}: ${righe.length} stazioni (t su ${conT}, vento su ${conW}, umidita' su ${conU}), max ${Math.max(...righe.map(r => r.mm)).toFixed(1)} mm`);
   }
 
   pulisciRetention();
