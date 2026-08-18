@@ -944,6 +944,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <button class="sh-tab on" data-t="mm">💧 Pioggia</button>
         <button class="sh-tab" data-t="t">🌡 Temp</button>
         <button class="sh-tab" data-t="v">💨 Vento</button>
+        <button class="sh-tab" data-t="u">💦 Umidità</button>
       </div>
       <div id="sh-body"></div>
       <div class="sh-fonte" id="sh-fonte"></div>
@@ -2770,7 +2771,7 @@ function histFromFiles(region,station,days,cb){
       .then(function(d){
         var m={};
         if(d&&d.stations) d.stations.forEach(function(s){
-          m[s.n]={mm:(typeof s.mm==='number')?s.mm:0,t:s.t||null,w:s.w||null};
+          m[s.n]={mm:(typeof s.mm==='number')?s.mm:0,t:s.t||null,w:s.w||null,u:s.u||null};
         });
         histFileCache[region+'/'+ds]=m;
       })
@@ -2791,6 +2792,15 @@ function histFromFiles(region,station,days,cb){
 // ridisegna dalla serie già scaricata senza nuove fetch.
 var histTab='mm';
 var histCurrent=null;
+// Umidità relativa u:[min,max] % nei file (dal 18/8/2026): prima Piemonte,
+// Emilia, Austria, Svizzera (rete SMN) e Francia — le reti che la davano negli
+// stessi record già scaricati. Le altre seguiranno; finché una rete non è qui
+// dentro il pannello resta prudente («non ha misurato in queste date»).
+var UMID_HIST_FROM={piemonte:'2026-08-18',emilia:'2026-08-18',austria:'2026-08-18',
+  svizzera:'2026-08-18',francia:'2026-08-18'};
+function umidDa(regionKey){
+  return UMID_HIST_FROM[regionKey]||(regionKey&&regionKey.indexOf('francia')===0?UMID_HIST_FROM.francia:null);
+}
 // Da quando esistono t/w nei file (inizio del backfill): prima di questa data
 // le linee restano vuote per costruzione, e la nota lo dice. Le date sono
 // quelle dei backfill di PROD (11/8/2026); la chiave svizzera copre anche il
@@ -2829,8 +2839,9 @@ function histNote(regionKey,days,periodoLungo){
     if(HIST_REAL_FROM[regionKey]) note.push('storico dal '+HIST_REAL_FROM[regionKey].split('-').reverse().join('/'));
   }else{
     // le 13 régions francesi condividono la data: chiave unica 'francia'
-    var da=METEO_HIST_FROM[regionKey]||(regionKey&&regionKey.indexOf('francia')===0?METEO_HIST_FROM.francia:null);
-    if(da&&days[0]<da) note.push('temperatura e vento dal '+da.split('-').reverse().join('/'));
+    var da=(histTab==='u')?umidDa(regionKey)
+      :(METEO_HIST_FROM[regionKey]||(regionKey&&regionKey.indexOf('francia')===0?METEO_HIST_FROM.francia:null));
+    if(da&&days[0]<da) note.push(((histTab==='u')?'umidità dal ':'temperatura e vento dal ')+da.split('-').reverse().join('/'));
   }
   return note.length?'<div class="sh-note">'+note.join(' · ')+'</div>':'';
 }
@@ -2874,15 +2885,19 @@ function histRenderPioggia(days,serie,selFrom,selTo){
 function histRenderLinee(days,serie,tipo){
   var a=[],b=[]; // a = linea "alta" (max / raffica), b = linea "bassa" (min / media)
   days.forEach(function(ds){
-    var o=serie[ds],arr=o&&(tipo==='t'?o.t:o.w);
+    var o=serie[ds],arr=o&&(tipo==='t'?o.t:(tipo==='u'?o.u:o.w));
     b.push(arr&&typeof arr[0]==='number'?arr[0]:null);
     a.push(arr&&typeof arr[1]==='number'?arr[1]:null);
   });
-  var known=((tipo==='t')?a.concat(b):b).filter(function(v){return v!==null;});
+  var known=((tipo==='t'||tipo==='u')?a.concat(b):b).filter(function(v){return v!==null;});
   if(!known.length) return null;
-  var mult=5;
-  var lo=(tipo==='t')?Math.floor(Math.min.apply(null,known)/mult)*mult:0;
+  // umidità: percentuali, scala a decine e tetto 100 (una linea al 100% è
+  // la notte a saturazione, non deve finire sul bordo alto del riquadro)
+  var mult=(tipo==='u')?10:5;
+  var lo=(tipo==='t'||tipo==='u')?Math.floor(Math.min.apply(null,known)/mult)*mult:0;
   var hi=Math.ceil(Math.max.apply(null,known)/mult)*mult;
+  if(tipo==='u'&&hi>100) hi=100;
+  if(tipo==='u'&&lo>=hi) lo=Math.max(0,hi-mult);
   if(hi===lo) hi=lo+mult;
   var ticks=[];
   for(var t=lo+mult;t<hi;t+=mult) ticks.push(t);
@@ -2901,14 +2916,16 @@ function histRenderLinee(days,serie,tipo){
     if(cur.length)segs.push(cur);
     return segs;
   }
-  var colA='#ff8a65';
-  var colB=(tipo==='t')?'#7ec8f8':'#ffd54f';
-  var h='<div class="sh-unit">'+((tipo==='t')?'°C':'km/h')+'</div><div class="sh-plot">';
+  // umidità: massima BLU (l'aria satura della notte), minima ARANCIO (il secco
+  // del pomeriggio) — l'opposto della temperatura, dove il caldo è rosso.
+  var colA=(tipo==='u')?'#4fc3f7':'#ff8a65';
+  var colB=(tipo==='t')?'#7ec8f8':((tipo==='u')?'#ffb74d':'#ffd54f');
+  var h='<div class="sh-unit">'+((tipo==='t')?'°C':((tipo==='u')?'%':'km/h'))+'</div><div class="sh-plot">';
   ticks.forEach(function(tk){
     h+='<div class="sh-grid" style="bottom:'+Math.round((tk-lo)/(hi-lo)*100)+'%"><span>'+tk+'</span></div>';
   });
   h+='<div class="sh-lines"><svg viewBox="0 0 100 100" preserveAspectRatio="none">';
-  ((tipo==='t')?[[a,colA],[b,colB]]:[[b,colB]]).forEach(function(sc){
+  ((tipo==='t'||tipo==='u')?[[a,colA],[b,colB]]:[[b,colB]]).forEach(function(sc){
     segmenti(sc[0]).forEach(function(seg){
       h+='<polyline points="'+seg.join(' ')+'" stroke="'+sc[1]+'"/>';
     });
@@ -2917,11 +2934,12 @@ function histRenderLinee(days,serie,tipo){
   days.forEach(function(ds,i){
     var lbl;
     if(tipo==='t') lbl=(b[i]===null&&a[i]===null)?'dato non disponibile':('min '+b[i]+'° · max '+a[i]+'°');
+    else if(tipo==='u') lbl=(b[i]===null&&a[i]===null)?'dato non disponibile':('min '+b[i]+'% · max '+a[i]+'%');
     else lbl=(b[i]===null&&a[i]===null)?'dato non disponibile':('media '+b[i]+' · raffica '+(a[i]===null?'—':a[i])+' km/h');
     h+='<div title="'+ds+' · '+lbl+'"></div>';
   });
   h+='</div></div></div>'+histAsseX(days);
-  if(tipo==='t')
+  if(tipo==='t'||tipo==='u')
     h+='<div class="sh-leg">'+
        '<span><i style="background:'+colA+'"></i>massima</span>'+
        '<span><i style="background:'+colB+'"></i>minima</span></div>';
@@ -2989,7 +3007,7 @@ var RETI_SENZA={toscana:'w',trentino:'w'};
 // prove in mano (HIST_PROVE_MIN), e mai quando il buco può essere nostro.
 function histMessaggioVuoto(region,region2,station,days){
   if(histTab==='mm') return 'Storico non disponibile per questa stazione.';
-  var cosa=(histTab==='t')?'la temperatura':'il vento';
+  var cosa=(histTab==='t')?'la temperatura':((histTab==='u')?'l\'umidità':'il vento');
   var mai='Questa stazione non misura '+cosa+'.';
   var ora='Questa stazione non ha misurato '+cosa+' in queste date.';
   // PRIMA di tutto: il periodo è tutto anteriore all'inizio di t/w per questa
@@ -2997,9 +3015,10 @@ function histMessaggioVuoto(region,region2,station,days){
   // falso (il Piemonte ha t/w dal 9/8: chi guarda luglio non trova nulla, ma
   // quelle stazioni il termometro ce l'hanno). La nota sotto al pannello dice
   // già da quando esistono, quindi qui basta il passato.
-  var da=METEO_HIST_FROM[region2]||(region2&&region2.indexOf('francia')===0?METEO_HIST_FROM.francia:null);
+  var da=(histTab==='u')?umidDa(region2)
+    :(METEO_HIST_FROM[region2]||(region2&&region2.indexOf('francia')===0?METEO_HIST_FROM.francia:null));
   if(da&&days[days.length-1]<da) return ora;
-  var campo=(histTab==='t')?'t':'w';
+  var campo=(histTab==='t')?'t':((histTab==='u')?'u':'w');
   var c=histCopertura(region,station,days,campo);
   // ⚠️ NON ABBIAMO VISTO NIENTE: nessuna giornata in cache con delle stazioni
   // dentro. Non e' una prova che la stazione non misuri, e' l'assenza di

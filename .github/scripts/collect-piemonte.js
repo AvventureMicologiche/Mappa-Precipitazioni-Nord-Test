@@ -121,13 +121,16 @@ function aggregaMeteoPie(records) {
   records.forEach(m => {
     const id = m.station_code;
     if (!id) return;
-    const a = acc[id] = acc[id] || { tmin: Infinity, tmax: -Infinity, nT: 0, ffSum: 0, nFF: 0, fxMax: -Infinity, nFX: 0 };
+    const a = acc[id] = acc[id] || { tmin: Infinity, tmax: -Infinity, nT: 0, ffSum: 0, nFF: 0, fxMax: -Infinity, nFX: 0, umin: Infinity, umax: -Infinity, nU: 0 };
     const t = parseFloat(m.air_temperature);
     if (!isNaN(t) && t >= -45 && t <= 50) { if (t < a.tmin) a.tmin = t; if (t > a.tmax) a.tmax = t; a.nT++; }
     const ff = parseFloat(m.wind);
     if (!isNaN(ff) && ff >= 0 && ff < 216) { a.ffSum += ff; a.nFF++; }
     const fx = parseFloat(m.gust_of_wind);
     if (!isNaN(fx) && fx >= 0 && fx < 324) { if (fx > a.fxMax) a.fxMax = fx; a.nFX++; }
+    // Umidità relativa (18/8/2026): campo `humidity` (%) negli stessi record.
+    const u = parseFloat(m.humidity);
+    if (!isNaN(u) && u >= 0 && u <= 100) { if (u < a.umin) a.umin = u; if (u > a.umax) a.umax = u; a.nU++; }
   });
   const out = {};
   Object.keys(acc).forEach(id => {
@@ -137,7 +140,9 @@ function aggregaMeteoPie(records) {
     if (a.nFF >= MIN_ORE_METEO)
       m.w = [Math.round(a.ffSum / a.nFF * 10) / 10,
              a.nFX > 0 ? Math.round(a.fxMax * 10) / 10 : null];
-    if (m.t || m.w) out[id] = m;
+    if (a.nU >= MIN_ORE_METEO && a.umax > -Infinity)
+      m.u = [Math.round(a.umin), Math.round(a.umax)];
+    if (m.t || m.w || m.u) out[id] = m;
   });
   return out;
 }
@@ -216,7 +221,7 @@ async function fetchUfficialeGiorno(day) {
     (j.results || []).forEach(r => {
       const pm = (r.fk_id_punto_misura_meteo || '').replace(/\/$/, '').split('/').pop();
       if (!pm) return;
-      out[pm] = { ptot: r.ptot, tmin: r.tmin, tmax: r.tmax, vmedia: r.vmedia, vraffica: r.vraffica };
+      out[pm] = { ptot: r.ptot, tmin: r.tmin, tmax: r.tmax, vmedia: r.vmedia, vraffica: r.vraffica, umin: r.umin, umax: r.umax };
       n++;
     });
     url = j.next || null;
@@ -259,6 +264,7 @@ function consolida(day, stations, anag, uff) {
                     q: a.q != null ? a.q : 0, p: a.p, mm: ptot, h: 24, src: 'arpa-ufficiale' };
       if (u.tmin != null && u.tmax != null) rec.t = [u.tmin, u.tmax];
       if (u.vmedia != null) rec.w = [Math.round(u.vmedia * 36) / 10, u.vraffica != null ? Math.round(u.vraffica * 36) / 10 : null];
+      if (u.umin != null && u.umax != null) rec.u = [Math.round(u.umin), Math.round(u.umax)];
       stations.push(rec); byId[id] = rec;
       stat.aggiunte++;
       stat.dettagli.push(`+ ${a.n} (${id}) ptot=${ptot}`);
@@ -287,6 +293,7 @@ function consolida(day, stations, anag, uff) {
     let tw = false;
     if (!mine.t && u.tmin != null && u.tmax != null) { mine.t = [u.tmin, u.tmax]; tw = true; }
     if (!mine.w && u.vmedia != null) { mine.w = [Math.round(u.vmedia * 36) / 10, u.vraffica != null ? Math.round(u.vraffica * 36) / 10 : null]; tw = true; }
+    if (!mine.u && u.umin != null && u.umax != null) { mine.u = [Math.round(u.umin), Math.round(u.umax)]; tw = true; }
     if (tw) stat.tw++;
   });
   return { stations, stat };
@@ -305,6 +312,7 @@ function mergePerOre(nuove, esistenti) {
     const m = { ...s };
     if (!m.t && prev.t) m.t = prev.t;
     if (!m.w && prev.w) m.w = prev.w;
+    if (!m.u && prev.u) m.u = prev.u;
     return m;
   });
   // stazioni che erano nel vecchio file e nel nuovo realtime non ci sono (es. aggiunte dall'ufficiale)

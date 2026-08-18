@@ -221,7 +221,7 @@ async function main() {
 
   for (let i = 0; i < stations.length; i += BATCH) {
     const gruppo = stations.slice(i, i + BATCH);
-    const url = `${API}?parameters=rr,tl,ff,ffx&start=${iso(minStart + 3600000)}&end=${iso(maxEnd)}` +
+    const url = `${API}?parameters=rr,tl,ff,ffx,rf&start=${iso(minStart + 3600000)}&end=${iso(maxEnd)}` +
                 `&station_ids=${gruppo.map(s => s.id).join(',')}&output_format=geojson`;
     const j = await getJson(url);
     const ts = (j.timestamps || []).map(t => Date.parse(t));
@@ -234,10 +234,12 @@ async function main() {
       const dTl  = (P.tl  && P.tl.data)  || [];
       const dFf  = (P.ff  && P.ff.data)  || [];
       const dFfx = (P.ffx && P.ffx.data) || [];
+      const dRf  = (P.rf  && P.rf.data)  || [];   // umidità relativa % (18/8/2026)
       for (const w of windows) {
         let sum = 0, n = 0;
         let tmin = Infinity, tmax = -Infinity, nT = 0;
         let ffSum = 0, nFF = 0, fxMax = -Infinity, nFX = 0;
+        let umin = Infinity, umax = -Infinity, nU = 0;
         for (let k = 0; k < ts.length; k++) {
           if (!(ts[k] > w.start && ts[k] <= w.end)) continue;
           const v = dati[k];
@@ -248,6 +250,8 @@ async function main() {
           if (vf != null && vf >= 0 && vf < 60) { ffSum += vf; nFF++; }
           const vx = dFfx[k];  // 90 m/s = 324 km/h di raffica: irreale anche in cresta
           if (vx != null && vx >= 0 && vx < 90) { if (vx > fxMax) fxMax = vx; nFX++; }
+          const vu = dRf[k];
+          if (vu != null && vu >= 0 && vu <= 100) { if (vu < umin) umin = vu; if (vu > umax) umax = vu; nU++; }
         }
         if (n < MIN_ORE) continue;
         const mm = Math.round(sum * 10) / 10;
@@ -256,6 +260,7 @@ async function main() {
         if (nT >= MIN_ORE)  rec.t = [Math.round(tmin * 10) / 10, Math.round(tmax * 10) / 10];
         if (nFF >= MIN_ORE) rec.w = [Math.round(ffSum / nFF * 3.6 * 10) / 10,
                                      nFX > 0 ? Math.round(fxMax * 3.6 * 10) / 10 : null];
+        if (nU >= MIN_ORE && umax > -Infinity) rec.u = [Math.round(umin), Math.round(umax)];
         perDay[w.dateStr].push(rec);
       }
     }

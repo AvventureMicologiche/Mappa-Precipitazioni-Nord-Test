@@ -44,12 +44,17 @@ function estraiMeteo(day) {
   const tx = num(day.temperatura_massima_giornaliera_2m);
   const ff = num(day.velocita_vento_media_giornaliera_10m);
   const fx = num(day.massima_raffica_vento_giornaliera_10m);
+  // Umidità relativa (18/8/2026): u:[min,max] % dagli aggregati ARPAE, stessa chiamata.
+  const un = num(day.umidita_minima_giornaliera_2m);
+  const ux = num(day.umidita_massima_giornaliera_2m);
   const out = {};
   if (tn != null && tx != null && tn >= -45 && tx <= 50 && tn <= tx)
     out.t = [Math.round(tn * 10) / 10, Math.round(tx * 10) / 10];
   if (ff != null && ff >= 0 && ff < 60)
     out.w = [Math.round(ff * 3.6 * 10) / 10,
              (fx != null && fx >= 0 && fx < 90) ? Math.round(fx * 3.6 * 10) / 10 : null];
+  if (un != null && ux != null && un >= 0 && ux <= 100 && un <= ux)
+    out.u = [Math.round(un), Math.round(ux)];
   return out;
 }
 

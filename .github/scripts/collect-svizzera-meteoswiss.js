@@ -144,6 +144,7 @@ function parseHourly(buf) {
   if (iTs < 0 || iV < 0) return null;
   const iTn = head.indexOf('tre200hn'), iTx = head.indexOf('tre200hx');
   const iFf = head.indexOf('fkl010h0'), iFx = head.indexOf('fkl010h1');
+  const iU  = head.indexOf('ure200h0');   // umidità relativa % media oraria (18/8/2026)
   const num = (c, i) => {
     if (i < 0) return null;
     const raw = c[i];
@@ -160,7 +161,7 @@ function parseHourly(buf) {
     if (raw === '' || raw === undefined) continue;
     const v = parseFloat(raw);
     if (isNaN(v) || v < 0) continue;
-    out.push([t, v, num(c, iTn), num(c, iTx), num(c, iFf), num(c, iFx)]);
+    out.push([t, v, num(c, iTn), num(c, iTx), num(c, iFf), num(c, iFx), num(c, iU)]);
   }
   return out;
 }
@@ -236,7 +237,8 @@ async function collectStation(st, windows, maxEnd) {
     let sum = 0, n = 0;
     let tmin = Infinity, tmax = -Infinity, nT = 0;
     let ffSum = 0, nFF = 0, fxMax = -Infinity, nFX = 0;
-    for (const [t, v, tn, tx, ff, fx] of rows) {
+    let umin = Infinity, umax = -Infinity, nU = 0;
+    for (const [t, v, tn, tx, ff, fx, u] of rows) {
       if (!(t > w.start && t <= w.end)) continue;
       sum += v; n++;
       // sanity come per l'Austria: fuori da [-45,50] °C o vento medio ≥60 m/s = glitch
@@ -244,6 +246,7 @@ async function collectStation(st, windows, maxEnd) {
       if (tx != null && tx >= -45 && tx <= 50) { if (tx > tmax) tmax = tx; }
       if (ff != null && ff >= 0 && ff < 60) { ffSum += ff; nFF++; }
       if (fx != null && fx >= 0 && fx < 90) { if (fx > fxMax) fxMax = fx; nFX++; }
+      if (u != null && u >= 0 && u <= 100) { if (u < umin) umin = u; if (u > umax) umax = u; nU++; }
     }
     if (n >= MIN_ORE) {
       const mm = Math.round(sum * 10) / 10;
@@ -254,6 +257,7 @@ async function collectStation(st, windows, maxEnd) {
         if (nFF >= MIN_ORE)
           rec.w = [Math.round(ffSum / nFF * 3.6 * 10) / 10,
                    nFX > 0 ? Math.round(fxMax * 3.6 * 10) / 10 : null];
+        if (nU >= MIN_ORE && umax > -Infinity) rec.u = [Math.round(umin), Math.round(umax)];
         res[w.dateStr] = rec;
       }
     }
@@ -340,6 +344,7 @@ async function main() {
         const rec = { id: st.abbr, n: st.name, lat: st.lat, lon: st.lon, q: st.q, p: st.canton, mm: r.mm };
         if (r.t) rec.t = r.t;
         if (r.w) rec.w = r.w;
+        if (r.u) rec.u = r.u;
         perDay[dateStr].push(rec);
       }
     }

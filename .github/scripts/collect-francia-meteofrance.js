@@ -264,7 +264,10 @@ async function main() {
       const thi = gradi(r.tx) != null ? gradi(r.tx) : t;
       const ff = metri(r.ff);
       const fx = metri(r.fxi) != null ? metri(r.fxi) : metri(r.fxy);
-      (ore[r.geo_id_insee] = ore[r.geo_id_insee] || []).push([ts, parseFloat(r.rr1), tlo, thi, ff, fx]);
+      // umidità relativa % (18/8/2026): un/ux = min/max nell'ora, ripiego su u istantanea
+      const pct = x => { const v = parseFloat(x); return (isNaN(v) || v < 0 || v > 100) ? null : v; };
+      const u = pct(r.u), ulo = pct(r.un) != null ? pct(r.un) : u, uhi = pct(r.ux) != null ? pct(r.ux) : u;
+      (ore[r.geo_id_insee] = ore[r.geo_id_insee] || []).push([ts, parseFloat(r.rr1), tlo, thi, ff, fx, ulo, uhi]);
     }
     for (const id of Object.keys(ore)) {
       const st = byId[id];
@@ -273,7 +276,8 @@ async function main() {
         let sum = 0, n = 0;
         let tmin = Infinity, tmax = -Infinity, nT = 0;
         let ffSum = 0, nFF = 0, fxMax = -Infinity, nFX = 0;
-        for (const [ts, v, tlo, thi, ff, fx] of ore[id]) {
+        let umin = Infinity, umax = -Infinity, nU = 0;
+        for (const [ts, v, tlo, thi, ff, fx, ulo, uhi] of ore[id]) {
           if (!(ts > w.start && ts <= w.end)) continue;
           if (isFinite(v)) { sum += v; n++; }
           // sanity come Austria/Svizzera: fuori da [-45,50] °C o medio ≥60 m/s = glitch
@@ -281,6 +285,8 @@ async function main() {
           if (thi != null && thi >= -45 && thi <= 50) { if (thi > tmax) tmax = thi; }
           if (ff != null && ff >= 0 && ff < 60) { ffSum += ff; nFF++; }
           if (fx != null && fx >= 0 && fx < 90) { if (fx > fxMax) fxMax = fx; nFX++; }
+          if (ulo != null) { if (ulo < umin) umin = ulo; nU++; }
+          if (uhi != null && uhi > umax) umax = uhi;
         }
         if (n < MIN_ORE) continue;
         const mm = Math.round(sum * 10) / 10;
@@ -291,6 +297,7 @@ async function main() {
         if (nFF >= MIN_ORE)
           rec.w = [Math.round(ffSum / nFF * 3.6 * 10) / 10,
                    nFX > 0 ? Math.round(fxMax * 3.6 * 10) / 10 : null];
+        if (nU >= MIN_ORE && umax > -Infinity) rec.u = [Math.round(umin), Math.round(umax)];
         perRegDay[reg.key][w.dateStr].push(rec);
       }
     }
