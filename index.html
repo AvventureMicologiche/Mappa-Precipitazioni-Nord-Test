@@ -2797,7 +2797,13 @@ var histCurrent=null;
 // stessi record già scaricati. Le altre seguiranno; finché una rete non è qui
 // dentro il pannello resta prudente («non ha misurato in queste date»).
 var UMID_HIST_FROM={piemonte:'2026-08-18',emilia:'2026-08-18',austria:'2026-08-18',
-  svizzera:'2026-08-18',francia:'2026-08-18'};
+  svizzera:'2026-08-18',francia:'2026-08-18',
+  // seconda ondata (18/8 sera): Lombardia (Socrata «Umidità Relativa»), Liguria
+  // (OMIRL Igro), Toscana (SIR igro), Alto Adige (sensore LF), le 10 reti MeteoHub (B13003)
+  lombardia:'2026-08-18',liguria:'2026-08-18',toscana:'2026-08-18',altoadige:'2026-08-18',
+  marche:'2026-08-18',umbria:'2026-08-18',lazio:'2026-08-18',campania:'2026-08-18',
+  puglia:'2026-08-18',basilicata:'2026-08-18',calabria:'2026-08-18',sicilia:'2026-08-18',
+  sardegna:'2026-08-18',molise:'2026-08-18'};
 function umidDa(regionKey){
   return UMID_HIST_FROM[regionKey]||(regionKey&&regionKey.indexOf('francia')===0?UMID_HIST_FROM.francia:null);
 }

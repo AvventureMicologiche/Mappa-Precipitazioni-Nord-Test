@@ -142,6 +142,14 @@ async function collectMeteoHub(netCfg, w) {
     (out[id] = out[id] || {}).w = [Math.round(media * 3.6 * 10) / 10,
                                    gu.length ? Math.round(Math.max(...gu) * 3.6 * 10) / 10 : null];
   });
+  // Umidità relativa (18/8/2026): prodotto B13003 (%), una query in più per rete/giorno.
+  await sleep(500);
+  const umid = await fetchProd('B13003');
+  Object.keys(umid).forEach(id => {
+    const vals = umid[id].map(v => v.val).filter(v => v >= 0 && v <= 100);
+    if (vals.length && oreDi(umid[id]) >= MIN_ORE_METEO)
+      (out[id] = out[id] || {}).u = [Math.round(Math.min(...vals)), Math.round(Math.max(...vals))];
+  });
   return out;
 }
 

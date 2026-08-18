@@ -37,6 +37,7 @@ const DATA_DIR      = path.join(__dirname, '../..', 'data', 'toscana');
 const COORDS_FILE   = path.join(__dirname, 'toscana-stazioni-coords.json');
 const SIR_URL       = 'https://www.sir.toscana.it/monitoraggio/stazioni.php?type=pluvio';
 const TERMO_URL     = 'https://www.sir.toscana.it/monitoraggio/stazioni.php?type=termo';
+const IGRO_URL      = 'https://www.sir.toscana.it/monitoraggio/stazioni.php?type=igro';   // umidità (18/8/2026), stesso tracciato
 
 function getItalyOffset(date) {
   const year = date.getUTCFullYear();
@@ -219,6 +220,44 @@ async function main() {
     const ieriStr = fmtDate(new Date(new Date(dateStr + 'T12:00:00Z').getTime() - 24 * 3600000));
     const nIeri = applica(path.join(DATA_DIR, `${ieriStr}.json`), tIeri);
     console.log(`  Meteo t: ${nOggi} stazioni su oggi, ${nIeri} su ieri (${ieriStr})`);
+    // Umidità relativa (18/8/2026): pagina type=igro, STESSE colonne della termo
+    // ([8]/[10] min-max oggi, [12]/[14] min-max ieri; verificato: «Vara» 61/96 oggi,
+    // 65/100 ieri), in %. Stessa estrazione per stringhe quotate.
+    try {
+      const igroHtml = await fetchRaw(IGRO_URL);
+      const perIdU = {};
+      let bm;
+      const reArrU = /\[\d+\]\s*=\s*new Array\((.*?)\);/g;
+      while ((bm = reArrU.exec(igroHtml))) {
+        const args = bm[1].match(/"((?:[^"\\]|\\.)*)"/g);
+        if (!args || args.length < 16) continue;
+        const p = args.map(s => s.slice(1, -1));
+        if (!/^TOS/.test(p[0])) continue;
+        if (!perIdU[p[0]] || args.length > perIdU[p[0]].length) perIdU[p[0]] = p;
+      }
+      const coppiaU = (mn, mx) => {
+        const a = num(mn), b = num(mx);
+        if (a === null || b === null || a < 0 || b > 100 || a > b) return null;
+        return [Math.round(a), Math.round(b)];
+      };
+      const uOggi = {}, uIeri = {};
+      Object.keys(perIdU).forEach(id => {
+        const p = perIdU[id];
+        const o = coppiaU(p[8], p[10]);  if (o) uOggi[id] = o;
+        const y = coppiaU(p[12], p[14]); if (y) uIeri[id] = y;
+      });
+      const applicaU = (file, mappa) => {
+        if (!fs.existsSync(file)) return 0;
+        const j = JSON.parse(fs.readFileSync(file, 'utf8'));
+        let n = 0;
+        (j.stations || []).forEach(s => { if (mappa[s.id]) { s.u = mappa[s.id]; n++; } });
+        if (n > 0) fs.writeFileSync(file, JSON.stringify(j));
+        return n;
+      };
+      const nUo = applicaU(outFile, uOggi);
+      const nUi = applicaU(path.join(DATA_DIR, `${ieriStr}.json`), uIeri);
+      console.log(`  Meteo u: ${nUo} stazioni su oggi, ${nUi} su ieri`);
+    } catch (e) { console.warn('  Warn: umidità SIR saltata: ' + e.message); }
   } catch (e) {
     console.warn('  Warn: temperatura SIR saltata: ' + e.message);
   }

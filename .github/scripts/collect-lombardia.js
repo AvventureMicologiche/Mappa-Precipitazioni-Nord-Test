@@ -87,15 +87,16 @@ async function fetchSensoriMeteo(tipologia) {
  * (temperatura a 10 min, vento a 5). valore > -50 esclude i -999 di ARPA.
  */
 const MIN_ORE_METEO = 20;
-async function fetchMeteoDay(dateStr, tempByStaz, windByStaz) {
+async function fetchMeteoDay(dateStr, tempByStaz, windByStaz, umidByStaz) {
   const sel = encodeURIComponent('idsensore,date_extract_hh(data) as h,min(valore) as mn,max(valore) as mx,avg(valore) as med,count(valore) as c');
   const where = encodeURIComponent(`data between '${dateStr}T00:00:00' and '${dateStr}T23:59:59' AND valore > -50`);
   const rows = await getJSON(`/resource/647i-nhxk.json?$select=${sel}&$where=${where}&$group=${encodeURIComponent('idsensore,h')}&$limit=50000`);
   const perSens = {};
   rows.forEach(r => { (perSens[r.idsensore] = perSens[r.idsensore] || []).push(r); });
-  const tempSens = {}, windSens = {};
+  const tempSens = {}, windSens = {}, umidSens = {};
   Object.keys(tempByStaz).forEach(st => tempSens[tempByStaz[st]] = st);
   Object.keys(windByStaz).forEach(st => windSens[windByStaz[st]] = st);
+  Object.keys(umidByStaz || {}).forEach(st => umidSens[umidByStaz[st]] = st);
   const out = {};
   Object.keys(perSens).forEach(id => {
     const ore = perSens[id];
@@ -116,19 +117,28 @@ async function fetchMeteoDay(dateStr, tempByStaz, windByStaz) {
         (out[st] = out[st] || {}).w = [Math.round(medie.reduce((a, v) => a + v, 0) / medie.length * 3.6 * 10) / 10, null];
       }
     }
+    // Umidità relativa (18/8/2026): sensori «Umidità Relativa» (220), stessa query oraria.
+    if (umidSens[id]) {
+      const mins = ore.map(o => parseFloat(o.mn)).filter(v => v >= 0 && v <= 100);
+      const maxs = ore.map(o => parseFloat(o.mx)).filter(v => v >= 0 && v <= 100);
+      if (mins.length >= MIN_ORE_METEO && maxs.length) {
+        const st = umidSens[id];
+        (out[st] = out[st] || {}).u = [Math.round(Math.min(...mins)), Math.round(Math.max(...maxs))];
+      }
+    }
   });
   return out;
 }
 
 /** Totale giornaliero per sensore per il giorno dateStr (YYYY-MM-DD). */
-async function fetchDay(dateStr, anagrafe, tempByStaz, windByStaz) {
+async function fetchDay(dateStr, anagrafe, tempByStaz, windByStaz, umidByStaz) {
   const where = encodeURIComponent(`data between '${dateStr}T00:00:00' and '${dateStr}T23:59:59' AND valore >= '0'`);
   const sel = encodeURIComponent('idsensore,sum(valore) as s');
   const rows = await getJSON(`/resource/647i-nhxk.json?$select=${sel}&$where=${where}&$group=idsensore&$limit=5000`);
   // t/w in un try: un guasto della query meteo non tocca mai la pioggia
   let meteo = {};
   if (tempByStaz) {
-    try { meteo = await fetchMeteoDay(dateStr, tempByStaz, windByStaz); }
+    try { meteo = await fetchMeteoDay(dateStr, tempByStaz, windByStaz, umidByStaz); }
     catch (e) { console.warn(`  Warn meteo ${dateStr}: ${e.message}`); }
   }
   const stations = [];
@@ -169,11 +179,12 @@ async function main() {
   const anagrafe = await fetchAnagrafe();
   console.log(`  Anagrafe: ${Object.keys(anagrafe).length} sensori pioggia`);
   if (Object.keys(anagrafe).length < 50) throw new Error('Anagrafe troppo piccola');
-  let tempByStaz = null, windByStaz = null;
+  let tempByStaz = null, windByStaz = null, umidByStaz = null;
   try {
     tempByStaz = await fetchSensoriMeteo('Temperatura');
     windByStaz = await fetchSensoriMeteo('Velocità Vento');
-    console.log(`  Sensori meteo: ${Object.keys(tempByStaz).length} temperatura, ${Object.keys(windByStaz).length} vento`);
+    umidByStaz = await fetchSensoriMeteo('Umidità Relativa');
+    console.log(`  Sensori meteo: ${Object.keys(tempByStaz).length} temperatura, ${Object.keys(windByStaz).length} vento, ${Object.keys(umidByStaz).length} umidità`);
   } catch (e) { console.warn('  Warn anagrafe meteo: ' + e.message); }
 
   // Giorni bersaglio: DATE_OVERRIDE (uno o "A:B" range) oppure ieri + altroieri
@@ -193,7 +204,7 @@ async function main() {
   }
 
   for (const dStr of targetDays) {
-    try { writeDay(dStr, await fetchDay(dStr, anagrafe, tempByStaz, windByStaz)); }
+    try { writeDay(dStr, await fetchDay(dStr, anagrafe, tempByStaz, windByStaz, umidByStaz)); }
     catch(e) { console.warn(`  Warn ${dStr}: ${e.message}`); }
     await sleep(500);
   }

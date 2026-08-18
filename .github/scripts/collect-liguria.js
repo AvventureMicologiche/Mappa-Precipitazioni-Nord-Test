@@ -82,9 +82,11 @@ function valoriIn(punti, startMs, endMs, lo, hi) {
 async function aggiungiMeteoLiguria(byId, dayStartMs, dayEndMs) {
   var termo = await fetchWithRetry(OMIRL_BASE + '/stations/Termo');
   var vento = await fetchWithRetry(OMIRL_BASE + '/stations/Vento');
+  var igro  = await fetchWithRetry(OMIRL_BASE + '/stations/Igro');   // umidità (18/8/2026): 108 stazioni
   var codsT = termo.map(function(s) { return s.shortCode; }).filter(function(c) { return byId[c]; });
   var codsV = vento.map(function(s) { return s.shortCode; }).filter(function(c) { return byId[c]; });
-  var conT = 0, conW = 0;
+  var codsU = igro.map(function(s) { return s.shortCode; }).filter(function(c) { return byId[c]; });
+  var conT = 0, conW = 0, conU = 0;
 
   for (var i = 0; i < codsT.length; i += 10) {
     var batch = codsT.slice(i, i + 10);
@@ -124,7 +126,23 @@ async function aggiungiMeteoLiguria(byId, dayStartMs, dayEndMs) {
     resV.forEach(function(r) { if (r) { byId[r.code].w = r.w; conW++; } });
     await new Promise(function(r) { setTimeout(r, 400); });
   }
-  console.log('  Meteo t/w: ' + conT + ' stazioni con temperatura, ' + conW + ' col vento');
+  // Umidità relativa: /charts/{code}/Igro, UNA serie («Umidità Relativa») ogni 30', in %.
+  for (var k = 0; k < codsU.length; k += 10) {
+    var batchU = codsU.slice(k, k + 10);
+    var resU = await Promise.all(batchU.map(function(code) {
+      return fetchWithRetry(OMIRL_BASE + '/charts/' + code + '/Igro').then(function(ch) {
+        var ds = ch.dataSeries || [];
+        var ser = (ds[0] && ds[0].data) || [];
+        if (oreCoperte(ser, dayStartMs, dayEndMs) < MIN_ORE_METEO) return null;
+        var vv = valoriIn(ser, dayStartMs, dayEndMs, 0, 100);
+        if (!vv.length) return null;
+        return { code: code, u: [Math.round(Math.min.apply(null, vv)), Math.round(Math.max.apply(null, vv))] };
+      }).catch(function() { return null; });
+    }));
+    resU.forEach(function(r) { if (r) { byId[r.code].u = r.u; conU++; } });
+    await new Promise(function(r) { setTimeout(r, 400); });
+  }
+  console.log('  Meteo t/w/u: ' + conT + ' stazioni con temperatura, ' + conW + ' col vento, ' + conU + ' con umidità');
 }
 
 async function main() {

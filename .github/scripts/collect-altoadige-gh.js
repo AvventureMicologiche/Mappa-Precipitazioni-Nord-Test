@@ -83,7 +83,7 @@ async function fetchSensore(stationCode, sensorCode, fromDay, toDay) {
 }
 
 /** Aggrega le righe dei tre sensori sul giorno dateStr → {t?, w?} (o {}). */
-function aggregaMeteo(lt, wg, boe, dateStr) {
+function aggregaMeteo(lt, wg, boe, dateStr, lf) {
   const out = {};
   const oreDi = rows => new Set(rows.map(r => r.hh)).size;
   const delGiorno = rows => rows.filter(r => r.day === dateStr);
@@ -100,6 +100,13 @@ function aggregaMeteo(lt, wg, boe, dateStr) {
     out.w = [Math.round(media * 3.6 * 10) / 10,
              vBOE.length ? Math.round(Math.max(...vBOE.map(r => r.v)) * 3.6 * 10) / 10 : null];
   }
+  // Umidità relativa (18/8/2026): sensore LF («Umidità relativa», %), 97 stazioni.
+  const vLF = delGiorno(lf || []).filter(r => r.v >= 0 && r.v <= 100);
+  if (oreDi(vLF) >= MIN_ORE_METEO) {
+    let un = Infinity, ux = -Infinity;
+    vLF.forEach(r => { if (r.v < un) un = r.v; if (r.v > ux) ux = r.v; });
+    out.u = [Math.round(un), Math.round(ux)];
+  }
   return out;
 }
 
@@ -111,9 +118,10 @@ function applicaMeteoAlFile(dateStr, meteoById) {
   let toccate = 0;
   (data.stations || []).forEach(s => {
     const m = meteoById[s.id];
-    if (!m || (!m.t && !m.w)) return;
+    if (!m || (!m.t && !m.w && !m.u)) return;
     if (m.t) s.t = m.t;
     if (m.w) s.w = m.w;
+    if (m.u) s.u = m.u;
     toccate++;
   });
   if (toccate > 0) fs.writeFileSync(f, JSON.stringify(data));
@@ -139,7 +147,9 @@ async function raccogliMeteo(codes, giorni) {
         const lt  = await fetchSensore(code, 'LT', fromDay, toDay);
         const wg  = await fetchSensore(code, 'WG', fromDay, toDay);
         const boe = await fetchSensore(code, 'WG.BOE', fromDay, toDay);
-        giorni.forEach(g => { perGiorno[g][code] = aggregaMeteo(lt, wg, boe, g); });
+        let lf = [];
+        try { lf = await fetchSensore(code, 'LF', fromDay, toDay); } catch (e) { /* stazione senza igrometro: t/w restano */ }
+        giorni.forEach(g => { perGiorno[g][code] = aggregaMeteo(lt, wg, boe, g, lf); });
         break;
       } catch (e) {
         if (tent === 1) { await sleep(1500); continue; }
