@@ -2838,12 +2838,12 @@ var UMID_HIST_FROM={piemonte:'2026-08-15',emilia:'2026-08-17',austria:'2026-08-1
   // terza ondata (18/8 notte, reti minori): Slovenia (ARSO pid 19/20), VdA (prid 2)
   // e OSMER (colonna «Umidita' %») riempite all'indietro fino al 27/6 come t/w;
   // Veneto (sensore UMID) e Trentino (getLastDataOfMeteoStation, che porta anche
-  // il vento medio) solo da quando i collector girano in prod. Le date qui sono
+  // il vento medio) dal 17/8, primo giorno scritto dai collector in prod. Le date qui sono
   // quelle in cui i FILE hanno davvero la `u` (rilette il 18/8: i collector
   // avevano ricalcolato i giorni recenti, quindi 15-17/8 e non 18), e la chiave
   // svizzera copre anche il Ticino OASI (dal 27/6, ma la data resta quella SMN).
   slovenia:'2026-06-27',valledaosta:'2026-06-27',friuli:'2026-06-27',
-  veneto:'2026-08-19',trentino:'2026-08-19'};
+  veneto:'2026-08-17',trentino:'2026-08-17'};
 function umidDa(regionKey){
   return UMID_HIST_FROM[regionKey]||(regionKey&&regionKey.indexOf('francia')===0?UMID_HIST_FROM.francia:null);
 }
