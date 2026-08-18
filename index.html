@@ -6702,6 +6702,15 @@ window.captureMapBlob=captureMapBlob;
 function _prewarmH2C(){ ensureHtml2Canvas().catch(function(){}); }
 
 // Nome file immagine: regioni + date (es. pioggia_lombardia-piemonte_2026-07-09_2026-07-28.png)
+// Didascalia della foto condivisa: «Dove ha piovuto in Lombardia e Piemonte
+// (19 lug - 17 ago), mappa dei pluviometri». Le regioni sono quelle attive,
+// col nome della mappa; le date quelle dell'analisi.
+function didascaliaFoto(){
+  var nomi=getActiveRegions().map(function(k){return (REGIONS[k]&&REGIONS[k].name)||k;});
+  var f=function(d){return new Date(d).toLocaleDateString('it-IT',{day:'numeric',month:'short'});};
+  var quando=(currentPast&&currentNow)?' ('+f(currentPast)+' - '+f(currentNow)+')':'';
+  return 'Dove ha piovuto in '+nomi.join(', ')+quando+': mappa dei pluviometri, dati reali di stazione';
+}
 function shareFileName(){
   return 'pioggia_'+getActiveRegions().join('-')+'_'+fmtISOLocal(new Date(currentPast))+'_'+fmtISOLocal(new Date(currentNow))+'.png';
 }
@@ -6773,11 +6782,20 @@ if(_btnShot){
       setTimeout(function(){_btnShot.classList.remove('ok');_btnShot.textContent=old;_btnShot.disabled=false;},1800);
     };
     captureMapBlob().then(function(blob){
-      var url=buildShareUrl();
+      // Il link che viaggia con la foto porta `s=i`: chi lo apre manda
+      // open_shared_image invece di open_shared_map (18/8/2026). Fino a oggi le
+      // aperture da foto e da link erano indistinguibili in GA4, e non si sapeva
+      // se la didascalia arrivasse davvero (WhatsApp su iPhone la scarta, su
+      // Android la tiene, Telegram la tiene). Il parametro non e' rigenerato da
+      // buildShareUrl: chi ri-condivide dalla pagina aperta produce un link pulito.
+      var url=buildShareUrl()+'&s=i';
       var file=new File([blob],shareFileName(),{type:'image/png'});
       if(isTouchShare()&&navigator.canShare&&navigator.canShare({files:[file]})){
-        // Telefono: foto nel menu nativo, col solo link in didascalia
-        navigator.share({files:[file],text:url})
+        // Telefono: foto nel menu nativo con una didascalia leggibile (regioni e
+        // date) e il link nel campo `url`; Chrome Android li unisce in un solo
+        // testo, e con l'URL fuori dal `text` non viene raddoppiato. Prima la
+        // didascalia era l'URL nudo.
+        navigator.share({files:[file],text:didascaliaFoto(),url:url})
           .then(function(){fine('✓');},function(){fine(old);});
       } else {
         var a=document.createElement('a');
@@ -6821,7 +6839,9 @@ if(_btnShot){
   document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){cb.checked=false;});
   keys.forEach(function(k){document.getElementById('chk-'+k).checked=true;});
   if(typeof refreshSelectorStyles==='function') refreshSelectorStyles();
-  try{gtag('event','open_shared_map',{regioni:keys.join(',')})}catch(e){}
+  // s=i = link arrivato insieme alla foto (tasto Immagine): evento a parte, cosi'
+  // si misura per la prima volta quante aperture portano le foto (18/8/2026).
+  try{gtag('event',q.get('s')==='i'?'open_shared_image':'open_shared_map',{regioni:keys.join(',')})}catch(e){}
   var pastDate=new Date(da+'T00:00:00');
   var nowDate=new Date(a+'T23:59:59');
   var dfmt=function(dd){return dd.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});};
