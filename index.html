@@ -2677,12 +2677,13 @@ var _archivio={falliti:0,errori:0,scorta:0,riservaOk:0,riservaKo:0,
 // finisce quando arriva l'ultimo file, quindi quel 2% costava 6,3 s a ogni analisi
 // invece di ~1,5. Rimedio: se raw non ha risposto entro SCORTA_MS si lancia IN
 // PARALLELO la stessa richiesta alla copia del sito e vince chi arriva prima
-// (la copia risponde in ~300 ms). Un giorno FRESCO (ultimi GIORNI_FRESCHI) non
-// ha scorta: la copia si aggiorna solo ai deploy e potrebbe essere vecchia — per
-// lui la copia vale solo se raw fallisce davvero, e l'interruttore non lo tocca.
+// (la copia risponde in ~300 ms). Un giorno FRESCO (ultimi GIORNI_FRESCHI) ha la
+// scorta piu' tardi (SCORTA_FRESCHI_MS): la copia si aggiorna solo ai deploy e
+// potrebbe essere vecchia, quindi a raw si lascia piu' tempo; l'interruttore non
+// lo tocca mai. (Misurato sul test: senza scorta un 429 su IERI costava 6,5 s.)
 // Prima del 17/8 il 429 c'era uguale: il sito aspettava 4-9 s e poi BUTTAVA il
 // giorno (r.ok falso → catch). La riserva l'ha reso visibile, non l'ha creato.
-var TETTO_RAW_MS=6000, SCORTA_MS=1500, INTERRUTTORE=8, GIORNI_FRESCHI=2;
+var TETTO_RAW_MS=6000, SCORTA_MS=1500, SCORTA_FRESCHI_MS=3000, INTERRUTTORE=8, GIORNI_FRESCHI=2;
 (function(){
   var _fetch=window.fetch.bind(window);
   function giornoFresco(path){
@@ -2705,10 +2706,10 @@ var TETTO_RAW_MS=6000, SCORTA_MS=1500, INTERRUTTORE=8, GIORNI_FRESCHI=2;
       var fine=function(p){ if(chiuso)return; chiuso=true; clearTimeout(tS); clearTimeout(tT); resolve(p); };
       // raw ha fallito (errore vero o tetto): si usa la scorta se gia' in volo, altrimenti si parte ora
       var ripiega=function(errore){ _archivio.falliti++; if(errore)_archivio.errori++; fine(contaCopia(scortaP||copia())); };
-      if(!fresco) tS=setTimeout(function(){ if(chiuso)return;
+      tS=setTimeout(function(){ if(chiuso)return;
         scortaP=copia();
         scortaP.then(function(r2){ if(!chiuso && r2.ok){ _archivio.scorta++; fine(r2); } }, function(){});
-      }, SCORTA_MS);
+      }, fresco?SCORTA_FRESCHI_MS:SCORTA_MS);
       tT=setTimeout(function(){ ripiega(false); }, TETTO_RAW_MS);
       _fetch(u,o).then(function(r){ if(chiuso)return; if(r.ok||r.status===404) fine(r); else ripiega(true); },
                        function(){ if(chiuso)return; ripiega(true); });
