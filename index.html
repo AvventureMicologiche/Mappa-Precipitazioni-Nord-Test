@@ -2827,14 +2827,23 @@ var histCurrent=null;
 // Emilia, Austria, Svizzera (rete SMN) e Francia — le reti che la davano negli
 // stessi record già scaricati. Le altre seguiranno; finché una rete non è qui
 // dentro il pannello resta prudente («non ha misurato in queste date»).
-var UMID_HIST_FROM={piemonte:'2026-08-18',emilia:'2026-08-18',austria:'2026-08-18',
-  svizzera:'2026-08-18',francia:'2026-08-18',
+var UMID_HIST_FROM={piemonte:'2026-08-15',emilia:'2026-08-17',austria:'2026-08-16',
+  svizzera:'2026-08-16',francia:'2026-08-16',
   // seconda ondata (18/8 sera): Lombardia (Socrata «Umidità Relativa»), Liguria
   // (OMIRL Igro), Toscana (SIR igro), Alto Adige (sensore LF), le 10 reti MeteoHub (B13003)
-  lombardia:'2026-08-18',liguria:'2026-08-18',toscana:'2026-08-18',altoadige:'2026-08-18',
-  marche:'2026-08-18',umbria:'2026-08-18',lazio:'2026-08-18',campania:'2026-08-18',
-  puglia:'2026-08-18',basilicata:'2026-08-18',calabria:'2026-08-18',sicilia:'2026-08-18',
-  sardegna:'2026-08-18',molise:'2026-08-18'};
+  lombardia:'2026-08-16',liguria:'2026-08-17',toscana:'2026-08-17',altoadige:'2026-08-17',
+  marche:'2026-08-16',umbria:'2026-08-16',lazio:'2026-08-16',campania:'2026-08-16',
+  puglia:'2026-08-16',basilicata:'2026-08-16',calabria:'2026-08-16',sicilia:'2026-08-16',
+  sardegna:'2026-08-16',molise:'2026-08-16',
+  // terza ondata (18/8 notte, reti minori): Slovenia (ARSO pid 19/20), VdA (prid 2)
+  // e OSMER (colonna «Umidita' %») riempite all'indietro fino al 27/6 come t/w;
+  // Veneto (sensore UMID) e Trentino (getLastDataOfMeteoStation, che porta anche
+  // il vento medio) solo da quando i collector girano in prod. Le date qui sono
+  // quelle in cui i FILE hanno davvero la `u` (rilette il 18/8: i collector
+  // avevano ricalcolato i giorni recenti, quindi 15-17/8 e non 18), e la chiave
+  // svizzera copre anche il Ticino OASI (dal 27/6, ma la data resta quella SMN).
+  slovenia:'2026-06-27',valledaosta:'2026-06-27',friuli:'2026-06-27',
+  veneto:'2026-08-19',trentino:'2026-08-19'};
 function umidDa(regionKey){
   return UMID_HIST_FROM[regionKey]||(regionKey&&regionKey.indexOf('francia')===0?UMID_HIST_FROM.francia:null);
 }
@@ -3034,7 +3043,7 @@ var HIST_PROVE_MIN=10;
 //   trentino l'API dà la sola raffica, senza media il grafico non disegna
 // ⚠️ Se una di queste fonti un giorno cominciasse a pubblicare, la voce va
 // tolta: resterebbe una frase falsa proprio dove diciamo di essere sicuri.
-var RETI_SENZA={toscana:'w',trentino:'w'};
+var RETI_SENZA={toscana:'w'};   // trentino tolto il 18/8/2026: il vento medio arriva da getLastDataOfMeteoStation
 // Tre situazioni, due frasi (scelte con l'utente il 12/8/2026). Una sola voce
 // e un solo verbo, «misurare»: cambia il TEMPO, e il tempo è quello che
 // separa una cosa vera da una falsa.
