@@ -258,6 +258,27 @@ async function main() {
       const nUi = applicaU(path.join(DATA_DIR, `${ieriStr}.json`), uIeri);
       console.log(`  Meteo u: ${nUo} stazioni su oggi, ${nUi} su ieri`);
     } catch (e) { console.warn('  Warn: umidità SIR saltata: ' + e.message); }
+    // Vento (19/8/2026): il SIR non lo pubblica, lo campiona ogni ora
+    // `campiona-vento-toscana.js` dalla pagina anemometri del CFR e scrive
+    // `data/toscana-vento/<giorno>.json` con `w: { TOS…: [media_kmh, raffica_kmh] }`
+    // (media di >= 20 letture istantanee + raffica massima). Qui si attacca al file
+    // di IERI, l'unico completo: quello di oggi viene riscritto da zero a ogni run.
+    // Un solo scrittore per data/toscana (questo collector): il campionatore non
+    // tocca mai questi file, cosi' i due workflow non si pestano i push.
+    try {
+      const fv = path.join(DATA_DIR, '..', 'toscana-vento', `${ieriStr}.json`);
+      if (fs.existsSync(fv)) {
+        const wIeri = (JSON.parse(fs.readFileSync(fv, 'utf8')) || {}).w || {};
+        const file = path.join(DATA_DIR, `${ieriStr}.json`);
+        if (fs.existsSync(file) && Object.keys(wIeri).length) {
+          const j = JSON.parse(fs.readFileSync(file, 'utf8'));
+          let n = 0;
+          (j.stations || []).forEach(s => { if (wIeri[s.id]) { s.w = wIeri[s.id]; n++; } });
+          if (n > 0) fs.writeFileSync(file, JSON.stringify(j));
+          console.log(`  Meteo w (CFR campionato): ${n} stazioni su ieri`);
+        }
+      }
+    } catch (e) { console.warn('  Warn: vento CFR saltato: ' + e.message); }
   } catch (e) {
     console.warn('  Warn: temperatura SIR saltata: ' + e.message);
   }

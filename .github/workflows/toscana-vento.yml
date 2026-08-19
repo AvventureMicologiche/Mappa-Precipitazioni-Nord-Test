@@ -1,0 +1,47 @@
+name: Toscana vento (campionatore CFR)
+on:
+  workflow_dispatch:
+  # Campionatore ORARIO della pagina anemometri del CFR (19/8/2026).
+  # Il SIR non pubblica il vento; il CFR ha una pagina live (solo l'istante,
+  # niente serie) con ~140 anemometri sugli stessi codici TOS dei pluviometri.
+  # La media giornaliera che il pannello disegna la costruiamo noi con 24
+  # letture al giorno: questo workflow legge la pagina (80 KB), aggiunge il
+  # campione a data/toscana-vento/<giorno>.json e ricalcola w (media+raffica)
+  # per ieri. NON tocca data/toscana: ci pensa il collector SIR nel suo passo
+  # t/u di ieri, cosi' i due workflow non entrano mai in conflitto sui file.
+  # Minuto 40: lontano dal :15 dei run Toscana e dagli altri cron del repo.
+  # GitHub ritarda i cron di 0-60 minuti; la dedup e' sull'ora di lettura della
+  # pagina, non su quella del run, quindi un run in ritardo non duplica niente.
+  schedule:
+    - cron: '40 * * * *'
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Campiona la pagina anemometri CFR
+        id: campiona
+        run: node .github/scripts/campiona-vento-toscana.js
+        continue-on-error: true
+      - name: Retry
+        if: steps.campiona.outcome == 'failure'
+        run: sleep 45 && node .github/scripts/campiona-vento-toscana.js
+      - name: Commit e push
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@bot.com"
+          mkdir -p data/toscana-vento
+          git add data/toscana-vento/
+          git diff --staged --quiet || git commit -m "toscana-vento $(date -u +%Y-%m-%dT%H:%M)"
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push; then ok=1; break; fi
+            echo "Push fallito (tentativo $i/5), retry tra 10s..."
+            sleep 10
+          done
+          [ "$ok" = "1" ] || { echo "Push fallito dopo 5 tentativi"; exit 1; }
