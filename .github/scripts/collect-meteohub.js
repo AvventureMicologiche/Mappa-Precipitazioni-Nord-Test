@@ -51,6 +51,14 @@ const NETWORKS = [
   { net: 'dpcn-sardegna',   dir: 'meteohub-sardegna',   sigla: 'SAR' },
   { net: 'dpcn-basilicata', dir: 'meteohub-basilicata', sigla: 'BAS' },
   { net: 'dpcn-molise',     dir: 'meteohub-molise',     sigla: 'MOL' },
+  // Friuli V.G. (19/8/2026): NON è una rete dpcn, è la rete idrometeorologica
+  // completa di ARPA FVG. L'archivio OSMER che usiamo in mappa (data/friuli-osmer)
+  // espone solo ~40 stazioni; qui ce ne sono 139, di cui 136 con la giornata
+  // completa, 99 con temperatura, 44 col vento e 55 con l'umidità.
+  // VALIDATA il 19/8/2026 col metodo delle stazioni gemelle: sulle 32 stazioni
+  // presenti in entrambe le fonti la pioggia del 17/8 coincide al decimo
+  // (Barcis 6,6=6,6; Codroipo 19,4=19,4; Tarvisio 24,1=24,1).
+  { net: 'arpafvg',         dir: 'meteohub-friuli',     sigla: 'FVG', src: 'meteohub-arpafvg' },
 ];
 
 function getItalyOffset(date) {
@@ -223,7 +231,7 @@ function tipicoReali(dir, giorni) {
   return v[Math.floor(v.length / 2)];
 }
 
-function writeDay(dir, dateStr, stations, net, soglia) {
+function writeDay(dir, dateStr, stations, net, soglia, src) {
   if (stations.length < 10) {
     console.warn(`  ${dateStr}: solo ${stations.length} stazioni, salto la scrittura`);
     return false;
@@ -247,7 +255,7 @@ function writeDay(dir, dateStr, stations, net, soglia) {
   fs.writeFileSync(outFile, JSON.stringify({
     date:      dateStr,
     collected: new Date().toISOString(),
-    source:    'meteohub-dpcn',
+    source:    src || 'meteohub-dpcn',
     network:   net,
     count:     stations.length,
     stations
@@ -264,7 +272,14 @@ async function main() {
   const todayStr = fmtDate(italyNow);
   const noon = new Date(todayStr + 'T12:00:00Z').getTime();
 
-  for (const netCfg of NETWORKS) {
+  // SOLO_RETE=arpafvg → lavora su una rete sola. Serve alle prove a mano: senza
+  // questo filtro un run di collaudo riscriverebbe anche le dieci cartelle dpcn,
+  // che in produzione sono già a posto (19/8/2026).
+  const soloRete = (process.env.SOLO_RETE || '').trim();
+  const daFare = soloRete ? NETWORKS.filter(n => n.net === soloRete) : NETWORKS;
+  if (soloRete && !daFare.length) throw new Error(`SOLO_RETE=${soloRete} non è fra le reti configurate`);
+
+  for (const netCfg of daFare) {
     console.log(`--- Rete ${netCfg.net}`);
     const dir = path.join(DATA_ROOT, netCfg.dir);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -306,7 +321,7 @@ async function main() {
     for (const dStr of targetDays) {
       try {
         console.log(`  Raccolgo ${dStr}...`);
-        writeDay(dir, dStr, await collectDay(netCfg, dStr), netCfg.net, soglia);
+        writeDay(dir, dStr, await collectDay(netCfg, dStr), netCfg.net, soglia, netCfg.src);
       } catch(e) {
         console.warn(`  Warn: ${netCfg.net} ${dStr} fallito: ${e.message}`);
       }

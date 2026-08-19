@@ -6,6 +6,10 @@ on:
         description: 'Data da raccogliere (YYYY-MM-DD, lascia vuoto per ieri+altroieri)'
         required: false
         default: ''
+      solo_rete:
+        description: 'Una rete sola (es. arpafvg). Vuoto = tutte'
+        required: false
+        default: ''
   # MIGRATO IN PRODUZIONE il 1/8/2026: la raccolta MeteoHub gira sul repo di
   # produzione, tenerla accesa anche qui farebbe scrivere gli stessi dati a due
   # repo. Cron commentati come per ticino.yml: per riattivare basta togliere i
@@ -34,18 +38,21 @@ jobs:
         run: node .github/scripts/collect-meteohub.js
         env:
           DATE_OVERRIDE: ${{ inputs.date_override }}
+          SOLO_RETE: ${{ inputs.solo_rete }}
         continue-on-error: true
       - name: Retry 1
         if: steps.collect.outcome == 'failure'
         run: sleep 30 && node .github/scripts/collect-meteohub.js
         env:
           DATE_OVERRIDE: ${{ inputs.date_override }}
+          SOLO_RETE: ${{ inputs.solo_rete }}
         continue-on-error: true
       - name: Retry 2
         if: steps.collect.outcome == 'failure'
         run: sleep 60 && node .github/scripts/collect-meteohub.js
         env:
           DATE_OVERRIDE: ${{ inputs.date_override }}
+          SOLO_RETE: ${{ inputs.solo_rete }}
       - name: Commit e push
         run: |
           git config user.name "bot"

@@ -2761,7 +2761,11 @@ var VDA_HIST_FROM='2026-05-17';
 var FRIULI_HIST_FROM='2026-05-19';
 // Regioni il cui storico PRIMA di questa data non è disponibile (limite inferiore
 // per grafico storico e date personalizzate).
-var HIST_REAL_FROM={toscana:'2026-07-12','friuli-osmer':FRIULI_HIST_FROM,'valledaosta-cf':VDA_HIST_FROM};
+// La rete regionale FVG via MeteoHub parte dal 19/8/2026 (la finestra pubblica
+// dell'API è di ~9 giorni: 11/8 è il primo giorno recuperabile a mano).
+var FVG_MH_HIST_FROM='2026-08-11';
+var HIST_REAL_FROM={toscana:'2026-07-12','friuli-osmer':FRIULI_HIST_FROM,'valledaosta-cf':VDA_HIST_FROM,
+                    'meteohub-friuli':FVG_MH_HIST_FROM};
 var histEl=document.getElementById('st-history');
 var histToken=0;
 var histOpenedAt=0;   // vedi map.on('click'): evita l'auto-chiusura all'apertura
@@ -3167,7 +3171,7 @@ function openStationHistory(s,rank,mx,my){
   // Svizzera: regione a due fonti — le stazioni OASI hanno lo storico in
   // data/ticino (prod), quelle MeteoSwiss in data/svizzera (pilota). Il tag
   // _src lo mette loadSvizzeraRegion.
-  var histRegion=(REGIONS[regionKey]&&REGIONS[regionKey].dataSource==='meteohub')?'meteohub-'+regionKey:(regionKey==='friuli')?'friuli-osmer':(regionKey==='valledaosta')?'valledaosta-cf':(regionKey==='svizzera')?((s._src==='oasi')?'ticino':'svizzera'):regionKey;
+  var histRegion=(REGIONS[regionKey]&&REGIONS[regionKey].dataSource==='meteohub')?'meteohub-'+regionKey:(regionKey==='friuli')?((s._src==='mh')?'meteohub-friuli':'friuli-osmer'):(regionKey==='valledaosta')?'valledaosta-cf':(regionKey==='svizzera')?((s._src==='oasi')?'ticino':'svizzera'):regionKey;
   var limit=HIST_REAL_FROM[histRegion]||HIST_REAL_FROM[regionKey];
 
   var days=[];
@@ -3729,7 +3733,7 @@ function osmerInlineDesktop(){
 function dirDatiRegione(rk){
   var cfg=REGIONS[rk];
   if(cfg&&cfg.dataSource==='meteohub') return ['meteohub-'+rk];
-  if(rk==='friuli') return ['friuli-osmer'];
+  if(rk==='friuli') return ['friuli-osmer','meteohub-friuli'];
   if(rk==='valledaosta') return ['valledaosta-cf'];
   if(rk==='svizzera') return ['svizzera','ticino'];  // due fonti sotto un bottone
   return [rk];
@@ -4957,12 +4961,31 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
 //     doppioni in multiregione). Contribuiscono all'IDW anche se fuori confine.
 // ═══════════════════════════════════════════════════════════════
 var FRIULI_VENETO_BORDER={'Sella Ciampigotto':1,'Santo Stefano di Cadore':1,'Costalta':1,'Domegge di Cadore':1,'Casamazzagno':1};
+// ═══════════════════════════════════════════════════════════════
+// TERZA FONTE (19/8/2026): la rete idrometeorologica COMPLETA di ARPA FVG,
+// presa da MeteoHub (rete 'arpafvg') e scritta in data/meteohub-friuli.
+// L'archivio OSMER espone ~40 stazioni, questa ne ha ~136 al giorno.
+// Validata col metodo delle stazioni gemelle su 8 giorni e 237 confronti:
+// il 96% coincide entro 0,25 mm con OSMER (le differenze restanti sono
+// stazioni diverse accoppiate dalla tolleranza, tipo Musi / Musi ponte).
+// DUE REGOLE, entrambe necessarie:
+//  1) DOPPIONI: ~32 stazioni stanno in tutte e due le fonti. Vince OSMER,
+//     che ha lo storico lungo; la gemella MeteoHub si scarta in finalizza(),
+//     non in ingestione, perché le due fonti arrivano in ordine imprevedibile.
+//  2) STORICO CORTO: MeteoHub senza login tiene solo ~9 giorni, quindi queste
+//     stazioni all'inizio non coprono le finestre lunghe. Sommarle comunque
+//     darebbe un cumulato corto con l'etichetta del periodo pieno, cioè una
+//     macchia secca FALSA. Perciò passano dallo stesso filtro copertura di
+//     OSMER: compaiono in una finestra solo quando hanno abbastanza giorni.
+// ═══════════════════════════════════════════════════════════════
 function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
   var OSMER_RAW=PILOT_DATA_BASE+'friuli-osmer';
+  var MH_RAW=PILOT_DATA_BASE+'meteohub-friuli';
   var VENETO_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/veneto';
   var COV_MIN=0.8;
   var addVeneto=getActiveRegions().indexOf('veneto')<0; // no doppioni se il Veneto è già in mappa
   var rainTot={}, stMeta={}, presReal={}, realDays=0, usaVeneto=false;
+  var presMH={};
   var dates=[];
   var d=new Date(pastDate.getTime());
   while(d<=nowDate){
@@ -4971,19 +4994,49 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
     d.setDate(d.getDate()+1);
   }
   if(dates.length===0){cb([],'🟢 ARPA OSMER FVG');return;}
-  var pending=dates.length*(addVeneto?2:1);
+  var pending=dates.length*(addVeneto?3:2);
 
   function finalizza(){
+    // Posizioni OSMER: servono a scartare le gemelle MeteoHub (regola 1).
+    // 1 km di tolleranza: le due fonti danno la stessa stazione con coordinate
+    // arrotondate in modo diverso, ma due pluviometri veri non sono mai così vicini.
+    var osmerPos=[];
+    Object.keys(stMeta).forEach(function(k){
+      if(stMeta[k]._src==='osmer') osmerPos.push([stMeta[k].lat,stMeta[k].lon]);
+    });
+    var gemella=function(la,lo){
+      return osmerPos.some(function(p){
+        return Math.abs(p[0]-la)<0.009 && Math.abs(p[1]-lo)<0.013;
+      });
+    };
+    var mhTenute=0;
     var full=Object.keys(rainTot).map(function(key){
       var s=stMeta[key];if(!s)return null;
       // Filtro copertura: solo stazioni OSMER, solo se il periodo ha giorni reali
       if(s._src==='osmer' && realDays>0 && (presReal[key]||0)/realDays < COV_MIN) return null;
+      if(s._src==='mh'){
+        if(gemella(s.lat,s.lon)) return null;                                    // regola 1
+        // regola 2 — il denominatore sono i GIORNI CHIESTI, non i giorni che
+        // MeteoHub ha restituito. Con i giorni restituiti una stazione presente
+        // in 8 giorni su 8 disponibili passerebbe anche in una finestra di 15,
+        // portando in mappa un cumulato di 8 giorni con l'etichetta di 15:
+        // esattamente la macchia secca falsa che questa regola deve impedire.
+        if((presMH[key]||0)/dates.length < COV_MIN) return null;
+        mhTenute++;
+      }
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',mm:mm<0.5?0:Math.round(mm*10)/10};
+      // _src viaggia fino alla stazione in mappa: al grafico storico serve per
+      // cercare il file nella cartella giusta (friuli-osmer o meteohub-friuli),
+      // come già fa la Svizzera con 'oasi'/'ms'.
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',_src:s._src,
+              mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([],'🟢 ARPA OSMER FVG');return;}
     full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
-    cb(selectUniform(full,150), usaVeneto?'🟢 ARPA OSMER FVG + ARPA Veneto':'🟢 ARPA OSMER FVG');
+    var eti='🟢 ARPA OSMER FVG';
+    if(mhTenute>0) eti='🟢 ARPA FVG (OSMER + rete regionale)';
+    if(usaVeneto) eti+=' + ARPA Veneto';
+    cb(selectUniform(full,150), eti);
   }
   function done(){ pending--; if(pending<=0) finalizza(); }
 
@@ -5001,6 +5054,25 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
           if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',_src:'osmer'};
           rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           if(isReal) presReal[key]=(presReal[key]||0)+1;
+        });
+      })
+      .catch(function(){})
+      .finally(done);
+
+    // Rete regionale completa ARPA FVG, via MeteoHub (data/meteohub-friuli).
+    // I 404 sono NORMALI sui giorni precedenti l'avvio della raccolta: il
+    // .catch li ingoia e la regola 2 in finalizza() tiene fuori le stazioni
+    // finché non coprono davvero la finestra chiesta.
+    fetch(MH_RAW+'/'+dateStr+'.json')
+      .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(usaGiorno)
+      .then(function(data){
+        if(!data.stations) return;
+        data.stations.forEach(function(s){
+          var key='mh_'+(s.id||s.n);
+          if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',_src:'mh'};
+          rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+          presMH[key]=(presMH[key]||0)+1;
         });
       })
       .catch(function(){})
