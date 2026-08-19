@@ -77,10 +77,34 @@ function fmtDate(d) {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+// ── Account MeteoHub (19/8/2026) ──────────────────────────────────────────
+// Senza login l'API serve solo gli ultimi ~10 giorni (il resto risponde 401).
+// Con un account gratuito (MH_USER / MH_PASS, secret del repo) il token JWT
+// apre l'archivio: arpafvg dal 26/7/2026, dpcn-lazio da maggio, sir-toscana
+// dal 14/6 (dpcn-puglia ha la rete completa solo dal 21/7). Il token si chiede
+// UNA volta per run e si passa come Bearer; se le credenziali mancano si
+// lavora come prima, anonimi, e i cron quotidiani non cambiano.
+let MH_TOKEN = null;
+async function loginMeteoHub() {
+  const user = (process.env.MH_USER || '').trim(), pass = process.env.MH_PASS || '';
+  if (!user || !pass) return null;
+  const r = await fetch('https://meteohub.agenziaitaliameteo.it/auth/login', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({ username: user, password: pass })
+  });
+  const testo = await r.text();
+  if (!r.ok) throw new Error('login MeteoHub HTTP ' + r.status);
+  let tok = testo.trim();
+  try { const j = JSON.parse(testo); tok = j.token || j.access_token || j.accessToken || tok; } catch (e) {}
+  return tok.replace(/^"|"$/g, '') || null;
+}
+
 async function fetchJSON(url, retries = 3) {
   for (let i = 0; i < retries; i++) {
     try {
-      const res = await fetch(url, { headers: { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0' } });
+      const headers = { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0' };
+      if (MH_TOKEN) headers['Authorization'] = 'Bearer ' + MH_TOKEN;
+      const res = await fetch(url, { headers });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return await res.json();
     } catch(e) {
@@ -266,6 +290,10 @@ function writeDay(dir, dateStr, stations, net, soglia, src) {
 
 async function main() {
   console.log('=== collect-meteohub avviato (pilota) ===');
+  try {
+    MH_TOKEN = await loginMeteoHub();
+    console.log(MH_TOKEN ? '  accesso MeteoHub con account (archivio aperto)' : '  accesso MeteoHub anonimo (ultimi ~10 giorni)');
+  } catch (e) { console.warn('  Warn login MeteoHub: ' + e.message + ' — proseguo anonimo'); }
 
   const now = new Date();
   const italyNow = new Date(now.getTime() + getItalyOffset(now) * 3600000);
@@ -287,7 +315,23 @@ async function main() {
     let targetDays;
     let soglia = 0; // stazioni reali minime perché un giorno regga senza stime
     if (process.env.DATE_OVERRIDE && process.env.DATE_OVERRIDE.trim()) {
-      targetDays = [process.env.DATE_OVERRIDE.trim()];
+      // Una data "YYYY-MM-DD" oppure un intervallo "YYYY-MM-DD:YYYY-MM-DD"
+      // (backfill con account, 19/8/2026). Nell'intervallo i giorni già
+      // scritti con dato reale si saltano: si può rilanciare senza rifare tutto.
+      const ov = process.env.DATE_OVERRIDE.trim();
+      if (ov.includes(':')) {
+        const [da, a] = ov.split(':');
+        targetDays = [];
+        for (let t = new Date(da + 'T12:00:00Z').getTime(); t <= new Date(a + 'T12:00:00Z').getTime(); t += 86400000) {
+          const dStr = new Date(t).toISOString().slice(0, 10);
+          const j = leggiFile(path.join(dir, `${dStr}.json`));
+          if (j && !haStime(j) && (j.count || 0) >= 10) continue;
+          targetDays.push(dStr);
+        }
+        console.log(`  Intervallo ${da} → ${a}: ${targetDays.length} giorni da raccogliere`);
+      } else {
+        targetDays = [ov];
+      }
     } else {
       // ieri + altroieri sempre; auto-riparazione 3-9 giorni indietro
       // (la finestra pubblica MeteoHub copre ~10 giorni: 9 lascia un giorno di
