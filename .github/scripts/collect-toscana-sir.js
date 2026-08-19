@@ -39,6 +39,62 @@ const SIR_URL       = 'https://www.sir.toscana.it/monitoraggio/stazioni.php?type
 const TERMO_URL     = 'https://www.sir.toscana.it/monitoraggio/stazioni.php?type=termo';
 const IGRO_URL      = 'https://www.sir.toscana.it/monitoraggio/stazioni.php?type=igro';   // umidità (18/8/2026), stesso tracciato
 
+// ── Rete di sicurezza per il vento: gli anemometri SIR su MeteoHub ──────
+// Gli stessi ~140 anemometri che il campionatore legge dalla pagina del CFR
+// sono anche su MeteoHub, rete `sir-toscana` (B11002 vento medio in m/s,
+// B11041 raffica). Si accoppia per POSIZIONE (MeteoHub non espone il codice
+// TOS) con tolleranza 600 m: due anemometri veri non sono mai cosi' vicini.
+// Restituisce { TOS…: [media_kmh, raffica_kmh|null] } per le sole stazioni
+// passate in `elenco`. Completezza: >= 20 ore distinte, come tutte le altre reti.
+const MH_URL = 'https://meteohub.agenziaitaliameteo.it/api/observations';
+async function ventoMeteoHub(dateStr, elenco) {
+  const off = getItalyOffset(new Date(dateStr + 'T12:00:00Z'));
+  const start = new Date(new Date(dateStr + 'T00:00:00Z').getTime() - off * 3600000);
+  const end   = new Date(start.getTime() + 24 * 3600000);
+  const fq = d => d.toISOString().substring(0, 16).replace('T', ' ');
+  const fr = d => d.toISOString().substring(0, 19);
+  const prendi = async prod => {
+    const q = `reftime: >=${fq(start)},<=${fq(end)};product:${prod};license:CCBY_COMPLIANT`;
+    const res = await fetch(`${MH_URL}?networks=sir-toscana&q=${encodeURIComponent(q)}`,
+                            { headers: { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0' } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const raw = await res.json();
+    const out = [];
+    for (const e of (raw.data || [])) {
+      const st = e.stat || {};
+      if (typeof st.lat !== 'number' || typeof st.lon !== 'number') continue;
+      let best = null;
+      for (const pr of (e.prod || [])) {
+        if (pr.var !== prod || !Array.isArray(pr.val)) continue;
+        if (!best || pr.val.length > best.val.length) best = pr;
+      }
+      if (!best) continue;
+      const vals = best.val.filter(v => v.ref > fr(start) && v.ref <= fr(end) && typeof v.val === 'number');
+      if (!vals.length) continue;
+      out.push({ lat: st.lat, lon: st.lon, v: vals.map(x => x.val),
+                 ore: new Set(vals.map(x => x.ref.slice(11, 13))).size });
+    }
+    return out;
+  };
+  const medi = await prendi('B11002');
+  let raff = [];
+  try { raff = await prendi('B11041'); } catch (e) { /* poche stazioni, non blocca */ }
+  const vicino = (arr, s) => arr.find(o => Math.abs(o.lat - s.lat) < 0.0054 && Math.abs(o.lon - s.lon) < 0.0077);
+  const out = {};
+  for (const s of elenco) {
+    const m = vicino(medi, s);
+    if (!m || m.ore < 20) continue;
+    const buoni = m.v.filter(v => v >= 0 && v < 60);          // m/s, sanity come le altre reti
+    if (!buoni.length) continue;
+    const media = buoni.reduce((a, v) => a + v, 0) / buoni.length;
+    const g = vicino(raff, s);
+    const gu = g ? g.v.filter(v => v >= 0 && v < 90) : [];
+    out[s.id] = [Math.round(media * 3.6 * 10) / 10,
+                 gu.length ? Math.round(Math.max(...gu) * 3.6 * 10) / 10 : null];
+  }
+  return out;
+}
+
 function getItalyOffset(date) {
   const year = date.getUTCFullYear();
   const lastSunMarch = new Date(Date.UTC(year, 2, 31));
@@ -267,18 +323,35 @@ async function main() {
     // tocca mai questi file, cosi' i due workflow non si pestano i push.
     try {
       const fv = path.join(DATA_DIR, '..', 'toscana-vento', `${ieriStr}.json`);
-      if (fs.existsSync(fv)) {
-        const wIeri = (JSON.parse(fs.readFileSync(fv, 'utf8')) || {}).w || {};
-        const file = path.join(DATA_DIR, `${ieriStr}.json`);
-        if (fs.existsSync(file) && Object.keys(wIeri).length) {
-          const j = JSON.parse(fs.readFileSync(file, 'utf8'));
-          let n = 0;
-          (j.stations || []).forEach(s => { if (wIeri[s.id]) { s.w = wIeri[s.id]; n++; } });
-          if (n > 0) fs.writeFileSync(file, JSON.stringify(j));
-          console.log(`  Meteo w (CFR campionato): ${n} stazioni su ieri`);
-        }
+      const wIeri = fs.existsSync(fv) ? ((JSON.parse(fs.readFileSync(fv, 'utf8')) || {}).w || {}) : {};
+      const nCampionatore = Object.keys(wIeri).length;
+      const file = path.join(DATA_DIR, `${ieriStr}.json`);
+      if (fs.existsSync(file)) {
+        const j = JSON.parse(fs.readFileSync(file, 'utf8'));
+        // RETE DI SICUREZZA (19/8/2026): gli stessi anemometri SIR sono anche su
+        // MeteoHub, rete `sir-toscana`. Serve a due cose: coprire i giorni in cui
+        // la pagina del CFR non risponde o cambia forma, e dare il vento subito
+        // sui giorni gia' passati, che il campionatore non puo' avere (parte dal
+        // 19/8). Il campionatore resta la fonte PRIMARIA: non ha il limite dei ~9
+        // giorni della finestra pubblica di MeteoHub. Qui si riempiono solo le
+        // stazioni che il campionatore non ha.
+        // VALIDATO il 19/8 sulle ore in comune di oggi: 272 confronti, scarto
+        // medio 1,41 km/h, spiegato dal confronto fra istanti diversi dentro la
+        // stessa ora (il vento e' raffichato). Unita': m/s in entrambe le fonti.
+        let daMH = {};
+        try {
+          const mancanti = (j.stations || []).filter(s => !wIeri[s.id]);
+          if (mancanti.length) daMH = await ventoMeteoHub(ieriStr, mancanti);
+        } catch (e) { console.warn('  Warn: rete di sicurezza MeteoHub saltata: ' + e.message); }
+        let nC = 0, nM = 0;
+        (j.stations || []).forEach(s => {
+          if (wIeri[s.id]) { s.w = wIeri[s.id]; nC++; }
+          else if (daMH[s.id]) { s.w = daMH[s.id]; nM++; }
+        });
+        if (nC + nM > 0) fs.writeFileSync(file, JSON.stringify(j));
+        console.log(`  Meteo w su ieri: ${nC} dal campionatore CFR (su ${nCampionatore} disponibili), ${nM} dalla rete di sicurezza MeteoHub`);
       }
-    } catch (e) { console.warn('  Warn: vento CFR saltato: ' + e.message); }
+    } catch (e) { console.warn('  Warn: vento saltato: ' + e.message); }
   } catch (e) {
     console.warn('  Warn: temperatura SIR saltata: ' + e.message);
   }
