@@ -63,6 +63,35 @@ function getCDATA(xml, tag) {
   return m ? m[1].trim() : null;
 }
 
+// ── BUG #20 (19/8/2026): il PREC di ARPAV è INCREMENTALE, non cumulato ──
+// Fino a oggi il totale del giorno era `Math.max(...vals)`, con il commento
+// «valori cumulativi, più robusto al reset del sensore». I valori NON sono
+// cumulativi: la serie del 17/8 a Lusiana fa 0…0, 7,8, 2,8, 0,2, 0…0 — una
+// cumulata non può scendere. Quindi scrivevamo la MEZZ'ORA PIÙ PIOVOSA al
+// posto del totale della giornata, e l'errore era tanto più grosso quanto
+// più pioveva (Solagna 17/8: 22 invece di 34,5; Rosà 2,4 invece di 12).
+// Verificato su 185 stazioni del 17/8: 171 con serie NON monotona, ZERO
+// cumulative. Controprova contro la stessa rete ARPAV ripubblicata dal DPC
+// su MeteoHub, 25 stazioni del giorno di pioggia: il max coincide 0 volte,
+// la somma 18 (le altre sono giornate parziali nella finestra XML).
+//
+// `attese` viene dal tag FREQ del sensore (minuti), come fanno gli altri
+// collector: una giornata troppo bucata è una SOTTOSTIMA travestita da dato
+// buono, e su una mappa per funghi è peggio di un buco.
+function totalePrecGiorno(sens, prefix) {
+  const dReg = /<DATI ISTANTE="(\d{12})"><VM>([\d.]*)<\/VM>/g;
+  let dm; const vals = [];
+  while ((dm = dReg.exec(sens)) !== null) {
+    if (!dm[1].startsWith(prefix)) continue;
+    const v = parseFloat(dm[2]);
+    if (!isNaN(v) && v >= 0) vals.push(v);
+  }
+  const freq = parseInt(getTag(sens, 'FREQ'), 10);
+  const attese = (freq > 0) ? Math.round(1440 / freq) : 48;
+  const mm = Math.round(vals.reduce((a, v) => a + v, 0) * 10) / 10;
+  return { mm, letture: vals.length, attese };
+}
+
 // Temperatura e vento (11/8/2026 — grafici stazione): gli STESSI XML di
 // stazione portano sensori TEMP (°C, letture ogni 30'), UMID (%, ogni 30',
 // dal 18/8/2026 → u:[min,max]) e VVENTO (m/s → ×3,6;
@@ -155,19 +184,15 @@ async function main() {
           const sens = sm[1];
           const type = getTag(sens, 'TYPE');
           if (type !== 'PREC') continue;
-          // Dati del giorno target: max - min
-          const datiRegex = /<DATI ISTANTE="(\d{12})"><VM>([\d.]+)<\/VM><\/DATI>/g;
-          let dm;
-          const vals = [];
-          while ((dm = datiRegex.exec(sens)) !== null) {
-            if (!dm[1].startsWith(targetPrefix)) continue;
-            const v = parseFloat(dm[2]);
-            if (!isNaN(v) && v >= 0) vals.push(v);
-          }
-          let mm = 0;
-          // Usa max dei valori cumulativi (più robusto al reset del sensore)
-          if (vals.length >= 1) mm = Math.max(...vals);
-          if (mm > 300) mm = 0;
+          // Totale del giorno = SOMMA degli incrementi (vedi bug #20).
+          // Qui si scrive il file di OGGI, che la mappa non mostra mai (regola #3)
+          // ed è per forza parziale: nessun filtro completezza, il valore vero
+          // lo scrive il ramo «aggiorna ieri» del run successivo.
+          const tot = totalePrecGiorno(sens, targetPrefix);
+          let mm = tot.mm;
+          // Oltre i 300 mm la stazione si SCARTA, non si azzera: un 320 diventato
+          // 0 sarebbe una macchia secca falsa proprio nel giorno dell'alluvione.
+          if (mm > 300) continue;
           const rec = {
             id:  s.id,
             n:   s.nome,
@@ -223,11 +248,15 @@ async function main() {
             const sReg = /<SENSORE>([\s\S]*?)<\/SENSORE>/g; let sm;
             while ((sm = sReg.exec(xml)) !== null) {
               const sens=sm[1]; if(getTag(sens,'TYPE')!=='PREC') continue;
-              const dReg=/<DATI ISTANTE="(\d{12})"><VM>([\d.]+)<\/VM><\/DATI>/g; let dm; const vals=[];
-              while((dm=dReg.exec(sens))!==null){ if(!dm[1].startsWith(_yPrefix)) continue; const v=parseFloat(dm[2]); if(!isNaN(v)&&v>=0) vals.push(v); }
-              let mm=0;
-              if(vals.length>=1) mm=Math.max(...vals);
-              if(mm>300) mm=0;
+              // Qui si scrive IERI, cioè il giorno che va in mappa: totale =
+              // somma degli incrementi (bug #20) e completezza >= 85% delle
+              // letture attese, se no si scarta la stazione invece di scrivere
+              // una sottostima. La finestra XML di ARPAV copre ~48 ore, quindi
+              // al primo run del mattino ieri è sempre completo.
+              const tot=totalePrecGiorno(sens,_yPrefix);
+              if(tot.letture < tot.attese*0.85) break;
+              const mm=tot.mm;
+              if(mm>300) break;
               const _rec={id:s.id,n:s.nome,lat:Math.round(s.lat*10000)/10000,lon:Math.round(s.lon*10000)/10000,q:s.quota,p:s.prov,mm:Math.round(mm*10)/10};
               try { Object.assign(_rec, estraiMeteoVen(xml, _yPrefix)); } catch(e) {}
               _out.push(_rec);
