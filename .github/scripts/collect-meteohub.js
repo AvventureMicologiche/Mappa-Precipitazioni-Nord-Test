@@ -313,7 +313,16 @@ async function main() {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
     let targetDays;
-    let soglia = 0; // stazioni reali minime perché un giorno regga senza stime
+    // Stazioni reali minime perché un giorno regga senza stime: mediana dei
+    // giorni sani recenti, meno il 10%. La usa writeDay() per NON sostituire
+    // una mappa di stime con una raccolta troppo scarsa.
+    // ⚠️ Si calcola SEMPRE, anche con DATE_OVERRIDE (corretto il 20/8/2026):
+    // prima stava solo nel ramo automatico, quindi un backfill a mano girava
+    // con la rete di sicurezza spenta e una giornata parziale poteva svuotare
+    // la mappa — esattamente le macchie asciutte false che la soglia evita.
+    const recenti = [];
+    for (let i = 1; i <= 10; i++) recenti.push(fmtDate(new Date(noon - i * 24 * 3600000)));
+    let soglia = Math.floor(tipicoReali(dir, recenti) * 0.9); // 0 se la finestra è troppo scarna
     if (process.env.DATE_OVERRIDE && process.env.DATE_OVERRIDE.trim()) {
       // Una data "YYYY-MM-DD" oppure un intervallo "YYYY-MM-DD:YYYY-MM-DD"
       // (backfill con account, 19/8/2026). Nell'intervallo i giorni già
@@ -346,9 +355,6 @@ async function main() {
       // ancora i giorni parziali sopra le 10 stazioni (Molise 29/7: 23 su 28),
       // che non venivano riletti MAI.
       targetDays = [1, 2].map(i => fmtDate(new Date(noon - i * 24 * 3600000)));
-      const recenti = [];
-      for (let i = 1; i <= 10; i++) recenti.push(fmtDate(new Date(noon - i * 24 * 3600000)));
-      soglia = Math.floor(tipicoReali(dir, recenti) * 0.9); // 0 se la finestra è troppo scarna
       for (let i = 3; i <= 9; i++) {
         const dStr = fmtDate(new Date(noon - i * 24 * 3600000));
         const j = leggiFile(path.join(dir, `${dStr}.json`));
