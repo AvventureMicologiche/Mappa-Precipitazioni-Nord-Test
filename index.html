@@ -2058,6 +2058,43 @@ function selectUniform(stazioni, maxTotal){
   return selected;
 }
 
+// Come selectUniform, ma quando in una casella ci sono piu' stazioni di
+// quante ne servano tiene le PIU' COMPLETE: prima quelle con l'anemometro,
+// poi con umidita, poi con temperatura. La copertura geografica resta quella
+// di selectUniform (stessa griglia, stesso numero per casella): cambia solo
+// QUALE stazione sopravvive a parita di zona, e si tiene quella che ha piu
+// da raccontare nel pannello. Serve ai PALLINI, non ai dati: il colore della
+// mappa usa tutte le stazioni (vedi renderMulti).
+function selectUniformRicche(stazioni, maxTotal){
+  if(stazioni.length<=maxTotal) return stazioni;
+  var lats=stazioni.map(function(s){return s.lat;});
+  var lons=stazioni.map(function(s){return s.lon;});
+  var LAT_MIN=Math.min.apply(null,lats)-0.1, LAT_MAX=Math.max.apply(null,lats)+0.1;
+  var LON_MIN=Math.min.apply(null,lons)-0.1, LON_MAX=Math.max.apply(null,lons)+0.1;
+  var GRID_W=10, GRID_H=8;
+  var MAX_PER_CELL=Math.ceil(maxTotal/(GRID_W*GRID_H))+2;
+  var cella=function(s){
+    var cx=Math.floor((s.lon-LON_MIN)/(LON_MAX-LON_MIN)*GRID_W);
+    var cy=Math.floor((s.lat-LAT_MIN)/(LAT_MAX-LAT_MIN)*GRID_H);
+    cx=Math.max(0,Math.min(GRID_W-1,cx)); cy=Math.max(0,Math.min(GRID_H-1,cy));
+    return cx+","+cy;
+  };
+  var ricchezza=function(s){ return (s.w?4:0)+(s.u?2:0)+(s.t?1:0); };
+  var grid={}, selected=[];
+  stazioni.slice().sort(function(a,b){
+    var ka=cella(a), kb=cella(b);
+    if(ka!==kb) return ka<kb?-1:1;
+    var ra=ricchezza(a), rb=ricchezza(b);
+    if(ra!==rb) return rb-ra;                       // prima le piu complete
+    return (a.n||"")<(b.n||"")?-1:1;                // poi il nome: scelta stabile
+  }).forEach(function(s){
+    var key=cella(s);
+    if(!grid[key]) grid[key]=0;
+    if(grid[key]<MAX_PER_CELL){ grid[key]++; selected.push(s); }
+  });
+  return selected;
+}
+
 // ═══════════════════════════════════════════════════════════════
 // COLORI
 // ═══════════════════════════════════════════════════════════════
@@ -4136,7 +4173,20 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
   document.getElementById('legend-panel').style.display='block';
   showLegendMobile();
   positionLegend();
-  addMarkers(dati,sorted);
+  // I PALLINI si diradano, i DATI no. Le stazioni marcate _cap vengono dalle
+  // reti fitte (MeteoHub, Svizzera, Austria, Slovenia, Friuli, VdA): disegnarle
+  // tutte renderebbe illeggibile la Sicilia, che ne ha 429. Si diradano per
+  // regione, tenendo a parita di zona quelle con anemometro. Il colore, il
+  // massimo, la media e la classifica restano calcolati su TUTTE.
+  var daDiradare={}, pallini=[];
+  dati.forEach(function(s){
+    if(s && s._cap){ (daDiradare[s._region||"?"]=daDiradare[s._region||"?"]||[]).push(s); }
+    else pallini.push(s);
+  });
+  Object.keys(daDiradare).forEach(function(rk){
+    pallini=pallini.concat(selectUniformRicche(daDiradare[rk],150));
+  });
+  addMarkers(pallini,sorted);
   var hasRain=dati.some(function(s){return s.mm>0;});
   document.getElementById('tp-status').textContent=hasRain?'⏳ Calcolo mappa…':'✅ Nessuna pioggia';
   // Avviso Friuli anche nel ramo "Nessuna pioggia": è proprio il caso del
@@ -4938,7 +4988,8 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
-        cb(selectUniform(full,150));
+        full.forEach(function(s){ s._cap=1; });   // pallini da diradare, dati interi
+        cb(full);
       });
   });
 }
@@ -5036,7 +5087,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
     var eti='🟢 ARPA OSMER FVG';
     if(mhTenute>0) eti='🟢 ARPA FVG (OSMER + rete regionale)';
     if(usaVeneto) eti+=' + ARPA Veneto';
-    cb(selectUniform(full,150), eti);
+    full.forEach(function(s){ s._cap=1; }); cb(full, eti);
   }
   function done(){ pending--; if(pending<=0) finalizza(); }
 
@@ -5138,7 +5189,8 @@ function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
         }).filter(Boolean);
         if(full.length<5){cb([],'🟢 Centro Funzionale VdA');return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
-        cb(selectUniform(full,150),'🟢 Centro Funzionale VdA');
+        full.forEach(function(s){ s._cap=1; });
+        cb(full,'🟢 Centro Funzionale VdA');
       });
   });
 }
@@ -5146,8 +5198,24 @@ function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
 // Loader generico MeteoHub (centro-sud, pilota repo TEST): legge
 // data/meteohub-<regione> (backfill Open-Meteo + reale già nei file), somma per
 // stazione nel periodo. Stesso pattern dei loader a file (Alto Adige/Trentino).
+// Pluviometri guasti nelle reti MeteoHub, tenuti fuori dalla mappa: stessa
+// idea di PIEMONTE_ESCLUSE, LOMB_ESCLUSE ed EMILIA_ESCLUSE. Chiave: regione
+// -> nome della stazione. Il dato grezzo resta nei file, non arriva in mappa.
+//
+// Sellia Superiore (Calabria, 38.98528_16.62083): pluviometro FERMO A ZERO.
+// Trovato il 20/8/2026 dal controllo con MeteoNetwork (check-mnw-sud.js, repo
+// di test): dieci giorni consecutivi a 0 mm, massimo 0,2, mentre i nostri
+// stessi vicini entro 10 km registravano 8,8 - 3,6 - 12,6 - 8,2 - 8 - 6,2 mm,
+// e i testimoni amatoriali confermavano la pioggia. Non e' una zona asciutta:
+// e' una macchia secca FALSA in mezzo alla Calabria, del tipo che manda la
+// gente a cercare funghi dove non ha piovuto. Da ricontrollare se tornasse a
+// misurare, come si fece per MONTE MALANOTTE in Piemonte.
+var MH_ESCLUSE={
+  calabria:{'Sellia Superiore':true}
+};
 function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
   var RAW=PILOT_DATA_BASE+'meteohub-'+regionKey;
+  var escluse=MH_ESCLUSE[regionKey]||{};
   var rainTot={}, stMeta={};
   var dates=[];
   var d=new Date(pastDate.getTime());
@@ -5165,6 +5233,7 @@ function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
+            if(escluse[s.n]) return;                 // pluviometro guasto, vedi MH_ESCLUSE
             var key=s.id||s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
@@ -5182,7 +5251,8 @@ function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
-        cb(selectUniform(full,150));
+        full.forEach(function(s){ s._cap=1; });   // pallini da diradare, dati interi
+        cb(full);
       });
   });
 }
@@ -5227,7 +5297,8 @@ function loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,cb){
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
-        cb(selectUniform(full,150));
+        full.forEach(function(s){ s._cap=1; });   // pallini da diradare, dati interi
+        cb(full);
       });
   });
 }
@@ -5272,7 +5343,8 @@ function loadMeteotrentino(pastDate,nowDate,labelPeriodo,cb){
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
-        cb(selectUniform(full,150));
+        full.forEach(function(s){ s._cap=1; });   // pallini da diradare, dati interi
+        cb(full);
       });
   });
 }
@@ -7070,7 +7142,11 @@ function loadMeteoHubStations(regionKey,cb){
   (function attempt(){
     if(idx>=tries.length){ cb([]); return; }
     fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
-      .then(function(data){ var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};}); meteohubStationsCache[regionKey]=st; cb(st); })
+      .then(function(data){ var escl=MH_ESCLUSE[regionKey]||{};
+                             var st=(data.stations||[]).filter(function(s){return !escl[s.n];})
+                                     .map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'',
+                                                              w:s.w,u:s.u,t:s.t};});  // i sensori servono a selectUniformRicche
+                             meteohubStationsCache[regionKey]=st; cb(st); })
       .catch(function(){ idx++; attempt(); });
   })();
 }
@@ -7190,7 +7266,7 @@ function addDefaultMarkersForRegion(regionKey){
 function drawDefaultMarkers(stazioni,cfg){
   // Cap uniforme a 150 (come i dati e le altre regioni): reti fitte tipo Sicilia
   // (426 staz.) coprivano tutta la mappa rendendo i puntini illeggibili e inutili.
-  if(stazioni && stazioni.length>150) stazioni=selectUniform(stazioni,150);
+  if(stazioni && stazioni.length>150) stazioni=selectUniformRicche(stazioni,150);
   stazioni.forEach(function(s){
     var m=L.circleMarker([s.lat,s.lon],{
       radius:5,fillColor:'#fff',fillOpacity:0.9,
