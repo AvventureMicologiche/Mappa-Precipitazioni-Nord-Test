@@ -1,0 +1,48 @@
+name: Sonda archivio MeteoHub
+# A mano. Dice, SENZA TOCCARE NIENTE, quali giornate di stima Open-Meteo
+# potrebbero essere sostituite con dati veri presi dall'archivio MeteoHub.
+# Serve l'account (secret MH_USER/MH_PASS): senza, l'archivio da' solo ~10 giorni.
+# I file da esaminare sono quelli di PRODUZIONE, quindi si clona prod.
+on:
+  workflow_dispatch:
+    inputs:
+      da:
+        description: 'Primo giorno (AAAA-MM-GG)'
+        required: false
+        default: ''
+      a:
+        description: 'Ultimo giorno (AAAA-MM-GG)'
+        required: false
+        default: ''
+permissions:
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Scarica i dati di produzione
+        run: git clone --quiet --depth 1 https://github.com/AvventureMicologiche/Mappa-Precipitazioni-Nord.git "$RUNNER_TEMP/prod"
+      - name: Sonda
+        env:
+          MH_USER: ${{ secrets.MH_USER }}
+          MH_PASS: ${{ secrets.MH_PASS }}
+          DATA_ROOT: ${{ runner.temp }}/prod/data
+          DA: ${{ inputs.da }}
+          A: ${{ inputs.a }}
+        run: |
+          set -o pipefail
+          [ -n "$DA" ] || DA=$(date -u -d '60 days ago' +%F)
+          [ -n "$A" ]  || A=$(date -u +%F)
+          node .github/scripts/sonda-archivio-meteohub.js "$DA" "$A" | tee "$RUNNER_TEMP/sonda.log"
+      - name: Resoconto
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonda-archivio
+          path: ${{ runner.temp }}/sonda.log
+          retention-days: 30
