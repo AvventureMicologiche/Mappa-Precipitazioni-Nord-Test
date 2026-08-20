@@ -4482,7 +4482,7 @@ function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
     var full=Object.keys(rainTot).map(function(key){
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -4500,6 +4500,7 @@ function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
             var key=s.n; // usa sempre il nome come chiave
             if(PIEMONTE_ESCLUSE[key]) return; // pluviometri guasti/offline, non in mappa
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         }
@@ -4539,7 +4540,7 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
     var full=Object.keys(rainTot).map(function(key){
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -4560,6 +4561,7 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             var key=s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         }
@@ -4637,7 +4639,7 @@ function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
     var full=Object.keys(rainTot).map(function(key){
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -4662,6 +4664,7 @@ function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             var key=s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         }
@@ -4706,7 +4709,7 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
     var full=Object.keys(rainTot).map(function(key){
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -4728,6 +4731,7 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
             if(s.id&&EMILIA_ESCLUSE[String(s.id)]) return;   // gemelle liguri: le porta OMIRL
             var key=s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         }
@@ -4777,6 +4781,7 @@ function loadAustriaRegion(pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             var key=s.id||s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'AT'};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         }
@@ -4788,7 +4793,7 @@ function loadAustriaRegion(pastDate,nowDate,labelPeriodo,cb){
         var full=Object.keys(rainTot).map(function(key){
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'AT',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'AT',mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -4821,6 +4826,7 @@ function loadSloveniaRegion(pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             var key=s.id||s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'SI'};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         }
@@ -4832,7 +4838,7 @@ function loadSloveniaRegion(pastDate,nowDate,labelPeriodo,cb){
         var full=Object.keys(rainTot).map(function(key){
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'SI',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'SI',mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -4867,6 +4873,7 @@ function loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             var key=s.id||s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FR'};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         }
@@ -4878,7 +4885,7 @@ function loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
         var full=Object.keys(rainTot).map(function(key){
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FR',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'FR',mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -4923,6 +4930,7 @@ function loadSvizzeraRegion(pastDate,nowDate,labelPeriodo,cb){
             data.stations.forEach(function(s){
               var key=srcCfg.pref+(s.id||s.n);
               if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||srcCfg.pDef,_src:srcCfg.src};
+              if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
               rainTot[key]=(rainTot[key]||0)+(s.mm||0);
             });
           }
@@ -4934,7 +4942,7 @@ function loadSvizzeraRegion(pastDate,nowDate,labelPeriodo,cb){
           var full=Object.keys(rainTot).map(function(key){
             var s=stMeta[key];if(!s)return null;
             var mm=rainTot[key]||0;
-            return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p,_src:s._src,
+            return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p,_src:s._src,
                     mm:mm<0.5?0:Math.round(mm*10)/10};
           }).filter(Boolean);
           if(full.length<5){cb([]);return;}
@@ -4972,6 +4980,7 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             var key=s.n||s.id;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         }
@@ -4983,7 +4992,7 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
         var full=Object.keys(rainTot).map(function(key){
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'',
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
                   mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
@@ -5079,7 +5088,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
       // _src viaggia fino alla stazione in mappa: al grafico storico serve per
       // cercare il file nella cartella giusta (friuli-osmer o meteohub-friuli),
       // come già fa la Svizzera con 'oasi'/'ms'.
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',_src:s._src,
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'FVG',_src:s._src,
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([],'🟢 ARPA OSMER FVG');return;}
@@ -5103,6 +5112,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
         data.stations.forEach(function(s){
           var key=s.id||s.n;
           if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',_src:'osmer'};
+          if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
           rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           if(isReal) presReal[key]=(presReal[key]||0)+1;
         });
@@ -5122,6 +5132,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
         data.stations.forEach(function(s){
           var key='mh_'+(s.id||s.n);
           if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',_src:'mh'};
+          if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
           rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           presMH[key]=(presMH[key]||0)+1;
         });
@@ -5141,6 +5152,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
             usaVeneto=true;
             var key='ven_'+s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'BL',_src:'veneto'};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         })
@@ -5174,6 +5186,7 @@ function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             var key=s.id||s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'AO'};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         }
@@ -5185,7 +5198,7 @@ function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
         var full=Object.keys(rainTot).map(function(key){
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'AO',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'AO',mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([],'🟢 Centro Funzionale VdA');return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -5236,6 +5249,7 @@ function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
             if(escluse[s.n]) return;                 // pluviometro guasto, vedi MH_ESCLUSE
             var key=s.id||s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         }
@@ -5247,7 +5261,7 @@ function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
         var full=Object.keys(rainTot).map(function(key){
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -5281,6 +5295,7 @@ function loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             var key=s.n||s.id;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'BZ'};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         }
@@ -5292,7 +5307,7 @@ function loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,cb){
         var full=Object.keys(rainTot).map(function(key){
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'BZ',
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'BZ',
                   mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
@@ -5327,6 +5342,7 @@ function loadMeteotrentino(pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             var key=s.n||s.id;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'TN'};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         }
@@ -5338,7 +5354,7 @@ function loadMeteotrentino(pastDate,nowDate,labelPeriodo,cb){
         var full=Object.keys(rainTot).map(function(key){
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'TN',
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'TN',
                   mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
@@ -5542,7 +5558,7 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
     var full=Object.keys(rainTot).map(function(key){
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -5562,6 +5578,7 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
             var key=s.n||s.id;
             if(!allowedToscana[key]) return; // solo le 170 curate
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
+            if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
           });
         }
@@ -7144,7 +7161,7 @@ function loadMeteoHubStations(regionKey,cb){
     fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
       .then(function(data){ var escl=MH_ESCLUSE[regionKey]||{};
                              var st=(data.stations||[]).filter(function(s){return !escl[s.n];})
-                                     .map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'',
+                                     .map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
                                                               w:s.w,u:s.u,t:s.t};});  // i sensori servono a selectUniformRicche
                              meteohubStationsCache[regionKey]=st; cb(st); })
       .catch(function(){ idx++; attempt(); });
@@ -7188,7 +7205,7 @@ function loadAustriaStations(cb){
     if(idx>=tries.length){ cb([]); return; }
     fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
       .then(function(data){
-        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'AT'};});
+        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'AT'};});
         austriaStationsCache=st; cb(st);
       })
       .catch(function(){ idx++; attempt(); });
@@ -7207,7 +7224,7 @@ function loadSloveniaStations(cb){
     if(idx>=tries.length){ cb([]); return; }
     fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
       .then(function(data){
-        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'SI'};});
+        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'SI'};});
         sloveniaStationsCache=st; cb(st);
       })
       .catch(function(){ idx++; attempt(); });
@@ -7226,7 +7243,7 @@ function loadFranciaStations(regionKey,cb){
     if(idx>=tries.length){ cb([]); return; }
     fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
       .then(function(data){
-        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FR'};});
+        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'FR'};});
         franciaStationsCache[regionKey]=st; cb(st);
       })
       .catch(function(){ idx++; attempt(); });
