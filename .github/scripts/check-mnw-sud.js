@@ -43,6 +43,11 @@
  * (un rapporto stabilmente lontano da 1 e' il sintomo di una sottostima
  * sistematica, cioe' proprio la forma che aveva il bug #20).
  *
+ * PRIMA DI GIUDICARE si pesano i testimoni: quelli che contraddicono la zona
+ * giorno dopo giorno vengono squalificati (blocco REPUTAZIONE DEI TESTIMONI
+ * piu' sotto). Sul primo giro lungo quasi meta' delle segnalazioni "di zona"
+ * veniva da quattro pluviometri amatoriali sballati attorno a Osimo.
+ *
  * USO:
  *   node .github/scripts/check-mnw-sud.js [DA A]
  *   senza date: gli ultimi 8 giorni (finestra pubblica, non serve l'account).
@@ -150,33 +155,111 @@ function leggiNostro(dir, g) {
   } catch (e) { return null; }
 }
 
-async function main() {
-  const date = process.argv.filter(a => /^\d{4}-\d{2}-\d{2}$/.test(a));
-  const giorni = [];
-  if (date.length === 2) {
-    for (let t = new Date(date[0] + 'T12:00:00Z').getTime(); t <= new Date(date[1] + 'T12:00:00Z').getTime(); t += 86400000)
-      giorni.push(new Date(t).toISOString().slice(0, 10));
-  } else {
-    for (let i = GIORNI_DEFAULT; i >= 1; i--) giorni.push(new Date(Date.now() - i * 86400000).toISOString().slice(0, 10));
+/**
+ * REPUTAZIONE DEI TESTIMONI (20/8/2026, dopo il primo giro di 45 giorni).
+ *
+ * PERCHE'. Sul giro lungo 18 delle 39 segnalazioni "di zona" venivano da DUE
+ * giorni soli e dagli STESSI quattro pluviometri amatoriali attorno a Osimo:
+ * l'11/7 dicevano 0 mentre le nostre nove stazioni E Open-Meteo davano 6-10 mm,
+ * il 16/7 dicevano 11 mentre tutti davano 0. Un testimone cosi' non toglie
+ * dubbi, li fabbrica.
+ *
+ * COME. Prima di giudicare si guarda ogni testimone su TUTTA la finestra e si
+ * confronta la sua serie con la mediana delle nostre stazioni vicine, provando
+ * anche a spostarla di un giorno avanti e indietro:
+ *   - contraddice spesso a sfasamento zero ma quasi mai a +1 o -1 giorno
+ *     → SFASATO, chiude la giornata a un'altra ora;
+ *   - contraddice spesso a qualunque sfasamento → INAFFIDABILE;
+ *   - pioggia totale sotto un quarto o sopra il quadruplo di quella intorno
+ *     → TARATURA (o sensore intasato).
+ * Squalificati questi, si giudica come prima.
+ *
+ * ⚠️ LA TRAPPOLA, ed e' il motivo per cui questa parte va letta con attenzione:
+ * misurare i testimoni contro le NOSTRE stazioni e' circolare. Se fosse
+ * MeteoHub a sbagliare su un'intera regione, i testimoni di quella zona
+ * sembrerebbero tutti bugiardi e verrebbero zittiti proprio quando hanno
+ * ragione. Due difese: la squalifica chiede una contraddizione RIPETUTA nel
+ * tempo (>= REP_MIN_CONTRO giorni su >= REP_MIN_GIORNI di storia, un errore
+ * isolato non basta), e si stampa sempre l'avviso per regione: se piu' della
+ * meta' dei testimoni di una regione risulta sfasata NELLO STESSO VERSO, il
+ * sospetto si rovescia e riguarda i NOSTRI dati.
+ */
+const REP_MIN_GIORNI = 20;   // storia minima per giudicare un testimone
+const REP_MIN_CONTRO = 3;    // contraddizioni oltre le quali si squalifica
+const REP_RAPP_BASSO = 0.25; // pioggia totale rispetto ai vicini nostri
+const REP_RAPP_ALTO  = 4;
+const REP_MIN_MM     = 20;   // sotto questa pioggia intorno il rapporto non dice nulla
+
+const chiave = m => m.lat.toFixed(3) + ',' + m.lon.toFixed(3);
+
+/** Contraddizioni forti fra la serie di un testimone e quella dei nostri vicini. */
+function contro(serieW, serieN, lag) {
+  let n = 0;
+  for (let i = 0; i < serieW.length; i++) {
+    const j = i + lag;
+    if (j < 0 || j >= serieN.length) continue;
+    const w = serieW[i], v = serieN[j];
+    if (w === null || v === null) continue;
+    if (w >= MM_FORTE && v <= MM_ASCIUTTO) n++;
+    else if (w <= MM_ASCIUTTO && v >= MM_FORTE) n++;
   }
+  return n;
+}
 
-  try { MH_TOKEN = await login(); } catch (e) { console.warn('Warn login: ' + e.message); }
-  console.log(`=== controllo MeteoNetwork ${giorni[0]} → ${giorni[giorni.length - 1]} ` +
-              `(${MH_TOKEN ? 'con account' : 'anonimo'}) ===\n`);
+function reputazione(giorni, mnwPerGiorno, nostrePerGiorno) {
+  const serie = {};   // chiave testimone → {id, w[], n[], reg{}}
+  giorni.forEach((g, i) => {
+    const nostre = nostrePerGiorno[g] || [];
+    for (const m of (mnwPerGiorno[g] || [])) {
+      const k = chiave(m);
+      if (!serie[k]) serie[k] = { id: m.id, lat: m.lat, lon: m.lon, reg: {},
+                                  w: giorni.map(() => null), n: giorni.map(() => null) };
+      serie[k].w[i] = m.mm;
+      const vic = nostre.filter(s => km(m, s) <= RAGGIO_KM);
+      if (vic.length >= 3) {
+        serie[k].n[i] = mediana(vic.map(s => s.mm));
+        for (const s of vic) serie[k].reg[s._reg] = (serie[k].reg[s._reg] || 0) + 1;
+      }
+    }
+  });
 
-  const segnalazioni = [];
-  const perRegione = {};   // nome → {coppie, concordi, rapporti[]}
+  const squalificati = {}, motivi = { sfasato: [], inaffidabile: [], taratura: [] }, perRegione = {};
+  for (const [k, s] of Object.entries(serie)) {
+    const utili = s.w.filter((v, i) => v !== null && s.n[i] !== null).length;
+    if (utili < REP_MIN_GIORNI) continue;                    // troppo poca storia: si tiene
+    // regione = quella da cui vengono piu' vicini nostri
+    const nome = Object.entries(s.reg).sort((a, b) => b[1] - a[1])[0][0];
+    const P = perRegione[nome] = perRegione[nome] || { valutati: 0, piu: 0, meno: 0 };
+    P.valutati++;
 
+    const c0 = contro(s.w, s.n, 0), cPiu = contro(s.w, s.n, 1), cMeno = contro(s.w, s.n, -1);
+    const sw = s.w.reduce((a, v, i) => a + (v !== null && s.n[i] !== null ? v : 0), 0);
+    const sn = s.n.reduce((a, v, i) => a + (v !== null && s.w[i] !== null ? v : 0), 0);
+
+    if (c0 >= REP_MIN_CONTRO && (cPiu * 3 <= c0 || cMeno * 3 <= c0)) {
+      const verso = (cPiu <= cMeno) ? 1 : -1;
+      squalificati[k] = 'sfasato';
+      motivi.sfasato.push({ id: s.id, c0, verso, utili });
+      if (verso > 0) P.piu++; else P.meno++;
+    } else if (c0 >= REP_MIN_CONTRO) {
+      squalificati[k] = 'inaffidabile';
+      motivi.inaffidabile.push({ id: s.id, c0, utili });
+    } else if (sn >= REP_MIN_MM && (sw / sn < REP_RAPP_BASSO || sw / sn > REP_RAPP_ALTO)) {
+      squalificati[k] = 'taratura';
+      motivi.taratura.push({ id: s.id, rap: sw / sn, mm: Math.round(sw), mmVicini: Math.round(sn) });
+    }
+  }
+  return { squalificati, motivi, perRegione, valutati: Object.keys(serie).length };
+}
+
+/** Giudica una finestra gia' scaricata. `escludi` = testimoni squalificati. */
+function giudica(giorni, mnwPerGiorno, nostrePerRegione, escludi) {
+  const segnalazioni = [], perRegione = {}, coppiePerGiorno = {};
   for (const g of giorni) {
-    const mnw = await testimoniDelGiorno(g);
-    if (!mnw) { console.log(`${g}  testimoni non disponibili, salto`); continue; }
-    let coppieG = 0, segnG = 0;
-
-    for (const [dir, nome] of REGIONI) {
-      const nostre = leggiNostro(dir, g);
-      if (!nostre || nostre.length < 10) continue;
+    const mnw = (mnwPerGiorno[g] || []).filter(m => !escludi[chiave(m)]);
+    let coppieG = 0;
+    for (const [nome, nostre] of Object.entries(nostrePerRegione[g] || {})) {
       const R = perRegione[nome] = perRegione[nome] || { coppie: 0, concordiBagnato: 0, concordiAsciutto: 0, rapporti: [] };
-
       for (const s of nostre) {
         const vicini = mnw.filter(m => km(s, m) <= RAGGIO_KM);
         if (vicini.length < MIN_TESTIMONI) continue;
@@ -206,13 +289,88 @@ async function main() {
                               tipo: bagnatoSoloNoi ? 'BAGNATO_SOLO_NOI' : 'ASCIUTTO_SOLO_NOI',
                               testimoni: vicini.length, mnwMax: max, mnwMed: med,
                               nostriVicini: nostroMed });
-          segnG++;
         }
       }
     }
-    console.log(`${g}  testimoni ${String(mnw.length).padStart(3)}  coppie ${String(coppieG).padStart(4)}  segnalazioni ${segnG}`);
+    coppiePerGiorno[g] = coppieG;
+  }
+  return { segnalazioni, perRegione, coppiePerGiorno };
+}
+
+async function main() {
+  const date = process.argv.filter(a => /^\d{4}-\d{2}-\d{2}$/.test(a));
+  const giorni = [];
+  if (date.length === 2) {
+    for (let t = new Date(date[0] + 'T12:00:00Z').getTime(); t <= new Date(date[1] + 'T12:00:00Z').getTime(); t += 86400000)
+      giorni.push(new Date(t).toISOString().slice(0, 10));
+  } else {
+    for (let i = GIORNI_DEFAULT; i >= 1; i--) giorni.push(new Date(Date.now() - i * 86400000).toISOString().slice(0, 10));
+  }
+
+  try { MH_TOKEN = await login(); } catch (e) { console.warn('Warn login: ' + e.message); }
+  console.log(`=== controllo MeteoNetwork ${giorni[0]} → ${giorni[giorni.length - 1]} ` +
+              `(${MH_TOKEN ? 'con account' : 'anonimo'}) ===\n`);
+
+  // ── PASSO 1: si scarica tutta la finestra e si tiene da parte ──────────────
+  // La reputazione di un testimone non si puo' misurare un giorno per volta:
+  // serve la sua storia intera (vedi il blocco REPUTAZIONE piu' sopra).
+  const mnwPerGiorno = {}, nostrePerGiorno = {}, nostrePerRegione = {};
+  for (const g of giorni) {
+    const mnw = await testimoniDelGiorno(g);
+    if (!mnw) { console.log(`${g}  testimoni non disponibili, salto`); continue; }
+    mnwPerGiorno[g] = mnw;
+    nostrePerRegione[g] = {};
+    const flat = [];
+    for (const [dir, nome] of REGIONI) {
+      const nostre = leggiNostro(dir, g);
+      if (!nostre || nostre.length < 10) continue;
+      nostre.forEach(s => { s._reg = nome; });
+      nostrePerRegione[g][nome] = nostre;
+      flat.push(...nostre);
+    }
+    nostrePerGiorno[g] = flat;
+    console.log(`${g}  testimoni ${String(mnw.length).padStart(3)}  nostre ${String(flat.length).padStart(4)}`);
     await new Promise(r => setTimeout(r, 800));
   }
+  const giorniOk = giorni.filter(g => mnwPerGiorno[g]);
+  if (!giorniOk.length) throw new Error('nessun giorno scaricato');
+
+  // ── PASSO 2: reputazione dei testimoni ────────────────────────────────────
+  const rep = reputazione(giorniOk, mnwPerGiorno, nostrePerGiorno);
+  const nSqual = Object.keys(rep.squalificati).length;
+  console.log(`\n── reputazione dei testimoni ──`);
+  console.log(`  valutabili ${rep.valutati}, squalificati ${nSqual} ` +
+              `(sfasati ${rep.motivi.sfasato.length}, inaffidabili ${rep.motivi.inaffidabile.length}, taratura ${rep.motivi.taratura.length})`);
+  for (const m of rep.motivi.sfasato.sort((a, b) => b.c0 - a.c0).slice(0, 8))
+    console.log(`  [sfasato ${m.verso > 0 ? '+1' : '-1'}g] ${m.id} — ${m.c0} contraddizioni su ${m.utili} giorni`);
+  for (const m of rep.motivi.inaffidabile.sort((a, b) => b.c0 - a.c0).slice(0, 8))
+    console.log(`  [inaffidabile] ${m.id} — ${m.c0} contraddizioni su ${m.utili} giorni`);
+  for (const m of rep.motivi.taratura.sort((a, b) => a.rap - b.rap).slice(0, 8))
+    console.log(`  [taratura] ${m.id} — ${m.mm} mm contro ${m.mmVicini} dei vicini (${m.rap.toFixed(2)}x)`);
+
+  // ⚠️ Il ribaltamento del sospetto: se in una regione la maggioranza dei
+  // testimoni risulta sfasata nello STESSO verso, non sono loro a sbagliare.
+  for (const [nome, r] of Object.entries(rep.perRegione)) {
+    if (r.valutati < 5) continue;
+    for (const verso of [1, -1]) {
+      const n = verso > 0 ? r.piu : r.meno;
+      if (n > r.valutati / 2)
+        console.log(`  ⚠️ ${nome}: ${n} testimoni su ${r.valutati} sfasati di ${verso > 0 ? '+1' : '-1'} giorno. ` +
+                    `Troppi perche' sia colpa loro: guardare le NOSTRE giornate.`);
+    }
+  }
+
+  // ── PASSO 3: giudizio, prima con tutti e poi coi soli testimoni buoni ─────
+  const prima = giudica(giorniOk, mnwPerGiorno, nostrePerRegione, {});
+  const dopo  = giudica(giorniOk, mnwPerGiorno, nostrePerRegione, rep.squalificati);
+  const { segnalazioni, perRegione } = dopo;
+  console.log(`\n  segnalazioni: ${prima.segnalazioni.length} con tutti i testimoni, ` +
+              `${segnalazioni.length} tenendo solo i credibili`);
+
+  console.log('\n── giorno per giorno ──');
+  for (const g of giorniOk)
+    console.log(`${g}  coppie ${String(dopo.coppiePerGiorno[g]).padStart(4)}  ` +
+                `segnalazioni ${segnalazioni.filter(s => s.g === g).length}`);
 
   console.log('\n── quadro per regione ──');
   console.log('regione       coppie  concordi(bagn/asc)  rapporto mediano nostro/testimoni');
@@ -240,7 +398,7 @@ async function main() {
   segnalazioni.forEach(x => { const k = x.regione + ' · ' + x.staz; (conta[k] = conta[k] || []).push(x.g); });
   const ricorrenti = Object.entries(conta).filter(e => e[1].length >= 2).sort((a, b) => b[1].length - a[1].length);
   if (ricorrenti.length) {
-    console.log('\n── segnalate piu\' volte (da guardare per prime) ──');
+    console.log("\n── segnalate piu' volte (da guardare per prime) ──");
     for (const e of ricorrenti) console.log('  ' + e[1].length + '×  ' + e[0] + '   (' + e[1].join(', ') + ')');
   }
 
@@ -248,9 +406,11 @@ async function main() {
   let reg = {};
   try { reg = JSON.parse(fs.readFileSync(REGISTRO, 'utf8')); } catch (e) {}
   reg.aggiornato = new Date().toISOString();
-  reg.parametri = { RAGGIO_KM, MIN_TESTIMONI, MM_FORTE, MM_ASCIUTTO, MIN_ORE };
+  reg.parametri = { RAGGIO_KM, MIN_TESTIMONI, MM_FORTE, MM_ASCIUTTO, MIN_ORE,
+                    REP_MIN_GIORNI, REP_MIN_CONTRO, REP_RAPP_BASSO, REP_RAPP_ALTO };
+  reg.testimoniSqualificati = rep.motivi;
   reg.giorni = reg.giorni || {};
-  for (const g of giorni) reg.giorni[g] = segnalazioni.filter(s => s.g === g);
+  for (const g of giorniOk) reg.giorni[g] = segnalazioni.filter(s => s.g === g);
   const limite = new Date(Date.now() - RETENTION * 86400000).toISOString().slice(0, 10);
   for (const g of Object.keys(reg.giorni)) if (g < limite) delete reg.giorni[g];
   fs.writeFileSync(REGISTRO, JSON.stringify(reg, null, 1));
