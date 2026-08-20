@@ -153,10 +153,43 @@ async function testimoniDelGiorno(g) {
   return null;
 }
 
+/**
+ * LE STAZIONI GIA' ESCLUSE non si controllano (20/8/2026).
+ *
+ * Il controllo legge i FILE dei dati, mentre l'esclusione di un pluviometro
+ * guasto vive in index.html (MH_ESCLUSE): i suoi zeri falsi restano
+ * nell'archivio anche quando la mappa non li disegna piu'. Senza questo,
+ * Sellia Superiore continuerebbe a produrre allarmi per sempre, e un allarme
+ * su una cosa gia' sistemata e' il modo piu' rapido per smettere di leggere
+ * la posta.
+ *
+ * Si legge la lista da index.html invece di ricopiarla qui: una lista in due
+ * posti diverge al primo che ci si dimentica.
+ */
+function escluse() {
+  const fuori = {};
+  try {
+    const html = fs.readFileSync(path.join(__dirname, '..', '..', 'index.html'), 'utf8');
+    const blocco = (html.match(/var\s+MH_ESCLUSE\s*=\s*\{([\s\S]*?)\n\};/) || [])[1];
+    if (!blocco) return fuori;
+    for (const riga of blocco.split('\n')) {
+      const reg = (riga.match(/([a-z]+)\s*:\s*\{/) || [])[1];
+      if (!reg) continue;
+      const nomi = riga.match(/'([^']+)'\s*:\s*true/g) || [];
+      fuori[reg] = fuori[reg] || {};
+      for (const n of nomi) fuori[reg][n.match(/'([^']+)'/)[1]] = true;
+    }
+  } catch (e) { console.warn('Warn: MH_ESCLUSE non letta (' + e.message + ')'); }
+  return fuori;
+}
+const ESCLUSE = escluse();
+
 function leggiNostro(dir, g) {
   try {
     const j = JSON.parse(fs.readFileSync(path.join(DATA, dir, g + '.json'), 'utf8'));
-    return (j.stations || []).filter(s => !s.om && typeof s.mm === 'number');  // le stime non si giudicano
+    const fuori = ESCLUSE[dir.replace('meteohub-', '')] || {};
+    // le stime non si giudicano, e nemmeno i pluviometri gia' esclusi dalla mappa
+    return (j.stations || []).filter(s => !s.om && typeof s.mm === 'number' && !fuori[s.n]);
   } catch (e) { return null; }
 }
 
