@@ -48,6 +48,11 @@
  * piu' sotto). Sul primo giro lungo quasi meta' delle segnalazioni "di zona"
  * veniva da quattro pluviometri amatoriali sballati attorno a Osimo.
  *
+ * E QUANDO LE DUE FONTI RESTANO IN DISACCORDO si chiama un ARBITRO di fuori,
+ * l'archivio Open-Meteo (blocco IL TERZO TESTIMONE): gratis, senza chiave, e
+ * la sua risposta va letta in modo asimmetrico perche' e' un modello, non un
+ * pluviometro. Si spegne con SENZA_TERZA=1.
+ *
  * USO:
  *   node .github/scripts/check-mnw-sud.js [DA A]
  *   senza date: gli ultimi 8 giorni (finestra pubblica, non serve l'account).
@@ -252,6 +257,85 @@ function reputazione(giorni, mnwPerGiorno, nostrePerGiorno) {
   return { squalificati, motivi, perRegione, valutati: Object.keys(serie).length };
 }
 
+/**
+ * IL TERZO TESTIMONE (20/8/2026): l'archivio Open-Meteo come arbitro.
+ *
+ * PERCHE' NON BASTA LA REPUTAZIONE. Il filtro qui sopra squalifica chi sbaglia
+ * di continuo, ma i quattro pluviometri di Osimo che hanno prodotto 18
+ * segnalazioni sbagliavano DUE giorni su 45: sotto qualunque soglia sensata.
+ * Il loro difetto non era essere cattivi testimoni in generale, era essere
+ * tutti d'accordo fra loro nello sbagliare lo stesso giorno, e contro quello
+ * nessuna statistica sui testimoni puo' nulla: serve qualcuno di FUORI.
+ *
+ * COME. Per ogni contraddizione forte si chiede all'archivio Open-Meteo
+ * (rianalisi ERA5, gratuita e senza chiave) quanta pioggia dava quel giorno su
+ * quelle coordinate. Le chiamate si accorpano: fino a 50 punti per volta e una
+ * sola finestra di date, quindi tutte le segnalazioni costano due o tre
+ * chiamate in croce.
+ *
+ * ⚠️ COME SI LEGGE LA SUA RISPOSTA, e non e' simmetrica. ERA5 e' un modello a
+ * maglia larga, non un pluviometro: quando dice PIOVUTO e' una prova solida
+ * (nessun modello inventa 10 mm dove non e' successo niente), quando dice
+ * ASCIUTTO puo' semplicemente non aver visto un temporale isolato, cosa che
+ * gli e' gia' successa (Selva di Val Gardena, 2,3 mm contro i 18,9 misurati).
+ * Quindi:
+ *   noi bagnati, testimoni asciutti  → OM bagnato: ragione a NOI, caso chiuso
+ *                                    → OM asciutto: non decide, il caso resta
+ *   noi asciutti, testimoni bagnati  → OM bagnato: ragione ai TESTIMONI, e
+ *                                      allora e' grave: e' un buco nei dati
+ *                                    → OM asciutto: ragione a NOI, caso chiuso
+ * Si spegne con SENZA_TERZA=1.
+ */
+const OM_URL = 'https://archive-api.open-meteo.com/v1/archive';
+const OM_LOTTO = 50;     // punti per chiamata
+const OM_FORTE = 5;      // mm oltre i quali ERA5 "dice piovuto"
+const OM_ASCIUTTO = 1;   // mm sotto i quali "dice asciutto"
+
+async function terzaFonte(segnalazioni, giorni) {
+  if (process.env.SENZA_TERZA || !segnalazioni.length) return 0;
+  const da = giorni[0], a = giorni[giorni.length - 1];
+  // un punto per stazione contestata, non per segnalazione
+  const punti = [], indice = {};
+  for (const s of segnalazioni) {
+    const k = s.lat.toFixed(3) + ',' + s.lon.toFixed(3);
+    if (!(k in indice)) { indice[k] = punti.length; punti.push({ lat: s.lat, lon: s.lon }); }
+  }
+  const serie = new Array(punti.length).fill(null);
+  for (let i = 0; i < punti.length; i += OM_LOTTO) {
+    const lotto = punti.slice(i, i + OM_LOTTO);
+    const url = OM_URL + '?latitude=' + lotto.map(p => p.lat.toFixed(4)).join(',') +
+                '&longitude=' + lotto.map(p => p.lon.toFixed(4)).join(',') +
+                '&start_date=' + da + '&end_date=' + a +
+                '&daily=precipitation_sum&timezone=Europe%2FRome';
+    try {
+      const r = await fetch(url, { signal: AbortSignal.timeout(120000) });
+      if (!r.ok) { console.warn('  terza fonte: HTTP ' + r.status + ', si prosegue senza'); continue; }
+      const j = await r.json();
+      const arr = Array.isArray(j) ? j : [j];
+      arr.forEach((x, n) => {
+        const d = x.daily || {}; const m = {};
+        (d.time || []).forEach((g, q) => { m[g] = (d.precipitation_sum || [])[q]; });
+        serie[i + n] = m;
+      });
+    } catch (e) { console.warn('  terza fonte: ' + e.message + ', si prosegue senza'); }
+    await new Promise(r => setTimeout(r, 1200));
+  }
+
+  let decisi = 0;
+  for (const s of segnalazioni) {
+    const m = serie[indice[s.lat.toFixed(3) + ',' + s.lon.toFixed(3)]];
+    const om = m ? m[s.g] : undefined;
+    if (om === undefined || om === null) { s.om = null; continue; }
+    s.om = om;
+    const bagnatoNoi = s.tipo === 'BAGNATO_SOLO_NOI';
+    if (om >= OM_FORTE)        s.arbitro = bagnatoNoi ? 'noi' : 'testimoni';
+    else if (om <= OM_ASCIUTTO) s.arbitro = bagnatoNoi ? null : 'noi';
+    else                        s.arbitro = null;   // fra i due, non decide
+    if (s.arbitro) decisi++;
+  }
+  return decisi;
+}
+
 /** Giudica una finestra gia' scaricata. `escludi` = testimoni squalificati. */
 function giudica(giorni, mnwPerGiorno, nostrePerRegione, escludi) {
   const segnalazioni = [], perRegione = {}, coppiePerGiorno = {};
@@ -285,7 +369,7 @@ function giudica(giorni, mnwPerGiorno, nostrePerRegione, escludi) {
             const noiConcordi = bagnatoSoloNoi ? nostroMed >= MM_FORTE : nostroMed <= MM_ASCIUTTO;
             chi = noiConcordi ? 'rete' : 'stazione';
           }
-          segnalazioni.push({ g, regione: nome, chi, staz: s.n, mm: s.mm,
+          segnalazioni.push({ g, regione: nome, chi, staz: s.n, mm: s.mm, lat: s.lat, lon: s.lon,
                               tipo: bagnatoSoloNoi ? 'BAGNATO_SOLO_NOI' : 'ASCIUTTO_SOLO_NOI',
                               testimoni: vicini.length, mnwMax: max, mnwMed: med,
                               nostriVicini: nostroMed });
@@ -367,10 +451,28 @@ async function main() {
   console.log(`\n  segnalazioni: ${prima.segnalazioni.length} con tutti i testimoni, ` +
               `${segnalazioni.length} tenendo solo i credibili`);
 
+  // ── PASSO 4: l'arbitro di fuori ────────────────────────────────────────────
+  const decisi = await terzaFonte(segnalazioni, giorniOk);
+  const perNoi = segnalazioni.filter(x => x.arbitro === 'noi');
+  const perLoro = segnalazioni.filter(x => x.arbitro === 'testimoni');
+  const aperte = segnalazioni.filter(x => x.arbitro !== 'noi');
+  if (decisi) {
+    console.log('\n── terzo testimone (Open-Meteo) ──');
+    console.log(`  interpellato su ${segnalazioni.length} casi, ne decide ${decisi}: ` +
+                `${perNoi.length} danno ragione a noi, ${perLoro.length} ai testimoni`);
+    console.log(`  non decisi ${segnalazioni.length - decisi}: ERA5 e' un modello a maglia larga ` +
+                `e i temporali isolati puo' non vederli, quindi restano aperti`);
+    if (perLoro.length) {
+      console.log("  ⚠️ QUI I TESTIMONI HANNO RAGIONE, cioe' e' un buco nei NOSTRI dati:");
+      for (const x of perLoro)
+        console.log(`     ${x.g}  ${x.regione} · ${x.staz} — noi ${x.mm} mm, testimoni ${x.mnwMed}, Open-Meteo ${x.om}`);
+    }
+  }
+
   console.log('\n── giorno per giorno ──');
   for (const g of giorniOk)
     console.log(`${g}  coppie ${String(dopo.coppiePerGiorno[g]).padStart(4)}  ` +
-                `segnalazioni ${segnalazioni.filter(s => s.g === g).length}`);
+                `da guardare ${aperte.filter(s => s.g === g).length}`);
 
   console.log('\n── quadro per regione ──');
   console.log('regione       coppie  concordi(bagn/asc)  rapporto mediano nostro/testimoni');
@@ -381,21 +483,21 @@ async function main() {
                 '        ', rap ? rap.toFixed(2) + (R.rapporti.length < 15 ? ' (solo ' + R.rapporti.length + ' casi, non fidarsi)' : '') : '—');
   }
 
-  console.log(`\n── contraddizioni forti: ${segnalazioni.length} ──`);
+  console.log(`\n── restano da guardare: ${aperte.length} ──`);
   console.log('  giorno      regione     chi sbaglia   noi     testimoni  nostri vicini  stazione');
-  for (const s of segnalazioni.slice(0, 40))
+  for (const s of aperte.slice(0, 40))
     console.log('  ' + s.g + '  ' + s.regione.padEnd(11) + ' [' + s.chi.padEnd(8) + '] ' +
                 (s.tipo === 'BAGNATO_SOLO_NOI' ? 'noi bagnati ' : 'noi asciutti') + ' ' +
                 String(s.mm).padStart(6) + ' | ' + String(s.mnwMed).padStart(6) + ' | ' +
                 (s.nostriVicini === null ? '     —' : String(s.nostriVicini).padStart(6)) + '  ' + s.staz);
-  if (segnalazioni.length > 40) console.log('  … e altre ' + (segnalazioni.length - 40));
+  if (aperte.length > 40) console.log('  … e altre ' + (aperte.length - 40));
   const perChi = {};
-  segnalazioni.forEach(x => { perChi[x.chi] = (perChi[x.chi] || 0) + 1; });
+  aperte.forEach(x => { perChi[x.chi] = (perChi[x.chi] || 0) + 1; });
   console.log('  ripartizione: ' + (Object.entries(perChi).map(([k, v]) => k + ' ' + v).join(', ') || '—'));
 
   // Una stazione che torna piu' volte non e' sfortuna: e' un sensore da guardare.
   const conta = {};
-  segnalazioni.forEach(x => { const k = x.regione + ' · ' + x.staz; (conta[k] = conta[k] || []).push(x.g); });
+  aperte.forEach(x => { const k = x.regione + ' · ' + x.staz; (conta[k] = conta[k] || []).push(x.g); });
   const ricorrenti = Object.entries(conta).filter(e => e[1].length >= 2).sort((a, b) => b[1].length - a[1].length);
   if (ricorrenti.length) {
     console.log("\n── segnalate piu' volte (da guardare per prime) ──");
