@@ -184,9 +184,19 @@ function escluse() {
 }
 const ESCLUSE = escluse();
 
+// Giornate buttate perche' non sono misure: si contano e si dicono, mai in silenzio.
+const SALTATE = {};
+
 function leggiNostro(dir, g) {
   try {
     const j = JSON.parse(fs.readFileSync(path.join(DATA, dir, g + '.json'), 'utf8'));
+    // ⚠️ GIORNATE DI STIMA: nei mesi in cui MeteoHub non copriva ancora una
+    // regione i file sono stati riempiti con Open-Meteo (`source:
+    // open-meteo-backfill-*`). Confrontarle coi testimoni non ha senso, e
+    // soprattutto chiamare Open-Meteo ad arbitrare una giornata che VIENE da
+    // Open-Meteo e' circolare: darebbe sempre ragione a noi. Su 45 giorni erano
+    // 13 su 45 per ogni regione del sud, e 24 delle 78 segnalazioni.
+    if ((j.source || '').startsWith('open-meteo')) { SALTATE[dir] = (SALTATE[dir] || 0) + 1; return null; }
     const fuori = ESCLUSE[dir.replace('meteohub-', '')] || {};
     // le stime non si giudicano, e nemmeno i pluviometri gia' esclusi dalla mappa
     return (j.stations || []).filter(s => !s.om && typeof s.mm === 'number' && !fuori[s.n]);
@@ -414,7 +424,12 @@ function corpoMail(nuovi, aperte, giorniOk) {
  */
 const OM_URL = 'https://archive-api.open-meteo.com/v1/archive';
 const OM_LOTTO = 50;     // punti per chiamata
-const OM_FORTE = 5;      // mm oltre i quali ERA5 "dice piovuto"
+const OM_FORTE = 5;      // mm oltre i quali ERA5 conferma una pioggia che diamo anche noi
+// ⚠️ Per dare torto a NOI, cioe' per far partire la mail, ci vuole di piu'.
+// Campodimele (Lazio) 22/7: ERA5 dava 5,0 mm sul punto ma 1,8-5,1 su TUTTA la
+// zona, mentre 14 pluviometri veri entro 25 km stavano a zero. Sotto i 10 mm
+// la pioggerella diffusa del modello e' grande quanto il segnale che cerchiamo.
+const OM_GRAVE = 10;
 const OM_ASCIUTTO = 1;   // mm sotto i quali "dice asciutto"
 
 async function terzaFonte(segnalazioni, giorni) {
@@ -454,8 +469,9 @@ async function terzaFonte(segnalazioni, giorni) {
     if (om === undefined || om === null) { s.om = null; continue; }
     s.om = om;
     const bagnatoNoi = s.tipo === 'BAGNATO_SOLO_NOI';
-    if (om >= OM_FORTE)        s.arbitro = bagnatoNoi ? 'noi' : 'testimoni';
-    else if (om <= OM_ASCIUTTO) s.arbitro = bagnatoNoi ? null : 'noi';
+    if (bagnatoNoi)             s.arbitro = om >= OM_FORTE ? 'noi' : null;
+    else if (om >= OM_GRAVE)    s.arbitro = 'testimoni';
+    else if (om <= OM_ASCIUTTO) s.arbitro = 'noi';
     else                        s.arbitro = null;   // fra i due, non decide
     if (s.arbitro) decisi++;
   }
@@ -542,6 +558,9 @@ async function main() {
     console.log(`${g}  testimoni ${String(mnw.length).padStart(3)}  nostre ${String(flat.length).padStart(4)}`);
     await new Promise(r => setTimeout(r, 800));
   }
+  const nSaltate = Object.values(SALTATE).reduce((a, v) => a + v, 0);
+  if (nSaltate) console.log(`\n  ${nSaltate} giornate-regione saltate perche' sono stime Open-Meteo, non misure: ` +
+                           Object.entries(SALTATE).map(([d, n]) => d.replace('meteohub-', '') + ' ' + n).join(', '));
   const giorniOk = giorni.filter(g => mnwPerGiorno[g]);
   if (!giorniOk.length) throw new Error('nessun giorno scaricato');
 
