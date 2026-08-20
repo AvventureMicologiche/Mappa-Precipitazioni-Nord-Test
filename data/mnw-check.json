@@ -1,0 +1,388 @@
+{
+ "aggiornato": "2026-08-20T06:05:46.930Z",
+ "parametri": {
+  "RAGGIO_KM": 10,
+  "MIN_TESTIMONI": 2,
+  "MM_FORTE": 5,
+  "MM_ASCIUTTO": 0.5,
+  "MIN_ORE": 20
+ },
+ "giorni": {
+  "2026-08-12": [
+   {
+    "g": "2026-08-12",
+    "regione": "Umbria",
+    "chi": "stazione",
+    "staz": "Ponte S.Maria",
+    "mm": 0,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 3,
+    "mnwMax": 86.2,
+    "mnwMed": 84.8,
+    "nostriVicini": 21.2
+   },
+   {
+    "g": "2026-08-12",
+    "regione": "Umbria",
+    "chi": "incerto",
+    "staz": "S.Biagio della Valle",
+    "mm": 0.2,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 5.2,
+    "mnwMed": 5.2,
+    "nostriVicini": null
+   },
+   {
+    "g": "2026-08-12",
+    "regione": "Lazio",
+    "chi": "incerto",
+    "staz": "Campodimele",
+    "mm": 0,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 5,
+    "mnwMed": 5,
+    "nostriVicini": null
+   },
+   {
+    "g": "2026-08-12",
+    "regione": "Lazio",
+    "chi": "stazione",
+    "staz": "Fosso di Pratolungo",
+    "mm": 0.4,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 5,
+    "mnwMax": 35,
+    "mnwMed": 7.1,
+    "nostriVicini": 8.8
+   },
+   {
+    "g": "2026-08-12",
+    "regione": "Lazio",
+    "chi": "stazione",
+    "staz": "Salone",
+    "mm": 0,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 5,
+    "mnwMax": 35,
+    "mnwMed": 7.1,
+    "nostriVicini": 1.6
+   },
+   {
+    "g": "2026-08-12",
+    "regione": "Lazio",
+    "chi": "incerto",
+    "staz": "Monterotondo ETG",
+    "mm": 5.3,
+    "tipo": "BAGNATO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 0,
+    "mnwMed": 0,
+    "nostriVicini": null
+   },
+   {
+    "g": "2026-08-12",
+    "regione": "Lazio",
+    "chi": "stazione",
+    "staz": "Veroli",
+    "mm": 0,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 4,
+    "mnwMax": 13.4,
+    "mnwMed": 12.8,
+    "nostriVicini": 10.3
+   },
+   {
+    "g": "2026-08-12",
+    "regione": "Lazio",
+    "chi": "incerto",
+    "staz": "Zagarolo",
+    "mm": 0.2,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 5.6,
+    "mnwMed": 5.6,
+    "nostriVicini": null
+   },
+   {
+    "g": "2026-08-12",
+    "regione": "Lazio",
+    "chi": "stazione",
+    "staz": "Capannacce",
+    "mm": 0,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 4,
+    "mnwMax": 35,
+    "mnwMed": 19.6,
+    "nostriVicini": 1.6
+   },
+   {
+    "g": "2026-08-12",
+    "regione": "Campania",
+    "chi": "rete",
+    "staz": "Pontelatone",
+    "mm": 28.2,
+    "tipo": "BAGNATO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 0.2,
+    "mnwMed": 0.2,
+    "nostriVicini": 5.9
+   }
+  ],
+  "2026-08-13": [
+   {
+    "g": "2026-08-13",
+    "regione": "Campania",
+    "chi": "stazione",
+    "staz": "Rocca d'Evandro",
+    "mm": 0.4,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 5.2,
+    "mnwMed": 5.2,
+    "nostriVicini": 0.8
+   },
+   {
+    "g": "2026-08-13",
+    "regione": "Campania",
+    "chi": "stazione",
+    "staz": "S.Ambrogio",
+    "mm": 0.2,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 5.2,
+    "mnwMed": 5.2,
+    "nostriVicini": 0.8
+   },
+   {
+    "g": "2026-08-13",
+    "regione": "Campania",
+    "chi": "rete",
+    "staz": "S.Mauro",
+    "mm": 0,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 11.2,
+    "mnwMed": 11.2,
+    "nostriVicini": 0
+   },
+   {
+    "g": "2026-08-13",
+    "regione": "Campania",
+    "chi": "rete",
+    "staz": "Sarno",
+    "mm": 0,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 11.2,
+    "mnwMed": 11.2,
+    "nostriVicini": 0
+   },
+   {
+    "g": "2026-08-13",
+    "regione": "Campania",
+    "chi": "rete",
+    "staz": "Corbara (S.Egidio M.)",
+    "mm": 0,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 11.2,
+    "mnwMed": 11.2,
+    "nostriVicini": 0.2
+   },
+   {
+    "g": "2026-08-13",
+    "regione": "Sicilia",
+    "chi": "rete",
+    "staz": "Casa Cantoniera",
+    "mm": 6.2,
+    "tipo": "BAGNATO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 0,
+    "mnwMed": 0,
+    "nostriVicini": 6.4
+   }
+  ],
+  "2026-08-14": [
+   {
+    "g": "2026-08-14",
+    "regione": "Calabria",
+    "chi": "stazione",
+    "staz": "Sellia Superiore",
+    "mm": 0,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 16.7,
+    "mnwMed": 16.7,
+    "nostriVicini": 12.6
+   }
+  ],
+  "2026-08-15": [
+   {
+    "g": "2026-08-15",
+    "regione": "Lazio",
+    "chi": "stazione",
+    "staz": "Vico nel Lazio",
+    "mm": 10.4,
+    "tipo": "BAGNATO_SOLO_NOI",
+    "testimoni": 3,
+    "mnwMax": 0,
+    "mnwMed": 0,
+    "nostriVicini": 0
+   }
+  ],
+  "2026-08-16": [
+   {
+    "g": "2026-08-16",
+    "regione": "Lazio",
+    "chi": "incerto",
+    "staz": "San Marino",
+    "mm": 0,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 16.4,
+    "mnwMed": 16.4,
+    "nostriVicini": null
+   },
+   {
+    "g": "2026-08-16",
+    "regione": "Puglia",
+    "chi": "incerto",
+    "staz": "Corigliano d'Otranto",
+    "mm": 24.8,
+    "tipo": "BAGNATO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 0,
+    "mnwMed": 0,
+    "nostriVicini": null
+   }
+  ],
+  "2026-08-17": [
+   {
+    "g": "2026-08-17",
+    "regione": "Lazio",
+    "chi": "rete",
+    "staz": "Frascati",
+    "mm": 0,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 12.5,
+    "mnwMed": 12.5,
+    "nostriVicini": 0.2
+   },
+   {
+    "g": "2026-08-17",
+    "regione": "Lazio",
+    "chi": "incerto",
+    "staz": "Ronciglione rlazio",
+    "mm": 0.2,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 6.2,
+    "mnwMed": 6.2,
+    "nostriVicini": null
+   },
+   {
+    "g": "2026-08-17",
+    "regione": "Lazio",
+    "chi": "stazione",
+    "staz": "Velletri",
+    "mm": 12.2,
+    "tipo": "BAGNATO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 0,
+    "mnwMed": 0,
+    "nostriVicini": 1.9
+   },
+   {
+    "g": "2026-08-17",
+    "regione": "Campania",
+    "chi": "stazione",
+    "staz": "Moiano",
+    "mm": 6.2,
+    "tipo": "BAGNATO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 0,
+    "mnwMed": 0,
+    "nostriVicini": 0.8
+   },
+   {
+    "g": "2026-08-17",
+    "regione": "Campania",
+    "chi": "stazione",
+    "staz": "Pozzuoli",
+    "mm": 0,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 19.7,
+    "mnwMed": 19.7,
+    "nostriVicini": 19.7
+   },
+   {
+    "g": "2026-08-17",
+    "regione": "Puglia",
+    "chi": "incerto",
+    "staz": "Diga Celone",
+    "mm": 8.7,
+    "tipo": "BAGNATO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 0,
+    "mnwMed": 0,
+    "nostriVicini": null
+   }
+  ],
+  "2026-08-18": [
+   {
+    "g": "2026-08-18",
+    "regione": "Puglia",
+    "chi": "incerto",
+    "staz": "Monopoli",
+    "mm": 50.6,
+    "tipo": "BAGNATO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 0,
+    "mnwMed": 0,
+    "nostriVicini": null
+   },
+   {
+    "g": "2026-08-18",
+    "regione": "Calabria",
+    "chi": "stazione",
+    "staz": "Sellia Superiore",
+    "mm": 0,
+    "tipo": "ASCIUTTO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 6.6,
+    "mnwMed": 6.6,
+    "nostriVicini": 6.2
+   }
+  ],
+  "2026-08-19": [
+   {
+    "g": "2026-08-19",
+    "regione": "Lazio",
+    "chi": "stazione",
+    "staz": "Melfa a Roccasecca",
+    "mm": 6.9,
+    "tipo": "BAGNATO_SOLO_NOI",
+    "testimoni": 2,
+    "mnwMax": 0,
+    "mnwMed": 0,
+    "nostriVicini": 2.6
+   },
+   {
+    "g": "2026-08-19",
+    "regione": "Lazio",
+    "chi": "stazione",
+    "staz": "Veroli",
+    "mm": 5.7,
+    "tipo": "BAGNATO_SOLO_NOI",
+    "testimoni": 3,
+    "mnwMax": 0,
+    "mnwMed": 0,
+    "nostriVicini": 0
+   }
+  ]
+ }
+}
