@@ -274,7 +274,11 @@ function reputazione(giorni, mnwPerGiorno, nostrePerGiorno) {
  * in un .eml e il workflow lo spedisce con curl, cosi' la password per le app
  * di Gmail non esce mai dal runner.
  */
-const MAIL_FILE = path.join(__dirname, '..', '..', 'mnw-mail.eml');
+// Il messaggio finito NON entra nel repo: si scrive nella cartella temporanea
+// (o dove dice EML) e il workflow lo prende da li'. Tenerlo nella radice come
+// fa alert-fonti.js vorrebbe dire aggiungere una riga a .gitignore, che sta
+// nella cartella del sito e costerebbe un deploy Netlify per niente.
+const MAIL_FILE = process.env.EML || path.join(require('os').tmpdir(), 'mnw-mail.eml');
 
 /** Subject con accenti ed emoji: encoded-word base64, spezzato per non sforare i 75 caratteri. */
 function encodeSubject(s) {
