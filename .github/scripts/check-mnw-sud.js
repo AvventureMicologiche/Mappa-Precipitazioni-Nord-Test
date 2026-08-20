@@ -258,6 +258,95 @@ function reputazione(giorni, mnwPerGiorno, nostrePerGiorno) {
 }
 
 /**
+ * LA POSTA (20/8/2026): si scrive solo quando c'e' davvero da leggere.
+ *
+ * La mail parte SOLO per i casi in cui il terzo testimone da' ragione ai
+ * testimoni, cioe' dove manca pioggia ai NOSTRI dati e la cosa e' confermata da
+ * una fonte che non c'entra niente. Tutto il resto (le contraddizioni ancora
+ * aperte, i temporali isolati, le stazioni sospette) resta nel registro e nel
+ * resoconto del run: sono cose da guardare con calma, non allarmi.
+ *
+ * E parte solo per le NOVITA': un caso gia' scritto nel registro non si
+ * rimanda. Con una finestra di 30 giorni ripetuta ogni settimana, senza questo
+ * la stessa giornata arriverebbe quattro volte.
+ *
+ * Meccanica identica ad alert-fonti.js: lo script scrive il messaggio completo
+ * in un .eml e il workflow lo spedisce con curl, cosi' la password per le app
+ * di Gmail non esce mai dal runner.
+ */
+const MAIL_FILE = path.join(__dirname, '..', '..', 'mnw-mail.eml');
+
+/** Subject con accenti ed emoji: encoded-word base64, spezzato per non sforare i 75 caratteri. */
+function encodeSubject(s) {
+  if (/^[\x20-\x7E]*$/.test(s)) return s;
+  const chars = [...s];
+  const parti = [];
+  for (let i = 0; i < chars.length; i += 15) {
+    const pezzo = chars.slice(i, i + 15).join('');
+    parti.push(`=?UTF-8?B?${Buffer.from(pezzo, 'utf8').toString('base64')}?=`);
+  }
+  return parti.join('\r\n ');
+}
+
+function scriviEml(subject, body) {
+  const from = process.env.MAIL_USER || 'alert@example.invalid';
+  const to = process.env.MAIL_TO || from;
+  const b64 = Buffer.from(body, 'utf8').toString('base64').replace(/(.{76})/g, '$1\r\n');
+  fs.writeFileSync(MAIL_FILE, [
+    `From: Mappa Precipitazioni <${from}>`,
+    `To: <${to}>`,
+    `Subject: ${encodeSubject(subject)}`,
+    `Date: ${new Date().toUTCString().replace('GMT', '+0000')}`,
+    'MIME-Version: 1.0',
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: base64',
+    '',
+    b64,
+    ''
+  ].join('\r\n'));
+}
+
+function output(chiave, valore) {
+  if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, `${chiave}=${valore}\n`);
+}
+
+const ita = g => g.slice(8, 10) + '/' + g.slice(5, 7);
+
+/** I casi gravi che nel registro non c'erano ancora. */
+function novita(reg, gravi) {
+  const visti = new Set();
+  for (const lista of Object.values((reg && reg.giorni) || {}))
+    for (const x of lista) if (x.arbitro === 'testimoni') visti.add(x.g + '|' + x.staz);
+  return gravi.filter(x => !visti.has(x.g + '|' + x.staz));
+}
+
+function corpoMail(nuovi, aperte, giorniOk) {
+  const righe = nuovi.map(x =>
+    `  ${ita(x.g)}  ${x.regione} · ${x.staz}\n` +
+    `      noi ${x.mm} mm, i testimoni MeteoNetwork ${x.mnwMed}, Open-Meteo ${x.om}`);
+  return [
+    `Controllo MeteoNetwork, finestra ${ita(giorniOk[0])} - ${ita(giorniOk[giorniOk.length - 1])}.`,
+    '',
+    nuovi.length === 1 ? 'Un caso nuovo in cui manca pioggia ai nostri dati:'
+                       : `${nuovi.length} casi nuovi in cui manca pioggia ai nostri dati:`,
+    '',
+    ...righe,
+    '',
+    'Sono i casi in cui due fonti indipendenti fra loro (i pluviometri',
+    'amatoriali MeteoNetwork e la rianalisi Open-Meteo) dicono che lì ha',
+    'piovuto e noi diamo asciutto. Di solito è un pluviometro fermo: si',
+    'guarda la stazione e, se conferma, si esclude come Sellia Superiore.',
+    '',
+    `Nello stesso giro restano ${aperte.length} contraddizioni aperte, che NON sono`,
+    'allarmi: quasi tutte sono nostre stazioni bagnate con i testimoni',
+    'asciutti, cioè temporali estivi veri. Stanno nel registro e nel',
+    'resoconto del run.',
+    '',
+    'Nessun dato è stato toccato: questo controllo non corregge niente.'
+  ].join('\n');
+}
+
+/**
  * IL TERZO TESTIMONE (20/8/2026): l'archivio Open-Meteo come arbitro.
  *
  * PERCHE' NON BASTA LA REPUTAZIONE. Il filtro qui sopra squalifica chi sbaglia
@@ -507,6 +596,29 @@ async function main() {
   // registro: si accumula, non si sovrascrive
   let reg = {};
   try { reg = JSON.parse(fs.readFileSync(REGISTRO, 'utf8')); } catch (e) {}
+
+  // La posta si decide PRIMA di riscrivere il registro, se no i casi nuovi
+  // risulterebbero gia' visti (vedi il blocco LA POSTA).
+  const nuovi = novita(reg, perLoro);
+  if (process.env.TEST_MAIL === '1') {
+    scriviEml('Prova del controllo MeteoNetwork',
+              'Messaggio di prova: la catena funziona. Il registro non è stato toccato.');
+    output('mail', 'true'); output('registro', 'false');
+    console.log("\nTEST_MAIL: scritta la mail di prova, registro lasciato com'era.");
+    return;
+  }
+  if (nuovi.length) {
+    const s = nuovi.length === 1
+      ? `⚠️ Manca pioggia ai dati: ${nuovi[0].regione} · ${nuovi[0].staz}`
+      : `⚠️ Manca pioggia ai dati in ${nuovi.length} casi`;
+    scriviEml(s, corpoMail(nuovi, aperte, giorniOk));
+    output('mail', 'true');
+    console.log(`\nmail: ${nuovi.length} casi nuovi confermati dalla terza fonte`);
+  } else {
+    output('mail', 'false');
+    console.log('\nmail: niente da mandare (nessun caso nuovo confermato dalla terza fonte)');
+  }
+
   reg.aggiornato = new Date().toISOString();
   reg.parametri = { RAGGIO_KM, MIN_TESTIMONI, MM_FORTE, MM_ASCIUTTO, MIN_ORE,
                     REP_MIN_GIORNI, REP_MIN_CONTRO, REP_RAPP_BASSO, REP_RAPP_ALTO };
@@ -516,7 +628,8 @@ async function main() {
   const limite = new Date(Date.now() - RETENTION * 86400000).toISOString().slice(0, 10);
   for (const g of Object.keys(reg.giorni)) if (g < limite) delete reg.giorni[g];
   fs.writeFileSync(REGISTRO, JSON.stringify(reg, null, 1));
-  console.log(`\nregistro aggiornato: ${path.relative(process.cwd(), REGISTRO)}`);
+  output('registro', 'true');
+  console.log(`registro aggiornato: ${path.relative(process.cwd(), REGISTRO)}`);
 }
 
 main().catch(e => { console.error('ERRORE', e.message); process.exit(1); });
