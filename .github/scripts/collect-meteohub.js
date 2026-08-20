@@ -235,9 +235,15 @@ function realiInFile(j) {
   if (!j || !Array.isArray(j.stations)) return 0;
   return j.stations.filter(s => !s.om).length;
 }
-/** Il file contiene stime Open-Meteo? (copertura intera o integrazione parziale) */
+/** Il file contiene stime Open-Meteo? (copertura intera o integrazione parziale)
+ *  ⚠️ 20/8/2026: guardava solo `open-meteo-gapfill`, cioe' i buchi tappati giorno
+ *  per giorno, e NON `open-meteo-backfill-<regione>`, cioe' le giornate riempite
+ *  in blocco prima che MeteoHub coprisse la regione. Quelle passavano per dato
+ *  reale: il backfill a intervallo le saltava («0 giorni da raccogliere») e la
+ *  soglia di sicurezza le contava fra i giorni sani. Ora prende tutta la
+ *  famiglia `open-meteo*`. */
 function haStime(j) {
-  return !!j && (j.source === 'open-meteo-gapfill' || !!j.gapfill ||
+  return !!j && ((j.source || '').startsWith('open-meteo') || !!j.gapfill ||
                  (Array.isArray(j.stations) && j.stations.some(s => s.om)));
 }
 function leggiFile(f) {
