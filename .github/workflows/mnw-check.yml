@@ -1,0 +1,60 @@
+name: Controllo MeteoNetwork sul centro-sud
+# A mano, quando serve: fa girare check-mnw-sud.js su una finestra lunga.
+#
+# PERCHE' QUI E NON SUL PORTATILE. Oltre gli 8 giorni l'archivio MeteoHub vuole
+# l'account, e la password sta nei secret del repo: facendolo girare in Actions
+# non esce di li' e non serve scriverla da nessuna parte.
+#
+# ⚠️ I DATI DA CONTROLLARE STANNO IN PRODUZIONE. Le cartelle meteohub-* di
+# questo repo sono ferme al 31/7 (cron spenti dalla migrazione), quindi si
+# clona il repo di prod in una cartella d'appoggio e si punta li' DATA_ROOT.
+#
+# NON tocca un solo dato: scrive un registro e lo lascia negli artifact.
+on:
+  workflow_dispatch:
+    inputs:
+      da:
+        description: 'Primo giorno (AAAA-MM-GG). Vuoto = 45 giorni fa'
+        required: false
+        default: ''
+      a:
+        description: 'Ultimo giorno (AAAA-MM-GG). Vuoto = ieri'
+        required: false
+        default: ''
+permissions:
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      # --depth 1: serve solo l'ultima versione dei file, non la storia.
+      - name: Scarica i dati di produzione
+        run: git clone --quiet --depth 1 https://github.com/AvventureMicologiche/Mappa-Precipitazioni-Nord.git "$RUNNER_TEMP/prod"
+      - name: Controllo
+        env:
+          MH_USER: ${{ secrets.MH_USER }}
+          MH_PASS: ${{ secrets.MH_PASS }}
+          DATA_ROOT: ${{ runner.temp }}/prod/data
+          DA: ${{ inputs.da }}
+          A: ${{ inputs.a }}
+        run: |
+          set -o pipefail
+          [ -n "$DA" ] || DA=$(date -u -d '45 days ago' +%F)
+          [ -n "$A" ]  || A=$(date -u -d 'yesterday' +%F)
+          echo "finestra: $DA → $A"
+          node .github/scripts/check-mnw-sud.js "$DA" "$A" | tee "$RUNNER_TEMP/mnw-check.log"
+      - name: Raccogli registro e resoconto
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mnw-check
+          path: |
+            ${{ runner.temp }}/mnw-check.log
+            data/mnw-check.json
+          if-no-files-found: warn
+          retention-days: 30
