@@ -14,6 +14,10 @@ on:
         description: 'Ultimo giorno (AAAA-MM-GG)'
         required: false
         default: ''
+      rete:
+        description: 'Una rete sola, es. dpcn-lazio (vuoto = tutte)'
+        required: false
+        default: ''
 permissions:
   contents: read
 jobs:
@@ -32,6 +36,7 @@ jobs:
           MH_USER: ${{ secrets.MH_USER }}
           MH_PASS: ${{ secrets.MH_PASS }}
           DATA_ROOT: ${{ runner.temp }}/prod/data
+          SOLO_RETE: ${{ inputs.rete }}
           DA: ${{ inputs.da }}
           A: ${{ inputs.a }}
         run: |

@@ -111,7 +111,11 @@ function giornateDiStima(dir, da, a) {
   console.log(`=== sonda archivio MeteoHub ${da} → ${a} (${TOKEN ? 'con account' : 'ANONIMA, vede ~10 giorni'}) ===\n`);
 
   let recuperabili = 0, perse = 0;
-  for (const [rete, dir] of RETI) {
+  // SOLO_RETE=dpcn-lazio → una rete sola. Il giro intero e' lungo (le query
+  // giornaliere delle reti grosse, Sicilia 438 stazioni, costano decine di
+  // secondi l'una) e in Actions rischia il tetto dei 60 minuti.
+  const solo = (process.env.SOLO_RETE || '').trim();
+  for (const [rete, dir] of RETI.filter(r => !solo || r[0] === solo)) {
     const stime = giornateDiStima(dir, da, a);
     if (!stime.length) { console.log(`${rete.padEnd(17)} nessuna giornata di stima`); continue; }
     console.log(`${rete.padEnd(17)} ${stime.length} giornate di stima (${stime[0].g} → ${stime[stime.length - 1].g})`);
