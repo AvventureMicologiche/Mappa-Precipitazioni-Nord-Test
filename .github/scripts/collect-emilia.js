@@ -24,6 +24,22 @@ function getItalyOffset(date) {
   return (date >= lastSunMarch && date < lastSunOct) ? 2 : 1;
 }
 
+// ── Zeri falsi riparati: non si rimangiano ──────────────────────────────────
+// Se una stazione di questo giorno era stata corretta con la misura della sua
+// gemella di un'altra agenzia (campo `zf`, vedi ripara-zero-falso.js) e il feed
+// continua a mandare 0, la riparazione resta. Senza, il collector se la
+// mangerebbe al primo run: ogni giorno viene riscritto per altre 48 ore dopo
+// che e' stato chiuso, e la riparazione del 20/8/2026 sarebbe durata due ore.
+// Se invece ARPAE pubblica finalmente un valore vero, vince lui e il marchio
+// sparisce: quella e' una correzione della fonte, e la fonte ha sempre ragione
+// quando parla. Il nostro rattoppo vale solo finche' lei tace.
+function tieniRiparazione(vecchia, nuova) {
+  return !!(vecchia && vecchia.zf && vecchia.mm > 0 && (nuova.mm === 0 || nuova.mm == null));
+}
+function riparata(vecchia, nuova) {
+  return Object.assign({}, nuova, { mm: vecchia.mm, zf: vecchia.zf });
+}
+
 function getTargetDate() {
   if (process.env.DATE_OVERRIDE && process.env.DATE_OVERRIDE.trim()) return process.env.DATE_OVERRIDE.trim();
   const now = new Date();
@@ -186,6 +202,7 @@ async function main() {
   // (evita di preservare valori anomali da run precedenti)
   const merged = Object.assign({}, existingMap);
   output.forEach(s => {
+    if (tieniRiparazione(existingMap[s.id], s)) { merged[s.id] = riparata(existingMap[s.id], s); return; }
     merged[s.id] = s;
   });
 
@@ -248,7 +265,10 @@ async function main() {
           const _pre = JSON.parse(fs.readFileSync(_file, 'utf8'));
           (_pre.stations || []).forEach(x => { _map[x.id] = x; });
         } catch (e) {}
-        _out.forEach(x => { _map[x.id] = x; });
+        _out.forEach(x => {
+          if (tieniRiparazione(_map[x.id], x)) { _map[x.id] = riparata(_map[x.id], x); return; }
+          _map[x.id] = x;
+        });
         const _fin = Object.values(_map);
         fs.writeFileSync(_file, JSON.stringify({date:_yDate,collected:new Date().toISOString(),source:'arpa-emilia-arpae',count:_fin.length,attese:_attese,stations:_fin}),'utf8');
         console.log('Aggiornato ieri: ' + _yDate + ' (' + _out.length + ' dal feed, ' + _fin.length + ' in tutto)');
