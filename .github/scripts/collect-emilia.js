@@ -122,12 +122,23 @@ async function main() {
       // Cerca il dato del giorno target
       const dati = s.dati || {};
       const dayData = dati[dateKey];
-      let mm = 0;
 
-      if (dayData && dayData['0000'] && dayData['0000'].precipitazione_cumulata_giornaliera !== undefined) {
-        const val = parseFloat(dayData['0000'].precipitazione_cumulata_giornaliera);
-        if (!isNaN(val) && val >= 0 && val < 500) mm = Math.round(val * 10) / 10;
-      }
+      // ⚠️ DATO ASSENTE NON E' ZERO (corretto il 21/8/2026, dopo l'evento del 20).
+      // Prima qui c'era `let mm = 0` e la stazione veniva scritta comunque: una che
+      // non aveva ancora pubblicato finiva in mappa con 0 mm, indistinguibile da
+      // "non e' piovuto". ARPAE pubblica l'aggregato del giorno il giorno DOPO e non
+      // tutte le stazioni insieme: il run delle 3:45 del 21/8 ha scritto 0 su 169
+      // stazioni su 326 mentre il crinale prendeva fino a 121 mm (Torriglia), e la
+      // mappa ha mostrato asciutto il giorno del diluvio finche' non l'abbiamo
+      // ricaricato a mano. Ora la stazione si SALTA: il merge tiene il valore che
+      // c'era gia', e se non c'era il pallino manca per qualche ora e l'IDW dei
+      // vicini copre. Meglio un pallino in meno che una macchia asciutta falsa.
+      const cella = dayData && dayData['0000'];
+      const grezzo = cella ? cella.precipitazione_cumulata_giornaliera : undefined;
+      if (grezzo === undefined || grezzo === null) { skip++; return; }
+      const val = parseFloat(grezzo);
+      if (isNaN(val) || val < 0 || val >= 500) { skip++; return; }
+      const mm = Math.round(val * 10) / 10;
 
       const rec = {
         id:  s._id,
@@ -203,19 +214,34 @@ async function main() {
           const lon=ana.geometry.coordinates[0]; const lat=ana.geometry.coordinates[1];
           if(lat<43.7||lat>45.2||lon<9.1||lon>12.8) return;
           if(!ana.variabili||!ana.variabili.includes('precipitazione_cumulata_giornaliera')) return;
-          const dd=(s.dati||{})[_yKey]; let mm=0;
-          if(dd&&dd['0000']&&dd['0000'].precipitazione_cumulata_giornaliera!==undefined){
-            const v=parseFloat(dd['0000'].precipitazione_cumulata_giornaliera);
-            if(!isNaN(v)&&v>=0&&v<500) mm=Math.round(v*10)/10;
-          }
+          const dd=(s.dati||{})[_yKey];
+          // Stessa regola del ramo di sopra: assente non e' zero, si salta.
+          const _cella=dd&&dd['0000'];
+          const _grezzo=_cella?_cella.precipitazione_cumulata_giornaliera:undefined;
+          if(_grezzo===undefined||_grezzo===null) return;
+          const v=parseFloat(_grezzo);
+          if(isNaN(v)||v<0||v>=500) return;
+          const mm=Math.round(v*10)/10;
           const _rec={id:s._id,n:ana.nome||'—',lat:Math.round(lat*10000)/10000,lon:Math.round(lon*10000)/10000,q:ana.altitudine||0,p:ana.provincia||'—',mm};
           if(dd&&dd['0000']) Object.assign(_rec,estraiMeteo(dd['0000']));
           _out.push(_rec);
         } catch(e) {}
       });
       if (_out.length >= 10) {
-        fs.writeFileSync(path.join(DATA_DIR,_yDate+'.json'), JSON.stringify({date:_yDate,collected:new Date().toISOString(),source:'arpa-emilia-arpae',count:_out.length,stations:_out}),'utf8');
-        console.log('Aggiornato ieri: ' + _yDate + ' (' + _out.length + ' stazioni)');
+        // ⚠️ MERGE, non riscrittura (21/8/2026). Questo ramo rifaceva il file da capo
+        // con le sole stazioni che il feed dava in quel momento: unito alla regola
+        // "assente si salta", una stazione che ARPAE smette di pubblicare sparirebbe
+        // da un file gia' buono. Ora i valori nuovi coprono i vecchi e il resto resta.
+        const _file = path.join(DATA_DIR, _yDate + '.json');
+        const _map = {};
+        try {
+          const _pre = JSON.parse(fs.readFileSync(_file, 'utf8'));
+          (_pre.stations || []).forEach(x => { _map[x.id] = x; });
+        } catch (e) {}
+        _out.forEach(x => { _map[x.id] = x; });
+        const _fin = Object.values(_map);
+        fs.writeFileSync(_file, JSON.stringify({date:_yDate,collected:new Date().toISOString(),source:'arpa-emilia-arpae',count:_fin.length,stations:_fin}),'utf8');
+        console.log('Aggiornato ieri: ' + _yDate + ' (' + _out.length + ' dal feed, ' + _fin.length + ' in tutto)');
       }
     } catch(e) { console.warn('Warn aggiornamento ieri: ' + e.message); }
   }
