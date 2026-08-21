@@ -65,6 +65,14 @@ const MIN_VICINI_MM = parseFloat(process.env.MIN_VICINI_MM || '50');
 const RAPPORTO      = parseFloat(process.env.RAPPORTO || '0.15');
 const RAGGIO_KM     = parseFloat(process.env.RAGGIO_KM || '25');
 const N_VICINI      = 5;
+// Il vicino piu' prossimo e' il testimone piu' forte che esista: se la stazione
+// non e' bassa nemmeno rispetto a lui, la mediana dei cinque puo' essere gonfiata
+// da pluviometri dall'altra parte di un crinale. Aggiunta il 21/8/2026 dopo la
+// Val Borbera: Cabella Ligure faceva 27,7 mm contro una mediana di 92 (il 30%),
+// ma a 5,5 km Roccaforte ne faceva 14 e sulle creste ne facevano 99. Era il
+// gradiente fondovalle-crinale, non un guasto.
+const VICINO_RAP    = parseFloat(process.env.VICINO_RAP || '0.50');
+const VICINO_MIN_MM = 20;   // sotto questa pioggia il vicino non fa testimonianza
 const SOLO_ELENCO   = process.env.SOLO_ELENCO === '1';
 const REGISTRO      = path.join(DATA_DIR, 'stazioni-ferme.json');
 
@@ -112,7 +120,8 @@ let filiLetti = 0, filiStima = 0;
 for (const reg of regioni()) {
   const dir = path.join(DATA_DIR, reg);
   const acc = new Map();
-  for (const g of giorni) {
+  for (let gi = 0; gi < giorni.length; gi++) {
+    const g = giorni[gi];
     const f = path.join(dir, g + '.json');
     if (!fs.existsSync(f)) continue;
     let j;
@@ -123,7 +132,8 @@ for (const reg of regioni()) {
       if (typeof s.mm !== 'number' || typeof s.lat !== 'number' || typeof s.lon !== 'number') continue;
       const k = String(s.id);
       let a = acc.get(k);
-      if (!a) { a = { regione: reg, id: k, nome: s.n, prov: s.p, quota: s.q, lat: s.lat, lon: s.lon, tot: 0, giorni: 0 }; acc.set(k, a); }
+      if (!a) { a = { regione: reg, id: k, nome: s.n, prov: s.p, quota: s.q, lat: s.lat, lon: s.lon, tot: 0, giorni: 0, per: new Array(giorni.length).fill(null) }; acc.set(k, a); }
+      a.per[gi] = s.mm;
       a.tot += s.mm;
       a.giorni++;
       a.nome = s.n || a.nome;          // l'ultimo nome visto, se cambia grafia
@@ -142,26 +152,46 @@ console.log(`File reali letti: ${filiLetti}, giorni stimati saltati: ${filiStima
 console.log(`Stazioni totali: ${stazioni.length}, giudicabili (>=${MIN_GIORNI} giorni): ${giudicabili.length}`);
 
 // ── Il confronto con i vicini ───────────────────────────────────────────────
+// ⚠️ SI SOMMA SUI SOLI GIORNI CHE LA STAZIONE HA CONSEGNATO. Confrontare il suo
+// totale con vicini sommati su tutti i 45 giorni fa sembrare rotta ogni stazione
+// che ha dei buchi: e' l'errore che il 21/8/2026 aveva fatto escludere Croce
+// Arcana (27 giorni su 40), che sui SUOI giorni fa il 71% dei vicini, cioe' e'
+// sana. Un vicino vale come testimone solo se copre almeno il 90% di quei giorni.
+function sommaSuiGiorni(v, indici) {
+  let t = 0, n = 0;
+  for (const i of indici) { if (v.per[i] === null) continue; t += v.per[i]; n++; }
+  return n >= indici.length * 0.9 ? t : null;
+}
+
 const sospette = [];
 for (const s of giudicabili) {
+  const indici = [];
+  s.per.forEach((v, i) => { if (v !== null) indici.push(i); });
+  const mio = indici.reduce((a, i) => a + s.per[i], 0);
   const vicini = [];
   for (const v of giudicabili) {
     if (v === s) continue;
     const d = km(s, v);
-    if (d <= RAGGIO_KM) vicini.push({ d, tot: v.tot, nome: v.nome, regione: v.regione });
+    if (d > RAGGIO_KM) continue;
+    const tot = sommaSuiGiorni(v, indici);
+    if (tot === null) continue;             // ha buchi diversi dai suoi: non fa testo
+    vicini.push({ d, tot, nome: v.nome, regione: v.regione });
   }
   if (vicini.length < N_VICINI) continue;   // troppo isolata per essere giudicata
   vicini.sort((a, b) => a.d - b.d);
   const primi = vicini.slice(0, N_VICINI);
   const med = mediana(primi.map(v => v.tot));
   if (med < MIN_VICINI_MM) continue;        // non e' piovuto: uno zero e' la verita'
-  if (s.tot >= med * RAPPORTO) continue;
+  if (mio >= med * RAPPORTO) continue;
+  const vicino = vicini.filter(v => v.tot >= VICINO_MIN_MM)[0];
+  if (!vicino || mio >= vicino.tot * VICINO_RAP) continue;   // vedi VICINO_RAP
   sospette.push({
     chiave: s.regione + '/' + s.id,
     regione: s.regione, id: s.id, nome: s.nome, prov: s.prov, quota: s.quota,
-    tot: Math.round(s.tot * 10) / 10,
+    tot: Math.round(mio * 10) / 10,
     vicini: Math.round(med * 10) / 10,
-    perc: med > 0 ? Math.round((s.tot / med) * 1000) / 10 : 0,
+    perc: med > 0 ? Math.round((mio / med) * 1000) / 10 : 0,
+    vicinoNome: vicino.nome, vicinoTot: Math.round(vicino.tot * 10) / 10, vicinoKm: Math.round(vicino.d * 10) / 10,
     giorniDato: s.giorni,
     esempiVicini: primi.slice(0, 3).map(v => `${v.nome} ${Math.round(v.tot)} mm a ${v.d.toFixed(1)} km`)
   });

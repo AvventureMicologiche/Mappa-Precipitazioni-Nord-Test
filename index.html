@@ -4616,7 +4616,24 @@ function loadOpenMeteoRegion(stations,pastDate,nowDate,labelPeriodo,cb){
 //    definitiva il 25/7, non riaggiungere;
 //  - CEPPO MORELLI: sensore offline, storicamente escluso.
 // I valori restano nei file grezzi data/piemonte: l'esclusione e' solo nel rendering.
-var PIEMONTE_ESCLUSE={'MONTE MALANOTTE':true,'CEPPO MORELLI':true};
+var PIEMONTE_ESCLUSE={
+  'MONTE MALANOTTE':true,   // pluviometro guasto dal 16/7/2026, vedi sopra
+  'CEPPO MORELLI':true,     // sensore offline, storicamente escluso
+  // ── 21/8/2026: la regola nata in Toscana passata anche qui ────────────────
+  // Sotto il 40% della mediana dei cinque vicini piu' prossimi E sotto la meta'
+  // del vicino piu' vicino (la seconda condizione serve a non accusare il
+  // fondovalle: in Val Borbera Cabella Ligure fa 27 mm, ma Roccaforte a 5,5 km
+  // ne fa 14 e le creste 99, ed e' orografia). Si esclude solo se restano
+  // almeno tre pluviometri PIEMONTESI entro 10 km. Confronto fatto sui soli
+  // giorni che la stazione ha consegnato.
+  // Le prime due sono le piu' sicure che abbiamo: l'archivio reale parte dal
+  // 3/5/2026 e permette un solo confronto all'indietro, e quel confronto dice
+  // che erano sane fino a poco fa.
+  'FINIERE':true,              // 13,0 mm, il 24% di VAL CLAREA che sta a 2,6 km. Nei 45 giorni precedenti era al 91%: e' crollata.
+  'MEUGLIANO':true,            // 35,1 mm, il 37% della mediana (CAVALLARIA 112 a 5,2 km). Nei 45 giorni precedenti era al 111%.
+  'PERRERO GERMANASCA':true,   // 34,0 mm, il 33% di 102. MASSELLO, a 7,8 km nella stessa valle, ne fa 143.
+  "BORGOFRANCO D'IVREA":true   // 24,2 mm, il 39% di 62. CAVALLARIA, a 3,1 km, ne fa 109.
+};
 
 function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
   var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/piemonte';
@@ -4759,7 +4776,13 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
 // l'altra, VFLUN (quota 121), funziona e il 20/8/2026 ha dato 29,4 mm.
 var LIGURIA_ESCLUSE={
   'VIFRA':1,  // Villafranca Lunigiana (vedi sopra)
-  'PARAN':1   // Parana: 24,3 mm in 45 giorni, il 31% della mediana dei cinque vicini (80 mm); Calice al Cornoviglio, a 4,2 km, ne ha fatti 75. Trovata il 21/8/2026 lavorando alla Toscana: SIR pubblica la stessa stazione con lo stesso numero, ed e' esclusa anche li' (TOS09001110). Entro 10 km restano 11 pluviometri liguri, nessun buco.
+  'PARAN':1,  // Parana: 24,3 mm in 45 giorni, il 31% della mediana dei cinque vicini (80 mm); Calice al Cornoviglio, a 4,2 km, ne ha fatti 75. Trovata il 21/8/2026 lavorando alla Toscana: SIR pubblica la stessa stazione con lo stesso numero, ed e' esclusa anche li' (TOS09001110). Entro 10 km restano 11 pluviometri liguri, nessun buco.
+  // ── 21/8/2026: la regola nata in Toscana passata anche qui ────────────────
+  // Sotto il 40% della mediana dei cinque vicini E sotto la meta' del vicino
+  // piu' prossimo, contando solo i giorni consegnati, e solo dove restano
+  // almeno tre pluviometri LIGURI entro 10 km.
+  'SEGIA':1,  // Sella Giassina (Neirone): 17,0 mm in 45 giorni, il 10% di 176. Torriglia, a 3,7 km, ne ha fatti 209 e Barbagelata a 4,8 km ne ha fatti 155. Misura ancora, ma e' sorda: e' il caso che ha fatto nascere il controllo del lunedi' e che quel controllo, con la soglia del 15%, prende per un soffio.
+  'MTPOR':1   // Monte Portofino (Camogli): 63,2 mm, il 31% di Camogli che sta a 2,3 km e ne fa 203. Anche S. Margherita e Rapallo, a 3-4 km, stanno fra 134 e 173. Su un promontorio esposto una parte di sottostima da vento e' normale, ma non due terzi.
 };
 
 function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
@@ -4847,7 +4870,23 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
   // luglio, 7,3 mm in 45 giorni contro i 54,8 dei vicini. Corte Centrale e'
   // ferma dal 26 luglio, 1,2 mm contro 81,6 (Codigoro a 7,7 km ne ha fatti 101).
   // Da ricontrollare se tornassero a misurare, come MONTE MALANOTTE in Piemonte.
-  var EMILIA_ESCLUSE={'5317':1,'5565':1,'5566':1,'5561':1,'5568':1,'3080':1,'3077':1,'12307':1,'3014':1,'12863':1,'14719':1};
+  var EMILIA_ESCLUSE={
+    // Gemelle liguri: le porta OMIRL, vedi sotto
+    '5317':1,'5565':1,'5566':1,'5561':1,'5568':1,'3080':1,'3077':1,'12307':1,
+    // Pluviometri fermi trovati a mano e col controllo del lunedi'
+    '3014':1,    // Ferriere Pluvio (PC): 9% dei vicini in 46 giorni
+    '12863':1,   // Lugo RA
+    '14719':1,   // Corte Centrale (FE)
+    // ── 21/8/2026: la regola nata in Toscana passata anche qui ──────────────
+    // Sotto il 40% della mediana dei cinque vicini E sotto la meta' del vicino
+    // piu' prossimo, contando solo i giorni che la stazione ha consegnato, e
+    // solo dove restano almeno tre pluviometri EMILIANI entro 10 km.
+    '53207':1,   // GUALDO (FE): 0,2 mm nei suoi 19 giorni, mentre Sellarino Voghiera a 3,3 km ne faceva 101 negli stessi giorni. In pianura non esiste un gradiente cosi'.
+    '12875':1,   // Poggio Renatico (FE): 16,2 mm nei suoi 28 giorni, il 23% di 70. Malalbergo, a 4,7 km, ne ha fatti 114.
+    '5467':1,    // Campora di Sasso (PR): 28,8 mm, il 34% di 84. Vetto, a 5,3 km, ne fa 87 e Vetto Pluvio 89.
+    '3056':1,    // Montriolo (FC): 24,0 mm, il 36% di 66. Lastra, a 5,0 km, ne fa 75.
+    '8':1        // Loiano (BO): 24,0 mm contro i 66 di Loiano Renana, che sta a 1,1 km. Due pluviometri cosi' vicini non vedono due piogge diverse.
+  };
   function _fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
 
   var todayStr=_fmt(new Date());
@@ -5576,11 +5615,22 @@ var TOSCANA_ESCLUSE={
   'TOS11000115':1, // Abbadia S. S. - Vetta Amiata 1 (SI): 12,6 mm, il 21% di 59. Il Laghetto Verde, a 3,1 km sulla stessa montagna, ne ha fatti 41. Ne restano 6 entro 10 km.
   'TOS09001110':1, // Parana (MS): 23,9 mm, il 30% di 80. Calice al Cornoviglio, a 4,2 km, ne ha fatti 75. La stessa stazione la pubblica anche OMIRL con lo stesso numero, ed e' esclusa pure li' (LIGURIA_ESCLUSE): non e' un doppione da scegliere, e' un pluviometro che non misura piu'. Ne restano 7 entro 10 km.
   'TOS11000516':1, // Casa Rota (AR): 21,5 mm, il 38% di 57. Ne restano 5 entro 10 km.
-  'TOS01000581':1, // Stia (AR): 36,6 mm, il 39% di 94. Stia Monte, a 3,6 km, sta nella norma. Ne restano 4 entro 10 km.
   'TOS01001225':1, // Case Passerini (FI): 25,9 mm, il 39% di 66, in mezzo alla piana di Firenze dove i vicini sono fitti. Ne restano 9 entro 10 km.
   'TOS03001802':1, // Cimone - Monte Serra (PI): 21,3 mm, il 42% di 51, ma soprattutto il 42% di Monte Serra, che sta a 1,8 km sulla stessa cima. Due pluviometri cosi' vicini non vedono due piogge diverse. Ne restano 7 entro 10 km.
-  // ── Consegna a singhiozzo ─────────────────────────────────────────────────
-  'TOS02000372':1  // Croce Arcana (PT): 27 giorni su 40. Un cumulato costruito su due terzi dei giorni esce corto e disegna una macchia secca che non c'e', lo stesso motivo per cui in Friuli le stazioni MeteoHub aspettano di avere copertura prima di entrare in una finestra. Ne restano 5 entro 10 km.
+  // ── Due che erano qui e sono rientrate il 21/8/2026 la sera stessa ────────
+  // Rimesse in mappa passando la stessa regola alle altre regioni, che ha
+  // costretto a misurarla meglio. Due correzioni al metodo, e tutt'e due le
+  // riguardavano:
+  //  - CROCE ARCANA (TOS02000372) era stata tolta perche' consegna 27 giorni su
+  //    40. Ma il cumulato va confrontato SUI SOLI GIORNI CHE HA CONSEGNATO, e
+  //    su quelli fa 76,9 mm contro i 109 dei cinque vicini: il 71%, cioe' una
+  //    stazione sana. La consegna a singhiozzo non e' un motivo per escludere
+  //    per sempre: si risolve col filtro di copertura per finestra, quello che
+  //    il Friuli ha gia', non con una riga qui dentro.
+  //  - STIA (TOS01000581) non era al 39% ma al 49%, sempre per lo stesso
+  //    errore: i vicini erano sommati su 45 giorni e lei su 40. Stia Monte, a
+  //    3,6 km, fa 47 mm contro i suoi 36,6: sono d'accordo.
+  //
   //
   // ⚠️ TENUTE APPOSTA, anche se i numeri le accuserebbero: Paganico (GR),
   // al 20% dei vicini, entro 10 km ne ha uno solo e il piu' prossimo e' a
