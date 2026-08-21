@@ -2798,9 +2798,10 @@ var VDA_HIST_FROM='2026-05-17';
 var FRIULI_HIST_FROM='2026-05-19';
 // Regioni il cui storico PRIMA di questa data non è disponibile (limite inferiore
 // per grafico storico e date personalizzate).
-// La rete regionale FVG via MeteoHub parte dal 19/8/2026 (la finestra pubblica
-// dell'API è di ~9 giorni: 11/8 è il primo giorno recuperabile a mano).
-var FVG_MH_HIST_FROM='2026-08-11';
+// La rete regionale completa del Friuli (ARPA FVG via MeteoHub) parte dal
+// 27/7/2026: e' il limite dell'archivio MeteoHub per questa rete, anche con
+// l'account. Prima di quella data in Friuli ci sono le sole ~41 stazioni OSMER.
+var FVG_MH_HIST_FROM='2026-07-27';
 var HIST_REAL_FROM={toscana:'2026-07-12','friuli-osmer':FRIULI_HIST_FROM,'valledaosta-cf':VDA_HIST_FROM,
                     'meteohub-friuli':FVG_MH_HIST_FROM};
 var histEl=document.getElementById('st-history');
@@ -4669,7 +4670,11 @@ var LIGURIA_37=[
 // giorni contro i 73,7 di mediana dei vicini. ⚠️ Si esclude per ID e non per
 // nome perche' in data/liguria ci sono DUE stazioni con lo stesso nome a 4,7 km:
 // l'altra, VFLUN (quota 121), funziona e il 20/8/2026 ha dato 29,4 mm.
-var LIGURIA_ESCLUSE={'VIFRA':1};
+var LIGURIA_ESCLUSE={
+  'VIFRA':1,  // Villafranca Lunigiana (vedi sopra)
+  'PARAN':1   // Parana: 24,3 mm in 45 giorni, il 31% della mediana dei cinque vicini (80 mm); Calice al Cornoviglio, a 4,2 km, ne ha fatti 75. Trovata il 21/8/2026 lavorando alla Toscana: SIR pubblica la stessa stazione con lo stesso numero, ed e' esclusa anche li' (TOS09001110). Entro 10 km restano 11 pluviometri liguri, nessun buco.
+};
+
 function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
   var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/liguria';
   function _fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
@@ -4749,7 +4754,13 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
   // 8,7 mm contro i 100,8 di mediana dei vicini entro 15 km, cioe' il 9%, e il
   // 20/8/2026 dava 0 mentre intorno cadevano 11 mm. Trovata col check dei picchi
   // isolati del 21/8. A 4 km c'e' Selva Ferriere, che funziona (125 mm).
-  var EMILIA_ESCLUSE={'5317':1,'5565':1,'5566':1,'5561':1,'5568':1,'3080':1,'3077':1,'12307':1,'3014':1};
+  // 12863 Lugo RA e 14719 Corte Centrale (FE): fermi anche loro, trovati dal
+  // controllo automatico del 21/8/2026 (check-stazioni-ferme.js). Lugo misurava
+  // 38,8 mm a maggio e 20,9 a luglio, poi PIU' NIENTE: ultima pioggia l'11
+  // luglio, 7,3 mm in 45 giorni contro i 54,8 dei vicini. Corte Centrale e'
+  // ferma dal 26 luglio, 1,2 mm contro 81,6 (Codigoro a 7,7 km ne ha fatti 101).
+  // Da ricontrollare se tornassero a misurare, come MONTE MALANOTTE in Piemonte.
+  var EMILIA_ESCLUSE={'5317':1,'5565':1,'5566':1,'5561':1,'5568':1,'3080':1,'3077':1,'12307':1,'3014':1,'12863':1,'14719':1};
   function _fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
 
   var todayStr=_fmt(new Date());
@@ -5086,23 +5097,6 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
 //     doppioni in multiregione). Contribuiscono all'IDW anche se fuori confine.
 // ═══════════════════════════════════════════════════════════════
 var FRIULI_VENETO_BORDER={'Sella Ciampigotto':1,'Santo Stefano di Cadore':1,'Costalta':1,'Domegge di Cadore':1,'Casamazzagno':1};
-// ═══════════════════════════════════════════════════════════════
-// TERZA FONTE (19/8/2026): la rete idrometeorologica COMPLETA di ARPA FVG,
-// presa da MeteoHub (rete 'arpafvg') e scritta in data/meteohub-friuli.
-// L'archivio OSMER espone ~40 stazioni, questa ne ha ~136 al giorno.
-// Validata col metodo delle stazioni gemelle su 8 giorni e 237 confronti:
-// il 96% coincide entro 0,25 mm con OSMER (le differenze restanti sono
-// stazioni diverse accoppiate dalla tolleranza, tipo Musi / Musi ponte).
-// DUE REGOLE, entrambe necessarie:
-//  1) DOPPIONI: ~32 stazioni stanno in tutte e due le fonti. Vince OSMER,
-//     che ha lo storico lungo; la gemella MeteoHub si scarta in finalizza(),
-//     non in ingestione, perché le due fonti arrivano in ordine imprevedibile.
-//  2) STORICO CORTO: MeteoHub senza login tiene solo ~9 giorni, quindi queste
-//     stazioni all'inizio non coprono le finestre lunghe. Sommarle comunque
-//     darebbe un cumulato corto con l'etichetta del periodo pieno, cioè una
-//     macchia secca FALSA. Perciò passano dallo stesso filtro copertura di
-//     OSMER: compaiono in una finestra solo quando hanno abbastanza giorni.
-// ═══════════════════════════════════════════════════════════════
 function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
   var OSMER_RAW=PILOT_DATA_BASE+'friuli-osmer';
   var MH_RAW=PILOT_DATA_BASE+'meteohub-friuli';
@@ -5288,8 +5282,19 @@ function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
 // e' una macchia secca FALSA in mezzo alla Calabria, del tipo che manda la
 // gente a cercare funghi dove non ha piovuto. Da ricontrollare se tornasse a
 // misurare, come si fece per MONTE MALANOTTE in Piemonte.
+//
+// Poggio San Vicino (Marche, 43.36842_13.07953) e Ponte S.Maria (Umbria,
+// 42.89595_12.02092): fermi a zero, trovati dal controllo automatico del
+// 21/8/2026 (check-stazioni-ferme.js). Sono il caso piu' netto di tutti:
+// **non hanno mai misurato una goccia** in tutti i giorni che abbiamo,
+// rispettivamente 0,0 e 0,2 mm, mentre i cinque vicini piu' prossimi stanno a
+// 58,9 e 79,8 mm in 45 giorni (San Giovanni a 3,8 km ne fa 59, Ponticelli a
+// 5,7 km ne fa 109). Non e' una zona asciutta, e' un pluviometro che non
+// riporta. Da ricontrollare se tornassero a misurare.
 var MH_ESCLUSE={
-  calabria:{'Sellia Superiore':true}
+  calabria:{'Sellia Superiore':true},
+  marche:{'Poggio San Vicino':true},
+  umbria:{'Ponte S.Maria':true}
 };
 function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
   var RAW=PILOT_DATA_BASE+'meteohub-'+regionKey;
@@ -5430,174 +5435,73 @@ function loadMeteotrentino(pastDate,nowDate,labelPeriodo,cb){
   });
 }
 
-// 165 stazioni SIR Toscana distribuite uniformemente
-var TOSCANA_STATIONS=[
-  {n:"Arezzo",lat:43.477,lon:11.904,q:0,p:"AR"},
-  {n:"Badia Agnano",lat:43.436,lon:11.649,q:0,p:"AR"},
-  {n:"Badia Tedalda",lat:43.686,lon:12.134,q:0,p:"AR"},
-  {n:"Bibbiena",lat:43.712,lon:11.83,q:0,p:"AR"},
-  {n:"Camaldoli",lat:43.81,lon:11.817,q:0,p:"AR"},
-  {n:"Capezzine",lat:43.183,lon:11.932,q:0,p:"AR"},
-  {n:"Casa Rota",lat:43.586,lon:11.543,q:0,p:"AR"},
-  {n:"Castiglion Fibocchi",lat:43.534,lon:11.744,q:0,p:"AR"},
-  {n:"Castiglion Fiorentino",lat:43.343,lon:11.929,q:0,p:"AR"},
-  {n:"Cortona",lat:43.269,lon:11.996,q:0,p:"AR"},
-  {n:"La Verna",lat:43.707,lon:11.931,q:0,p:"AR"},
-  {n:"Monte Ginezzo",lat:43.275,lon:12.088,q:0,p:"AR"},
-  {n:"Monte S. Savino",lat:43.339,lon:11.742,q:0,p:"AR"},
-  {n:"Montecchio",lat:43.58,lon:11.903,q:0,p:"AR"},
-  {n:"Montedoglio",lat:43.591,lon:12.053,q:0,p:"AR"},
-  {n:"Monterchi",lat:43.49,lon:12.105,q:0,p:"AR"},
-  {n:"Palazzo del Pero",lat:43.421,lon:11.979,q:0,p:"AR"},
-  {n:"Salutio",lat:43.615,lon:11.813,q:0,p:"AR"},
-  {n:"Sestino",lat:43.75,lon:12.275,q:0,p:"AR"},
-  {n:"Stia",lat:43.802,lon:11.718,q:0,p:"AR"},
-  {n:"Trappola",lat:43.619,lon:11.653,q:0,p:"AR"},
-  {n:"Vallucciole",lat:43.842,lon:11.657,q:0,p:"AR"},
-  {n:"Borgo S. Lorenzo",lat:43.958,lon:11.391,q:0,p:"FI"},
-  {n:"Castelfiorentino",lat:43.604,lon:10.968,q:0,p:"FI"},
-  {n:"Cavallina",lat:43.984,lon:11.237,q:0,p:"FI"},
-  {n:"Firenze Università",lat:43.799,lon:11.251,q:0,p:"FI"},
-  {n:"Il Palagio",lat:43.613,lon:11.427,q:0,p:"FI"},
-  {n:"Le Croci (Barberino)",lat:44.007,lon:11.271,q:0,p:"FI"},
-  {n:"Mangona",lat:44.05,lon:11.196,q:0,p:"FI"},
-  {n:"Monte Giovi",lat:43.877,lon:11.448,q:0,p:"FI"},
-  {n:"Monte di Fò",lat:44.08,lon:11.281,q:0,p:"FI"},
-  {n:"Monteboro",lat:43.693,lon:10.923,q:0,p:"FI"},
-  {n:"Montespertoli",lat:43.65,lon:11.092,q:0,p:"FI"},
-  {n:"Piancaldoli",lat:44.215,lon:11.433,q:0,p:"FI"},
-  {n:"Ponte a Signa",lat:43.773,lon:11.093,q:0,p:"FI"},
-  {n:"Razzuolo",lat:44.032,lon:11.468,q:0,p:"FI"},
-  {n:"S. Donato in Collina",lat:43.721,lon:11.381,q:0,p:"FI"},
-  {n:"Sambuca",lat:43.595,lon:11.234,q:0,p:"FI"},
-  {n:"Vallombrosa",lat:43.731,lon:11.557,q:0,p:"FI"},
-  {n:"Villore",lat:43.964,lon:11.541,q:0,p:"FI"},
-  {n:"Vinci",lat:43.786,lon:10.96,q:0,p:"FI"},
-  {n:"Vingone",lat:43.743,lon:11.182,q:0,p:"FI"},
-  {n:"Alberese",lat:42.661,lon:11.017,q:0,p:"GR"},
-  {n:"Argentario",lat:42.387,lon:11.17,q:0,p:"GR"},
-  {n:"Baccinello",lat:42.796,lon:11.406,q:0,p:"GR"},
-  {n:"Batignano",lat:42.868,lon:11.166,q:0,p:"GR"},
-  {n:"Braccagni",lat:42.931,lon:11.08,q:0,p:"GR"},
-  {n:"Caldana",lat:42.893,lon:10.927,q:0,p:"GR"},
-  {n:"Campiano",lat:43.102,lon:11.039,q:0,p:"GR"},
-  {n:"Capalbio",lat:42.405,lon:11.392,q:0,p:"GR"},
-  {n:"Capanne",lat:42.691,lon:11.547,q:0,p:"GR"},
-  {n:"Casotto dei Pescatori",lat:42.769,lon:11.016,q:0,p:"GR"},
-  {n:"Casteani",lat:42.981,lon:10.979,q:0,p:"GR"},
-  {n:"Castel del Piano",lat:42.894,lon:11.527,q:0,p:"GR"},
-  {n:"Follonica",lat:42.933,lon:10.765,q:0,p:"GR"},
-  {n:"Gerfalco",lat:43.143,lon:10.974,q:0,p:"GR"},
-  {n:"Giglio Castello",lat:42.358,lon:10.907,q:0,p:"GR"},
-  {n:"Granaione",lat:42.804,lon:11.303,q:0,p:"GR"},
-  {n:"Lago",lat:43.155,lon:10.807,q:0,p:"GR"},
-  {n:"Manciano",lat:42.6,lon:11.518,q:0,p:"GR"},
-  {n:"Marsiliana",lat:42.544,lon:11.336,q:0,p:"GR"},
-  {n:"Massa Marittima Valpiana",lat:43.021,lon:10.865,q:0,p:"GR"},
-  {n:"Montenero",lat:42.951,lon:11.439,q:0,p:"GR"},
-  {n:"Paganico",lat:42.94,lon:11.285,q:0,p:"GR"},
-  {n:"Pari",lat:43.063,lon:11.323,q:0,p:"GR"},
-  {n:"Pitigliano",lat:42.635,lon:11.654,q:0,p:"GR"},
-  {n:"Poggio Perotto",lat:42.614,lon:11.255,q:0,p:"GR"},
-  {n:"Rispescia",lat:42.706,lon:11.145,q:0,p:"GR"},
-  {n:"Roccastrada",lat:43.016,lon:11.165,q:0,p:"GR"},
-  {n:"Scansano",lat:42.694,lon:11.329,q:0,p:"GR"},
-  {n:"Sorano Meteo",lat:42.728,lon:11.684,q:0,p:"GR"},
-  {n:"Torricelle",lat:42.642,lon:11.425,q:0,p:"GR"},
-  {n:"Usi",lat:42.718,lon:11.491,q:0,p:"GR"},
-  {n:"Bibbona",lat:43.262,lon:10.597,q:0,p:"LI"},
-  {n:"Calzalunga",lat:43.067,lon:10.723,q:0,p:"LI"},
-  {n:"Capraia Isola",lat:43.063,lon:9.821,q:0,p:"LI"},
-  {n:"Collesalvetti",lat:43.584,lon:10.467,q:0,p:"LI"},
-  {n:"Gorgona",lat:43.428,lon:9.895,q:0,p:"LI"},
-  {n:"Livorno Mareografo",lat:43.546,lon:10.3,q:0,p:"LI"},
-  {n:"Montecristo",lat:42.333,lon:10.291,q:0,p:"LI"},
-  {n:"Patresi Mortigliano",lat:42.785,lon:10.111,q:0,p:"LI"},
-  {n:"Populonia",lat:42.989,lon:10.49,q:0,p:"LI"},
-  {n:"Portoferraio",lat:42.796,lon:10.36,q:0,p:"LI"},
-  {n:"Rosignano Solvay Pluvio",lat:43.382,lon:10.433,q:0,p:"LI"},
-  {n:"S. Martino",lat:42.782,lon:10.269,q:0,p:"LI"},
-  {n:"S. Vincenzo porto",lat:43.098,lon:10.537,q:0,p:"LI"},
-  {n:"Sassetta",lat:43.124,lon:10.64,q:0,p:"LI"},
-  {n:"Valle Benedetta",lat:43.521,lon:10.404,q:0,p:"LI"},
-  {n:"Venturina",lat:42.993,lon:10.641,q:0,p:"LI"},
-  {n:"Bagni di Lucca",lat:44.034,lon:10.6,q:0,p:"LU"},
-  {n:"Careggine",lat:44.104,lon:10.337,q:0,p:"LU"},
-  {n:"Gallena",lat:43.992,lon:10.252,q:0,p:"LU"},
-  {n:"Gallicano",lat:44.064,lon:10.443,q:0,p:"LU"},
-  {n:"Gombitelli",lat:43.92,lon:10.37,q:0,p:"LU"},
-  {n:"Lido di Camaiore",lat:43.898,lon:10.243,q:0,p:"LU"},
-  {n:"Minucciano",lat:44.171,lon:10.208,q:0,p:"LU"},
-  {n:"Monte Castellino",lat:44.235,lon:10.333,q:0,p:"LU"},
-  {n:"Monte Pisano Nord",lat:43.794,lon:10.522,q:0,p:"LU"},
-  {n:"Monte Romecchio",lat:44.164,lon:10.521,q:0,p:"LU"},
-  {n:"Passo Pradarena",lat:44.285,lon:10.301,q:0,p:"LU"},
-  {n:"Piaggione",lat:43.929,lon:10.514,q:0,p:"LU"},
-  {n:"Terrinca",lat:44.029,lon:10.276,q:0,p:"LU"},
-  {n:"Torre del Lago",lat:43.832,lon:10.307,q:0,p:"LU"},
-  {n:"Bagnone",lat:44.31,lon:9.984,q:0,p:"MS"},
-  {n:"Iera",lat:44.333,lon:10.034,q:0,p:"MS"},
-  {n:"Licciana Nardi",lat:44.242,lon:10.003,q:0,p:"MS"},
-  {n:"Parana",lat:44.282,lon:9.863,q:0,p:"MS"},
-  {n:"Passo del Brattello",lat:44.456,lon:9.823,q:0,p:"MS"},
-  {n:"Passo della Cisa",lat:44.466,lon:9.92,q:0,p:"MS"},
-  {n:"Patigno",lat:44.355,lon:9.764,q:0,p:"MS"},
-  {n:"Pontremoli",lat:44.369,lon:9.893,q:0,p:"MS"},
-  {n:"Tendola",lat:44.156,lon:10.034,q:0,p:"MS"},
-  {n:"Turano",lat:44.246,lon:10.152,q:0,p:"MS"},
-  {n:"Vara",lat:44.084,lon:10.13,q:0,p:"MS"},
-  {n:"Bocca d'Arno",lat:43.681,lon:10.28,q:0,p:"PI"},
-  {n:"Capannoli",lat:43.592,lon:10.684,q:0,p:"PI"},
-  {n:"Castellina Marittima",lat:43.41,lon:10.573,q:0,p:"PI"},
-  {n:"Castelnuovo Val di Cecina",lat:43.204,lon:10.881,q:0,p:"PI"},
-  {n:"Fornacino",lat:43.632,lon:10.85,q:0,p:"PI"},
-  {n:"La Madonnina",lat:43.442,lon:10.953,q:0,p:"PI"},
-  {n:"Molino d'Era",lat:43.456,lon:10.83,q:0,p:"PI"},
-  {n:"Montecatini V. Cecina",lat:43.387,lon:10.743,q:0,p:"PI"},
-  {n:"Montopoli",lat:43.668,lon:10.746,q:0,p:"PI"},
-  {n:"Orciatico",lat:43.434,lon:10.725,q:0,p:"PI"},
-  {n:"Orentano",lat:43.774,lon:10.657,q:0,p:"PI"},
-  {n:"Pisa (Fac. Agraria)",lat:43.711,lon:10.412,q:0,p:"PI"},
-  {n:"Ponte SR439",lat:43.334,lon:10.858,q:0,p:"PI"},
-  {n:"Ponte di Monterufoli",lat:43.323,lon:10.67,q:0,p:"PI"},
-  {n:"Ripafratta",lat:43.819,lon:10.414,q:0,p:"PI"},
-  {n:"S. Giovanni alla Vena valle",lat:43.685,lon:10.585,q:0,p:"PI"},
-  {n:"Santermo",lat:43.532,lon:10.578,q:0,p:"PI"},
-  {n:"Prato Università",lat:43.886,lon:11.099,q:0,p:"PO"},
-  {n:"Vaiano acquedotto",lat:43.965,lon:11.147,q:0,p:"PO"},
-  {n:"Acquerino",lat:44.023,lon:11.025,q:0,p:"PT"},
-  {n:"Boscolungo",lat:44.139,lon:10.674,q:0,p:"PT"},
-  {n:"Castelmartini",lat:43.821,lon:10.825,q:0,p:"PT"},
-  {n:"Croce Arcana",lat:44.13,lon:10.782,q:0,p:"PT"},
-  {n:"La Ferruccia",lat:43.885,lon:11.004,q:0,p:"PT"},
-  {n:"Montagnana",lat:43.954,lon:10.823,q:0,p:"PT"},
-  {n:"Pescia",lat:43.897,lon:10.695,q:0,p:"PT"},
-  {n:"Serra Pistoiese",lat:43.972,lon:10.756,q:0,p:"PT"},
-  {n:"Anqua",lat:43.215,lon:10.987,q:0,p:"SI"},
-  {n:"Bettolle",lat:43.203,lon:11.804,q:0,p:"SI"},
-  {n:"Castellina in Chianti",lat:43.473,lon:11.288,q:0,p:"SI"},
-  {n:"Castelnuovo B.ga",lat:43.37,lon:11.423,q:0,p:"SI"},
-  {n:"Mensano",lat:43.291,lon:11.071,q:0,p:"SI"},
-  {n:"Monastero d'Ombrone",lat:43.329,lon:11.556,q:0,p:"SI"},
-  {n:"Montalcino",lat:43.05,lon:11.491,q:0,p:"SI"},
-  {n:"Monte Oliveto",lat:43.175,lon:11.545,q:0,p:"SI"},
-  {n:"Montepulciano Azienda",lat:43.085,lon:11.844,q:0,p:"SI"},
-  {n:"Monteroni Arbia Biena",lat:43.243,lon:11.417,q:0,p:"SI"},
-  {n:"Monticchiello",lat:43.066,lon:11.725,q:0,p:"SI"},
-  {n:"Monticiano La Pineta",lat:43.134,lon:11.242,q:0,p:"SI"},
-  {n:"Montisi",lat:43.155,lon:11.65,q:0,p:"SI"},
-  {n:"Nusenna in Chianti",lat:43.45,lon:11.531,q:0,p:"SI"},
-  {n:"Piancastagnaio",lat:42.818,lon:11.733,q:0,p:"SI"},
-  {n:"Radda in Chianti",lat:43.486,lon:11.379,q:0,p:"SI"},
-  {n:"Radicofani",lat:42.948,lon:11.733,q:0,p:"SI"},
-  {n:"Rigomagno",lat:43.263,lon:11.695,q:0,p:"SI"},
-  {n:"Ripa d'Orcia",lat:43.027,lon:11.582,q:0,p:"SI"},
-  {n:"S. Gimignano",lat:43.471,lon:11.041,q:0,p:"SI"},
-  {n:"Siena Poggio al Vento",lat:43.32,lon:11.313,q:0,p:"SI"},
-  {n:"Simignano",lat:43.292,lon:11.167,q:0,p:"SI"},
-  {n:"Spineta",lat:42.951,lon:11.853,q:0,p:"SI"},
-  {n:"Vivo d'Orcia",lat:42.935,lon:11.638,q:0,p:"SI"},
-];
+// ─── SIR Toscana ──────────────────────────────────────────────
+// Fino al 21/8/2026 qui c'era TOSCANA_STATIONS, una WHITELIST di 165 nomi
+// «distribuiti uniformemente», nata quando il feed CFR era rotto per meta'
+// rete e una lista corta e curata sembrava l'unica difesa. Il passaggio a SIR
+// (12/7) ha tolto la ragione, la lista e' rimasta. Misurato il 21/8: 379
+// stazioni raccolte, 160 in mappa, 218 NASCOSTE (LU 47, FI 42, PI 26, MS 21,
+// AR 18, PT 16, SI 15, GR 13, LI 13, PO 7), fra cui 129 con la temperatura,
+// 116 con l'umidita' e 75 col vento; e 5 nomi della lista non davano piu'
+// dati (Arezzo, Palazzo del Pero, Bocca d'Arno, Castellina Marittima, Ponte
+// SR439). E' lo stesso difetto tolto in Lombardia il 31/7 e in Piemonte il
+// 17/8 (110 nascoste): ora si mostra TUTTO quello che il collector scrive,
+// meno i dodici pluviometri guasti elencati qui sotto. In mappa 160 → 367.
+//
+// ⚠️ NON ESCLUDERE I DOPPIONI DELLE RETI CONFINANTI. Ventidue stazioni della
+// Lunigiana e del crinale le pubblicano tutt'e due le ARPA: le stesse
+// coordinate compaiono in data/toscana e in data/liguria o data/emilia. Il
+// 21/8/2026 sono state tolte da qui, «tanto ci sono gia'», e la Lunigiana e'
+// rimasta con 10 pluviometri su 32: un buco bianco in cima alla regione. Il
+// motivo e' che ogni regione carica SOLO la sua fonte, quindi chi guarda la
+// Toscana da sola non vede niente della Liguria. Il doppio pallino si vede
+// unicamente quando si accendono tutt'e due le regioni, e due pallini
+// sovrapposti con lo stesso numero sono un fastidio da niente in confronto a
+// una provincia vuota. Se un giorno si vorra' togliere il doppione, va fatto
+// al momento del disegno guardando le regioni accese, non qui.
+//
+// ⚠️ QUI SI ESCLUDE PER ID, non per nome come in Piemonte: nei file della
+// Toscana ci sono quattro nomi doppi su stazioni diverse (Passo Radici,
+// Villafranca, Pitigliano, Pieve S. Stefano) e un'esclusione per nome ne
+// porterebbe via due invece di una, senza dare nessun errore. Tutte le 379
+// stazioni hanno l'id (verificato il 21/8/2026 su tutto lo storico SIR).
+// I valori restano nei file grezzi data/toscana: l'esclusione e' solo nel
+// rendering, come in Piemonte, Lombardia ed Emilia.
+//
+// LA REGOLA CON CUI SONO SCELTI. Il controllo automatico del lunedi'
+// (check-stazioni-ferme.js) accusa solo sotto il 15% della mediana dei cinque
+// vicini, ed e' giusto che sia prudente: gira da solo e non deve poter
+// sbagliare. Qui la soglia e' piu' severa, sotto il 40%, perche' la scelta e'
+// fatta a mano e perche' adesso di stazioni ce ne sono tante: toglierne una
+// non lascia scoperto niente. Ma si esclude SOLO se restano almeno tre
+// pluviometri TOSCANI entro 10 km. Toscani, non «di qualunque rete»: e' l'errore
+// raccontato qui sopra. Dove non ce ne sono, la stazione resta anche se e'
+// sospetta, perche' un dato dubbio e' comunque meglio di una macchia bianca.
+// Misure sui 40 giorni di dato reale SIR, 12/7-20/8/2026.
+var TOSCANA_ESCLUSE={
+  // ── Fermi: consegnano il dato ogni giorno, ed e' sempre zero ──────────────
+  'TOS01001561':1, // Serra Pistoiese (PT): 4,6 mm, il 4% della mediana dei cinque vicini (107 mm). Trovata dal controllo automatico il 21/8/2026; Sorana, a 3,2 km, ne ha fatti 110. Ne restano 8 entro 10 km.
+  'TOS02004059':1, // Camaiore (LU): 6,5 mm, il 10% di 64. Segnalata dallo stesso controllo, non esclusa allora perche' la whitelist la teneva gia' fuori dalla mappa. Ne restano 13 entro 10 km.
+  'TOS03001965':1, // Gabbro (LI): 0,4 mm in 45 giorni con Valle Benedetta a 42 mm a 2,4 km. Ne restano 4 entro 10 km.
+  'TOS01002181':1, // Sassa (PI): 0,2 mm in 45 giorni, i cinque vicini fra 15 e 26 mm. Il controllo automatico non la prende, perche' la mediana dei vicini resta sotto i 50 mm di soglia, ma uno zero secco per 45 giorni nelle Colline Metallifere non e' una misura. Ne restano 6 entro 10 km.
+  // ── Sospetti: leggono troppo poco rispetto a chi hanno intorno ────────────
+  'TOS01001041':1, // Consuma (FI): 12,0 mm, il 17% di 70. Ne restano 4 entro 10 km.
+  'TOS11000115':1, // Abbadia S. S. - Vetta Amiata 1 (SI): 12,6 mm, il 21% di 59. Il Laghetto Verde, a 3,1 km sulla stessa montagna, ne ha fatti 41. Ne restano 6 entro 10 km.
+  'TOS09001110':1, // Parana (MS): 23,9 mm, il 30% di 80. Calice al Cornoviglio, a 4,2 km, ne ha fatti 75. La stessa stazione la pubblica anche OMIRL con lo stesso numero, ed e' esclusa pure li' (LIGURIA_ESCLUSE): non e' un doppione da scegliere, e' un pluviometro che non misura piu'. Ne restano 7 entro 10 km.
+  'TOS11000516':1, // Casa Rota (AR): 21,5 mm, il 38% di 57. Ne restano 5 entro 10 km.
+  'TOS01000581':1, // Stia (AR): 36,6 mm, il 39% di 94. Stia Monte, a 3,6 km, sta nella norma. Ne restano 4 entro 10 km.
+  'TOS01001225':1, // Case Passerini (FI): 25,9 mm, il 39% di 66, in mezzo alla piana di Firenze dove i vicini sono fitti. Ne restano 9 entro 10 km.
+  'TOS03001802':1, // Cimone - Monte Serra (PI): 21,3 mm, il 42% di 51, ma soprattutto il 42% di Monte Serra, che sta a 1,8 km sulla stessa cima. Due pluviometri cosi' vicini non vedono due piogge diverse. Ne restano 7 entro 10 km.
+  // ── Consegna a singhiozzo ─────────────────────────────────────────────────
+  'TOS02000372':1  // Croce Arcana (PT): 27 giorni su 40. Un cumulato costruito su due terzi dei giorni esce corto e disegna una macchia secca che non c'e', lo stesso motivo per cui in Friuli le stazioni MeteoHub aspettano di avere copertura prima di entrare in una finestra. Ne restano 5 entro 10 km.
+  //
+  // ⚠️ TENUTE APPOSTA, anche se i numeri le accuserebbero: Paganico (GR),
+  // al 20% dei vicini, entro 10 km ne ha uno solo e il piu' prossimo e' a
+  // 8,1 km; Orbetello e Argentario (GR), ferme a 0,0 mm, hanno solo se stesse
+  // a 5,9 km di distanza e intorno tutta la Maremma asciutta, dove lo zero e'
+  // probabilmente la verita'. Toglierle lascerebbe scoperta mezza provincia.
+  // Da ricontrollare al prossimo giro d'acqua vero.
+};
 
 function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
   var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/toscana';
@@ -5613,8 +5517,6 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
     d.setDate(d.getDate()+1);
   }
 
-  // Filtra solo le 170 stazioni curate nei file GitHub
-  var allowedToscana={}; TOSCANA_STATIONS.forEach(function(s){allowedToscana[s.n]=true;});
 
   var rainTot={};
   var stMeta={};
@@ -5641,7 +5543,7 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
         if(data.stations){
           data.stations.forEach(function(s){
             var key=s.id||s.n;   // per ID: due stazioni omonime nello stesso file non vanno fuse in una
-            if(!allowedToscana[s.n]) return; // solo le 170 curate
+            if(TOSCANA_ESCLUSE[key]) return; // guasti, vedi TOSCANA_ESCLUSE
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
