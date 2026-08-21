@@ -3776,15 +3776,28 @@ function dirDatiRegione(rk){
   return [rk];
 }
 var _ieriCache={};
-// true se ALMENO una delle cartelle della regione ha il giorno chiesto.
+// Stato del giorno per una regione: 'si', 'no', oppure 'parziale'.
+// PARZIALE esiste solo per le reti che pubblicano a scaglioni (vedi RITARDO_NOTO):
+// l'ARPAE dell'Emilia consegna l'aggregato di ieri fra le 3:45 e le 4:30 del
+// mattino, e per una mezz'ora il file c'e' ma con meta' delle stazioni. Il conto
+// non usa soglie inventate: il collector scrive nel file quante stazioni la fonte
+// elenca in anagrafe (`attese`), e si confronta con quelle davvero arrivate.
 function regioneHaIlGiorno(rk,giorno,cb){
-  var dirs=dirDatiRegione(rk), restanti=dirs.length, trovato=false;
+  var dirs=dirDatiRegione(rk), restanti=dirs.length, trovato=false, parziale=false;
+  var quota=(RITARDO_NOTO[rk]||{}).parziale;
   dirs.forEach(function(d){
     var url=histRawBase(d)+d+'/'+giorno+'.json';
-    var fine=function(ok){ if(ok) trovato=true; if(--restanti===0) cb(trovato); };
-    if(_ieriCache[url]!==undefined){ fine(_ieriCache[url]); return; }
-    fetch(url).then(function(r){ _ieriCache[url]=r.ok; fine(r.ok); })
-              .catch(function(){ _ieriCache[url]=false; fine(false); });
+    var fine=function(ok,pz){ if(ok) trovato=true; if(pz) parziale=true;
+      if(--restanti===0) cb(trovato?(parziale?'parziale':'si'):'no'); };
+    if(_ieriCache[url]!==undefined){ fine(_ieriCache[url].ok,_ieriCache[url].pz); return; }
+    fetch(url).then(function(r){
+      if(!r.ok){ _ieriCache[url]={ok:false,pz:false}; fine(false,false); return; }
+      if(!quota){ _ieriCache[url]={ok:true,pz:false}; fine(true,false); return; }
+      return r.json().then(function(j){
+        var pz=!!(j&&j.attese&&j.count&&j.count<j.attese*quota);
+        _ieriCache[url]={ok:true,pz:pz}; fine(true,pz);
+      });
+    }).catch(function(){ _ieriCache[url]={ok:false,pz:false}; fine(false,false); });
   });
 }
 // Reti con un ritardo di pubblicazione NOTO e strutturale: per loro il file di
@@ -3792,7 +3805,16 @@ function regioneHaIlGiorno(rk,giorno,cb){
 // l'utente torna a controllare ogni ora una cosa che non puo' cambiare.
 // ⚠️ Solo qui dentro si puo' promettere «in arrivo»: per una rete che si e'
 // inceppata sarebbe una bugia, perche' quel giorno potrebbe non arrivare mai.
-var RITARDO_NOTO={slovenia:'36h'};
+// `finoAlle` = ora locale oltre la quale il ritardo NON e' piu' normale: dopo
+// quella il messaggio torna al generico «non pervenuti», perche' promettere
+// «in arrivo» alle tre del pomeriggio sarebbe una bugia. La Slovenia non ce
+// l'ha: da lei il file di ieri non arriva MAI, a nessuna ora.
+// `parziale` = sotto questa frazione delle stazioni attese il giorno c'e' ma e'
+// ancora a meta' (vedi regioneHaIlGiorno).
+var RITARDO_NOTO={
+  slovenia:{testo:'36h'},
+  emilia:{testo:'di solito entro le 5 del mattino',finoAlle:7,parziale:0.8}
+};
 function aggiornaAvvisoIeri(){
   var box=document.getElementById('ieri-notice');
   if(box){ box.style.display='none'; box.innerHTML=''; }
@@ -3812,21 +3834,25 @@ function aggiornaAvvisoIeri(){
     return !(REGIONS[rk]&&REGIONS[rk].dataSource==='open_meteo');
   });
   if(!regioni.length) return;
-  var restanti=regioni.length, noti=[], imprevisti=[], ritardo='36h';
+  var restanti=regioni.length, noti=[], imprevisti=[], parziali=[], ritardo='36h';
   regioni.forEach(function(rk){
-    regioneHaIlGiorno(rk,ieriStr,function(ok){
-      if(!ok){
-        var nome=(REGIONS[rk]&&REGIONS[rk].name)||rk;
-        if(RITARDO_NOTO[rk]){ ritardo=RITARDO_NOTO[rk]; noti.push(nome); }
+    regioneHaIlGiorno(rk,ieriStr,function(stato){
+      var nome=(REGIONS[rk]&&REGIONS[rk].name)||rk;
+      var rn=RITARDO_NOTO[rk];
+      // il ritardo e' "normale" solo dentro la sua finestra oraria
+      var normale=!!rn && (!rn.finoAlle || new Date().getHours()<rn.finoAlle);
+      if(stato==='no'){
+        if(normale){ ritardo=rn.testo; noti.push(nome); }
         else imprevisti.push(nome);
-      }
-      if(--restanti>0 || (!noti.length && !imprevisti.length)) return;
+      } else if(stato==='parziale' && normale){ parziali.push(nome); }
+      if(--restanti>0 || (!noti.length && !imprevisti.length && !parziali.length)) return;
       // una regione sola: il nome non serve, si sa gia' di chi si parla
       var chi=function(l){ return (nSelezionate===1)?'':('<b>'+l.join(', ')+'</b>: '); };
       var righe=[];
       // «non incluso» e non «non pervenuto»: parla del TOTALE che si sta
       // guardando, che e' corto di un giorno anche su 7/30 giorni.
       if(noti.length) righe.push('⚠️ '+chi(noti)+'ieri non incluso, in arrivo ('+ritardo+')');
+      if(parziali.length) righe.push('⚠️ '+chi(parziali)+'alcune stazioni di ieri devono ancora arrivare');
       if(imprevisti.length) righe.push('⚠️ '+chi(imprevisti)+'dati di ieri non pervenuti');
       var ts=document.getElementById('tp-status');
       // Analisi finita a vuoto: si SOSTITUISCE il generico «Nessun dato per
@@ -4559,7 +4585,8 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
       .then(function(data){
         if(data&&data.stations){
           data.stations.forEach(function(s){
-            var key=s.n;
+            if(s.id&&LIGURIA_ESCLUSE[String(s.id)]) return;   // pluviometro fermo, vedi sopra
+            var key=s.id||s.n;   // per ID: due stazioni omonime non vanno fuse in una
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0);
@@ -4618,6 +4645,11 @@ var LIGURIA_37=[
   {n:"Sestri Levante - PonteSS1",lat:44.2667,lon:9.4259,q:13,p:"Sestri Levante"}
 ];
 
+// VIFRA "Villafranca Lunigiana" (quota 156): pluviometro fermo, 0,0 mm in 46
+// giorni contro i 73,7 di mediana dei vicini. ⚠️ Si esclude per ID e non per
+// nome perche' in data/liguria ci sono DUE stazioni con lo stesso nome a 4,7 km:
+// l'altra, VFLUN (quota 121), funziona e il 20/8/2026 ha dato 29,4 mm.
+var LIGURIA_ESCLUSE={'VIFRA':1};
 function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
   var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/liguria';
   function _fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
@@ -4688,7 +4720,11 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
   // venivano disegnate e pesate due volte nell'IDW, e su Alpe Gorreto il feed
   // ARPAE ha dato 0 invece di "dato assente" per quattro giorni (29/6→2/7/2026).
   // I file data/emilia restano intatti: servono da verifica ai check periodici.
-  var EMILIA_ESCLUSE={'5317':1,'5565':1,'5566':1,'5561':1,'5568':1,'3080':1,'3077':1,'12307':1};
+  // 3014 Ferriere Pluvio (PC): pluviometro fermo. In 46 giorni ha totalizzato
+  // 8,7 mm contro i 100,8 di mediana dei vicini entro 15 km, cioe' il 9%, e il
+  // 20/8/2026 dava 0 mentre intorno cadevano 11 mm. Trovata col check dei picchi
+  // isolati del 21/8. A 4 km c'e' Selva Ferriere, che funziona (125 mm).
+  var EMILIA_ESCLUSE={'5317':1,'5565':1,'5566':1,'5561':1,'5568':1,'3080':1,'3077':1,'12307':1,'3014':1};
   function _fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
 
   var todayStr=_fmt(new Date());

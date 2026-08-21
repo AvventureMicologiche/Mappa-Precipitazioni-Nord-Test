@@ -104,6 +104,12 @@ async function main() {
   // ── Step 3: estrai dati del giorno target ───────────────────
   const output = [];
   let ok = 0, skip = 0;
+  // `attese` = quante stazioni ARPAE ELENCA in anagrafe per l'Emilia con il
+  // pluviometro, a prescindere dal fatto che abbiano gia' pubblicato il giorno.
+  // Serve al sito per distinguere «giornata a meta'» da «giornata completa»
+  // senza soglie inventate: il numero lo dice la fonte, e cambia da solo se la
+  // rete cresce o cala. Vedi RITARDO_NOTO in index.html.
+  let attese = 0;
 
   items.forEach(s => {
     try {
@@ -118,6 +124,7 @@ async function main() {
 
       // Solo stazioni con precipitazione
       if (!ana.variabili || !ana.variabili.includes('precipitazione_cumulata_giornaliera')) { skip++; return; }
+      attese++;
 
       // Cerca il dato del giorno target
       const dati = s.dati || {};
@@ -195,6 +202,7 @@ async function main() {
     collected: new Date().toISOString(),
     source:    'arpa-emilia-arpae',
     count:     finalOutput.length,
+    attese,
     stations:  finalOutput
   }), 'utf8');
   console.log(`Salvato: ${outFile} (${finalOutput.length} stazioni)`);
@@ -208,12 +216,14 @@ async function main() {
     console.log('Aggiorno anche ieri: ' + _yDate);
     try {
       const _out = [];
+      let _attese = 0;
       items.forEach(s => {
         try {
           const ana=s.anagrafica; if(!ana||!ana.geometry||!ana.geometry.coordinates) return;
           const lon=ana.geometry.coordinates[0]; const lat=ana.geometry.coordinates[1];
           if(lat<43.7||lat>45.2||lon<9.1||lon>12.8) return;
           if(!ana.variabili||!ana.variabili.includes('precipitazione_cumulata_giornaliera')) return;
+          _attese++;
           const dd=(s.dati||{})[_yKey];
           // Stessa regola del ramo di sopra: assente non e' zero, si salta.
           const _cella=dd&&dd['0000'];
@@ -240,7 +250,7 @@ async function main() {
         } catch (e) {}
         _out.forEach(x => { _map[x.id] = x; });
         const _fin = Object.values(_map);
-        fs.writeFileSync(_file, JSON.stringify({date:_yDate,collected:new Date().toISOString(),source:'arpa-emilia-arpae',count:_fin.length,stations:_fin}),'utf8');
+        fs.writeFileSync(_file, JSON.stringify({date:_yDate,collected:new Date().toISOString(),source:'arpa-emilia-arpae',count:_fin.length,attese:_attese,stations:_fin}),'utf8');
         console.log('Aggiornato ieri: ' + _yDate + ' (' + _out.length + ' dal feed, ' + _fin.length + ' in tutto)');
       }
     } catch(e) { console.warn('Warn aggiornamento ieri: ' + e.message); }
