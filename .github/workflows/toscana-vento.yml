@@ -12,8 +12,12 @@ on:
   # Minuto 40: lontano dal :15 dei run Toscana e dagli altri cron del repo.
   # GitHub ritarda i cron di 0-60 minuti; la dedup e' sull'ora di lettura della
   # pagina, non su quella del run, quindi un run in ritardo non duplica niente.
-  schedule:
-    - cron: '40 * * * *'
+  # schedule:
+  # ⚠️ SPENTO il 21/8/2026: il campionatore e' passato in produzione e il sito
+  # di test legge la Toscana da li' (GITHUB_RAW punta al repo di prod), quindi
+  # tenerlo acceso anche qui vorrebbe dire leggere due volte la stessa pagina
+  # del CFR e mantenere due archivi paralleli. Resta lanciabile a mano.
+  # - cron: '40 * * * *'
 permissions:
   contents: write
 jobs:

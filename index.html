@@ -2885,6 +2885,12 @@ var UMID_HIST_FROM={piemonte:'2026-08-15',emilia:'2026-08-17',austria:'2026-08-1
   // svizzera copre anche il Ticino OASI (dal 27/6, ma la data resta quella SMN).
   slovenia:'2026-06-27',valledaosta:'2026-06-27',friuli:'2026-06-27',
   veneto:'2026-08-17',trentino:'2026-08-17'};
+// Il vento della TOSCANA esiste solo da quando lo campioniamo noi, e non dalla
+// data di METEO_HIST_FROM: li' c'e' il 10/8, che e' il giorno della temperatura.
+// Una data sola per regione non basta quando i due sensori partono in momenti
+// diversi, e senza questa eccezione il pannello prometterebbe vento dal 10/8.
+var VENTO_HIST_FROM={toscana:'2026-08-20'};
+function ventoDa(rk){ return VENTO_HIST_FROM[rk]||null; }
 function umidDa(regionKey){
   return UMID_HIST_FROM[regionKey]||(regionKey&&regionKey.indexOf('francia')===0?UMID_HIST_FROM.francia:null);
 }
@@ -2926,9 +2932,9 @@ function histNote(regionKey,days,periodoLungo){
     if(HIST_REAL_FROM[regionKey]) note.push('storico dal '+HIST_REAL_FROM[regionKey].split('-').reverse().join('/'));
   }else{
     // le 13 régions francesi condividono la data: chiave unica 'francia'
-    var da=(histTab==='u')?umidDa(regionKey)
+    var da=(histTab==='u')?umidDa(regionKey):(histTab==='w'&&ventoDa(regionKey))?ventoDa(regionKey)
       :(METEO_HIST_FROM[regionKey]||(regionKey&&regionKey.indexOf('francia')===0?METEO_HIST_FROM.francia:null));
-    if(da&&days[0]<da) note.push(((histTab==='u')?'umidità dal ':'temperatura e vento dal ')+da.split('-').reverse().join('/'));
+    if(da&&days[0]<da) note.push(((histTab==='u')?'umidità dal ':(histTab==='w'&&ventoDa(regionKey))?'vento dal ':'temperatura e vento dal ')+da.split('-').reverse().join('/'));
   }
   return note.length?'<div class="sh-note">'+note.join(' · ')+'</div>':'';
 }
@@ -3084,7 +3090,13 @@ var HIST_PROVE_MIN=10;
 //   trentino l'API dà la sola raffica, senza media il grafico non disegna
 // ⚠️ Se una di queste fonti un giorno cominciasse a pubblicare, la voce va
 // tolta: resterebbe una frase falsa proprio dove diciamo di essere sicuri.
-var RETI_SENZA={toscana:'w'};   // trentino tolto il 18/8/2026: il vento medio arriva da getLastDataOfMeteoStation
+// Vuoto dal 21/8/2026: la Toscana e' uscita quando e' partito il campionatore
+// del CFR (il SIR il vento non lo pubblica, la pagina anemometrica si', e la
+// leggiamo ogni ora). Trentino uscito il 18/8: il vento medio arriva da
+// getLastDataOfMeteoStation. Se un domani si aggiunge una rete che davvero non
+// misura una grandezza, va rimessa qui: e' l'unico posto in cui si puo'
+// affermare «non misura» invece del prudente «in quelle date non ha risposto».
+var RETI_SENZA={};
 // Tre situazioni, due frasi (scelte con l'utente il 12/8/2026). Una sola voce
 // e un solo verbo, «misurare»: cambia il TEMPO, e il tempo è quello che
 // separa una cosa vera da una falsa.
@@ -3104,7 +3116,7 @@ function histMessaggioVuoto(region,region2,station,days){
   // falso (il Piemonte ha t/w dal 9/8: chi guarda luglio non trova nulla, ma
   // quelle stazioni il termometro ce l'hanno). La nota sotto al pannello dice
   // già da quando esistono, quindi qui basta il passato.
-  var da=(histTab==='u')?umidDa(region2)
+  var da=(histTab==='u')?umidDa(region2):(histTab==='w'&&ventoDa(region2))?ventoDa(region2)
     :(METEO_HIST_FROM[region2]||(region2&&region2.indexOf('francia')===0?METEO_HIST_FROM.francia:null));
   if(da&&days[days.length-1]<da) return ora;
   var campo=(histTab==='t')?'t':((histTab==='u')?'u':'w');
@@ -4575,11 +4587,15 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
-    var withRain=full.filter(function(s){return s.mm>0;});
-    var noRain=full.filter(function(s){return s.mm===0;});
-    var maxNoRain=Math.max(0,300-withRain.length);
-    var noRainSel=noRain.length>maxNoRain?selectUniform(noRain,maxNoRain):noRain;
-    cb(withRain.concat(noRainSel));
+    // ⚠️ NIENTE TETTO SUI DATI (21/8/2026). Qui si diradavano le stazioni
+    // ASCIUTTE quando le bagnate erano tante (tetto 300). Toglieva solo zeri, mai
+    // una bagnata, ma uno zero non e' inutile: nell'interpolazione tira giu' il suo
+    // intorno, e levarlo sposta la mappa verso il PIU' BAGNATO, il verso peggiore
+    // per una mappa da funghi. Misurato in Emilia il 20/8: 3 pallini a zero tolti.
+    // Stessa correzione fatta il 20/8 ai sei loader pilota: i dati passano interi,
+    // si diradano solo i PALLINI (_cap, vedi renderMulti).
+    full.forEach(function(s){ s._cap=1; });
+    cb(full);
   }
 
   var pending=days.length;
@@ -4681,11 +4697,15 @@ function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
     if(full.length<5){cb([]);return;}
     // Usa tutte le stazioni reali — non tagliare con selectUniform per Liguria
     // (regione stretta: più stazioni = heatmap più smooth)
-    var withRain=full.filter(function(s){return s.mm>0;});
-    var noRain=full.filter(function(s){return s.mm===0;});
-    var maxNoRain=Math.max(0,300-withRain.length);
-    var noRainSel=noRain.length>maxNoRain?selectUniform(noRain,maxNoRain):noRain;
-    cb(withRain.concat(noRainSel));
+    // ⚠️ NIENTE TETTO SUI DATI (21/8/2026). Qui si diradavano le stazioni
+    // ASCIUTTE quando le bagnate erano tante (tetto 300). Toglieva solo zeri, mai
+    // una bagnata, ma uno zero non e' inutile: nell'interpolazione tira giu' il suo
+    // intorno, e levarlo sposta la mappa verso il PIU' BAGNATO, il verso peggiore
+    // per una mappa da funghi. Misurato in Emilia il 20/8: 3 pallini a zero tolti.
+    // Stessa correzione fatta il 20/8 ai sei loader pilota: i dati passano interi,
+    // si diradano solo i PALLINI (_cap, vedi renderMulti).
+    full.forEach(function(s){ s._cap=1; });
+    cb(full);
   }
 
   if(days.length===0){cb([]);return;}
@@ -4754,11 +4774,15 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
-    var withRain=full.filter(function(s){return s.mm>0;});
-    var noRain=full.filter(function(s){return s.mm===0;});
-    var maxNoRain=Math.max(0,300-withRain.length);
-    var noRainSel=noRain.length>maxNoRain?selectUniform(noRain,maxNoRain):noRain;
-    cb(withRain.concat(noRainSel));
+    // ⚠️ NIENTE TETTO SUI DATI (21/8/2026). Qui si diradavano le stazioni
+    // ASCIUTTE quando le bagnate erano tante (tetto 300). Toglieva solo zeri, mai
+    // una bagnata, ma uno zero non e' inutile: nell'interpolazione tira giu' il suo
+    // intorno, e levarlo sposta la mappa verso il PIU' BAGNATO, il verso peggiore
+    // per una mappa da funghi. Misurato in Emilia il 20/8: 3 pallini a zero tolti.
+    // Stessa correzione fatta il 20/8 ai sei loader pilota: i dati passano interi,
+    // si diradano solo i PALLINI (_cap, vedi renderMulti).
+    full.forEach(function(s){ s._cap=1; });
+    cb(full);
   }
 
   var pending=days.length;
