@@ -7232,6 +7232,14 @@ document.getElementById('region-select').addEventListener('change', function(){
     return;
   }
   _vistaUtente=false; _vistaDaLink=false;   // nuova regione: si riparte dall'inquadratura automatica
+  // ⚠️ E via anche il PAESE CERCATO (22/8/2026): il segnaposto restava
+  // piantato su Viozene mentre l'utente stava gia' guardando la Liguria.
+  // Sulla mappa questo succede gia' (vedi il gestore dei checkbox), ma chi
+  // sceglie dalla tendina passa di qui e non di la'.
+  _vistaPaese=null;
+  if(typeof locSegnapostoVia==='function') locSegnapostoVia();
+  var _lin=document.getElementById('loc-input');
+  if(_lin){ _lin.value=''; document.getElementById('loc-box').classList.remove('pieno'); }
   // Deseleziona tutti i checkbox
   document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){
     cb.checked = false;
@@ -8016,6 +8024,39 @@ if(_btnShot){
 (function(){
   var q=new URLSearchParams(location.search);
   var r=q.get('r'),da=q.get('da'),a=q.get('a');
+  // ── Link dalle PAGINE REGIONE (22/8/2026) ──────────────────────────────
+  // Quelle pagine sono statiche e non possono scrivere le date del giorno,
+  // quindi portano `r` e, quando vogliono anche l'analisi, `g` = quanti
+  // giorni. Senza questo pezzo il tasto «Apri la mappa a 7 giorni» apriva
+  // l'Italia tutta da scegliere, e chi arrivava dalla pagina della Lombardia
+  // doveva rifare da capo il lavoro che la pagina prometteva di aver gia'
+  // fatto (segnalato il 22/8/2026).
+  if(r && !da && !a){
+    var _g=parseInt(q.get('g'),10);
+    if(isFinite(_g) && _g>=1 && _g<=365){
+      var _ie=new Date(); _ie.setDate(_ie.getDate()-1); a=fmtISOLocal(_ie);
+      var _in=new Date(); _in.setDate(_in.getDate()-_g); da=fmtISOLocal(_in);
+    } else {
+      // Senza `g`: si spuntano le regioni e ci si ferma qui. Il periodo lo
+      // sceglie l'utente, ed e' l'unico passo che gli resta da fare.
+      var _kk=r.split(',').map(function(k){return k==='ticino'?'svizzera':k;})
+        .filter(function(k,ix,arr){return arr.indexOf(k)===ix;})
+        .filter(function(k){return document.getElementById('chk-'+k);}).slice(0,3);
+      if(!_kk.length) return;
+      document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){cb.checked=false;});
+      _kk.forEach(function(k){document.getElementById('chk-'+k).checked=true;});
+      // change sull'ultima: il gestore di sempre disegna i confini e valida
+      document.getElementById('chk-'+_kk[_kk.length-1]).dispatchEvent(new Event('change'));
+      // Chi arriva da «Apri la mappa in Lombardia» si aspetta di VEDERE la
+      // Lombardia, non l'Italia con una regione spuntata: qui si inquadra
+      // subito, senza aspettare il click del periodo.
+      try{ fitMapToRegions(_kk); }catch(e){}
+      var _sr=document.getElementById('region-select');
+      if(_sr && _kk.length===1){ _sr.value=_kk[0]; if(typeof regEtichetta==='function') regEtichetta(); }
+      try{gtag('event','open_region_link',{regioni:_kk.join(',')})}catch(e){}
+      return;
+    }
+  }
   if(!r||!da||!a) return;
   if(!/^\d{4}-\d{2}-\d{2}$/.test(da)||!/^\d{4}-\d{2}-\d{2}$/.test(a)||da>a) return;
   // Alias per i link già in circolazione: prima del 3/8/2026 la Svizzera in
