@@ -6132,10 +6132,14 @@ var LOC_MIN = 3;             // lettere prima di aprire la tendina (vedi HTML)
 var LOC_MAX_RIGHE = 8;
 // Km di raggio inquadrati. ⚠️ NON è il raggio dei DATI, che resta 30 km e
 // decide solo QUALI regioni caricare: qui si decide solo quanto si vede.
-// Partito da 25 (118x60 km su un desktop 1280): troppo stretto, uno non
-// riconosce dove sta. A 40 se ne vedono 190x96, cioè la valle e quelle
-// intorno.
-var LOC_RAGGIO_VISTA = 40;
+//
+// ⚠️ SONO DUE, e servono a due cose diverse. Quando scegli il paese la domanda
+// è «è questo?»: si sta stretti, si leggono i nomi delle frazioni intorno e si
+// riconosce la valle. Quando poi scegli le date la domanda cambia in «dove ha
+// piovuto?», e lì serve largo. Con un raggio solo una delle due era sempre
+// sbagliata.
+var LOC_RAGGIO_SCELTA = 15;  // alla scelta del paese
+var LOC_RAGGIO_VISTA  = 40;  // dopo il click sul periodo, e a ogni ricarica
 var _locIndice = null, _locGriglia = null, _locCaricamento = null;
 var _locRighe = [], _locSel = -1, _locT = null;
 var _locPin = null;           // il segnaposto rosso del posto cercato
@@ -6362,8 +6366,11 @@ function locVai(p) {
   document.getElementById('chk-' + regioni[regioni.length - 1]).dispatchEvent(new Event('change'));
   _daRicerca = false;
 
-  // DOPO il change: il suo fitMapToRegions ci passerebbe sopra
-  fitMapToPunto(p.lat, p.lon, LOC_RAGGIO_VISTA);
+  // DOPO il change: il suo fitMapToRegions ci passerebbe sopra.
+  // ⚠️ Se un periodo è GIÀ scelto, loadData parte subito dopo e riallarga a
+  // LOC_RAGGIO_VISTA: giusto così, perché in quel caso la mappa ha già i dati
+  // e la domanda è di nuovo «dove ha piovuto».
+  fitMapToPunto(p.lat, p.lon, LOC_RAGGIO_SCELTA);
   locSegnaposto(p.lat, p.lon);
 
   // L'avviso delle stime. L'Abruzzo è l'unica regione senza pluviometri reali,
@@ -6412,13 +6419,28 @@ function locVai(p) {
       locCarica().then(function () {
         if (inp.value !== testo) return;   // ha continuato a scrivere
         var res = locCerca(testo);
-        if (res.totale) { locDisegna(res, testo); return; }
-        // niente fra i comuni: si prova con le frazioni, dicendolo
-        drop.innerHTML = '<div class="loc-nota">cerco anche fra le frazioni…</div>';
-        drop.classList.add('aperta');
+        // I comuni si mostrano SUBITO, senza aspettare la rete.
+        if (res.totale) locDisegna(res, testo);
+        else { drop.innerHTML = '<div class="loc-nota">cerco anche fra le frazioni…</div>'; drop.classList.add('aperta'); }
+        // ⚠️ E POI SI CHIEDONO LE FRAZIONI ANCHE SE UN COMUNE C'ERA.
+        // Il primo giro le chiedeva solo quando l'elenco locale non trovava
+        // NIENTE, e così «monesi» restava senza Monesi di Triora: bastava che
+        // esistesse MONESIGLIO, che con quel prefisso ci sta, perché il ripiego
+        // non partisse mai. Un comune omonimo più lungo faceva da tappo alla
+        // frazione, e uno se ne accorgeva solo continuando a scrivere.
+        // Si salta solo quando l'elenco riempie già tutte le righe: lì non c'è
+        // posto e la domanda è comunque troppo generica.
+        if (res.righe.length >= LOC_MAX_RIGHE) return;
         return locDaGeocoder(testo).then(function (extra) {
-          if (inp.value !== testo) return;
-          locDisegna({ righe: extra.slice(0, LOC_MAX_RIGHE), totale: extra.length }, testo);
+          // scritto altro nel frattempo, o sta già scegliendo con le frecce:
+          // un elenco che si allunga sotto la selezione è peggio del silenzio
+          if (inp.value !== testo || _locSel >= 0) return;
+          var visti = {};
+          res.righe.forEach(function (x) { visti[x.q + '|' + x.reg] = 1; });
+          var nuove = extra.filter(function (x) { return !visti[x.q + '|' + x.reg]; });
+          if (!nuove.length) { if (!res.totale) locDisegna(res, testo); return; }
+          locDisegna({ righe: res.righe.concat(nuove).slice(0, LOC_MAX_RIGHE),
+                       totale: res.totale + nuove.length }, testo);
         });
       }).catch(function () {
         drop.innerHTML = '<div class="loc-nota">Elenco località non raggiungibile, riprova più tardi</div>';
