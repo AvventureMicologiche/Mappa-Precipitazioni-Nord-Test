@@ -259,6 +259,79 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   width:17px;height:17px;border-radius:50%;background:#1b3f6e;color:#fff;
   font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:700;
   font-size:12px;line-height:1;vertical-align:0;}
+/* ── Ricerca per località (22/8/2026) ──────────────────────────────────────
+   Stessa tavolozza dei pannelli (blu #1b3f6e, fondo #f0f4fb, bordo #d0d8e8):
+   la casella deve sembrare parte del pannello, non un pezzo appiccicato. */
+/* Su DESKTOP la casella galleggia sulla mappa in alto a sinistra, di fianco ai
+   tasti dello zoom (che stanno a x 10-44) e con il bordo destro allineato ai
+   pannelli sotto: 54+356 = 10+400 = 410. Il pannello regioni qui non c'è —
+   su desktop le regioni si scelgono cliccando la mappa — quindi la casella
+   deve stare in piedi da sola. */
+#loc-box{position:absolute;top:12px;left:54px;width:356px;z-index:1001;box-sizing:border-box;}
+#loc-input{
+  width:100%;box-sizing:border-box;
+  padding:8px 30px 8px 32px;         /* spazio a sinistra per la lente, a destra per la × */
+  background:#fff;border:1px solid #d0d8e8;border-radius:5px;
+  font-size:14px;font-weight:600;color:#1b3f6e;font-family:inherit;
+  transition:border-color .12s,box-shadow .12s;
+}
+#loc-input{box-shadow:0 2px 10px rgba(0,0,0,.13);}   /* galleggia sulla mappa, non su un pannello */
+#loc-input:focus{outline:none;border-color:#90b0d8;box-shadow:0 0 0 2px rgba(27,63,110,.18),0 2px 10px rgba(0,0,0,.13);}
+/* Il grigio chiaro del suggerimento: deve dire COSA scrivere senza sembrare
+   testo già inserito. */
+#loc-input::placeholder{color:#9aa4b2;font-weight:500;opacity:1;}
+.loc-lente{
+  position:absolute;left:9px;top:50%;transform:translateY(-50%);
+  width:16px;height:16px;color:#9aa4b2;pointer-events:none;
+}
+#loc-clear{
+  display:none;position:absolute;right:4px;top:50%;transform:translateY(-50%);
+  width:22px;height:22px;padding:0;line-height:1;
+  background:none;border:none;cursor:pointer;
+  color:#9aa4b2;font-size:19px;font-family:inherit;
+}
+#loc-clear:hover{color:#1b3f6e;}
+#loc-box.pieno #loc-clear{display:block;}
+
+#loc-drop{
+  display:none;position:absolute;left:0;right:0;top:calc(100% + 3px);z-index:1200;
+  background:#fff;border:1px solid #d0d8e8;border-radius:5px;
+  box-shadow:0 4px 14px rgba(0,0,0,.16);
+  max-height:266px;overflow-y:auto;overscroll-behavior:contain;
+}
+#loc-drop.aperta{display:block;}
+.loc-riga{
+  display:flex;align-items:baseline;gap:6px;
+  padding:7px 9px;cursor:pointer;border-bottom:1px solid #f0f2f6;
+}
+.loc-riga:last-child{border-bottom:none;}
+.loc-riga:hover,.loc-riga.sel{background:#f0f4fb;}
+.loc-nome{font-size:14px;font-weight:700;color:#1b3f6e;}
+.loc-nome b{background:#e2ecfb;font-weight:700;border-radius:2px;}
+.loc-dove{font-size:12px;color:#6b7686;margin-left:auto;white-space:nowrap;}
+/* Un ex comune resta cercabile (il posto esiste anche se l'ente no), ma va
+   detto, se no sembra un errore dell'elenco. */
+.loc-ex{font-size:11px;color:#9aa4b2;font-style:italic;}
+.loc-nota{padding:7px 9px;font-size:12px;color:#6b7686;font-style:italic;}
+/* TELEFONO E TABLET (misurato a 360x640 e 393x760, non dedotto).
+   Qui il pannello regioni ESISTE ed è una barra alta 42px in cima alla mappa,
+   con dentro la tendina delle regioni; i tasti dello zoom invece non ci sono.
+   La casella si mette SOTTO quella barra, a tutta larghezza meno i margini:
+   con la misura del desktop (left 54, width 356) sbordava di 50px a destra. */
+@media (max-width:900px){
+  #loc-box{top:48px;left:7px;right:7px;width:auto;}
+  /* ⚠️ 16px NON è un capriccio tipografico: sotto i 16px iOS ingrandisce la
+     pagina da solo quando si apre la tastiera, e la mappa resta storta. */
+  #loc-input{font-size:16px;padding-top:9px;padding-bottom:9px;}
+  /* ⚠️ MISURATO, non dedotto. Con la tendina a 40vh restavano sotto la tastiera
+     due righe a 360x640 e una a 393x760 (la tastiera si mangia circa il 45%
+     dell'altezza). Un tetto in VH non serve, perché `vh` non cambia quando la
+     tastiera si apre: meglio un tetto in RIGHE. Cinque bastano — con tre
+     lettere la mediana è 2 risultati — e chi ne ha di più legge «e altre N». */
+  #loc-drop{max-height:186px;}
+  .loc-nome{font-size:15px;}
+  .loc-riga{padding:9px;}
+}
 .tp-btn{background:#f0f4fb;border:1px solid #d0d8e8;border-radius:5px;
   font-size:14px;font-weight:600;color:#1b3f6e;
   padding:7px 2px;text-align:center;cursor:pointer;
@@ -1075,6 +1148,28 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 
     <!-- Coppia di pannelli blu (solo desktop, si alternano via updateGuidePulse):
          l'hint invita a cliccare la mappa; dopo il click della data diventa "Indietro" -->
+    <!-- ── RICERCA PER LOCALITÀ (22/8/2026) ────────────────────────────
+    L'altra porta d'ingresso, accanto alla scelta della regione: uno
+    scrive il paese e la mappa lo porta lì con le regioni giuste già
+    spuntate. Sta IN CIMA al pannello regioni perché è la stessa
+    domanda («dove guardo?») posta in un altro modo.
+    La tendina NON si apre a vuoto: servono almeno LOC_MIN lettere.
+    Misurato sugli 8.023 nomi: con 2 lettere un prefisso tira su 249
+    risultati in media (856 il peggiore), con 3 la mediana e' 2 e il
+    novantesimo percentile 14. Sotto le tre lettere non e' un elenco,
+    e' un muro. -->
+    <div id="loc-box">
+    <svg class="loc-lente" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/>
+    <line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <input id="loc-input" type="text" placeholder="Località" autocomplete="off"
+    autocorrect="off" spellcheck="false" aria-label="Cerca una località"
+    aria-autocomplete="list" aria-controls="loc-drop" aria-expanded="false">
+    <button id="loc-clear" type="button" aria-label="Cancella la ricerca">×</button>
+    <div id="loc-drop" role="listbox" aria-label="Località trovate"></div>
+    </div>
+
     <div id="map-hint-panel">🖱 Clicca sulla mappa e seleziona le regioni (max 3)</div>
     <button id="btn-reset-regions" type="button">↩ Indietro</button>
 
@@ -3989,6 +4084,10 @@ function loadData(pastDate,nowDate,labelPeriodo){
   if(window.innerWidth>900){
     // Da link condiviso la vista arriva dall'URL: il fit la scavalcherebbe.
     if(_linkView){ _linkView=false; }
+    // Vista PAESE (ricerca per località): come per il link condiviso, il fit
+    // sulle regioni la scavalcherebbe. Resta finché l'utente non tocca una
+    // regione a mano o non torna indietro.
+    else if(_vistaPaese) fitMapToPunto(_vistaPaese.lat,_vistaPaese.lon,LOC_RAGGIO_VISTA);
     else fitMapToRegions(regions);
   }
 
@@ -5994,6 +6093,286 @@ function toggleRegionFromMap(rk){
   cb.dispatchEvent(new Event('change'));  // il handler esistente valida (max 3) e carica
   refreshSelectorStyles();                // legge lo stato FINALE (dopo eventuale rifiuto)
 }
+// ═══════════════════════════════════════════════════════════════
+// RICERCA PER LOCALITÀ (22/8/2026)
+// ═══════════════════════════════════════════════════════════════
+// Si digita il nome di un paese, si sceglie dalla tendina, la mappa ci va
+// sopra con le regioni giuste già spuntate. Poi si clicca il periodo, come
+// sempre: la ricerca sostituisce SOLO il passo «scegli la regione».
+//
+// ⚠️ NON APRE UNA STRADA NUOVA: al click spunta le stesse caselle che
+// spunterebbe un dito e lascia fare al resto del sito. Così pannello
+// statistiche, link condiviso, chip delle fonti, ritaglio dei confini,
+// avvisi e crediti continuano a funzionare senza sapere che esiste.
+//
+// DUE FILE, tutti e due in data/ (che è nella regola ignore di Netlify:
+// rigenerarli non fa scattare un deploy) e tutti e due CARICATI PIGRAMENTE,
+// al primo focus sulla casella: chi non cerca non li scarica mai.
+//   data/elenco-paesi.txt    8.023 posti  ·  98 KB in rete
+//   data/regioni-vicine.txt  53.958 celle ·  58 KB in rete, 19 ms a leggerlo
+//
+// LA REGOLA DELLE REGIONI DA CARICARE, decisa il 22/8/2026 dopo averla
+// misurata su tutti i comuni italiani: **la sua regione più quelle della
+// griglia, la sua per prima, poi le altre in ordine di distanza, taglio a 3**
+// (il tetto che il sito ha già). Effetto: 1,61 regioni in media, il 50,6% dei
+// posti ne carica una sola, mai più di tre.
+//   ⚠️ La domanda non è «quali regioni confinano» ma «quali hanno pluviometri
+//     abbastanza vicini»: 1,94 contro 1,46 di media. Una regione confinante
+//     senza stazioni in quella fascia è solo peso da scaricare.
+//   ⚠️ La sua regione va garantita anche quando non ha stazioni vicine: senza,
+//     per L'Aquila si caricherebbe solo il Lazio e IL PAESE CERCATO
+//     RESTEREBBE FUORI DAL COLORE, in un buco bianco. È il contrario di quello
+//     che uno si aspetta cercando un posto.
+var LOC_MIN = 3;             // lettere prima di aprire la tendina (vedi HTML)
+var LOC_MAX_RIGHE = 8;
+var LOC_RAGGIO_VISTA = 25;   // km di raggio inquadrati; i dati coprono 30 km,
+                             // così una passata di dito non trova subito il bianco
+var _locIndice = null, _locGriglia = null, _locCaricamento = null;
+var _locRighe = [], _locSel = -1, _locT = null;
+var _vistaPaese = null;      // {lat,lon} finché l'utente resta sul paese cercato
+var _daRicerca = false;      // per distinguere le spunte nostre da quelle a dito
+
+function locNormalizza(s) {
+  // accenti via, apostrofi e trattini come spazi: «Sant'Angelo» si deve trovare
+  // scrivendo «sant angelo», «santangelo» o «angelo».
+  return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+          .replace(/['’\-]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function locCarica() {
+  if (_locCaricamento) return _locCaricamento;
+  _locCaricamento = Promise.all([
+    fetch('/data/elenco-paesi.txt').then(function (r) { return r.text(); }),
+    fetch('/data/regioni-vicine.txt').then(function (r) { return r.text(); })
+  ]).then(function (due) {
+    _locIndice = [];
+    due[0].split('\n').forEach(function (r) {
+      if (!r) return;
+      var p = r.split('|');
+      if (p.length < 6) return;
+      _locIndice.push({ n: p[0], lat: +p[1], lon: +p[2], sg: p[3], reg: p[4], pop: +p[5],
+                        q: locNormalizza(p[0]) });
+    });
+    _locGriglia = new Map();
+    var t = due[1], i = 0, n = t.length;
+    while (i < n) {
+      var fine = t.indexOf('\n', i);
+      var riga = t.slice(i, fine < 0 ? n : fine);
+      var c = riga.indexOf(':');
+      if (c > 0) _locGriglia.set(riga.slice(0, c), riga.slice(c + 1));
+      if (fine < 0) break;
+      i = fine + 1;
+    }
+    return true;
+  }).catch(function (e) {
+    _locCaricamento = null;   // un guasto di rete non deve spegnere la casella per sempre
+    throw e;
+  });
+  return _locCaricamento;
+}
+
+// Le regioni utili intorno a un punto, dalla griglia da 0,05°.
+function locRegioniVicine(lat, lon) {
+  if (!_locGriglia) return [];
+  var k = (Math.round(lat / 0.05) * 0.05).toFixed(2) + ',' + (Math.round(lon / 0.05) * 0.05).toFixed(2);
+  var v = _locGriglia.get(k);
+  return v ? v.split('+') : [];
+}
+
+function locCerca(testo) {
+  var q = locNormalizza(testo);
+  if (!q || !_locIndice) return { righe: [], totale: 0 };
+  var inizio = [], dentro = [];
+  for (var i = 0; i < _locIndice.length; i++) {
+    var p = _locIndice[i];
+    if (p.q.lastIndexOf(q, 0) === 0) inizio.push(p);
+    else if (p.q.indexOf(' ' + q) >= 0) dentro.push(p);   // inizio di una parola qualsiasi
+  }
+  // dentro ogni gruppo comanda la popolazione: chi cerca «San» vuole prima
+  // San Giovanni Rotondo, non una frazione da sei anime.
+  var perPop = function (a, b) { return b.pop - a.pop || a.n.localeCompare(b.n, 'it'); };
+  inizio.sort(perPop); dentro.sort(perPop);
+  var tutte = inizio.concat(dentro);
+  return { righe: tutte.slice(0, LOC_MAX_RIGHE), totale: tutte.length };
+}
+
+function locChiudi() {
+  var d = document.getElementById('loc-drop');
+  d.classList.remove('aperta'); d.innerHTML = '';
+  _locRighe = []; _locSel = -1;
+  document.getElementById('loc-input').setAttribute('aria-expanded', 'false');
+}
+
+function locDisegna(res, testo) {
+  var d = document.getElementById('loc-drop');
+  _locRighe = res.righe; _locSel = -1;
+  if (!res.righe.length) {
+    d.innerHTML = '<div class="loc-nota">Nessuna località trovata</div>';
+    d.classList.add('aperta');
+    document.getElementById('loc-input').setAttribute('aria-expanded', 'true');
+    return;
+  }
+  var q = locNormalizza(testo);
+  var html = res.righe.map(function (p, i) {
+    // evidenzia il pezzo digitato, ma sul nome VERO (accenti compresi): la
+    // lunghezza combacia perché la normalizzazione non aggiunge né toglie
+    // caratteri, li sostituisce
+    var pos = p.q.lastIndexOf(q, 0) === 0 ? 0 : p.q.indexOf(' ' + q) + 1;
+    var nome = pos >= 0
+      ? p.n.slice(0, pos) + '<b>' + p.n.slice(pos, pos + q.length) + '</b>' + p.n.slice(pos + q.length)
+      : p.n;
+    var reg = (typeof REGIONS !== 'undefined' && REGIONS[p.reg] && REGIONS[p.reg].name) || p.reg;
+    return '<div class="loc-riga" role="option" data-i="' + i + '">' +
+             '<span class="loc-nome">' + nome + '</span>' +
+             (p.pop ? '' : '<span class="loc-ex">ex comune</span>') +
+             '<span class="loc-dove">' + p.sg + ' · ' + reg + '</span>' +
+           '</div>';
+  }).join('');
+  if (res.totale > res.righe.length)
+    html += '<div class="loc-nota">e altre ' + (res.totale - res.righe.length) + ': scrivi qualche lettera in più</div>';
+  d.innerHTML = html;
+  d.classList.add('aperta');
+  document.getElementById('loc-input').setAttribute('aria-expanded', 'true');
+  d.querySelectorAll('.loc-riga').forEach(function (r) {
+    // mousedown e non click: il blur della casella chiuderebbe la tendina prima
+    // che il click arrivi. ⚠️ stopPropagation: senza, il mousedown risale fino ai
+    // gestori di trascinamento che Leaflet aggancia al documento, e un evento
+    // nato in una tendina non ha niente a che fare con la mappa.
+    r.addEventListener('mousedown', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      locVai(_locRighe[+r.getAttribute('data-i')]);
+    });
+  });
+}
+
+function locEvidenzia(n) {
+  var righe = document.querySelectorAll('#loc-drop .loc-riga');
+  if (!righe.length) return;
+  if (_locSel >= 0 && righe[_locSel]) righe[_locSel].classList.remove('sel');
+  _locSel = (n + righe.length) % righe.length;
+  righe[_locSel].classList.add('sel');
+  righe[_locSel].scrollIntoView({ block: 'nearest' });
+}
+
+// Inquadra un cerchio di raggio km attorno al punto. Stessa tecnica di
+// fitMapToRegions (getBoundsZoom + setView con lo spostamento a est), perché su
+// desktop i pannelli coprono la sinistra della mappa e un fitBounds ingenuo
+// metterebbe il paese cercato proprio sotto il pannello.
+function fitMapToPunto(lat, lon, raggioKm) {
+  var dLat = raggioKm / 111;
+  var dLon = raggioKm / (111.32 * Math.cos(lat * Math.PI / 180));
+  var lb = L.latLngBounds([[lat - dLat, lon - dLon], [lat + dLat, lon + dLon]]);
+  var isDesk = window.innerWidth > 900;
+  var panelPx = isDesk ? 420 : 0;
+  var z = map.getBoundsZoom(lb, false, L.point((panelPx / 2) + 30, 70));
+  var shift = panelPx / 2;
+  if (isDesk) {
+    var nw = map.project(lb.getNorthWest(), z), se = map.project(lb.getSouthEast(), z);
+    var maxShift = Math.max(0, (map.getSize().x - Math.abs(se.x - nw.x)) / 2 - 10);
+    if (shift > maxShift) shift = maxShift;
+  }
+  map.setView(map.unproject(map.project(lb.getCenter(), z).subtract(L.point(shift, 0)), z), z, { animate: false });
+}
+
+function locVai(p) {
+  if (!p || isLoading) return;
+  document.getElementById('loc-input').value = p.n;
+  document.getElementById('loc-box').classList.add('pieno');
+  locChiudi();
+  document.getElementById('loc-input').blur();
+
+  // le regioni: la sua per prima, poi le vicine in ordine di distanza, taglio a 3
+  var regioni = [p.reg].concat(locRegioniVicine(p.lat, p.lon).filter(function (k) { return k !== p.reg; }))
+    .filter(function (k) { return document.getElementById('chk-' + k); })
+    .slice(0, 3);
+  if (!regioni.length) return;
+
+  // Si sostituisce la selezione: i bordi delle vecchie regioni vanno tolti a
+  // mano, perché il handler del checkbox lo fa solo per quella che TU spegni,
+  // e qui le spegniamo tutte in silenzio.
+  Object.keys(regionBorders).forEach(function (r) {
+    map.removeLayer(regionBorders[r]); delete regionBorders[r];
+  });
+  document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function (cb) { cb.checked = false; });
+  regioni.forEach(function (k) { document.getElementById('chk-' + k).checked = true; });
+
+  _vistaPaese = { lat: p.lat, lon: p.lon };
+  _daRicerca = true;
+  document.getElementById('chk-' + regioni[regioni.length - 1]).dispatchEvent(new Event('change'));
+  _daRicerca = false;
+
+  // DOPO il change: il suo fitMapToRegions ci passerebbe sopra
+  fitMapToPunto(p.lat, p.lon, LOC_RAGGIO_VISTA);
+
+  // L'avviso delle stime. L'Abruzzo è l'unica regione senza pluviometri reali,
+  // e ci sono una manciata di isole troppo lontane da qualsiasi stazione: in
+  // tutti e due i casi la mappa qualcosa la disegna, e va detto CHE COSA.
+  var stime = REGIONS[p.reg] && REGIONS[p.reg].dataSource === 'open_meteo';
+  var vuoto = locRegioniVicine(p.lat, p.lon).length === 0;
+  var st = document.getElementById('tp-status');
+  if (st && (stime || vuoto)) {
+    st.className = 'error';
+    st.textContent = stime
+      ? '⚠️ ' + p.n + ': qui non abbiamo pluviometri reali, quello che vedi sono stime Open-Meteo'
+      : '⚠️ ' + p.n + ': nessun pluviometro entro 30 km, la mappa può restare vuota qui intorno';
+  }
+  // ⚠️ SUL TELEFONO la scelta della regione è una TENDINA A UNA VOCE SOLA, e
+  // dopo una ricerca ne restano spuntate fino a tre: la tendina mostrerebbe
+  // ancora «Tocca per scegliere la regione» sopra una mappa che ne ha caricate
+  // tre. Si aggiunge in cima una voce che dice dove sei. Sparisce da sola
+  // quando l'utente sceglie una regione a mano o torna indietro.
+  var sel = document.getElementById('region-select');
+  if (sel) {
+    var o = sel.querySelector('option[value="__paese"]');
+    if (!o) { o = document.createElement('option'); o.value = '__paese'; sel.insertBefore(o, sel.firstChild); }
+    o.textContent = '📍 ' + p.n + (regioni.length > 1 ? ' (' + regioni.length + ' regioni)' : '');
+    sel.value = '__paese';
+  }
+
+  try { gtag('event', 'cerca_localita', { regioni: regioni.join(','), stime: !!stime }); } catch (e) {}
+}
+
+(function locAvvia() {
+  var inp = document.getElementById('loc-input');
+  if (!inp) return;
+  var box = document.getElementById('loc-box'), drop = document.getElementById('loc-drop');
+
+  // Il focus fa partire lo scarico: quando l'utente arriva alla terza lettera
+  // i due file ci sono già, e la tendina si apre senza attesa.
+  inp.addEventListener('focus', function () { locCarica().catch(function () {}); });
+
+  inp.addEventListener('input', function () {
+    box.classList.toggle('pieno', !!inp.value);
+    clearTimeout(_locT);
+    var testo = inp.value;
+    if (locNormalizza(testo).length < LOC_MIN) { locChiudi(); return; }
+    _locT = setTimeout(function () {
+      locCarica().then(function () {
+        if (inp.value !== testo) return;   // ha continuato a scrivere
+        locDisegna(locCerca(testo), testo);
+      }).catch(function () {
+        drop.innerHTML = '<div class="loc-nota">Elenco località non raggiungibile, riprova più tardi</div>';
+        drop.classList.add('aperta');
+      });
+    }, 120);
+  });
+
+  inp.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); locEvidenzia(_locSel + 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); locEvidenzia(_locSel - 1); }
+    else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (_locRighe.length) locVai(_locRighe[_locSel >= 0 ? _locSel : 0]);
+    } else if (e.key === 'Escape') { locChiudi(); inp.blur(); }
+  });
+
+  inp.addEventListener('blur', function () { setTimeout(locChiudi, 120); });
+
+  document.getElementById('loc-clear').addEventListener('click', function () {
+    inp.value = ''; box.classList.remove('pieno'); locChiudi(); inp.focus();
+  });
+})();
+
 function buildRegionSelector(){
   if(window.innerWidth<=900) return;
   Object.keys(REGIONS).forEach(function(rk){
@@ -6033,6 +6412,10 @@ if(typeof positionPanels==='function') positionPanels(); // il pannello periodo 
 // tutto e torna alla vista Italia neutra.
 function resetToStart(){
   if(isLoading) return;
+  _vistaPaese=null;
+  var _li=document.getElementById('loc-input');
+  if(_li){ _li.value=''; document.getElementById('loc-box').classList.remove('pieno'); }
+  var _op2=document.querySelector('#region-select option[value="__paese"]'); if(_op2) _op2.remove();
   document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb2){ cb2.checked=false; });
   Object.keys(regionBorders).forEach(function(rk2){ map.removeLayer(regionBorders[rk2]); delete regionBorders[rk2]; });
   clearMarkers(); clearHeatmap();
@@ -6405,6 +6788,11 @@ var OPZIONI_FRANCIA=
 document.getElementById('region-select').addEventListener('change', function(){
   var rk = this.value;
   if(!rk) return;
+  // La voce «📍 paese» la mette la ricerca per località: è un'etichetta, non una
+  // regione. Se l'utente la ri-sceglie non c'è niente da fare; se sceglie una
+  // regione vera l'etichetta va tolta, perché non è più dove sta guardando.
+  if(rk==='__paese') return;
+  var _op=this.querySelector('option[value="__paese"]'); if(_op) _op.remove();
   // Navigazione del sottomenu Francia: si ripopola la tendina e la si riapre
   // subito dove il browser lo permette (showPicker: Chrome/Android recenti;
   // altrove serve un secondo tocco — accettabile). Nessuna regione cambia.
@@ -6489,6 +6877,10 @@ document.getElementById('region-select').addEventListener('change', function(){
 
 document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){
   cb.addEventListener('change',function(){
+    // Una spunta messa a DITO vuol dire «non sto più guardando quel paese»:
+    // la vista torna a inquadrare le regioni. Le spunte messe dalla ricerca
+    // passano di qui con _daRicerca alzato e non spengono niente.
+    if(!_daRicerca) _vistaPaese=null;
     var rk=this.value;
     // Massimo 3 SELEZIONI insieme (i bottoni combo Piemonte-VdA / Trentino-A.A.
     // valgono 1: due combo + una singola = 5 regioni reali, ma 3 selezioni).
