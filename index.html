@@ -7934,8 +7934,13 @@ if(_btnShare){
     if(!url) return;
     try{gtag('event','share_map',{regioni:getSelectedValues().join(',')})}catch(e){}
     if(isTouchShare()){
-      // Solo il link, senza descrizione: l'anteprima la mette l'app di chat.
-      navigator.share({url:url}).catch(function(){});
+      // Il testo viaggia col link come viaggia con la foto (22/8/2026): il
+      // riquadro dell'anteprima lo disegna l'app di chat leggendo le etichette
+      // social della pagina, che sono SCRITTE FISSE e uguali per ogni link
+      // (per farle parlare del paese servirebbe generare la pagina su un
+      // server: idea in attesa dal 30/7). Quello che possiamo scrivere noi e'
+      // il messaggio, e quello adesso dice dove si sta guardando.
+      navigator.share({text:didascaliaFoto(),url:url}).catch(function(){});
     } else if(navigator.clipboard&&navigator.clipboard.writeText){
       navigator.clipboard.writeText(url).then(function(){
         _btnShare.classList.add('ok');_btnShare.textContent='✓ Copiato';
