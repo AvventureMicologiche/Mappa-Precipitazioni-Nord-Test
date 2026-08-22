@@ -179,6 +179,58 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 /* Fallback per i browser che ignorano color-scheme sui select ma colorano
    le singole voci. */
 .region-select-mobile option{background:#2b2b2b;color:#f2f2f2;}
+/* Fuori dalla media query: su desktop non esistono proprio. Senza queste due
+   righe il pannello scuro si impagina dentro la mappa a schermo grande. */
+#reg-apri{display:none;}
+#reg-sheet{display:none;}
+/* ═══ LA TENDINA DELLE REGIONI, FATTA DA NOI (22/8/2026) ═══ solo mobile.
+   La select nativa RESTA nel DOM ed e' ancora lei a comandare: qui sopra ci
+   si mette una tendina nostra che la legge e le gira le scelte
+   (sel.value + change). Cosi' il sottomenu Francia, la voce «📍 paese» della
+   ricerca e tutto il resto continuano a funzionare senza saperlo.
+   ⚠️ Perche' non la nativa: la lista la disegna Android, con i suoi colori e
+   i suoi pallini radio, e dentro non ci si puo' mettere una casella di
+   testo. La ricerca per localita' invece deve stare LI', prima delle
+   regioni: e' la stessa domanda («dove guardo?») posta in un altro modo. */
+@media(max-width:900px){
+  /* piu' specifico della regola che piu' avanti la rimette a block */
+  select.region-select-mobile{display:none !important;}
+  #reg-apri{display:block;width:100%;margin:0;box-sizing:border-box;
+    border:1px solid #d0d8e8;border-radius:0;background:#f0f4fb;color:#1b3f6e;
+    font-family:inherit;font-size:17px;font-weight:800;letter-spacing:.3px;
+    padding:9px 10px;text-align:left;cursor:pointer;}
+  /* Il velo scuro parte SOTTO la barra blu: coprendola la faceva sembrare
+     una fascia nera, e l'intestazione del sito non c'entra niente con la
+     scelta della regione. */
+  #reg-sheet{display:none;position:fixed;left:0;right:0;top:46px;bottom:0;z-index:3000;
+    background:rgba(0,0,0,.5);}
+  #reg-sheet.aperta{display:block;}
+  /* parte sotto la barra blu, cosi' l'intestazione del sito resta visibile */
+  #reg-sheet-inner{position:absolute;left:0;right:0;top:0;max-height:100%;overflow-y:auto;
+    -webkit-overflow-scrolling:touch;background:#1b3f6e;color:#fff;   /* lo stesso blu dell'intestazione */
+    border-radius:0 0 16px 16px;padding:10px 12px 14px;box-shadow:0 8px 30px rgba(0,0,0,.5);}
+  .reg-testa{display:flex;align-items:center;justify-content:space-between;
+    font-size:13.5px;font-weight:700;color:#b9d0ec;letter-spacing:.5px;padding:2px 2px 10px;}
+  #reg-chiudi{background:none;border:0;color:#b9d0ec;font-size:24px;line-height:1;
+    padding:0 6px;cursor:pointer;font-family:inherit;}
+  .reg-oppure{font-size:13.5px;font-weight:700;color:#b9d0ec;letter-spacing:.5px;
+    padding:14px 2px 4px;}
+  /* ⚠️ relative e NON static: la lente e la × sono posizionate in modo
+     assoluto DENTRO la casella. Con static si agganciavano al pannello e
+     la lente finiva in mezzo all'elenco, sotto Lombardia (22/8/2026). */
+  /* ⚠️ Vanno azzerati anche top/right: la casella nasce ancorata in alto a
+     destra sulla mappa (top:52px;right:14px), e in relative quei valori
+     restano validi come SPOSTAMENTO: scendeva di 52 px e finiva sopra
+     l'elenco, coprendo «OPPURE SCEGLI LA REGIONE» (22/8/2026). */
+  #reg-sheet #loc-box{position:relative;top:auto;right:auto;left:auto;width:100%;}
+  #reg-sheet #loc-drop{position:static;margin-top:4px;max-height:230px;}
+  .reg-riga{display:block;width:100%;box-sizing:border-box;text-align:left;background:none;
+    border:0;border-top:1px solid rgba(255,255,255,.16);color:#fff;font-family:inherit;
+    font-size:18px;font-weight:600;padding:14px 6px;cursor:pointer;}
+  .reg-riga:first-child{border-top:0;}
+  .reg-riga.attiva{color:#8fd0ff;}
+  body.reg-bloccato{overflow:hidden;}
+}
 .region-btns-desktop{display:none !important;} /* dal 27/7: su desktop si clicca la mappa, i checkbox restano solo come stato (il !important vince su .tp-grid4) */
 /* Hint selezione da mappa + pulsante Ricomincia (solo desktop) */
 .map-hint-desktop{display:flex;align-items:center;gap:10px;padding:2px 0 3px;}
@@ -197,8 +249,25 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 #map-hint-panel{display:none;position:absolute;top:100px;left:10px;z-index:1000;width:400px;
   background:rgba(27,63,110,.85);border-radius:13px;
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  color:#fff;font-size:15px;font-weight:700;padding:14px 8px;
+  color:#fff;font-size:15px;font-weight:700;padding:12px 14px;
   box-shadow:0 3px 14px rgba(0,0,0,.12);white-space:nowrap;text-align:center;box-sizing:border-box;}
+/* IL CARTELLO BLU ACCANTO ALLA CASELLA (22/8/2026). Da desktop si parte in
+   due modi, cliccando le regioni o cercando un paese, e il pannello di
+   sinistra ne raccontava uno solo. Il secondo NON si spiega da sinistra con
+   un bottone: mandava a cliccare a sinistra e poi a guardare all'angolo
+   opposto. Ogni istruzione sta dove sta la cosa. */
+/* LA CASELLA CHE SI FA NOTARE (22/8/2026). La ricerca e' nuova e nessuno la
+   cerca: invece di spiegarla da un cartello dall'altra parte dello schermo,
+   e' la casella stessa a chiamare, col suo testo grigio e un bordo che
+   respira. Smette appena l'utente ha scelto una delle due strade: una
+   regione sulla mappa, oppure la casella (basta il fuoco, l'ha vista).
+   ⚠️ Il respiro e' sul BORDO, non sull'opacita' del testo: un placeholder
+   che sfarfalla si legge male e sembra un guasto. */
+#loc-input.loc-chiama{animation:loc-bordo-pulsa 1.7s ease-in-out infinite;}
+@keyframes loc-bordo-pulsa{
+  0%,100%{border-color:#d0d8e8;box-shadow:0 0 0 0 rgba(27,63,110,.42),0 2px 10px rgba(0,0,0,.13);}
+  50%{border-color:#1b3f6e;box-shadow:0 0 0 6px rgba(27,63,110,0),0 2px 10px rgba(0,0,0,.13);}}
+@media(prefers-reduced-motion:reduce){#loc-input.loc-chiama{animation:none;border-color:#1b3f6e;}}
 /* Guida a lampeggio (solo desktop): pulsa il pannello del passo attivo —
    regioni finché non ne selezioni una, poi periodo finché non lo clicchi.
    Anello marcato + sfondo che "respira" verso l'azzurro per farsi notare. */
@@ -739,7 +808,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     top:auto !important; width:100% !important;
     border-radius:14px 14px 0 0 !important;
     box-shadow:0 -4px 20px rgba(0,0,0,.25) !important;
-    padding:0 14px 12px !important;
+    padding:0 14px 8px !important;
     z-index:2000 !important;
     /* 46vh e non 40 (13/8/2026). A 40vh il pannello era piu' corto del suo
        contenuto e la coda restava nello scroll: 302px per 344 a 393x760,
@@ -751,6 +820,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
        A 46vh il pannello arriva a 347px, il contenuto ne chiede 344 e si
        ferma li'; a 48 e a 50vh il risultato e' identico. Se un domani si
        aggiunge una riga al pannello, questo tetto va rialzato. */
+  }
+  /* SPAZIO BIANCO IN FONDO (22/8/2026, segnalato su Pixel 9). Sotto i tasti
+     restavano 38 px prima di «FAQ video / invia feedback» e 15 sotto: i 38
+     erano la RIGA DI STATO VUOTA, che teneva il posto (18 px di min-height
+     piu' 8 di margine) anche quando non c'era niente da dire. Qui sparisce
+     quando e' vuota e ricompare da sola col messaggio; il pannello passa da
+     346 a ~310 px. Il codice la svuota con textContent='', quindi :empty la
+     prende davvero (uno spazio solo la terrebbe visibile). */
+  #tp-status:empty{display:none;}
+  #tp-links{margin:10px 0 0 !important;}   /* 10 e non 6: senza la riga di stato i link finivano appiccicati ai tasti */
+  #time-panel{
     max-height:46vh;
     overflow-y:auto;
     transform:translateY(calc(100% - 44px));
@@ -1112,8 +1192,9 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <span>🖱 Clicca sulla mappa e seleziona le regioni (max 3)</span>
         </div>
         <!-- Mobile: select dropdown -->
+        <button id="reg-apri" type="button">Tocca qui per scegliere la regione ▼</button>
         <select id="region-select" class="region-select-mobile">
-          <option value="">Tocca per scegliere la regione ▼</option>
+          <option value="">Tocca qui per scegliere la regione ▼</option>
           <!-- Prima l'estero, poi le regioni italiane (ordine scelto il 6/8/2026).
                Le 13 régions francesi NON stanno qui: allungavano la tendina e
                spingevano le regioni italiane troppo in fondo (segnalato il
@@ -1170,14 +1251,24 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/>
     <line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     </svg>
-    <input id="loc-input" type="text" placeholder="Località" autocomplete="off"
+    <input id="loc-input" type="text" placeholder="Nuovo: trova la tua località" autocomplete="off"
     autocorrect="off" spellcheck="false" aria-label="Cerca una località"
     aria-autocomplete="list" aria-controls="loc-drop" aria-expanded="false">
     <button id="loc-clear" type="button" aria-label="Cancella la ricerca">×</button>
     <div id="loc-drop" role="listbox" aria-label="Località trovate"></div>
     </div>
+    <!-- La tendina nostra: casella di ricerca in cima, regioni sotto. Il suo
+         contenuto lo genera regRender() leggendo la select nativa. -->
+    <div id="reg-sheet" aria-hidden="true">
+      <div id="reg-sheet-inner" role="dialog" aria-modal="true" aria-label="Scegli dove guardare">
+        <div class="reg-testa"><span>DOVE VUOI GUARDARE?</span><button id="reg-chiudi" type="button" aria-label="Chiudi">×</button></div>
+        <div id="reg-cerca-slot"></div>
+        <div class="reg-oppure">OPPURE SCEGLI LA REGIONE</div>
+        <div id="reg-lista"></div>
+      </div>
+    </div>
 
-    <div id="map-hint-panel">🖱 Clicca sulla mappa e seleziona le regioni (max 3)</div>
+    <div id="map-hint-panel">🖱 Clicca fino a 3 regioni sulla mappa</div>
     <button id="btn-reset-regions" type="button">↩ Indietro</button>
 
     <div id="time-panel">
@@ -4094,7 +4185,7 @@ function loadData(pastDate,nowDate,labelPeriodo){
     // Vista PAESE (ricerca per località): come per il link condiviso, il fit
     // sulle regioni la scavalcherebbe. Resta finché l'utente non tocca una
     // regione a mano o non torna indietro.
-    else if(_vistaPaese) fitMapToPunto(_vistaPaese.lat,_vistaPaese.lon,LOC_RAGGIO_VISTA);
+    else if(_vistaPaese) fitMapToPunto(_vistaPaese.lat,_vistaPaese.lon,LOC_TACCA_FINE);
     else fitMapToRegions(regions);
   }
 
@@ -6070,6 +6161,7 @@ function updateGuidePulse(){
     return;
   }
   var nSel=document.querySelectorAll('.rcheck-wrap input[type=checkbox]:checked').length;
+  if(nSel>0 && typeof locFermaChiamata==='function') locFermaChiamata();  // ha scelto la mappa
   var hasPeriod=!!currentLabel;
   // Su desktop il pannello bianco "Seleziona regione" non si mostra mai: al suo
   // posto due pannelli blu che si alternano — l'HINT ("Clicca sulla mappa…")
@@ -6132,22 +6224,40 @@ function toggleRegionFromMap(rk){
 //     che uno si aspetta cercando un posto.
 var LOC_MIN = 3;             // lettere prima di aprire la tendina (vedi HTML)
 var LOC_MAX_RIGHE = 8;
-// Km di raggio inquadrati. ⚠️ NON è il raggio dei DATI, che resta 30 km e
-// decide solo QUALI regioni caricare: qui si decide solo quanto si vede.
+// ═══ LA SCALA DELLE TACCHE ═══ (22/8/2026, richiesta dell'utente)
+// Due numeri, e sono i due qui sotto. La scala e' questa:
+//     tacca 1  = la vista di APERTURA del sito, la piu' larga
+//     tacca 10 = la vista che c'era il 22/8 dopo il click del periodo
+//     tacca 5  = mezza strada fra le due
+// Una tacca in piu' avvicina, una in meno allontana. Non c'e' un tetto: 11,
+// 12, 0, -1 sono numeri validi. Quando l'inquadratura non va bene si cambia
+// SOLO il numero, senza km, raggi, rettangoli o ricalcoli.
+//   ⚠️ Niente a che vedere col raggio dei DATI (30 km), che decide QUALI
+//     regioni caricare: qui si decide solo quanto si vede.
+// ⚠️ 6 e non 5: fra la tacca 1 e la 10 ci sono NOVE intervalli, quindi il
+// punto di mezzo esatto e' la 5,5 (le tacche con la virgola sono valide).
+// La 6 e' la vista approvata il 22/8, 920 km di larghezza; la 5 sarebbe un
+// filo piu' larga, 1095.
+var LOC_TACCA_MEZZO = 6;    // alla scelta del paese (solo desktop, vedi locVai)
+var LOC_TACCA_FINE  = 10;   // al click del periodo
+// Quanto vale UNA tacca, in livelli di zoom di Leaflet. Tarato perche' la
+// tacca 10 cadesse esattamente sulla vista del 22/8/2026: zoom 9 su una
+// mappa 1536x697, cioe' 325x148 km. Questa e' la scala, non la preferenza:
+// si tocca solo se le tacche diventano troppo grosse o troppo fini.
+var LOC_TACCA_PASSO = 0.36;
+// Lo zoom di una tacca. Parte da initZoom, che e' gia' adattato alla forma
+// della finestra, cosi' la stessa tacca vale su uno schermo alto e su uno
+// basso. Arrotondato a 0,25, che e' lo zoomSnap della mappa.
+function locZoomTacca(t) { return Math.round((initZoom + (t - 1) * LOC_TACCA_PASSO) * 4) / 4; }
 //
-// ⚠️ UNO SOLO, e ci sono arrivato sbagliando. Per un giro ne ho messi due —
-// stretto alla scelta del paese, largo dopo le date — perché l'utente aveva
-// detto «il primo zoom è troppo poco, il secondo va bene». Ma in quel momento
-// i due erano GIÀ LO STESSO NUMERO (40 km): quello che vedeva stretto non era
-// il raggio, era il primo fit che finiva a vuoto per la dimensione fantasma di
-// Leaflet (vedi fitMapToPunto). Ho preso una descrizione di un guasto per una
-// richiesta di taratura, e ho costruito una differenza che non serviva a
-// nessuno: alla scelta 50x23 km, dopo le date 190x90, cioè un salto INDIETRO
-// proprio quando uno si aspetta di avvicinarsi.
-// Riparato il guasto, resta un numero solo e la vista non si muove più fra i
-// due momenti: si sceglie il paese, lo si vede, si clicca il periodo e il
-// colore compare SENZA che la mappa si sposti.
-var LOC_RAGGIO_VISTA = 40;
+// STORIA, in breve, perche' e' costata due giri. Il primo: avevo messo due
+// numeri diversi credendo a una richiesta di taratura che era invece il
+// racconto di un GUASTO (la dimensione fantasma di Leaflet, vedi
+// fitMapToPunto). I due valori erano gia' uguali, e quello che sembrava uno
+// zoom sbagliato era il fit che finiva a vuoto. Il secondo giro: riparato il
+// guasto, la differenza fra i due momenti e' diventata vera e voluta, un
+// avvicinamento in tre tempi (apertura, scelta del paese, periodo) invece
+// del salto indietro di prima.
 var _locIndice = null, _locGriglia = null, _locCaricamento = null;
 var _locRighe = [], _locSel = -1, _locT = null;
 var _locPin = null;           // il segnaposto rosso del posto cercato
@@ -6347,53 +6457,54 @@ function locEvidenzia(n) {
   righe[_locSel].scrollIntoView({ block: 'nearest' });
 }
 
-// Inquadra un cerchio di raggio km attorno al punto. Stessa tecnica di
-// fitMapToRegions (getBoundsZoom + setView con lo spostamento a est), perché su
-// desktop i pannelli coprono la sinistra della mappa e un fitBounds ingenuo
-// metterebbe il paese cercato proprio sotto il pannello.
+// Porta la mappa sul punto, alla tacca chiesta (vedi LA SCALA DELLE TACCHE).
+// Lo zoom e' un NUMERO, non un fit: niente getBoundsZoom, niente rettangoli
+// da far entrare. Resta lo spostamento a est, perche' su desktop i pannelli
+// coprono la sinistra della mappa e un centro ingenuo metterebbe il paese
+// cercato proprio sotto il pannello.
 // ⚠️ DUE DIFESE, tutte e due nate da guai veri.
 //
 // invalidateSize(): Leaflet tiene in CACHE la dimensione del contenitore e la
 // aggiorna solo quando se ne accorge. Se la mappa e' stata creata mentre la
-// finestra non era ancora impaginata, `getSize()` resta 0x0 e `getBoundsZoom`
-// restituisce numeri senza senso (misurato: zoom 19, il paese nell'angolo).
-// Costa una lettura del layout e toglie di mezzo un'intera classe di misteri.
+// finestra non era ancora impaginata, `getSize()` resta 0x0 e tutto quello che
+// ne dipende esce senza senso (col fit di prima: zoom 19 e il paese
+// nell'angolo; adesso lo zoom e' un numero, ma lo spostamento a est resta
+// appeso a getSize). Costa una lettura del layout e toglie di mezzo
+// un'intera classe di misteri.
 //
 // Il ricontrollo dopo 800 ms: il 22/8/2026 l'utente ha mandato uno screenshot
-// in cui la ricerca era andata a buon fine — segnaposto al suo posto, tre
-// regioni caricate — ma la mappa era rimasta all'INQUADRATURA DI APERTURA.
+// in cui la ricerca era andata a buon fine (segnaposto al suo posto, tre
+// regioni caricate) ma la mappa era rimasta all'INQUADRATURA DI APERTURA.
 // Non sono riuscito a riprodurlo (pagina fresca, stesso formato di finestra,
 // zoom 11,25 stabile per sei secondi), quindi non so chi muova la mappa dopo
 // di noi. Invece di indovinare, si RICONTROLLA: se dopo un attimo il centro e'
 // finito lontano dal paese, si rimette a posto. Una lettura e, quasi sempre,
 // niente. ⚠️ Non tocca nulla se l'utente ha gia' trascinato o zoomato lui, ne'
 // se nel frattempo ha cercato un altro posto.
-function fitMapToPunto(lat, lon, raggioKm) {
+function fitMapToPunto(lat, lon, tacca) {
   try { map.invalidateSize({ pan: false }); } catch (e) {}
-  var dLat = raggioKm / 111;
-  var dLon = raggioKm / (111.32 * Math.cos(lat * Math.PI / 180));
-  var lb = L.latLngBounds([[lat - dLat, lon - dLon], [lat + dLat, lon + dLon]]);
+  var z = locZoomTacca(tacca);
   var isDesk = window.innerWidth > 900;
-  var panelPx = isDesk ? 420 : 0;
-  var z = map.getBoundsZoom(lb, false, L.point((panelPx / 2) + 30, 70));
-  var shift = panelPx / 2;
-  if (isDesk) {
-    var nw = map.project(lb.getNorthWest(), z), se = map.project(lb.getSouthEast(), z);
-    var maxShift = Math.max(0, (map.getSize().x - Math.abs(se.x - nw.x)) / 2 - 10);
-    if (shift > maxShift) shift = maxShift;
-  }
-  map.setView(map.unproject(map.project(lb.getCenter(), z).subtract(L.point(shift, 0)), z), z, { animate: false });
+  // mezza colonna dei pannelli (~420 px), con il cap per le finestre strette
+  var shift = isDesk ? Math.min(210, Math.max(0, map.getSize().x / 2 - 60)) : 0;
+  map.setView(map.unproject(map.project(L.latLng(lat, lon), z).subtract(L.point(shift, 0)), z), z, { animate: false });
 
   clearTimeout(_locRicontrollo);
-  var atteso = { lat: lat, lon: lon, r: raggioKm };
+  var atteso = { lat: lat, lon: lon, t: tacca };
   _locRicontrollo = setTimeout(function () {
     if (!_vistaPaese || _vistaPaese.lat !== lat || _vistaPaese.lon !== lon) return;  // cerca altro
     if (typeof _vistaUtente !== 'undefined' && _vistaUtente) return;                 // comanda lui
     var c = map.getCenter();
     var dy = (c.lat - lat) * 111;
     var dx = (c.lng - lon) * 111.32 * Math.cos(lat * Math.PI / 180);
-    if (Math.sqrt(dx * dx + dy * dy) < atteso.r * 2.5) return;                       // e' dove deve
-    fitMapToPunto(atteso.lat, atteso.lon, atteso.r);
+    // Tolleranza: mezza schermata, mai meno di 80 km. Il guasto che si cerca
+    // e' la mappa rimasta all'inquadratura di apertura, lontana centinaia di
+    // km, non uno scarto di qualche pixel. Lo spostamento a est qui sopra e'
+    // legittimo e non deve far scattare niente.
+    var mpp = 156543.03392 * Math.cos(lat * Math.PI / 180) / Math.pow(2, map.getZoom());
+    var mezzaSchermata = map.getSize().x * mpp / 2000;                               // km
+    if (Math.sqrt(dx * dx + dy * dy) < Math.max(80, mezzaSchermata)) return;         // e' dove deve
+    fitMapToPunto(atteso.lat, atteso.lon, atteso.t);
   }, 800);
 }
 
@@ -6425,7 +6536,11 @@ function locVai(p) {
   _daRicerca = false;
 
   // DOPO il change, che se no il suo fit ci passerebbe sopra.
-  fitMapToPunto(p.lat, p.lon, LOC_RAGGIO_VISTA);
+  // Vista DI MEZZO alla scelta; quella stretta arriva al click del periodo.
+  // ⚠️ Solo su desktop: sul telefono il click del periodo NON muove la mappa
+  // (quel fit sta dentro un if(innerWidth>900)), quindi la vista di mezzo
+  // resterebbe l'unica e il paese si vedrebbe da troppo lontano per sempre.
+  fitMapToPunto(p.lat, p.lon, window.innerWidth > 900 ? LOC_TACCA_MEZZO : LOC_TACCA_FINE);
   locSegnaposto(p.lat, p.lon);
 
   // L'avviso delle stime. L'Abruzzo è l'unica regione senza pluviometri reali,
@@ -6451,16 +6566,45 @@ function locVai(p) {
     if (!o) { o = document.createElement('option'); o.value = '__paese'; sel.insertBefore(o, sel.firstChild); }
     o.textContent = '📍 ' + p.n + (regioni.length > 1 ? ' (' + regioni.length + ' regioni)' : '');
     sel.value = '__paese';
+    if (typeof regEtichetta === 'function') regEtichetta();   // la tendina nostra mostra dove sei
+    if (typeof regChiudi === 'function') regChiudi();      // scelto il paese: via la tendina, si guarda la mappa
   }
 
   locSalvaRecente(p);
   try { gtag('event', 'cerca_localita', { regioni: regioni.join(','), stime: !!stime }); } catch (e) {}
 }
 
+// La chiamata della casella: parte all'apertura e si spegne alla PRIMA delle
+// due strade che l'utente imbocca, una regione sulla mappa (vedi
+// updateGuidePulse) o la casella stessa. Una volta spenta non si riaccende.
+var _locChiamata = true;
+function locFermaChiamata() {
+  if (!_locChiamata) return;
+  _locChiamata = false;
+  var i = document.getElementById('loc-input');
+  if (i) i.classList.remove('loc-chiama');
+}
+
 (function locAvvia() {
   var inp = document.getElementById('loc-input');
   if (!inp) return;
   var box = document.getElementById('loc-box'), drop = document.getElementById('loc-drop');
+
+  inp.classList.add('loc-chiama');
+  inp.addEventListener('focus', locFermaChiamata);   // l'ha vista: basta chiamare
+
+  // La casella vive DENTRO il contenitore Leaflet: un doppio click per
+  // selezionare una parola arrivava alla mappa e la zoomava (segnalato il
+  // 22/8/2026). disableClickPropagation ferma click, dblclick e mousedown;
+  // disableScrollPropagation evita che la rotellina sulla tendina zoomi.
+  if (window.L && L.DomEvent) {
+    L.DomEvent.disableClickPropagation(box);
+    L.DomEvent.disableScrollPropagation(box);
+  }
+
+  // Il pannello blu sta sopra la mappa: senza questo un clic sul cartello
+  // arriverebbe a Leaflet.
+  if (window.L && L.DomEvent) L.DomEvent.disableClickPropagation(document.getElementById('map-hint-panel'));
 
   // Il focus fa partire lo scarico: quando l'utente arriva alla terza lettera
   // i due file ci sono già, e la tendina si apre senza attesa. E intanto si
@@ -6706,11 +6850,18 @@ var REGION_BOUNDS={
   var panelPx=isDesk?420:0;
   var z=map.getBoundsZoom(lb,false,L.point((panelPx/2)+30,70));
   if(z>=initZoom) return;   // ci sta già dentro: vista invariata
-  // +230px oltre la metà pannelli (10/8/2026): l'Italia scivola a destra e la
-  // Francia si vede di più anche sulle finestre basse, dove questo fit
-  // sostituisce l'initCenter di apertura. Il cap maxShift qui sotto resta e
-  // sulle finestre strette riduce lo spostamento senza mai tagliare l'Italia.
-  var shift=panelPx/2+(isDesk?230:0);
+  // Spostamento a est: l'Italia si mette al centro dello SPAZIO LIBERO, cioe'
+  // quello che resta a destra dei pannelli (~420 px), non al centro dello
+  // schermo. Mezza colonna di pannelli e basta.
+  // ⚠️ Il 10/8/2026 c'erano 230 px in piu' «per vedere meglio la Francia».
+  // Tolti il 22/8: su una finestra bassa il fit qui sopra zooma fuori per far
+  // entrare l'Italia in altezza, e in larghezza avanza uno sproposito (3280 km
+  // di vista per 980 km di Italia). Con i 230 px in piu' l'Italia finiva
+  // appiccicata al bordo destro e mezzo schermo era Spagna e Atlantico:
+  // misurato sulla finestra dell'utente (mappa 1536x697), centro dell'Italia
+  // a 440 px dal centro schermo invece che a 210. Il cap maxShift qui sotto
+  // non se ne accorgeva: guarda solo che l'Italia non esca, e non usciva.
+  var shift=panelPx/2;
   if(isDesk){
     var nw=map.project(lb.getNorthWest(),z), se=map.project(lb.getSouthEast(),z);
     var maxShift=Math.max(0,(map.getSize().x-Math.abs(se.x-nw.x))/2-10);
@@ -6952,6 +7103,69 @@ var OPZIONI_FRANCIA=
   '<option value="francia-occitania">Occitania</option>'+
   '<option value="francia-loira">Paesi della Loira</option>'+
   '<option value="francia-provenza">Provenza-Costa Azzurra</option>';
+// ═══ LA TENDINA NOSTRA (mobile) ═══
+// Legge la select nativa e le gira le scelte: sel.value + change. Non decide
+// niente da sola, cosi' il sottomenu Francia e la voce «📍 paese» continuano
+// a funzionare senza sapere che esiste.
+function regRender(){
+  var sel=document.getElementById('region-select'), lista=document.getElementById('reg-lista');
+  if(!sel||!lista) return;
+  lista.innerHTML='';
+  [].slice.call(sel.options).forEach(function(o){
+    if(!o.value) return;                       // la voce-titolo non e' una scelta
+    var b=document.createElement('button');
+    b.type='button';
+    b.className='reg-riga'+(o.value===sel.value?' attiva':'');
+    b.setAttribute('data-v',o.value);
+    b.textContent=o.textContent;
+    lista.appendChild(b);
+  });
+}
+function regEtichetta(){
+  var sel=document.getElementById('region-select'), b=document.getElementById('reg-apri');
+  if(!sel||!b) return;
+  var o=sel.options[sel.selectedIndex];
+  b.textContent=(o&&o.value)?o.textContent:'Tocca qui per scegliere la regione ▼';
+}
+function regApri(){
+  var sh=document.getElementById('reg-sheet'); if(!sh) return;
+  regRender();
+  sh.classList.add('aperta'); sh.setAttribute('aria-hidden','false');
+  document.body.classList.add('reg-bloccato');
+}
+function regChiudi(){
+  var sh=document.getElementById('reg-sheet'); if(!sh) return;
+  sh.classList.remove('aperta'); sh.setAttribute('aria-hidden','true');
+  document.body.classList.remove('reg-bloccato');
+}
+(function regAvvia(){
+  var sh=document.getElementById('reg-sheet'), apri=document.getElementById('reg-apri');
+  if(!sh||!apri) return;
+  // La casella di ricerca TRASLOCA dentro la tendina: e' lo stesso elemento di
+  // sempre (#loc-box), quindi tutta la ricerca continua a funzionare com'e'.
+  if(window.innerWidth<=900){
+    var slot=document.getElementById('reg-cerca-slot'), box=document.getElementById('loc-box');
+    if(slot&&box) slot.appendChild(box);
+  }
+  apri.addEventListener('click', regApri);
+  document.getElementById('reg-chiudi').addEventListener('click', regChiudi);
+  // Tocco sul velo scuro = chiudi. Sul pannello no: e' dentro #reg-sheet.
+  sh.addEventListener('click', function(ev){ if(ev.target===sh) regChiudi(); });
+  document.addEventListener('keydown', function(ev){ if(ev.key==='Escape'&&sh.classList.contains('aperta')) regChiudi(); });
+  document.getElementById('reg-lista').addEventListener('click', function(ev){
+    var b=ev.target.closest?ev.target.closest('.reg-riga'):null;
+    if(!b) return;
+    var v=b.getAttribute('data-v');
+    var sel=document.getElementById('region-select');
+    sel.value=v;
+    sel.dispatchEvent(new Event('change'));
+    // Francia e Indietro non scelgono niente: ripopolano la lista e si resta qui.
+    if(v==='__francia'||v==='__indietro'){ regRender(); return; }
+    regChiudi();
+  });
+  document.getElementById('region-select').addEventListener('change', regEtichetta);
+  regEtichetta();
+})();
 document.getElementById('region-select').addEventListener('change', function(){
   var rk = this.value;
   if(!rk) return;
