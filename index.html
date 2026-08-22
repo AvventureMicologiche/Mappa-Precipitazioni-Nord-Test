@@ -4194,7 +4194,13 @@ function loadData(pastDate,nowDate,labelPeriodo){
     // Vista PAESE (ricerca per località): come per il link condiviso, il fit
     // sulle regioni la scavalcherebbe. Resta finché l'utente non tocca una
     // regione a mano o non torna indietro.
-    else if(_vistaPaese) fitMapToPunto(_vistaPaese.lat,_vistaPaese.lon,LOC_TACCA_FINE);
+    // ⚠️ ...ma NON se la vista arriva da un link condiviso (22/8/2026): da
+    // quando il link porta anche il segnaposto, _vistaPaese e' impostato
+    // anche a chi APRE il link, e al secondo giro di loadData questo fit
+    // buttava via lo zoom di chi aveva condiviso (link a 7,75, mappa a 9).
+    // Chi condivide comanda: _vistaDaLink si spegne appena l'utente sceglie
+    // una regione o cerca un altro paese.
+    else if(_vistaPaese && !_vistaDaLink) fitMapToPunto(_vistaPaese.lat,_vistaPaese.lon,LOC_TACCA_FINE);
     else fitMapToRegions(regions);
   }
 
@@ -6550,6 +6556,7 @@ function locVai(p) {
   regioni.forEach(function (k) { document.getElementById('chk-' + k).checked = true; });
 
   _vistaPaese = { lat: p.lat, lon: p.lon, n: p.n };   // il nome serve al link condiviso
+  _vistaDaLink = false;   // ricerca nuova: comanda lei, non piu' il link da cui sei arrivato
   _daRicerca = true;
   document.getElementById('chk-' + regioni[regioni.length - 1]).dispatchEvent(new Event('change'));
   _daRicerca = false;
