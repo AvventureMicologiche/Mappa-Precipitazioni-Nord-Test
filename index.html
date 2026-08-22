@@ -6484,10 +6484,13 @@ function locEvidenzia(n) {
 function fitMapToPunto(lat, lon, tacca) {
   try { map.invalidateSize({ pan: false }); } catch (e) {}
   var z = locZoomTacca(tacca);
-  var isDesk = window.innerWidth > 900;
-  // mezza colonna dei pannelli (~420 px), con il cap per le finestre strette
-  var shift = isDesk ? Math.min(210, Math.max(0, map.getSize().x / 2 - 60)) : 0;
-  map.setView(map.unproject(map.project(L.latLng(lat, lon), z).subtract(L.point(shift, 0)), z), z, { animate: false });
+  // ⚠️ NIENTE spostamento a est (22/8/2026): il paese cercato si centra sulle
+  // sue coordinate e basta. Lo spostamento serviva a fitMapToRegions, dove la
+  // sagoma da mostrare e' larga e il pannello se ne mangia un pezzo; per un
+  // PUNTO non serve, perche' i pannelli coprono i primi 420 px e il centro
+  // dello schermo sta molto piu' a destra. Spostare voleva solo dire non
+  // centrare dove uno si aspetta.
+  map.setView(L.latLng(lat, lon), z, { animate: false });
 
   clearTimeout(_locRicontrollo);
   var atteso = { lat: lat, lon: lon, t: tacca };
@@ -6564,7 +6567,7 @@ function locVai(p) {
   if (sel) {
     var o = sel.querySelector('option[value="__paese"]');
     if (!o) { o = document.createElement('option'); o.value = '__paese'; sel.insertBefore(o, sel.firstChild); }
-    o.textContent = '📍 ' + p.n + (regioni.length > 1 ? ' (' + regioni.length + ' regioni)' : '');
+    o.textContent = '📍 ' + p.n;   // solo il nome: il numero di regioni non dice niente a chi legge
     sel.value = '__paese';
     if (typeof regEtichetta === 'function') regEtichetta();   // la tendina nostra mostra dove sei
     if (typeof regChiudi === 'function') regChiudi();      // scelto il paese: via la tendina, si guarda la mappa
