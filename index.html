@@ -7185,6 +7185,12 @@ function regChiudi(){
 (function regAvvia(){
   var sh=document.getElementById('reg-sheet'), apri=document.getElementById('reg-apri');
   if(!sh||!apri) return;
+  // ⚠️ LA TENDINA ESCE DAL CONTENITORE DELLA MAPPA (22/8/2026). Nasce dentro
+  // #map, e li' dentro Leaflet annulla il touchmove per trascinare la mappa:
+  // il dito non faceva scorrere l'elenco e si vedevano solo le prime regioni,
+  // sempre (misurato: contenuto 1286 px in 869, e defaultPrevented=true sul
+  // touchmove). Spostata in fondo al body, Leaflet non la vede nemmeno.
+  document.body.appendChild(sh);
   // La casella di ricerca TRASLOCA dentro la tendina: e' lo stesso elemento di
   // sempre (#loc-box), quindi tutta la ricerca continua a funzionare com'e'.
   locCollocaCasella();
