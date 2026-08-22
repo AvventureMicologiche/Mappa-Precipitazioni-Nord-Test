@@ -223,7 +223,16 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      restano validi come SPOSTAMENTO: scendeva di 52 px e finiva sopra
      l'elenco, coprendo «OPPURE SCEGLI LA REGIONE» (22/8/2026). */
   #reg-sheet #loc-box{position:relative;top:auto;right:auto;left:auto;width:100%;}
-  #reg-sheet #loc-drop{position:static;margin-top:4px;max-height:230px;}
+  /* ⚠️ Nascosta finche' non e' dentro la tendina: il trasloco lo fa il
+     codice, e per un istante dopo il caricamento la casella si vedeva
+     sotto la barra delle regioni (segnalato il 22/8/2026). */
+  #loc-box{display:none;}
+  #reg-sheet #loc-box{display:block;}
+  /* ⚠️ ASSOLUTA, non nel flusso: se la tendina dei risultati sta dentro il
+     flusso, #loc-box diventa alto quanto l'elenco e la lente, che e'
+     ancorata al 50% della casella, finisce in mezzo ai risultati (visto
+     accanto a «Bardineto» il 22/8/2026). Stesso difetto della × . */
+  #reg-sheet #loc-drop{max-height:230px;}
   .reg-riga{display:block;width:100%;box-sizing:border-box;text-align:left;background:none;
     border:0;border-top:1px solid rgba(255,255,255,.16);color:#fff;font-family:inherit;
     font-size:18px;font-weight:600;padding:14px 6px;cursor:pointer;}
@@ -6490,7 +6499,14 @@ function fitMapToPunto(lat, lon, tacca) {
   // PUNTO non serve, perche' i pannelli coprono i primi 420 px e il centro
   // dello schermo sta molto piu' a destra. Spostare voleva solo dire non
   // centrare dove uno si aspetta.
-  map.setView(L.latLng(lat, lon), z, { animate: false });
+  // Su TELEFONO il punto non va al centro esatto ma un po' piu' su: in basso
+  // c'e' il pannello della legenda, che aperto si mangia 268 px di 869 (misurato
+  // a 412x915), e il paese finiva proprio sul suo bordo. Il centro della mappa si
+  // sposta a SUD del paese di un decimo dell'altezza, e il paese sale al 40%
+  // dello schermo. Su desktop niente: li' i pannelli stanno a sinistra.
+  var _c = map.project(L.latLng(lat, lon), z);
+  if (window.innerWidth <= 900) _c = _c.add(L.point(0, map.getSize().y * 0.10));
+  map.setView(map.unproject(_c, z), z, { animate: false });
 
   clearTimeout(_locRicontrollo);
   var atteso = { lat: lat, lon: lon, t: tacca };
