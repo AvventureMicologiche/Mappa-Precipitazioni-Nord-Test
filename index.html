@@ -6549,7 +6549,7 @@ function locVai(p) {
   document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function (cb) { cb.checked = false; });
   regioni.forEach(function (k) { document.getElementById('chk-' + k).checked = true; });
 
-  _vistaPaese = { lat: p.lat, lon: p.lon };
+  _vistaPaese = { lat: p.lat, lon: p.lon, n: p.n };   // il nome serve al link condiviso
   _daRicerca = true;
   document.getElementById('chk-' + regioni[regioni.length - 1]).dispatchEvent(new Event('change'));
   _daRicerca = false;
@@ -7545,6 +7545,13 @@ function buildShareUrl(){
   p.set('z',String(Math.round(map.getZoom()*100)/100));
   var c=map.getCenter();
   p.set('c',c.lat.toFixed(4)+','+c.lng.toFixed(4));
+  // Il PAESE CERCATO viaggia col link (22/8/2026): senza, chi riceveva vedeva
+  // la stessa inquadratura ma senza segnaposto, e non capiva di cosa si stesse
+  // parlando. Due parametri, coordinate e nome.
+  if(_vistaPaese){
+    p.set('pl', _vistaPaese.lat.toFixed(5)+','+_vistaPaese.lon.toFixed(5));
+    if(_vistaPaese.n) p.set('pn', _vistaPaese.n);
+  }
   // Nota (7/8/2026): si era provato ad aggiungere `w`, la larghezza della mappa
   // di chi condivide, per far vedere a chi riceve la STESSA PORZIONE di
   // territorio adattando lo zoom. Provato dall'utente fra PC e telefono e
@@ -7611,7 +7618,12 @@ function captureMapBlob(scala){
     });
     // Si riallarga SOLO se l'inquadratura e' quella automatica: se l'utente
     // ha zoomato o trascinato lui, la sua scelta comanda.
-    if(_bb && !_vistaUtente && !map.getBounds().contains(_bb)){
+    // ⚠️ E nemmeno se l'inquadratura e' un PAESE CERCATO (22/8/2026): quel
+    // riquadro e' voluto quanto uno zoom fatto a mano, e riallargarlo
+    // significava scattare la foto della regione intera, cioe' com'era
+    // prima della ricerca. Segnalato: «scarica l'immagine pre inserimento
+    // date», ed era proprio lo zoom che tornava indietro.
+    if(_bb && !_vistaUtente && !_vistaPaese && !map.getBounds().contains(_bb)){
       vistaPrec={c:map.getCenter(),z:map.getZoom()};
       // Padding asimmetrico: su desktop i pannelli di sinistra (~410px) sono
       // sovrapposti alla mappa — un fit centrato nasconderebbe dietro di loro
@@ -8046,6 +8058,23 @@ if(_btnShot){
       if(vistaDalLink){
         _vistaDaLink=true;   // su telefono protegge la vista da centraRegioneInStriscia
         map.setView([c[0],c[1]],z,{animate:false});
+      }
+      // Il segnaposto del paese, se il link lo porta. Va DOPO la vista, che
+      // se no il fit delle regioni se lo mangerebbe, e mette anche il nome
+      // nella casella: chi apre deve leggere DI CHE POSTO si parla.
+      var _pl=(q.get('pl')||'').split(',').map(Number), _pn=q.get('pn')||'';
+      if(_pl.length===2 && isFinite(_pl[0]) && isFinite(_pl[1])){
+        _vistaPaese={lat:_pl[0],lon:_pl[1],n:_pn};
+        try{ locSegnaposto(_pl[0],_pl[1]); }catch(e){}
+        var _li=document.getElementById('loc-input');
+        if(_li&&_pn){ _li.value=_pn; document.getElementById('loc-box').classList.add('pieno');
+                      if(typeof locFermaChiamata==='function') locFermaChiamata(); }
+        if(typeof regEtichetta==='function'){
+          var _sel=document.getElementById('region-select');
+          if(_sel&&_pn){ var _o=_sel.querySelector('option[value="__paese"]');
+            if(!_o){ _o=document.createElement('option'); _o.value='__paese'; _sel.insertBefore(_o,_sel.firstChild); }
+            _o.textContent='📍 '+_pn; _sel.value='__paese'; regEtichetta(); }
+        }
       } else if(window.innerWidth<=900){
         try{ fitMapToRegions(keys); }catch(e){}
       }
