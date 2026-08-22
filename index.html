@@ -313,6 +313,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    detto, se no sembra un errore dell'elenco. */
 .loc-ex{font-size:11px;color:#9aa4b2;font-style:italic;}
 .loc-nota{padding:7px 9px;font-size:12px;color:#6b7686;font-style:italic;}
+.loc-testa{padding:6px 9px 4px;font-size:11px;font-weight:700;color:#9aa4b2;
+  text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #f0f2f6;}
 /* Il segnaposto del posto cercato. divIcon e non l'icona di serie di Leaflet:
    quella carica due PNG da unpkg, e un segnaposto che non compare perché una
    CDN non risponde è peggio che non averlo. Qui è un SVG dentro la pagina. */
@@ -6138,11 +6140,12 @@ var LOC_MAX_RIGHE = 8;
 // riconosce la valle. Quando poi scegli le date la domanda cambia in «dove ha
 // piovuto?», e lì serve largo. Con un raggio solo una delle due era sempre
 // sbagliata.
-var LOC_RAGGIO_SCELTA = 15;  // alla scelta del paese
+var LOC_RAGGIO_SCELTA = 10;  // alla scelta del paese
 var LOC_RAGGIO_VISTA  = 40;  // dopo il click sul periodo, e a ogni ricarica
 var _locIndice = null, _locGriglia = null, _locCaricamento = null;
 var _locRighe = [], _locSel = -1, _locT = null;
 var _locPin = null;           // il segnaposto rosso del posto cercato
+var _locRicontrollo = null;   // vedi fitMapToPunto
 var _vistaPaese = null;      // {lat,lon} finché l'utente resta sul paese cercato
 var _daRicerca = false;      // per distinguere le spunte nostre da quelle a dito
 
@@ -6261,6 +6264,24 @@ function locSegnapostoVia() {
   if (_locPin) { map.removeLayer(_locPin); _locPin = null; }
 }
 
+// ── Le ultime località scelte ──────────────────────────────────────────────
+// Chi cerca funghi torna sugli stessi posti: rifare ogni volta «v-i-o-z-e-n-e»
+// e' lavoro inutile. Si tengono le ultime LOC_RECENTI e si mostrano appena si
+// tocca la casella, prima di scrivere qualsiasi cosa. Stanno in localStorage,
+// che e' roba sua e resta sul suo computer: nessuno le vede e non viaggiano.
+var LOC_RECENTI = 6;
+var LOC_CHIAVE = 'pluvio_localita_recenti';
+function locLeggiRecenti() {
+  try { return JSON.parse(localStorage.getItem(LOC_CHIAVE) || '[]'); } catch (e) { return []; }
+}
+function locSalvaRecente(p) {
+  try {
+    var a = locLeggiRecenti().filter(function (x) { return !(x.n === p.n && x.reg === p.reg); });
+    a.unshift({ n: p.n, lat: p.lat, lon: p.lon, sg: p.sg, reg: p.reg, pop: p.pop, frazione: !!p.frazione, q: p.q });
+    localStorage.setItem(LOC_CHIAVE, JSON.stringify(a.slice(0, LOC_RECENTI)));
+  } catch (e) {}   // navigazione in incognito o spazio finito: pazienza
+}
+
 function locChiudi() {
   var d = document.getElementById('loc-drop');
   d.classList.remove('aperta'); d.innerHTML = '';
@@ -6268,7 +6289,7 @@ function locChiudi() {
   document.getElementById('loc-input').setAttribute('aria-expanded', 'false');
 }
 
-function locDisegna(res, testo) {
+function locDisegna(res, testo, intestazione) {
   var d = document.getElementById('loc-drop');
   _locRighe = res.righe; _locSel = -1;
   if (!res.righe.length) {
@@ -6295,6 +6316,7 @@ function locDisegna(res, testo) {
   }).join('');
   if (res.totale > res.righe.length)
     html += '<div class="loc-nota">e altre ' + (res.totale - res.righe.length) + ': scrivi qualche lettera in più</div>';
+  if (intestazione) html = '<div class="loc-testa">' + intestazione + '</div>' + html;
   d.innerHTML = html;
   d.classList.add('aperta');
   document.getElementById('loc-input').setAttribute('aria-expanded', 'true');
@@ -6323,7 +6345,25 @@ function locEvidenzia(n) {
 // fitMapToRegions (getBoundsZoom + setView con lo spostamento a est), perché su
 // desktop i pannelli coprono la sinistra della mappa e un fitBounds ingenuo
 // metterebbe il paese cercato proprio sotto il pannello.
+// ⚠️ DUE DIFESE, tutte e due nate da guai veri.
+//
+// invalidateSize(): Leaflet tiene in CACHE la dimensione del contenitore e la
+// aggiorna solo quando se ne accorge. Se la mappa e' stata creata mentre la
+// finestra non era ancora impaginata, `getSize()` resta 0x0 e `getBoundsZoom`
+// restituisce numeri senza senso (misurato: zoom 19, il paese nell'angolo).
+// Costa una lettura del layout e toglie di mezzo un'intera classe di misteri.
+//
+// Il ricontrollo dopo 800 ms: il 22/8/2026 l'utente ha mandato uno screenshot
+// in cui la ricerca era andata a buon fine — segnaposto al suo posto, tre
+// regioni caricate — ma la mappa era rimasta all'INQUADRATURA DI APERTURA.
+// Non sono riuscito a riprodurlo (pagina fresca, stesso formato di finestra,
+// zoom 11,25 stabile per sei secondi), quindi non so chi muova la mappa dopo
+// di noi. Invece di indovinare, si RICONTROLLA: se dopo un attimo il centro e'
+// finito lontano dal paese, si rimette a posto. Una lettura e, quasi sempre,
+// niente. ⚠️ Non tocca nulla se l'utente ha gia' trascinato o zoomato lui, ne'
+// se nel frattempo ha cercato un altro posto.
 function fitMapToPunto(lat, lon, raggioKm) {
+  try { map.invalidateSize({ pan: false }); } catch (e) {}
   var dLat = raggioKm / 111;
   var dLon = raggioKm / (111.32 * Math.cos(lat * Math.PI / 180));
   var lb = L.latLngBounds([[lat - dLat, lon - dLon], [lat + dLat, lon + dLon]]);
@@ -6337,6 +6377,18 @@ function fitMapToPunto(lat, lon, raggioKm) {
     if (shift > maxShift) shift = maxShift;
   }
   map.setView(map.unproject(map.project(lb.getCenter(), z).subtract(L.point(shift, 0)), z), z, { animate: false });
+
+  clearTimeout(_locRicontrollo);
+  var atteso = { lat: lat, lon: lon, r: raggioKm };
+  _locRicontrollo = setTimeout(function () {
+    if (!_vistaPaese || _vistaPaese.lat !== lat || _vistaPaese.lon !== lon) return;  // cerca altro
+    if (typeof _vistaUtente !== 'undefined' && _vistaUtente) return;                 // comanda lui
+    var c = map.getCenter();
+    var dy = (c.lat - lat) * 111;
+    var dx = (c.lng - lon) * 111.32 * Math.cos(lat * Math.PI / 180);
+    if (Math.sqrt(dx * dx + dy * dy) < atteso.r * 2.5) return;                       // e' dove deve
+    fitMapToPunto(atteso.lat, atteso.lon, atteso.r);
+  }, 800);
 }
 
 function locVai(p) {
@@ -6398,6 +6450,7 @@ function locVai(p) {
     sel.value = '__paese';
   }
 
+  locSalvaRecente(p);
   try { gtag('event', 'cerca_localita', { regioni: regioni.join(','), stime: !!stime }); } catch (e) {}
 }
 
@@ -6407,8 +6460,17 @@ function locVai(p) {
   var box = document.getElementById('loc-box'), drop = document.getElementById('loc-drop');
 
   // Il focus fa partire lo scarico: quando l'utente arriva alla terza lettera
-  // i due file ci sono già, e la tendina si apre senza attesa.
-  inp.addEventListener('focus', function () { locCarica().catch(function () {}); });
+  // i due file ci sono già, e la tendina si apre senza attesa. E intanto si
+  // mostrano le ultime cercate, che nove volte su dieci sono quello che vuole.
+  inp.addEventListener('focus', function () {
+    locCarica().catch(function () {});
+    // ⚠️ Il testo si seleziona tutto: dopo una ricerca nella casella resta il
+    // nome scelto, e senza questo uno dovrebbe cancellarlo a mano prima di
+    // scriverne un altro. Così la prima lettera che batte lo sostituisce.
+    try { inp.select(); } catch (e) {}
+    var rec = locLeggiRecenti();
+    if (rec.length) locDisegna({ righe: rec, totale: rec.length }, '', 'Cercate di recente');
+  });
 
   inp.addEventListener('input', function () {
     box.classList.toggle('pieno', !!inp.value);
@@ -6462,6 +6524,15 @@ function locVai(p) {
 
   document.getElementById('loc-clear').addEventListener('click', function () {
     inp.value = ''; box.classList.remove('pieno'); locChiudi(); inp.focus();
+  });
+
+  // Ritocco alla tendina delle recenti: si apre anche ri-toccando la casella
+  // quando dentro c'è già un nome (il focus non riscatta se era già a fuoco).
+  inp.addEventListener('mouseup', function () {
+    if (document.getElementById('loc-drop').classList.contains('aperta')) return;
+    if (locNormalizza(inp.value).length >= LOC_MIN) return;
+    var rec = locLeggiRecenti();
+    if (rec.length) locDisegna({ righe: rec, totale: rec.length }, '', 'Cercate di recente');
   });
 })();
 
