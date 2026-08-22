@@ -7876,10 +7876,22 @@ function didascaliaFoto(){
   var nomi=getActiveRegions().map(function(k){return (REGIONS[k]&&REGIONS[k].name)||k;});
   var f=function(d){return new Date(d).toLocaleDateString('it-IT',{day:'numeric',month:'short'});};
   var quando=(currentPast&&currentNow)?' ('+f(currentPast)+' - '+f(currentNow)+')':'';
+  // ⚠️ Se c'e' un paese cercato e' LUI il soggetto (22/8/2026): chi riceve la
+  // foto legge «Viozene», non «Liguria, Provenza-Costa Azzurra (FR), Piemonte»,
+  // che e' l'elenco delle regioni che servono A NOI per disegnare. «e dintorni»
+  // perche' la mappa mostra la zona attorno, non il paese soltanto.
+  if(_vistaPaese && _vistaPaese.n)
+    return 'Dove ha piovuto a '+_vistaPaese.n+' e dintorni'+quando+': mappa dei pluviometri, dati reali di stazione';
   return 'Dove ha piovuto in '+nomi.join(', ')+quando+': mappa dei pluviometri, dati reali di stazione';
 }
 function shareFileName(){
-  return 'pioggia_'+getActiveRegions().join('-')+'_'+fmtISOLocal(new Date(currentPast))+'_'+fmtISOLocal(new Date(currentNow))+'.png';
+  // Stesso ragionamento della didascalia: se c'e' un paese, il file porta il
+  // suo nome. pioggia_viozene_2026-08-15_2026-08-21.png
+  var chi=(_vistaPaese&&_vistaPaese.n)
+    ? _vistaPaese.n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
+        .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
+    : getActiveRegions().join('-');
+  return 'pioggia_'+chi+'_'+fmtISOLocal(new Date(currentPast))+'_'+fmtISOLocal(new Date(currentNow))+'.png';
 }
 // Il menu di condivisione nativo va usato solo sui dispositivi touch: anche
 // Chrome su Windows ha navigator.share, ma la tendina di sistema scarta il
