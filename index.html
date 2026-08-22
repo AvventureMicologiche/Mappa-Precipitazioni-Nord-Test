@@ -262,12 +262,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 /* ── Ricerca per località (22/8/2026) ──────────────────────────────────────
    Stessa tavolozza dei pannelli (blu #1b3f6e, fondo #f0f4fb, bordo #d0d8e8):
    la casella deve sembrare parte del pannello, non un pezzo appiccicato. */
-/* Su DESKTOP la casella galleggia sulla mappa in alto a sinistra, di fianco ai
-   tasti dello zoom (che stanno a x 10-44) e con il bordo destro allineato ai
-   pannelli sotto: 54+356 = 10+400 = 410. Il pannello regioni qui non c'è —
-   su desktop le regioni si scelgono cliccando la mappa — quindi la casella
-   deve stare in piedi da sola. */
-#loc-box{position:absolute;top:12px;left:54px;width:356px;z-index:1001;box-sizing:border-box;}
+/* Su DESKTOP la casella sta in alto a DESTRA, appoggiata sopra il pannello
+   «Iscriviti» e allineata a lui (right:14px, width:368px): formano una colonna
+   sola. Il primo giro l'aveva messa in alto a sinistra, di fianco ai tasti
+   dello zoom, ma quel lato è già la colonna del lavoro — hint, periodo,
+   legenda — e la casella ci finiva in mezzo. A destra sopra c'era il vuoto. */
+#loc-box{position:absolute;top:52px;right:14px;width:368px;z-index:1001;box-sizing:border-box;}
 #loc-input{
   width:100%;box-sizing:border-box;
   padding:8px 30px 8px 32px;         /* spazio a sinistra per la lente, a destra per la × */
@@ -313,13 +313,18 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    detto, se no sembra un errore dell'elenco. */
 .loc-ex{font-size:11px;color:#9aa4b2;font-style:italic;}
 .loc-nota{padding:7px 9px;font-size:12px;color:#6b7686;font-style:italic;}
+/* Il segnaposto del posto cercato. divIcon e non l'icona di serie di Leaflet:
+   quella carica due PNG da unpkg, e un segnaposto che non compare perché una
+   CDN non risponde è peggio che non averlo. Qui è un SVG dentro la pagina. */
+.loc-pin{background:none;border:none;}
+.loc-pin svg{display:block;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45));}
 /* TELEFONO E TABLET (misurato a 360x640 e 393x760, non dedotto).
    Qui il pannello regioni ESISTE ed è una barra alta 42px in cima alla mappa,
    con dentro la tendina delle regioni; i tasti dello zoom invece non ci sono.
    La casella si mette SOTTO quella barra, a tutta larghezza meno i margini:
    con la misura del desktop (left 54, width 356) sbordava di 50px a destra. */
 @media (max-width:900px){
-  #loc-box{top:48px;left:7px;right:7px;width:auto;}
+  #loc-box{top:48px;left:7px;right:7px;width:auto;}   /* il pannello Iscriviti qui non c'è */
   /* ⚠️ 16px NON è un capriccio tipografico: sotto i 16px iOS ingrandisce la
      pagina da solo quando si apre la tastiera, e la mappa resta storta. */
   #loc-input{font-size:16px;padding-top:9px;padding-bottom:9px;}
@@ -6125,10 +6130,15 @@ function toggleRegionFromMap(rk){
 //     che uno si aspetta cercando un posto.
 var LOC_MIN = 3;             // lettere prima di aprire la tendina (vedi HTML)
 var LOC_MAX_RIGHE = 8;
-var LOC_RAGGIO_VISTA = 25;   // km di raggio inquadrati; i dati coprono 30 km,
-                             // così una passata di dito non trova subito il bianco
+// Km di raggio inquadrati. ⚠️ NON è il raggio dei DATI, che resta 30 km e
+// decide solo QUALI regioni caricare: qui si decide solo quanto si vede.
+// Partito da 25 (118x60 km su un desktop 1280): troppo stretto, uno non
+// riconosce dove sta. A 40 se ne vedono 190x96, cioè la valle e quelle
+// intorno.
+var LOC_RAGGIO_VISTA = 40;
 var _locIndice = null, _locGriglia = null, _locCaricamento = null;
 var _locRighe = [], _locSel = -1, _locT = null;
+var _locPin = null;           // il segnaposto rosso del posto cercato
 var _vistaPaese = null;      // {lat,lon} finché l'utente resta sul paese cercato
 var _daRicerca = false;      // per distinguere le spunte nostre da quelle a dito
 
@@ -6179,6 +6189,40 @@ function locRegioniVicine(lat, lon) {
   return v ? v.split('+') : [];
 }
 
+// ⚠️ L'ELENCO HA SOLO I COMUNI, e chi cerca funghi cerca la FRAZIONE.
+// Trovato il 22/8/2026: «Viozene» non c'era, perché è una frazione di Ormea
+// con 43 abitanti e sta 10 km più in là del capoluogo. Come lei mancavano
+// Prato Nevoso, Valcasotto, Piani di Artavaggio. Metterle tutte nel file non
+// si può — in Italia sono decine di migliaia — ma sono anche la CODA: quando
+// l'elenco non trova niente, e solo allora, si chiede al geocoder di
+// Open-Meteo, che le ha. Una chiamata sola, sui pochi casi che sfuggono.
+var GEO_REGIONI = {
+  'Piemonte':'piemonte', "Valle d'Aosta":'valledaosta', 'Lombardia':'lombardia',
+  'Veneto':'veneto', 'Friuli Venezia Giulia':'friuli', 'Liguria':'liguria',
+  'Emilia-Romagna':'emilia', 'Toscana':'toscana', 'Umbria':'umbria', 'Marche':'marche',
+  'Lazio':'lazio', 'Abruzzo':'abruzzo', 'Molise':'molise', 'Campania':'campania',
+  'Puglia':'puglia', 'Basilicata':'basilicata', 'Calabria':'calabria',
+  'Sicilia':'sicilia', 'Sardegna':'sardegna'
+};
+function locDaGeocoder(testo) {
+  return fetch('https://geocoding-api.open-meteo.com/v1/search?name=' +
+               encodeURIComponent(testo) + '&count=10&language=it&countryCode=IT')
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      return (j.results || []).map(function (x) {
+        var a1 = x.admin1 || '', a2 = x.admin2 || '';
+        var k = a1.indexOf('Trentino') === 0
+          ? (a2.indexOf('Bolzano') >= 0 ? 'altoadige' : 'trentino')
+          : GEO_REGIONI[a1];
+        if (!k || !document.getElementById('chk-' + k)) return null;
+        return { n: x.name, lat: x.latitude, lon: x.longitude,
+                 sg: a2.replace(/^Provincia (di |dell'|della |del )?/i, '').slice(0, 14),
+                 reg: k, pop: x.population || 0, q: locNormalizza(x.name), frazione: true };
+      }).filter(Boolean);
+    })
+    .catch(function () { return []; });
+}
+
 function locCerca(testo) {
   var q = locNormalizza(testo);
   if (!q || !_locIndice) return { righe: [], totale: 0 };
@@ -6194,6 +6238,23 @@ function locCerca(testo) {
   inizio.sort(perPop); dentro.sort(perPop);
   var tutte = inizio.concat(dentro);
   return { righe: tutte.slice(0, LOC_MAX_RIGHE), totale: tutte.length };
+}
+
+// ⚠️ interactive:false — il segnaposto NON deve rubare il clic alle stazioni
+// che gli finiscono sotto: quelle hanno il tooltip coi millimetri, che è il
+// motivo per cui uno è lì.
+function locSegnaposto(lat, lon) {
+  locSegnapostoVia();
+  var svg = '<svg viewBox="0 0 24 34" width="24" height="34" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M12 0C5.4 0 0 5.4 0 12c0 8.4 12 22 12 22s12-13.6 12-22c0-6.6-5.4-12-12-12z" fill="#e12b2b"/>' +
+    '<circle cx="12" cy="12" r="4.6" fill="#fff"/></svg>';
+  _locPin = L.marker([lat, lon], {
+    icon: L.divIcon({ className: 'loc-pin', html: svg, iconSize: [24, 34], iconAnchor: [12, 34] }),
+    interactive: false, keyboard: false, zIndexOffset: 2000
+  }).addTo(map);
+}
+function locSegnapostoVia() {
+  if (_locPin) { map.removeLayer(_locPin); _locPin = null; }
 }
 
 function locChiudi() {
@@ -6224,7 +6285,7 @@ function locDisegna(res, testo) {
     var reg = (typeof REGIONS !== 'undefined' && REGIONS[p.reg] && REGIONS[p.reg].name) || p.reg;
     return '<div class="loc-riga" role="option" data-i="' + i + '">' +
              '<span class="loc-nome">' + nome + '</span>' +
-             (p.pop ? '' : '<span class="loc-ex">ex comune</span>') +
+             (p.frazione ? '<span class="loc-ex">frazione</span>' : (p.pop ? '' : '<span class="loc-ex">ex comune</span>')) +
              '<span class="loc-dove">' + p.sg + ' · ' + reg + '</span>' +
            '</div>';
   }).join('');
@@ -6303,6 +6364,7 @@ function locVai(p) {
 
   // DOPO il change: il suo fitMapToRegions ci passerebbe sopra
   fitMapToPunto(p.lat, p.lon, LOC_RAGGIO_VISTA);
+  locSegnaposto(p.lat, p.lon);
 
   // L'avviso delle stime. L'Abruzzo è l'unica regione senza pluviometri reali,
   // e ci sono una manciata di isole troppo lontane da qualsiasi stazione: in
@@ -6349,7 +6411,15 @@ function locVai(p) {
     _locT = setTimeout(function () {
       locCarica().then(function () {
         if (inp.value !== testo) return;   // ha continuato a scrivere
-        locDisegna(locCerca(testo), testo);
+        var res = locCerca(testo);
+        if (res.totale) { locDisegna(res, testo); return; }
+        // niente fra i comuni: si prova con le frazioni, dicendolo
+        drop.innerHTML = '<div class="loc-nota">cerco anche fra le frazioni…</div>';
+        drop.classList.add('aperta');
+        return locDaGeocoder(testo).then(function (extra) {
+          if (inp.value !== testo) return;
+          locDisegna({ righe: extra.slice(0, LOC_MAX_RIGHE), totale: extra.length }, testo);
+        });
       }).catch(function () {
         drop.innerHTML = '<div class="loc-nota">Elenco località non raggiungibile, riprova più tardi</div>';
         drop.classList.add('aperta');
@@ -6416,6 +6486,7 @@ function resetToStart(){
   var _li=document.getElementById('loc-input');
   if(_li){ _li.value=''; document.getElementById('loc-box').classList.remove('pieno'); }
   var _op2=document.querySelector('#region-select option[value="__paese"]'); if(_op2) _op2.remove();
+  if(typeof locSegnapostoVia==='function') locSegnapostoVia();
   document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb2){ cb2.checked=false; });
   Object.keys(regionBorders).forEach(function(rk2){ map.removeLayer(regionBorders[rk2]); delete regionBorders[rk2]; });
   clearMarkers(); clearHeatmap();
@@ -6880,7 +6951,7 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
     // Una spunta messa a DITO vuol dire «non sto più guardando quel paese»:
     // la vista torna a inquadrare le regioni. Le spunte messe dalla ricerca
     // passano di qui con _daRicerca alzato e non spengono niente.
-    if(!_daRicerca) _vistaPaese=null;
+    if(!_daRicerca){ _vistaPaese=null; if(typeof locSegnapostoVia==='function') locSegnapostoVia(); }
     var rk=this.value;
     // Massimo 3 SELEZIONI insieme (i bottoni combo Piemonte-VdA / Trentino-A.A.
     // valgono 1: due combo + una singola = 5 regioni reali, ma 3 selezioni).
