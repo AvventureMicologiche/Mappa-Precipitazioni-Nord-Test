@@ -4468,6 +4468,42 @@ function usaGiorno(data){
   return {date:data.date,source:data.source,count:reali.length,stations:reali};
 }
 
+// ═══════════════════════════════════════════════════════════════
+// COPERTURA MINIMA DEL PERIODO (22/8/2026)
+// ═══════════════════════════════════════════════════════════════
+// I caricatori sommano i giorni che TROVANO e disegnano il pallino come se la
+// stazione avesse coperto tutto il periodo. Una che ha consegnato 3 giorni su
+// 30 finisce in mappa con il totale di quei 3 e l'etichetta di 30: se in quei
+// tre giorni non e' piovuto, diventa un pallino BIANCO che dichiara «0 mm in
+// 30 giorni». E' lo stesso «assente non e' zero» corretto nel collector il
+// 21/8/2026, un piano piu' su: allora era la raccolta, qui e' la somma.
+//
+// Trovato il 22/8 in Emilia, guardando otto punti bianchi impossibili in
+// pianura. Cinque non erano pluviometri rotti: erano stazioni che ARPAE aveva
+// smesso di pubblicare (Bassarone cassa e Medelana cancellate dall'anagrafe,
+// S. Bartolomeo in Bosco rimasta senza il pluviometro fra le sue variabili).
+// Sui giorni che avevano davvero consegnato erano SANE: Finale Emilia al 93%
+// dei cinque vicini piu' prossimi, Medelana al 100%, Martorano all'83%.
+//
+// IL DENOMINATORE non e' il numero di giorni chiesti, e nemmeno quello dei file
+// scaricati: sono i giorni della stazione MEGLIO COPERTA della rete. Cosi' si
+// corregge da solo quando un giorno manca a tutti o arriva a meta' — e succede
+// spesso, perche' le reti pubblicano l'aggregato di ieri a scaglioni — e non
+// puo' mai svuotare una regione, visto che chi fa da denominatore passa sempre.
+//
+// COSTO MISURATO sull'intera rete il 22/8/2026: sulla finestra di 30 giorni
+// cadono 84 pallini su 6.064 (l'1,4%), su quella di 7 giorni 58 su 5.931
+// (l'1,0%). Il dato non si perde, si perde il PALLINO: l'interpolazione dei
+// vicini copre il buco, esattamente come quando una stazione non ha ancora
+// pubblicato. Meglio un pallino in meno che una macchia asciutta falsa.
+var COPERTURA_MIN=0.60;
+function copFiltro(cop){
+  var max=0,k;
+  for(k in cop) if(cop[k]>max) max=cop[k];
+  var minimo=max*COPERTURA_MIN;
+  return function(key){ return max>0 && (cop[key]||0)<minimo; };
+}
+
 function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
   // Dal 24/7/2026 la Lombardia legge file giornalieri come le altre regioni,
   // invece di interrogare Socrata live a ogni caricamento (lento sui periodi
@@ -4506,15 +4542,17 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
   var d=new Date(pastDate);
   while(d<=nowDate){ var ds=_fmt(new Date(d)); if(ds!==todayStr) days.push(ds); d.setDate(d.getDate()+1); }
   if(days.length===0){cb([]);return;}
-  var rainMap={}, meta={};
+  var rainMap={}, meta={}, cop={};
   var pending=days.length;
   function finalizza(){
+    var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
     var out=Object.keys(rainMap).map(function(id){
+      if(_scarsa(id))return null;
       var m=meta[id];
       return {n:m.n||'—',lat:m.lat,lon:m.lon,q:m.q||0,p:m.p||'—',
               idsensore:id,                                  // serve al grafico storico
               mm:rainMap[id]<0.5?0:Math.round(rainMap[id]*10)/10};
-    }).filter(function(s){return s.lat&&s.lon;});
+    }).filter(function(s){return s&&s.lat&&s.lon;});
     if(out.length<3){ loadOpenMeteoRegion(LOMBARDIA_STATIONS,pastDate,nowDate,labelPeriodo,cb); return; } // fallback se i file mancano
     cb(out);
   }
@@ -4526,7 +4564,7 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
         if(data&&data.stations){
           data.stations.forEach(function(s){
             if(!s.id||LOMB_ESCLUSE[String(s.id)])return;
-            rainMap[s.id]=(rainMap[s.id]||0)+(s.mm||0);
+            rainMap[s.id]=(rainMap[s.id]||0)+(s.mm||0); cop[s.id]=(cop[s.id]||0)+1;
             if(!meta[s.id]) meta[s.id]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,p:s.p};
           });
         }
@@ -4652,11 +4690,13 @@ function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
 
   // Tutte le stazioni del collector, meno le escluse (vedi PIEMONTE_ESCLUSE)
 
-  var rainTot={};
+  var rainTot={}, cop={};
   var stMeta={};
 
   function finalizza(){
+    var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
     var full=Object.keys(rainTot).map(function(key){
+      if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
       return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
@@ -4683,7 +4723,7 @@ function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
             if(PIEMONTE_ESCLUSE[key]) return; // pluviometri guasti/offline, non in mappa
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
       })
@@ -4715,11 +4755,13 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
 
   if(days.length===0){cb([]);return;}
 
-  var rainTot={};
+  var rainTot={}, cop={};
   var stMeta={};
 
   function finalizza(){
+    var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
     var full=Object.keys(rainTot).map(function(key){
+      if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
       return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
@@ -4748,7 +4790,7 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
             var key=s.id||s.n;   // per ID: due stazioni omonime non vanno fuse in una
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
       })
@@ -4799,11 +4841,13 @@ function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
     d.setDate(d.getDate()+1);
   }
 
-  var rainTot={};
+  var rainTot={}, cop={};
   var stMeta={};
 
   function finalizza(){
+    var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
     var full=Object.keys(rainTot).map(function(key){
+      if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
       return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
@@ -4837,7 +4881,7 @@ function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
             var key=s.id||s.n;   // per ID: due stazioni omonime nello stesso file non vanno fuse in una
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
       })
@@ -4877,6 +4921,7 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
     '3014':1,    // Ferriere Pluvio (PC): 9% dei vicini in 46 giorni
     '12863':1,   // Lugo RA
     '14719':1,   // Corte Centrale (FE)
+    '14729':1,   // Imola2 (BO): 0,0 mm in 99 giorni di dato, ultima pioggia misurata il 10 maggio, mentre Imola a 6,1 km ne faceva 86 nei soli ultimi 45. Trovata il 22/8/2026 dalla porta «zero assoluto» di check-stazioni-ferme.js, che e' nata proprio per lei: la porta di sopra non la vedeva perche' in pianura la mediana dei vicini non arriva ai 50 mm di MIN_VICINI_MM. Conferma indipendente: ARPAE ha messo a null i suoi valori di agosto.
     // ── 21/8/2026: la regola nata in Toscana passata anche qui ──────────────
     // Sotto il 40% della mediana dei cinque vicini E sotto la meta' del vicino
     // piu' prossimo, contando solo i giorni che la stazione ha consegnato, e
@@ -4900,11 +4945,13 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
 
   if(days.length===0){cb([]);return;}
 
-  var rainTot={};
+  var rainTot={}, cop={};
   var stMeta={};
 
   function finalizza(){
+    var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
     var full=Object.keys(rainTot).map(function(key){
+      if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
       return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
@@ -4934,7 +4981,7 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
             var key=s.id||s.n;   // per ID: due stazioni omonime nello stesso file non vanno fuse in una
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
       })
@@ -4964,7 +5011,7 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
 // ═══════════════════════════════════════════════════════════════
 function loadAustriaRegion(pastDate,nowDate,labelPeriodo,cb){
   var AT_RAW=PILOT_DATA_BASE+'austria';
-  var rainTot={}, stMeta={};
+  var rainTot={}, stMeta={}, cop={};
   var dates=[];
   var d=new Date(pastDate.getTime());
   while(d<=nowDate){
@@ -4984,7 +5031,7 @@ function loadAustriaRegion(pastDate,nowDate,labelPeriodo,cb){
             var key=s.id||s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'AT'};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
       })
@@ -4992,7 +5039,9 @@ function loadAustriaRegion(pastDate,nowDate,labelPeriodo,cb){
       .finally(function(){
         pending--;
         if(pending>0) return;
+        var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
         var full=Object.keys(rainTot).map(function(key){
+          if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
           return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'AT',mm:mm<0.5?0:Math.round(mm*10)/10};
@@ -5009,7 +5058,7 @@ function loadAustriaRegion(pastDate,nowDate,labelPeriodo,cb){
 // ═══════════════════════════════════════════════════════════════
 function loadSloveniaRegion(pastDate,nowDate,labelPeriodo,cb){
   var SI_RAW=PILOT_DATA_BASE+'slovenia';
-  var rainTot={}, stMeta={};
+  var rainTot={}, stMeta={}, cop={};
   var dates=[];
   var d=new Date(pastDate.getTime());
   while(d<=nowDate){
@@ -5029,7 +5078,7 @@ function loadSloveniaRegion(pastDate,nowDate,labelPeriodo,cb){
             var key=s.id||s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'SI'};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
       })
@@ -5037,7 +5086,9 @@ function loadSloveniaRegion(pastDate,nowDate,labelPeriodo,cb){
       .finally(function(){
         pending--;
         if(pending>0) return;
+        var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
         var full=Object.keys(rainTot).map(function(key){
+          if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
           return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'SI',mm:mm<0.5?0:Math.round(mm*10)/10};
@@ -5056,7 +5107,7 @@ function loadSloveniaRegion(pastDate,nowDate,labelPeriodo,cb){
 // ═══════════════════════════════════════════════════════════════
 function loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
   var FR_RAW=PILOT_DATA_BASE+(REGIONS[regionKey].dataDir||regionKey);
-  var rainTot={}, stMeta={};
+  var rainTot={}, stMeta={}, cop={};
   var dates=[];
   var d=new Date(pastDate.getTime());
   while(d<=nowDate){
@@ -5076,7 +5127,7 @@ function loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
             var key=s.id||s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FR'};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
       })
@@ -5084,7 +5135,9 @@ function loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
       .finally(function(){
         pending--;
         if(pending>0) return;
+        var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
         var full=Object.keys(rainTot).map(function(key){
+          if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
           return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'FR',mm:mm<0.5?0:Math.round(mm*10)/10};
@@ -5110,7 +5163,7 @@ function loadSvizzeraRegion(pastDate,nowDate,labelPeriodo,cb){
      pref:'ti:', src:'oasi', pDef:'TI'},
     {raw:PILOT_DATA_BASE+'svizzera', pref:'ch:', src:'ms', pDef:''}
   ];
-  var rainTot={}, stMeta={};
+  var rainTot={}, stMeta={}, cop={};
   var dates=[];
   var d=new Date(pastDate.getTime());
   while(d<=nowDate){
@@ -5133,7 +5186,7 @@ function loadSvizzeraRegion(pastDate,nowDate,labelPeriodo,cb){
               var key=srcCfg.pref+(s.id||s.n);
               if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||srcCfg.pDef,_src:srcCfg.src};
               if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-              rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+              rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
             });
           }
         })
@@ -5141,7 +5194,9 @@ function loadSvizzeraRegion(pastDate,nowDate,labelPeriodo,cb){
         .finally(function(){
           pending--;
           if(pending>0) return;
+          var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
           var full=Object.keys(rainTot).map(function(key){
+            if(_scarsa(key))return null;
             var s=stMeta[key];if(!s)return null;
             var mm=rainTot[key]||0;
             return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p,_src:s._src,
@@ -5161,7 +5216,7 @@ function loadSvizzeraRegion(pastDate,nowDate,labelPeriodo,cb){
 // ═══════════════════════════════════════════════════════════════
 function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
   var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/'+regionKey;
-  var rainTot={}, stMeta={};
+  var rainTot={}, stMeta={}, cop={};
   var dates=[];
   var d=new Date(pastDate.getTime());
   while(d<=nowDate){
@@ -5183,7 +5238,7 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
             var key=s.id||s.n;   // per ID: due stazioni omonime nello stesso file non vanno fuse in una
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
       })
@@ -5191,7 +5246,9 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
       .finally(function(){
         pending--;
         if(pending>0) return;
+        var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
         var full=Object.keys(rainTot).map(function(key){
+          if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
           return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
@@ -5229,7 +5286,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
   var VENETO_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/veneto';
   var COV_MIN=0.8;
   var addVeneto=getActiveRegions().indexOf('veneto')<0; // no doppioni se il Veneto è già in mappa
-  var rainTot={}, stMeta={}, presReal={}, realDays=0, usaVeneto=false;
+  var rainTot={}, stMeta={}, cop={}, presReal={}, realDays=0, usaVeneto=false;
   var presMH={};
   var dates=[];
   var d=new Date(pastDate.getTime());
@@ -5255,7 +5312,9 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
       });
     };
     var mhTenute=0;
+    var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
     var full=Object.keys(rainTot).map(function(key){
+      if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       // Filtro copertura: solo stazioni OSMER, solo se il periodo ha giorni reali
       if(s._src==='osmer' && realDays>0 && (presReal[key]||0)/realDays < COV_MIN) return null;
@@ -5298,7 +5357,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
           var key=s.id||s.n;
           if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',_src:'osmer'};
           if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-          rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+          rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           if(isReal) presReal[key]=(presReal[key]||0)+1;
         });
       })
@@ -5318,7 +5377,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
           var key='mh_'+(s.id||s.n);
           if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',_src:'mh'};
           if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-          rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+          rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           presMH[key]=(presMH[key]||0)+1;
         });
       })
@@ -5338,7 +5397,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
             var key='ven_'+s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'BL',_src:'veneto'};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         })
         .catch(function(){})
@@ -5352,7 +5411,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
 // sempre dai file, nessuno switch runtime (vedi loadOSMERFriuliRegion).
 function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
   var CF_RAW=PILOT_DATA_BASE+'valledaosta-cf';
-  var rainTot={}, stMeta={};
+  var rainTot={}, stMeta={}, cop={};
   var dates=[];
   var d=new Date(pastDate.getTime());
   while(d<=nowDate){
@@ -5372,7 +5431,7 @@ function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
             var key=s.id||s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'AO'};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
       })
@@ -5380,7 +5439,9 @@ function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
       .finally(function(){
         pending--;
         if(pending>0) return;
+        var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
         var full=Object.keys(rainTot).map(function(key){
+          if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
           return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'AO',mm:mm<0.5?0:Math.round(mm*10)/10};
@@ -5425,7 +5486,7 @@ var MH_ESCLUSE={
 function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
   var RAW=MH_DATA_BASE+'meteohub-'+regionKey;
   var escluse=MH_ESCLUSE[regionKey]||{};
-  var rainTot={}, stMeta={};
+  var rainTot={}, stMeta={}, cop={};
   var dates=[];
   var d=new Date(pastDate.getTime());
   while(d<=nowDate){
@@ -5446,7 +5507,7 @@ function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
             var key=s.id||s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
       })
@@ -5454,7 +5515,9 @@ function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
       .finally(function(){
         pending--;
         if(pending>0) return;
+        var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
         var full=Object.keys(rainTot).map(function(key){
+          if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
           return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',mm:mm<0.5?0:Math.round(mm*10)/10};
@@ -5470,7 +5533,7 @@ function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
 function loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,cb){
   var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/altoadige';
   // Storico da GitHub: legge JSON giornalieri da GitHub
-  var rainTot={}, stMeta={};
+  var rainTot={}, stMeta={}, cop={};
   var dates=[];
   var d=new Date(pastDate.getTime());
   while(d<=nowDate){
@@ -5492,7 +5555,7 @@ function loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,cb){
             var key=s.id||s.n;   // per ID: due stazioni omonime nello stesso file non vanno fuse in una
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'BZ'};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
       })
@@ -5500,7 +5563,9 @@ function loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,cb){
       .finally(function(){
         pending--;
         if(pending>0) return;
+        var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
         var full=Object.keys(rainTot).map(function(key){
+          if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
           return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'BZ',
@@ -5517,7 +5582,7 @@ function loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,cb){
 function loadMeteotrentino(pastDate,nowDate,labelPeriodo,cb){
   var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/trentino';
   // Storico da GitHub: legge JSON giornalieri da GitHub
-  var rainTot={}, stMeta={};
+  var rainTot={}, stMeta={}, cop={};
   var dates=[];
   var d=new Date(pastDate.getTime());
   while(d<=nowDate){
@@ -5539,7 +5604,7 @@ function loadMeteotrentino(pastDate,nowDate,labelPeriodo,cb){
             var key=s.id||s.n;   // per ID: due stazioni omonime nello stesso file non vanno fuse in una
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'TN'};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
       })
@@ -5547,7 +5612,9 @@ function loadMeteotrentino(pastDate,nowDate,labelPeriodo,cb){
       .finally(function(){
         pending--;
         if(pending>0) return;
+        var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
         var full=Object.keys(rainTot).map(function(key){
+          if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
           return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'TN',
@@ -5655,11 +5722,13 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
   }
 
 
-  var rainTot={};
+  var rainTot={}, cop={};
   var stMeta={};
 
   function finalizza(){
+    var _scarsa=copFiltro(cop);   // copertura sotto il 60% del periodo: niente pallino
     var full=Object.keys(rainTot).map(function(key){
+      if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
       return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
@@ -5683,7 +5752,7 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
             if(TOSCANA_ESCLUSE[key]) return; // guasti, vedi TOSCANA_ESCLUSE
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
-            rainTot[key]=(rainTot[key]||0)+(s.mm||0);
+            rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
       })

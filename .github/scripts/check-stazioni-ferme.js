@@ -196,12 +196,69 @@ for (const s of giudicabili) {
     esempiVicini: primi.slice(0, 3).map(v => `${v.nome} ${Math.round(v.tot)} mm a ${v.d.toFixed(1)} km`)
   });
 }
+// ── SECONDA PORTA: LO ZERO ASSOLUTO (22/8/2026) ─────────────────────────────
+// Aperta dopo Imola2 (BO): 0,0 mm in 99 giorni consecutivi, ultima pioggia
+// misurata il 10 maggio, e nessun controllo l'aveva mai vista. Il motivo e'
+// MIN_VICINI_MM: in pianura padana la mediana dei cinque vicini su 45 giorni
+// stava a 43,2 mm, sotto la soglia di 50, e la porta di sopra si chiudeva prima
+// di guardare. Quella soglia serve — in una regione secca uno zero e' la verita'
+// — ma di fatto ACCECA IL CONTROLLO IN TUTTA LA PIANURA, cioe' proprio dove la
+// rete e' piu' fitta e i confronti sarebbero piu' affidabili.
+//
+// Lo zero ASSOLUTO e' un'altra cosa dal «misura poco»: un pluviometro sano, in
+// quaranta giorni, un decimo di millimetro lo raccoglie. Per questo qui bastano
+// 20 mm di pioggia intorno invece di 50, e non c'e' nessun rapporto da
+// calcolare: il rapporto e' zero per definizione. Restano invece uguali il
+// raggio, i cinque vicini e la somma sui SOLI giorni consegnati.
+//
+// COSTO MISURATO sull'intera rete il 22/8/2026: 5 stazioni su 4.398 con almeno
+// 40 giorni di dato, di cui una (VIFRA) gia' esclusa. Nessun rumore. La strada
+// semplice — abbassare MIN_VICINI_MM da 50 a 25 — portava invece le sospette da
+// 7 a 18, con dentro parecchi falsi allarmi del sud secco: la porta dedicata
+// costa molto meno di una soglia piu' larga per tutti.
+const ZERO_GIORNI    = parseInt(process.env.ZERO_GIORNI || '40', 10);
+const ZERO_VICINI_MM = parseFloat(process.env.ZERO_VICINI_MM || '20');
+const giaSospette = new Set(sospette.map(s => s.chiave));
+for (const s of giudicabili) {
+  const chiave = s.regione + '/' + s.id;
+  if (giaSospette.has(chiave)) continue;    // gia' passata dalla porta di sopra
+  if (s.giorni < ZERO_GIORNI) continue;
+  const indici = [];
+  s.per.forEach((v, i) => { if (v !== null) indici.push(i); });
+  const mio = indici.reduce((a, i) => a + s.per[i], 0);
+  if (mio !== 0) continue;                  // zero ASSOLUTO, non «quasi zero»
+  const vicini = [];
+  for (const v of giudicabili) {
+    if (v === s) continue;
+    const d = km(s, v);
+    if (d > RAGGIO_KM) continue;
+    const tot = sommaSuiGiorni(v, indici);
+    if (tot === null) continue;             // ha buchi diversi dai suoi: non fa testo
+    vicini.push({ d, tot, nome: v.nome, regione: v.regione });
+  }
+  if (vicini.length < N_VICINI) continue;   // troppo isolata per essere giudicata
+  vicini.sort((a, b) => a.d - b.d);
+  const primi = vicini.slice(0, N_VICINI);
+  const med5 = mediana(primi.map(v => v.tot));
+  if (med5 < ZERO_VICINI_MM) continue;      // non e' piovuto: uno zero e' la verita'
+  const vicino = vicini.filter(v => v.tot >= VICINO_MIN_MM)[0];
+  if (!vicino) continue;                    // nessun testimone abbastanza bagnato
+  sospette.push({
+    chiave, regione: s.regione, id: s.id, nome: s.nome, prov: s.prov, quota: s.quota,
+    tot: 0, vicini: Math.round(med5 * 10) / 10, perc: 0, zeroAssoluto: true,
+    vicinoNome: vicino.nome, vicinoTot: Math.round(vicino.tot * 10) / 10, vicinoKm: Math.round(vicino.d * 10) / 10,
+    giorniDato: s.giorni,
+    esempiVicini: primi.slice(0, 3).map(v => `${v.nome} ${Math.round(v.tot)} mm a ${v.d.toFixed(1)} km`)
+  });
+}
+
 sospette.sort((a, b) => a.perc - b.perc);
 
 console.log(`\nSOSPETTE: ${sospette.length}`);
 for (const s of sospette) {
   console.log(`  ${s.perc.toFixed(1)}%  ${s.regione}/${s.id} ${s.nome}${s.prov ? ' (' + s.prov + ')' : ''}` +
-              `  ${s.tot} mm contro ${s.vicini} mm dei vicini, ${s.giorniDato} giorni di dato`);
+              `  ${s.tot} mm contro ${s.vicini} mm dei vicini, ${s.giorniDato} giorni di dato` +
+              `${s.zeroAssoluto ? '  [zero assoluto]' : ''}`);
   console.log(`         vicini: ${s.esempiVicini.join(' · ')}`);
 }
 
@@ -248,7 +305,13 @@ if (!nuove.length) {
 const vir = n => String(n).replace('.', ',');
 const righe = nuove.map(s =>
   `• ${s.nome}${s.prov ? ' (' + s.prov + ')' : ''} — ${s.regione}, id ${s.id}\n` +
-  `  ${vir(s.tot)} mm in ${FINESTRA} giorni contro ${vir(s.vicini)} mm dei cinque vicini piu' prossimi (${vir(s.perc.toFixed(1))}%).\n` +
+  // Per lo zero assoluto la percentuale non dice niente (e' zero per
+  // definizione): quello che deve saltare all'occhio e' che non ha raccolto
+  // NEMMENO UN DECIMO in quaranta giorni e passa.
+  (s.zeroAssoluto
+    ? `  ZERO ASSOLUTO: nemmeno un decimo di millimetro in ${s.giorniDato} giorni di dato,\n` +
+      `  mentre i cinque vicini piu' prossimi ne facevano ${vir(s.vicini)} mm.\n`
+    : `  ${vir(s.tot)} mm in ${FINESTRA} giorni contro ${vir(s.vicini)} mm dei cinque vicini piu' prossimi (${vir(s.perc.toFixed(1))}%).\n`) +
   `  Vicini: ${s.esempiVicini.join('; ')}.`
 ).join('\n\n');
 
