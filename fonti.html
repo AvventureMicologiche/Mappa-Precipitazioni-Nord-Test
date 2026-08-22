@@ -5,6 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fonti e licenze — Mappa Pluviometrica Italia</title>
 <meta name="description" content="Le fonti dei dati pluviometrici della Mappa Pluviometrica Italia: agenzie regionali, licenze e criteri di utilizzo.">
+<!-- Google tag (gtag.js) — aggiunto il 22/8/2026. Questa pagina era rimasta
+     senza: in 28 giorni GA4 le contava ZERO visualizzazioni, e non perche non
+     ci andasse nessuno ma perche non c era il codice. Conseguenza a catena:
+     click_feedback risultava a zero eventi, ed e proprio qui che portano i due
+     link "invia feedback" e "Feedback e contatti". Stesso identico snippet di
+     index.html, guardia sul dominio compresa: sul sito di test non invia niente. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  if (/(^|.)avventuremicologiche.it$/.test(location.hostname)) {
+    gtag('config', 'G-9R7MXXS0V4');
+  }
+</script>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -59,7 +75,7 @@ td a:hover{text-decoration:underline}
 <tr><td>Liguria</td><td><a href="https://omirl.regione.liguria.it" target="_blank" rel="noopener">OMIRL — ARPAL Liguria</a></td><td>osservatorio meteo-idrologico regionale</td></tr>
 <tr><td>Valle d'Aosta</td><td><a href="https://cf.regione.vda.it" target="_blank" rel="noopener">Centro Funzionale Regione Valle d'Aosta</a></td><td>rete di monitoraggio regionale</td></tr>
 <tr><td>Friuli V.G.</td><td><a href="https://www.meteo.fvg.it" target="_blank" rel="noopener">ARPA FVG — OSMER</a></td><td>dati orari delle stazioni</td></tr>
-<tr><td>Friuli V.G. (rete regionale completa)</td><td><a href="https://meteohub.agenziaitaliameteo.it" target="_blank" rel="noopener">ARPA FVG via MeteoHub — Agenzia ItaliaMeteo</a></td><td>rete idrometeorologica regionale, ~136 stazioni al giorno contro le ~40 dell'archivio OSMER. Dati CC-BY. Storico in costruzione dall'11 agosto 2026: sulle finestre più lunghe di quanto abbiamo raccolto restano in mappa le sole stazioni OSMER</td></tr>
+<tr><td>Friuli V.G. (rete regionale completa)</td><td><a href="https://meteohub.agenziaitaliameteo.it" target="_blank" rel="noopener">ARPA FVG via MeteoHub — Agenzia ItaliaMeteo</a></td><td>rete idrometeorologica regionale, ~136 stazioni al giorno contro le ~40 dell'archivio OSMER. Dati CC-BY. Storico dal 27 luglio 2026: sulle finestre più lunghe restano in mappa le sole stazioni OSMER</td></tr>
 <tr><td>Ticino (CH)</td><td><a href="https://www.oasi.ti.ch" target="_blank" rel="noopener">OASI — Repubblica e Cantone Ticino</a></td><td>dati liberamente utilizzabili con citazione della fonte</td></tr>
 <tr><td>Svizzera (CH)</td><td><a href="https://www.meteoswiss.admin.ch/services-and-publications/service/open-data.html" target="_blank" rel="noopener">MeteoSvizzera — Open Government Data</a></td><td>reti SwissMetNet e pluviometrica automatica, licenza CC BY 4.0. Fonte: MeteoSvizzera</td></tr>
 <tr><td>Austria (AT)</td><td><a href="https://data.hub.geosphere.at" target="_blank" rel="noopener">GeoSphere Austria — Data Hub</a></td><td>rete climatologica nazionale (dataset orario <code>klima-v2-1h</code>), licenza CC BY 4.0. Fonte: GeoSphere Austria. Il confine nazionale disegnato in mappa è del <a href="https://www.data.gv.at/katalog/dataset/987d6260-1e87-4314-9039-ccae502819b6" target="_blank" rel="noopener">BEV — Bundesamt für Eich- und Vermessungswesen</a> via data.gv.at, licenza CC BY-SA 2.0 AT: il file <code>austria-confine.geojson</code> del nostro repo, essendone una semplificazione, è distribuito con la stessa licenza</td></tr>
