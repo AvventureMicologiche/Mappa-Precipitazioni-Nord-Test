@@ -1058,7 +1058,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
            su un Pixel 9 (412), spingendo fuori il tasto "Iscriviti"; e anche il
            solo "+ Svizzera" traboccava già di 9px a 360. Su telefono resta
            "Mappa Pluviometrica Italia", che entra anche a 320. -->
-      <h1>Mappa Pluviometrica<span class="hdr-paesi"> Italia · Svizzera · Austria · Francia · Slovenia</span> <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v8.0)</span></h1>
+      <h1>Mappa Pluviometrica<span class="hdr-paesi"> Italia · Svizzera · Austria · Francia · Slovenia</span> <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v9.0)</span></h1>
       <div class="hdr-sub" id="datehdr"></div>
     </div>
   </div>
@@ -7126,6 +7126,24 @@ var OPZIONI_FRANCIA=
 // Legge la select nativa e le gira le scelte: sel.value + change. Non decide
 // niente da sola, cosi' il sottomenu Francia e la voce «📍 paese» continuano
 // a funzionare senza sapere che esiste.
+// Dove vive la casella di ricerca: su telefono DENTRO la tendina, su schermo
+// largo al suo posto sulla mappa. ⚠️ Si ridecide a ogni cambio di larghezza e
+// non solo al caricamento: chi apriva il sito con la finestra stretta e poi la
+// allargava restava SENZA CASELLA, perche' era finita dentro una tendina che
+// su desktop non si apre (trovato collaudando la promozione, 22/8/2026).
+var _locCasa = null, _locDopo = null;
+function locCollocaCasella(){
+  var box=document.getElementById('loc-box'), slot=document.getElementById('reg-cerca-slot');
+  if(!box||!slot) return;
+  if(!_locCasa){ _locCasa=box.parentElement; _locDopo=box.nextSibling; }
+  if(window.innerWidth<=900){
+    if(box.parentElement!==slot) slot.appendChild(box);
+  } else if(box.parentElement!==_locCasa){
+    _locCasa.insertBefore(box,_locDopo);
+  }
+}
+window.addEventListener('resize', locCollocaCasella);
+
 function regRender(){
   var sel=document.getElementById('region-select'), lista=document.getElementById('reg-lista');
   if(!sel||!lista) return;
@@ -7162,10 +7180,7 @@ function regChiudi(){
   if(!sh||!apri) return;
   // La casella di ricerca TRASLOCA dentro la tendina: e' lo stesso elemento di
   // sempre (#loc-box), quindi tutta la ricerca continua a funzionare com'e'.
-  if(window.innerWidth<=900){
-    var slot=document.getElementById('reg-cerca-slot'), box=document.getElementById('loc-box');
-    if(slot&&box) slot.appendChild(box);
-  }
+  locCollocaCasella();
   apri.addEventListener('click', regApri);
   document.getElementById('reg-chiudi').addEventListener('click', regChiudi);
   // Tocco sul velo scuro = chiudi. Sul pannello no: e' dentro #reg-sheet.
