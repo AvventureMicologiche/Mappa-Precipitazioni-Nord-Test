@@ -6135,13 +6135,19 @@ var LOC_MAX_RIGHE = 8;
 // Km di raggio inquadrati. ⚠️ NON è il raggio dei DATI, che resta 30 km e
 // decide solo QUALI regioni caricare: qui si decide solo quanto si vede.
 //
-// ⚠️ SONO DUE, e servono a due cose diverse. Quando scegli il paese la domanda
-// è «è questo?»: si sta stretti, si leggono i nomi delle frazioni intorno e si
-// riconosce la valle. Quando poi scegli le date la domanda cambia in «dove ha
-// piovuto?», e lì serve largo. Con un raggio solo una delle due era sempre
-// sbagliata.
-var LOC_RAGGIO_SCELTA = 10;  // alla scelta del paese
-var LOC_RAGGIO_VISTA  = 40;  // dopo il click sul periodo, e a ogni ricarica
+// ⚠️ UNO SOLO, e ci sono arrivato sbagliando. Per un giro ne ho messi due —
+// stretto alla scelta del paese, largo dopo le date — perché l'utente aveva
+// detto «il primo zoom è troppo poco, il secondo va bene». Ma in quel momento
+// i due erano GIÀ LO STESSO NUMERO (40 km): quello che vedeva stretto non era
+// il raggio, era il primo fit che finiva a vuoto per la dimensione fantasma di
+// Leaflet (vedi fitMapToPunto). Ho preso una descrizione di un guasto per una
+// richiesta di taratura, e ho costruito una differenza che non serviva a
+// nessuno: alla scelta 50x23 km, dopo le date 190x90, cioè un salto INDIETRO
+// proprio quando uno si aspetta di avvicinarsi.
+// Riparato il guasto, resta un numero solo e la vista non si muove più fra i
+// due momenti: si sceglie il paese, lo si vede, si clicca il periodo e il
+// colore compare SENZA che la mappa si sposti.
+var LOC_RAGGIO_VISTA = 40;
 var _locIndice = null, _locGriglia = null, _locCaricamento = null;
 var _locRighe = [], _locSel = -1, _locT = null;
 var _locPin = null;           // il segnaposto rosso del posto cercato
@@ -6418,11 +6424,8 @@ function locVai(p) {
   document.getElementById('chk-' + regioni[regioni.length - 1]).dispatchEvent(new Event('change'));
   _daRicerca = false;
 
-  // DOPO il change: il suo fitMapToRegions ci passerebbe sopra.
-  // ⚠️ Se un periodo è GIÀ scelto, loadData parte subito dopo e riallarga a
-  // LOC_RAGGIO_VISTA: giusto così, perché in quel caso la mappa ha già i dati
-  // e la domanda è di nuovo «dove ha piovuto».
-  fitMapToPunto(p.lat, p.lon, LOC_RAGGIO_SCELTA);
+  // DOPO il change, che se no il suo fit ci passerebbe sopra.
+  fitMapToPunto(p.lat, p.lon, LOC_RAGGIO_VISTA);
   locSegnaposto(p.lat, p.lon);
 
   // L'avviso delle stime. L'Abruzzo è l'unica regione senza pluviometri reali,
@@ -7076,7 +7079,12 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
     // (factor 0.5 — le altre regioni restano cliccabili), il fit completo
     // scatta in loadData al click del periodo. Con un'analisi già visibile
     // niente mezzo zoom: ci pensa il reload automatico col fit pieno.
-    if(window.innerWidth>900 && !(currentPast&&currentNow)) fitMapToRegions(regions,0.5);
+    // ⚠️ NON quando la selezione arriva dalla RICERCA PER LOCALITÀ: lì la vista
+    // la decide il paese, e questa mezza inquadratura sulle regioni si vedeva
+    // come un salto — un istante sull'inquadratura vecchia, poi lo scatto sul
+    // paese (segnalato il 22/8/2026: «per un attimo vedo lo stesso zoom di
+    // prima poi cambia»). Due movimenti dove ne basta uno.
+    if(window.innerWidth>900 && !_daRicerca && !(currentPast&&currentNow)) fitMapToRegions(regions,0.5);
     regions.forEach(function(r){
       setRegionBorder(r,function(){ addDefaultMarkersForRegion(r); });
     });
