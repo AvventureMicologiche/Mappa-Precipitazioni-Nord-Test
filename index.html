@@ -4200,7 +4200,7 @@ function loadData(pastDate,nowDate,labelPeriodo){
     // buttava via lo zoom di chi aveva condiviso (link a 7,75, mappa a 9).
     // Chi condivide comanda: _vistaDaLink si spegne appena l'utente sceglie
     // una regione o cerca un altro paese.
-    else if(_vistaPaese && !_vistaDaLink) fitMapToPunto(_vistaPaese.lat,_vistaPaese.lon,LOC_TACCA_FINE);
+    else if(_vistaPaese && !_vistaDaLink) fitMapToPunto(_vistaPaese.lat,_vistaPaese.lon,_vistaPaese.z?LOC_TACCA_ZONA:LOC_TACCA_FINE);
     else fitMapToRegions(regions);
   }
 
@@ -6255,6 +6255,9 @@ var LOC_MAX_RIGHE = 8;
 // filo piu' larga, 1095.
 var LOC_TACCA_MEZZO = 6;    // alla scelta del paese (solo desktop, vedi locVai)
 var LOC_TACCA_FINE  = 10;   // al click del periodo
+// Le ZONE e le VALLI sono aree, non punti: la Valtellina e' lunga 120 km e
+// col riquadro di un paese se ne vedrebbe un pezzo. Una tacca piu' larga.
+var LOC_TACCA_ZONA  = 8;    // al posto della 10 quando il posto e' una zona
 // Quanto vale UNA tacca, in livelli di zoom di Leaflet. Tarato perche' la
 // tacca 10 cadesse esattamente sulla vista del 22/8/2026: zoom 9 su una
 // mappa 1536x697, cioe' 325x148 km. Questa e' la scala, non la preferenza:
@@ -6298,7 +6301,9 @@ function locCarica() {
       if (!r) return;
       var p = r.split('|');
       if (p.length < 6) return;
+      // settimo campo: 'z' = zona o valle (vedi ricerca-paesi/genera-zone.js)
       _locIndice.push({ n: p[0], lat: +p[1], lon: +p[2], sg: p[3], reg: p[4], pop: +p[5],
+                        t: (p[6] || '').trim(),
                         q: locNormalizza(p[0]) });
     });
     _locGriglia = new Map();
@@ -6372,7 +6377,11 @@ function locCerca(testo) {
   }
   // dentro ogni gruppo comanda la popolazione: chi cerca «San» vuole prima
   // San Giovanni Rotondo, non una frazione da sei anime.
-  var perPop = function (a, b) { return b.pop - a.pop || a.n.localeCompare(b.n, 'it'); };
+  // ⚠️ Una ZONA non ha popolazione (in Garfagnana non abita «la Garfagnana»)
+  // ma non per questo va in fondo: pesa come un paese di 25 mila abitanti,
+  // cioe' sopra i paesini e sotto le citta'.
+  var peso = function (p) { return p.t === 'z' ? 25000 : p.pop; };
+  var perPop = function (a, b) { return peso(b) - peso(a) || a.n.localeCompare(b.n, 'it'); };
   inizio.sort(perPop); dentro.sort(perPop);
   var tutte = inizio.concat(dentro);
   return { righe: tutte.slice(0, LOC_MAX_RIGHE), totale: tutte.length };
@@ -6408,7 +6417,7 @@ function locLeggiRecenti() {
 function locSalvaRecente(p) {
   try {
     var a = locLeggiRecenti().filter(function (x) { return !(x.n === p.n && x.reg === p.reg); });
-    a.unshift({ n: p.n, lat: p.lat, lon: p.lon, sg: p.sg, reg: p.reg, pop: p.pop, frazione: !!p.frazione, q: p.q });
+    a.unshift({ n: p.n, lat: p.lat, lon: p.lon, sg: p.sg, reg: p.reg, pop: p.pop, frazione: !!p.frazione, t: p.t || '', q: p.q });
     localStorage.setItem(LOC_CHIAVE, JSON.stringify(a.slice(0, LOC_RECENTI)));
   } catch (e) {}   // navigazione in incognito o spazio finito: pazienza
 }
@@ -6441,7 +6450,8 @@ function locDisegna(res, testo, intestazione) {
     var reg = (typeof REGIONS !== 'undefined' && REGIONS[p.reg] && REGIONS[p.reg].name) || p.reg;
     return '<div class="loc-riga" role="option" data-i="' + i + '">' +
              '<span class="loc-nome">' + nome + '</span>' +
-             (p.frazione ? '<span class="loc-ex">frazione</span>' : (p.pop ? '' : '<span class="loc-ex">ex comune</span>')) +
+             (p.t === 'z' ? '' :   // la parola «valle»/«zona» sta gia' al posto della sigla
+               (p.frazione ? '<span class="loc-ex">frazione</span>' : (p.pop ? '' : '<span class="loc-ex">ex comune</span>'))) +
              '<span class="loc-dove">' + p.sg + ' · ' + reg + '</span>' +
            '</div>';
   }).join('');
@@ -6555,7 +6565,7 @@ function locVai(p) {
   document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function (cb) { cb.checked = false; });
   regioni.forEach(function (k) { document.getElementById('chk-' + k).checked = true; });
 
-  _vistaPaese = { lat: p.lat, lon: p.lon, n: p.n };   // il nome serve al link condiviso
+  _vistaPaese = { lat: p.lat, lon: p.lon, n: p.n, z: p.t === 'z' };   // z: e' un'area, si inquadra piu' larga
   _vistaDaLink = false;   // ricerca nuova: comanda lei, non piu' il link da cui sei arrivato
   _daRicerca = true;
   document.getElementById('chk-' + regioni[regioni.length - 1]).dispatchEvent(new Event('change'));
@@ -6566,7 +6576,7 @@ function locVai(p) {
   // ⚠️ Solo su desktop: sul telefono il click del periodo NON muove la mappa
   // (quel fit sta dentro un if(innerWidth>900)), quindi la vista di mezzo
   // resterebbe l'unica e il paese si vedrebbe da troppo lontano per sempre.
-  fitMapToPunto(p.lat, p.lon, window.innerWidth > 900 ? LOC_TACCA_MEZZO : LOC_TACCA_FINE);
+  fitMapToPunto(p.lat, p.lon, window.innerWidth > 900 ? LOC_TACCA_MEZZO : (p.t === 'z' ? LOC_TACCA_ZONA : LOC_TACCA_FINE));
   locSegnaposto(p.lat, p.lon);
 
   // L'avviso delle stime. L'Abruzzo è l'unica regione senza pluviometri reali,

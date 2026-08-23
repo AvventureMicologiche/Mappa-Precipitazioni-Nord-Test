@@ -8021,3 +8021,590 @@ Zumaglia|45.595|8.089|BI|piemonte|1129
 Zumpano|39.311|16.294|CS|calabria|2468
 Zungoli|41.128|15.203|AV|campania|1197
 Zungri|38.657|15.984|VV|calabria|1985
+Abruzzi e Molise|42.35000|13.40000|zona|lazio|0|z
+Agro nocerino-sarnese|40.75000|14.55000|zona|campania|0|z
+Agro nolano|40.93330|14.45000|zona|campania|0|z
+Alpe di Poti|43.47138|11.97330|zona|toscana|0|z
+Alpi Apuane|43.95000|10.21667|zona|toscana|0|z
+Alpi Centrali|45.91667|7.88333|zona|piemonte|0|z
+Alpi Cusiane|45.93611|8.20361|zona|piemonte|0|z
+Alpi del Gran Paradiso|45.52220|7.26250|zona|piemonte|0|z
+Alpi del Mischabel e del Weissmies|46.08361|7.85722|zona|piemonte|0|z
+Alpi del Weisshorn e del Cervino|46.10139|7.71611|zona|valledaosta|0|z
+Alpi della Grande Sassière e del Rutor|45.50500|6.99972|zona|valledaosta|0|z
+Alpi Giulie|46.36667|13.81667|zona|friuli|0|z
+Alpi Occidentali|45.83360|6.86500|zona|valledaosta|0|z
+Alpi Orientali|47.00000|12.00000|zona|altoadige|0|z
+Alpi Orobie|46.08016|9.97995|zona|lombardia|0|z
+Alpi Venoste|46.89690|10.87530|zona|altoadige|0|z
+Alta Pusteria|46.73194|12.29639|valle|altoadige|0|z
+Alta Val d'Enza|44.41236|10.12333|valle|emilia|0|z
+Alta Val Tagliamento|46.39326|12.66981|valle|friuli|0|z
+Alta Valtellina|46.35576|10.10856|valle|lombardia|0|z
+Alto Milanese|45.60375|8.88225|zona|lombardia|0|z
+Altopiano del Tesino|46.09641|11.62067|valle|trentino|0|z
+Altopiano della Renga|41.95306|13.34278|valle|lazio|0|z
+Anglona|40.82680|8.93326|zona|sardegna|0|z
+Appennino calabro|38.15910|15.92060|zona|calabria|0|z
+Appennino campano|40.83333|14.75000|zona|campania|0|z
+Appennino centrale|42.40000|13.50000|zona|lazio|0|z
+Appennino ligure|44.50000|9.00000|zona|liguria|0|z
+Appennino lucano|40.50000|16.00000|zona|basilicata|0|z
+Appennino meridionale|40.00000|16.00000|zona|calabria|0|z
+Appennino piacentino|44.55080|9.49000|zona|emilia|0|z
+Appennino sannita|41.66667|14.66667|zona|molise|0|z
+Appennino settentrionale|44.36667|9.75000|zona|liguria|0|z
+Appennino siculo|37.90000|14.50000|zona|sicilia|0|z
+Appennino tosco-emiliano|44.19361|10.70128|zona|emilia|0|z
+Appennino tosco-romagnolo|43.86667|11.70000|zona|toscana|0|z
+Appennino umbro-marchigiano|42.82510|13.27440|zona|marche|0|z
+Area del tufo|42.66110|11.70020|zona|toscana|0|z
+Aspromonte|38.16667|16.00000|zona|calabria|0|z
+Barbagia di Belvì|39.95000|9.06667|zona|sardegna|0|z
+Barbagia di Nuoro|40.31670|9.33333|zona|sardegna|0|z
+Barbagia di Ollolai|40.16670|9.18333|zona|sardegna|0|z
+Barbagia di Seùlo|39.86667|9.23333|zona|sardegna|0|z
+Barbagia|40.00000|9.20000|zona|sardegna|0|z
+Barenthal|45.84120|11.52340|valle|veneto|0|z
+Barigadu|40.00000|8.81667|zona|sardegna|0|z
+Baronia|41.04988|15.23190|zona|campania|0|z
+Baronie|40.38330|9.70000|zona|sardegna|0|z
+Basso Novarese|45.45000|8.61670|zona|piemonte|0|z
+Cadini di Misurina|46.57928|12.28729|zona|veneto|0|z
+Cadore|46.50917|12.35722|valle|veneto|0|z
+Calabria|39.00000|16.50000|zona|calabria|0|z
+Calatino|37.23333|14.51667|zona|sicilia|0|z
+Calciana|45.46700|9.86700|zona|lombardia|0|z
+Calvana|43.94650|11.17351|zona|toscana|0|z
+Campi Flegrei|40.82700|14.13900|zona|campania|0|z
+Campidano di Cagliari|39.31667|8.96667|zona|sardegna|0|z
+Campidano di Oristano|39.76667|8.58333|zona|sardegna|0|z
+Candalla|43.95723|10.32405|valle|toscana|0|z
+Carnia|46.39444|12.77417|valle|friuli|0|z
+Carso|45.66667|13.90000|zona|friuli|0|z
+Casentino|43.70000|11.81667|valle|toscana|0|z
+Catena Bernina-Scalino|46.38250|9.90806|zona|lombardia|0|z
+Catena Costiera|39.21861|16.13306|zona|calabria|0|z
+Cava d'Ispica|36.81046|14.87609|valle|sicilia|0|z
+Chianti|43.60000|10.95000|zona|toscana|0|z
+Cilento|40.33333|15.25000|zona|campania|0|z
+Cime di San Miali|39.44997|8.67679|zona|sardegna|0|z
+Colli Albani|41.73000|12.70000|zona|lazio|0|z
+Colli Asolani|45.81833|11.95000|zona|veneto|0|z
+Colline dell'Albegna e del Fiora|42.67620|11.53900|zona|toscana|0|z
+Colline Livornesi|43.52083|10.41611|zona|toscana|0|z
+Colline Metallifere grossetane|43.02250|11.04494|zona|toscana|0|z
+Colline Metallifere|43.23333|10.85000|zona|toscana|0|z
+Collio|45.98647|13.49247|zona|friuli|0|z
+Comelico|46.56667|12.55000|zona|veneto|0|z
+Comprensorio Sellata-Volturino-Viggiano e Monti della Maddalena|40.41250|15.80970|zona|basilicata|0|z
+Conca aquilana|42.37047|13.32949|valle|lazio|0|z
+Conca ternana|42.55000|12.60000|valle|umbria|0|z
+Contea di Nizza|43.70000|7.27000|zona|liguria|0|z
+Costa d'Argento|42.51008|11.19158|zona|toscana|0|z
+Costa Verde|39.54290|8.45449|zona|sardegna|0|z
+Crete Senesi|43.20000|11.56667|zona|toscana|0|z
+Daunia|41.53667|15.59472|zona|puglia|0|z
+Deserto di Accona|43.19561|11.57290|zona|toscana|0|z
+Dolomiti di Braies|46.67253|12.07947|zona|veneto|0|z
+Dolomiti|46.61306|12.16306|zona|veneto|0|z
+Emilia|44.75000|11.00000|zona|emilia|0|z
+Europa meridionale|41.09350|15.01701|zona|campania|0|z
+Franciacorta|45.62000|10.02000|zona|lombardia|0|z
+Friuli|46.16639|13.00000|zona|friuli|0|z
+Frullone|40.88390|14.22860|zona|campania|0|z
+Gallura|41.00000|9.30000|zona|sardegna|0|z
+Garfagnana|44.09000|10.43000|zona|toscana|0|z
+Gargano|41.73300|15.75000|zona|puglia|0|z
+Gera d'Adda|45.49973|9.61681|zona|lombardia|0|z
+Giudicarie|46.03000|10.73000|zona|trentino|0|z
+Goceano|40.41667|9.00000|zona|sardegna|0|z
+Gola di Gorropu|40.18528|9.50167|valle|sardegna|0|z
+Gole del Drago|37.86283|13.30263|valle|sicilia|0|z
+Gole del Tiberio|37.95329|14.15102|valle|sicilia|0|z
+Gran Monte|46.29222|13.32722|zona|friuli|0|z
+Grecia salentina|40.35000|18.16667|zona|puglia|0|z
+Gruppo del Bosconero|46.33333|12.26667|zona|veneto|0|z
+Gruppo del Catinaccio|46.46667|11.65000|zona|trentino|0|z
+Gruppo del Cir|46.55875|11.80278|zona|trentino|0|z
+Gruppo del Popera|46.61417|12.38611|zona|veneto|0|z
+Gruppo del Sassolungo|46.52472|11.73528|zona|trentino|0|z
+Gruppo della Schiara|46.23222|12.18361|zona|veneto|0|z
+Gruppo delle Odle|46.61033|11.76902|zona|altoadige|0|z
+Gruppo di Leschaux|45.89528|6.97389|zona|valledaosta|0|z
+Gruppo montuoso del Monte Nuria|42.36083|13.09056|zona|lazio|0|z
+Gruppo montuoso di Monte Calvo|42.39279|13.20075|zona|lazio|0|z
+Gruppo Rondoi-Baranci|46.68833|12.27750|zona|altoadige|0|z
+Guilcer|40.01667|9.00000|zona|sardegna|0|z
+Guspinese|39.55000|8.80000|zona|sardegna|0|z
+Iglesiente|39.31891|8.61766|zona|sardegna|0|z
+Irpinia|40.97444|15.14583|zona|campania|0|z
+Italia centrale|42.30972|13.24944|zona|lazio|0|z
+Italia meridionale|40.81011|15.89535|zona|basilicata|0|z
+Italia nord-occidentale|45.50000|9.00000|zona|lombardia|0|z
+Italia nord-orientale|45.50000|12.00000|zona|veneto|0|z
+Italia settentrionale|45.50000|10.50000|zona|lombardia|0|z
+Langhe|44.60860|7.96361|zona|piemonte|0|z
+Latium adiectum|41.35000|13.41667|zona|lazio|0|z
+Lombardia|45.65000|9.95000|zona|lombardia|0|z
+Lomellina|45.31670|8.86667|zona|lombardia|0|z
+Lucania|40.48261|15.95625|zona|basilicata|0|z
+Lunigiana|44.18694|9.91389|zona|liguria|0|z
+Madonie|37.88333|14.01667|zona|sicilia|0|z
+Mainarde|41.65000|13.96000|zona|lazio|0|z
+Mandrolisai|39.98330|9.08333|zona|sardegna|0|z
+Marcesina|45.95500|11.61200|zona|trentino|0|z
+Maremma grossetana|42.58639|11.15160|zona|toscana|0|z
+Maremma|42.41639|11.47806|zona|lazio|0|z
+Marghine|40.26660|8.78330|zona|sardegna|0|z
+Marmilla|39.70000|8.78333|zona|sardegna|0|z
+Marsica|42.04703|13.43806|zona|lazio|0|z
+Massiccio del Gennargentu|40.02000|9.32000|zona|sardegna|0|z
+Massiccio del Mercantour-Argentera|44.12278|7.38389|zona|piemonte|0|z
+Matese|41.45000|14.37000|zona|campania|0|z
+Mazzini|44.48060|11.38240|zona|emilia|0|z
+Media Valle del Serchio|44.01861|10.53917|valle|toscana|0|z
+Meilogu|40.41000|8.86100|zona|sardegna|0|z
+Mezzogiorno|41.19419|15.24242|zona|puglia|0|z
+Mondeval|46.46359|12.09573|valle|veneto|0|z
+Monferrato|44.60861|7.96361|zona|piemonte|0|z
+Monreale|39.55000|8.80000|zona|sardegna|0|z
+Montagnola Senese|43.28333|11.18333|zona|toscana|0|z
+Monte Colovrat|46.19564|13.61949|zona|friuli|0|z
+Monte di Mezzo|46.41900|11.29500|zona|altoadige|0|z
+Monte Donato|44.45653|11.35088|zona|emilia|0|z
+Monte Massico|41.16296|13.91713|zona|campania|0|z
+Monte Pisano|43.75000|10.55000|zona|toscana|0|z
+Monte Rosa|45.93667|7.86694|zona|piemonte|0|z
+Monte San Giorgio|45.88925|8.91462|zona|lombardia|0|z
+Monte Spico|46.91902|11.88641|zona|altoadige|0|z
+Monte Stevia|46.57601|11.76689|zona|altoadige|0|z
+Monteacuto|40.71670|9.10000|zona|sardegna|0|z
+Montefeltro|43.76417|12.33306|zona|marche|0|z
+Monti Alburni|40.55000|15.31667|zona|campania|0|z
+Monti Amerini|42.65990|12.32500|zona|umbria|0|z
+Monti Aurunci|41.32222|13.66528|zona|lazio|0|z
+Monti Ausoni|41.42000|13.33000|zona|lazio|0|z
+Monti Cantari|41.85000|13.28333|zona|lazio|0|z
+Monti Cimini|42.35820|12.17770|zona|lazio|0|z
+Monti Climiti|37.15700|15.07680|zona|sicilia|0|z
+Monti del Partenio|40.91667|14.73333|zona|campania|0|z
+Monti del Sulcis|39.14890|8.82750|zona|sardegna|0|z
+Monti del Villgraten|46.87170|12.35810|zona|altoadige|0|z
+Monti dell'Uccellina|42.63861|11.09156|zona|toscana|0|z
+Monti della Daunia|41.36667|15.15000|zona|puglia|0|z
+Monti della Laga|42.61667|13.38333|zona|marche|0|z
+Monti della Tolfa|42.13333|11.90000|zona|lazio|0|z
+Monti di Palermo|38.11500|13.26444|zona|sicilia|0|z
+Monti di Trapani|38.05861|12.77694|zona|sicilia|0|z
+Monti Erei|37.41667|14.35000|zona|sicilia|0|z
+Monti Ernici|41.80390|13.48880|zona|lazio|0|z
+Monti Iblei|37.11637|14.82048|zona|sicilia|0|z
+Monti Lattari|40.65000|14.50000|zona|campania|0|z
+Monti Lepini|41.58000|13.00000|zona|lazio|0|z
+Monti Lucretili|42.10000|12.86670|zona|lazio|0|z
+Monti Peloritani|38.05000|15.33333|zona|sicilia|0|z
+Monti Prenestini|41.91194|12.92889|zona|lazio|0|z
+Monti Reatini|42.47350|12.99750|zona|lazio|0|z
+Monti Sabatini|42.16667|12.25000|zona|lazio|0|z
+Monti Sabini|42.21667|12.81667|zona|lazio|0|z
+Monti Sibillini|42.82389|13.27556|zona|marche|0|z
+Monti Sicani|37.81667|13.16667|zona|sicilia|0|z
+Monti Simbruini|41.79111|13.64583|zona|lazio|0|z
+Monti Tiburtini|41.93220|12.82220|zona|lazio|0|z
+Monti Volsini|42.66667|11.91667|zona|lazio|0|z
+Montiferru|40.21670|8.58333|zona|sardegna|0|z
+Monzoccolo|46.59944|11.28333|zona|altoadige|0|z
+Mugello|43.95000|11.38330|valle|toscana|0|z
+Murge|40.97600|16.40600|zona|puglia|0|z
+Nebrodi|37.90000|14.58333|zona|sicilia|0|z
+Nurra|40.80800|8.25400|zona|sardegna|0|z
+Odle di Eores|46.65138|11.76794|zona|altoadige|0|z
+Ogliastra|39.54667|9.55000|zona|sardegna|0|z
+Oltrepò Pavese|44.99250|9.00917|zona|lombardia|0|z
+Padania|45.14432|10.39549|zona|lombardia|0|z
+Parteòlla|39.38330|9.18333|zona|sardegna|0|z
+Pavese|45.18530|9.15500|zona|lombardia|0|z
+Penisola della Maddalena|37.01787|15.31496|zona|sicilia|0|z
+Penisola sorrentina|40.63056|14.41667|zona|campania|0|z
+Pentria|41.57642|14.49424|zona|molise|0|z
+Petites Murailles|45.93450|7.58600|zona|valledaosta|0|z
+Piana del Cavaliere|42.07403|13.06014|valle|lazio|0|z
+Piana di Firenze-Prato-Pistoia|43.85000|11.07000|zona|toscana|0|z
+Piani Palentini|42.02319|13.37544|valle|lazio|0|z
+Pianura padana|45.33028|9.79889|valle|lombardia|0|z
+Planargia|40.30000|8.53600|zona|sardegna|0|z
+Plose|46.69556|11.73333|zona|altoadige|0|z
+Polesine|45.08090|11.79400|zona|veneto|0|z
+Prealpi Trivenete|46.34239|12.42113|zona|friuli|0|z
+Primiero|46.18333|11.83333|valle|trentino|0|z
+Promontorio di Punta Penna|42.17256|14.71506|zona|molise|0|z
+Punta San Vigilio|45.57361|10.67222|zona|lombardia|0|z
+Quirra|39.95600|9.61600|zona|sardegna|0|z
+Riviera delle Palme|42.95000|13.88333|zona|marche|0|z
+Riviera di Levante|44.42000|9.24000|zona|liguria|0|z
+Riviera di Ponente|43.95490|8.17310|zona|liguria|0|z
+Roero|44.70000|7.85000|zona|piemonte|0|z
+Romagna toscana|44.04000|11.82000|zona|emilia|0|z
+Romagna|44.17740|12.12479|zona|emilia|0|z
+Romangia|40.80420|8.57300|zona|sardegna|0|z
+Sabina|42.40417|12.85667|zona|lazio|0|z
+Salento|40.33330|18.00000|zona|puglia|0|z
+San Rocco|40.87775|14.23939|zona|campania|0|z
+Sannio|41.43222|14.62278|zona|molise|0|z
+Sarcidano|39.70880|9.21200|zona|sardegna|0|z
+Sarrabus-Gerrei|39.42000|9.57000|zona|sardegna|0|z
+Sassarese|40.63970|8.61800|zona|sardegna|0|z
+Serre calabresi|38.52917|16.34500|zona|calabria|0|z
+Serre salentine|39.88086|18.33575|zona|puglia|0|z
+Sila Greca|39.28000|16.45000|zona|calabria|0|z
+Sila|39.36667|16.50000|zona|calabria|0|z
+Sinis|39.91917|8.44306|zona|sardegna|0|z
+Stato dei Presidi|42.43940|11.21250|zona|toscana|0|z
+Stretti di Giaredo|44.36775|9.84180|valle|toscana|0|z
+Sulcis-Iglesiente|39.11667|8.70000|zona|sardegna|0|z
+Sulcis|39.10000|8.73336|zona|sardegna|0|z
+Supramonte|40.24000|9.43000|zona|sardegna|0|z
+Taburno Camposauro|41.10833|14.60833|zona|campania|0|z
+Tavoliere delle Puglie|41.46670|15.53330|zona|puglia|0|z
+Tavoliere salentino|40.50000|17.58333|zona|puglia|0|z
+Terra brigasca|44.06250|7.61639|zona|liguria|0|z
+Terra di Bari|40.89750|16.84150|zona|puglia|0|z
+Terra di Lavoro|41.11820|14.22060|zona|campania|0|z
+Tigullio|44.29900|9.31800|zona|liguria|0|z
+Tirolo|47.00000|11.00000|zona|altoadige|0|z
+Tre Cime di Lavaredo|46.61861|12.30556|zona|veneto|0|z
+Tre Venezie|45.73333|11.85000|zona|veneto|0|z
+Trexenta|39.62890|9.15000|zona|sardegna|0|z
+Triangolo della morte Acerra-Nola-Marigliano|40.94000|14.44000|zona|campania|0|z
+Triangolo Lariano|45.88000|9.22000|zona|lombardia|0|z
+Val Alpisella|46.54950|10.22070|valle|lombardia|0|z
+Val Badia|46.68361|11.89917|valle|altoadige|0|z
+Val Bisagno|44.44740|9.00520|valle|liguria|0|z
+Val Bodengo|46.26667|9.28333|valle|lombardia|0|z
+Val Bognanco|46.12500|8.20000|valle|piemonte|0|z
+Val Bona|45.93378|10.39959|valle|lombardia|0|z
+Val Borbera|44.71090|8.88797|valle|piemonte|0|z
+Val Bormida|44.40000|8.26667|valle|liguria|0|z
+Val Brembana|45.87250|9.65194|valle|lombardia|0|z
+Val Cairasca|46.25000|8.18300|valle|piemonte|0|z
+Val Calamento|46.13418|11.45336|valle|trentino|0|z
+Val Camonica|46.00750|10.34750|valle|lombardia|0|z
+Val Campelle|46.14457|11.51112|valle|trentino|0|z
+Val Campo di Dentro|46.68028|12.29889|valle|altoadige|0|z
+Val Canale|45.78100|11.18160|valle|veneto|0|z
+Val Canali|46.21781|11.87767|valle|trentino|0|z
+Val Cavargna|46.08500|9.13000|valle|lombardia|0|z
+Val Cervara - Foreste di faggi antiche e primarie|41.82583|13.75334|valle|lazio|0|z
+Val Chiarsò|46.52936|13.11867|valle|friuli|0|z
+Val Chisone|45.03300|7.05000|valle|piemonte|0|z
+Val Cichero|44.41310|9.32760|valle|liguria|0|z
+Val Clarea|45.14860|6.95720|valle|piemonte|0|z
+Val Clavalité|45.68330|7.49170|valle|valledaosta|0|z
+Val Codalunga|46.46320|12.03153|valle|veneto|0|z
+Val Codera|46.24426|9.47651|valle|lombardia|0|z
+Val Contrin|46.44672|11.79745|valle|trentino|0|z
+Val Cordevole|46.35000|11.97000|valle|veneto|0|z
+Val d'Agri|40.29261|15.90654|valle|basilicata|0|z
+Val d'Ala|45.31502|7.30240|valle|piemonte|0|z
+Val d'Alpone|45.41667|11.28333|valle|veneto|0|z
+Val d'Ansiei|46.54598|12.32386|valle|veneto|0|z
+Val d'Arigna|46.12485|9.99431|valle|lombardia|0|z
+Val d'Assa|45.94181|11.43569|valle|trentino|0|z
+Val d'Astico|45.83710|11.37020|valle|veneto|0|z
+Val d'Aupa|46.41667|13.20000|valle|friuli|0|z
+Val d'Aveto|44.53333|9.38333|valle|liguria|0|z
+Val d'Ayas|45.78300|7.70000|valle|valledaosta|0|z
+Val d'Ega|46.44917|11.44833|valle|altoadige|0|z
+Val d'Enza|44.48300|10.33000|valle|emilia|0|z
+Val d'Esino|45.96042|9.32166|valle|lombardia|0|z
+Val d'Intelvi|45.95000|9.08333|valle|lombardia|0|z
+Val d'Orcia|43.06667|11.55000|valle|toscana|0|z
+Val d'Ossola|46.08333|8.33333|valle|piemonte|0|z
+Val d'Ultimo|46.55000|11.00000|valle|altoadige|0|z
+Val da Rin|46.55444|12.37861|valle|veneto|0|z
+Val de' Varri|42.15986|13.18420|valle|lazio|0|z
+Val Degano|46.48300|12.86700|valle|friuli|0|z
+Val del Grisol|46.26472|12.21972|valle|veneto|0|z
+Val di Bove|42.92645|13.18660|valle|marche|0|z
+Val di Cembra|46.17575|11.23131|valle|trentino|0|z
+Val di Chiana|43.25000|11.81667|valle|toscana|0|z
+Val di Cogne|45.62500|7.32500|valle|valledaosta|0|z
+Val di Daone|45.97313|10.56058|valle|trentino|0|z
+Val di Fassa|46.44815|11.69735|valle|trentino|0|z
+Val di Fiemme|46.28330|11.56670|valle|trentino|0|z
+Val di Fleres|46.96417|11.34778|valle|altoadige|0|z
+Val di Fundres|46.89375|11.70258|valle|altoadige|0|z
+Val di Funes|46.63936|11.67418|valle|altoadige|0|z
+Val di Giovo|46.85689|11.39039|valle|altoadige|0|z
+Val di Landro|46.65694|12.22583|valle|veneto|0|z
+Val di Lozio|45.98750|10.24611|valle|lombardia|0|z
+Val di Luce|44.13144|10.63064|valle|toscana|0|z
+Val di Lungiarù|46.63390|11.85370|valle|altoadige|0|z
+Val di Magra|44.29560|9.95000|valle|liguria|0|z
+Val di Marebbe|46.69080|11.94170|valle|altoadige|0|z
+Val di Mello|46.25418|9.65152|valle|lombardia|0|z
+Val di Merse|43.19437|11.20227|valle|toscana|0|z
+Val di Non|46.36667|11.03333|valle|trentino|0|z
+Val di Peio|46.35000|10.68333|valle|trentino|0|z
+Val di Rabbi|46.38739|10.86563|valle|trentino|0|z
+Val di Rhêmes|45.56700|7.11700|valle|valledaosta|0|z
+Val di Riva|46.94007|12.05269|valle|altoadige|0|z
+Val di Rose|41.76664|13.94750|valle|lazio|0|z
+Val di Sella|46.00000|11.41700|valle|trentino|0|z
+Val di Solda|46.56611|10.55833|valle|altoadige|0|z
+Val di Sole|46.30000|10.80000|valle|trentino|0|z
+Val di Spessa|46.64989|11.94748|valle|altoadige|0|z
+Val di Spluga|46.19911|9.60281|valle|lombardia|0|z
+Val di Stava|46.31467|11.50412|valle|trentino|0|z
+Val di Susa|45.13333|7.05000|valle|piemonte|0|z
+Val di Taro|44.69000|10.09000|valle|emilia|0|z
+Val di Tires|46.46611|11.51722|valle|altoadige|0|z
+Val di Tovel|46.30444|10.98306|valle|trentino|0|z
+Val di Tures|46.83333|11.93333|valle|altoadige|0|z
+Val di Vallaro|46.22333|10.43861|valle|lombardia|0|z
+Val di Vara|44.24306|9.83639|valle|liguria|0|z
+Val Divedro|46.19694|8.15194|valle|piemonte|0|z
+Val Dois|46.00690|10.44530|valle|lombardia|0|z
+Val Duron|46.49222|11.69750|valle|trentino|0|z
+Val Federia|46.54583|10.08417|valle|lombardia|0|z
+Val Fiorentina|46.44000|12.06000|valle|veneto|0|z
+Val Fiscalina|46.65592|12.35292|valle|veneto|0|z
+Val Fondillo - Foreste di faggi antiche e primarie|41.75417|13.88583|valle|lazio|0|z
+Val Formazza|46.38300|8.43300|valle|piemonte|0|z
+Val Foxi|45.78991|11.11175|valle|trentino|0|z
+Val Gallina|46.22000|12.35000|valle|veneto|0|z
+Val Gallinera|46.17222|10.39667|valle|lombardia|0|z
+Val Gardena|46.56000|11.70472|valle|trentino|0|z
+Val Genova|46.16667|10.66667|valle|trentino|0|z
+Val Gerola|46.08941|9.55744|valle|lombardia|0|z
+Val Grande di Lanzo|45.36417|7.22278|valle|piemonte|0|z
+Val Grande|46.29278|10.40083|valle|lombardia|0|z
+Val Grigna|45.90528|10.32222|valle|lombardia|0|z
+Val Gronda|45.76836|7.98659|valle|piemonte|0|z
+Val Las|45.93896|9.89217|valle|lombardia|0|z
+Val Lasties|46.50907|11.80481|valle|trentino|0|z
+Val Loana|46.10600|8.50120|valle|piemonte|0|z
+Val Lumiei|46.46431|12.70903|valle|friuli|0|z
+Val Luretta|44.96667|9.53333|valle|emilia|0|z
+Val Malga|46.13667|10.38083|valle|lombardia|0|z
+Val Mara|45.96667|8.98333|valle|lombardia|0|z
+Val Martello|46.55107|10.77862|valle|altoadige|0|z
+Val Mastallone|45.87004|8.18467|valle|piemonte|0|z
+Val Meledrio|46.31127|10.87743|valle|trentino|0|z
+Val Meria|45.93318|9.36099|valle|lombardia|0|z
+Val Mezdì|46.52611|11.83167|valle|trentino|0|z
+Val Miller|46.13278|10.46139|valle|lombardia|0|z
+Val Monastero|46.60566|10.39009|valle|lombardia|0|z
+Val Muggiasca|45.97370|9.31700|valle|lombardia|0|z
+Val Neva|44.12910|8.11090|valle|liguria|0|z
+Val Noana|46.13500|11.85220|valle|trentino|0|z
+Val Nure|44.70000|9.56667|valle|emilia|0|z
+Val Paghera|45.98500|10.40722|valle|lombardia|0|z
+Val Paisco|46.06778|10.26750|valle|lombardia|0|z
+Val Passiria|46.76667|11.21667|valle|altoadige|0|z
+Val Pellice|44.80000|7.11000|valle|piemonte|0|z
+Val Pesarina|46.51964|12.79565|valle|friuli|0|z
+Val Polcevera|44.43000|8.88991|valle|liguria|0|z
+Val Pontaiba|46.53454|13.05674|valle|friuli|0|z
+Val Popera|46.63739|12.39485|valle|veneto|0|z
+Val Pusteria|46.74050|12.36956|valle|altoadige|0|z
+Val Rabbia|46.15722|10.39722|valle|lombardia|0|z
+Val Raccolana|46.40129|13.40074|valle|friuli|0|z
+Val Rendena|46.11490|10.75360|valle|trentino|0|z
+Val Resia|46.36000|13.33000|valle|friuli|0|z
+Val Ridanna|46.90000|11.33000|valle|altoadige|0|z
+Val Rio del Lago|46.40639|13.53667|valle|friuli|0|z
+Val Roia|43.94179|7.51638|valle|liguria|0|z
+Val Salarno|46.11750|10.49361|valle|lombardia|0|z
+Val San Nicolò|46.42417|11.75083|valle|trentino|0|z
+Val Sangone|45.01889|7.67278|valle|piemonte|0|z
+Val Sarentino|46.66216|11.36407|valle|altoadige|0|z
+Val Schener|46.09543|11.75960|valle|trentino|0|z
+Val Sedornia|45.98482|9.98973|valle|lombardia|0|z
+Val Senales|46.72222|10.86083|valle|altoadige|0|z
+Val Seriana|45.91667|9.91667|valle|lombardia|0|z
+Val Serina|45.87019|9.72999|valle|lombardia|0|z
+Val Settimana|46.34472|12.57861|valle|friuli|0|z
+Val Soana|45.48300|7.55000|valle|piemonte|0|z
+Val Taleggio|45.88330|9.60000|valle|lombardia|0|z
+Val Tenna|43.10046|13.52090|valle|marche|0|z
+Val Terragnolo|45.87569|11.14439|valle|trentino|0|z
+Val Tidone|44.93035|9.40899|valle|emilia|0|z
+Val Travenanzes|46.56459|12.04552|valle|veneto|0|z
+Val Trebbia|44.61700|9.33000|valle|emilia|0|z
+Val Trementina|46.15247|11.05327|valle|trentino|0|z
+Val Trompia|45.69194|10.18639|valle|lombardia|0|z
+Val Vaccara|45.73333|10.83333|zona|trentino|0|z
+Val Varatella|44.13664|8.19202|valle|liguria|0|z
+Val Varenna|44.46056|8.82056|valle|liguria|0|z
+Val Veddasca|46.08222|8.82306|valle|lombardia|0|z
+Val Venegia|46.31804|11.80345|valle|trentino|0|z
+Val Venina|46.11870|9.90274|valle|lombardia|0|z
+Val Venosta|46.61500|10.70500|valle|altoadige|0|z
+Val Vigezzo|46.13330|8.55000|valle|piemonte|0|z
+Val Visdende|46.61633|12.63312|valle|veneto|0|z
+Val Vogna|45.81460|7.93039|valle|piemonte|0|z
+Val Zebrù|46.48017|10.47081|valle|lombardia|0|z
+Valassina|45.88333|9.26667|valle|lombardia|0|z
+Valbelluna|46.13760|12.19880|valle|veneto|0|z
+Valcalda|46.52476|12.92324|valle|friuli|0|z
+Valchiavenna|46.35600|9.38690|valle|lombardia|0|z
+Valchiusella|45.51700|7.75000|valle|piemonte|0|z
+Valconca|43.91286|12.75667|valle|emilia|0|z
+Valdarno|43.56667|11.53333|valle|toscana|0|z
+Valdelsa|43.46667|11.15000|valle|toscana|0|z
+Valdigne|45.75000|7.06667|valle|valledaosta|0|z
+Valdinievole|43.85611|10.76778|valle|toscana|0|z
+Valeille (valle)|45.57111|7.38610|valle|valledaosta|0|z
+Valgrosina|46.33170|10.24883|valle|lombardia|0|z
+Vallagarina|45.83333|11.16667|valle|trentino|0|z
+Valle Adamé|46.10611|10.52306|valle|lombardia|0|z
+Valle Antigorio|46.25000|8.32500|valle|piemonte|0|z
+Valle Antrona|46.06700|8.11700|valle|piemonte|0|z
+Valle Artogna|45.80216|7.99908|valle|piemonte|0|z
+Valle Asinina|45.90180|9.57600|valle|lombardia|0|z
+Valle Caudina|41.05000|14.60000|valle|campania|0|z
+Valle Cervo|45.61000|8.05800|valle|piemonte|0|z
+Valle d'Agrò|37.95000|15.27000|valle|sicilia|0|z
+Valle d'Ampezzo|46.49056|12.17889|valle|veneto|0|z
+Valle d'Inferno|46.00181|9.55694|valle|lombardia|0|z
+Valle d'Itria|40.71667|17.33333|valle|puglia|0|z
+Valle dei Campassi|44.59093|9.15067|valle|liguria|0|z
+Valle dei Laghi|46.00000|10.96667|valle|trentino|0|z
+Valle dei Mocheni|46.08333|11.28333|valle|trentino|0|z
+Valle dei Molini|46.89621|11.81889|valle|altoadige|0|z
+Valle dei Mulini|40.68350|14.53290|valle|campania|0|z
+Valle dei Nuraghi|40.44824|8.75400|zona|sardegna|0|z
+Valle dei Ratti|46.20029|9.49098|valle|lombardia|0|z
+Valle del Belice|37.62500|13.11400|valle|sicilia|0|z
+Valle del Biois|46.36667|11.86667|valle|veneto|0|z
+Valle del Bitto|46.11702|9.56550|valle|lombardia|0|z
+Valle del Boite|46.46667|12.20000|valle|veneto|0|z
+Valle del Braulio|46.52499|10.35480|valle|lombardia|0|z
+Valle del But|46.53092|13.01518|valle|friuli|0|z
+Valle del Carlone|44.74447|9.35278|valle|emilia|0|z
+Valle del Cervaro|41.24076|15.27588|valle|puglia|0|z
+Valle del Chiampo|45.55059|11.27604|valle|veneto|0|z
+Valle del Chiese|45.86551|10.57671|valle|trentino|0|z
+Valle del Fitalia|38.05030|14.76370|valle|sicilia|0|z
+Valle del Giovenco|42.00558|13.72928|valle|lazio|0|z
+Valle del Gran San Bernardo|45.81700|7.23300|valle|valledaosta|0|z
+Valle del Liri|41.73160|13.61520|zona|lazio|0|z
+Valle del Lys|45.75000|7.83333|valle|valledaosta|0|z
+Valle del Mela|38.09520|15.28500|valle|sicilia|0|z
+Valle del Mis|46.17730|12.04610|valle|veneto|0|z
+Valle del Miscano|41.23492|15.05603|valle|campania|0|z
+Valle del Mortirolo|46.23083|10.31806|valle|lombardia|0|z
+Valle del Noce|39.97830|15.79970|valle|basilicata|0|z
+Valle del Salto|42.22100|13.16590|valle|lazio|0|z
+Valle del Sarca|45.97521|10.91969|valle|trentino|0|z
+Valle del Sele|40.65224|15.23553|valle|campania|0|z
+Valle del Tevere|42.13333|12.58333|valle|lazio|0|z
+Valle del Tronto|42.82970|13.68760|valle|marche|0|z
+Valle del Vanoi|46.19609|11.67425|valle|trentino|0|z
+Valle dell’Adige|45.83333|11.16667|valle|trentino|0|z
+Valle dell'Alcantara|37.88000|15.15000|valle|sicilia|0|z
+Valle dell'Arbogna|45.40826|8.62647|valle|piemonte|0|z
+Valle dell'Avio|46.17917|10.47222|valle|lombardia|0|z
+Valle dell'Elvo|45.57151|7.99015|valle|piemonte|0|z
+Valle dell'Ombrone|42.85720|11.30300|valle|toscana|0|z
+Valle dell'Orsa|45.73320|10.99980|valle|trentino|0|z
+Valle dell'Ufita|41.09063|15.09318|valle|campania|0|z
+Valle delle Valli|45.91056|10.37222|valle|lombardia|0|z
+Valle Devero|46.28300|8.28300|valle|piemonte|0|z
+Valle di Albaredo|46.09173|9.59583|valle|lombardia|0|z
+Valle di Amplero|41.90861|13.61833|valle|lazio|0|z
+Valle di Anterselva|46.84833|12.08750|valle|altoadige|0|z
+Valle di Astino|45.70600|9.63800|valle|lombardia|0|z
+Valle di Braies|46.72142|12.13882|valle|altoadige|0|z
+Valle di Braone|45.96889|10.40056|valle|lombardia|0|z
+Valle di Champorcher|45.61890|7.64046|valle|valledaosta|0|z
+Valle di Comino|41.63000|13.80000|valle|lazio|0|z
+Valle di Corteno|46.16917|10.26222|valle|lombardia|0|z
+Valle di Eores|46.66111|11.67083|valle|altoadige|0|z
+Valle di Fraele|46.54000|10.31722|valle|lombardia|0|z
+Valle di Ledro|45.88577|10.73373|valle|trentino|0|z
+Valle di Mosso|45.62060|8.15570|valle|piemonte|0|z
+Valle di Muggio|45.89990|9.04550|valle|lombardia|0|z
+Valle di Nerfa|42.00497|13.30956|valle|lazio|0|z
+Valle di Racines|46.86500|11.31343|valle|altoadige|0|z
+Valle di San Lucano|46.29595|11.95397|valle|veneto|0|z
+Valle di San Pellegrino|46.37401|11.74514|valle|trentino|0|z
+Valle di Santa Lucia|45.87197|10.88527|valle|trentino|0|z
+Valle di Saviore|46.07056|10.38861|valle|lombardia|0|z
+Valle di Scalve|46.01250|10.18000|valle|lombardia|0|z
+Valle di Sesto|46.67278|12.37639|valle|veneto|0|z
+Valle di Stabio|45.93139|10.35500|valle|lombardia|0|z
+Valle di Trafoi|46.55768|10.51477|valle|lombardia|0|z
+Valle di Valdurna|46.73889|11.43889|valle|altoadige|0|z
+Valle di Valles|46.83333|11.61667|valle|altoadige|0|z
+Valle di Viso|46.28333|10.53333|valle|trentino|0|z
+Valle di Viù|45.22983|7.24557|valle|piemonte|0|z
+Valle Dossana|45.90401|9.86387|valle|lombardia|0|z
+Valle Fiorita|41.69170|13.98010|valle|molise|0|z
+Valle Fontanabuona|44.40000|9.26667|valle|liguria|0|z
+Valle Germanasca|44.93704|7.12194|valle|piemonte|0|z
+Valle Gesso|44.22000|7.39000|valle|piemonte|0|z
+Valle Giulia|41.91725|12.48024|valle|lazio|0|z
+Valle Grana|44.41000|7.30000|valle|piemonte|0|z
+Valle Imagna|45.81426|9.50589|valle|lombardia|0|z
+Valle Infernotto|44.73000|7.27000|valle|piemonte|0|z
+Valle Isarco|46.67000|11.60000|valle|altoadige|0|z
+Valle Isorno|46.21700|8.40000|valle|piemonte|0|z
+Valle Latina|41.57440|13.35110|valle|lazio|0|z
+Valle Maira|44.50194|7.13778|valle|piemonte|0|z
+Valle Murcia|41.88590|12.48580|valle|lazio|0|z
+Valle Olona|45.67167|8.87468|valle|lombardia|0|z
+Valle Orco|45.41700|7.46700|valle|piemonte|0|z
+Valle Po|44.66280|7.29615|valle|piemonte|0|z
+Valle Roveto|41.91500|13.42806|valle|lazio|0|z
+Valle Sabbia|45.71580|10.41810|valle|lombardia|0|z
+Valle San Giacomo|46.33333|9.38333|valle|lombardia|0|z
+Valle San Martino|45.79890|9.44021|valle|lombardia|0|z
+Valle Sessera|45.71667|8.23333|valle|piemonte|0|z
+Valle Stura di Demonte|44.31000|7.17000|valle|piemonte|0|z
+Valle Umbra|42.92000|12.68000|valle|umbria|0|z
+Valle Varaita|44.58000|7.10000|valle|piemonte|0|z
+Valle Vermenagna|44.24000|7.54000|valle|piemonte|0|z
+Valle Vitulanese|41.15000|14.67000|valle|campania|0|z
+Vallelonga|41.91125|13.56983|valle|lazio|0|z
+Vallelunga|46.83225|10.61588|valle|altoadige|0|z
+Vallericcia|41.71667|12.66667|valle|lazio|0|z
+Vallesinella|46.20778|10.84694|valle|trentino|0|z
+Valli Grandi Veronesi|45.01000|11.31000|zona|emilia|0|z
+Valli occitane|44.52470|7.11568|zona|piemonte|0|z
+Valli Valdesi|44.83333|7.08333|valle|piemonte|0|z
+Vallo di Diano|40.40000|15.56667|valle|campania|0|z
+Vallone dei Mulini|40.62508|14.37632|valle|campania|0|z
+Vallone dell'Urtier|45.59440|7.43060|valle|valledaosta|0|z
+Vallone di Champdepraz|45.68300|7.60000|valle|valledaosta|0|z
+Vallone di Gorizia|45.84841|13.56326|valle|friuli|0|z
+Vallone di La Thuile|45.73300|6.95000|valle|valledaosta|0|z
+Vallone di Les Laures|45.68300|7.40000|valle|valledaosta|0|z
+Vallone di Saint-Barthélemy|45.78300|7.48300|valle|valledaosta|0|z
+Vallone di Saint-Marcel|45.68000|7.45000|valle|valledaosta|0|z
+Vallone di San Grato|45.67500|7.81500|valle|valledaosta|0|z
+Vallonina|42.50754|12.99060|valle|lazio|0|z
+Vallunga|46.57432|11.79777|valle|trentino|0|z
+Valmaggiore|41.33334|15.18258|valle|puglia|0|z
+Valmalenco|46.24400|9.85300|valle|lombardia|0|z
+Valnerina|42.71667|12.83333|valle|umbria|0|z
+Valnontey|45.57000|7.33000|valle|valledaosta|0|z
+Valpantena|45.53333|11.00000|valle|veneto|0|z
+Valpolicella|45.51667|10.88333|zona|veneto|0|z
+Valsassina|45.98300|9.40000|valle|lombardia|0|z
+Valserra|42.62000|12.68000|valle|umbria|0|z
+Valsesia|45.81667|8.13333|valle|piemonte|0|z
+Valsorda|46.36540|11.59960|valle|trentino|0|z
+Valsugana|46.05372|11.45780|valle|trentino|0|z
+Valtellina|46.16667|9.86667|valle|lombardia|0|z
+Valtiberina|43.55000|12.20000|valle|umbria|0|z
+Vedrette di Ries|46.91250|12.14170|zona|altoadige|0|z
+Velabro|41.88917|12.48194|valle|lazio|0|z
+Versilia|43.93611|10.24694|zona|toscana|0|z
+Vette Feltrine|46.11227|11.84401|zona|veneto|0|z
+Vulcanello|38.42500|14.95833|zona|sicilia|0|z
+Vulture-Melfese|40.95000|15.70000|zona|basilicata|0|z
+Wipptal|47.00000|11.50000|valle|altoadige|0|z
+Zerpa|45.35000|11.26000|zona|veneto|0|z
