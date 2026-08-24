@@ -8480,18 +8480,35 @@ function loadDefaultMarkers(){
     var p=g.split('-');
     return 'il '+(+p[2])+'/'+(+p[1]);
   }
-  // Scrive il contatore SOLO se la chip e' libera. Se c'e' un'analisi in
-  // corso la chip dice «Fonte: qualcosa» e non si tocca: il contatore
-  // ricomparira' da solo al prossimo «Indietro».
-  function mostraLetture(){
-    var c=document.getElementById('fonte-tag');
-    if(!c||!TESTO) return false;
-    var t=(c.textContent||'').trim();
-    if(t && t.indexOf('Fonte:')===0 && t.indexOf('—')<0) return false;
-    c.textContent=TESTO;
-    return true;
+  // ⚠️ IL CARICATORE STA NELLO STESSO IDENTICO PUNTO (24/8/2026, segnalato
+  // dall'utente con uno scatto): «#loader» e' fixed a bottom:18px, left:50%, e
+  // la chip e' a bottom:6px centrata. Prima non se ne accorgeva nessuno perche'
+  // «Fonte: —» e' largo 60px e ci spariva sotto; la riga delle letture e' larga
+  // 259px e spuntava da tutt'e due i lati. Succede solo su DESKTOP: sotto i
+  // 600px il caricatore sta al 40% dell'altezza. Quindi finche' il caricatore
+  // e' visibile la chip resta «Fonte: —», e le letture tornano appena sparisce.
+  // ⚠️ Il caricatore e' `opacity:0` con `animation ... 2.5s`: guardare il solo
+  // `display` direbbe «visibile» anche nei primi 2,5 secondi in cui non si vede.
+  function loaderSopra(){
+    var l=document.getElementById('loader');
+    if(!l) return false;
+    var s=getComputedStyle(l);
+    return s.display!=='none' && parseFloat(s.opacity||'0')>0.05;
   }
-  window.mostraLetture=mostraLetture;
+  // Tiene la regola: fonte vera -> non si tocca; caricatore sopra -> chip
+  // libera; niente di tutto cio' -> letture.
+  function sincronizza(){
+    var c=document.getElementById('fonte-tag');
+    if(!c) return false;
+    var t=(c.textContent||'').trim();
+    var nostro=!!TESTO && t===TESTO;
+    var libera=!t || t.indexOf('—')>=0;
+    if(!nostro && !libera) return false;
+    if(loaderSopra()){ if(nostro) c.textContent='Fonte: —'; return false; }
+    if(TESTO && libera){ c.textContent=TESTO; return true; }
+    return false;
+  }
+  window.mostraLetture=sincronizza;
   try{
     fetch(URL_LETTURE)
       .then(function(r){ return r.ok?r.json():null; })
@@ -8499,9 +8516,22 @@ function loadDefaultMarkers(){
       .then(function(j){
         if(!j||!j.stazioni||!j.letto) return;
         TESTO='🌧️ '+migliaia(j.stazioni)+' pluviometri in '+NAZIONI+' nazioni, letti '+quando(j.letto);
-        mostraLetture();
+        sincronizza();
       })
       .catch(function(){});
+  }catch(e){}
+  // Si ricontrolla quando il caricatore compare (animationstart, che scatta
+  // DOPO il ritardo di 2,5s) e quando viene mostrato o nascosto (lo fa con
+  // `style.display`, quindi una mutazione di attributo). La rete di sicurezza
+  // a 3 secondi copre il caso in cui l'animazione sia gia' stata consumata.
+  try{
+    var _l=document.getElementById('loader');
+    if(_l){
+      _l.addEventListener('animationstart',sincronizza);
+      _l.addEventListener('animationend',sincronizza);
+      new MutationObserver(sincronizza).observe(_l,{attributes:true,attributeFilter:['style','class']});
+    }
+    setTimeout(sincronizza,3000);
   }catch(e){}
 })();
 </script>
