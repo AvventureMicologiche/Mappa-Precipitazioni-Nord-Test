@@ -594,14 +594,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   pointer-events:none;white-space:nowrap;display:none;}
 @media(max-width:600px){#beta-note{bottom:auto;top:72px;font-size:8px;}}
 
-/* ── Box canale YouTube (desktop, in basso a destra) ──
-   Filigrana sullo SFONDO, non sull'intero elemento: la mappa si intravede
-   ma Archie e il pulsante restano pieni. Col mouse sopra diventa opaco. */
+/* ── Box canale YouTube (desktop, in alto a destra) ──
+   Rifatta il 24/8/2026 col linguaggio della vetrina video: stessa cornice,
+   stessa gerarchia (occhiello rosso, riga grande, riga piccola, bottone in
+   rilievo), stesse classi .v-*. Cosi' quando la vetrina scade non si torna a
+   una scheda di un'altra epoca: cambiano i contenuti, non il vestito.
+   Lo sfondo era al 65% e faceva filigrana: sembrava roba smorta, ora e' 92%. */
 #channel-logo{
   position:absolute;top:100px;right:14px;z-index:1000;
-  display:flex;align-items:center;gap:14px;
-  width:368px;padding:14px 17px;
-  background:rgba(255,255,255,.65);
+  display:block;
+  width:368px;padding:12px 13px 13px;
+  background:rgba(255,255,255,.92);
   border:1px solid rgba(226,224,216,.85);
   border-radius:13px;
   box-shadow:0 3px 14px rgba(0,0,0,.12);
@@ -623,18 +626,18 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   width:80px;height:80px;border-radius:50%;flex:none;
   border:2px solid #1b3f6e;object-fit:cover;background:#f3efe6;
 }
-#channel-logo .ch-txt{flex:1;min-width:0;}
-#channel-logo .ch-nome{
-  font-size:18px;font-weight:700;color:#1b3f6e;line-height:1.15;
-  font-family:'Segoe UI',Arial,sans-serif;
-  text-align:center;
-}
-#channel-logo .ch-claim{font-size:12px;font-weight:600;color:#000;margin:4px 0 10px;line-height:1.3;text-align:center;white-space:nowrap;}
-#channel-logo .ch-btn{
-  background:#FF0000;color:#fff;font-size:15px;font-weight:700;
-  padding:8px 0;border-radius:5px;text-align:center;letter-spacing:.4px;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
+/* Le righe che esistono solo nella scheda «Iscriviti». La classe `v-iscr` sta
+   solo in QUESTO markup: quando parte la vetrina l'innerHTML viene riscritto e
+   quelle classi spariscono da sole, quindi la scheda col video non cambia di
+   un pixel. Testo grande e righe attaccate: la versione con le tre righe
+   piccole e distanziate lasciava un buco bianco in mezzo alla scheda. */
+#channel-logo .v-alto.v-iscr{align-items:center;}
+#channel-logo .v-occhio.v-iscr{font-size:12px;margin-bottom:3px;}
+#channel-logo .v-nome{font-size:23px;line-height:1.02;color:#1b3f6e;letter-spacing:-.3px;
+  font-family:'Segoe UI Black','Arial Black','Segoe UI',Arial,sans-serif;font-weight:900;}
+#channel-logo .v-sotto{font-size:13px;font-weight:600;color:#3f5a7a;margin-top:4px;line-height:1.15;}
+#channel-logo .v-btn.v-iscr{font-size:17px;margin-top:9px;padding:9px 0 10px;
+  font-family:'Segoe UI Black','Arial Black','Segoe UI',Arial,sans-serif;}
 
 /* ── Pillola canale (schermi piccoli) ──
    Vive nel pannello dei cumulati, sotto le statistiche: non copre mai la
@@ -672,8 +675,11 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    Regole usate SOLO dentro la finestra promo: fuori restano inerti, perche'
    nessun elemento porta quelle classi. Il contenitore diventa a blocchi: la
    scheda "Iscriviti" e' una riga flex, questa no. */
-#channel-logo.vetrina{display:block;padding:12px 13px 13px;background:rgba(255,255,255,.92);}
-#channel-logo.vetrina:hover{background:#fff;}
+/* Con un'analisi a schermo la scheda si toglie di mezzo: la mappa e' la cosa
+   che si e' venuti a guardare, e la scheda in alto a destra ne copre un pezzo.
+   Torna da sola con «Indietro», come fa il contatore delle letture. Vale per
+   la scheda in tutte e due le versioni, video e «Iscriviti». */
+#channel-logo.nascosta{display:none;}
 #channel-logo .v-alto{display:flex;gap:11px;align-items:stretch;}
 #channel-logo .v-cop{width:130px;height:73px;flex:none;border-radius:7px;
   background:#e8e5dc center/cover no-repeat;box-shadow:0 1px 5px rgba(0,0,0,.28);}
@@ -1185,18 +1191,15 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <a href="https://www.youtube.com/@avventuremicologiche" target="_blank"
        onclick="try{gtag('event','click_youtube',{pulsante:'box-desktop'})}catch(e){}"
        id="channel-logo">
-      <img src="archie-avatar.png" alt="Archie" class="ch-ava">
-      <div class="ch-txt">
-        <div class="ch-nome">Avventure Micologiche</div>
-        <div class="ch-claim">Questo sito è free, sostienici su YouTube</div>
-        <div class="ch-btn">
-          <svg width="19" height="14" viewBox="0 0 42 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <rect width="42" height="30" rx="6" fill="#fff"/>
-            <polygon points="16,7 16,23 31,15" fill="#FF0000"/>
-          </svg>
-          ISCRIVITI
+      <div class="v-alto v-iscr">
+        <img src="archie-avatar.png" alt="Archie" class="ch-ava">
+        <div class="v-dx">
+          <div class="v-occhio v-iscr"><svg width="16" height="12" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#FF0000"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg> Canale YouTube</div>
+          <div class="v-nome">Avventure Micologiche</div>
+          <div class="v-sotto">Questo sito è free, sostienici</div>
         </div>
       </div>
+      <div class="v-btn v-iscr">ISCRIVITI</div>
     </a>
 
     <!-- Pannelli: su desktop sovrapposti alla mappa via absolute -->
@@ -1428,6 +1431,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
            un periodo). -->
       <div id="ieri-notice" style="display:none;margin-top:8px;font-size:14px;font-weight:600;line-height:1.3;color:#cc0000;"></div>
       <div id="archivio-notice" style="display:none;margin-top:8px;font-size:14px;font-weight:600;line-height:1.3;color:#cc0000;"></div>
+      <div id="stime-notice" style="display:none;margin-top:8px;font-size:14px;font-weight:600;line-height:1.3;color:#cc0000;"></div>
       <div id="osmer-notice" style="display:none;margin-top:6px;font-size:14px;font-weight:600;line-height:1.3;color:#cc0000;">⚠️ <b>Friuli</b>: possibili ritardi fino a 48h</div>
       <a href="https://www.youtube.com/@avventuremicologiche" target="_blank"
          onclick="try{gtag('event','click_youtube',{pulsante:'pillola-mobile'})}catch(e){}"
@@ -2541,7 +2545,7 @@ var activeRegions   = ['lombardia','piemonte']; // regioni con checkbox spuntata
 var DEFAULT_REGION = 'lombardia'; // ripiego se nessuna regione risulta spuntata
 var lastUsedFonte  = '—'; // fonte effettiva usata nell'ultimo render
 var ARPA_STATIONS    = null; // stazioni ARPA Lombardia
-var ARPA_PIE_STATIONS = null; // stazioni ARPA Piemonte (caricate al boot)
+// ARPA_PIE_STATIONS tolta il 24/8/2026: era scritta al boot e mai letta.
 var lombardiaRings = [];
 var regionRings    = {};   // cache GeoJSON per regione
 var regionBorder   = null; // layer Leaflet confine attivo
@@ -3039,7 +3043,7 @@ var HIST_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Preci
 // Repo dei dati dei piloti VdA-CF e Friuli-OSMER. Finché non si promuove, i file
 // (promozione fatta il 10/8/2026: qui in prod gli URL puntano già a Nord)
 // UNICA riga (e spostare data/valledaosta-cf + data/friuli-osmer nel repo prod). ◄◄
-var PILOT_DATA_BASE='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord-Test/main/data/';
+var PILOT_DATA_BASE='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
 // MeteoHub sta a parte dagli altri piloti perche' la sua raccolta NON gira sul
 // repo di test: i cron di meteohub.yml sono commentati dal 1/8/2026, altrimenti
 // i due repo scriverebbero gli stessi dati. Il risultato era che sul sito di
@@ -3052,7 +3056,7 @@ var PILOT_DATA_BASE='https://raw.githubusercontent.com/AvventureMicologiche/Mapp
 // differenza fra i due index. ⚠️ Se un giorno si torna a provare qui una
 // modifica al collector MeteoHub, questa riga va rimessa a PILOT_DATA_BASE,
 // altrimenti si guarda il dato di produzione credendo che sia il proprio.
-var MH_DATA_BASE='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
+var MH_DATA_BASE=PILOT_DATA_BASE;
 var HIST_RAW_BY_REGION={
   'friuli-osmer':PILOT_DATA_BASE,
   'valledaosta-cf':PILOT_DATA_BASE,
@@ -4130,6 +4134,11 @@ var RITARDO_NOTO={
   emilia:{testo:'di solito entro le 5 del mattino',finoAlle:7,parziale:0.8}
 };
 function aggiornaAvvisoIeri(){
+  // L'avviso stime vive in un elemento suo e si aggiorna qui perche' questa
+  // funzione e' chiamata da tutti i punti giusti. NON puo' stare piu' sotto:
+  // di li' in poi si esce quando il periodo non finisce a ieri, e con le date
+  // personalizzate non comparirebbe mai.
+  try{ avvisoStime(); }catch(e){}
   var box=document.getElementById('ieri-notice');
   if(box){ box.style.display='none'; box.innerHTML=''; }
   if(!currentNow) return;
@@ -4258,6 +4267,7 @@ function loadData(pastDate,nowDate,labelPeriodo){
   // rinnova. Se invece è la riprova stessa, il budget resta consumato.
   if(_retryCall){ _retryCall=false; } else { _autoRetryUsed=false; }
   _archivio.reset();   // contatori della riserva archivio: nuovi a ogni caricamento
+  _stime={};           // giorni coperti da stime: si ricontano a ogni analisi
   currentPast=pastDate; currentNow=nowDate; currentLabel=labelPeriodo;
   // Su un giorno solo le stime non si usano (vedi usaGiorno).
   _periodoUnGiorno=(fmtISOLocal(pastDate)===fmtISOLocal(nowDate));
@@ -4753,8 +4763,74 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
 //     toglierebbe in silenzio un giorno intero dalla somma.
 // Nessun avviso all'utente: sono casi rarissimi (al Nord 5 giorni in un anno)
 // e su un periodo lungo la stima si annacqua. Chiacchiericcio in meno.
+// ══ Avviso «questi giorni sono stime» (24/8/2026) ══════════
+// La rete di sicurezza copre i giorni mancanti con stime Open-Meteo e la mappa
+// non mostra buchi: il totale c'e', ma non e' pioggia misurata. Fino a oggi non
+// lo diceva nessuno. La scelta del 31/7 («casi rarissimi, su un periodo lungo la
+// stima si annacqua») valeva quando erano 5 giorni all'anno al Nord; non vale
+// piu' da quando la Puglia ne ha persi tre di fila e le stime hanno cancellato
+// temporali veri da 28 mm, mostrando la regione asciutta.
+//
+// Si avvisa SOLO per i giorni stimati CONSECUTIVI e RECENTI, cioe' quelli che
+// arrivano fino alla coda del periodo: quello e' il guasto in corso, ed e'
+// l'unico che cambia il giudizio su cosa si sta guardando. Se la rete riparte e
+// quei giorni restano stime in mezzo allo storico, nessun avviso: sarebbe
+// rumore su una cosa che non si puo' piu' cambiare.
+//
+// «Pluviometri offline» e non «rete X offline»: durante quei blocchi gli
+// strumenti non hanno consegnato, ed e' la parola che usa la Regione stessa nel
+// suo portale («Fuori linea»). Dare dell'offline all'intermediario sarebbe
+// falso — il 24/8 MeteoHub rispondeva benissimo, era la telemetria pugliese a
+// monte a essere caduta.
+var _stime={};
+function avvisoStime(){
+  var box=document.getElementById('stime-notice');
+  if(box){ box.style.display='none'; box.innerHTML=''; }
+  if(!box || !currentPast || !currentNow) return;
+  // Su un periodo di UN GIORNO le stime non si usano affatto (vedi usaGiorno):
+  // il giorno vale come mancante e l'utente legge «nessun dato». Dire li' che
+  // sta guardando delle stime sarebbe falso, non ne sta guardando nessuna.
+  if(_periodoUnGiorno) return;
+  var regioni=getActiveRegions(); if(!regioni.length) return;
+  var GIORNO=86400000;
+  // La coda del periodo puo' essere ancora scoperta: il gapfill ha 2 giorni di
+  // grazia, quindi gli ultimi due possono MANCARE invece che essere stimati, e
+  // non devono spezzare la catena.
+  var limite=fmtISOLocal(new Date(currentNow.getTime()-2*GIORNO));
+  var righe=[];
+  regioni.forEach(function(rk){
+    var mappa=_stime[rk]; if(!mappa) return;
+    var date=Object.keys(mappa).sort();
+    if(!date.length) return;
+    var ultimo=date[date.length-1];
+    if(ultimo<limite) return;   // guasto vecchio, gia' rientrato: si tace
+    var primo=ultimo;
+    while(true){
+      var prec=fmtISOLocal(new Date(new Date(primo+'T12:00:00').getTime()-GIORNO));
+      if(!mappa[prec]) break;
+      primo=prec;
+    }
+    var p=primo.split('-');
+    var chi=(regioni.length===1)?'':('<b>'+((REGIONS[rk]&&REGIONS[rk].name)||rk)+'</b>: ');
+    righe.push('⚠️ '+chi+'dal '+p[2]+'/'+p[1]+' stime Open-Meteo, pluviometri&nbsp;offline');
+  });
+  if(!righe.length) return;
+  box.innerHTML=righe.join('<br>');
+  box.style.display='block';
+  if(typeof positionPanels==='function') positionPanels();
+}
 var _periodoUnGiorno=false;
-function usaGiorno(data){
+// Il secondo argomento e' la regione: senza, un giorno stimato non si
+// saprebbe di chi e'. Lo passano tutti e 18 i punti di caricamento.
+function usaGiorno(data,rk){
+  // ⚠️ Solo `open-meteo-gapfill`, cioe' i buchi tappati dalla rete di
+  // sicurezza. NON `open-meteo-backfill-*`, che e' la pre-storia dichiarata
+  // di ogni regione (Toscana prima del 12/7, centro-sud prima del 19/7):
+  // segnalare quella farebbe comparire l'avviso su mezza Italia a ogni
+  // periodo lungo, che e' esattamente il chiacchiericcio da evitare.
+  if(rk && data && /open-meteo-gapfill/.test(data.source||'')){
+    (_stime[rk]=_stime[rk]||{})[data.date]=1;
+  }
   if(!data||!data.stations) return {stations:[]};
   if(!_periodoUnGiorno) return data;
   var stimate=0;
@@ -4832,7 +4908,7 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
   //   2535 "Virgilio Mantova Cerese" (MN) → coordinate di Dorio (LC)
   // Attenzione: "Ispra JRC" (32355) è invece corretta e riporta ogni giorno.
   var LOMB_ESCLUSE={'2239':1,'2206':1,'2535':1};
-  var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord-Test/main/data/lombardia';
+  var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/lombardia';
   function _fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
   var todayStr=_fmt(new Date());
   var days=[];
@@ -4856,7 +4932,7 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
   days.forEach(function(day){
     fetch(GITHUB_RAW+'/'+day+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'lombardia');})
       .then(function(data){
         if(data&&data.stations){
           data.stations.forEach(function(s){
@@ -5007,7 +5083,7 @@ function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
   days.forEach(function(day){
     fetch(GITHUB_RAW+'/'+day+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'piemonte');})
       .then(function(data){
         if(data&&data.stations){
           data.stations.forEach(function(s){
@@ -5080,7 +5156,7 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
   days.forEach(function(day){
     fetch(GITHUB_RAW+'/'+day+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'veneto');})
       .then(function(data){
         if(data&&data.stations){
           data.stations.forEach(function(s){
@@ -5170,7 +5246,7 @@ function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
   days.forEach(function(day){
     fetch(GITHUB_RAW+'/'+day+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'liguria');})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -5270,7 +5346,7 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
   days.forEach(function(day){
     fetch(GITHUB_RAW+'/'+day+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'emilia');})
       .then(function(data){
         if(data&&data.stations){
           data.stations.forEach(function(s){
@@ -5321,7 +5397,7 @@ function loadAustriaRegion(pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(AT_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'austria');})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -5368,7 +5444,7 @@ function loadSloveniaRegion(pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(SI_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'slovenia');})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -5417,7 +5493,7 @@ function loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(FR_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,regionKey);})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -5476,7 +5552,7 @@ function loadSvizzeraRegion(pastDate,nowDate,labelPeriodo,cb){
     dates.forEach(function(dateStr){
       fetch(srcCfg.raw+'/'+dateStr+'.json')
         .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-        .then(usaGiorno)
+        .then(function(d){return usaGiorno(d,'svizzera');})
         .then(function(data){
           if(data.stations){
             data.stations.forEach(function(s){
@@ -5528,7 +5604,7 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(GITHUB_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'svizzera');})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -5645,7 +5721,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
     // OSMER (backfill + reale)
     fetch(OSMER_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'friuli');})
       .then(function(data){
         if(!data.stations) return;
         var isReal=data.source && data.source.indexOf('backfill')<0;
@@ -5667,7 +5743,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
     // finché non coprono davvero la finestra chiesta.
     fetch(MH_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'friuli');})
       .then(function(data){
         if(!data.stations) return;
         data.stations.forEach(function(s){
@@ -5685,7 +5761,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
     if(addVeneto){
       fetch(VENETO_RAW+'/'+dateStr+'.json')
         .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'friuli');})
         .then(function(data){
           if(!data.stations) return;
           data.stations.forEach(function(s){
@@ -5721,7 +5797,7 @@ function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(CF_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'valledaosta');})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -5796,7 +5872,7 @@ function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,regionKey);})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -5845,7 +5921,7 @@ function loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(GITHUB_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'altoadige');})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -5894,7 +5970,7 @@ function loadMeteotrentino(pastDate,nowDate,labelPeriodo,cb){
   dates.forEach(function(dateStr){
     fetch(GITHUB_RAW+'/'+dateStr+'.json')
       .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'trentino');})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -6041,7 +6117,7 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
   days.forEach(function(day){
     fetch(GITHUB_RAW+'/'+day+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
-      .then(usaGiorno)
+      .then(function(d){return usaGiorno(d,'toscana');})
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
@@ -6896,7 +6972,10 @@ function loadAllBorders(regionKeys, cb){
 // delle stazioni di ciascuna regione (con un po' di margine).
 var REGION_BOUNDS={
   lombardia:   [[44.90, 8.90],[46.45,10.85]],
-  piemonte:    [[43.80, 6.63],[46.46, 9.22]],
+  // 44.05 e non 43.80: il confine vero parte da 44.061, e i 0,26 gradi di
+  // mare che c'erano sotto costavano il 10,7% dell'altezza — cioe' zoom, 
+  // perche' e' l'altezza a decidere l'inquadratura di questa regione.
+  piemonte:    [[44.05, 6.63],[46.46, 9.22]],
   veneto:      [[44.79,10.63],[46.68,13.10]],
   valledaosta: [[45.47, 6.80],[45.99, 7.94]],
   liguria:     [[43.75, 7.49],[44.68,10.07]],
@@ -7086,7 +7165,13 @@ function fitMapToRegions(regionKeys,factor){
   // uso getBoundsZoom + setView, il meccanismo che funziona.)
   var isDesk=window.innerWidth>900;
   var panelPx=isDesk?420:0;
-  var _pp=L.point((panelPx/2)+30, 70);            // padding simmetrico che riserva il pannello
+  // Bordo verticale: 30 px su desktop, 70 sul telefono. I 70 di prima erano
+  // il 17% dell'altezza buttato in aria attorno alla regione, e per le
+  // regioni alte e strette (Piemonte in testa) valevano una tacca di zoom
+  // intera. Sul telefono restano 70 apposta: li' il pannello periodo copre
+  // la parte bassa della mappa e il margine serve davvero.
+  var padY=isDesk?30:70;
+  var _pp=L.point((panelPx/2)+30, padY);          // padding simmetrico che riserva il pannello
   var _z=map.getBoundsZoom(_lb,false,_pp);
   // Spostamento a est del contenuto (per liberare i pannelli): sulle finestre
   // STRETTE lo spostamento fisso di panelPx/2 spingeva la regione fuori dal
@@ -8204,11 +8289,13 @@ if(_btnShot){
   //    assente e la heatmap non compare.
   function whenLombardiaReady(cb){
     if(keys.indexOf('lombardia')<0){cb();return;}
-    var t0=Date.now();
-    (function poll(){
-      if((typeof ARPA_STATIONS!=='undefined'&&ARPA_STATIONS&&ARPA_STATIONS.length>10)||Date.now()-t0>8000){cb();return;}
-      setTimeout(poll,150);
-    })();
+    // L'anagrafe non si carica piu' all'apertura: la si chiede QUI, e si
+    // parte comunque dopo 8 s se la function non risponde (con la lista
+    // statica di riserva, che caricaAnagrafeLombardia mette da sola).
+    var fatto=false;
+    var vai=function(){ if(fatto)return; fatto=true; cb(); };
+    setTimeout(vai,8000);
+    caricaAnagrafeLombardia(vai);
   }
   whenLombardiaReady(function(){
     loadAllBorders(keys,function(){
@@ -8272,64 +8359,70 @@ if(_btnShot){
   setTimeout(initMobile, 200);
 }());
 
-// Carica GeoJSON e stazioni ARPA in background, poi nasconde loader
-// I confini e le stazioni vengono mostrati solo quando l'utente seleziona una regione
+// Confini GeoJSON: sono l'unica cosa che serve davvero all'apertura, e appena
+// arrivano il loader se ne va.
+//
+// ⚠️ 24/8/2026 — QUI DENTRO C'ERANO DUE CHIAMATE ALLE FUNCTION ARPA, FATTE A
+// OGNI APERTURA DEL SITO ANCHE SENZA AVER SCELTO NESSUNA REGIONE, e il loader
+// spariva SOLO nel .finally() della piu' lenta delle due, il Piemonte.
+// Misurato in produzione il 24/8: arpa-piemonte ci mette 8,8 s a freddo, e
+// 11 s + errore 500 quando ARPA e' in avaria (successo due volte su due alle
+// 20:15). Risultato: la pillola «Caricamento stazioni ARPA…» restava addosso
+// 10-12 secondi anche a chi apriva la Liguria, che col Piemonte non c'entra
+// niente. La pillola ha 2,5 s di ritardo prima di farsi vedere: era nata per
+// non comparire mai, e compariva sempre.
+//
+// Peggio: ARPA_PIE_STATIONS, il risultato di quell'attesa, NON ERA LETTO DA
+// NESSUNA PARTE — l'unica altra occorrenza era la sua dichiarazione. Il
+// Piemonte prende i pallini dalla sua cfg.stations e i dati veri da
+// loadARPAPiemonteRegion, che si fa le chiamate per conto suo. Quindi la
+// chiamata Piemonte e' stata TOLTA, e quella Lombardia e' diventata pigra.
 loadGeoJSONOnce(function(){
-  document.getElementById('lmsg').textContent='Caricamento stazioni ARPA…';
-  // I confini sono arrivati: via il messaggio della fase precedente, altrimenti
-  // la pillola annuncia ancora un caricamento già concluso.
   document.getElementById('lsub').textContent='';
-
-  // Carica stazioni Lombardia e Piemonte in parallelo
-  var stUrlLombardia='/.netlify/functions/arpa?endpoint=nf78-nj6b.json&$limit=500&$select=idsensore,nomestazione,lat,lng,quota,provincia&$where=tipologia=%27Precipitazione%27';
-  var stUrlPiemonte='/.netlify/functions/arpa-piemonte?type=anag';
-
-  // Lombardia
-  fetch(stUrlLombardia)
-    .then(function(r){if(!r.ok)throw new Error('HTTP');return r.json();})
-    .then(function(data){
-      var stazioni=[];
-      data.forEach(function(s){
-        var lat=parseFloat(s.lat),lon=parseFloat(s.lng);
-        if(!isNaN(lat)&&!isNaN(lon)&&lat>44&&lat<47&&lon>7&&lon<12){
-          stazioni.push({n:s.nomestazione||'—',lat:lat,lon:lon,q:parseInt(s.quota)||0,p:s.provincia||'—',idsensore:s.idsensore});
-        }
-      });
-      stazioni=selectUniform(stazioni,200);
-      if(stazioni.length>=5){
-        ARPA_STATIONS=stazioni;
-        console.log('[ARPA Lombardia] Stazioni caricate:',stazioni.length);
-      } else throw new Error('poche stazioni');
-    })
-    .catch(function(e){
-      console.warn('[ARPA Lombardia] fallback:',e.message);
-      ARPA_STATIONS=LOMBARDIA_STATIONS;
-    });
-
-  // Piemonte — carica in background, non blocca il loader
-  fetch(stUrlPiemonte)
-    .then(function(r){if(!r.ok)throw new Error('HTTP');return r.json();})
-    .then(function(raw){
-      var data=Array.isArray(raw)?raw:(raw.data||raw.results||[]);
-      var stazioni=[];
-      data.forEach(function(s){
-        var lat=parseFloat(s.lat),lon=parseFloat(s.lng||s.lon);
-        if(!isNaN(lat)&&!isNaN(lon)&&lat>43.8&&lat<46.5&&lon>6.6&&lon<9.3){
-          stazioni.push({n:s.name||'—',lat:lat,lon:lon,q:parseInt(s.altitude)||0,p:s.province||'—',station_code:s.station_code});
-        }
-      });
-      if(stazioni.length>=5){
-        ARPA_PIE_STATIONS=stazioni;
-        console.log('[ARPA Piemonte] Stazioni caricate:',stazioni.length);
-      }
-    })
-    .catch(function(e){
-      console.warn('[ARPA Piemonte] stazioni fallback:',e.message);
-    })
-    .finally(function(){
-      document.getElementById('loader').style.display='none';
-    });
+  document.getElementById('loader').style.display='none';
 });
+
+// Rete di sicurezza: se i confini non arrivano proprio (raw irraggiungibile,
+// rete a pezzi) il loader se ne va lo stesso. Nessuna singola richiesta puo'
+// piu' tenere in ostaggio l'apertura del sito.
+setTimeout(function(){
+  var l=document.getElementById('loader');
+  if(l) l.style.display='none';
+},8000);
+
+// Anagrafe ARPA Lombardia — serve SOLO ai pallini grigi della Lombardia prima
+// che si scelga un periodo: i dati veri li legge loadARPALombardiaRegion dai
+// file giornalieri (dal 24/7/2026) e questa lista non la tocca nemmeno. Si
+// carica alla PRIMA richiesta e una volta sola.
+var _anagLombardia=null;
+function caricaAnagrafeLombardia(cb){
+  cb=cb||function(){};
+  if(ARPA_STATIONS){ cb(ARPA_STATIONS); return; }
+  if(!_anagLombardia){
+    var stUrl='/.netlify/functions/arpa?endpoint=nf78-nj6b.json&$limit=500&$select=idsensore,nomestazione,lat,lng,quota,provincia&$where=tipologia=%27Precipitazione%27';
+    _anagLombardia=fetch(stUrl)
+      .then(function(r){if(!r.ok)throw new Error('HTTP');return r.json();})
+      .then(function(data){
+        var stazioni=[];
+        data.forEach(function(s){
+          var lat=parseFloat(s.lat),lon=parseFloat(s.lng);
+          if(!isNaN(lat)&&!isNaN(lon)&&lat>44&&lat<47&&lon>7&&lon<12){
+            stazioni.push({n:s.nomestazione||'—',lat:lat,lon:lon,q:parseInt(s.quota)||0,p:s.provincia||'—',idsensore:s.idsensore});
+          }
+        });
+        stazioni=selectUniform(stazioni,200);
+        if(stazioni.length>=5){
+          ARPA_STATIONS=stazioni;
+          console.log('[ARPA Lombardia] Stazioni caricate:',stazioni.length);
+        } else throw new Error('poche stazioni');
+      })
+      .catch(function(e){
+        console.warn('[ARPA Lombardia] fallback:',e.message);
+        ARPA_STATIONS=LOMBARDIA_STATIONS;
+      });
+  }
+  _anagLombardia.then(function(){ cb(ARPA_STATIONS||LOMBARDIA_STATIONS); });
+}
 
 var meteohubStationsCache={};
 // Anagrafe stazioni MeteoHub per i puntini di default (prima di scegliere un
@@ -8460,7 +8553,14 @@ function addDefaultMarkersForRegion(regionKey){
     loadFranciaStations(regionKey,function(st){ drawDefaultMarkers(st,cfg); });
     return;
   }
-  var stazioni=(regionKey==='lombardia')?(ARPA_STATIONS||LOMBARDIA_STATIONS):((cfg&&cfg.stations)?cfg.stations:[]);
+  // Lombardia: l'anagrafe ARPA non e' piu' precaricata all'apertura (vedi la
+  // nota su caricaAnagrafeLombardia), quindi anche qui si aspetta — con la
+  // lista statica di riserva se la function non risponde.
+  if(regionKey==='lombardia'){
+    caricaAnagrafeLombardia(function(st){ drawDefaultMarkers(st||LOMBARDIA_STATIONS,cfg); });
+    return;
+  }
+  var stazioni=(cfg&&cfg.stations)?cfg.stations:[];
   drawDefaultMarkers(stazioni,cfg);
 }
 function drawDefaultMarkers(stazioni,cfg){
@@ -8630,6 +8730,31 @@ function loadDefaultMarkers(){
    parte giusta.
    ════════════════════════ */
 (function(){
+  // ── La scheda si toglie di mezzo quando c'e' un'analisi ────────────────
+  // Vale SEMPRE, non solo durante la vetrina: dal 28/8 la vetrina scade ma la
+  // scheda «Iscriviti» e' alta uguale, e resterebbe piantata sopra la mappa.
+  // I segnali sono quelli che il sito gia' produce: il badge dell'header
+  // (svuotato da setBadge('') dentro resetToStart, cioe' «Indietro») e la
+  // rotella sulla mappa, che si accende al primo istante del calcolo. Servono
+  // tutti e due: con la sola rotella la scheda tornerebbe a fine analisi, col
+  // solo badge resterebbe li' per tutta l'attesa. Non si tocca nessuna
+  // funzione esistente, si guardano gli elementi.
+  try{
+    var scheda=document.getElementById('channel-logo');
+    var _badge=document.getElementById('badge');
+    var _rotella=document.getElementById('map-spinner');
+    if(scheda){
+      var aggiornaScheda=function(){
+        var analisi=(_badge && _badge.textContent.trim()!=='')
+                 || (_rotella && _rotella.style.display==='flex');
+        scheda.classList.toggle('nascosta',!!analisi);
+      };
+      if(_badge) new MutationObserver(aggiornaScheda).observe(_badge,{childList:true,characterData:true,subtree:true});
+      if(_rotella) new MutationObserver(aggiornaScheda).observe(_rotella,{attributes:true,attributeFilter:['style']});
+      aggiornaScheda();
+    }
+  }catch(e){}
+
   var V={
     fino:'2026-08-28T23:59:59+02:00',
     link:'https://youtu.be/moADfe6fWGw',
@@ -8667,6 +8792,7 @@ function loadDefaultMarkers(){
           +'<div class="v-canale"><img src="archie-avatar.png" alt="">'+V.canale+'</div>'
         +'</div></div>'
         +'<div class="v-btn">GUARDA IL VIDEO</div>';
+
     }
 
     // Pillola telefono: invariata dal 24/8, il gancio in prima riga e la riga
