@@ -18,6 +18,18 @@
   </script>
 
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <!-- ⚠️ CANONICO (23/8/2026). Ogni link condiviso e' questa stessa pagina con
+       i parametri dello stato (?r=…&da=…&a=…): per Google erano PAGINE DIVERSE
+       e uguali fra loro, e Search Console ha mandato l'avviso «pagina duplicata
+       senza URL canonico selezionato dall'utente» su /?r=lombardia&da=…
+       Questa riga dice qual e' l'originale, e tutti i link condivisi portano il
+       loro peso qui invece di litigare fra loro. Le 23 pagine regione il loro
+       canonico l'avevano gia' dal primo giorno, ed e' per questo che sono
+       indicizzate pulite.
+       ⚠️ URL di PRODUZIONE anche nel repo di test, di proposito: il test e'
+       noindex, quindi Google non lo guarda, e cosi' la differenza fra i due
+       repo resta quella delle 5 righe di dominio e non diventa 6. -->
+  <link rel="canonical" href="https://precipitazioni.avventuremicologiche.it/">
   <meta name="description" content="Mappa interattiva delle precipitazioni in Italia, Svizzera, Austria, Francia e Slovenia con dati da stazioni meteo reali. Pianifica le tue uscite funghi.">
   <meta property="og:title" content="Mappa Pluviometrica Italia, Svizzera, Austria, Francia e Slovenia | Avventure Micologiche">
   <meta property="og:description" content="Mappa interattiva con dati meteo reali di Italia, Svizzera, Austria, Francia e Slovenia per pianificare ogni uscita. Trova le zone dove ha piovuto di più.">
