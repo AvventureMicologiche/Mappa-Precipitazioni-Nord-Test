@@ -711,27 +711,6 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   border-top:1px solid #eee;text-align:center;background:#fff;flex-shrink:0;}
 .fonte a{color:#1b3f6e}
 
-/* CONTATORE DELLE LETTURE (24/8/2026). Due copie, MAI visibili insieme: sopra
-   i 600px vive sotto la mappa accanto ai crediti, sotto i 600px il pie' di
-   pagina e' display:none e allora sta dentro il pannello dei cumulati, sopra
-   la pillola del canale. Il :empty le tiene sparite finche' il numero non
-   arriva: se il file non si scarica la pagina resta identica a prima, senza
-   buchi ne' scritte di attesa. */
-#letture-fonte{display:none;}
-#letture-pannello{display:none;}
-@media(min-width:601px){
-  #letture-fonte{display:block;font-size:11px;color:#7a8598;text-align:center;
-    background:#fff;padding:5px 10px 0;flex-shrink:0;}
-  #letture-fonte:empty{display:none;}
-}
-@media(max-width:600px){
-  #letture-pannello{display:block;font-size:12.5px;line-height:1.3;color:#5a6472;
-    text-align:center;padding:4px 8px 1px;margin-top:5px;
-    border-top:1px solid rgba(0,0,0,.07);
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  #letture-pannello:empty{display:none;}
-}
-
 /* ══════════════════════════════════════
    TABLET (601-900px)
    ══════════════════════════════════════ */
@@ -1405,12 +1384,6 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       <div id="ieri-notice" style="display:none;margin-top:8px;font-size:14px;font-weight:600;line-height:1.3;color:#cc0000;"></div>
       <div id="archivio-notice" style="display:none;margin-top:8px;font-size:14px;font-weight:600;line-height:1.3;color:#cc0000;"></div>
       <div id="osmer-notice" style="display:none;margin-top:6px;font-size:14px;font-weight:600;line-height:1.3;color:#cc0000;">⚠️ <b>Friuli</b>: possibili ritardi fino a 48h</div>
-      <!-- Sta QUI, sotto le statistiche e sopra la pillola del canale, perche'
-           e' il parente stretto di «254 Staz.»: quella riga dice quante
-           stazioni ha usato QUESTA analisi, questa dice quante ne legge il
-           sito ogni mattina. Costa 27px al pannello (268 -> 295), misurati a
-           393x760 e 360x640. -->
-      <div id="letture-pannello"></div>
       <a href="https://www.youtube.com/@avventuremicologiche" target="_blank"
          onclick="try{gtag('event','click_youtube',{pulsante:'pillola-mobile'})}catch(e){}"
          id="channel-pill">
@@ -1426,8 +1399,6 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     </div>
   </div>
 </div>
-
-<div id="letture-fonte"></div>
 
 <div class="fonte">
   © 2024-2026 <a href="https://avventuremicologiche.it" target="_blank" rel="noopener">Avventure Micologiche</a> ·
@@ -6815,6 +6786,9 @@ function resetToStart(){
   document.querySelectorAll('.tp-btn,.tp-custom-btn').forEach(function(b){b.classList.remove('active');});
   document.getElementById('custom-box').style.display='none';
   document.getElementById('fonte-tag').textContent='Fonte: —';
+  // Nessuna analisi a schermo: la chip torna a fare da contatore delle letture
+  // (vedi in fondo). Se il numero non e' ancora arrivato resta «Fonte: —».
+  try{ if(window.mostraLetture) window.mostraLetture(); }catch(e){}
   document.getElementById('beta-note').style.display='none';
   currentPast=null; currentNow=null; currentLabel='';
   updateOsmerNotice();
@@ -8457,26 +8431,38 @@ function loadDefaultMarkers(){
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   «5.584 pluviometri letti stamattina alle 7:10»  (24 agosto 2026)
+   «5.584 pluviometri in 5 nazioni, letti stamattina alle 7:10»
+   (24 agosto 2026, seconda versione)
 
-   PERCHE': il sito non diceva da nessuna parte che dietro c'e' una macchina
-   che si sveglia ogni mattina e legge mezza Europa. Questa riga lo dice con
-   un numero che si puo' VERIFICARE: torni domani e l'ora e' cambiata.
+   DOVE STA E PERCHE' LI'. Nello spazio della chip «Fonte:», e SOLO quando
+   quella chip e' vuota, cioe' quando non c'e' nessuna analisi a schermo:
+   all'apertura e dopo «Indietro». Appena parte un'analisi la chip torna a
+   dire «Fonte: ARPA Lombardia» e il contatore sparisce. E' lo stesso
+   meccanismo del titolo e del badge nell'header, che si danno il cambio.
 
-   COSTA UNA RICHIESTA da 150 byte, non bloccante: se non arriva, le due
-   caselle restano vuote (:empty) e la pagina e' identica a prima. Il numero
-   lo scrive `genera-riepiloghi.js` nei due giri gia' schedulati, quindi
-   niente cron nuovi, niente funzioni, niente crediti Netlify.
+   ⚠️ LE DUE VERSIONI PRECEDENTI ERANO SBAGLIATE, e per lo stesso motivo:
+   la VICINANZA a un altro numero. Sotto «254 Staz.» il totale della rete
+   sembrava contraddirlo; accanto a «Fonte: ARPA Lombardia» sembrava dire
+   che ARPA Lombardia ha 5.584 pluviometri. Qui, quando si vede, non c'e'
+   nessun altro numero ne' nessun nome di agenzia con cui confonderlo.
+   E in piu' non ruba una riga a nessuno: la chip e' appoggiata sulla mappa.
+
+   COSTA UNA RICHIESTA da 150 byte, non bloccante: se non arriva, la chip
+   resta «Fonte: —» come prima. Il numero lo scrive `genera-riepiloghi.js`
+   nei due giri gia' schedulati: niente cron nuovi, niente funzioni, niente
+   crediti Netlify.
 
    ⚠️ L'INDIRIZZO E' QUELLO DI PRODUZIONE ANCHE NEL REPO DI TEST, ed e'
    voluto: li' il workflow non gira. Cosi' la riga resta IDENTICA nei due
    file e non diventa una sesta «riga di dominio» da tenere allineata.
 
-   ⚠️ L'ora e' sempre quella ITALIANA, non quella del visitatore: il file
-   porta un istante UTC e qui si formatta su Europe/Rome.
+   ⚠️ «5 nazioni» e' scritto a mano: se un giorno se ne aggiunge una sesta
+   va cambiato qui (e nel titolo, e nella home).
    ═══════════════════════════════════════════════════════════════ */
 (function(){
   var URL_LETTURE='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/riepiloghi/letture.json';
+  var NAZIONI=5;
+  var TESTO=null;
   function giornoRoma(d){ return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Rome'}).format(d); }
   // ⚠️ NON si usa toLocaleString: in italiano Intl non mette il punto ai
   // numeri di QUATTRO cifre (5584) e lo mette a quelli di cinque, quindi il
@@ -8494,17 +8480,26 @@ function loadDefaultMarkers(){
     var p=g.split('-');
     return 'il '+(+p[2])+'/'+(+p[1]);
   }
+  // Scrive il contatore SOLO se la chip e' libera. Se c'e' un'analisi in
+  // corso la chip dice «Fonte: qualcosa» e non si tocca: il contatore
+  // ricomparira' da solo al prossimo «Indietro».
+  function mostraLetture(){
+    var c=document.getElementById('fonte-tag');
+    if(!c||!TESTO) return false;
+    var t=(c.textContent||'').trim();
+    if(t && t.indexOf('Fonte:')===0 && t.indexOf('—')<0) return false;
+    c.textContent=TESTO;
+    return true;
+  }
+  window.mostraLetture=mostraLetture;
   try{
     fetch(URL_LETTURE)
       .then(function(r){ return r.ok?r.json():null; })
       .catch(function(){ return null; })
       .then(function(j){
         if(!j||!j.stazioni||!j.letto) return;
-        var t='🌧️ '+migliaia(j.stazioni)+' pluviometri letti '+quando(j.letto);
-        ['letture-fonte','letture-pannello'].forEach(function(id){
-          var e=document.getElementById(id);
-          if(e) e.textContent=t;
-        });
+        TESTO='🌧️ '+migliaia(j.stazioni)+' pluviometri in '+NAZIONI+' nazioni, letti '+quando(j.letto);
+        mostraLetture();
       })
       .catch(function(){});
   }catch(e){}
