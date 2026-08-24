@@ -119,6 +119,7 @@ async function main() {
 
   // ── Step 3: estrai dati del giorno target ───────────────────
   const output = [];
+  const nulliOggi = [];   // stazioni che ARPAE oggi da' a null per il giorno target
   let ok = 0, skip = 0;
   // `attese` = quante stazioni ARPAE ELENCA in anagrafe per l'Emilia con il
   // pluviometro, a prescindere dal fatto che abbiano gia' pubblicato il giorno.
@@ -156,11 +157,17 @@ async function main() {
       // ricaricato a mano. Ora la stazione si SALTA: il merge tiene il valore che
       // c'era gia', e se non c'era il pallino manca per qualche ora e l'IDW dei
       // vicini copre. Meglio un pallino in meno che una macchia asciutta falsa.
+      // ⚠️ E NON BASTA SALTARLA: se quella stazione era gia' nel file di quel
+      // giorno, il merge qui sotto la conserverebbe com'era. Il 24/8/2026 abbiamo
+      // verificato che i null di ARPAE NON tornano numeri: 91 coppie
+      // stazione-giorno rimaste null a due giorni di distanza, zero rivalidate.
+      // Sono invalidazioni definitive, quindi quei valori vanno TOLTI, non tenuti.
+      // Se ne tiene la lista e si cancellano dal merge (vedi «Step 4»).
       const cella = dayData && dayData['0000'];
       const grezzo = cella ? cella.precipitazione_cumulata_giornaliera : undefined;
-      if (grezzo === undefined || grezzo === null) { skip++; return; }
+      if (grezzo === undefined || grezzo === null) { nulliOggi.push(s._id); skip++; return; }
       const val = parseFloat(grezzo);
-      if (isNaN(val) || val < 0 || val >= 500) { skip++; return; }
+      if (isNaN(val) || val < 0 || val >= 500) { nulliOggi.push(s._id); skip++; return; }
       const mm = Math.round(val * 10) / 10;
 
       const rec = {
@@ -206,6 +213,18 @@ async function main() {
     merged[s.id] = s;
   });
 
+  // ⚠️ Le stazioni che ARPAE ha rimesso a NULL escono dal file (24/8/2026).
+  // Prima restavano dentro col valore vecchio: 87 zeri e 4 valori veri su 15
+  // giorni, cioe' pallini che dicevano «qui non e' piovuto» dove la fonte ha
+  // ritirato la misura. Vale solo per i giorni che il feed copre ancora (~15):
+  // le invalidazioni piu' vecchie non le vediamo, ed e' un limite dichiarato.
+  let tolteNull = 0;
+  nulliOggi.forEach(id => { if (merged[id] !== undefined) { delete merged[id]; tolteNull++; } });
+  if (tolteNull) console.log('  Tolte, ARPAE le ha rimesse a null: ' + tolteNull);
+  if (process.env.PROVA) {
+    console.log('  PROVA: non scrivo niente. Restavano ' + Object.keys(merged).length + ' stazioni.');
+    return;
+  }
   const finalOutput = Object.values(merged);
   console.log(`  Stazioni finali: ${finalOutput.length}`);
 
