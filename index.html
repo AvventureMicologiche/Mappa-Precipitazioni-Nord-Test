@@ -8475,7 +8475,10 @@ function loadDefaultMarkers(){
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   «5.584 pluviometri in 5 nazioni, letti stamattina alle 7:10»
+   «🟢 5.584 pluviometri in 5 nazioni, letti stamattina alle 7:10»
+   ⚠️ Il pallino e' VERDE come quello della chip «Fonte:», e vuol dire la
+   stessa cosa: dati di stazione reali (il 🌍 invece sono le stime). La
+   nuvoletta era grigia e a 10px non la vedeva nessuno.
    (24 agosto 2026, seconda versione)
 
    DOVE STA E PERCHE' LI'. Nello spazio della chip «Fonte:», e SOLO quando
@@ -8563,7 +8566,7 @@ function loadDefaultMarkers(){
       .catch(function(){ return null; })
       .then(function(j){
         if(!j||!j.stazioni||!j.letto) return;
-        TESTO='🌧️ '+migliaia(j.stazioni)+' pluviometri in '+NAZIONI+' nazioni, letti '+quando(j.letto);
+        TESTO='🟢 '+migliaia(j.stazioni)+' pluviometri in '+NAZIONI+' nazioni, letti '+quando(j.letto);
         sincronizza();
       })
       .catch(function(){});
