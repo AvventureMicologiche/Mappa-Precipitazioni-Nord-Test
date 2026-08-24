@@ -725,8 +725,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   #letture-fonte:empty{display:none;}
 }
 @media(max-width:600px){
-  #letture-pannello{display:block;font-size:12.5px;line-height:1.35;color:#5a6472;
-    text-align:center;padding:6px 8px 4px;margin-top:8px;
+  #letture-pannello{display:block;font-size:12.5px;line-height:1.3;color:#5a6472;
+    text-align:center;padding:4px 8px 1px;margin-top:5px;
     border-top:1px solid rgba(0,0,0,.07);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   #letture-pannello:empty{display:none;}
@@ -8478,6 +8478,10 @@ function loadDefaultMarkers(){
 (function(){
   var URL_LETTURE='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/riepiloghi/letture.json';
   function giornoRoma(d){ return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Rome'}).format(d); }
+  // ⚠️ NON si usa toLocaleString: in italiano Intl non mette il punto ai
+  // numeri di QUATTRO cifre (5584) e lo mette a quelli di cinque, quindi il
+  // giorno che le stazioni passano 9.999 la riga cambierebbe faccia da sola.
+  function migliaia(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
   function quando(iso){
     var d=new Date(iso);
     if(isNaN(d.getTime())) return '';
@@ -8496,7 +8500,7 @@ function loadDefaultMarkers(){
       .catch(function(){ return null; })
       .then(function(j){
         if(!j||!j.stazioni||!j.letto) return;
-        var t='🌧️ '+j.stazioni.toLocaleString('it-IT')+' pluviometri letti '+quando(j.letto);
+        var t='🌧️ '+migliaia(j.stazioni)+' pluviometri letti '+quando(j.letto);
         ['letture-fonte','letture-pannello'].forEach(function(id){
           var e=document.getElementById(id);
           if(e) e.textContent=t;
