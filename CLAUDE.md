@@ -297,6 +297,18 @@ dataset — attribuzione «Fonte: GeoSphere Austria», voce in `fonti.html`.
 
 ## Architettura dati per regione
 
+> ⚠️ **I COLLECTOR STANNO TUTTI IN `.github/scripts/`.** Qui sotto sono citati
+> col solo nome del file: il percorso e' sempre quello, ed e' quello che i
+> workflow lanciano.
+>
+> Fino al 24/8/2026 nella RADICE del repo c'erano nove copie degli stessi
+> collector, ferme a inizio giugno: `collect-emilia.js` nella radice era
+> indietro di 136 righe rispetto a quello vero, `collect-veneto.js` di 509.
+> Nessuno le lanciava, ma chiunque avrebbe potuto correggere quella sbagliata
+> senza accorgersi di niente. Sono state cancellate (restano nella storia di
+> git). Se ti serve leggere un collector, aprilo in `.github/scripts/`.
+
+
 ### Lombardia
 - **Fonte:** ARPA Lombardia Socrata API (live dal frontend, no collect script)
 - **Formula:** `sum(valore)` nella query API
