@@ -48,10 +48,11 @@ const fs = require('fs');
 const path = require('path');
 
 // ⚠️ UNICA RIGA DIVERSA DA PRODUZIONE (24/8/2026): il dominio. Tutto il resto,
-// RAW compreso, deve restare IDENTICO — i dati si leggono da prod anche qui,
-// perche' in questo repo Alto Adige, Toscana, Liguria e le dieci reti MeteoHub
-// non girano e i loro file sono fermi a luglio. Un `diff` fra i due generatori
-// deve dare solo queste righe: se ne compaiono altre, i due sono divergenti.
+// RAW compreso, deve restare IDENTICO — i dati e i riepiloghi si leggono da
+// prod anche qui, perche' in questo repo Alto Adige, Toscana, Liguria e le
+// dieci reti MeteoHub non girano e i loro file sono fermi a luglio. Un `diff`
+// fra i due generatori deve dare solo queste righe: se ne compaiono altre, i
+// due sono divergenti.
 const SITO = 'https://avventurepluvio-test.netlify.app';
 const GA_ID = 'G-9R7MXXS0V4';
 const VIDEO_FAQ = 'https://youtu.be/fvsBZJ_Ylf4';
@@ -248,7 +249,10 @@ footer a{color:var(--blu);}
   var BASE='${RAW}';
   var MESI=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
   function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-  function breve(d){ return d.getDate()+' '+MESI[d.getMonth()]; }
+  // breve() legge una data ISO 'AAAA-MM-GG': e' la forma in cui arrivano dal
+  // riepilogo gia' fatto, e ci si porta anche il ripiego per non avere due modi
+  // di dire la stessa cosa.
+  function breve(s){ var p=String(s).split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
   function giornoFa(n){ var d=new Date(); d.setDate(d.getDate()-n); return d; }
   // Una regione puo' leggere piu' cartelle (la Svizzera somma MeteoSvizzera e
   // OASI Ticino): si scaricano tutte e si uniscono, con la chiave stazione
@@ -264,8 +268,6 @@ footer a{color:var(--blu);}
       return parti.length ? parti : null;
     });
   }
-  document.getElementById('cta7').href='${SITO}/?r=${r.k}&da='+iso(giornoFa(7))+'&a='+iso(giornoFa(1));
-  document.getElementById('cta15').href='${SITO}/?r=${r.k}&da='+iso(giornoFa(20))+'&a='+iso(giornoFa(1));
   // GEMELLE. Se le cartelle sono piu' d'una, le reti si sovrappongono: la
   // stessa stazione fisica compare in tutt'e due con id diversi (il Friuli ha
   // 37 pluviometri OSMER ripubblicati da MeteoHub come «lat_lon»), e unendo per
@@ -274,6 +276,8 @@ footer a{color:var(--blu);}
   // PRIMA cartella, che e' la fonte di casa. Tolleranza larga apposta: le due
   // fonti arrotondano le coordinate in modo diverso e due pluviometri veri non
   // stanno mai cosi' vicini. Stessa regola della mappa (loadOSMERFriuliRegion).
+  // ⚠️ Questa e' la copia del RIPIEGO: quella che lavora tutti i giorni sta in
+  // genera-riepiloghi.js. Le due devono restare gemelle.
   function scartaGemelle(files){
     var fuori={};
     if(DIRS.length<2) return fuori;
@@ -295,67 +299,110 @@ footer a{color:var(--blu);}
     });});
     return fuori;
   }
-  var giorni=[]; for(var i=1;i<=20;i++) giorni.push(giornoFa(i));
-  Promise.all(giorni.map(prendi)).then(function(files){
-    var gemelle=scartaGemelle(files);
-    function riepilogo(quanti, prefisso){
-      var somma={}, nomi={}, prov={}, presenti=0, ultimo=null, primo=null;
-      for(var k=0;k<quanti;k++){
-        var parti=files[k];
-        if(!parti) continue;
-        presenti++;
-        if(!ultimo) ultimo=giorni[k];
-        primo=giorni[k];
-        parti.forEach(function(p){
-          p.stations.forEach(function(s){
-            if(s.mm==null) return;
-            var id=p.dir+':'+s.id;
-            if(gemelle[id]) return;
-            somma[id]=(somma[id]||0)+s.mm;
-            nomi[id]=s.n;
-            if(s.p) prov[id]=s.p;
-          });
-        });
-      }
-      // La provincia si scrive solo se DICE qualcosa. Il campo e' disomogeneo
-      // fra reti: le dieci reti MeteoHub ci mettono la sigla della REGIONE
-      // (tutte le siciliane «SIC»), Friuli «FVG», VdA «AO», Trentino «TN» —
-      // ripetere lo stesso valore su ogni riga e' rumore. Il Piemonte scrive
-      // «PROVINCIA DI ALESSANDRIA» in maiuscolo, la Liguria il comune.
-      // Regola: se in tutta la regione c'e' un valore solo si omette; se no
-      // si ripulisce e si mostra.
-      var distinti={}; Object.keys(prov).forEach(function(id){ distinti[prov[id]]=1; });
-      var mostraProv=Object.keys(distinti).length>1;
-      function etichetta(id){
-        if(!mostraProv||!prov[id]) return nomi[id];
-        var p=String(prov[id]).replace(/^PROVINCIA DI\\s+/i,'');
-        if(p===p.toUpperCase()&&p.length>4) p=p.charAt(0)+p.slice(1).toLowerCase();
-        return nomi[id]+' ('+p+')';
-      }
-      var el=document.getElementById(prefisso+'-media');
-      if(!presenti){ el.innerHTML='<span class="attesa">dati non disponibili al momento</span>'; return; }
-      var valori=Object.keys(somma).map(function(id){return somma[id];});
-      var media=valori.reduce(function(a,b){return a+b;},0)/valori.length;
-      el.innerHTML=media.toFixed(0)+' mm <small>di media regionale</small>';
-      var top=Object.keys(somma).sort(function(a,b){return somma[b]-somma[a];}).slice(0,5);
-      var cont=document.getElementById(prefisso+'-top');
-      if(!top.length||somma[top[0]]<1){
-        cont.innerHTML='<p class="nota">Periodo quasi asciutto su tutta la regione.</p>';
-      }else{
-        var ol=document.createElement('ol'); ol.className='top-staz';
-        top.forEach(function(id){
-          var li=document.createElement('li');
-          li.textContent=etichetta(id)+' — '+somma[id].toFixed(1)+' mm';
-          ol.appendChild(li);
-        });
-        cont.innerHTML='<p style="margin:8px 0 2px"><b>Dove ha piovuto di più:</b></p>';
-        cont.appendChild(ol);
-      }
-      document.getElementById(prefisso+'-date').textContent='Dal '+breve(primo)+' al '+breve(ultimo)+', su '+presenti+' giornate di dati. La giornata odierna è esclusa.';
+
+  // Indirizzi di partenza dei pulsanti: portano gia' alla regione col periodo
+  // giusto anche prima che arrivino i numeri. disegna() li riscrive poi con le
+  // date VERE del riepilogo, che possono essere di un giorno indietro.
+  document.getElementById('cta7').href='${SITO}/?r=${r.k}&da='+iso(giornoFa(7))+'&a='+iso(giornoFa(1));
+  document.getElementById('cta15').href='${SITO}/?r=${r.k}&da='+iso(giornoFa(20))+'&a='+iso(giornoFa(1));
+
+  // Il disegno e' uno solo per tutt'e due le strade: prende sempre
+  // {media, top:[{n,mm}], primo, ultimo, giorni} e non sa da dove viene.
+  function disegna(prefisso, d){
+    var el=document.getElementById(prefisso+'-media');
+    if(!d||!d.giorni){ el.innerHTML='<span class="attesa">dati non disponibili al momento</span>'; return; }
+    el.innerHTML=Math.round(d.media)+' mm <small>di media regionale</small>';
+    var cont=document.getElementById(prefisso+'-top');
+    if(!d.top||!d.top.length||d.top[0].mm<1){
+      cont.innerHTML='<p class="nota">Periodo quasi asciutto su tutta la regione.</p>';
+    }else{
+      var ol=document.createElement('ol'); ol.className='top-staz';
+      d.top.forEach(function(s){
+        var li=document.createElement('li');
+        li.textContent=s.n+' — '+s.mm.toFixed(1)+' mm';
+        ol.appendChild(li);
+      });
+      cont.innerHTML='<p style="margin:8px 0 2px"><b>Dove ha piovuto di più:</b></p>';
+      cont.appendChild(ol);
     }
-    riepilogo(7,'rip7');
-    riepilogo(20,'rip15');
-  });
+    document.getElementById(prefisso+'-date').textContent='Dal '+breve(d.primo)+' al '+breve(d.ultimo)+', su '+d.giorni+' giornate di dati. La giornata odierna è esclusa.';
+    var cta=document.getElementById(prefisso==='rip7'?'cta7':'cta15');
+    if(cta&&d.primo&&d.ultimo) cta.href='${SITO}/?r=${r.k}&da='+d.primo+'&a='+d.ultimo;
+  }
+
+  // ── RIPIEGO: i giorni uno per uno, come faceva la pagina fino al 24/8/2026 ──
+  function calcolaDaiFile(){
+    var giorni=[]; for(var i=1;i<=20;i++) giorni.push(giornoFa(i));
+    return Promise.all(giorni.map(prendi)).then(function(files){
+      var gemelle=scartaGemelle(files);
+      function riepilogo(quanti, prefisso){
+        var somma={}, nomi={}, prov={}, presenti=0, ultimo=null, primo=null;
+        for(var k=0;k<quanti;k++){
+          var parti=files[k];
+          if(!parti) continue;
+          presenti++;
+          if(!ultimo) ultimo=giorni[k];
+          primo=giorni[k];
+          parti.forEach(function(p){
+            p.stations.forEach(function(s){
+              if(s.mm==null) return;
+              var id=p.dir+':'+s.id;
+              if(gemelle[id]) return;
+              somma[id]=(somma[id]||0)+s.mm;
+              nomi[id]=s.n;
+              if(s.p) prov[id]=s.p;
+            });
+          });
+        }
+        // La provincia si scrive solo se DICE qualcosa. Il campo e' disomogeneo
+        // fra reti: le dieci reti MeteoHub ci mettono la sigla della REGIONE
+        // (tutte le siciliane «SIC»), Friuli «FVG», VdA «AO», Trentino «TN» —
+        // ripetere lo stesso valore su ogni riga e' rumore. Il Piemonte scrive
+        // «PROVINCIA DI ALESSANDRIA» in maiuscolo, la Liguria il comune.
+        // Regola: se in tutta la regione c'e' un valore solo si omette; se no
+        // si ripulisce e si mostra.
+        var distinti={}; Object.keys(prov).forEach(function(id){ distinti[prov[id]]=1; });
+        var mostraProv=Object.keys(distinti).length>1;
+        function etichetta(id){
+          if(!mostraProv||!prov[id]) return nomi[id];
+          var p=String(prov[id]).replace(/^PROVINCIA DI\\s+/i,'');
+          if(p===p.toUpperCase()&&p.length>4) p=p.charAt(0)+p.slice(1).toLowerCase();
+          return nomi[id]+' ('+p+')';
+        }
+        if(!presenti){ disegna(prefisso,null); return; }
+        var chiavi=Object.keys(somma);
+        var media=chiavi.reduce(function(a,id){return a+somma[id];},0)/chiavi.length;
+        var top=chiavi.sort(function(a,b){return somma[b]-somma[a];}).slice(0,5)
+                      .map(function(id){ return {n:etichetta(id), mm:somma[id]}; });
+        disegna(prefisso,{media:media, top:top, primo:iso(primo), ultimo:iso(ultimo), giorni:presenti});
+      }
+      riepilogo(7,'rip7');
+      riepilogo(20,'rip15');
+    });
+  }
+
+  // ── STRADA NORMALE: il riepilogo gia' fatto, UNA richiesta ──
+  // ⚠️ La freschezza si misura su QUANDO E' STATO SCRITTO (36 ore), non
+  // sull'ultimo giorno che contiene: la Slovenia pubblica con 34 ore di
+  // ritardo e la Puglia ha giornate che MeteoHub non consegna, quindi un
+  // riepilogo sanissimo puo' finire due giorni indietro. Guardando l'ultimo
+  // giorno che contiene, quelle due regioni sarebbero cadute sul ripiego
+  // TUTTI i giorni, cioe' le 20 richieste sarebbero tornate proprio dove
+  // piu' danno fastidio.
+  // Sopra le 36 ore vuol dire invece workflow fermo, e allora si ricalcola.
+  function fresco(j){
+    if(!j||!j.generato||!j.periodi||!j.periodi['20']||!j.periodi['7']) return false;
+    var eta=Date.now()-new Date(j.generato).getTime();
+    return eta>=0 && eta<36*3600*1000;
+  }
+  fetch(BASE+'riepiloghi/${r.k}.json')
+    .then(function(res){ return res.ok?res.json():null; })
+    .catch(function(){ return null; })
+    .then(function(j){
+      if(j&&fresco(j)){ disegna('rip7',j.periodi['7']); disegna('rip15',j.periodi['20']); return; }
+      return calcolaDaiFile();
+    })
+    .catch(function(){ return calcolaDaiFile(); });
 })();
 </script>
 </body>
@@ -396,12 +443,22 @@ function scrivi(dest, testo, crlf){
   fs.writeFileSync(dest, crlf ? norm.replace(/\n/g, '\r\n') : norm, 'utf8');
 }
 
-const radice = path.resolve(__dirname, '..', '..');
-REGIONI.forEach(r => {
-  scrivi(path.join(radice, r.k, 'index.html'), pagina(r), true);
-  console.log(`  /${r.k}/  ${r.nome} — ${r.staz} staz., ${r.dirs.join('+')}`);
-});
-// Data di nascita delle pagine, fissa: rigenerare il modello non deve far
-// credere a Google che siano cambiate tutte.
-scrivi(path.join(radice, 'sitemap.xml'), sitemap('2026-08-14'), false);
-console.log(`\n${REGIONI.length} pagine + sitemap.xml scritte.`);
+// La tabella REGIONI e' l'anagrafe: quali cartelle dati legge una regione, come
+// si chiama, quante stazioni dichiara. La usa anche `genera-riepiloghi.js`, che
+// prepara i numeri per queste stesse pagine, e deve restare UNA SOLA: due
+// elenchi di cartelle che divergono darebbero pagina e riepilogo diversi sullo
+// stesso indirizzo. Per questo il file si lascia anche richiedere come modulo,
+// e la scrittura vera parte solo se lo si lancia a mano.
+module.exports = { REGIONI };
+
+if (require.main === module) {
+  const radice = path.resolve(__dirname, '..', '..');
+  REGIONI.forEach(r => {
+    scrivi(path.join(radice, r.k, 'index.html'), pagina(r), true);
+    console.log(`  /${r.k}/  ${r.nome} — ${r.staz} staz., ${r.dirs.join('+')}`);
+  });
+  // Data di nascita delle pagine, fissa: rigenerare il modello non deve far
+  // credere a Google che siano cambiate tutte.
+  scrivi(path.join(radice, 'sitemap.xml'), sitemap('2026-08-14'), false);
+  console.log(`\n${REGIONI.length} pagine + sitemap.xml scritte.`);
+}
