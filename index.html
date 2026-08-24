@@ -668,6 +668,35 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   #channel-pill .cp-yt{flex:none;display:flex;align-items:center;}
 }
 
+/* ── Vetrina video (24/8/2026) ──
+   Regole usate SOLO dentro la finestra promo: fuori restano inerti, perche'
+   nessun elemento porta quelle classi. Il contenitore diventa a blocchi: la
+   scheda "Iscriviti" e' una riga flex, questa no. */
+#channel-logo.vetrina{display:block;padding:12px 13px 13px;background:rgba(255,255,255,.92);}
+#channel-logo.vetrina:hover{background:#fff;}
+#channel-logo .v-alto{display:flex;gap:11px;align-items:stretch;}
+#channel-logo .v-cop{width:130px;height:73px;flex:none;border-radius:7px;
+  background:#e8e5dc center/cover no-repeat;box-shadow:0 1px 5px rgba(0,0,0,.28);}
+#channel-logo .v-dx{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between;}
+#channel-logo .v-occhio{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;
+  letter-spacing:.8px;color:#FF0000;text-transform:uppercase;}
+/* L'a capo e' DECISO, sui due punti, non calcolato: due blocchi in nowrap.
+   Cosi' non si spezza mai dove capita. Se un domani il testo cambia, va
+   ricontrollato che le due meta' ci stiano ancora: la colonna e' 199px. */
+#channel-logo .v-gancio{font-size:13px;font-weight:700;color:#1b3f6e;line-height:1.25;margin:4px 0 0;}
+#channel-logo .v-gancio b{display:block;font-weight:700;white-space:nowrap;}
+#channel-logo .v-canale{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:#3f5a7a;}
+#channel-logo .v-canale img{width:22px;height:22px;border-radius:50%;flex:none;object-fit:cover;background:#f3efe6;}
+#channel-logo .v-btn{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:11px;
+  background:linear-gradient(180deg,#ff3b30 0%,#e60000 48%,#c40000 100%);
+  color:#fff;font-size:15px;font-weight:800;letter-spacing:.5px;white-space:nowrap;
+  padding:10px 0 11px;border-radius:8px;border:1px solid #a80000;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55), inset 0 -1px 0 rgba(0,0,0,.18),
+             0 3px 0 #8e0000, 0 6px 14px rgba(140,0,0,.35);
+  text-shadow:0 1px 1px rgba(0,0,0,.35);}
+#channel-logo.vetrina:active .v-btn{transform:translateY(2px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45), 0 1px 0 #8e0000, 0 3px 8px rgba(140,0,0,.3);}
+
 /* ── Frecce tutorial ── */
 .spinner{width:36px;height:36px;border:3px solid #eee;
   border-top-color:#1b3f6e;border-radius:50%;animation:spin .7s linear infinite}
@@ -8590,5 +8619,70 @@ function loadDefaultMarkers(){
   }catch(e){}
 })();
 </script>
+<script>
+/* ══ Vetrina video ═══════════════════
+   Dal 24/8/2026 al 28/8/2026 la scheda desktop e la pillola telefono non
+   dicono piu' "iscriviti": puntano al video nuovo. Scaduta la finestra questo
+   blocco esce alla prima riga e non tocca NIENTE, quindi torna da sola la
+   versione di prima, che resta scritta nel markup qui sopra. Stessa cosa se
+   qui dentro salta qualcosa: il try/catch lascia la pagina com'era. Se la data
+   non e' leggibile il confronto da' NaN e si esce, cioe' si sbaglia dalla
+   parte giusta.
+   ════════════════════════ */
+(function(){
+  var V={
+    fino:'2026-08-28T23:59:59+02:00',
+    link:'https://youtu.be/moADfe6fWGw',
+    id:'moADfe6fWGw',
+    copertina:'vetrina-video.jpg',
+    gancio1:'Prima uscita dopo i temporali:',
+    gancio2:'stanno nascendo?',
+    canale:'Avventure Micologiche'
+  };
+  V.gancio=V.gancio1+' '+V.gancio2;
+  try{
+    if(!(Date.now() <= new Date(V.fino).getTime())) return;
+
+    var ytPieno='<svg width="16" height="12" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#FF0000"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>';
+
+    // L'onclick e' un attributo scritto nel markup: va SOSTITUITO, non aggiunto,
+    // altrimenti a ogni clic partirebbero due eventi.
+    function tracc(dove){
+      return "try{gtag('event','click_youtube',{pulsante:'"+dove+"',video:'"+V.id+"'})}catch(e){}";
+    }
+
+    // Scheda desktop: copertina del video a sinistra, occhiello/gancio/canale
+    // a destra (la colonna e' alta quanto la copertina), bottone in rilievo.
+    var box=document.getElementById('channel-logo');
+    if(box){
+      box.classList.add('vetrina');
+      box.href=V.link;
+      box.title='Guarda il video nuovo';
+      box.setAttribute('onclick',tracc('vetrina-desktop'));
+      box.innerHTML='<div class="v-alto">'
+        +'<div class="v-cop" style="background-image:url('+V.copertina+')"></div>'
+        +'<div class="v-dx">'
+          +'<div class="v-occhio">'+ytPieno+' Nuovo video</div>'
+          +'<div class="v-gancio"><b>'+V.gancio1+'</b><b>'+V.gancio2+'</b></div>'
+          +'<div class="v-canale"><img src="archie-avatar.png" alt="">'+V.canale+'</div>'
+        +'</div></div>'
+        +'<div class="v-btn">GUARDA IL VIDEO</div>';
+    }
+
+    // Pillola telefono: invariata dal 24/8, il gancio in prima riga e la riga
+    // piccola sotto. Usa il markup che c'e' gia', quindi niente CSS nuovo.
+    var pill=document.getElementById('channel-pill');
+    if(pill){
+      var t=pill.querySelector('.cp-t');
+      if(t){
+        t.innerHTML=V.gancio+'<small>\u25B6 Nuovo video \u00B7 '+V.canale+'</small>';
+        pill.href=V.link;
+        pill.setAttribute('onclick',tracc('vetrina-mobile'));
+      }
+    }
+  }catch(e){}
+})();
+</script>
+
 </body>
 </html>
