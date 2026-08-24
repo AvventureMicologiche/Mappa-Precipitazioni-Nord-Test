@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dove ha piovuto in Alto Adige: la mappa dei pluviometri</title>
+<meta name="description" content="Quanta pioggia è caduta in Alto Adige negli ultimi 7 e 20 giorni, misurata da oltre 50 pluviometri della Provincia di Bolzano. Zone più bagnate, ogni giorno.">
+<link rel="canonical" href="https://avventurepluvio-test.netlify.app/altoadige/">
+<meta property="og:title" content="Dove ha piovuto in Alto Adige — piogge per funghi">
+<meta property="og:description" content="Riepilogo degli ultimi 7 e 20 giorni con le zone più bagnate, da oltre 50 pluviometri di Provincia autonoma di Bolzano.">
+<meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
+<meta property="og:url" content="https://avventurepluvio-test.netlify.app/altoadige/">
+<meta property="og:type" content="website">
+<!-- Google tag (gtag.js) — stessa proprietà del sito.
+     ⚠️ Il config sta dietro al controllo sull'HOSTNAME, come in index.html dal
+     22/7/2026: senza, le stesse pagine pubblicate sul sito di TEST manderebbero
+     eventi alla proprietà vera, e sono proprio i numeri per regione che si
+     stanno usando per giudicare titoli e descrizioni. Senza quel config gtag.js
+     non invia nulla e le chiamate gtag('event',…) sparse nella pagina restano
+     innocue. La regex copre dominio nudo e www. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  if (/(^|\.)avventuremicologiche\.it$/.test(location.hostname)) {
+    gtag('config', 'G-9R7MXXS0V4');
+  }
+</script>
+<style>
+:root{--blu:#1b3f6e;--blu-scuro:#123252;--grigio:#f0f4fb;--bordo:#d0d8e8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#222;background:#fff;font-size:17px;line-height:1.6;}
+header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+header a{color:#fff;text-decoration:none;}
+header .logo{font-weight:600;font-size:15px;display:flex;align-items:center;gap:7px;}
+header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;}
+main{max-width:760px;margin:0 auto;padding:22px 16px 4px;}
+h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
+.sotto{color:#555;font-size:17px;margin-bottom:22px;}
+h2{color:var(--blu-scuro);font-size:22px;margin:34px 0 10px;}
+p{margin-bottom:12px;}
+.cta{display:block;text-align:center;background:var(--blu);color:#fff;font-size:19px;font-weight:600;padding:15px 18px;border-radius:9px;text-decoration:none;margin:22px 0;}
+.cta:hover{background:#2a5490;}
+.griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:18px 0;}
+.card{background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:16px;display:flex;flex-direction:column;}
+.card h2{margin:0 0 6px;font-size:20px;}
+.numerone{font-size:32px;font-weight:700;color:var(--blu-scuro);}
+.numerone small{font-size:15px;font-weight:400;color:#555;}
+.attesa{color:#777;font-style:italic;}
+.nota{font-size:14px;color:#666;margin-top:8px;}
+.top-staz{margin:6px 0 0;}
+.top-staz li{margin:4px 0 4px 20px;}
+footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;font-size:14px;color:#555;text-align:center;}
+footer a{color:var(--blu);}
+@media(max-width:480px){h1{font-size:25px;}body{font-size:16px;}}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="https://avventurepluvio-test.netlify.app/">🌧️ Mappa Pluviometrica</a>
+  <a class="yt" href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener"
+     onclick="try{gtag('event','click_youtube',{pulsante:'pagina-altoadige'})}catch(e){}">▶ Iscriviti</a>
+</header>
+<main>
+<h1>Dove ha piovuto in Alto Adige</h1>
+<p class="sotto">Ieri e negli ultimi 20 giorni, da <b>oltre 50 pluviometri di Provincia autonoma di Bolzano</b>, dalla Val Venosta alle Dolomiti.</p>
+
+<div class="griglia">
+  <div class="card">
+    <h2>Ultimi 7 giorni</h2>
+    <div class="numerone" id="rip7-media"><span class="attesa">calcolo in corso…</span></div>
+    <div id="rip7-top"></div>
+    <p class="nota" id="rip7-date"></p>
+    <!-- ⚠️ L'indirizzo scritto qui deve GIA' portare alla regione (23/8/2026):
+         lo script in fondo alla pagina lo riscrive con le date esatte, ma solo
+         dopo che i dati sono arrivati, e chi cliccava prima finiva sulla mappa
+         vuota da scegliere. Il parametro g sono i giorni: la mappa li fa date.
+         ⚠️ Se un giorno queste pagine si rigenerano, la correzione deve stare
+         QUI: la stessa, fatta a mano sulle 23 pagine, e' durata mezza giornata
+         ed e' stata cancellata dal primo giro del generatore. -->
+    <a class="cta" id="cta7" style="margin:14px 0 2px;margin-top:auto;" href="https://avventurepluvio-test.netlify.app/?r=altoadige&amp;g=7"
+       onclick="try{gtag('event','apri_mappa',{da:'pagina-altoadige-7gg'})}catch(e){}">Apri la mappa a 7 giorni →</a>
+  </div>
+  <div class="card">
+    <h2>Ultimi 20 giorni</h2>
+    <div class="numerone" id="rip15-media"><span class="attesa">calcolo in corso…</span></div>
+    <div id="rip15-top"></div>
+    <p class="nota" id="rip15-date"></p>
+    <a class="cta" id="cta15" style="margin:14px 0 2px;margin-top:auto;" href="https://avventurepluvio-test.netlify.app/?r=altoadige&amp;g=20"
+       onclick="try{gtag('event','apri_mappa',{da:'pagina-altoadige-20gg'})}catch(e){}">Apri la mappa a 20 giorni →</a>
+  </div>
+</div>
+
+<h2>Ecco cosa vedi sulla mappa</h2>
+<a href="https://avventurepluvio-test.netlify.app/?r=altoadige" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'pagina-altoadige-anteprima'})}catch(e){}">
+  <img src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/altoadige.jpg" alt="La mappa delle piogge in Alto Adige: le zone più bagnate, stazione per stazione"
+       width="1600" height="1000" loading="lazy"
+       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
+  <span style="display:block;text-align:center;background:var(--blu);color:#fff;font-size:19px;font-weight:600;padding:15px 18px;border-radius:9px;margin:12px 0 4px;">Apri la mappa in Alto Adige →</span>
+</a>
+<p class="nota" style="text-align:center;margin-bottom:26px;">Più il colore è acceso, più acqua è caduta. Ogni pallino è un pluviometro: cliccalo e vedi il suo storico.</p>
+
+<h2>Come si legge</h2>
+<p>Il colore mostra i millimetri <b>cumulati</b> nel periodo che scegli.</p>
+<p>Cliccando una stazione trovi quota, grafico della pioggia degli ultimi 30 giorni e, dove ci sono i sensori, temperatura minima e massima, vento e umidità.</p>
+
+<h2>Da dove arrivano i dati</h2>
+<p>Sono <b>oltre 50 pluviometri di Provincia autonoma di Bolzano</b>, strumenti a terra, non stime da modello.</p>
+
+<p style="margin-bottom:6px;"><a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;"
+   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-altoadige'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
+<p><a href="https://youtu.be/fvsBZJ_Ylf4" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;"
+   onclick="try{gtag('event','click_youtube',{pulsante:'faq-pagina-altoadige'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Video FAQ: come si usa la mappa (2 minuti)</a></p>
+</main>
+
+<footer>
+  Dati: Provincia autonoma di Bolzano ·
+  <a href="https://avventurepluvio-test.netlify.app/fonti.html">tutte le fonti e licenze</a> ·
+  <a href="https://avventuremicologiche.it">Avventure Micologiche</a><br>
+  La mappa copre Italia, Svizzera, Austria, Francia e Slovenia — 5000+ stazioni.
+</footer>
+
+<script>
+(function(){
+  var DIRS=["altoadige"];
+  var BASE='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
+  var MESI=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function breve(d){ return d.getDate()+' '+MESI[d.getMonth()]; }
+  function giornoFa(n){ var d=new Date(); d.setDate(d.getDate()-n); return d; }
+  // Una regione puo' leggere piu' cartelle (la Svizzera somma MeteoSvizzera e
+  // OASI Ticino): si scaricano tutte e si uniscono, con la chiave stazione
+  // prefissata dalla cartella per non far collidere id di reti diverse.
+  function prendi(d){
+    return Promise.all(DIRS.map(function(dir){
+      return fetch(BASE+dir+'/'+iso(d)+'.json')
+        .then(function(res){ return res.ok?res.json():null; })
+        .catch(function(){ return null; })
+        .then(function(j){ return j&&j.stations ? {dir:dir,stations:j.stations} : null; });
+    })).then(function(parti){
+      parti=parti.filter(Boolean);
+      return parti.length ? parti : null;
+    });
+  }
+  document.getElementById('cta7').href='https://avventurepluvio-test.netlify.app/?r=altoadige&da='+iso(giornoFa(7))+'&a='+iso(giornoFa(1));
+  document.getElementById('cta15').href='https://avventurepluvio-test.netlify.app/?r=altoadige&da='+iso(giornoFa(20))+'&a='+iso(giornoFa(1));
+  // GEMELLE. Se le cartelle sono piu' d'una, le reti si sovrappongono: la
+  // stessa stazione fisica compare in tutt'e due con id diversi (il Friuli ha
+  // 37 pluviometri OSMER ripubblicati da MeteoHub come «lat_lon»), e unendo per
+  // cartella+id la sua pioggia verrebbe contata due volte. Si scartano quindi
+  // le stazioni delle cartelle successive che cadono entro ~1 km da una della
+  // PRIMA cartella, che e' la fonte di casa. Tolleranza larga apposta: le due
+  // fonti arrotondano le coordinate in modo diverso e due pluviometri veri non
+  // stanno mai cosi' vicini. Stessa regola della mappa (loadOSMERFriuliRegion).
+  function scartaGemelle(files){
+    var fuori={};
+    if(DIRS.length<2) return fuori;
+    var pos={};
+    files.forEach(function(parti){ if(!parti) return; parti.forEach(function(p){
+      if(p.dir!==DIRS[0]) return;
+      p.stations.forEach(function(s){ pos[s.id]=[s.lat,s.lon]; });
+    });});
+    var casa=Object.keys(pos).map(function(k){ return pos[k]; });
+    files.forEach(function(parti){ if(!parti) return; parti.forEach(function(p){
+      if(p.dir===DIRS[0]) return;
+      p.stations.forEach(function(s){
+        var id=p.dir+':'+s.id;
+        if(id in fuori) return;
+        fuori[id]=casa.some(function(q){
+          return Math.abs(q[0]-s.lat)<0.009 && Math.abs(q[1]-s.lon)<0.013;
+        });
+      });
+    });});
+    return fuori;
+  }
+  var giorni=[]; for(var i=1;i<=20;i++) giorni.push(giornoFa(i));
+  Promise.all(giorni.map(prendi)).then(function(files){
+    var gemelle=scartaGemelle(files);
+    function riepilogo(quanti, prefisso){
+      var somma={}, nomi={}, prov={}, presenti=0, ultimo=null, primo=null;
+      for(var k=0;k<quanti;k++){
+        var parti=files[k];
+        if(!parti) continue;
+        presenti++;
+        if(!ultimo) ultimo=giorni[k];
+        primo=giorni[k];
+        parti.forEach(function(p){
+          p.stations.forEach(function(s){
+            if(s.mm==null) return;
+            var id=p.dir+':'+s.id;
+            if(gemelle[id]) return;
+            somma[id]=(somma[id]||0)+s.mm;
+            nomi[id]=s.n;
+            if(s.p) prov[id]=s.p;
+          });
+        });
+      }
+      // La provincia si scrive solo se DICE qualcosa. Il campo e' disomogeneo
+      // fra reti: le dieci reti MeteoHub ci mettono la sigla della REGIONE
+      // (tutte le siciliane «SIC»), Friuli «FVG», VdA «AO», Trentino «TN» —
+      // ripetere lo stesso valore su ogni riga e' rumore. Il Piemonte scrive
+      // «PROVINCIA DI ALESSANDRIA» in maiuscolo, la Liguria il comune.
+      // Regola: se in tutta la regione c'e' un valore solo si omette; se no
+      // si ripulisce e si mostra.
+      var distinti={}; Object.keys(prov).forEach(function(id){ distinti[prov[id]]=1; });
+      var mostraProv=Object.keys(distinti).length>1;
+      function etichetta(id){
+        if(!mostraProv||!prov[id]) return nomi[id];
+        var p=String(prov[id]).replace(/^PROVINCIA DI\s+/i,'');
+        if(p===p.toUpperCase()&&p.length>4) p=p.charAt(0)+p.slice(1).toLowerCase();
+        return nomi[id]+' ('+p+')';
+      }
+      var el=document.getElementById(prefisso+'-media');
+      if(!presenti){ el.innerHTML='<span class="attesa">dati non disponibili al momento</span>'; return; }
+      var valori=Object.keys(somma).map(function(id){return somma[id];});
+      var media=valori.reduce(function(a,b){return a+b;},0)/valori.length;
+      el.innerHTML=media.toFixed(0)+' mm <small>di media regionale</small>';
+      var top=Object.keys(somma).sort(function(a,b){return somma[b]-somma[a];}).slice(0,5);
+      var cont=document.getElementById(prefisso+'-top');
+      if(!top.length||somma[top[0]]<1){
+        cont.innerHTML='<p class="nota">Periodo quasi asciutto su tutta la regione.</p>';
+      }else{
+        var ol=document.createElement('ol'); ol.className='top-staz';
+        top.forEach(function(id){
+          var li=document.createElement('li');
+          li.textContent=etichetta(id)+' — '+somma[id].toFixed(1)+' mm';
+          ol.appendChild(li);
+        });
+        cont.innerHTML='<p style="margin:8px 0 2px"><b>Dove ha piovuto di più:</b></p>';
+        cont.appendChild(ol);
+      }
+      document.getElementById(prefisso+'-date').textContent='Dal '+breve(primo)+' al '+breve(ultimo)+', su '+presenti+' giornate di dati. La giornata odierna è esclusa.';
+    }
+    riepilogo(7,'rip7');
+    riepilogo(20,'rip15');
+  });
+})();
+</script>
+</body>
+</html>
