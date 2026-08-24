@@ -715,6 +715,15 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    TABLET (601-900px)
    ══════════════════════════════════════ */
 @media(max-width:375px){
+  /* ⚠️ #reg-apri e' il bottone VERO della scelta regione: il select nativo
+     della riga sotto e' nascosto sotto i 900px. A 17px il testo «Tocca qui
+     per scegliere la regione ▼» vuole 340px, e a 360 di schermo ce ne sono
+     326: andava a capo e il pannello passava da 58 a 68px (misurato il
+     24/8/2026). A 16px ne servono 320 ed entra. ⚠️ La soglia comprende il
+     375 apposta: li' a 17px entrava per UN pixel, cioe' bastava un carattere
+     reso un filo piu' largo per mandarlo a capo lo stesso. Sotto i 330px va
+     a capo comunque (servirebbe 14,3px) e si accetta: sono due telefoni. */
+  #reg-apri{font-size:16px;}
   /* iPhone SE: pannello date proporzionalmente compatto */
   .region-select-mobile{font-size:14px !important;font-weight:700 !important;padding:4px 8px !important;}
   #time-panel{padding:5px 8px !important;}
@@ -1041,7 +1050,14 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   .tt-mm{font-size:18px;}
   h1{font-size:12px;}
   .hdr-sub{display:none;}
-  .fonte-tag{bottom:auto;top:52px;font-size:8px;}
+  /* ⚠️ IL `top` LO SCRIVE `posizionaChipFonte()` a ogni cambio di pannello:
+     52px fissi finivano SOTTO il pannello «Tocca qui per scegliere la
+     regione», che e' alto 58px a una riga e ~90 quando il testo va a capo
+     (360px di larghezza). Era un difetto vecchio: copriva anche «Fonte:
+     ARPA Lombardia». Qui resta solo come valore di partenza.
+     Il corpo passa da 8 a 10px: a 8 non si legge (segnalato dall'utente
+     su Android), a 10 si legge e resta una scritta di servizio. */
+  .fonte-tag{bottom:auto;top:66px;font-size:10px;background:rgba(255,255,255,.92);}
 }
 
 </style>
@@ -3588,7 +3604,35 @@ function addMarkers(dati,sorted){
 // è mai stata eseguita (usava regionRings[currentRegion] anziché la regione
 // realmente selezionata). Rimossa perché induceva in errore chi legge.
 
+// La chip «Fonte:»/letture sta in alto sul telefono e deve stare SOTTO il
+// pannello delle regioni, che cambia altezza (una riga o due, a seconda della
+// larghezza e di cosa c'e' scritto). Si misura quello visibile fra i tre che
+// occupano quella posizione, esattamente come fa positionPanels qui sotto per
+// il pannello del periodo.
+function posizionaChipFonte(){
+  var c=document.getElementById('fonte-tag'), m=document.getElementById('map');
+  if(!c||!m) return;
+  if(window.innerWidth>600){ c.style.top=''; return; }   // desktop/tablet: sta in basso, ci pensa il CSS
+  // ⚠️ NON si usa offsetParent per capire se un pannello e' in campo: per gli
+  // elementi `position:fixed` Chrome lo restituisce NULLO anche quando sono
+  // visibilissimi, e la chip finiva lo stesso sotto il pannello. Si guarda il
+  // rettangolo vero.
+  function vis(e){
+    if(!e) return false;
+    var s=getComputedStyle(e);
+    if(s.display==='none'||s.visibility==='hidden') return false;
+    return e.getBoundingClientRect().height>0;
+  }
+  var el=[document.getElementById('region-panel'),
+          document.getElementById('map-hint-panel'),
+          document.getElementById('btn-reset-regions')].filter(vis)[0];
+  var top=m.getBoundingClientRect().top;
+  c.style.top=Math.round(el ? (el.getBoundingClientRect().bottom-top+8) : 6)+'px';
+}
+window.posizionaChipFonte=posizionaChipFonte;
+
 function positionPanels(){
+  posizionaChipFonte();          // vale su TUTTE le larghezze, quindi prima del taglio
   if(window.innerWidth<=900) return;
   var GAP=10;
   var rp=document.getElementById('region-panel');
@@ -8487,13 +8531,17 @@ function loadDefaultMarkers(){
   // 259px e spuntava da tutt'e due i lati. Succede solo su DESKTOP: sotto i
   // 600px il caricatore sta al 40% dell'altezza. Quindi finche' il caricatore
   // e' visibile la chip resta «Fonte: —», e le letture tornano appena sparisce.
-  // ⚠️ Il caricatore e' `opacity:0` con `animation ... 2.5s`: guardare il solo
-  // `display` direbbe «visibile» anche nei primi 2,5 secondi in cui non si vede.
+  // ⚠️ Si guarda il `display`, cioe' se il caricatore e' IN CAMPO, non se e'
+  // gia' visibile: e' `opacity:0` con `animation ... 2.5s`, quindi guardando
+  // l'opacita' la chip si liberava mentre la pillola stava gia' comparendo, e
+  // per un fotogramma erano tutt'e due li' (misurato: 1 campione su 78).
+  // Col display si libera 2,5 secondi PRIMA: sovrapposizione impossibile, non
+  // improbabile. In cambio le letture compaiono a mappa pronta invece che
+  // durante il caricamento, che e' anche piu' sensato.
   function loaderSopra(){
     var l=document.getElementById('loader');
     if(!l) return false;
-    var s=getComputedStyle(l);
-    return s.display!=='none' && parseFloat(s.opacity||'0')>0.05;
+    return getComputedStyle(l).display!=='none';
   }
   // Tiene la regola: fonte vera -> non si tocca; caricatore sopra -> chip
   // libera; niente di tutto cio' -> letture.
@@ -8528,10 +8576,14 @@ function loadDefaultMarkers(){
     var _l=document.getElementById('loader');
     if(_l){
       _l.addEventListener('animationstart',sincronizza);
+      window.addEventListener('resize',function(){ try{ posizionaChipFonte(); }catch(e){} });
+      window.addEventListener('orientationchange',function(){ setTimeout(function(){ try{ posizionaChipFonte(); }catch(e){} },300); });
       _l.addEventListener('animationend',sincronizza);
       new MutationObserver(sincronizza).observe(_l,{attributes:true,attributeFilter:['style','class']});
     }
     setTimeout(sincronizza,3000);
+    try{ posizionaChipFonte(); }catch(e){}
+    setTimeout(function(){ try{ posizionaChipFonte(); }catch(e){} },600);
   }catch(e){}
 })();
 </script>
