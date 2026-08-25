@@ -681,9 +681,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      fila accanto al testo. Quella strada sembrava piu' prudente ma costava
      quasi uguale in altezza (+31px contro +42), perche' il gancio finiva su
      tre righe: si pagava lo stesso e si toccava peggio. */
-  #channel-pill.cp-social{display:block;padding:8px 10px 9px;}
-  #channel-pill.cp-social .cp-alto{display:flex;align-items:center;gap:10px;text-decoration:none;}
-  #channel-pill.cp-social .cp-riga{display:flex;gap:6px;margin-top:8px;}
+  /* ⚠️ MISURE DEL 25/8: la pillola coi tre social nasceva alta 105 px. Qui
+     scende a 88 SENZA toccare i bottoni, che restano a 31: le due diete che
+     rimpicciolivano anche quelli arrivavano a 91 con bersagli da 28, cioe'
+     peggio in tutt'e due i sensi. I 17 px si prendono dalla riga piccola
+     («▶ Nuovo video · Avventure Micologiche»), che con tre bottoni colorati
+     li' sotto ripeteva una cosa gia' evidente, e da un po' d'aria. */
+  #channel-pill.cp-social{display:block;padding:7px 9px 8px;margin-top:6px;}
+  #channel-pill.cp-social .cp-alto{display:flex;align-items:center;gap:9px;text-decoration:none;}
+  #channel-pill.cp-social img{width:34px;height:34px;}
+  #channel-pill.cp-social .cp-t small{display:none;}
+  #channel-pill.cp-social .cp-riga{display:flex;gap:6px;margin-top:7px;}
   #channel-pill.cp-social .cp-riga a{flex:1;display:flex;align-items:center;justify-content:center;
     gap:5px;padding:7px 0;border-radius:8px;text-decoration:none;
     font-size:11px;font-weight:700;color:#fff;letter-spacing:.2px;}
@@ -780,7 +788,14 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      375 apposta: li' a 17px entrava per UN pixel, cioe' bastava un carattere
      reso un filo piu' largo per mandarlo a capo lo stesso. Sotto i 330px va
      a capo comunque (servirebbe 14,3px) e si accetta: sono due telefoni. */
-  #reg-apri{font-size:16px;}
+  /* ⚠️ Il ▼ andava a capo LO STESSO, anche dopo il passaggio a 16px del
+     24/8: misurato il 25/8 a 360px, le parole prendono 309 px e ne restano
+     326, ma con lo spazio davanti il triangolo sfora di 4-5 px e si porta
+     dietro una riga intera (bottone da 43 a 66 px). Non era il corpo del
+     carattere: era la SPAZIATURA FRA LE LETTERE, 0,3 px per 36 caratteri,
+     cioe' 11 px — piu' del doppio di quelli che mancavano. Tolta qui sotto i
+     375, il testo torna su una riga sola e la mappa guadagna 23 px. */
+  #reg-apri{font-size:16px;letter-spacing:0;}
   /* iPhone SE: pannello date proporzionalmente compatto */
   .region-select-mobile{font-size:14px !important;font-weight:700 !important;padding:4px 8px !important;}
   #time-panel{padding:5px 8px !important;}
@@ -1059,12 +1074,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   #leg-back-btn{
     display:inline-flex !important;
     align-items:center;gap:6px;
-    padding:8px 20px;
+    padding:7px 20px;
     border-radius:22px;
     border:2px solid #1b3f6e;
     background:#f0f4fb;
     color:#1b3f6e;
-    font-family:inherit;font-size:18px;font-weight:700;
+    font-family:inherit;font-size:16px;font-weight:700;
     cursor:pointer;
     white-space:nowrap;
   }
@@ -1072,12 +1087,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      (Indietro finiva 14px oltre il bordo su 390px, 44px su 360px): il titolo
      prende una riga sua e i tre tasti vanno sotto, occupando tutta la larghezza
      (a dimensione da desktop restavano due tasti minuscoli accanto a Indietro). */
-  .leg-header{flex-wrap:wrap;gap:10px;}
+  .leg-header{flex-wrap:wrap;gap:10px;margin-bottom:4px;}
   .leg-header .leg-title{flex:1 1 100%;margin-bottom:2px;}
   #btn-shot,#btn-share{
     flex:1 1 0;min-width:0;margin-left:0;
     display:inline-flex;align-items:center;justify-content:center;gap:6px;
-    font-size:15px;padding:11px 8px;border-radius:10px;
+    font-size:14px;padding:8px 8px;border-radius:10px;
   }
 
   /* Nascondi tasti zoom su mobile (si usa pinch) */
@@ -1094,8 +1109,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      il pannello copriva troppa mappa; qui si recuperano ~25px di striscia) */
   .sv{font-size:20px;}.sl{font-size:10px;}
   .grad{height:14px;}.grad-l{font-size:11px;margin-bottom:4px;}
-  .leg-title{font-size:16px;font-weight:700;}
-  .stats-row{gap:6px;margin-top:8px;}
+  .leg-title{font-size:14px;font-weight:700;}
+  .stats-row{gap:6px;margin-top:5px;}
   .stat{padding:5px 4px;}
 
   /* Tooltip in alto */
