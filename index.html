@@ -687,13 +687,16 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      peggio in tutt'e due i sensi. I 17 px si prendono dalla riga piccola
      («▶ Nuovo video · Avventure Micologiche»), che con tre bottoni colorati
      li' sotto ripeteva una cosa gia' evidente, e da un po' d'aria. */
-  #channel-pill.cp-social{display:block;padding:7px 9px 8px;margin-top:6px;}
+  #channel-pill.cp-social{display:block;padding:5px 8px 6px;margin-top:5px;}
   #channel-pill.cp-social .cp-alto{display:flex;align-items:center;gap:9px;text-decoration:none;}
-  #channel-pill.cp-social img{width:34px;height:34px;}
+  #channel-pill.cp-social img{width:30px;height:30px;}
+  /* ⚠️ 13 px NON e' un ritocco estetico: a 14 il gancio andava su DUE righe, a
+     13 ci sta in una. Vale piu' della differenza di corpo. */
+  #channel-pill.cp-social .cp-t{font-size:13px;}
   #channel-pill.cp-social .cp-t small{display:none;}
-  #channel-pill.cp-social .cp-riga{display:flex;gap:6px;margin-top:7px;}
+  #channel-pill.cp-social .cp-riga{display:flex;gap:6px;margin-top:5px;}
   #channel-pill.cp-social .cp-riga a{flex:1;display:flex;align-items:center;justify-content:center;
-    gap:5px;padding:7px 0;border-radius:8px;text-decoration:none;
+    gap:5px;padding:6px 0;border-radius:8px;text-decoration:none;
     font-size:11px;font-weight:700;color:#fff;letter-spacing:.2px;}
   #channel-pill.cp-social .cp-riga a:active{transform:scale(.97);}
   #channel-pill.cp-social .s-yt{background:#FF0000;}
@@ -1074,12 +1077,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   #leg-back-btn{
     display:inline-flex !important;
     align-items:center;gap:6px;
-    padding:7px 20px;
+    padding:5px 18px;
     border-radius:22px;
     border:2px solid #1b3f6e;
     background:#f0f4fb;
     color:#1b3f6e;
-    font-family:inherit;font-size:16px;font-weight:700;
+    font-family:inherit;font-size:14px;font-weight:700;
     cursor:pointer;
     white-space:nowrap;
   }
@@ -1087,12 +1090,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      (Indietro finiva 14px oltre il bordo su 390px, 44px su 360px): il titolo
      prende una riga sua e i tre tasti vanno sotto, occupando tutta la larghezza
      (a dimensione da desktop restavano due tasti minuscoli accanto a Indietro). */
-  .leg-header{flex-wrap:wrap;gap:10px;margin-bottom:4px;}
+  .leg-header{flex-wrap:wrap;gap:7px;margin-bottom:3px;}
   .leg-header .leg-title{flex:1 1 100%;margin-bottom:2px;}
   #btn-shot,#btn-share{
     flex:1 1 0;min-width:0;margin-left:0;
     display:inline-flex;align-items:center;justify-content:center;gap:6px;
-    font-size:14px;padding:8px 8px;border-radius:10px;
+    font-size:13px;padding:5px 8px;border-radius:10px;
   }
 
   /* Nascondi tasti zoom su mobile (si usa pinch) */
@@ -1107,11 +1110,11 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 
   /* Stats legenda: leggibili ma compatte (6/8/2026 — con la pillola canale
      il pannello copriva troppa mappa; qui si recuperano ~25px di striscia) */
-  .sv{font-size:20px;}.sl{font-size:10px;}
-  .grad{height:14px;}.grad-l{font-size:11px;margin-bottom:4px;}
-  .leg-title{font-size:14px;font-weight:700;}
-  .stats-row{gap:6px;margin-top:5px;}
-  .stat{padding:5px 4px;}
+  .sv{font-size:17px;}.sl{font-size:9px;}
+  .grad{height:11px;}.grad-l{font-size:10px;margin-bottom:2px;}
+  .leg-title{font-size:12px;font-weight:700;}
+  .stats-row{gap:5px;margin-top:4px;}
+  .stat{padding:3px 4px;}
 
   /* Tooltip in alto */
   #st-tooltip{
@@ -3797,6 +3800,25 @@ function centraRegioneInStriscia(){
     var ov=mBox.bottom-Math.max(r.top,mBox.top);   // quanto mangia dal basso
     if(ov>coperto) coperto=ov;
   });
+  // ⚠️ E ANCHE DALL'ALTO (25/8/2026). Fin qui si guardava solo cosa mangia la
+  // mappa dal basso, ma «Tocca qui per scegliere la regione» (#region-panel) e'
+  // fixed con z-index 1500 e ne copre i primi 58 px. La striscia davvero
+  // visibile comincia sotto quella barra, quindi centrare su S/2 misurato dal
+  // bordo della mappa spingeva ogni regione 29 px piu' in alto del giusto.
+  // Non si vedeva finche' le regioni erano piccole; appena il pannello e'
+  // dimagrito (25/8) lo zoom e' cresciuto, la cima e' arrivata sotto la barra
+  // e l'utente se n'e' accorto subito su Svizzera e Liguria.
+  var sopra=0;
+  ['region-panel'].forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    var st=getComputedStyle(el);
+    if(st.display==='none'||st.visibility==='hidden'||+st.opacity===0) return;
+    var r=el.getBoundingClientRect();
+    if(r.height<10) return;
+    var ov=Math.min(r.bottom,mBox.bottom)-mBox.top;   // quanto mangia dall'alto
+    if(ov>sopra) sopra=ov;
+  });
+  if(sopra<0) sopra=0;
   if(coperto<=20) return;                          // niente da compensare
   var bb=null;
   rks.forEach(function(r){
@@ -3831,7 +3853,7 @@ function centraRegioneInStriscia(){
     if(!isFinite(top)) return null;
     return {w:rgt-lft,h:bot-top,cx:(lft+rgt)/2-mBox.left,cy:(top+bot)/2-mBox.top};
   }
-  var S=mBox.height-coperto;
+  var S=mBox.height-coperto-sopra;
   var d=unioneDisegno(), w0,h0,c0;
   if(d){ w0=d.w; h0=d.h; c0=map.containerPointToLatLng([d.cx,d.cy]); }
   else{
@@ -3862,7 +3884,9 @@ function centraRegioneInStriscia(){
   // Ricentra nella striscia, rimisurando dopo lo zoom
   var d2=unioneDisegno();
   var cy=d2?d2.cy:map.latLngToContainerPoint(bb.getCenter()).y;
-  var dy=Math.round(cy-S/2);
+  // Il bersaglio non e' piu' meta' della striscia contata dal bordo della
+  // mappa, ma meta' della striscia contata da sotto la barra della regione.
+  var dy=Math.round(cy-(sopra+S/2));
   if(Math.abs(dy)>12) map.panBy([0,dy],{animate:false});
 }
 
