@@ -469,7 +469,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   .cd-inp{font-size:16px!important;padding:10px!important;}
   .cd-go{font-size:16px!important;padding:12px!important;}
 }
-.cd-lbl{font-size:9px;text-transform:uppercase;color:#aaa;letter-spacing:.05em;margin-bottom:2px}
+.cd-lbl{font-size:9px;text-transform:uppercase;color:#5a7192;letter-spacing:.05em;margin-bottom:2px}
 .cd-inp{width:100%;border:1px solid #d0d8e8;border-radius:5px;padding:4px 6px;
   font-size:11px;color:#333;font-family:inherit;margin-bottom:5px}
 .cd-inp:focus{outline:none;border-color:#1b3f6e}
@@ -478,7 +478,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .cd-go:hover{background:#14305a}
 
 /* Legenda */
-.leg-title{font-size:10px;font-weight:700;color:#777;
+/* ⚠️ I GRIGI DEL PANNELLO SONO BLU DAL 25/8/2026, e non per gusto: misurato
+   il contrasto sul bianco, «STAZ/MAX/MEDIA/MIN» stava a 1,9:1 e i numeri della
+   scala a 2,3, contro un minimo raccomandato di 4,5 per il testo piccolo. Qui i
+   corpi sono ancora piu' piccoli che sul telefono (7-10 px), quindi il problema
+   era peggiore, non minore. Stessa famiglia di blu del resto del pannello. */
+.leg-title{font-size:10px;font-weight:700;color:#456086;
   text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
 .leg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;gap:8px;}
 .leg-header .leg-title{margin-bottom:0;}
@@ -502,11 +507,11 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     #78c800 49%,#dcE600 55%,#ffb400 61%,#ff7800 67%,
     #f03200 73%,#b40000 79%,#8c00b4 85%,#c864dc 90%,
     #f0aaf0 95%,#ffdcff 100%)}
-.grad-l{display:flex;justify-content:space-between;font-size:9px;color:#aaa;margin-bottom:8px}
+.grad-l{display:flex;justify-content:space-between;font-size:9px;color:#5a7192;margin-bottom:8px}
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
 .stat{background:#f0f4fb;border-radius:5px;padding:5px 4px;text-align:center}
 .sv{font-size:17px;font-weight:700;color:#1b3f6e;line-height:1}
-.sl{font-size:7px;color:#bbb;text-transform:uppercase;margin-top:2px}
+.sl{font-size:7px;color:#5a7192;text-transform:uppercase;margin-top:2px}
 
 /* Tooltip */
 #st-tooltip{position:absolute;z-index:2000;background:#1e1e1e;color:#fff;
@@ -520,13 +525,19 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .tt-unit{font-size:11px;color:#888}
 .tt-row{display:flex;justify-content:space-between;font-size:10px;padding:2px 0;color:#aaa}
 .tt-row b{color:#ddd;font-weight:600}
-.tt-fonte{font-size:9px;color:#555;margin-top:5px;padding-top:5px;border-top:1px solid #333}
+/* ⚠️ Su fondo scuro (#1e1e1e) si SCHIARISCE per leggere meglio, il contrario
+   di quello che si fa sul bianco. Misurato il 25/8: #555 dava 2,2:1, #888 da'
+   4,7. E qui il blu del pannello sarebbe un peggioramento (3,3:1): il colore
+   giusto dipende dal fondo, non dal gusto. */
+.tt-fonte{font-size:9px;color:#888;margin-top:5px;padding-top:5px;border-top:1px solid #333}
 
 /* Pannello stazione con grafico storico — sostituisce il vecchio tooltip
    sui marker con i dati (stessa palette scura, così resta coerente). */
 #st-history{position:absolute;z-index:2100;display:none;width:296px;background:#1e1e1e;
   color:#fff;border-radius:7px;padding:10px 13px;box-shadow:0 4px 20px rgba(0,0,0,.5);}
-.sh-close{position:absolute;top:5px;right:7px;cursor:pointer;color:#777;
+/* La X di chiusura e' un COMANDO: a 3,7:1 si faceva cercare. Con #aaa sta a
+   7,2 e resta discreta. */
+.sh-close{position:absolute;top:5px;right:7px;cursor:pointer;color:#aaa;
   font-size:16px;line-height:1;border:0;background:none;padding:2px 5px;}
 .sh-close:hover{color:#fff}
 .sh-nome{font-size:13px;font-weight:700;border-bottom:1px solid #3a3a3a;
@@ -538,7 +549,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .sh-row{display:flex;justify-content:space-between;font-size:10px;padding:1px 0;color:#aaa}
 .sh-row b{color:#ddd;font-weight:600}
 .sh-per{font-size:10px;color:#888;margin:7px 0 0}
-.sh-unit{font-size:9px;color:#777;text-align:right;padding-right:28px;margin:2px 0}
+.sh-unit{font-size:9px;color:#999;text-align:right;padding-right:28px;margin:2px 0}
 .sh-plot{position:relative;padding-right:28px}
 .sh-grid{position:absolute;left:0;right:28px;border-top:1px dashed #3a3a3a}
 .sh-grid span{position:absolute;right:-27px;top:-7px;font-size:9px;color:#777;width:25px}
@@ -580,7 +591,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 
 .fonte-tag{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
   z-index:1000;background:rgba(255,255,255,.88);
-  border-radius:10px;padding:3px 12px;font-size:9px;color:#888;
+  border-radius:10px;padding:3px 12px;font-size:9px;color:#4a5f7d;
   pointer-events:none;white-space:nowrap;}
 
 /* ── Fase di test Centro-Sud (regioni MeteoHub) ──
@@ -733,6 +744,23 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    ricontrollato che le due meta' ci stiano ancora: la colonna e' 199px. */
 #channel-logo .v-gancio{font-size:13px;font-weight:700;color:#1b3f6e;line-height:1.25;margin:4px 0 0;}
 #channel-logo .v-gancio b{display:block;font-weight:700;white-space:nowrap;}
+/* ⚠️ Gancio di UNA riga sola (la guida): senza la seconda riga restava un buco
+   di aria in mezzo alla scheda. Misurato il 25/8 a 1366px: la colonna destra e'
+   larga 199 px e «Guida al pluviometro» ci sta fino a 20 px di corpo, a 21
+   sborda. Si tengono 19 per lasciare margine ai font resi un filo piu' larghi
+   su altri computer — e' comunque il 46% piu' grande dei 13 px di prima. La
+   scheda NON cresce: resta 368x157, il posto era gia' li'. */
+#channel-logo .v-gancio.v-uno{font-size:18px;line-height:1.15;margin:6px 0 0;letter-spacing:-.7px;}
+/* Peso 800 come l'occhiello e il bottone: a 700 il titolo era la cosa piu'
+   grande della scheda ma la meno marcata.
+   ⚠️ IL PESO COSTA LARGHEZZA, e non poco: «Guida al pluviometro» a 19px passa
+   da 189 px a 216 appena si va da 700 a 800, cioe' sborda di 17 dalla colonna
+   (199). Misurato, non dedotto: il primo tentativo a 19/800 tagliava la «o»
+   finale. Si rientra con 18 px e lettere strette di 0,7 -> 191 px, margine 8.
+   Il restringimento e' la stessa tecnica della scheda «Iscriviti» (li' -0,3).
+   Nessuna combinazione a 800 entra sopra i 18 px: 18,5 lascia 3 px, troppo
+   poco per i font resi piu' larghi altrove. */
+#channel-logo .v-gancio.v-uno b{font-weight:800;}
 #channel-logo .v-canale{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:#3f5a7a;}
 #channel-logo .v-canale img{width:22px;height:22px;border-radius:50%;flex:none;object-fit:cover;background:#f3efe6;}
 #channel-logo .v-btn{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:11px;
@@ -784,7 +812,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   border-top-color:#1b3f6e;border-radius:50%;animation:spin .8s linear infinite}
 #lmsg{font-size:12px;color:#666}
 #lsub{font-size:10px;color:#aaa}
-.fonte{font-size:9px;color:#aaa;padding:2px 10px;
+.fonte{font-size:9px;color:#6b80a0;padding:2px 10px;
   border-top:1px solid #eee;text-align:center;background:#fff;flex-shrink:0;}
 .fonte a{color:#1b3f6e}
 
@@ -8829,7 +8857,37 @@ function loadDefaultMarkers(){
     }
   }catch(e){}
 
-  var V={
+  // ⚠️ L'INTERRUTTORE. 'alterna' = le due vetrine si danno il cambio a caso,
+  // 'video' o 'guida' = sempre quella, '' = niente vetrina e resta la scheda
+  // «Iscriviti».
+  //
+  // L'alternanza la decide il BROWSER di chi apre il sito, non il repo: costa
+  // un deploy per metterla e poi zero, per sempre. Quando le date di scadenza
+  // saranno passate tutte e due, la scheda «Iscriviti» torna da sola senza che
+  // nessuno pubblichi niente.
+  var MOSTRA='alterna';
+
+  var VETRINE={};
+  VETRINE.guida={
+    // ⚠️ Stessa scadenza del video, per decisione dell'utente il 25/8: passata
+    // quella data escono di scena tutte e due e resta «Iscriviti». La guida
+    // potrebbe restare (non invecchia, spiega come si usa la mappa): per
+    // riaccenderla basta spostare avanti questa data.
+    fino:'2026-08-28T23:59:59+02:00',
+    link:'https://youtu.be/fvsBZJ_Ylf4',
+    id:'fvsBZJ_Ylf4',
+    facebook:'',
+    instagram:'',
+    copertina:'guida-pluviometro.jpg',
+    occhiello:'Guida',            // occhiello rosso della scheda desktop
+    occhielloP:'Video',           // riga piccola della pillola: li' «Guida»
+                                  // ripeteva il titolo che sta appena sopra
+    bottone:'GUARDA LA GUIDA',
+    gancio1:'Guida al pluviometro',
+    gancio2:'',
+    canale:'Avventure Micologiche'
+  };
+  VETRINE.video={
     fino:'2026-08-28T23:59:59+02:00',
     link:'https://youtu.be/moADfe6fWGw',
     id:'moADfe6fWGw',
@@ -8845,7 +8903,38 @@ function loadDefaultMarkers(){
     gancio2:'stanno nascendo?',
     canale:'Avventure Micologiche'
   };
-  V.gancio=V.gancio1+' '+V.gancio2;
+
+  var V=null, QUALE='';
+  if(MOSTRA==='alterna'){
+    // Solo le vetrine ancora in corso partecipano: quando il video scade,
+    // l'alternanza si riduce da sola alla guida, e quando scade anche quella
+    // non resta nessuno e si esce.
+    var ora=Date.now(), scelte=[];
+    ['video','guida'].forEach(function(k){
+      if(VETRINE[k] && ora <= new Date(VETRINE[k].fino).getTime()) scelte.push(k);
+    });
+    if(!scelte.length) return;
+    // ⚠️ LA SCELTA SI RICORDA. Tirando il dado a ogni apertura la stessa
+    // persona vedrebbe il video, poi la guida, poi di nuovo il video: un sito
+    // che non sa quello che vuole. Cosi' invece ognuno ha la sua, e in GA4 il
+    // confronto fra le due e' fra persone diverse, che e' quello che serve.
+    try{ QUALE=localStorage.getItem('vetrina')||''; }catch(e){}
+    if(scelte.indexOf(QUALE)<0){
+      QUALE=scelte[Math.floor(Math.random()*scelte.length)];
+      try{ localStorage.setItem('vetrina',QUALE); }catch(e){}
+    }
+    V=VETRINE[QUALE];
+  } else {
+    QUALE=MOSTRA; V=VETRINE[MOSTRA];
+  }
+  if(!V) return;                       // nessuna vetrina: resta «Iscriviti»
+  // Il gancio va su due righe nella scheda desktop. Se la seconda e' vuota (la
+  // guida ha un titolo corto) non si lascia un <b> vuoto che aprirebbe una riga
+  // in bianco: si usa la sola prima.
+  V.gancio=(V.gancio1+' '+(V.gancio2||'')).trim();
+  V.occhiello=V.occhiello||'Nuovo video';
+  V.occhielloP=V.occhielloP||V.occhiello;
+  V.bottone=V.bottone||'GUARDA IL VIDEO';
   try{
     if(!(Date.now() <= new Date(V.fino).getTime())) return;
 
@@ -8858,8 +8947,11 @@ function loadDefaultMarkers(){
     // il confronto con le uscite precedenti vale piu' del nome giusto. Quale
     // social e' stato scelto si legge dal campo `pulsante`
     // (vetrina-mobile-youtube / -facebook / -instagram).
+    // Il campo `vetrina` dice QUALE delle due era in onda quando si e'
+    // cliccato: e' il confronto che mancava da luglio per sapere, coi numeri
+    // invece che a sensazione, se tira di piu' l'uscita nuova o la guida.
     function tracc(dove){
-      return "try{gtag('event','click_youtube',{pulsante:'"+dove+"',video:'"+V.id+"'})}catch(e){}";
+      return "try{gtag('event','click_youtube',{pulsante:'"+dove+"',video:'"+V.id+"',vetrina:'"+QUALE+"'})}catch(e){}";
     }
 
     // Scheda desktop: copertina del video a sinistra, occhiello/gancio/canale
@@ -8873,11 +8965,11 @@ function loadDefaultMarkers(){
       box.innerHTML='<div class="v-alto">'
         +'<div class="v-cop" style="background-image:url('+V.copertina+')"></div>'
         +'<div class="v-dx">'
-          +'<div class="v-occhio">'+ytPieno+' Nuovo video</div>'
-          +'<div class="v-gancio"><b>'+V.gancio1+'</b><b>'+V.gancio2+'</b></div>'
+          +'<div class="v-occhio">'+ytPieno+' '+V.occhiello+'</div>'
+          +'<div class="v-gancio'+(V.gancio2?'':' v-uno')+'"><b>'+V.gancio1+'</b>'+(V.gancio2?'<b>'+V.gancio2+'</b>':'')+'</div>'
           +'<div class="v-canale"><img src="archie-avatar.png" alt="">'+V.canale+'</div>'
         +'</div></div>'
-        +'<div class="v-btn">GUARDA IL VIDEO</div>';
+        +'<div class="v-btn">'+V.bottone+'</div>';
 
     }
 
@@ -8893,7 +8985,7 @@ function loadDefaultMarkers(){
     if(pill && !altri.length){
       var t=pill.querySelector('.cp-t');
       if(t){
-        t.innerHTML=V.gancio+'<small>\u25B6 Nuovo video \u00B7 '+V.canale+'</small>';
+        t.innerHTML=V.gancio+'<small>\u25B6 '+V.occhielloP+' \u00B7 '+V.canale+'</small>';
         pill.href=V.link;
         pill.setAttribute('onclick',tracc('vetrina-mobile'));
       }
@@ -8914,7 +9006,7 @@ function loadDefaultMarkers(){
       nuova.innerHTML=
         '<a class="cp-alto" href="'+V.link+'" target="_blank" rel="noopener" onclick="'+tracc('vetrina-mobile').replace(/"/g,'&quot;')+'">'
         +'<img src="archie-avatar.png" alt="Archie">'
-        +'<div class="cp-t">'+V.gancio+'<small>\u25B6 Nuovo video \u00B7 '+V.canale+'</small></div>'
+        +'<div class="cp-t">'+V.gancio+'<small>\u25B6 '+V.occhielloP+' \u00B7 '+V.canale+'</small></div>'
         +'</a>'
         +'<div class="cp-riga">'+riga+'</div>';
       pill.replaceWith(nuova);
