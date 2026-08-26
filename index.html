@@ -235,6 +235,23 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      restano validi come SPOSTAMENTO: scendeva di 52 px e finiva sopra
      l'elenco, coprendo «OPPURE SCEGLI LA REGIONE» (22/8/2026). */
   #reg-sheet #novita-box{position:relative;top:auto;right:auto;left:auto;width:100%;}
+  /* ── IL BLOCCO SI VESTE DEL FOGLIO (26/8/2026) ──────────────────────────
+     Sul foglio blu (#1b3f6e) la cornice bianca era un corpo estraneo, e da
+     telefono si legge come una macchia grigia (segnalato dall'utente).
+     ⚠️ Solo qui sotto: sul PC la cornice galleggia sulla MAPPA chiara e deve
+     restare chiara, se no sparisce. */
+  #reg-sheet #novita-box{background:none;border:0;border-radius:0;padding:0;box-shadow:none;}
+  /* Era blu su bianco; qui sarebbe blu su blu, cioe' invisibile. */
+  #reg-sheet .nv-tag{background:#fff;color:#1b3f6e;}
+  #reg-sheet #novita-testa{margin-bottom:8px;}
+  /* ⚠️ LA CASELLA RESTA BIANCA, di proposito: il fondo bianco e' il segnale
+     universale di «qui dentro si scrive». E' la stessa ragione per cui il
+     26/8 si era scelta la casella aperta invece di un secondo bottone. */
+  #reg-sheet #geo-btn{background:none;border-color:#fff;color:#fff;}
+  #reg-sheet #geo-btn:hover{background:rgba(255,255,255,.10);}
+  #reg-sheet #geo-btn[disabled]{opacity:.55;}
+  /* Grigio scuro su blu non si legge: lo stesso azzurro delle etichette. */
+  #reg-sheet #geo-nota{color:#b9d0ec;}
   /* ⚠️ Nascosta finche' non e' dentro la tendina: il trasloco lo fa il
      codice, e per un istante dopo il caricamento la casella si vedeva
      sotto la barra delle regioni (segnalato il 22/8/2026). */
@@ -376,7 +393,13 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   font-family:inherit;font-size:14px;font-weight:600;color:#1b3f6e;cursor:pointer;text-align:left;}
 #geo-btn:hover{background:#dce8f6;}
 #geo-btn[disabled]{opacity:.65;cursor:default;}
-#geo-btn svg{flex:none;width:17px;height:17px;}
+/* ⚠️ IL ROSSO NON E' UNA DECORAZIONE: e' lo stesso #e12b2b del segnaposto
+   che locSegnaposto() pianta sulla mappa un secondo dopo. Schiacci il rosso,
+   spunta il rosso. E NON e' il #FF0000 di YouTube, che nel sito vuol dire
+   un'altra cosa: due rossi distinti, due significati distinti. */
+.gb-disco{width:22px;height:22px;border-radius:50%;background:#e12b2b;flex:none;
+  display:inline-flex;align-items:center;justify-content:center;color:#fff;}
+#geo-btn svg{flex:none;width:13px;height:13px;}
 #geo-nota{display:none;font-size:12px;font-weight:500;color:#5a6470;margin:6px 2px 0;line-height:1.35;}
 #geo-nota.on{display:block;}
 #loc-input{
@@ -1428,13 +1451,13 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <div id="novita-box">
     <div id="novita-testa"><span class="nv-tag">NOVITÀ</span></div>
     <button id="geo-btn" type="button">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <span class="gb-disco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
     <circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
     <line x1="12" y1="1.5" x2="12" y2="4.5" stroke-linecap="round"/>
     <line x1="12" y1="19.5" x2="12" y2="22.5" stroke-linecap="round"/>
     <line x1="1.5" y1="12" x2="4.5" y2="12" stroke-linecap="round"/>
     <line x1="19.5" y1="12" x2="22.5" y2="12" stroke-linecap="round"/>
-    </svg><span class="gb-t">La mia posizione</span>
+    </svg></span><span class="gb-t">La mia posizione</span>
     </button>
     <div id="loc-box">
     <svg class="loc-lente" viewBox="0 0 24 24" aria-hidden="true">
