@@ -515,7 +515,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   #loc-box{margin-top:0;}
   #loc-input{box-shadow:0 2px 10px rgba(0,0,0,.13);}
   #loc-input:focus{box-shadow:0 0 0 2px rgba(27,63,110,.18),0 2px 10px rgba(0,0,0,.13);}
-  #loc-input.loc-chiama,#geo-btn.loc-chiama{animation:none;}
+  /* ⚠️ LA CASELLA TORNA A RESPIRARE COM'ERA PRIMA DEL TASTO (26/8/2026,
+     l'utente: «lascialo esattamente come era prima»). Il «non farle
+     lampeggiare su desktop» di stamattina riguardava le DUE cose che
+     respiravano insieme; adesso che sul PC il tasto non c'e' piu', resta
+     la sola casella e la sua chiamata e' quella di sempre, viva dal 22/8.
+     Non si aggiunge niente qui: basta non spegnerla. */
 }
 /* ⚠️ NIENTE «LA MIA POSIZIONE» DOVE C'E' UN MOUSE, a qualunque larghezza
    (26/8/2026, l'utente: «ti avevo detto di tornare alla versione pre tasto»).
