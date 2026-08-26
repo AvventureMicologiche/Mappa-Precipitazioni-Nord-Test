@@ -7705,7 +7705,11 @@ function geoOpzioni(fresco){
    sappiamo: meglio ammetterlo che portare uno in Campania. */
 var GEO_BUONA   = 3000;    // m: buona, si parte senza aspettare altro
 var GEO_MASSIMA = 20000;   // m: oltre non e' sicura nemmeno la regione
-var GEO_ATTESA  = 8000;    // ms: quanto si aspetta un colpo migliore
+var GEO_ATTESA  = 8000;    // ms: quanto si aspetta se il colpo e' pessimo
+// ⚠️ Un colpo da 5 km il paese lo dice gia': far aspettare otto secondi per
+// raffinarlo e' tempo tolto a chi guarda lo schermo. Sopra GEO_MASSIMA il
+// dubbio e' sulla REGIONE e li' vale la pena aspettare; sotto, no.
+var GEO_ATTESA_CORTA = 2000;
 
 /* La spia: index.html?geodebug=1 fa scrivere al tasto codice e precisione.
    Serve a capire da lontano cosa risponde un telefono che non e' qui. */
@@ -7720,6 +7724,7 @@ function geoTrova(){
   // ⚠️ null = sta ancora provando, numero = ha fallito con quel codice.
   // Si rinuncia solo quando hanno fallito TUTTI E DUE.
   var esito = { preciso: null, grosso: null };
+  var t0 = Date.now(), tFix = 0;   // per la spia: dove se ne va il tempo
   var opz = geoOpzioni(_geoFatto);   // dal secondo clic in poi: colpo nuovo
   _geoFatto = true;
 
@@ -7731,7 +7736,9 @@ function geoTrova(){
   function spia(pre){
     return pre + ' [spia: p=' + (esito.preciso === null ? 'attesa' : esito.preciso) +
       ' g=' + (esito.grosso === null ? 'attesa' : esito.grosso) +
-      ' ±' + (miglior ? Math.round(miglior.coords.accuracy || 0) : '?') + ' m]';
+      ' ±' + (miglior ? Math.round(miglior.coords.accuracy || 0) : '?') + ' m' +
+      (tFix ? ', posizione in ' + tFix + ' ms' : '') +
+      ', tot ' + (Date.now() - t0) + ' ms]';
   }
   function fine(msg, tipo, codice, prec){
     if(chiuso) return;
@@ -7768,13 +7775,15 @@ function geoTrova(){
   }
   function trovato(pos){
     if(chiuso) return;
+    if(!tFix) tFix = Date.now() - t0;      // il PRIMO colpo utile, per la spia
     var acc = (pos.coords && pos.coords.accuracy) || 0;
     if(!miglior || acc < (miglior.coords.accuracy || 0)) miglior = pos;
     if(!acc || acc <= GEO_BUONA){ accetta(pos); return; }
     // Colpo grossolano tenuto da parte: si da' tempo al GPS di svegliarsi,
     // ma solo se il preciso e' ancora vivo — se ha gia' fallito non arrivera'.
     if(esito.preciso !== null){ decidi(); return; }
-    if(attesa === null) attesa = setTimeout(decidi, GEO_ATTESA);
+    if(attesa === null) attesa = setTimeout(decidi,
+      acc <= GEO_MASSIMA ? GEO_ATTESA_CORTA : GEO_ATTESA);
   }
   function fallito(chi, err){
     if(chiuso) return;
@@ -7793,6 +7802,10 @@ function geoTrova(){
 
   geoNota('');
   if(typeof locFermaChiamata === 'function') locFermaChiamata();
+  // ⚠️ L'elenco dei paesi si scarica MENTRE il GPS cerca, non dopo: sono due
+  // attese che possono stare sovrapposte invece che in fila. locCarica()
+  // tiene la sua promessa, quindi la seconda chiamata non riscarica niente.
+  try{ locCarica(); }catch(e){}
   b.disabled = true; b.classList.add('cerca'); et.textContent = 'Ti sto cercando…';
   tmr = setTimeout(function(){
     if(miglior){ decidi(); return; }
