@@ -322,11 +322,6 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   0%,100%{box-shadow:0 0 0 0 rgba(27,63,110,.42);}
   50%{box-shadow:0 0 0 6px rgba(27,63,110,0);}}
 @media(prefers-reduced-motion:reduce){#geo-btn.loc-chiama{animation:none;}}
-/* ⚠️ NIENTE LAMPEGGIO SU DESKTOP (26/8/2026, l'utente). Sul PC il blocco sta
-   in alto a destra SULLA MAPPA, sempre in vista: li' il respiro e' solo
-   rumore addosso a chi sta guardando le piogge. Sul telefono resta, perche'
-   li' il blocco e' chiuso dentro la tendina e uno deve sapere che c'e'. */
-}
 /* Guida a lampeggio (solo desktop): pulsa il pannello del passo attivo —
    regioni finché non ne selezioni una, poi periodo finché non lo clicchi.
    Anello marcato + sfondo che "respira" verso l'azzurro per farsi notare. */
@@ -517,6 +512,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   #loc-input{box-shadow:0 2px 10px rgba(0,0,0,.13);}
   #loc-input:focus{box-shadow:0 0 0 2px rgba(27,63,110,.18),0 2px 10px rgba(0,0,0,.13);}
   #loc-input.loc-chiama,#geo-btn.loc-chiama{animation:none;}
+}
 /* TELEFONO E TABLET (misurato a 360x640 e 393x760, non dedotto).
    Qui il pannello regioni ESISTE ed è una barra alta 42px in cima alla mappa,
    con dentro la tendina delle regioni; i tasti dello zoom invece non ci sono.
