@@ -234,12 +234,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      destra sulla mappa (top:52px;right:14px), e in relative quei valori
      restano validi come SPOSTAMENTO: scendeva di 52 px e finiva sopra
      l'elenco, coprendo «OPPURE SCEGLI LA REGIONE» (22/8/2026). */
-  #reg-sheet #loc-box{position:relative;top:auto;right:auto;left:auto;width:100%;}
+  #reg-sheet #novita-box{position:relative;top:auto;right:auto;left:auto;width:100%;}
   /* ⚠️ Nascosta finche' non e' dentro la tendina: il trasloco lo fa il
      codice, e per un istante dopo il caricamento la casella si vedeva
      sotto la barra delle regioni (segnalato il 22/8/2026). */
-  #loc-box{display:none;}
-  #reg-sheet #loc-box{display:block;}
+  #novita-box{display:none;}
+  #reg-sheet #novita-box{display:block;}
   /* ⚠️ ASSOLUTA, non nel flusso: se la tendina dei risultati sta dentro il
      flusso, #loc-box diventa alto quanto l'elenco e la lente, che e'
      ancorata al 50% della casella, finisce in mezzo ai risultati (visto
@@ -357,7 +357,28 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    sola. Il primo giro l'aveva messa in alto a sinistra, di fianco ai tasti
    dello zoom, ma quel lato è già la colonna del lavoro — hint, periodo,
    legenda — e la casella ci finiva in mezzo. A destra sopra c'era il vuoto. */
-#loc-box{position:absolute;top:52px;right:14px;width:368px;z-index:1001;box-sizing:border-box;}
+/* ── BLOCCO «NOVITA'» (26/8/2026) ──────────────────────────────────────
+   I due modi di dire dove sei stanno insieme in una cornice sola: la casella
+   della localita' (che stava gia' qui) e «La mia posizione». Le coordinate
+   assolute sono passate dalla casella alla CORNICE, ed e' la cornice che
+   trasloca dentro la tendina sotto i 900px. */
+#novita-box{position:absolute;top:52px;right:14px;width:368px;z-index:1001;box-sizing:border-box;
+  background:rgba(255,255,255,.96);border:1px solid #378ADD;border-radius:10px;
+  padding:8px 9px 9px;box-shadow:0 2px 10px rgba(0,0,0,.13);}
+#novita-testa{display:flex;align-items:center;margin-bottom:7px;}
+.nv-tag{background:#1b3f6e;color:#fff;font-size:9.5px;font-weight:700;letter-spacing:.06em;
+  padding:2px 8px;border-radius:20px;line-height:1.6;}
+/* ⚠️ relative e NON static: lente e × sono posizionate in assoluto DENTRO la
+   casella e senza un contenitore posizionato si agganciano alla cornice. */
+#loc-box{position:relative;width:100%;box-sizing:border-box;}
+#geo-btn{display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;margin-top:6px;
+  background:#eaf2fb;border:1px solid #90b0d8;border-radius:5px;padding:8px 11px;
+  font-family:inherit;font-size:14px;font-weight:600;color:#1b3f6e;cursor:pointer;text-align:left;}
+#geo-btn:hover{background:#dce8f6;}
+#geo-btn[disabled]{opacity:.65;cursor:default;}
+#geo-btn svg{flex:none;width:17px;height:17px;}
+#geo-nota{display:none;font-size:12px;font-weight:500;color:#5a6470;margin:6px 2px 0;line-height:1.35;}
+#geo-nota.on{display:block;}
 #loc-input{
   width:100%;box-sizing:border-box;
   padding:8px 30px 8px 32px;         /* spazio a sinistra per la lente, a destra per la × */
@@ -365,8 +386,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   font-size:14px;font-weight:600;color:#1b3f6e;font-family:inherit;
   transition:border-color .12s,box-shadow .12s;
 }
-#loc-input{box-shadow:0 2px 10px rgba(0,0,0,.13);}   /* galleggia sulla mappa, non su un pannello */
-#loc-input:focus{outline:none;border-color:#90b0d8;box-shadow:0 0 0 2px rgba(27,63,110,.18),0 2px 10px rgba(0,0,0,.13);}
+/* L'ombra sta sulla CORNICE (#novita-box): qui dentro farebbe doppione. */
+#loc-input:focus{outline:none;border-color:#90b0d8;box-shadow:0 0 0 2px rgba(27,63,110,.18);}
 /* Il grigio chiaro del suggerimento: deve dire COSA scrivere senza sembrare
    testo già inserito. */
 #loc-input::placeholder{color:#9aa4b2;font-weight:500;opacity:1;}
@@ -416,7 +437,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    La casella si mette SOTTO quella barra, a tutta larghezza meno i margini:
    con la misura del desktop (left 54, width 356) sbordava di 50px a destra. */
 @media (max-width:900px){
-  #loc-box{top:48px;left:7px;right:7px;width:auto;}   /* il pannello Iscriviti qui non c'è */
+  #novita-box{top:48px;left:7px;right:7px;width:auto;}   /* il pannello Iscriviti qui non c'è */
   /* ⚠️ 16px NON è un capriccio tipografico: sotto i 16px iOS ingrandisce la
      pagina da solo quando si apre la tastiera, e la mappa resta storta. */
   #loc-input{font-size:16px;padding-top:9px;padding-bottom:9px;}
@@ -615,6 +636,10 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    rilievo), stesse classi .v-*. Cosi' quando la vetrina scade non si torna a
    una scheda di un'altra epoca: cambiano i contenuti, non il vestito.
    Lo sfondo era al 65% e faceva filigrana: sembrava roba smorta, ora e' 92%. */
+/* ⚠️ IL TOP LO SCRIVE IL CODICE (collocaCanale, 26/8/2026): sopra c'e' il
+   blocco «novita'», che cambia altezza quando compare la riga di avviso
+   sotto «La mia posizione». Il 100px qui sotto e' solo il valore di
+   partenza per il primo istante, prima che la misura arrivi. */
 #channel-logo{
   position:absolute;top:100px;right:14px;z-index:1000;
   display:block;
@@ -1400,16 +1425,29 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     risultati in media (856 il peggiore), con 3 la mediana e' 2 e il
     novantesimo percentile 14. Sotto le tre lettere non e' un elenco,
     e' un muro. -->
+    <div id="novita-box">
+    <div id="novita-testa"><span class="nv-tag">NOVITÀ</span></div>
     <div id="loc-box">
     <svg class="loc-lente" viewBox="0 0 24 24" aria-hidden="true">
     <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/>
     <line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     </svg>
-    <input id="loc-input" type="text" placeholder="Nuovo: trova la tua località" autocomplete="off"
+    <input id="loc-input" type="text" placeholder="Trova la tua località" autocomplete="off"
     autocorrect="off" spellcheck="false" aria-label="Cerca una località"
     aria-autocomplete="list" aria-controls="loc-drop" aria-expanded="false">
     <button id="loc-clear" type="button" aria-label="Cancella la ricerca">×</button>
     <div id="loc-drop" role="listbox" aria-label="Località trovate"></div>
+    </div>
+    <button id="geo-btn" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
+    <line x1="12" y1="1.5" x2="12" y2="4.5" stroke-linecap="round"/>
+    <line x1="12" y1="19.5" x2="12" y2="22.5" stroke-linecap="round"/>
+    <line x1="1.5" y1="12" x2="4.5" y2="12" stroke-linecap="round"/>
+    <line x1="19.5" y1="12" x2="22.5" y2="12" stroke-linecap="round"/>
+    </svg><span class="gb-t">La mia posizione</span>
+    </button>
+    <div id="geo-nota" role="status"></div>
     </div>
     <!-- La tendina nostra: casella di ricerca in cima, regioni sotto. Il suo
          contenuto lo genera regRender() leggendo la select nativa. -->
@@ -7465,9 +7503,86 @@ var OPZIONI_FRANCIA=
 // non solo al caricamento: chi apriva il sito con la finestra stretta e poi la
 // allargava restava SENZA CASELLA, perche' era finita dentro una tendina che
 // su desktop non si apre (trovato collaudando la promozione, 22/8/2026).
+/* ── «La mia posizione» (26/8/2026) ──────────────────────────────────────
+   Non ricalcola NIENTE di suo: prende le coordinate dal browser e chiama
+   locVai(), la stessa strada della ricerca per localita' — sceglie le regioni
+   dalla griglia da 0,05°, centra, mette il segnaposto e avvisa se sono stime.
+   ⚠️ La posizione NON esce dal browser: nessuna nostra chiamata la riceve.
+   ⚠️ Il bottone non viene proprio disegnato se il browser non ha la
+   geolocalizzazione o se la pagina non e' in HTTPS (Chrome la spegne e basta):
+   meglio non vederlo che vederlo morto.                                      */
+var NOVITA_FINO = '2026-09-30T23:59:59+02:00';   // poi il cartellino sparisce da solo
+
+function geoNota(msg){
+  var n = document.getElementById('geo-nota');
+  if(!n) return;
+  n.textContent = msg || '';
+  n.className = msg ? 'on' : '';
+  if(typeof collocaCanale === 'function') collocaCanale();
+}
+
+function geoTrova(){
+  var b = document.getElementById('geo-btn');
+  if(!b || b.disabled || isLoading) return;
+  var et = b.querySelector('.gb-t'), vecchio = et.textContent, chiuso = false, tmr;
+  function fine(msg){
+    if(chiuso) return;
+    chiuso = true; clearTimeout(tmr);
+    b.disabled = false; et.textContent = vecchio; geoNota(msg);
+  }
+  geoNota('');
+  b.disabled = true; et.textContent = 'Ti sto cercando…';
+  // ⚠️ Tetto NOSTRO oltre a quello del browser: su Android capita che il
+  // timeout di getCurrentPosition non scatti mai, e il bottone resterebbe a
+  // «ti sto cercando» per sempre. Chi e' sotto un bosco deve poter riprovare.
+  tmr = setTimeout(function(){ fine('Non ci sono riuscito, riprova'); }, 12000);
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var lat = pos.coords.latitude, lon = pos.coords.longitude;
+    locCarica().then(function(){
+      var vic = locRegioniVicine(lat, lon).filter(function(k){ return document.getElementById('chk-'+k); });
+      if(!vic.length){
+        fine('Qui non arriviamo ancora: scegli una regione qui sotto');
+        try{ gtag('event','usa_posizione',{esito:'fuori'}) }catch(e){}
+        return;
+      }
+      fine('');
+      try{ gtag('event','usa_posizione',{esito:'ok', regione:vic[0]}) }catch(e){}
+      locVai({ n:'La mia posizione', lat:lat, lon:lon, reg:vic[0], t:'' });
+    }).catch(function(){ fine('Non ci sono riuscito, riprova'); });
+  }, function(err){
+    var negato = !!(err && err.code === 1);
+    fine(negato ? 'Permesso negato: scegli la regione qui sotto'
+                : 'Non ci sono riuscito, riprova');
+    try{ gtag('event','usa_posizione',{esito: negato ? 'negato' : 'errore'}) }catch(e){}
+  }, { enableHighAccuracy:false, timeout:10000, maximumAge:120000 });
+}
+
+/* Il box canale sta SOTTO il blocco «novita'», e il blocco cambia altezza
+   (l'avviso compare e sparisce). Si misura invece di scrivere un numero:
+   un numero fisso si scollega il giorno che il blocco cresce di una riga. */
+function collocaCanale(){
+  var nb = document.getElementById('novita-box'), cl = document.getElementById('channel-logo');
+  if(!nb || !cl) return;
+  if(window.innerWidth <= 900 || getComputedStyle(nb).display === 'none'){ cl.style.top = ''; return; }
+  var m = document.getElementById('map');
+  if(!m) return;
+  var giu = nb.getBoundingClientRect().bottom - m.getBoundingClientRect().top + 10;
+  cl.style.top = Math.round(giu) + 'px';
+}
+window.addEventListener('resize', collocaCanale);
+
+function geoPrepara(){
+  var b = document.getElementById('geo-btn');
+  if(!b) return;
+  if(!navigator.geolocation || !window.isSecureContext){ b.style.display = 'none'; return; }
+  b.addEventListener('click', geoTrova);
+  var t = document.getElementById('novita-testa');
+  if(t && Date.now() > new Date(NOVITA_FINO).getTime()) t.style.display = 'none';
+}
+
 var _locCasa = null, _locDopo = null;
 function locCollocaCasella(){
-  var box=document.getElementById('loc-box'), slot=document.getElementById('reg-cerca-slot');
+  var box=document.getElementById('novita-box'), slot=document.getElementById('reg-cerca-slot');
   if(!box||!slot) return;
   if(!_locCasa){ _locCasa=box.parentElement; _locDopo=box.nextSibling; }
   if(window.innerWidth<=900){
@@ -7475,6 +7590,7 @@ function locCollocaCasella(){
   } else if(box.parentElement!==_locCasa){
     _locCasa.insertBefore(box,_locDopo);
   }
+  if(typeof collocaCanale === 'function') collocaCanale();
 }
 window.addEventListener('resize', locCollocaCasella);
 
@@ -7521,6 +7637,8 @@ function regChiudi(){
   // La casella di ricerca TRASLOCA dentro la tendina: e' lo stesso elemento di
   // sempre (#loc-box), quindi tutta la ricerca continua a funzionare com'e'.
   locCollocaCasella();
+  geoPrepara();
+  collocaCanale();
   apri.addEventListener('click', regApri);
   document.getElementById('reg-chiudi').addEventListener('click', regChiudi);
   // Tocco sul velo scuro = chiudi. Sul pannello no: e' dentro #reg-sheet.
@@ -8956,15 +9074,19 @@ function loadDefaultMarkers(){
       if(VETRINE[k] && ora <= new Date(VETRINE[k].fino).getTime()) scelte.push(k);
     });
     if(!scelte.length) return;
-    // ⚠️ LA SCELTA SI RICORDA. Tirando il dado a ogni apertura la stessa
-    // persona vedrebbe il video, poi la guida, poi di nuovo il video: un sito
-    // che non sa quello che vuole. Cosi' invece ognuno ha la sua, e in GA4 il
-    // confronto fra le due e' fra persone diverse, che e' quello che serve.
-    try{ QUALE=localStorage.getItem('vetrina')||''; }catch(e){}
-    if(scelte.indexOf(QUALE)<0){
-      QUALE=scelte[Math.floor(Math.random()*scelte.length)];
-      try{ localStorage.setItem('vetrina',QUALE); }catch(e){}
-    }
+    // ⚠️ IL DADO SI TIRA A OGNI APERTURA, e la scelta NON si ricorda.
+    // Prima restava appiccicata alla persona (localStorage 'vetrina'): chi
+    // aveva pescato la guida vedeva sempre e solo quella. Decisione
+    // dell'utente il 26/8/2026: chi ne ha gia' visto uno e' giusto che veda
+    // anche l'altro, quindi ogni caricamento e' una moneta nuova.
+    // Il confronto in GA4 regge lo stesso: le due vetrine escono circa meta'
+    // e meta' delle volte, quindi i clic si possono confrontare cosi' come
+    // sono, senza pesarli. Cambia solo che il paragone non e' piu' fra
+    // persone diverse ma fra aperture diverse.
+    QUALE=scelte[Math.floor(Math.random()*scelte.length)];
+    // La chiave vecchia non si legge piu': si toglie di mezzo una volta sola,
+    // se no resta li' a sporcare il browser di chi c'era prima.
+    try{ if(localStorage.getItem('vetrina')) localStorage.removeItem('vetrina'); }catch(e){}
     V=VETRINE[QUALE];
   } else {
     QUALE=MOSTRA; V=VETRINE[MOSTRA];
