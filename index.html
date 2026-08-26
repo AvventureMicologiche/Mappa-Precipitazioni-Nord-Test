@@ -370,8 +370,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   padding:2px 8px;border-radius:20px;line-height:1.6;}
 /* ⚠️ relative e NON static: lente e × sono posizionate in assoluto DENTRO la
    casella e senza un contenitore posizionato si agganciano alla cornice. */
-#loc-box{position:relative;width:100%;box-sizing:border-box;}
-#geo-btn{display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;margin-top:6px;
+#loc-box{position:relative;width:100%;box-sizing:border-box;margin-top:6px;}
+#geo-btn{display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;
   background:#eaf2fb;border:1px solid #90b0d8;border-radius:5px;padding:8px 11px;
   font-family:inherit;font-size:14px;font-weight:600;color:#1b3f6e;cursor:pointer;text-align:left;}
 #geo-btn:hover{background:#dce8f6;}
@@ -1427,17 +1427,6 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     e' un muro. -->
     <div id="novita-box">
     <div id="novita-testa"><span class="nv-tag">NOVITÀ</span></div>
-    <div id="loc-box">
-    <svg class="loc-lente" viewBox="0 0 24 24" aria-hidden="true">
-    <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/>
-    <line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    <input id="loc-input" type="text" placeholder="Trova la tua località" autocomplete="off"
-    autocorrect="off" spellcheck="false" aria-label="Cerca una località"
-    aria-autocomplete="list" aria-controls="loc-drop" aria-expanded="false">
-    <button id="loc-clear" type="button" aria-label="Cancella la ricerca">×</button>
-    <div id="loc-drop" role="listbox" aria-label="Località trovate"></div>
-    </div>
     <button id="geo-btn" type="button">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
     <circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
@@ -1447,6 +1436,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <line x1="19.5" y1="12" x2="22.5" y2="12" stroke-linecap="round"/>
     </svg><span class="gb-t">La mia posizione</span>
     </button>
+    <div id="loc-box">
+    <svg class="loc-lente" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/>
+    <line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <input id="loc-input" type="text" placeholder="Cerca località" autocomplete="off"
+    autocorrect="off" spellcheck="false" aria-label="Cerca una località"
+    aria-autocomplete="list" aria-controls="loc-drop" aria-expanded="false">
+    <button id="loc-clear" type="button" aria-label="Cancella la ricerca">×</button>
+    <div id="loc-drop" role="listbox" aria-label="Località trovate"></div>
+    </div>
     <div id="geo-nota" role="status"></div>
     </div>
     <!-- La tendina nostra: casella di ricerca in cima, regioni sotto. Il suo
@@ -3916,6 +3916,22 @@ function centraRegioneInStriscia(){
   });
   if(sopra<0) sopra=0;
   if(coperto<=20) return;                          // niente da compensare
+  // ⚠️ SE L'UTENTE HA DETTO DOVE, IL BERSAGLIO E' IL SUO PUNTO (26/8/2026).
+  // Fin qui si centrava sempre il baricentro delle REGIONI attive: chi cercava
+  // un paese (o usava «La mia posizione») veniva portato sul suo punto, poi
+  // cliccava il periodo, la scala graduata compariva, la striscia visibile si
+  // accorciava e questa funzione ricentrava sulla regione intera — il punto
+  // scivolava in basso, fin sotto la scala. Segnalato dall'utente provando dal
+  // telefono vero. ⚠️ Il difetto c'era gia' nella RICERCA PER LOCALITA', viva
+  // dal 22/8: la geolocalizzazione l'ha solo reso evidente.
+  // Qui non si tocca lo zoom (l'ha scelto fitMapToPunto): si sposta e basta.
+  if(typeof _vistaPaese!=='undefined' && _vistaPaese && !_vistaDaLink){
+    var Sp=mBox.height-coperto-sopra;
+    var pp=map.latLngToContainerPoint([_vistaPaese.lat,_vistaPaese.lon]);
+    var dyp=Math.round(pp.y-(sopra+Sp/2));
+    if(Math.abs(dyp)>12) map.panBy([0,dyp],{animate:false});
+    return;
+  }
   var bb=null;
   rks.forEach(function(r){
     var b=REGION_BOUNDS[r]; if(!b) return;
@@ -6888,8 +6904,13 @@ function fitMapToPunto(lat, lon, tacca) {
 
 function locVai(p) {
   if (!p || isLoading) return;
-  document.getElementById('loc-input').value = p.n;
-  document.getElementById('loc-box').classList.add('pieno');
+  // ⚠️ p.muta: la casella NON si riempie. Serve a «La mia posizione», che
+  // passa di qui ma non e' una ricerca scritta: vedersi comparire «La mia
+  // posizione» dentro il campo di ricerca confondeva (segnalato il 26/8/2026).
+  if (!p.muta) {
+    document.getElementById('loc-input').value = p.n;
+    document.getElementById('loc-box').classList.add('pieno');
+  }
   locChiudi();
   document.getElementById('loc-input').blur();
 
@@ -6908,7 +6929,7 @@ function locVai(p) {
   document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function (cb) { cb.checked = false; });
   regioni.forEach(function (k) { document.getElementById('chk-' + k).checked = true; });
 
-  _vistaPaese = { lat: p.lat, lon: p.lon, n: p.n, z: p.t === 'z' };   // z: e' un'area, si inquadra piu' larga
+  _vistaPaese = { lat: p.lat, lon: p.lon, n: p.n, z: p.t === 'z', priv: !!p.priv };   // z: e' un'area, si inquadra piu' larga
   _vistaDaLink = false;   // ricerca nuova: comanda lei, non piu' il link da cui sei arrivato
   _daRicerca = true;
   document.getElementById('chk-' + regioni[regioni.length - 1]).dispatchEvent(new Event('change'));
@@ -7547,7 +7568,9 @@ function geoTrova(){
       }
       fine('');
       try{ gtag('event','usa_posizione',{esito:'ok', regione:vic[0]}) }catch(e){}
-      locVai({ n:'La mia posizione', lat:lat, lon:lon, reg:vic[0], t:'' });
+      // muta: non scrive nella casella di ricerca.
+      // priv: il punto NON viaggia col link condiviso — vedi buildShareUrl.
+      locVai({ n:'La mia posizione', lat:lat, lon:lon, reg:vic[0], t:'', muta:true, priv:true });
     }).catch(function(){ fine('Non ci sono riuscito, riprova'); });
   }, function(err){
     var negato = !!(err && err.code === 1);
@@ -8010,11 +8033,22 @@ function buildShareUrl(){
   p.set('a',fmtISOLocal(new Date(currentNow)));
   p.set('z',String(Math.round(map.getZoom()*100)/100));
   var c=map.getCenter();
-  p.set('c',c.lat.toFixed(4)+','+c.lng.toFixed(4));
+  // ⚠️ E NON BASTA TOGLIERE pl (26/8/2026): dopo «La mia posizione» il CENTRO
+  // della mappa e' la persona, e quattro decimali sono undici metri — a quel
+  // punto il link dice comunque dov'era, casa compresa. Con la posizione GPS
+  // il centro si arrotonda a DUE decimali, circa un chilometro: chi riceve
+  // vede la stessa zona, ma il punto di partenza non e' piu' un indirizzo.
+  var _dec = (_vistaPaese && _vistaPaese.priv) ? 2 : 4;
+  p.set('c',c.lat.toFixed(_dec)+','+c.lng.toFixed(_dec));
   // Il PAESE CERCATO viaggia col link (22/8/2026): senza, chi riceveva vedeva
   // la stessa inquadratura ma senza segnaposto, e non capiva di cosa si stesse
   // parlando. Due parametri, coordinate e nome.
-  if(_vistaPaese){
+  // ⚠️ MAI la posizione DELLA PERSONA (26/8/2026). Il paese cercato a mano
+  // viaggia col link, e va bene: e' un nome pubblico. Le coordinate prese dal
+  // GPS no: pl ha CINQUE decimali, cioe' circa un metro, e un link condiviso
+  // su Facebook direbbe a tutti dove si trovava chi l'ha creato — spesso casa
+  // sua. Chi riceve vede la stessa inquadratura, senza il segnaposto.
+  if(_vistaPaese && !_vistaPaese.priv){
     p.set('pl', _vistaPaese.lat.toFixed(5)+','+_vistaPaese.lon.toFixed(5));
     if(_vistaPaese.n) p.set('pn', _vistaPaese.n);
   }
@@ -8346,14 +8380,17 @@ function didascaliaFoto(){
   // foto legge «Viozene», non «Liguria, Provenza-Costa Azzurra (FR), Piemonte»,
   // che e' l'elenco delle regioni che servono A NOI per disegnare. «e dintorni»
   // perche' la mappa mostra la zona attorno, non il paese soltanto.
-  if(_vistaPaese && _vistaPaese.n)
+  // ⚠️ Non con la posizione GPS: la didascalia direbbe «Dove ha piovuto a La
+  // mia posizione», che non vuol dire niente a chi legge. Li' tornano i nomi
+  // delle regioni, come prima della ricerca per localita'.
+  if(_vistaPaese && _vistaPaese.n && !_vistaPaese.priv)
     return 'Dove ha piovuto a '+_vistaPaese.n+' e dintorni'+quando+': mappa dei pluviometri, dati reali di stazione';
   return 'Dove ha piovuto in '+nomi.join(', ')+quando+': mappa dei pluviometri, dati reali di stazione';
 }
 function shareFileName(){
   // Stesso ragionamento della didascalia: se c'e' un paese, il file porta il
   // suo nome. pioggia_viozene_2026-08-15_2026-08-21.png
-  var chi=(_vistaPaese&&_vistaPaese.n)
+  var chi=(_vistaPaese&&_vistaPaese.n&&!_vistaPaese.priv)
     ? _vistaPaese.n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
         .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
     : getActiveRegions().join('-');
