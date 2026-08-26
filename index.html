@@ -7669,7 +7669,7 @@ function geoNota(msg){
    a dire quale dei tre e' stato, senza doverglielo chiedere.
    ⚠️ Il tetto nostro e' largo apposta: il tempo che uno ci mette a rispondere
    al permesso NON e' compreso nei timeout del browser, ma nel nostro si'. */
-var GEO_TETTO   = 32000;
+var GEO_TETTO   = 25000;
 /* ⚠️ IL SECONDO CLIC PRETENDE UN COLPO NUOVO (26/8/2026, l'utente: «si puo'
    fare che se riclicco rifa la ricerca?»). Il tasto il browser lo interrogava
    gia' (misurato), ma con maximumAge a 60 s si riprendeva la POSIZIONE DI
@@ -7678,9 +7678,13 @@ var GEO_TETTO   = 32000;
    immediato; dal secondo in poi si azzera la cache e si aspetta il GPS. */
 var _geoFatto = false;
 function geoOpzioni(fresco){
+  // ⚠️ La cache non si prende piu' a cuor leggero: il grossolano accetta un
+  // colpo di al massimo DUE MINUTI (prima quindici), e al riclic pretende
+  // comunque un colpo nuovo. «Dove sono» che risponde con dove eri stamattina
+  // e' peggio di un errore.
   return {
-    preciso: { enableHighAccuracy:true,  timeout:15000, maximumAge: fresco ? 0 : 60000 },
-    grosso:  { enableHighAccuracy:false, timeout:10000, maximumAge: fresco ? 60000 : 900000 }
+    preciso: { enableHighAccuracy:true,  timeout:20000, maximumAge: fresco ? 0 : 60000 },
+    grosso:  { enableHighAccuracy:false, timeout:12000, maximumAge: fresco ? 0 : 120000 }
   };
 }
 
@@ -7711,8 +7715,11 @@ function geoTrova(){
   var b = document.getElementById('geo-btn');
   if(!b || b.disabled || isLoading) return;
   var et = b.querySelector('.gb-t'), vecchio = et.textContent;
-  var chiuso = false, tmr = null, watch = null, secondo = false;
+  var chiuso = false, tmr = null, watch = null;
   var miglior = null, attesa = null;
+  // ⚠️ null = sta ancora provando, numero = ha fallito con quel codice.
+  // Si rinuncia solo quando hanno fallito TUTTI E DUE.
+  var esito = { preciso: null, grosso: null };
   var opz = geoOpzioni(_geoFatto);   // dal secondo clic in poi: colpo nuovo
   _geoFatto = true;
 
@@ -7721,16 +7728,19 @@ function geoTrova(){
     try{ navigator.geolocation.clearWatch(watch); }catch(e){}
     watch = null;
   }
-  function fine(msg, esito, codice, prec){
+  function spia(pre){
+    return pre + ' [spia: p=' + (esito.preciso === null ? 'attesa' : esito.preciso) +
+      ' g=' + (esito.grosso === null ? 'attesa' : esito.grosso) +
+      ' ±' + (miglior ? Math.round(miglior.coords.accuracy || 0) : '?') + ' m]';
+  }
+  function fine(msg, tipo, codice, prec){
     if(chiuso) return;
     chiuso = true; clearTimeout(tmr); clearTimeout(attesa); stop();
     b.disabled = false; b.classList.remove('cerca'); et.textContent = vecchio;
-    if(GEO_SPIA && esito) msg = (msg ? msg + ' ' : '') + '[spia: ' + esito +
-      ', cod ' + (codice || 0) + ', ±' + Math.round(prec || 0) + ' m, ' +
-      (secondo ? '2°' : '1°') + ' tentativo]';
+    if(GEO_SPIA && tipo) msg = spia(msg ? msg + ' ' : (tipo + ' '));
     geoNota(msg);
-    if(esito){ try{ gtag('event','usa_posizione',
-      {esito:esito, codice:codice||0, precisione:Math.round(prec||0)}); }catch(e){} }
+    if(tipo){ try{ gtag('event','usa_posizione',
+      {esito:tipo, codice:codice||0, precisione:Math.round(prec||0)}); }catch(e){} }
   }
   function accetta(pos){
     stop(); clearTimeout(attesa);
@@ -7740,18 +7750,18 @@ function geoTrova(){
       if(chiuso) return;
       var vic = locRegioniVicine(lat, lon).filter(function(k){ return document.getElementById('chk-'+k); });
       if(!vic.length){ fine('Qui non arriviamo ancora', 'fuori', 0, acc); return; }
-      // qui l'evento se lo manda da solo, perche' porta anche la regione:
+      // l'evento se lo manda da solo perche' porta anche la regione:
       // fine() non deve rifarlo, se no in GA4 ne contiamo due.
       try{ gtag('event','usa_posizione',{esito:'ok', regione:vic[0], precisione:Math.round(acc)}); }catch(e){}
-      fine(GEO_SPIA ? '[spia: ok, ±' + Math.round(acc) + ' m, ' +
-           (secondo ? '2°' : '1°') + ' tentativo]' : '');
+      fine(GEO_SPIA ? spia('ok') : '');
       // muta: non scrive nella casella di ricerca.
       // priv: il punto NON viaggia col link condiviso, vedi buildShareUrl.
       locVai({ n:'La mia posizione', lat:lat, lon:lon, reg:vic[0], t:'', muta:true, priv:true });
     }).catch(function(){ fine('Non ci sono riuscito: scrivi il paese qui sotto', 'errore', 0, acc); });
   }
   function decidi(){
-    stop();
+    stop(); clearTimeout(attesa);
+    if(chiuso) return;
     var a = miglior ? (miglior.coords.accuracy || 0) : 0;
     if(miglior && (!a || a <= GEO_MASSIMA)) accetta(miglior);
     else fine('Non riesco a capire dove sei: scrivi il paese qui sotto', 'impreciso', 0, a);
@@ -7761,36 +7771,44 @@ function geoTrova(){
     var acc = (pos.coords && pos.coords.accuracy) || 0;
     if(!miglior || acc < (miglior.coords.accuracy || 0)) miglior = pos;
     if(!acc || acc <= GEO_BUONA){ accetta(pos); return; }
-    // Colpo grossolano: dal ripiego non ne arrivano altri, dal watch si'.
-    if(secondo){ decidi(); return; }
+    // Colpo grossolano tenuto da parte: si da' tempo al GPS di svegliarsi,
+    // ma solo se il preciso e' ancora vivo — se ha gia' fallito non arrivera'.
+    if(esito.preciso !== null){ decidi(); return; }
     if(attesa === null) attesa = setTimeout(decidi, GEO_ATTESA);
   }
-  function fallito(err){
-    stop();
+  function fallito(chi, err){
     if(chiuso) return;
     var c = (err && err.code) || 0;
+    esito[chi] = c;
+    if(chi === 'preciso') stop();
+    // Il permesso negato vale per tutti e due: inutile aspettare l'altro.
     if(c === 1){ fine('Permesso negato: scrivi il paese qui sotto', 'negato', 1); return; }
-    if(!secondo){                       // il ripiego grossolano
-      secondo = true;
-      try{ navigator.geolocation.getCurrentPosition(trovato, fallito, opz.grosso); }
-      catch(e){ fine('Non ci sono riuscito: scrivi il paese qui sotto', 'errore', c); }
-      return;
-    }
-    if(miglior){ decidi(); return; }    // un colpo grossolano c'era: meglio di niente
-    fine(c === 3 ? 'Ci sto mettendo troppo: scrivi il paese qui sotto'
-                 : 'GPS non disponibile: scrivi il paese qui sotto',
-         c === 3 ? 'lento' : 'nondisponibile', c);
+    if(esito.preciso === null || esito.grosso === null) return;   // l'altro ci prova ancora
+    if(miglior){ decidi(); return; }                              // qualcosa era arrivato
+    var cc = esito.preciso || esito.grosso;
+    fine(cc === 3 ? 'Ci sto mettendo troppo: scrivi il paese qui sotto'
+                  : 'GPS non disponibile: scrivi il paese qui sotto',
+         cc === 3 ? 'lento' : 'nondisponibile', cc);
   }
 
   geoNota('');
   if(typeof locFermaChiamata === 'function') locFermaChiamata();
   b.disabled = true; b.classList.add('cerca'); et.textContent = 'Ti sto cercando…';
   tmr = setTimeout(function(){
-    if(miglior) { decidi(); return; }
+    if(miglior){ decidi(); return; }
     fine('Ci sto mettendo troppo: scrivi il paese qui sotto', 'lento', 0);
   }, GEO_TETTO);
-  try{ watch = navigator.geolocation.watchPosition(trovato, fallito, opz.preciso); }
-  catch(e){ fine('Non ci sono riuscito: scrivi il paese qui sotto', 'errore'); }
+  // ⚠️ I DUE TENTATIVI PARTONO INSIEME (26/8/2026, seconda prova dal telefono:
+  // «ci sta mettendo piu' del solito»). Prima il grossolano partiva SOLO dopo
+  // un errore del preciso: ma su Chrome Android watchPosition a volte non
+  // richiama nessuno dei due callback, quindi l'errore non arrivava mai e il
+  // ripiego non partiva mai. Era una porta di sicurezza chiusa dall'interno.
+  try{ watch = navigator.geolocation.watchPosition(trovato,
+    function(e){ fallito('preciso', e); }, opz.preciso); }
+  catch(e){ fallito('preciso', { code: 0 }); }
+  try{ navigator.geolocation.getCurrentPosition(trovato,
+    function(e){ fallito('grosso', e); }, opz.grosso); }
+  catch(e){ fallito('grosso', { code: 0 }); }
 }
 
 /* Il box canale sta SOTTO il blocco «novita'», e il blocco cambia altezza
