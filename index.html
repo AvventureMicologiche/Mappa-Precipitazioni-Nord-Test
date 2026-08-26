@@ -322,6 +322,11 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   0%,100%{box-shadow:0 0 0 0 rgba(27,63,110,.42);}
   50%{box-shadow:0 0 0 6px rgba(27,63,110,0);}}
 @media(prefers-reduced-motion:reduce){#geo-btn.loc-chiama{animation:none;}}
+/* ⚠️ NIENTE LAMPEGGIO SU DESKTOP (26/8/2026, l'utente). Sul PC il blocco sta
+   in alto a destra SULLA MAPPA, sempre in vista: li' il respiro e' solo
+   rumore addosso a chi sta guardando le piogge. Sul telefono resta, perche'
+   li' il blocco e' chiuso dentro la tendina e uno deve sapere che c'e'. */
+}
 /* Guida a lampeggio (solo desktop): pulsa il pannello del passo attivo —
    regioni finché non ne selezioni una, poi periodo finché non lo clicchi.
    Anello marcato + sfondo che "respira" verso l'azzurro per farsi notare. */
@@ -494,6 +499,24 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    CDN non risponde è peggio che non averlo. Qui è un SVG dentro la pagina. */
 .loc-pin{background:none;border:none;}
 .loc-pin svg{display:block;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45));}
+/* ⚠️ SUL PC IL BLOCCO NON C'E' (26/8/2026, deciso dall'utente dopo la prova:
+   «alla fine e' una funzione per telefono»). Chi sta al computer non ha il
+   GPS: la posizione gliela darebbe il servizio di rete, che senza wi-fi
+   riconosciute ripiega sull'indirizzo internet e sbaglia di centinaia di
+   chilometri (il caso Caserta). Un tasto che quasi sempre risponde male e'
+   peggio di un tasto che non c'e'.
+   Sopra i 900 px resta quindi la SOLA casella di ricerca, identica a com'era
+   prima del blocco: bianca, con la sua ombra, appoggiata sulla mappa. La
+   cornice si smonta (era li' per tenere insieme due controlli, e ne resta
+   uno) e l'ombra torna sulla casella, che se no galleggerebbe senza niente
+   sotto. Niente lampeggio, sempre per sua richiesta. */
+@media(min-width:901px){
+  #novita-testa,#geo-btn{display:none;}
+  #novita-box{background:none;border:0;border-radius:0;padding:0;box-shadow:none;}
+  #loc-box{margin-top:0;}
+  #loc-input{box-shadow:0 2px 10px rgba(0,0,0,.13);}
+  #loc-input:focus{box-shadow:0 0 0 2px rgba(27,63,110,.18),0 2px 10px rgba(0,0,0,.13);}
+  #loc-input.loc-chiama,#geo-btn.loc-chiama{animation:none;}
 /* TELEFONO E TABLET (misurato a 360x640 e 393x760, non dedotto).
    Qui il pannello regioni ESISTE ed è una barra alta 42px in cima alla mappa,
    con dentro la tendina delle regioni; i tasti dello zoom invece non ci sono.
@@ -1547,7 +1570,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <div class="tp-btn" data-type="d" data-val="30">30 giorni</div>
         </div>
         <div class="tp-custom-btn" id="btn-custom">📅 Date personalizzate</div>
-        <div class="tp-custom-btn tp-funghi-btn" id="btn-funghi"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAC6ElEQVR42m2TPWxTVxTHz7nvvveuE8cmtuNgG8cGQhEfgRCGBqlFqAtDVTGwsMOKOnTpUFUdq6pjhmYoDEhVVQnxIb6UABKIqoWUqFUpBNpA3IKdBD+C46R+ee/eczo8KwmoZ/7/7l/63XOQmWF1mADFbH3h9tWLT+7f9hsvVSJdHhh+7/BH5WIeAJgZEQEA2xgzM4MQ3337zdjol+xVilnVqdzQmGaLmnZ6z5ETxz/5TElkBkRsY0QGhPXVpycnTo30pqGwKbMhkQi1EYiWANbB1F/V+PDRL0a/dyxEFAIAyBghrLNnTt07PVLqs4VrubYTBAGRMUavBDpga8/AttbE2TMjXwthMRESEQIs+8HHh3cpr4IuIHNfPtuhlDHEAMRMRASo0DxasD4/92tvJiWYCBCfTD1qvZhmo5sN3Vg0U09r03/PeguLzUZDt5ZdpJgEW8WUX//j/l0AkJGZTDr1WqWTW7cWCuWQ8Xmt3lPMLQd+p2svvfa8ymMnaOa7VtAEK/6/bZOR1ouXLv0++WNPKr7YaFpS9m/eFIsnDxz8YKbyfHJiMpvqGj//w4M7N0fHfyuVSm2TETk3O1epzFy5fCGXsuOdnbv37i9v6Z9/OT8+dmvf0FB1bj6dLRw6+D4zy+ifEZGIejf29mSzP98ZSyZjwCKR3EDMUsrilv6BoeF3O2ICMSoQaxvCzMw3ro9pv2lZtm3bjqu01l3xuA5aHTElEIgocrGGCSEQcfrPh5lMdxiGtutKKQ2R6yrbwmqtBoARs4ZF1c2l5aVFL6aU1lq5ypISmBkgmYi/qtej2BtYNK88j40GRCnt0uZ+aL/Njuv4fmt98g2MmQGIiXbs2tuzMWe0jnyFgXZc9T9YtNO5fC4kK5cvvLNjZxiGiCillFJUZ+f7SqUo9nYbM7uO8+GRY0//8Wq1KiIAsN9qXbt2o1jenuruXtW47t7WiXk2M/PL3Z8AjC1lqGnb9p2Dg4OrBxrNfxMWeekz+THZAAAAAElFTkSuQmCC" style="width:18px;height:18px;vertical-align:middle;margin-right:5px;">Piogge per funghi <span style="font-size:13px;opacity:.8">(range 15-21 gg fa)</span></div>
+        <div class="tp-custom-btn tp-funghi-btn" id="btn-funghi"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAC6ElEQVR42m2TPWxTVxTHz7nvvveuE8cmtuNgG8cGQhEfgRCGBqlFqAtDVTGwsMOKOnTpUFUdq6pjhmYoDEhVVQnxIb6UABKIqoWUqFUpBNpA3IKdBD+C46R+ee/eczo8KwmoZ/7/7l/63XOQmWF1mADFbH3h9tWLT+7f9hsvVSJdHhh+7/BH5WIeAJgZEQEA2xgzM4MQ3337zdjol+xVilnVqdzQmGaLmnZ6z5ETxz/5TElkBkRsY0QGhPXVpycnTo30pqGwKbMhkQi1EYiWANbB1F/V+PDRL0a/dyxEFAIAyBghrLNnTt07PVLqs4VrubYTBAGRMUavBDpga8/AttbE2TMjXwthMRESEQIs+8HHh3cpr4IuIHNfPtuhlDHEAMRMRASo0DxasD4/92tvJiWYCBCfTD1qvZhmo5sN3Vg0U09r03/PeguLzUZDt5ZdpJgEW8WUX//j/l0AkJGZTDr1WqWTW7cWCuWQ8Xmt3lPMLQd+p2svvfa8ymMnaOa7VtAEK/6/bZOR1ouXLv0++WNPKr7YaFpS9m/eFIsnDxz8YKbyfHJiMpvqGj//w4M7N0fHfyuVSm2TETk3O1epzFy5fCGXsuOdnbv37i9v6Z9/OT8+dmvf0FB1bj6dLRw6+D4zy+ifEZGIejf29mSzP98ZSyZjwCKR3EDMUsrilv6BoeF3O2ICMSoQaxvCzMw3ro9pv2lZtm3bjqu01l3xuA5aHTElEIgocrGGCSEQcfrPh5lMdxiGtutKKQ2R6yrbwmqtBoARs4ZF1c2l5aVFL6aU1lq5ypISmBkgmYi/qtej2BtYNK88j40GRCnt0uZ+aL/Njuv4fmt98g2MmQGIiXbs2tuzMWe0jnyFgXZc9T9YtNO5fC4kK5cvvLNjZxiGiCillFJUZ+f7SqUo9nYbM7uO8+GRY0//8Wq1KiIAsN9qXbt2o1jenuruXtW47t7WiXk2M/PL3Z8AjC1lqGnb9p2Dg4OrBxrNfxMWeekz+THZAAAAAElFTkSuQmCC" style="width:18px;height:18px;vertical-align:middle;margin-right:5px;">Piogge per funghi <span style="font-size:13px;opacity:.8">(range 13-20 gg fa)</span></div>
         <!-- Riga di stato e rotella: QUI, sotto «Piogge per funghi» e sopra il
              link «FAQ video» (13/8/2026). Stavano in FONDO al pannello, dopo il
              FAQ e dopo il riquadro delle date personalizzate. Su telefono
@@ -3077,6 +3100,19 @@ function posTooltip(mx,my){
   if(ty<0)ty=4;
   tooltip.style.left=tx+'px';tooltip.style.top=ty+'px';
 }
+/* LA QUOTA, E QUANDO NON SI SA (26/8/2026) ─────────────────────────────
+   Prima si scriveva sempre `s.q + ' m slm'`, e per chi la quota non ce l'ha
+   veniva fuori «0 m slm»: non ammettere di non sapere, ma AFFERMARE il
+   livello del mare su un pluviometro che sta in montagna.
+   ⚠️ Zero NON vuol dire ignoto: Grado, Chioggia, Viareggio e Livorno
+   Mareografo stanno davvero sul mare. Ignoto e' `null`.
+   ⚠️ La tilde dice che la quota non la dichiara l'ente: e' l'altezza del
+   TERRENO nel punto della stazione (undici reti fra MeteoHub e OSMER non la
+   pubblicano). RESTA DA RISOLVERE trovando le anagrafiche vere. */
+function testoQuota(s){
+  if(!s || s.q === null || s.q === undefined || s.q === '') return '—';
+  return (s.qt ? '~ ' : '') + s.q + ' m slm';
+}
 function showTooltip(s,rank,mx,my){
   // Col grafico storico aperto il tooltip si sovrapporrebbe (su mobile in modo
   // vistoso, visto che il popup occupa tutta la larghezza): niente tooltip.
@@ -3087,7 +3123,7 @@ function showTooltip(s,rank,mx,my){
   document.getElementById('tt-nome').textContent=s.n;
   document.getElementById('tt-mm').textContent=s.mm;
   document.getElementById('tt-prov').textContent=s.p;
-  document.getElementById('tt-quota').textContent=s.q+' m slm';
+  document.getElementById('tt-quota').textContent=testoQuota(s);
   document.getElementById('tt-rank').textContent='#'+rank+' / '+totalStations;
   document.getElementById('tt-fonte').textContent=fonte;
   posTooltip(mx,my);
@@ -3715,7 +3751,7 @@ function openStationHistory(s,rank,mx,my){
   // (verificato sulla fonte). Etichetta coerente col dato invece che sbagliata.
   document.getElementById('sh-prov-lbl').textContent=(regionKey==='liguria')?'Comune':'Provincia';
   document.getElementById('sh-prov').textContent=s.p||'—';
-  document.getElementById('sh-quota').textContent=(s.q||0)+' m slm';
+  document.getElementById('sh-quota').textContent=testoQuota(s);
   document.getElementById('sh-rank').textContent=rank?('#'+rank+' / '+totalStations):'—';
   document.getElementById('sh-fonte').textContent=lastUsedFonte||'—';
   var gg=Math.round((end-currentPast)/(24*3600000))+1;
@@ -4143,7 +4179,7 @@ function loadOpenMeteo(stations,pastDate,nowDate,labelPeriodo,badgePrefix){
     if(pending>0) return;
     // Assembla output
     var out=stations.map(function(s){
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,p:s.p,mm:results[s.n]||0};
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p,mm:results[s.n]||0};
     });
     var fonte=badgePrefix?badgePrefix+' · Open-Meteo':'🌍 Open-Meteo live';
     render(out,fonte,labelPeriodo);
@@ -4315,7 +4351,7 @@ function osmerInlineDesktop(){
 // GIORNI)» sommandone sei. Un totale corto di un giorno con l'etichetta del
 // giorno pieno, e nessun modo per l'utente di accorgersene — su una mappa per
 // funghi l'ultimo giorno e' fra i piu' importanti. La finestra «Piogge per
-// funghi» non e' toccata: finisce 15 giorni fa, non arriva a ieri.
+// funghi» non e' toccata: finisce 13 giorni fa, non arriva a ieri.
 //
 // NON SI DEDUCE DALLA REGIONE, SI VERIFICA IL FILE. Cosi' l'avviso e' vero
 // anche il giorno in cui a incepparsi fosse il Piemonte, e sparisce da solo
@@ -5131,7 +5167,7 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
   // caselle in cui divide la regione, quindi decima proprio la montagna, dove
   // la rete è fitta: nelle Orobie sopravvivevano 2 pluviometri su 12 e una
   // sacca da 44 mm risultava asciutta. Per una mappa che serve a trovare dove
-  // ha piovuto 15-21 giorni fa è il difetto peggiore possibile.
+  // ha piovuto 13-20 giorni fa è il difetto peggiore possibile.
   // NB in produzione il RAW va cambiato in Mappa-Precipitazioni-Nord.
   //
   // Sensori esclusi: hanno coordinate corrotte nell'anagrafe ARPA (nome e
@@ -5157,7 +5193,7 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
     var out=Object.keys(rainMap).map(function(id){
       if(_scarsa(id))return null;
       var m=meta[id];
-      return {n:m.n||'—',lat:m.lat,lon:m.lon,q:m.q||0,p:m.p||'—',
+      return {n:m.n||'—',lat:m.lat,lon:m.lon,q:m.q,qt:m.qt,p:m.p||'—',
               idsensore:id,                                  // serve al grafico storico
               mm:rainMap[id]<0.5?0:Math.round(rainMap[id]*10)/10};
     }).filter(function(s){return s&&s.lat&&s.lon;});
@@ -5173,8 +5209,8 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             if(!s.id||LOMB_ESCLUSE[String(s.id)])return;
             rainMap[s.id]=(rainMap[s.id]||0)+(s.mm||0); cop[s.id]=(cop[s.id]||0)+1;
-            if(!meta[s.id]) meta[s.id]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,p:s.p};
-            else if(!meta[s.id].q && s.q) meta[s.id].q=s.q;   // la quota arriva anche da un file dopo
+            if(!meta[s.id]) meta[s.id]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p};
+            else if(!meta[s.id].q && s.q) meta[s.id].q=s.q;meta[s.id].qt=s.qt;   // la quota arriva anche da un file dopo
           });
         }
       })
@@ -5195,7 +5231,7 @@ function loadOpenMeteoRegion(stations,pastDate,nowDate,labelPeriodo,cb){
   function onBatchDone(){
     pending--;
     if(pending>0) return;
-    var out=stations.map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,p:s.p,mm:results[s.n]||0};});
+    var out=stations.map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p,mm:results[s.n]||0};});
     cb(out);
   }
   function fmtD(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
@@ -5308,7 +5344,7 @@ function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
       if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -5337,8 +5373,8 @@ function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
             // le stazioni solo dai file dal 20/8 in poi: bastava che arrivasse prima
             // un giorno di agosto piu' vecchio e il pannello diceva «0 m slm» per
             // Verolengo, che sta a 163 metri. Ora un valore buono rimpiazza lo zero.
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -5381,7 +5417,7 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
       if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -5405,8 +5441,8 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
         if(data&&data.stations){
           data.stations.forEach(function(s){
             var key=s.id||s.n;   // per ID: due stazioni omonime non vanno fuse in una
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -5468,7 +5504,7 @@ function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
       if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -5497,8 +5533,8 @@ function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             if(s.id&&LIGURIA_ESCLUSE[String(s.id)]) return;   // pluviometro fermo, vedi sopra
             var key=s.id||s.n;   // per ID: due stazioni omonime nello stesso file non vanno fuse in una
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -5573,7 +5609,7 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
       if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -5598,8 +5634,8 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             if(s.id&&EMILIA_ESCLUSE[String(s.id)]) return;   // gemelle liguri: le porta OMIRL
             var key=s.id||s.n;   // per ID: due stazioni omonime nello stesso file non vanno fuse in una
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -5649,8 +5685,8 @@ function loadAustriaRegion(pastDate,nowDate,labelPeriodo,cb){
         if(data.stations){
           data.stations.forEach(function(s){
             var key=s.id||s.n;
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'AT'};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'AT'};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -5665,7 +5701,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da 
           if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'AT',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'AT',mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -5697,8 +5733,8 @@ function loadSloveniaRegion(pastDate,nowDate,labelPeriodo,cb){
         if(data.stations){
           data.stations.forEach(function(s){
             var key=s.id||s.n;
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'SI'};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'SI'};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -5713,7 +5749,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da 
           if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'SI',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'SI',mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -5747,8 +5783,8 @@ function loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
         if(data.stations){
           data.stations.forEach(function(s){
             var key=s.id||s.n;
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FR'};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'FR'};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -5763,7 +5799,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da 
           if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'FR',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'FR',mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -5807,8 +5843,8 @@ function loadSvizzeraRegion(pastDate,nowDate,labelPeriodo,cb){
           if(data.stations){
             data.stations.forEach(function(s){
               var key=srcCfg.pref+(s.id||s.n);
-              if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||srcCfg.pDef,_src:srcCfg.src};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+              if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||srcCfg.pDef,_src:srcCfg.src};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
               if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
               rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
             });
@@ -5823,7 +5859,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da 
             if(_scarsa(key))return null;
             var s=stMeta[key];if(!s)return null;
             var mm=rainTot[key]||0;
-            return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p,_src:s._src,
+            return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p,_src:s._src,
                     mm:mm<0.5?0:Math.round(mm*10)/10};
           }).filter(Boolean);
           if(full.length<5){cb([]);return;}
@@ -5860,8 +5896,8 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
         if(data.stations){
           data.stations.forEach(function(s){
             var key=s.id||s.n;   // per ID: due stazioni omonime nello stesso file non vanno fuse in una
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -5876,7 +5912,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da 
           if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
                   mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
@@ -5957,7 +5993,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
       // _src viaggia fino alla stazione in mappa: al grafico storico serve per
       // cercare il file nella cartella giusta (friuli-osmer o meteohub-friuli),
       // come già fa la Svizzera con 'oasi'/'ms'.
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'FVG',_src:s._src,
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'FVG',_src:s._src,
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([],'🟢 ARPA OSMER FVG');return;}
@@ -5980,8 +6016,8 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
         if(isReal) realDays++;
         data.stations.forEach(function(s){
           var key=s.id||s.n;
-          if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',_src:'osmer'};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+          if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'FVG',_src:'osmer'};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
           if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
           rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           if(isReal) presReal[key]=(presReal[key]||0)+1;
@@ -6001,8 +6037,8 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da 
         if(!data.stations) return;
         data.stations.forEach(function(s){
           var key='mh_'+(s.id||s.n);
-          if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'FVG',_src:'mh'};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+          if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'FVG',_src:'mh'};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
           if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
           rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           presMH[key]=(presMH[key]||0)+1;
@@ -6022,8 +6058,8 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da 
             if(!FRIULI_VENETO_BORDER[s.n]) return;
             usaVeneto=true;
             var key='ven_'+s.n;
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'BL',_src:'veneto'};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'BL',_src:'veneto'};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -6057,8 +6093,8 @@ function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
         if(data.stations){
           data.stations.forEach(function(s){
             var key=s.id||s.n;
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'AO'};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'AO'};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -6073,7 +6109,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da 
           if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'AO',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'AO',mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([],'🟢 Centro Funzionale VdA');return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -6134,8 +6170,8 @@ function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             if(escluse[s.n]) return;                 // pluviometro guasto, vedi MH_ESCLUSE
             var key=s.id||s.n;
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -6150,7 +6186,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da 
           if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -6183,8 +6219,8 @@ function loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,cb){
         if(data.stations){
           data.stations.forEach(function(s){
             var key=s.id||s.n;   // per ID: due stazioni omonime nello stesso file non vanno fuse in una
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'BZ'};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'BZ'};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -6199,7 +6235,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da 
           if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'BZ',
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'BZ',
                   mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
@@ -6233,8 +6269,8 @@ function loadMeteotrentino(pastDate,nowDate,labelPeriodo,cb){
         if(data.stations){
           data.stations.forEach(function(s){
             var key=s.id||s.n;   // per ID: due stazioni omonime nello stesso file non vanno fuse in una
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||'TN'};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'TN'};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -6249,7 +6285,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da 
           if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'TN',
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'TN',
                   mm:mm<0.5?0:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
@@ -6363,7 +6399,7 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
       if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -6382,8 +6418,8 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
           data.stations.forEach(function(s){
             var key=s.id||s.n;   // per ID: due stazioni omonime nello stesso file non vanno fuse in una
             if(TOSCANA_ESCLUSE[key]) return; // guasti, vedi TOSCANA_ESCLUSE
-            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''};
-else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;   // la quota arriva anche da un file dopo
+            if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
+else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
@@ -7541,8 +7577,9 @@ function middleRegion(keys){
   return best;
 }
 
-// Bottone funghi — piogge 15-21 giorni fa (finestra spostata il 7/8/2026;
-// prima 16-23, prima ancora 18-25)
+// Bottone funghi — piogge 13-20 giorni fa (finestra spostata il 26/8/2026;
+// prima 15-21 dal 7/8, prima ancora 16-23 e 18-25). Sono OTTO giorni di
+// accumulo, non piu' sette, e la finestra si avvicina di due giorni a oggi.
 document.getElementById('btn-funghi').addEventListener('click',function(){
   isLoading=false; // reset forzato per evitare blocco
   if(false) return;
@@ -7555,15 +7592,15 @@ document.getElementById('btn-funghi').addEventListener('click',function(){
   this.classList.add('active');
   document.getElementById('custom-box').style.display='none';
   var now=new Date();
-  var past21=new Date(now.getTime()-21*24*3600000);
-  var past15=new Date(now.getTime()-15*24*3600000);
+  var past20=new Date(now.getTime()-20*24*3600000);
+  var past13=new Date(now.getTime()-13*24*3600000);
   function fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
-  var label='🍄 Piogge 15-21 gg fa ('+fmt(past21)+' → '+fmt(past15)+')';
-  currentPast=past21; currentNow=past15; currentLabel=label;
+  var label='🍄 Piogge 13-20 gg fa ('+fmt(past20)+' → '+fmt(past13)+')';
+  currentPast=past20; currentNow=past13; currentLabel=label;
   osmerMobileHide(); // scelto un periodo → nascondi la nota mobile
   var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
-  document.getElementById('datehdr').textContent=fmt(past21)+' – '+fmt(past15);
-  loadData(past21,past15,label);
+  document.getElementById('datehdr').textContent=fmt(past20)+' – '+fmt(past13);
+  loadData(past20,past13,label);
 });
 // Select mobile regioni — a DUE LIVELLI dal 10/8/2026: le 13 régions francesi
 // stanno in un sottomenu (voce "Francia ▸"), se no la tendina spingeva le
@@ -7637,41 +7674,100 @@ function geoNota(msg){
    ⚠️ Il tetto nostro e' largo apposta: il tempo che uno ci mette a rispondere
    al permesso NON e' compreso nei timeout del browser, ma nel nostro si'. */
 var GEO_TETTO   = 32000;
-var GEO_PRECISO = { enableHighAccuracy:true,  timeout:15000, maximumAge:60000 };
-var GEO_GROSSO  = { enableHighAccuracy:false, timeout:10000, maximumAge:900000 };
+/* ⚠️ IL SECONDO CLIC PRETENDE UN COLPO NUOVO (26/8/2026, l'utente: «si puo'
+   fare che se riclicco rifa la ricerca?»). Il tasto il browser lo interrogava
+   gia' (misurato), ma con maximumAge a 60 s si riprendeva la POSIZIONE DI
+   PRIMA dalla cache: la mappa non si muoveva e da fuori sembrava un tasto
+   morto. Il primo clic puo' accontentarsi di un colpo recente, che e'
+   immediato; dal secondo in poi si azzera la cache e si aspetta il GPS. */
+var _geoFatto = false;
+function geoOpzioni(fresco){
+  return {
+    preciso: { enableHighAccuracy:true,  timeout:15000, maximumAge: fresco ? 0 : 60000 },
+    grosso:  { enableHighAccuracy:false, timeout:10000, maximumAge: fresco ? 60000 : 900000 }
+  };
+}
+
+/* ⚠️ QUANTO E' BUONA LA POSIZIONE (26/8/2026: «su PC mi dice che sono a
+   Caserta invece che in Liguria»). Sul computer il GPS non esiste: la
+   posizione la da' il servizio di rete, e quando non riconosce nessuna rete
+   wi-fi intorno ripiega sull'INDIRIZZO INTERNET, cioe' sulla centrale del
+   provider. Puo' sbagliare di seicento chilometri, ed e' esattamente il caso
+   Caserta. Il browser pero' non ce lo nasconde: `coords.accuracy` e' il raggio
+   in metri entro cui dice di essere sicuro. Un colpo da GPS sta sotto i 50 m,
+   uno da wi-fi sotto il chilometro, uno da indirizzo internet sta sulle
+   decine o centinaia di chilometri.
+   Quindi: sotto GEO_BUONA si parte subito; sopra si tiene da parte e si da'
+   tempo al GPS di svegliarsi (per questo serviva watchPosition: continua a
+   mandare colpi via via piu' precisi); passata l'attesa si prende il migliore
+   solo se sta sotto GEO_MASSIMA, che e' il limite oltre il quale non e'
+   nemmeno detto che la REGIONE sia quella giusta. Se no si dice che non lo
+   sappiamo: meglio ammetterlo che portare uno in Campania. */
+var GEO_BUONA   = 3000;    // m: buona, si parte senza aspettare altro
+var GEO_MASSIMA = 20000;   // m: oltre non e' sicura nemmeno la regione
+var GEO_ATTESA  = 8000;    // ms: quanto si aspetta un colpo migliore
+
+/* La spia: index.html?geodebug=1 fa scrivere al tasto codice e precisione.
+   Serve a capire da lontano cosa risponde un telefono che non e' qui. */
+var GEO_SPIA = /(^|[?&])geodebug(=1)?(&|$)/.test(location.search);
 
 function geoTrova(){
   var b = document.getElementById('geo-btn');
   if(!b || b.disabled || isLoading) return;
   var et = b.querySelector('.gb-t'), vecchio = et.textContent;
   var chiuso = false, tmr = null, watch = null, secondo = false;
+  var miglior = null, attesa = null;
+  var opz = geoOpzioni(_geoFatto);   // dal secondo clic in poi: colpo nuovo
+  _geoFatto = true;
 
   function stop(){
     if(watch === null) return;
     try{ navigator.geolocation.clearWatch(watch); }catch(e){}
     watch = null;
   }
-  function fine(msg, esito, codice){
+  function fine(msg, esito, codice, prec){
     if(chiuso) return;
-    chiuso = true; clearTimeout(tmr); stop();
+    chiuso = true; clearTimeout(tmr); clearTimeout(attesa); stop();
     b.disabled = false; b.classList.remove('cerca'); et.textContent = vecchio;
+    if(GEO_SPIA && esito) msg = (msg ? msg + ' ' : '') + '[spia: ' + esito +
+      ', cod ' + (codice || 0) + ', ±' + Math.round(prec || 0) + ' m, ' +
+      (secondo ? '2°' : '1°') + ' tentativo]';
     geoNota(msg);
-    if(esito){ try{ gtag('event','usa_posizione',{esito:esito, codice:codice||0}); }catch(e){} }
+    if(esito){ try{ gtag('event','usa_posizione',
+      {esito:esito, codice:codice||0, precisione:Math.round(prec||0)}); }catch(e){} }
   }
-  function trovato(pos){
-    stop();
+  function accetta(pos){
+    stop(); clearTimeout(attesa);
     if(chiuso) return;
-    var lat = pos.coords.latitude, lon = pos.coords.longitude;
+    var lat = pos.coords.latitude, lon = pos.coords.longitude, acc = pos.coords.accuracy || 0;
     locCarica().then(function(){
       if(chiuso) return;
       var vic = locRegioniVicine(lat, lon).filter(function(k){ return document.getElementById('chk-'+k); });
-      if(!vic.length){ fine('Qui non arriviamo ancora', 'fuori'); return; }
-      fine('');
-      try{ gtag('event','usa_posizione',{esito:'ok', regione:vic[0]}); }catch(e){}
+      if(!vic.length){ fine('Qui non arriviamo ancora', 'fuori', 0, acc); return; }
+      // qui l'evento se lo manda da solo, perche' porta anche la regione:
+      // fine() non deve rifarlo, se no in GA4 ne contiamo due.
+      try{ gtag('event','usa_posizione',{esito:'ok', regione:vic[0], precisione:Math.round(acc)}); }catch(e){}
+      fine(GEO_SPIA ? '[spia: ok, ±' + Math.round(acc) + ' m, ' +
+           (secondo ? '2°' : '1°') + ' tentativo]' : '');
       // muta: non scrive nella casella di ricerca.
       // priv: il punto NON viaggia col link condiviso, vedi buildShareUrl.
       locVai({ n:'La mia posizione', lat:lat, lon:lon, reg:vic[0], t:'', muta:true, priv:true });
-    }).catch(function(){ fine('Non ci sono riuscito: scrivi il paese qui sotto', 'errore'); });
+    }).catch(function(){ fine('Non ci sono riuscito: scrivi il paese qui sotto', 'errore', 0, acc); });
+  }
+  function decidi(){
+    stop();
+    var a = miglior ? (miglior.coords.accuracy || 0) : 0;
+    if(miglior && (!a || a <= GEO_MASSIMA)) accetta(miglior);
+    else fine('Non riesco a capire dove sei: scrivi il paese qui sotto', 'impreciso', 0, a);
+  }
+  function trovato(pos){
+    if(chiuso) return;
+    var acc = (pos.coords && pos.coords.accuracy) || 0;
+    if(!miglior || acc < (miglior.coords.accuracy || 0)) miglior = pos;
+    if(!acc || acc <= GEO_BUONA){ accetta(pos); return; }
+    // Colpo grossolano: dal ripiego non ne arrivano altri, dal watch si'.
+    if(secondo){ decidi(); return; }
+    if(attesa === null) attesa = setTimeout(decidi, GEO_ATTESA);
   }
   function fallito(err){
     stop();
@@ -7680,10 +7776,11 @@ function geoTrova(){
     if(c === 1){ fine('Permesso negato: scrivi il paese qui sotto', 'negato', 1); return; }
     if(!secondo){                       // il ripiego grossolano
       secondo = true;
-      try{ navigator.geolocation.getCurrentPosition(trovato, fallito, GEO_GROSSO); }
+      try{ navigator.geolocation.getCurrentPosition(trovato, fallito, opz.grosso); }
       catch(e){ fine('Non ci sono riuscito: scrivi il paese qui sotto', 'errore', c); }
       return;
     }
+    if(miglior){ decidi(); return; }    // un colpo grossolano c'era: meglio di niente
     fine(c === 3 ? 'Ci sto mettendo troppo: scrivi il paese qui sotto'
                  : 'GPS non disponibile: scrivi il paese qui sotto',
          c === 3 ? 'lento' : 'nondisponibile', c);
@@ -7692,8 +7789,11 @@ function geoTrova(){
   geoNota('');
   if(typeof locFermaChiamata === 'function') locFermaChiamata();
   b.disabled = true; b.classList.add('cerca'); et.textContent = 'Ti sto cercando…';
-  tmr = setTimeout(function(){ fine('Ci sto mettendo troppo: scrivi il paese qui sotto', 'lento', 0); }, GEO_TETTO);
-  try{ watch = navigator.geolocation.watchPosition(trovato, fallito, GEO_PRECISO); }
+  tmr = setTimeout(function(){
+    if(miglior) { decidi(); return; }
+    fine('Ci sto mettendo troppo: scrivi il paese qui sotto', 'lento', 0);
+  }, GEO_TETTO);
+  try{ watch = navigator.geolocation.watchPosition(trovato, fallito, opz.preciso); }
   catch(e){ fine('Non ci sono riuscito: scrivi il paese qui sotto', 'errore'); }
 }
 
@@ -8853,7 +8953,7 @@ function loadMeteoHubStations(regionKey,cb){
     fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
       .then(function(data){ var escl=MH_ESCLUSE[regionKey]||{};
                              var st=(data.stations||[]).filter(function(s){return !escl[s.n];})
-                                     .map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'',
+                                     .map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
                                                               w:s.w,u:s.u,t:s.t};});  // i sensori servono a selectUniformRicche
                              meteohubStationsCache[regionKey]=st; cb(st); })
       .catch(function(){ idx++; attempt(); });
@@ -8877,7 +8977,7 @@ function loadSvizzeraStations(cb){
       if(idx>=tries.length){ if(--pendingSrc===0){ svizzeraStationsCache=merged; cb(merged); } return; }
       fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
         .then(function(data){
-          (data.stations||[]).forEach(function(s){ merged.push({n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,p:s.p||''}); });
+          (data.stations||[]).forEach(function(s){ merged.push({n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''}); });
           if(--pendingSrc===0){ svizzeraStationsCache=merged; cb(merged); }
         })
         .catch(function(){ idx++; attempt(); });
@@ -8897,7 +8997,7 @@ function loadAustriaStations(cb){
     if(idx>=tries.length){ cb([]); return; }
     fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
       .then(function(data){
-        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'AT'};});
+        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'AT'};});
         austriaStationsCache=st; cb(st);
       })
       .catch(function(){ idx++; attempt(); });
@@ -8916,7 +9016,7 @@ function loadSloveniaStations(cb){
     if(idx>=tries.length){ cb([]); return; }
     fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
       .then(function(data){
-        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'SI'};});
+        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'SI'};});
         sloveniaStationsCache=st; cb(st);
       })
       .catch(function(){ idx++; attempt(); });
@@ -8935,7 +9035,7 @@ function loadFranciaStations(regionKey,cb){
     if(idx>=tries.length){ cb([]); return; }
     fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
       .then(function(data){
-        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q||0,w:s.w,u:s.u,t:s.t,p:s.p||'FR'};});
+        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'FR'};});
         franciaStationsCache[regionKey]=st; cb(st);
       })
       .catch(function(){ idx++; attempt(); });
@@ -8996,7 +9096,7 @@ function drawDefaultMarkers(stazioni,cfg){
         document.getElementById('tt-nome').textContent=st.n;
         document.getElementById('tt-mm').textContent='–';
         document.getElementById('tt-prov').textContent=st.p;
-        document.getElementById('tt-quota').textContent=st.q+' m slm';
+        document.getElementById('tt-quota').textContent=testoQuota(st);
         document.getElementById('tt-rank').textContent='seleziona un periodo';
         document.getElementById('tt-fonte').textContent=cfg?cfg.fonte:'—';
         posTooltip(cx,cy);

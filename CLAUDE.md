@@ -442,7 +442,7 @@ dataset — attribuzione «Fonte: GeoSphere Austria», voce in `fonti.html`.
 - YouTube "ISCRIVITI" button nel box canale (nascosto su mobile ≤600px)
 - Home icon nell'header
 - Pulsanti periodo: Ieri/7gg/10gg/15gg/20gg/30gg
-- "Piogge per funghi" (range **15-21 gg fa** dal 7 agosto 2026; 16-23 dal 24 luglio, prima ancora 18-25)
+- "Piogge per funghi" (range **13-20 gg fa** dal 26 agosto 2026; 15-21 dal 7 agosto, 16-23 dal 24 luglio, prima ancora 18-25)
 - Date personalizzate
 - Nota "I dati escludono la giornata odierna"
 - IDW_RAD: 0.15 per ≤24h, 0.35 per periodi più lunghi
@@ -552,7 +552,7 @@ Non è un guasto: è il ritmo della piattaforma. Il collector **parte da D-2 e n
 scrive mai un giorno incompleto** — un parziale in mappa sembrerebbe una giornata
 asciutta, che è peggio di un buco.
 **In mappa la Slovenia quindi non ha «Ieri»**: verificato, mostra «⚠️ Nessun dato
-per questo periodo» senza errori. Per la finestra funghi (15-21 giorni fa) e per
+per questo periodo» senza errori. Per la finestra funghi (13-20 giorni fa) e per
 7/10/15/20/30 giorni non cambia nulla. Se un giorno servisse anche «Ieri», la
 strada è il **modello Ticino** (valore provvisorio dal feed live
 `observationAms_si_latest.xml`, poi sovrascritto dall'archivio) — ma è la
