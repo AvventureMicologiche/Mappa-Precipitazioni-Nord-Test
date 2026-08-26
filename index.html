@@ -250,8 +250,13 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   #reg-sheet #geo-btn{background:none;border-color:#fff;color:#fff;}
   #reg-sheet #geo-btn:hover{background:rgba(255,255,255,.10);}
   #reg-sheet #geo-btn[disabled]{opacity:.55;}
-  /* Grigio scuro su blu non si legge: lo stesso azzurro delle etichette. */
-  #reg-sheet #geo-nota{color:#b9d0ec;}
+  /* Il rosso su blu non si legge: dentro il foglio l'avviso e' rosa chiaro. */
+  #reg-sheet .gb-nota{color:#ffc8c2;}
+  /* ⚠️ Sul foglio blu un anello blu non si vede: qui e' bianco. */
+  #reg-sheet #geo-btn.loc-chiama{animation:geo-anello-pulsa-blu 1.7s ease-in-out infinite;}
+  @keyframes geo-anello-pulsa-blu{
+    0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.55);}
+    50%{box-shadow:0 0 0 6px rgba(255,255,255,0);}}
   /* ⚠️ Nascosta finche' non e' dentro la tendina: il trasloco lo fa il
      codice, e per un istante dopo il caricamento la casella si vedeva
      sotto la barra delle regioni (segnalato il 22/8/2026). */
@@ -306,6 +311,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   0%,100%{border-color:#d0d8e8;box-shadow:0 0 0 0 rgba(27,63,110,.42),0 2px 10px rgba(0,0,0,.13);}
   50%{border-color:#1b3f6e;box-shadow:0 0 0 6px rgba(27,63,110,0),0 2px 10px rgba(0,0,0,.13);}}
 @media(prefers-reduced-motion:reduce){#loc-input.loc-chiama{animation:none;border-color:#1b3f6e;}}
+/* ⚠️ «O PULSANO TUTTI E DUE O NESSUNO» (26/8/2026, l'utente). La chiamata
+   stava solo sulla casella e il bottone accanto restava immobile, che su un
+   tasto nuovo si legge come «spento». Sul bottone e' un ANELLO e non il
+   bordo: cosi' regge qualunque colore gli si dia domani. La classe la
+   mettono nello STESSO istante (vedi locAvvia), se no vanno fuori fase e
+   il respiro doppio da' l'idea di due cose scollegate. */
+#geo-btn.loc-chiama{animation:geo-anello-pulsa 1.7s ease-in-out infinite;}
+@keyframes geo-anello-pulsa{
+  0%,100%{box-shadow:0 0 0 0 rgba(27,63,110,.42);}
+  50%{box-shadow:0 0 0 6px rgba(27,63,110,0);}}
+@media(prefers-reduced-motion:reduce){#geo-btn.loc-chiama{animation:none;}}
 /* Guida a lampeggio (solo desktop): pulsa il pannello del passo attivo —
    regioni finché non ne selezioni una, poi periodo finché non lo clicchi.
    Anello marcato + sfondo che "respira" verso l'azzurro per farsi notare. */
@@ -389,10 +405,23 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    casella e senza un contenitore posizionato si agganciano alla cornice. */
 #loc-box{position:relative;width:100%;box-sizing:border-box;margin-top:6px;}
 #geo-btn{display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;
-  background:#eaf2fb;border:1px solid #90b0d8;border-radius:5px;padding:8px 11px;
+  /* Il grigio-azzurro dei tasti del periodo (.tp-btn), scelto il 26/8/2026:
+     l'azzurrino di prima faceva sembrare il bottone una seconda casella da
+     riempire, e qui invece si preme. Stesso colore = stessa promessa. */
+  background:#f0f4fb;border:1px solid #d0d8e8;border-radius:5px;padding:8px 11px;
   font-family:inherit;font-size:14px;font-weight:600;color:#1b3f6e;cursor:pointer;text-align:left;}
-#geo-btn:hover{background:#dce8f6;}
+#geo-btn:hover{background:#dde8ff;border-color:#90b0d8;}
 #geo-btn[disabled]{opacity:.65;cursor:default;}
+/* MENTRE CERCA (26/8/2026): il bottone restava identico a se stesso e
+   sembrava che il clic non fosse arrivato. La rotella sta DENTRO il
+   dischetto rosso, al posto del mirino: e' lo stesso posto, quindi il
+   bottone non cambia larghezza e non fa saltare niente. */
+#geo-btn[disabled].cerca{opacity:1;}
+#geo-btn.cerca .gb-disco svg{display:none;}
+#geo-btn.cerca .gb-disco::after{content:"";width:12px;height:12px;box-sizing:border-box;
+  border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;
+  animation:spin .7s linear infinite;}
+@media(prefers-reduced-motion:reduce){#geo-btn.cerca .gb-disco::after{animation:none;}}
 /* ⚠️ IL ROSSO NON E' UNA DECORAZIONE: e' lo stesso #e12b2b del segnaposto
    che locSegnaposto() pianta sulla mappa un secondo dopo. Schiacci il rosso,
    spunta il rosso. E NON e' il #FF0000 di YouTube, che nel sito vuol dire
@@ -400,8 +429,19 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .gb-disco{width:22px;height:22px;border-radius:50%;background:#e12b2b;flex:none;
   display:inline-flex;align-items:center;justify-content:center;color:#fff;}
 #geo-btn svg{flex:none;width:13px;height:13px;}
-#geo-nota{display:none;font-size:12px;font-weight:500;color:#5a6470;margin:6px 2px 0;line-height:1.35;}
-#geo-nota.on{display:block;}
+/* ⚠️ L'AVVISO STA DENTRO IL BOTTONE (26/8/2026, chiesto dall'utente). Due
+   ragioni, e la seconda e' quella che conta: il guasto appartiene al tasto che
+   ha fallito, e mettendolo nella casella di ricerca le si toglieva proprio il
+   ruolo di via d'uscita — chi ha il GPS rotto deve VEDERE che puo' scrivere il
+   paese. Sotto al titolo, dentro lo stesso tasto: il tasto resta cliccabile e
+   un secondo clic riprova. */
+.gb-testi{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0;}
+/* white-space:normal e non nowrap: una frase lunga va a capo dentro il tasto,
+   che si alza — e il box canale sotto lo insegue perche' collocaCanale()
+   MISURA invece di fidarsi di un numero fisso. */
+.gb-nota{display:none;font-size:12px;font-weight:600;color:#cc0000;line-height:1.25;
+  white-space:normal;text-align:left;}
+#geo-btn.avviso .gb-nota{display:block;}
 #loc-input{
   width:100%;box-sizing:border-box;
   padding:8px 30px 8px 32px;         /* spazio a sinistra per la lente, a destra per la × */
@@ -1457,7 +1497,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <line x1="12" y1="19.5" x2="12" y2="22.5" stroke-linecap="round"/>
     <line x1="1.5" y1="12" x2="4.5" y2="12" stroke-linecap="round"/>
     <line x1="19.5" y1="12" x2="22.5" y2="12" stroke-linecap="round"/>
-    </svg></span><span class="gb-t">La mia posizione</span>
+    </svg></span><span class="gb-testi"><span class="gb-t">La mia posizione</span><span class="gb-nota" role="status"></span></span>
     </button>
     <div id="loc-box">
     <svg class="loc-lente" viewBox="0 0 24 24" aria-hidden="true">
@@ -1470,7 +1510,6 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <button id="loc-clear" type="button" aria-label="Cancella la ricerca">×</button>
     <div id="loc-drop" role="listbox" aria-label="Località trovate"></div>
     </div>
-    <div id="geo-nota" role="status"></div>
     </div>
     <!-- La tendina nostra: casella di ricerca in cima, regioni sotto. Il suo
          contenuto lo genera regRender() leggendo la select nativa. -->
@@ -7006,6 +7045,8 @@ function locFermaChiamata() {
   _locChiamata = false;
   var i = document.getElementById('loc-input');
   if (i) i.classList.remove('loc-chiama');
+  var g = document.getElementById('geo-btn');
+  if (g) g.classList.remove('loc-chiama');
 }
 
 (function locAvvia() {
@@ -7014,7 +7055,14 @@ function locFermaChiamata() {
   var box = document.getElementById('loc-box'), drop = document.getElementById('loc-drop');
 
   inp.classList.add('loc-chiama');
+  // ⚠️ NELLO STESSO ISTANTE della casella, non in geoPrepara: due
+  // animazioni identiche fatte partire in due momenti diversi vanno fuori
+  // fase, e il respiro sfalsato si legge come due cose scollegate.
+  var gb = document.getElementById('geo-btn');
+  if (gb) gb.classList.add('loc-chiama');
   inp.addEventListener('focus', locFermaChiamata);   // l'ha vista: basta chiamare
+  // Se imbocca l'altra strada, l'avviso del GPS ha finito il suo lavoro.
+  inp.addEventListener('focus', function(){ if (typeof geoNota === 'function') geoNota(''); });
 
   // La casella vive DENTRO il contenitore Leaflet: un doppio click per
   // selezionare una parola arrivava alla mappa e la zoomava (segnalato il
@@ -7557,50 +7605,96 @@ var OPZIONI_FRANCIA=
    meglio non vederlo che vederlo morto.                                      */
 var NOVITA_FINO = '2026-09-30T23:59:59+02:00';   // poi il cartellino sparisce da solo
 
+/* ⚠️ L'AVVISO VA NEL BOTTONE, NON NELLA CASELLA (26/8/2026, l'utente).
+   La casella di ricerca e' l'ALTERNATIVA a questo tasto: se ci scrivo dentro
+   che il GPS non va, chi ha il GPS rotto non vede piu' la via d'uscita.
+   Il messaggio sta su una riga sua dentro il tasto, che resta cliccabile:
+   il secondo clic riprova e ripulisce. */
 function geoNota(msg){
-  var n = document.getElementById('geo-nota');
-  if(!n) return;
-  n.textContent = msg || '';
-  n.className = msg ? 'on' : '';
+  var b = document.getElementById('geo-btn');
+  if(!b) return;
+  var n = b.querySelector('.gb-nota');
+  if(n) n.textContent = msg || '';
+  b.classList.toggle('avviso', !!msg);
   if(typeof collocaCanale === 'function') collocaCanale();
 }
+
+/* ⚠️ ANDROID NON TROVAVA LA POSIZIONE (26/8/2026, provato dall'utente sul suo
+   telefono: sul PC funzionava, su Android no). La prima versione chiedeva la
+   posizione con enableHighAccuracy:FALSE e dieci secondi di tetto. Su Android
+   quella strada passa dal servizio di rete di Google: se e' spento, o se non
+   ha campo, risponde POSITION_UNAVAILABLE e NON prova il GPS. Ora si fa in
+   due tempi:
+     1. watchPosition col GPS acceso. watch e non getCurrentPosition perche'
+        su Chrome Android capita che il secondo non richiami MAI nessuno dei
+        due callback (e' la ragione per cui il tetto nostro esisteva gia').
+     2. se il primo fallisce, un secondo tentativo grossolano che si
+        accontenta anche di una posizione vecchia di un quarto d'ora: a noi
+        serve il paese, non il metro.
+   ⚠️ I messaggi ora sono TRE DISTINTI (negato / non disponibile / troppo
+   lento) e il codice d'errore va in GA4: se ricapita, e' il messaggio stesso
+   a dire quale dei tre e' stato, senza doverglielo chiedere.
+   ⚠️ Il tetto nostro e' largo apposta: il tempo che uno ci mette a rispondere
+   al permesso NON e' compreso nei timeout del browser, ma nel nostro si'. */
+var GEO_TETTO   = 32000;
+var GEO_PRECISO = { enableHighAccuracy:true,  timeout:15000, maximumAge:60000 };
+var GEO_GROSSO  = { enableHighAccuracy:false, timeout:10000, maximumAge:900000 };
 
 function geoTrova(){
   var b = document.getElementById('geo-btn');
   if(!b || b.disabled || isLoading) return;
-  var et = b.querySelector('.gb-t'), vecchio = et.textContent, chiuso = false, tmr;
-  function fine(msg){
-    if(chiuso) return;
-    chiuso = true; clearTimeout(tmr);
-    b.disabled = false; et.textContent = vecchio; geoNota(msg);
+  var et = b.querySelector('.gb-t'), vecchio = et.textContent;
+  var chiuso = false, tmr = null, watch = null, secondo = false;
+
+  function stop(){
+    if(watch === null) return;
+    try{ navigator.geolocation.clearWatch(watch); }catch(e){}
+    watch = null;
   }
-  geoNota('');
-  b.disabled = true; et.textContent = 'Ti sto cercando…';
-  // ⚠️ Tetto NOSTRO oltre a quello del browser: su Android capita che il
-  // timeout di getCurrentPosition non scatti mai, e il bottone resterebbe a
-  // «ti sto cercando» per sempre. Chi e' sotto un bosco deve poter riprovare.
-  tmr = setTimeout(function(){ fine('Non ci sono riuscito, riprova'); }, 12000);
-  navigator.geolocation.getCurrentPosition(function(pos){
+  function fine(msg, esito, codice){
+    if(chiuso) return;
+    chiuso = true; clearTimeout(tmr); stop();
+    b.disabled = false; b.classList.remove('cerca'); et.textContent = vecchio;
+    geoNota(msg);
+    if(esito){ try{ gtag('event','usa_posizione',{esito:esito, codice:codice||0}); }catch(e){} }
+  }
+  function trovato(pos){
+    stop();
+    if(chiuso) return;
     var lat = pos.coords.latitude, lon = pos.coords.longitude;
     locCarica().then(function(){
+      if(chiuso) return;
       var vic = locRegioniVicine(lat, lon).filter(function(k){ return document.getElementById('chk-'+k); });
-      if(!vic.length){
-        fine('Qui non arriviamo ancora: scegli una regione qui sotto');
-        try{ gtag('event','usa_posizione',{esito:'fuori'}) }catch(e){}
-        return;
-      }
+      if(!vic.length){ fine('Qui non arriviamo ancora', 'fuori'); return; }
       fine('');
-      try{ gtag('event','usa_posizione',{esito:'ok', regione:vic[0]}) }catch(e){}
+      try{ gtag('event','usa_posizione',{esito:'ok', regione:vic[0]}); }catch(e){}
       // muta: non scrive nella casella di ricerca.
-      // priv: il punto NON viaggia col link condiviso — vedi buildShareUrl.
+      // priv: il punto NON viaggia col link condiviso, vedi buildShareUrl.
       locVai({ n:'La mia posizione', lat:lat, lon:lon, reg:vic[0], t:'', muta:true, priv:true });
-    }).catch(function(){ fine('Non ci sono riuscito, riprova'); });
-  }, function(err){
-    var negato = !!(err && err.code === 1);
-    fine(negato ? 'Permesso negato: scegli la regione qui sotto'
-                : 'Non ci sono riuscito, riprova');
-    try{ gtag('event','usa_posizione',{esito: negato ? 'negato' : 'errore'}) }catch(e){}
-  }, { enableHighAccuracy:false, timeout:10000, maximumAge:120000 });
+    }).catch(function(){ fine('Non ci sono riuscito: scrivi il paese qui sotto', 'errore'); });
+  }
+  function fallito(err){
+    stop();
+    if(chiuso) return;
+    var c = (err && err.code) || 0;
+    if(c === 1){ fine('Permesso negato: scrivi il paese qui sotto', 'negato', 1); return; }
+    if(!secondo){                       // il ripiego grossolano
+      secondo = true;
+      try{ navigator.geolocation.getCurrentPosition(trovato, fallito, GEO_GROSSO); }
+      catch(e){ fine('Non ci sono riuscito: scrivi il paese qui sotto', 'errore', c); }
+      return;
+    }
+    fine(c === 3 ? 'Ci sto mettendo troppo: scrivi il paese qui sotto'
+                 : 'GPS non disponibile: scrivi il paese qui sotto',
+         c === 3 ? 'lento' : 'nondisponibile', c);
+  }
+
+  geoNota('');
+  if(typeof locFermaChiamata === 'function') locFermaChiamata();
+  b.disabled = true; b.classList.add('cerca'); et.textContent = 'Ti sto cercando…';
+  tmr = setTimeout(function(){ fine('Ci sto mettendo troppo: scrivi il paese qui sotto', 'lento', 0); }, GEO_TETTO);
+  try{ watch = navigator.geolocation.watchPosition(trovato, fallito, GEO_PRECISO); }
+  catch(e){ fine('Non ci sono riuscito: scrivi il paese qui sotto', 'errore'); }
 }
 
 /* Il box canale sta SOTTO il blocco «novita'», e il blocco cambia altezza
