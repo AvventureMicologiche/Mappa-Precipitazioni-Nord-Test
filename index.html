@@ -4941,7 +4941,18 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
     else pallini.push(s);
   });
   Object.keys(daDiradare).forEach(function(rk){
-    pallini=pallini.concat(selectUniformRicche(daDiradare[rk],150));
+    // ⚠️ TETTO 400, NON 150 (26/8/2026). Con 150 la griglia teneva 4 stazioni
+    // per casella e la Liguria scendeva da 197 pallini a 111: fra i mancanti
+    // c'era Santo Stefano d'Aveto, che l'utente cercava. Non era un guasto e
+    // il DATO non si perdeva (colore, massimo, media e classifica si calcolano
+    // su tutte), ma il pallino sparito vuol dire niente tooltip e niente
+    // grafico per quella stazione. Nascondeva il 44% della Liguria, il 56%
+    // della Toscana, il 40% della Lombardia: proprio le reti a cui avevamo
+    // tolto le whitelist per mostrarle intere.
+    // A 400 restano diradate solo la Sicilia (431 stazioni su un'isola
+    // compatta, il caso per cui il diradamento era nato) e le reti estere
+    // piu' fitte. Misurato sui dati del 25/8: 1.071 pallini restituiti.
+    pallini=pallini.concat(selectUniformRicche(daDiradare[rk],400));
   });
   addMarkers(pallini,sorted);
   var hasRain=dati.some(function(s){return s.mm>0;});
@@ -6760,10 +6771,42 @@ var _vistaPaese = null;      // {lat,lon} finché l'utente resta sul paese cerca
 var _daRicerca = false;      // per distinguere le spunte nostre da quelle a dito
 
 function locNormalizza(s) {
-  // accenti via, apostrofi e trattini come spazi: «Sant'Angelo» si deve trovare
+  // accenti via, apostrofi trattini e PUNTI come spazi (il punto dal 26/8/2026:
+  // cosi' «S.Stefano» e «S. Stefano» valgono «s stefano») «Sant'Angelo» si deve trovare
   // scrivendo «sant angelo», «santangelo» o «angelo».
   return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
-          .replace(/['’\-]/g, ' ').replace(/\s+/g, ' ').trim();
+          .replace(/['’\-.]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/* ⚠️ «S.» E «S» VALGONO SAN, SANT', SANTO, SANTA (26/8/2026, l'utente: «se
+   faccio s o s. mi da' zero paesi»). Nell'elenco il santo e' scritto sempre
+   per esteso, 494 comuni su 8.610 (345 San, 76 Sant', 59 Santa, 14 Santo) e
+   nessuno abbreviato: non e' l'elenco a essere disordinato, e' la DOMANDA che
+   va allargata. Chi scrive «s stefano» cerca anche «santo stefano», e vince
+   quella che esiste davvero.
+   ⚠️ Si allarga SOLO quando uno scrive l'abbreviazione: chi scrive «san» per
+   intero trova quello che trovava prima, ne' piu' ne' meno. */
+var LOC_SANTI = ['san', 'sant', 'santo', 'santa', 'santi', 'sante'];
+function locVarianti(q) {
+  var m = q.match(/^ss? (.+)$/);       // «s stefano», «ss annunziata»
+  if (!m) return [q];
+  return [q].concat(LOC_SANTI.map(function (x) { return x + ' ' + m[1]; }));
+}
+
+/* Dove comincia, dentro il nome, il pezzo trovato: serve al grassetto della
+   tendina. Torna anche QUANTO e' lungo, perche' con le varianti il pezzo
+   trovato puo' essere piu' lungo di quello scritto (uno scrive «s stefano» e
+   in grassetto va «Santo Stefano»).
+   ⚠️ pos -1 = non trovato: prima il calcolo dava 0 e il grassetto finiva sulle
+   prime lettere a caso. */
+function locDove(p, varianti) {
+  for (var v = 0; v < varianti.length; v++) {
+    var qq = varianti[v];
+    if (p.q.lastIndexOf(qq, 0) === 0) return { pos: 0, len: qq.length };
+    var i = p.q.indexOf(' ' + qq);
+    if (i >= 0) return { pos: i + 1, len: qq.length };
+  }
+  return { pos: -1, len: 0 };
 }
 
 function locCarica() {
@@ -6845,11 +6888,15 @@ function locDaGeocoder(testo) {
 function locCerca(testo) {
   var q = locNormalizza(testo);
   if (!q || !_locIndice) return { righe: [], totale: 0 };
+  var varianti = locVarianti(q);
   var inizio = [], dentro = [];
   for (var i = 0; i < _locIndice.length; i++) {
     var p = _locIndice[i];
-    if (p.q.lastIndexOf(q, 0) === 0) inizio.push(p);
-    else if (p.q.indexOf(' ' + q) >= 0) dentro.push(p);   // inizio di una parola qualsiasi
+    for (var v = 0; v < varianti.length; v++) {
+      var qq = varianti[v];
+      if (p.q.lastIndexOf(qq, 0) === 0) { inizio.push(p); break; }
+      if (p.q.indexOf(' ' + qq) >= 0) { dentro.push(p); break; }   // inizio di una parola qualsiasi
+    }
   }
   // dentro ogni gruppo comanda la popolazione: chi cerca «San» vuole prima
   // San Giovanni Rotondo, non una frazione da sei anime.
@@ -6919,9 +6966,9 @@ function locDisegna(res, testo, intestazione) {
     // evidenzia il pezzo digitato, ma sul nome VERO (accenti compresi): la
     // lunghezza combacia perché la normalizzazione non aggiunge né toglie
     // caratteri, li sostituisce
-    var pos = p.q.lastIndexOf(q, 0) === 0 ? 0 : p.q.indexOf(' ' + q) + 1;
+    var d = locDove(p, locVarianti(q)), pos = d.pos;
     var nome = pos >= 0
-      ? p.n.slice(0, pos) + '<b>' + p.n.slice(pos, pos + q.length) + '</b>' + p.n.slice(pos + q.length)
+      ? p.n.slice(0, pos) + '<b>' + p.n.slice(pos, pos + d.len) + '</b>' + p.n.slice(pos + d.len)
       : p.n;
     var reg = (typeof REGIONS !== 'undefined' && REGIONS[p.reg] && REGIONS[p.reg].name) || p.reg;
     return '<div class="loc-riga" role="option" data-i="' + i + '">' +
