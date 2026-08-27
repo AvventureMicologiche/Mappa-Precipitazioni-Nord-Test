@@ -7294,7 +7294,23 @@ function locFermaChiamata() {
     } else if (e.key === 'Escape') { locChiudi(); inp.blur(); }
   });
 
-  inp.addEventListener('blur', function () { setTimeout(locChiudi, 120); });
+  /* ⚠️ LA TENDINA SI CHIUDE SOLO SE IL FUOCO E' DAVVERO ANDATO VIA (27/8/2026).
+     Prima bastava un blur qualsiasi e dopo 120 ms si chiudeva. Sul computer non
+     si nota; su Android il tocco sulla casella fa aprire la tastiera, che
+     rimpicciolisce la finestra e puo' far partire un blur seguito subito da un
+     altro focus: la tendina appena disegnata (i «cercate di recente») spariva
+     un decimo di secondo dopo essere comparsa. E' il difetto segnalato
+     dall'utente il 27/8: «da cellulare non ricorda la cronologia», mentre da PC
+     la stessa cronologia c'e'.
+     Adesso, passati i 120 ms, si guarda DOVE sta il fuoco: se e' ancora dentro
+     la casella o dentro il suo riquadro, non si chiude niente. */
+  inp.addEventListener('blur', function () {
+    setTimeout(function () {
+      var a = document.activeElement;
+      if (a && (a === inp || (box && box.contains(a)))) return;
+      locChiudi();
+    }, 120);
+  });
 
   document.getElementById('loc-clear').addEventListener('click', function () {
     inp.value = ''; box.classList.remove('pieno'); locChiudi(); inp.focus();
