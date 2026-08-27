@@ -3735,6 +3735,8 @@ function closeStationHistory(){
   histEl.style.display='none';
   histPinned=false;
   histToken++;
+  // il pallino evidenziato torna normale insieme al pannello
+  if(typeof evidenziaMarker==='function') evidenziaMarker(null);
 }
 
 function openStationHistory(s,rank,mx,my){
@@ -3851,15 +3853,70 @@ histEl.addEventListener('mouseleave',function(){
 // quelli che arrivano nell'istante in cui il popup si è appena aperto:
 // senza questa guardia il popup si chiuderebbe da solo e la richiesta in
 // volo verrebbe annullata dal cambio di histToken.
-map.on('click',function(){
+// ── Tolleranza del tocco (27/8/2026) ────────────────────────────────
+// Sul telefono il bersaglio di un pallino e' 10x10 px contro i 44-48 che
+// consigliano Apple e Google, e centrarlo col dito e' una lotteria. Il tocco
+// apre quindi la stazione piu' vicina entro TAP_TOLL pixel, invece di
+// pretendere il centro.
+// ⚠️ SOLO col dito: sul PC il puntatore e' preciso e il clic sul vuoto deve
+// continuare a chiudere il pannello, com'e' sempre stato.
+// ⚠️ La tolleranza NON risolve la vista di apertura, e non deve illudere:
+// li' i pallini distano 6 px mediani (Liguria, misurata il 27/8) e il piu'
+// vicino sarebbe comunque una lotteria. Serve da zoom 10 in su, dove i vicini
+// stanno a 27 px e oltre. Sotto, l'unica strada resta zoomare — ed e' per
+// questo che contava soprattutto togliere i gestori 'touchstart' dai marker,
+// che lo zoom lo impedivano.
+var TAP_TOLL = 20;   // tacca 5 su 10 (0 = centro esatto, 10 = 44 px)
+var TAP_DITO = matchMedia('(pointer:coarse)').matches;
+
+function stazioneVicina(punto){
+  if(!TAP_DITO||!punto) return null;
+  var best=null,bestD=TAP_TOLL;
+  activeMarkers.forEach(function(m){
+    if(!m._st) return;
+    var p;
+    try{ p=map.latLngToContainerPoint(m.getLatLng()); }catch(e){ return; }
+    var d=Math.sqrt((p.x-punto.x)*(p.x-punto.x)+(p.y-punto.y)*(p.y-punto.y));
+    if(d<bestD){ bestD=d; best=m; }
+  });
+  return best;
+}
+
+// Quale pallino ho aperto: con i vicini a pochi pixel, senza questo non si
+// capisce su quale si e' finiti.
+var _mEvid=null;
+function evidenziaMarker(m){
+  if(_mEvid&&_mEvid!==m){ try{_mEvid.setStyle({radius:5,weight:1.5,color:'#333'});}catch(e){} }
+  _mEvid=m||null;
+  if(m){ try{ m.setStyle({radius:8,weight:2,color:'#000'}); }catch(e){} }
+}
+
+map.on('click',function(e){
   if(Date.now()-histOpenedAt<400) return;
+  var m=stazioneVicina(e&&e.containerPoint);
+  if(m){
+    var ev=e.originalEvent||{};
+    // ⚠️ I DUE TIMER VANNO SPENTI PRIMA DI APRIRE, come fa da sempre il clic
+    // sul pallino. Dopo un tocco il browser muove anche il puntatore finto:
+    // uscendo dal pallino di prima parte histHideT, che chiude il pannello
+    // 280 ms dopo. Senza queste due righe la stazione si apriva e si
+    // richiudeva da sola, ma SOLO dal secondo tocco in poi — il primo non ha
+    // un pallino da cui uscire. Trovato il 27/8 con la spia sul click.
+    if(histHoverT)clearTimeout(histHoverT);
+    if(histHideT)clearTimeout(histHideT);
+    histPinned=false;
+    openStationHistory(m._st,m._rank,ev.clientX||0,ev.clientY||0);
+    histPinned=true;
+    evidenziaMarker(m);
+    return;
+  }
   closeStationHistory();
 });
 
 // ═══════════════════════════════════════════════════════════════
 // MARKER
 // ═══════════════════════════════════════════════════════════════
-function clearMarkers(){activeMarkers.forEach(function(m){m.remove();});activeMarkers=[];}
+function clearMarkers(){activeMarkers.forEach(function(m){m.remove();});activeMarkers=[];_mEvid=null;}
 
 function addMarkers(dati,sorted){
   dati.forEach(function(s){
@@ -3895,19 +3952,23 @@ function addMarkers(dati,sorted){
       histPinned=false; // riapre sulla stazione cliccata, poi fissa
       openStationHistory(s,rank,e.originalEvent.clientX,e.originalEvent.clientY);
       histPinned=true;
+      if(TAP_DITO) evidenziaMarker(this);   // col dito: si vede su quale si e' finiti
     });
-    // Touch: un tap apre il pannello e lo lascia fisso
-    m.on('touchstart',function(e){
-      this.setStyle({radius:10,weight:2,color:'#000'});
-      var touch=e.originalEvent.touches[0];
-      histPinned=false;
-      openStationHistory(s,rank,touch.clientX,touch.clientY);
-      histPinned=true;
-      e.originalEvent.stopPropagation();
-    });
-    m.on('touchend',function(e){
-      e.originalEvent.stopPropagation();
-    });
+    // ⚠️ QUI C'ERANO DUE GESTORI 'touchstart'/'touchend' E FACEVANO DANNI
+    // (27/8/2026, segnalato dall'utente: «si aprono stazioni a caso quando
+    // uno scrolla o zooma»). 'touchstart' scatta **nell'istante in cui il dito
+    // si appoggia**, prima che si sappia se sara' un tocco, una trascinata o
+    // una pinzata: quindi appoggiando il dito per muovere la mappa si apriva
+    // una stazione. E chiamavano stopPropagation, togliendo il tocco a
+    // Leaflet: una trascinata che partiva da un pallino non trascinava
+    // nemmeno la mappa. Il difetto colpiva proprio lo zoom, che sul telefono
+    // e' l'unica strada per centrare un pallino (misurato: alla vista di
+    // apertura della Liguria i pallini distano SEI pixel l'uno dall'altro).
+    // Sono stati TOLTI, non sostituiti: Leaflet manda gia' un 'click' dopo un
+    // tocco pulito e lo sopprime dopo una trascinata, quindi il gestore
+    // 'click' qui sopra fa la cosa giusta da solo, su mouse e su dito.
+    // La tolleranza del tocco sta in map.on('click'), piu' sopra.
+    m._st=s; m._rank=rank;   // servono a stazioneVicina()
   });
 }
 
