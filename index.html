@@ -7904,7 +7904,13 @@ document.getElementById('btn-funghi').addEventListener('click',function(){
   var past20=_mezzanotte(20);
   var past13=_mezzanotte(13);
   past13.setHours(23,59,59,999);   // fine giornata, come i bottoni 7/10/15/20/30
-  function fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
+  // ⚠️ gg/mm/aaaa, non il formato dei database (27/8/2026, segnalato
+  // dall'utente con la schermata). Qui usciva «2026-08-07 → 2026-08-14», che
+  // e' l'anno-mese-giorno con cui si chiamano i FILE: giusto li' dentro,
+  // sbagliato sotto gli occhi di chi guarda la mappa. Compare in due posti,
+  // tutti e due da questa riga: la conferma sotto il bottone e il titolo del
+  // pannello dei cumulati (che legge currentLabel).
+  function fmt(d){var p=function(n){return String(n).padStart(2,'0');};return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear();}
   var label='🍄 Piogge 13-20 gg fa ('+fmt(past20)+' → '+fmt(past13)+')';
   currentPast=past20; currentNow=past13; currentLabel=label;
   osmerMobileHide(); // scelto un periodo → nascondi la nota mobile
@@ -8450,6 +8456,13 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
 // ═══════════════════════════════════════════════════════════════
 // PULSANTI PERIODO
 // ═══════════════════════════════════════════════════════════════
+// Una data 2026-08-07 riscritta come 07/08/2026, per quando finisce sotto gli
+// occhi di qualcuno invece che dentro il nome di un file (27/8/2026).
+function ggmmaaaa(iso){
+  var p=String(iso||'').split('-');
+  return (p.length===3)?(p[2]+'/'+p[1]+'/'+p[0]):String(iso||'');
+}
+
 function fmtISOLocal(d){
   var p=function(n){return String(n).padStart(2,'0');};
   return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
@@ -8578,7 +8591,7 @@ document.getElementById('cd-apply').addEventListener('click',function(){
     var minDt2=new Date(Math.max(minMs2, new Date('2026-05-15').getTime()));
     var minDate2=fmtISOLocal(minDt2);
     if(from<minDate2){
-      alert('Per questa regione i dati affidabili partono dal '+minDate2+'. La finestra si amplia di 1 giorno al giorno.');
+      alert('Per questa regione i dati affidabili partono dal '+ggmmaaaa(minDate2)+'. La finestra si amplia di 1 giorno al giorno.');
       return;
     }
   } else {
@@ -8587,7 +8600,7 @@ document.getElementById('cd-apply').addEventListener('click',function(){
   document.getElementById('custom-box').style.display='none';
   // Blocca se la data fine è oggi o futura
   var ieriStr=fmtISOLocal(new Date(new Date().setDate(new Date().getDate()-1)));
-  if(to>ieriStr){alert('I dati di oggi non sono ancora disponibili. La data massima è ieri ('+ieriStr+').');return;}
+  if(to>ieriStr){alert('I dati di oggi non sono ancora disponibili. La data massima è ieri ('+ggmmaaaa(ieriStr)+').');return;}
   var pastDate=new Date(from+'T00:00:00');
   var nowDate=new Date(to+'T23:59:59');
   var d=function(dd){return dd.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});};
