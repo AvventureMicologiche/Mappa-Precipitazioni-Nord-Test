@@ -6809,14 +6809,44 @@ function locDove(p, varianti) {
   return { pos: -1, len: 0 };
 }
 
+/* ⚠️ I DUE FILE SI CARICANO SEPARATI (27/8/2026). Qui c'era un Promise.all che
+   aspettava tutti e due, ma alla tendina ne serve UNO SOLO:
+     - elenco-paesi.txt   367 KB: i nomi, cioe' quello che la tendina mostra;
+     - regioni-vicine.txt 1,4 MB: la griglia da 0,05 gradi, che serve solo DOPO,
+       quando uno ha gia' scelto, per decidere quali regioni accendere.
+   Misurato a 120 kB/s (una linea mobile scarsa): si finiva di scrivere a 8 s e
+   le righe comparivano a 36,5 s. Ventotto secondi di casella muta, che si
+   leggono come «questo paese non esiste». Aspettare 1,4 MB per mostrare un
+   elenco di nomi vuol dire far pagare a tutti il prezzo del passo dopo. */
+var _locVicine = null;
+function locCaricaVicine() {
+  if (_locVicine) return _locVicine;
+  _locVicine = fetch('/data/regioni-vicine.txt').then(function (r) { return r.text(); })
+    .then(function (t) {
+      _locGriglia = new Map();
+      var i = 0, n = t.length;
+      while (i < n) {
+        var fine = t.indexOf('\n', i);
+        var riga = t.slice(i, fine < 0 ? n : fine);
+        var c = riga.indexOf(':');
+        if (c > 0) _locGriglia.set(riga.slice(0, c), riga.slice(c + 1));
+        if (fine < 0) break;
+        i = fine + 1;
+      }
+      return true;
+    }).catch(function (e) {
+      _locVicine = null;   // un guasto di rete non deve spegnerla per sempre
+      throw e;
+    });
+  return _locVicine;
+}
+
 function locCarica() {
   if (_locCaricamento) return _locCaricamento;
-  _locCaricamento = Promise.all([
-    fetch('/data/elenco-paesi.txt').then(function (r) { return r.text(); }),
-    fetch('/data/regioni-vicine.txt').then(function (r) { return r.text(); })
-  ]).then(function (due) {
+  _locCaricamento = fetch('/data/elenco-paesi.txt').then(function (r) { return r.text(); })
+  .then(function (uno) {
     _locIndice = [];
-    due[0].split('\n').forEach(function (r) {
+    uno.split('\n').forEach(function (r) {
       if (!r) return;
       var p = r.split('|');
       if (p.length < 6) return;
@@ -6825,16 +6855,6 @@ function locCarica() {
                         t: (p[6] || '').trim(),
                         q: locNormalizza(p[0]) });
     });
-    _locGriglia = new Map();
-    var t = due[1], i = 0, n = t.length;
-    while (i < n) {
-      var fine = t.indexOf('\n', i);
-      var riga = t.slice(i, fine < 0 ? n : fine);
-      var c = riga.indexOf(':');
-      if (c > 0) _locGriglia.set(riga.slice(0, c), riga.slice(c + 1));
-      if (fine < 0) break;
-      i = fine + 1;
-    }
     return true;
   }).catch(function (e) {
     _locCaricamento = null;   // un guasto di rete non deve spegnere la casella per sempre
@@ -6952,11 +6972,13 @@ function locChiudi() {
   document.getElementById('loc-input').setAttribute('aria-expanded', 'false');
 }
 
-function locDisegna(res, testo, intestazione) {
+function locDisegna(res, testo, intestazione, nota) {
   var d = document.getElementById('loc-drop');
   _locRighe = res.righe; _locSel = -1;
   if (!res.righe.length) {
-    d.innerHTML = '<div class="loc-nota">Nessuna località trovata</div>';
+    // ⚠️ Il messaggio si puo' cambiare da fuori: un elenco che deve ancora
+    // arrivare NON e' «nessuna localita'», che si legge come «non esiste».
+    d.innerHTML = '<div class="loc-nota">' + (nota || 'Nessuna località trovata') + '</div>';
     d.classList.add('aperta');
     document.getElementById('loc-input').setAttribute('aria-expanded', 'true');
     return;
@@ -7066,8 +7088,31 @@ function fitMapToPunto(lat, lon, tacca) {
   }, 800);
 }
 
-function locVai(p) {
-  if (!p || isLoading) return;
+/* ⚠️ LA SCELTA NON SI BUTTA VIA (27/8/2026). Qui c'era `if (isLoading) return`:
+   se uno sceglieva il paese mentre la mappa stava ancora caricando, il tocco
+   spariva IN SILENZIO — mappa ferma, e il paese nemmeno fra i «cercati di
+   recente», perche' locSalvaRecente() sta in fondo a questa funzione e non
+   veniva mai raggiunto. Adesso la scelta si tiene e si riprova da sola appena
+   il caricamento finisce. Il tetto e' li' perche' un'attesa infinita e' un
+   altro modo di sparire. */
+var _locInAttesa = null;
+function locVai(p, _giro) {
+  if (!p) return;
+  if (isLoading) {
+    if ((_giro || 0) > 40) return;                 // ~16 s e poi si lascia perdere
+    _locInAttesa = p;
+    setTimeout(function () { if (_locInAttesa === p) locVai(p, (_giro || 0) + 1); }, 400);
+    return;
+  }
+  _locInAttesa = null;
+  // ⚠️ La griglia delle regioni vicine e' l'altro file, quello grosso: se non e'
+  // ancora arrivata si aspetta LEI, se no locRegioniVicine() risponde zero
+  // regioni e la scelta finisce nel vuoto in silenzio — il difetto da cui e'
+  // partita tutta questa storia.
+  if (!_locGriglia) {
+    locCaricaVicine().then(function () { locVai(p, _giro); }).catch(function () {});
+    return;
+  }
   // ⚠️ p.muta: la casella NON si riempie. Serve a «La mia posizione», che
   // passa di qui ma non e' una ricerca scritta: vedersi comparire «La mia
   // posizione» dentro il campo di ricerca confondeva (segnalato il 26/8/2026).
@@ -7163,6 +7208,12 @@ function locFermaChiamata() {
   var gb = document.getElementById('geo-btn');
   if (gb) gb.classList.add('loc-chiama');
   inp.addEventListener('focus', locFermaChiamata);   // l'ha vista: basta chiamare
+  // ⚠️ L'elenco dei paesi parte al TOCCO, non alla prima lettera: sono due file
+  // di testo, e su una rete lenta chi scriveva subito non vedeva nessuna riga.
+  // locCarica() tiene la sua promessa, quindi chiamarla due volte non costa.
+  inp.addEventListener('focus', function () {
+    try { locCarica(); locCaricaVicine(); } catch (e) {}   // i nomi e la griglia
+  });
   // Se imbocca l'altra strada, l'avviso del GPS ha finito il suo lavoro.
   inp.addEventListener('focus', function(){ if (typeof geoNota === 'function') geoNota(''); });
 
@@ -7197,6 +7248,9 @@ function locFermaChiamata() {
     clearTimeout(_locT);
     var testo = inp.value;
     if (locNormalizza(testo).length < LOC_MIN) { locChiudi(); return; }
+    // ⚠️ Se l'elenco sta ancora arrivando lo si dice subito, se no per un paio
+    // di secondi la tendina resta muta e sembra che il paese non esista.
+    if (!_locIndice) locDisegna({ righe: [], totale: 0 }, testo, '', 'Sto caricando l\'elenco dei paesi…');
     _locT = setTimeout(function () {
       locCarica().then(function () {
         if (inp.value !== testo) return;   // ha continuato a scrivere
@@ -7827,7 +7881,11 @@ function geoTrova(){
     stop(); clearTimeout(attesa);
     if(chiuso) return;
     var lat = pos.coords.latitude, lon = pos.coords.longitude, acc = pos.coords.accuracy || 0;
-    locCarica().then(function(){
+    // ⚠️ Servono TUTTI E DUE i pezzi: i nomi non bastano, le regioni vicine le
+    // dice la griglia (l'altro file). Dal 27/8 si caricano separati, e chi si
+    // scorda la griglia qui riceve zero regioni e finisce in «Qui non
+    // arriviamo ancora» con la posizione giusta in mano.
+    Promise.all([locCarica(), locCaricaVicine()]).then(function(){
       if(chiuso) return;
       var vic = locRegioniVicine(lat, lon).filter(function(k){ return document.getElementById('chk-'+k); });
       if(!vic.length){ fine('Qui non arriviamo ancora', 'fuori', 0, acc); return; }
@@ -7947,6 +8005,11 @@ function locCollocaCasella(){
   if(typeof collocaCanale === 'function') collocaCanale();
 }
 window.addEventListener('resize', locCollocaCasella);
+/* ⚠️ I NOMI DEI PAESI SI SCARICANO A MAPPA GIA' FATTA (27/8/2026): 367 KB
+   presi quando non danno fastidio a nessuno, cosi' chi tocca la casella li
+   trova gia' li' invece di aspettarli. La griglia da 1,4 MB NON parte qui:
+   quella serve solo a chi sceglie davvero un paese, e si prende al tocco. */
+setTimeout(function () { try { locCarica(); } catch (e) {} }, 3000);
 
 function regRender(){
   var sel=document.getElementById('region-select'), lista=document.getElementById('reg-lista');
