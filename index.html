@@ -3443,9 +3443,12 @@ function histAsseX(days){
   return h+'</div>';
 }
 
-function histNote(regionKey,days,periodoLungo){
+function histNote(regionKey,days,notaPeriodo){
   var note=[];
-  if(periodoLungo) note.push('grafico: ultimi 30 giorni del periodo');
+  // ⚠️ Dal 27/8/2026 la finestra e' SEMPRE gli ultimi 30 giorni, mai «del
+  // periodo»: il vecchio testo era giusto solo finche' finiva col periodo.
+  if(notaPeriodo==='fuori') note.push('grafico: ultimi 30 giorni, il periodo scelto è più indietro');
+  else if(notaPeriodo==='lungo') note.push('grafico: ultimi 30 giorni');
   if(histTab==='mm'){
     if(HIST_REAL_FROM[regionKey]) note.push('storico dal '+HIST_REAL_FROM[regionKey].split('-').reverse().join('/'));
   }else{
@@ -3672,9 +3675,9 @@ function histMessaggioVuoto(region,region2,station,days){
   return ora;
 }
 
-function histRender(station,regionKey,days,serie,selFrom,selTo,periodoLungo,histRegion){
+function histRender(station,regionKey,days,serie,selFrom,selTo,notaPeriodo,histRegion){
   histCurrent={station:station,regionKey:regionKey,days:days,serie:serie,
-               selFrom:selFrom,selTo:selTo,periodoLungo:periodoLungo,histRegion:histRegion};
+               selFrom:selFrom,selTo:selTo,notaPeriodo:notaPeriodo,histRegion:histRegion};
   document.querySelectorAll('#st-history .sh-tab').forEach(function(b){
     b.classList.toggle('on',b.getAttribute('data-t')===histTab);
   });
@@ -3684,10 +3687,10 @@ function histRender(station,regionKey,days,serie,selFrom,selTo,periodoLungo,hist
   else h=histRenderLinee(days,serie,histTab);
   if(h===null){
     body.innerHTML='<div class="sh-load">'+histMessaggioVuoto(histRegion||regionKey,regionKey,station,days)+'</div>'
-                  +histNote(regionKey,days,periodoLungo);
+                  +histNote(regionKey,days,notaPeriodo);
     return;
   }
-  body.innerHTML=h+histNote(regionKey,days,periodoLungo);
+  body.innerHTML=h+histNote(regionKey,days,notaPeriodo);
 }
 
 function histPosition(mx,my){
@@ -3754,24 +3757,24 @@ function openStationHistory(s,rank,mx,my){
   var histRegion=(REGIONS[regionKey]&&REGIONS[regionKey].dataSource==='meteohub')?'meteohub-'+regionKey:(regionKey==='friuli')?((s._src==='mh')?'meteohub-friuli':'friuli-osmer'):(regionKey==='valledaosta')?'valledaosta-cf':(regionKey==='svizzera')?((s._src==='oasi')?'ticino':'svizzera'):regionKey;
   var limit=HIST_REAL_FROM[histRegion]||HIST_REAL_FROM[regionKey];
 
-  // ⚠️ IL GRAFICO ARRIVA A IERI QUANDO PUO' (27/8/2026, segnalato dall'utente
-  // sui funghi: «mette i grafici a caso»). Finora la finestra finiva SEMPRE
-  // con la fine del periodo. Coi bottoni 7/10/15/20/30 e «Ieri» la fine e' gia'
-  // ieri e non si notava, ma «Piogge per funghi» si ferma 13 giorni fa: il
-  // grafico si fermava li' e le ultime due settimane sparivano — cioe' proprio
-  // la domanda di chi cerca funghi, «ha piovuto DOPO?».
-  // Adesso la finestra si allunga fino a ieri, ma SOLO se il periodo scelto ci
-  // sta ancora dentro tutto. Le date personalizzate lontane nel passato
-  // tengono il comportamento di prima: se no il periodo, che e' la ragione per
-  // cui si guarda il grafico, finirebbe fuori dalla finestra.
-  // I giorni a colori pieni restano quelli del periodo (selFrom..selTo).
-  var fine=end;
-  var ieri=new Date(); ieri.setDate(ieri.getDate()-1);
-  ieri=new Date(ieri.getFullYear(),ieri.getMonth(),ieri.getDate());
-  if(fmtISOLocal(ieri)>fmtISOLocal(end)){
-    var primo=new Date(ieri.getFullYear(),ieri.getMonth(),ieri.getDate()-(HIST_DAYS-1));
-    if(fmtISOLocal(primo)<=selFrom) fine=ieri;
-  }
+  // ⚠️ LA FINESTRA E' SEMPRE GLI ULTIMI 30 GIORNI, E FINISCE SEMPRE IERI
+  // (27/8/2026, deciso dall'utente dopo averlo visto sui funghi: «mette i
+  // grafici a caso»).
+  // Prima finiva con la fine del PERIODO. Coi bottoni Ieri/7/10/15/20/30 la
+  // fine e' gia' ieri e non si notava, ma «Piogge per funghi» si ferma 13
+  // giorni fa: il grafico si fermava li' (16 lug -> 14 ago con oggi 27 ago) e
+  // le ultime due settimane sparivano, cioe' proprio la domanda di chi cerca
+  // funghi: «ha piovuto DOPO?».
+  // Regola unica, nessuna eccezione: 30 giorni fino a ieri, i giorni del
+  // periodo a colori pieni e gli altri in grigio, uguale per tutti i periodi.
+  // ⚠️ Conseguenza ACCETTATA sulle date personalizzate lontane nel passato
+  // (es. 1-10 giugno): quei giorni non cadono nella finestra, quindi nessuna
+  // barra risulta accesa e il pannello lo dichiara (vedi histNote, 'fuori').
+  // La ragione che ha chiuso la discussione e' dei dati, non del disegno:
+  // temperatura, vento e umidita' non li abbiamo cosi' indietro, quindi le
+  // altre tre schede su una finestra vecchia sarebbero vuote comunque.
+  var fine=new Date(); fine.setDate(fine.getDate()-1);
+  fine=new Date(fine.getFullYear(),fine.getMonth(),fine.getDate());
 
   var days=[];
   for(var i=HIST_DAYS-1;i>=0;i--){
@@ -3781,7 +3784,11 @@ function openStationHistory(s,rank,mx,my){
     days.push(ds);
   }
   if(!days.length) return;
-  var periodoLungo=(selFrom<days[0]);
+  // Che cosa dire sotto il grafico, ora che la finestra non segue piu' il
+  // periodo: '' niente da dire · 'lungo' il periodo comincia prima della
+  // finestra ma ci finisce dentro · 'fuori' il periodo e' tutto indietro e
+  // nel grafico non c'e' nessun giorno acceso.
+  var notaPeriodo = (selTo<days[0]) ? 'fuori' : (selFrom<days[0]) ? 'lungo' : '';
 
   document.getElementById('sh-nome').textContent=s.n;
   document.getElementById('sh-mm').textContent=s.mm;
@@ -3801,7 +3808,7 @@ function openStationHistory(s,rank,mx,my){
 
   function done(serie){
     if(token!==histToken) return; // clic su un'altra stazione nel frattempo
-    histRender(s,regionKey,days,serie,selFrom,selTo,periodoLungo,histRegion);
+    histRender(s,regionKey,days,serie,selFrom,selTo,notaPeriodo,histRegion);
     histPosition(mx,my);
   }
   histFromFiles(histRegion,s,days,done);
@@ -3828,7 +3835,7 @@ document.querySelectorAll('#st-history .sh-tab').forEach(function(b){
     if(t===histTab) return;
     histTab=t;
     if(histCurrent) histRender(histCurrent.station,histCurrent.regionKey,histCurrent.days,
-      histCurrent.serie,histCurrent.selFrom,histCurrent.selTo,histCurrent.periodoLungo,
+      histCurrent.serie,histCurrent.selFrom,histCurrent.selTo,histCurrent.notaPeriodo,
       histCurrent.histRegion);
   });
 });
