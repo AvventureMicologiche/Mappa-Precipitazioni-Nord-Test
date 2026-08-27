@@ -7214,6 +7214,23 @@ function locFermaChiamata() {
   if (g) g.classList.remove('loc-chiama');
 }
 
+/* I «cercati di recente», da qualunque strada si arrivi: il fuoco, il tocco a
+   fuoco gia' preso, la ✕ che svuota. Una funzione sola perche' le tre strade
+   non possano divergere.
+   ⚠️ Se non c'e' niente si DICE: un nulla non si sa leggere, e per capire che
+   la lista era vuota e non nascosta ci sono voluti tre scambi di messaggi.
+   Con ?geodebug=1 la riga porta anche i due numeri che distinguono «non
+   abbiamo mai salvato» da «il telefono non conserva niente». */
+function locMostraRecenti() {
+  var rec = locLeggiRecenti();
+  if (rec.length) { locDisegna({ righe: rec, totale: rec.length }, '', 'Cercate di recente'); return; }
+  locDisegna({ righe: [], totale: 0 }, '', '',
+    'Qui compariranno i paesi che cerchi' +
+    ((typeof GEO_SPIA !== 'undefined' && GEO_SPIA)
+      ? '  —  spia: ricordi=0, memoria=' + locMemoriaStato()
+      : ''));
+}
+
 (function locAvvia() {
   var inp = document.getElementById('loc-input');
   if (!inp) return;
@@ -7257,19 +7274,21 @@ function locFermaChiamata() {
     // nome scelto, e senza questo uno dovrebbe cancellarlo a mano prima di
     // scriverne un altro. Così la prima lettera che batte lo sostituisce.
     try { inp.select(); } catch (e) {}
-    var rec = locLeggiRecenti();
-    if (rec.length) locDisegna({ righe: rec, totale: rec.length }, '', 'Cercate di recente');
-    // ⚠️ SE NON C'E' NIENTE, LO SI DICE (27/8/2026). Prima toccando la casella
-    // vuota non compariva NULLA, e un nulla non si sa leggere: l'utente ha
-    // dovuto scrivere tre volte per farci capire che la lista era vuota e non
-    // nascosta. Adesso la casella spiega a cosa serve, e con ?geodebug=1
-    // aggiunge i due numeri che distinguono «non abbiamo mai salvato» da «il
-    // telefono non conserva niente»: sono due guasti diversi.
-    else locDisegna({ righe: [], totale: 0 }, '', '',
-      'Qui compariranno i paesi che cerchi' +
-      ((typeof GEO_SPIA !== 'undefined' && GEO_SPIA)
-        ? '  —  spia: ricordi=' + rec.length + ', memoria=' + locMemoriaStato()
-        : ''));
+    locMostraRecenti();
+  });
+
+  /* ⚠️ ANCHE AL TOCCO, NON SOLO AL FUOCO (27/8/2026). La lista era appesa al
+     solo evento `focus`, e **un tocco su una casella che ha GIA' il fuoco non
+     genera nessun focus**. Il giro dell'utente era proprio quello: la ✕ svuota
+     il campo e lascia il cursore dentro, quindi da li' in poi toccare la
+     casella non faceva partire niente e la lista non compariva mai — ne' in
+     Chrome ne' nel browser interno, mentre sul computer non si vedeva perche'
+     li' si clicca altrove di continuo e il fuoco se ne va davvero.
+     ⚠️ Solo se NON si sta cercando (meno di LOC_MIN lettere): se no
+     cancellerebbe i risultati mentre uno li sta guardando. */
+  inp.addEventListener('click', function () {
+    if (locNormalizza(inp.value).length >= LOC_MIN) return;
+    locMostraRecenti();
   });
 
   inp.addEventListener('input', function () {
@@ -7342,7 +7361,9 @@ function locFermaChiamata() {
   });
 
   document.getElementById('loc-clear').addEventListener('click', function () {
-    inp.value = ''; box.classList.remove('pieno'); locChiudi(); inp.focus();
+    // ⚠️ Svuotare e chiudere lasciava il cursore dentro e la tendina chiusa:
+    // da li' nessun tocco poteva piu' riaprirla (niente focus nuovo).
+    inp.value = ''; box.classList.remove('pieno'); inp.focus(); locMostraRecenti();
   });
 
   // Ritocco alla tendina delle recenti: si apre anche ri-toccando la casella
