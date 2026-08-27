@@ -1,0 +1,29 @@
+# Fini riga — 27 agosto 2026
+#
+# Il problema: index.html aveva 9.350 righe CRLF e 354 LF mescolate. Qualunque
+# editor le uniformava di nascosto, e cambiare una virgola produceva un diff da
+# 354 righe. I trenta script "applica-*.py" nella cartella claudio erano nati
+# solo per scrivere il file a byte ed evitare questo.
+# Il 27/8/2026 i file qui sotto sono stati portati tutti a CRLF.
+#
+# Cosa fa "-text": dice a git di NON convertire mai i fini riga, in nessuna
+# direzione. Il file viene immagazzinato e riconsegnato byte per byte com'e'.
+# Serve perche' su un'altra macchina con core.autocrlf=true git li
+# riscriverebbe da solo, e ci ritroveremmo il pasticcio da capo.
+# Il diff resta leggibile come testo: verificato, non diventa "file binari".
+#
+# ⚠️ NON si usa "text eol=crlf", che sembrerebbe piu' logico: quella regola fa
+#    immagazzinare a git il file con i fini riga Unix, quindi al primo commit
+#    cambia OGNI riga. Provata il 27/8: diff da 11.052 righe invece di 633.
+#
+# ⚠️ NON sono in elenco, ed e' voluto:
+#    - data/**              li scrivono i collector sui runner Linux, a \n
+#    - .github/scripts/**   49 file, in maggioranza a \n: ognuno e' gia'
+#                           coerente per conto suo, tranne i due qui sotto
+#    - .github/workflows/** tutti a \n, vanno bene cosi'
+
+index.html                              -text
+fonti.html                              -text
+CLAUDE.md                               -text
+.github/scripts/check-fonti.js          -text
+.github/scripts/collect-friuli-osmer.js -text
