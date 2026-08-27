@@ -6986,8 +6986,14 @@ function locLeggiRecenti() {
   try {
     var a = JSON.parse(localStorage.getItem(LOC_CHIAVE) || '[]');
     if (!Array.isArray(a)) return [];
-    return a.filter(function (x) { return x && x.n && typeof x.lat === 'number' && typeof x.lon === 'number'; })
-            .map(function (x) { if (!x.q) x.q = locNormalizza(x.n); return x; });
+    // ⚠️ I ricordi senza `q` SI BUTTANO, non si riparano: l'unico modo di
+    // averne uno era «La mia posizione», che finiva qui dentro per sbaglio e
+    // in un elenco di paesi cercati non ci deve stare. Ripararlo voleva dire
+    // farlo ricomparire in cima, che e' quello che l'utente si e' ritrovato.
+    return a.filter(function (x) {
+      return x && x.n && x.q && x.n !== 'La mia posizione' &&
+             typeof x.lat === 'number' && typeof x.lon === 'number';
+    });
   } catch (e) { return []; }
 }
 function locSalvaRecente(p) {
@@ -7246,10 +7252,7 @@ function locMostraRecenti() {
   var rec = locLeggiRecenti();
   if (rec.length) { locDisegna({ righe: rec, totale: rec.length }, '', 'Cercate di recente'); return; }
   locDisegna({ righe: [], totale: 0 }, '', '',
-    'Qui compariranno i paesi che cerchi' +
-    ((typeof GEO_SPIA !== 'undefined' && GEO_SPIA)
-      ? '  —  spia: ricordi=0, memoria=' + locMemoriaStato()
-      : ''));
+    'Qui compariranno i paesi che cerchi');
 }
 
 (function locAvvia() {
@@ -8069,33 +8072,6 @@ function collocaCanale(){
   cl.style.top = Math.round(giu) + 'px';
 }
 window.addEventListener('resize', collocaCanale);
-
-/* ⚠️ LA SPIA CHE SI VEDE SENZA TOCCARE NIENTE (27/8/2026). Due ore di
-   correzioni al buio sulla cronologia, e ancora non sapevamo la cosa piu'
-   importante: se il telefono stesse caricando la versione nuova. Con
-   ?geodebug=1 il blocco scrive una riga con la data della versione, quanti
-   ricordi ci sono e se la memoria del browser conserva davvero. Uno
-   screenshot e si sa tutto, senza chiedere niente a nessuno. */
-var SPIA_VERSIONE = '27/8 h21';
-function spiaStato(){
-  if(typeof GEO_SPIA === 'undefined' || !GEO_SPIA) return;
-  var b = document.getElementById('novita-box');
-  if(!b) return;
-  var e = document.getElementById('spia-stato');
-  if(!e){
-    e = document.createElement('div');
-    e.id = 'spia-stato';
-    e.style.cssText = 'font-size:11px;line-height:1.4;margin-top:6px;padding:5px 7px;' +
-      'background:#fff;color:#1b3f6e;border:1px solid #90b0d8;border-radius:4px;word-break:break-word;';
-    b.appendChild(e);
-  }
-  var rec = [];
-  try{ rec = locLeggiRecenti(); }catch(err){}
-  e.textContent = 'spia ' + SPIA_VERSIONE + ' · ricordi=' + rec.length +
-    ' · memoria=' + locMemoriaStato() +
-    ' · elenco=' + (typeof _locIndice !== 'undefined' && _locIndice ? 'pronto' : 'no');
-}
-setInterval(function(){ try{ spiaStato(); }catch(e){} }, 1500);
 
 function geoPrepara(){
   var b = document.getElementById('geo-btn');
