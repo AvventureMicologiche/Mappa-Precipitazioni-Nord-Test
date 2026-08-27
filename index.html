@@ -6800,10 +6800,13 @@ function locVarianti(q) {
    ⚠️ pos -1 = non trovato: prima il calcolo dava 0 e il grassetto finiva sulle
    prime lettere a caso. */
 function locDove(p, varianti) {
+  // ⚠️ Non ci si fida del campo: un ricordo vecchio puo' non avere `q`, e qui
+  // un'eccezione non fa sbagliare il grassetto, spegne TUTTA la tendina.
+  var pq = (p && p.q) || '';
   for (var v = 0; v < varianti.length; v++) {
     var qq = varianti[v];
-    if (p.q.lastIndexOf(qq, 0) === 0) return { pos: 0, len: qq.length };
-    var i = p.q.indexOf(' ' + qq);
+    if (pq.lastIndexOf(qq, 0) === 0) return { pos: 0, len: qq.length };
+    var i = pq.indexOf(' ' + qq);
     if (i >= 0) return { pos: i + 1, len: qq.length };
   }
   return { pos: -1, len: 0 };
@@ -6967,7 +6970,25 @@ function locMemoriaStato() {
 }
 
 function locLeggiRecenti() {
-  try { return JSON.parse(localStorage.getItem(LOC_CHIAVE) || '[]'); } catch (e) { return []; }
+  /* ⚠️ I RICORDI SI RIPARANO IN LETTURA (27/8/2026). UN SOLO ricordo malfatto
+     spegneva TUTTA la tendina: locDove() fa `p.q.lastIndexOf(...)` e su un
+     ricordo senza `q` solleva un'eccezione, quindi non si disegna piu' niente
+     e a schermo non compare NULLA. E' il difetto che l'utente ha inseguito per
+     due ore, con la spia che diceva «ricordi=5, memoria=ok»: i ricordi c'erano,
+     era il disegno che moriva.
+     Da dove veniva il ricordo rotto: «La mia posizione» finiva fra i cercati di
+     recente, e il suo oggetto NON ha il campo `q` — JSON.stringify butta via le
+     proprieta' undefined, quindi in memoria restava un ricordo senza q. Sul PC
+     non capitava piu' perche' li' il tasto della posizione non esiste.
+     Adesso: i malfatti si scartano, e a chi manca solo `q` la si ricalcola dal
+     nome. La lista si ripara da sola alla prima lettura, senza che nessuno
+     debba cancellare niente. */
+  try {
+    var a = JSON.parse(localStorage.getItem(LOC_CHIAVE) || '[]');
+    if (!Array.isArray(a)) return [];
+    return a.filter(function (x) { return x && x.n && typeof x.lat === 'number' && typeof x.lon === 'number'; })
+            .map(function (x) { if (!x.q) x.q = locNormalizza(x.n); return x; });
+  } catch (e) { return []; }
 }
 function locSalvaRecente(p) {
   try {
@@ -8055,7 +8076,7 @@ window.addEventListener('resize', collocaCanale);
    ?geodebug=1 il blocco scrive una riga con la data della versione, quanti
    ricordi ci sono e se la memoria del browser conserva davvero. Uno
    screenshot e si sa tutto, senza chiedere niente a nessuno. */
-var SPIA_VERSIONE = '27/8 h20';
+var SPIA_VERSIONE = '27/8 h21';
 function spiaStato(){
   if(typeof GEO_SPIA === 'undefined' || !GEO_SPIA) return;
   var b = document.getElementById('novita-box');
