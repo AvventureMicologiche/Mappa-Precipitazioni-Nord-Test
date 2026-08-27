@@ -3754,9 +3754,28 @@ function openStationHistory(s,rank,mx,my){
   var histRegion=(REGIONS[regionKey]&&REGIONS[regionKey].dataSource==='meteohub')?'meteohub-'+regionKey:(regionKey==='friuli')?((s._src==='mh')?'meteohub-friuli':'friuli-osmer'):(regionKey==='valledaosta')?'valledaosta-cf':(regionKey==='svizzera')?((s._src==='oasi')?'ticino':'svizzera'):regionKey;
   var limit=HIST_REAL_FROM[histRegion]||HIST_REAL_FROM[regionKey];
 
+  // ⚠️ IL GRAFICO ARRIVA A IERI QUANDO PUO' (27/8/2026, segnalato dall'utente
+  // sui funghi: «mette i grafici a caso»). Finora la finestra finiva SEMPRE
+  // con la fine del periodo. Coi bottoni 7/10/15/20/30 e «Ieri» la fine e' gia'
+  // ieri e non si notava, ma «Piogge per funghi» si ferma 13 giorni fa: il
+  // grafico si fermava li' e le ultime due settimane sparivano — cioe' proprio
+  // la domanda di chi cerca funghi, «ha piovuto DOPO?».
+  // Adesso la finestra si allunga fino a ieri, ma SOLO se il periodo scelto ci
+  // sta ancora dentro tutto. Le date personalizzate lontane nel passato
+  // tengono il comportamento di prima: se no il periodo, che e' la ragione per
+  // cui si guarda il grafico, finirebbe fuori dalla finestra.
+  // I giorni a colori pieni restano quelli del periodo (selFrom..selTo).
+  var fine=end;
+  var ieri=new Date(); ieri.setDate(ieri.getDate()-1);
+  ieri=new Date(ieri.getFullYear(),ieri.getMonth(),ieri.getDate());
+  if(fmtISOLocal(ieri)>fmtISOLocal(end)){
+    var primo=new Date(ieri.getFullYear(),ieri.getMonth(),ieri.getDate()-(HIST_DAYS-1));
+    if(fmtISOLocal(primo)<=selFrom) fine=ieri;
+  }
+
   var days=[];
   for(var i=HIST_DAYS-1;i>=0;i--){
-    var d=new Date(end.getFullYear(),end.getMonth(),end.getDate()-i);
+    var d=new Date(fine.getFullYear(),fine.getMonth(),fine.getDate()-i);
     var ds=fmtISOLocal(d);
     if(limit&&ds<limit) continue;
     days.push(ds);
@@ -7802,8 +7821,21 @@ document.getElementById('btn-funghi').addEventListener('click',function(){
   this.classList.add('active');
   document.getElementById('custom-box').style.display='none';
   var now=new Date();
-  var past20=new Date(now.getTime()-20*24*3600000);
-  var past13=new Date(now.getTime()-13*24*3600000);
+  // ⚠️ A MEZZANOTTE, come fanno TUTTI gli altri bottoni (27/8/2026).
+  // Sottraendo millisecondi le due date si portavano dietro l'ora del momento,
+  // e il pannello stazione conta i giorni con round((fine-inizio)/24h)+1 su una
+  // fine che invece e' mezzanotte: dopo le 12:00 il conto perdeva un giorno e
+  // la scheda diceva «7 giorni» su una finestra di OTTO (visto dall'utente alle
+  // 12:20). Prima di mezzogiorno ne diceva otto: il difetto cambiava faccia a
+  // meta' giornata, che e' il modo peggiore di sbagliare.
+  // I GIORNI SOMMATI erano e restano otto: sbagliava solo l'etichetta.
+  var _mezzanotte=function(n){
+    var d=new Date(); d.setDate(d.getDate()-n);
+    return new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,0,0,0);
+  };
+  var past20=_mezzanotte(20);
+  var past13=_mezzanotte(13);
+  past13.setHours(23,59,59,999);   // fine giornata, come i bottoni 7/10/15/20/30
   function fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
   var label='🍄 Piogge 13-20 gg fa ('+fmt(past20)+' → '+fmt(past13)+')';
   currentPast=past20; currentNow=past13; currentLabel=label;
