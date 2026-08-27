@@ -6954,6 +6954,18 @@ function locSegnapostoVia() {
 // che e' roba sua e resta sul suo computer: nessuno le vede e non viaggiano.
 var LOC_RECENTI = 6;
 var LOC_CHIAVE = 'pluvio_localita_recenti';
+/* La memoria del browser funziona davvero? Si prova a scrivere e rileggere:
+   in incognito, o con i dati dei siti bloccati, localStorage esiste ma non
+   conserva niente — e allora la cronologia non e' un nostro guasto. */
+function locMemoriaStato() {
+  try {
+    localStorage.setItem('_pluvio_prova', '1');
+    var v = localStorage.getItem('_pluvio_prova');
+    localStorage.removeItem('_pluvio_prova');
+    return v === '1' ? 'ok' : 'non conserva';
+  } catch (e) { return 'bloccata (' + ((e && e.name) || '?') + ')'; }
+}
+
 function locLeggiRecenti() {
   try { return JSON.parse(localStorage.getItem(LOC_CHIAVE) || '[]'); } catch (e) { return []; }
 }
@@ -7120,6 +7132,13 @@ function locVai(p, _giro) {
     document.getElementById('loc-input').value = p.n;
     document.getElementById('loc-box').classList.add('pieno');
   }
+  /* ⚠️ IL RICORDO SI SCRIVE QUI, NON IN FONDO (27/8/2026). Stava dopo il cambio
+     regioni, la centratura, il segnaposto e il caricamento: qualunque cosa si
+     rompesse per strada, il paese non finiva fra i «cercati di recente» e
+     l'utente si ritrovava la lista vuota senza capire perche'.
+     ⚠️ Non per «La mia posizione» (p.muta): il GPS non e' una ricerca, e
+     trovarsela fra i paesi cercati non vuol dire niente. Prima ci finiva. */
+  if (!p.muta) locSalvaRecente(p);
   locChiudi();
   document.getElementById('loc-input').blur();
 
@@ -7179,7 +7198,6 @@ function locVai(p, _giro) {
     if (typeof regChiudi === 'function') regChiudi();      // scelto il paese: via la tendina, si guarda la mappa
   }
 
-  locSalvaRecente(p);
   try { gtag('event', 'cerca_localita', { regioni: regioni.join(','), stime: !!stime }); } catch (e) {}
 }
 
@@ -7241,6 +7259,12 @@ function locFermaChiamata() {
     try { inp.select(); } catch (e) {}
     var rec = locLeggiRecenti();
     if (rec.length) locDisegna({ righe: rec, totale: rec.length }, '', 'Cercate di recente');
+    // ⚠️ La spia: con ?geodebug=1 la tendina dice quanti ricordi ha e se la
+    // memoria del browser conserva davvero. Serve a distinguere «non ha mai
+    // salvato» da «il telefono non tiene niente», che sono due guasti diversi.
+    else if (typeof GEO_SPIA !== 'undefined' && GEO_SPIA)
+      locDisegna({ righe: [], totale: 0 }, '', '',
+                 'spia: ricordi=' + rec.length + ', memoria=' + locMemoriaStato());
   });
 
   inp.addEventListener('input', function () {
