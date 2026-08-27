@@ -7930,6 +7930,19 @@ var GEO_ATTESA_CORTA = 2000;
 /* La spia: index.html?geodebug=1 fa scrivere al tasto codice e precisione.
    Serve a capire da lontano cosa risponde un telefono che non e' qui. */
 var GEO_SPIA = /(^|[?&])geodebug(=1)?(&|$)/.test(location.search);
+// ⚠️ Letta la spia, si toglie SUBITO dall'indirizzo (27/8/2026). Se restasse,
+// tornerebbe accesa a ogni apertura: sul telefono Chrome nella barra la query
+// non la mostra nemmeno, quindi uno se la ritrova senza capire da dove esce, e
+// basta un tocco nella cronologia. Vale per questa visita, non per le prossime.
+// Gli altri parametri (r, z, c, s: i link condivisi) restano tutti.
+if(GEO_SPIA) try{
+  var _qs = [];
+  location.search.replace(/^\?/, '').split('&').forEach(function(p){
+    if(p && !/^geodebug(=|$)/.test(p)) _qs.push(p);
+  });
+  history.replaceState(null, '', location.pathname +
+    (_qs.length ? '?' + _qs.join('&') : '') + location.hash);
+}catch(e){}
 
 function geoTrova(){
   var b = document.getElementById('geo-btn');
@@ -8124,6 +8137,15 @@ function regEtichetta(){
 function regApri(){
   var sh=document.getElementById('reg-sheet'); if(!sh) return;
   regRender();
+  // ⚠️ LA NOTA DEL TASTO POSIZIONE PARLA DELL'ULTIMO TENTATIVO (27/8/2026,
+  // visto dall'utente sul telefono). Restava scritta per sempre: si chiedeva
+  // la posizione, si guardava la heatmap, si riapriva la tendina e la riga era
+  // ancora li' a raccontare una cosa di dieci minuti prima. Col ?geodebug=1
+  // e' la riga della spia, lunga tre righe, e si vede benissimo.
+  // Si azzera riaprendo, ma NON mentre sta ancora cercando: li' la riga e'
+  // l'attesa spiegata a gradini e serve.
+  var gb=document.getElementById('geo-btn');
+  if(gb && !gb.disabled && typeof geoNota==='function') geoNota('');
   sh.classList.add('aperta'); sh.setAttribute('aria-hidden','false');
   document.body.classList.add('reg-bloccato');
 }
