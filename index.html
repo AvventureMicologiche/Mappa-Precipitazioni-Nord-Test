@@ -7259,12 +7259,17 @@ function locFermaChiamata() {
     try { inp.select(); } catch (e) {}
     var rec = locLeggiRecenti();
     if (rec.length) locDisegna({ righe: rec, totale: rec.length }, '', 'Cercate di recente');
-    // ⚠️ La spia: con ?geodebug=1 la tendina dice quanti ricordi ha e se la
-    // memoria del browser conserva davvero. Serve a distinguere «non ha mai
-    // salvato» da «il telefono non tiene niente», che sono due guasti diversi.
-    else if (typeof GEO_SPIA !== 'undefined' && GEO_SPIA)
-      locDisegna({ righe: [], totale: 0 }, '', '',
-                 'spia: ricordi=' + rec.length + ', memoria=' + locMemoriaStato());
+    // ⚠️ SE NON C'E' NIENTE, LO SI DICE (27/8/2026). Prima toccando la casella
+    // vuota non compariva NULLA, e un nulla non si sa leggere: l'utente ha
+    // dovuto scrivere tre volte per farci capire che la lista era vuota e non
+    // nascosta. Adesso la casella spiega a cosa serve, e con ?geodebug=1
+    // aggiunge i due numeri che distinguono «non abbiamo mai salvato» da «il
+    // telefono non conserva niente»: sono due guasti diversi.
+    else locDisegna({ righe: [], totale: 0 }, '', '',
+      'Qui compariranno i paesi che cerchi' +
+      ((typeof GEO_SPIA !== 'undefined' && GEO_SPIA)
+        ? '  —  spia: ricordi=' + rec.length + ', memoria=' + locMemoriaStato()
+        : ''));
   });
 
   inp.addEventListener('input', function () {
