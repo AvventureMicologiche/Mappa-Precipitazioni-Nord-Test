@@ -3830,7 +3830,17 @@ document.getElementById('sh-close').addEventListener('click',closeStationHistory
 // il grafico cambiava e un istante dopo spariva tutto (trovato al collaudo
 // headless del 10/8: subito=none). disableClickPropagation ferma anche
 // dblclick e mousedown, così due click veloci non zoomano la mappa.
-if(window.L&&L.DomEvent) L.DomEvent.disableClickPropagation(document.querySelector('#st-history .sh-tabs'));
+// ⚠️ 27/8/2026: NON basta piu' la sola barra delle schede, si ferma TUTTO il
+// pannello. Da quando il clic sulla mappa apre la stazione piu' vicina entro
+// 20 px, il clic sulla X risaliva a map.on('click') e apriva un pallino che
+// stava sotto o accanto al bottone: la scheda non si chiudeva piu'.
+// Segnalato dall'utente dal telefono («disastro»), e la spia del mattino lo
+// aveva gia' mostrato — nel registro c'era un click con bersaglio BUTTON —
+// senza che ci facessi caso.
+if(window.L&&L.DomEvent){
+  L.DomEvent.disableClickPropagation(histEl);
+  L.DomEvent.disableClickPropagation(document.querySelector('#st-history .sh-tabs'));
+}
 document.querySelectorAll('#st-history .sh-tab').forEach(function(b){
   b.addEventListener('click',function(){
     var t=b.getAttribute('data-t');
@@ -3891,8 +3901,17 @@ function evidenziaMarker(m){
   if(m){ try{ m.setStyle({radius:8,weight:2,color:'#000'}); }catch(e){} }
 }
 
+// Pannelli e riquadri che stanno SOPRA la mappa: un clic dentro di loro non e'
+// un clic sulla mappa, e non deve ne' aprire una stazione ne' chiudere niente.
+var SOPRA_LA_MAPPA='#st-history,#legend-panel,#time-panel,#region-panel,#reg-sheet,#map-hint-panel,.leaflet-control';
+
 map.on('click',function(e){
   if(Date.now()-histOpenedAt<400) return;
+  // ⚠️ Rete di sicurezza oltre a disableClickPropagation: quella va messa a
+  // mano su ogni pannello nuovo e prima o poi qualcuno se ne dimentica (e'
+  // successo con la X il 27/8). Qui si guarda da DOVE arriva il clic.
+  var _t=e&&e.originalEvent&&e.originalEvent.target;
+  if(_t&&_t.closest&&_t.closest(SOPRA_LA_MAPPA)) return;
   var m=stazioneVicina(e&&e.containerPoint);
   if(m){
     var ev=e.originalEvent||{};
