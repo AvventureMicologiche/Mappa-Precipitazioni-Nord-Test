@@ -8211,13 +8211,22 @@ function collocaCanale(){
 }
 window.addEventListener('resize', collocaCanale);
 
+// ⚠️ La scadenza del cartellino NOVITA' sta QUI, per conto suo, e non dentro
+// geoPrepara (28/8/2026). Li' stava DOPO il `return` che scatta quando il
+// browser non ha la geolocalizzazione o la pagina non e' in HTTPS: su un
+// browser cosi' il cartellino non sarebbe scaduto mai, e sarebbe rimasto
+// «NOVITA'» per sempre. Due cose senza niente in comune erano finite nella
+// stessa funzione perche' vivono nello stesso riquadro.
+function novitaScadenza(){
+  var t = document.getElementById('novita-testa');
+  if(t && Date.now() > new Date(NOVITA_FINO).getTime()) t.style.display = 'none';
+}
+
 function geoPrepara(){
   var b = document.getElementById('geo-btn');
   if(!b) return;
   if(!navigator.geolocation || !window.isSecureContext){ b.style.display = 'none'; return; }
   b.addEventListener('click', geoTrova);
-  var t = document.getElementById('novita-testa');
-  if(t && Date.now() > new Date(NOVITA_FINO).getTime()) t.style.display = 'none';
 }
 
 var _locCasa = null, _locDopo = null;
@@ -8292,6 +8301,7 @@ function regChiudi(){
   // sempre (#loc-box), quindi tutta la ricerca continua a funzionare com'e'.
   locCollocaCasella();
   geoPrepara();
+  novitaScadenza();   // indipendente dal tasto posizione: vedi il commento sopra
   collocaCanale();
   apri.addEventListener('click', regApri);
   document.getElementById('reg-chiudi').addEventListener('click', regChiudi);
