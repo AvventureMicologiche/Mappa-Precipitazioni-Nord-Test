@@ -253,6 +253,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   /* Il rosso su blu non si legge: dentro il foglio l'avviso e' rosa chiaro. */
   #reg-sheet .gb-nota{color:#ffc8c2;}
   #reg-sheet #geo-btn.attesa .gb-nota{color:#b9d0ec;}
+  #reg-sheet #geo-btn.info .gb-nota{color:#b9d0ec;}   /* riga a riposo, vedi .info */
   /* ⚠️ Sul foglio blu un anello blu non si vede: qui e' bianco. */
   #reg-sheet #geo-btn.loc-chiama{animation:geo-anello-pulsa-blu 1.7s ease-in-out infinite;}
   @keyframes geo-anello-pulsa-blu{
@@ -446,6 +447,11 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 /* ⚠️ L'attesa NON e' un guasto: grigio, non rosso. Un messaggio rosso
    mentre il sito sta ancora lavorando fa credere che sia gia' finita male. */
 #geo-btn.attesa .gb-nota{color:#5a6470;font-weight:500;}
+/* ⚠️ TERZO STATO della riga (30/8/2026, in prova sul TEST). Non e' ne' un
+   guasto ne' un'attesa: e' un avviso a riposo, per chi il permesso non l'ha
+   ancora dato. Colore calmo come l'attesa — un rosso qui direbbe che qualcosa
+   e' andato storto quando invece non e' ancora successo niente. */
+#geo-btn.info .gb-nota{display:block;color:#5a6470;font-weight:500;}
 #loc-input{
   width:100%;box-sizing:border-box;
   padding:8px 30px 8px 32px;         /* spazio a sinistra per la lente, a destra per la × */
@@ -7987,11 +7993,51 @@ function geoNota(msg, attesa){
   if(!b) return;
   var n = b.querySelector('.gb-nota');
   if(n) n.textContent = msg || '';
-  // Stessa riga, due significati: grigio mentre cerca, rosso quando rinuncia.
+  // Stessa riga, TRE significati: grigio mentre cerca, rosso quando rinuncia,
+  // e a riposo l'avviso del permesso (vedi geoRigaRiposo).
   b.classList.toggle('attesa', !!msg && !!attesa);
   b.classList.toggle('avviso', !!msg && !attesa);
+  if(msg) b.classList.remove('info');
+  else geoRigaRiposo();          // finito il messaggio, torna la riga a riposo
   if(typeof collocaCanale === 'function') collocaCanale();
 }
+
+/* ⚠️ «è richiesta l'autorizzazione» — IN PROVA SUL TEST dal 30/8/2026.
+   Perche': in GA4, sui primi tre giorni, 26 tentativi su 49 finiscono con
+   `esito=negato`, cioe' UNO SU DUE preme il tasto e poi dice no al permesso
+   del browser. L'ipotesi e' che non se lo aspetti.
+   ⚠️ La riga NON si mostra a tutti: il browser sa gia' come sta messo e lo
+   dice (`navigator.permissions`), quindi non si tira a indovinare —
+   `granted` = ha gia' autorizzato, non c'e' niente da dire e la riga non
+   compare; `denied` = il tasto e' bloccato, e quello e' un altro discorso;
+   `prompt` = la richiesta arrivera' davvero, ed e' l'unico caso in cui serve.
+   Con `change` la riga sparisce da sola nel momento in cui autorizza, senza
+   ricaricare la pagina.
+   ⚠️ Su Safari la domanda non e' supportata: li' si ricade sul mostrarla, che
+   e' il comportamento prudente (dire una cosa vera a chi non serviva costa
+   meno che tacerla a chi serviva).
+   ⚠️ Il testo sta su UNA riga sola: misurato a 360 px, il tetto e' ~42
+   caratteri e questo ne ha 28. Il blocco passa da 114 a 127 px. */
+var _geoPermesso = null;
+function geoRigaRiposo(){
+  var b = document.getElementById('geo-btn');
+  if(!b || b.classList.contains('attesa') || b.classList.contains('avviso')) return;
+  var mostra = (_geoPermesso === null || _geoPermesso === 'prompt');
+  var n = b.querySelector('.gb-nota');
+  if(n) n.textContent = mostra ? 'è richiesta l’autorizzazione' : '';
+  b.classList.toggle('info', mostra);
+  if(typeof collocaCanale === 'function') collocaCanale();
+}
+try{
+  if(navigator.permissions && navigator.permissions.query){
+    navigator.permissions.query({name:'geolocation'}).then(function(s){
+      _geoPermesso = s.state;
+      geoRigaRiposo();
+      if(typeof s.addEventListener === 'function')
+        s.addEventListener('change', function(){ _geoPermesso = s.state; geoRigaRiposo(); });
+    }, function(){ geoRigaRiposo(); });
+  } else geoRigaRiposo();
+}catch(e){ geoRigaRiposo(); }
 
 /* ⚠️ ANDROID NON TROVAVA LA POSIZIONE (26/8/2026, provato dall'utente sul suo
    telefono: sul PC funzionava, su Android no). La prima versione chiedeva la
