@@ -253,7 +253,6 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   /* Il rosso su blu non si legge: dentro il foglio l'avviso e' rosa chiaro. */
   #reg-sheet .gb-nota{color:#ffc8c2;}
   #reg-sheet #geo-btn.attesa .gb-nota{color:#b9d0ec;}
-  #reg-sheet #geo-btn.info .gb-nota{color:#b9d0ec;}   /* riga a riposo, vedi .info */
   /* ⚠️ Sul foglio blu un anello blu non si vede: qui e' bianco. */
   #reg-sheet #geo-btn.loc-chiama{animation:geo-anello-pulsa-blu 1.7s ease-in-out infinite;}
   @keyframes geo-anello-pulsa-blu{
@@ -447,11 +446,15 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 /* ⚠️ L'attesa NON e' un guasto: grigio, non rosso. Un messaggio rosso
    mentre il sito sta ancora lavorando fa credere che sia gia' finita male. */
 #geo-btn.attesa .gb-nota{color:#5a6470;font-weight:500;}
-/* ⚠️ TERZO STATO della riga (30/8/2026, in prova sul TEST). Non e' ne' un
-   guasto ne' un'attesa: e' un avviso a riposo, per chi il permesso non l'ha
-   ancora dato. Colore calmo come l'attesa — un rosso qui direbbe che qualcosa
-   e' andato storto quando invece non e' ancora successo niente. */
-#geo-btn.info .gb-nota{display:block;color:#5a6470;font-weight:500;}
+/* ⚠️ LA CODA DEL TITOLO (30/8/2026, in prova sul TEST). Sta sulla STESSA
+   riga di «La mia posizione», non sotto: cosi' il blocco resta di 114 px in
+   tutti e tre i casi, cioe' identico a com'era. La versione a riga separata,
+   provata prima, ne costava 13 e portava la tendina a 15 px dal fondo.
+   Tono minore apposta: e' un'informazione, non un guasto. */
+.gb-t .gb-coda{font-weight:500;opacity:.82;font-size:12.5px;}
+/* Tasto bloccato: il pallino si spegne in un rosso cupo, cosi' si vede a
+   colpo d'occhio che li' non c'e' niente da premere finche' non si sblocca. */
+#geo-btn.bloccato .gb-disco{background:#8a1a12;}
 #loc-input{
   width:100%;box-sizing:border-box;
   padding:8px 30px 8px 32px;         /* spazio a sinistra per la lente, a destra per la × */
@@ -7997,47 +8000,68 @@ function geoNota(msg, attesa){
   // e a riposo l'avviso del permesso (vedi geoRigaRiposo).
   b.classList.toggle('attesa', !!msg && !!attesa);
   b.classList.toggle('avviso', !!msg && !attesa);
-  if(msg) b.classList.remove('info');
-  else geoRigaRiposo();          // finito il messaggio, torna la riga a riposo
+  // Finito il messaggio, l'etichetta torna quella giusta per lo stato di
+  // adesso. ⚠️ regApri() chiama geoNota(''): riaprendo la tendina il tasto
+  // bloccato torna «La mia posizione», che e' il comportamento chiesto.
+  if(!msg){ _geoBloccato = false; geoEtichetta(); }
   if(typeof collocaCanale === 'function') collocaCanale();
 }
 
-/* ⚠️ «è richiesta l'autorizzazione» — IN PROVA SUL TEST dal 30/8/2026.
+/* ⚠️ L'ETICHETTA DEL TASTO, tre stati — IN PROVA SUL TEST dal 30/8/2026.
    Perche': in GA4, sui primi tre giorni, 26 tentativi su 49 finiscono con
    `esito=negato`, cioe' UNO SU DUE preme il tasto e poi dice no al permesso
    del browser. L'ipotesi e' che non se lo aspetti.
-   ⚠️ La riga NON si mostra a tutti: il browser sa gia' come sta messo e lo
-   dice (`navigator.permissions`), quindi non si tira a indovinare —
-   `granted` = ha gia' autorizzato, non c'e' niente da dire e la riga non
-   compare; `denied` = il tasto e' bloccato, e quello e' un altro discorso;
-   `prompt` = la richiesta arrivera' davvero, ed e' l'unico caso in cui serve.
-   Con `change` la riga sparisce da sola nel momento in cui autorizza, senza
+   ⚠️ Il browser sa gia' come sta messo e lo dice (`navigator.permissions`),
+   quindi non si tira a indovinare:
+     · `prompt`  → «La mia posizione · autorizzazione richiesta»
+     · `granted` → «La mia posizione» e basta, non c'e' niente da dire
+     · `denied`  → a riposo «La mia posizione»; se lo premi diventa
+                   «Sbloccala dalle impostazioni» col pallino rosso cupo,
+                   e riaprendo la tendina torna com'era (`regApri` → `geoNota('')`).
+   Con `change` la coda sparisce da sola nel momento in cui autorizza, senza
    ricaricare la pagina.
    ⚠️ Su Safari la domanda non e' supportata: li' si ricade sul mostrarla, che
    e' il comportamento prudente (dire una cosa vera a chi non serviva costa
    meno che tacerla a chi serviva).
-   ⚠️ Il testo sta su UNA riga sola: misurato a 360 px, il tetto e' ~42
-   caratteri e questo ne ha 28. Il blocco passa da 114 a 127 px. */
-var _geoPermesso = null;
-function geoRigaRiposo(){
-  var b = document.getElementById('geo-btn');
-  if(!b || b.classList.contains('attesa') || b.classList.contains('avviso')) return;
-  var mostra = (_geoPermesso === null || _geoPermesso === 'prompt');
-  var n = b.querySelector('.gb-nota');
-  if(n) n.textContent = mostra ? 'è richiesta l’autorizzazione' : '';
-  b.classList.toggle('info', mostra);
+   ⚠️ TUTTO SU UNA RIGA SOLA, e non e' un vezzo: misurati a 360 px, i tre
+   testi stanno in 249, 106 e 179 px e il blocco resta 114 px in tutti e tre i
+   casi, cioe' identico a com'era prima. La versione con la riga sotto al
+   titolo, provata il 30/8, ne costava 13 in piu' e spingeva la tendina a 15 px
+   dal fondo dello schermo. */
+var _geoPermesso = null;   // 'prompt' | 'granted' | 'denied' | null se non si sa
+var _geoBloccato = false;  // ha appena premuto e il browser ha detto no
+function geoEtichetta(){
+  var b = document.getElementById('geo-btn'); if(!b) return;
+  var t = b.querySelector('.gb-t'); if(!t) return;
+  if(b.classList.contains('cerca')) return;   // sta cercando: non si tocca
+  if(_geoBloccato){
+    t.textContent = 'Sbloccala dalle impostazioni';
+    b.classList.add('bloccato');
+    // il messaggio ora sta NEL tasto: la riga sotto si spegne, se no la stessa
+    // cosa e' scritta due volte
+    var n = b.querySelector('.gb-nota');
+    if(n && !GEO_SPIA){ n.textContent = ''; b.classList.remove('avviso','attesa'); }
+  } else {
+    b.classList.remove('bloccato');
+    // ⚠️ La coda si mostra a chi deve ancora decidere. Se il browser non sa
+    //    rispondere (Safari) si mostra lo stesso: dire una cosa vera a chi non
+    //    serviva costa meno che tacerla a chi serviva.
+    t.innerHTML = 'La mia posizione' +
+      ((_geoPermesso === null || _geoPermesso === 'prompt')
+        ? '<span class="gb-coda"> · autorizzazione richiesta</span>' : '');
+  }
   if(typeof collocaCanale === 'function') collocaCanale();
 }
 try{
   if(navigator.permissions && navigator.permissions.query){
     navigator.permissions.query({name:'geolocation'}).then(function(s){
       _geoPermesso = s.state;
-      geoRigaRiposo();
+      geoEtichetta();
       if(typeof s.addEventListener === 'function')
-        s.addEventListener('change', function(){ _geoPermesso = s.state; geoRigaRiposo(); });
-    }, function(){ geoRigaRiposo(); });
-  } else geoRigaRiposo();
-}catch(e){ geoRigaRiposo(); }
+        s.addEventListener('change', function(){ _geoPermesso = s.state; geoEtichetta(); });
+    }, function(){ geoEtichetta(); });
+  } else geoEtichetta();
+}catch(e){ geoEtichetta(); }
 
 /* ⚠️ ANDROID NON TROVAVA LA POSIZIONE (26/8/2026, provato dall'utente sul suo
    telefono: sul PC funzionava, su Android no). La prima versione chiedeva la
@@ -8118,7 +8142,7 @@ if(GEO_SPIA) try{
 function geoTrova(){
   var b = document.getElementById('geo-btn');
   if(!b || b.disabled || isLoading) return;
-  var et = b.querySelector('.gb-t'), vecchio = et.textContent;
+  var et = b.querySelector('.gb-t');
   var chiuso = false, tmr = null, watch = null;
   var miglior = null, attesa = null;
   // ⚠️ null = sta ancora provando, numero = ha fallito con quel codice.
@@ -8145,9 +8169,14 @@ function geoTrova(){
     if(chiuso) return;
     chiuso = true; clearTimeout(tmr); clearTimeout(attesa); stop();
     passi.forEach(clearTimeout);
-    b.disabled = false; b.classList.remove('cerca'); et.textContent = vecchio;
+    b.disabled = false; b.classList.remove('cerca');
+    // ⚠️ L'etichetta NON si ripristina copiando il testo di prima: si
+    //    RICOSTRUISCE dallo stato, se no la coda «autorizzazione richiesta»
+    //    tornerebbe come testo semplice, senza il suo tono minore.
+    if(tipo === 'negato'){ _geoBloccato = true; msg = ''; }   // lo dice il TASTO, non una riga sotto
+    geoEtichetta();
     if(GEO_SPIA && tipo) msg = spia(msg ? msg + ' ' : (tipo + ' '));
-    geoNota(msg);
+    if(msg || !_geoBloccato) geoNota(msg);
     if(tipo){ try{ gtag('event','usa_posizione',
       {esito:tipo, codice:codice||0, precisione:Math.round(prec||0)}); }catch(e){} }
   }
