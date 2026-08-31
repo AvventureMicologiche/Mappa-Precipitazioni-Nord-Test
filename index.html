@@ -790,6 +790,20 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 #channel-logo .v-nome{font-size:23px;line-height:1.02;color:#1b3f6e;letter-spacing:-.3px;
   font-family:'Segoe UI Black','Arial Black','Segoe UI',Arial,sans-serif;font-weight:900;}
 #channel-logo .v-sotto{font-size:13px;font-weight:600;color:#3f5a7a;margin-top:4px;line-height:1.15;}
+/* ⚠️ 21 E NON 23 (31/8/2026). A 23 px «Avventure Micologiche» NON ci sta nella
+   colonna accanto ad Archie e va a capo in «Avventure» / «Micologiche»: era cosi'
+   da sempre. Misurato: la colonna e' larga 249 px, a 23 px il nome ne chiede di
+   piu', a 21 ci sta su UNA riga. Archie resta 80 px. */
+#channel-logo .v-nome{font-size:21px;}
+/* Il ringraziamento sta SOTTO, a tutta larghezza: nella colonna stretta
+   andrebbe a capo quattro volte e la scheda diventerebbe una colonna
+   sbilenca. ⚠️ Quando parte la vetrina l'innerHTML di #channel-logo viene
+   riscritto, quindi questa riga sparisce da sola: la scheda col video non
+   cambia di un pixel. */
+#channel-logo .v-grazie{margin-top:9px;padding-top:9px;
+  border-top:1px solid rgba(27,63,110,.14);
+  font-size:13px;line-height:1.35;color:#3f5a7a;font-weight:600;}
+#channel-logo .v-grazie b{color:#1b3f6e;font-weight:800;}
 #channel-logo .v-btn.v-iscr{font-size:17px;margin-top:9px;padding:9px 0 10px;
   font-family:'Segoe UI Black','Arial Black','Segoe UI',Arial,sans-serif;}
 
@@ -1424,9 +1438,9 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <div class="v-dx">
           <div class="v-occhio v-iscr"><svg width="16" height="12" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#FF0000"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg> Canale YouTube</div>
           <div class="v-nome">Avventure Micologiche</div>
-          <div class="v-sotto">Questo sito è free, sostienici</div>
         </div>
       </div>
+      <div class="v-grazie"><b>Grazie a tutti:</b> avete fatto oltre <b>35.000 analisi</b> in poche settimane. Se vi siamo stati utili, lasciate un like e un'iscrizione.</div>
       <div class="v-btn v-iscr">ISCRIVITI</div>
     </a>
 
@@ -1677,7 +1691,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
          onclick="try{gtag('event','click_youtube',{pulsante:'pillola-mobile'})}catch(e){}"
          id="channel-pill">
         <img src="archie-avatar.png" alt="Archie">
-        <div class="cp-t">Archie ti aspetta su YouTube<small>Avventure Micologiche · iscriviti</small></div>
+        <div class="cp-t">Grazie: oltre 35.000 analisi<small>Lasciate un like e un'iscrizione</small></div>
         <div class="cp-yt">
           <svg width="26" height="19" viewBox="0 0 42 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <rect width="42" height="30" rx="6" fill="#FF0000"/>
