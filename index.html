@@ -10182,14 +10182,17 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
     cu.parentNode.insertBefore(riga,cu); riga.appendChild(cu);
     cu.innerHTML='<span class="rd-ic">\uD83D\uDCC5</span> Scegli date';
     var b=document.createElement('div');
-    /* ⚠️ IL NOME E' «RADAR METEO», E «LIVE» NON CI STA (31/8/2026).
-       Chiesto «Radar meteo live»: MISURATO a 360 px, quel testo va a capo e
-       fa il tasto alto 77 px contro i 54 del gemello «Scegli date», che e'
-       proprio lo scalino che si nota. Su una riga ci stanno «Radar meteo»,
-       «Radar pioggia» e «Radar live», tutti a 54 px.
-       Si tiene la sua parola e si lascia cadere «live», che il pannello
-       dice gia' da solo col primo tasto «Adesso». */
-    b.className='tp-custom-btn rd-btn'; b.id='btn-radar'; b.innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar meteo';
+    /* ⚠️ IL NOME E' «DIRETTA RADAR» (31/8/2026, sua proposta).
+       MISURATO a 360 px, altezza del tasto contro i 54 px del gemello
+       «Scegli date»: «Radar meteo» 54, «Diretta radar» 54, ma
+       «Radar in diretta» 77 e «Radar meteo live» 77, cioe' vanno a capo
+       e fanno lo scalino che si nota subito. Restano quindi solo le
+       forme corte.
+       Fra le due si sceglie «Diretta radar» perche' messa accanto
+       all'altro tasto la coppia si legge «Scegli date | Diretta radar»:
+       il passato e l'adesso, che e' esattamente la differenza fra i due
+       modi. E dice «live» in italiano, che era la parola chiesta. */
+    b.className='tp-custom-btn rd-btn'; b.id='btn-radar'; b.innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Diretta radar';
     riga.appendChild(b);
     b.addEventListener('click',function(){ acceso?esci():entra(); });
     // ⚠️ Il tasto «Indietro» della legenda chiama hideLegendMobile(), che in
@@ -10330,7 +10333,7 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
     if(!acceso) return;
     acceso=false; sorveglia(false); pulisci(); ultimoBuono=null; window._radarModo=null;
     document.body.classList.remove('modo-radar');
-    el('btn-radar').innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar meteo';
+    el('btn-radar').innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Diretta radar';
     heat(true); pallini(true);
     /* ⚠️ USCENDO SI TORNA ALL'INQUADRATURA STANDARD DELLA REGIONE, non alla
        vista che c'era prima di entrare (cambiato il 31/8/2026 su sua
