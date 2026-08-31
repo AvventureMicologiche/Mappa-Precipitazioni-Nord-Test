@@ -9939,5 +9939,332 @@ function loadDefaultMarkers(){
 })();
 </script>
 
+<style>
+/* Modo radar — in prova sul sito di test dal 31/8/2026 */
+.rd-coppia{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.rd-coppia > *{margin:0 !important;width:auto !important}
+.rd-btn{text-align:center;cursor:pointer;position:relative;overflow:visible}
+/* ⚠️ Il «new» e' uno pseudo-elemento, non testo dentro il tasto: cosi'
+   sopravvive all'innerHTML che cambia entrando in modo radar, e sparisce da
+   solo quando il tasto diventa «Chiudi radar». */
+#btn-radar::after{content:'new';position:absolute;top:-6px;right:-4px;
+  background:#e12b2b;color:#fff;font-size:8.5px;font-weight:700;letter-spacing:.3px;
+  padding:1px 4px;border-radius:6px;line-height:1.35;pointer-events:none}
+.modo-radar #btn-radar::after{display:none}
+/* tre tasti al posto della riga delle statistiche: il pannello non cresce */
+.rd-durate{display:none;grid-template-columns:repeat(4,1fr);gap:5px;margin:6px 0 4px}
+.modo-radar .rd-durate{display:grid}
+.rd-d{
+  padding:8px 2px;text-align:center;font-size:12.5px;font-weight:600;
+  border:1px solid #cfd8e6;border-radius:7px;background:#f0f4fb;color:#1b3f6e;
+  cursor:pointer;white-space:nowrap;
+}
+.rd-d.on{background:#1b3f6e;color:#fff;border-color:#1b3f6e}
+/* la previsione si veste diversa: non e' una misura */
+.rd-d.rd-prev{background:#fff;border-style:dashed}
+.rd-d.rd-prev.on{background:#5a6470;border-color:#5a6470;color:#fff}
+.rd-nota{display:none;font-size:11.5px;line-height:1.35;color:#5a6470;margin:0 0 4px}
+/* ⚠️ LA LEGENDA E' VERA, non inventata: i colori sono quelli della tabella
+   ufficiale dello schema «Universal Blue» (rainviewer_api_colors_table.csv,
+   la stessa palette che serve LibreWXR), e i millimetri all'ora vengono dai
+   dBZ con la formula di Marshall-Palmer Z=200*R^1.6:
+     20 dBZ #00a3e0 = 0,6 mm/h    35 dBZ #ffee00 = 5,6
+     30 dBZ #005588 = 2,7         40 dBZ #ffaa00 = 11,5
+     45 dBZ #ff4400 = 23,7        50 dBZ #c10000 = 48,6 */
+.rd-scala{display:none;margin:2px 0 4px}
+.modo-radar .rd-scala{display:block}
+.modo-radar.sat-on .rd-scala{display:none}
+.rd-barra{height:10px;border-radius:3px;
+  background:linear-gradient(90deg,#00a3e0 0%,#005588 26%,#ffee00 45%,#ffaa00 63%,#ff4400 81%,#c10000 100%)}
+.rd-num{display:flex;justify-content:space-between;font-size:10px;color:#8a93a0;margin-top:1px}
+.modo-radar .rd-nota{display:block}
+/* in modo radar il cumulato non esiste: via barra, numeri e tasto Immagine */
+.modo-radar .grad,
+.modo-radar .grad-l,
+.modo-radar .stats-row,
+.modo-radar #btn-shot{display:none !important}
+/* il velo azzurro della regione si mangerebbe le macchie di pioggia */
+.modo-radar #map path{fill-opacity:0 !important}
+.modo-radar path.conf-pulse{stroke-opacity:1 !important;stroke-width:2.6px}
+/* col radar acceso non pulsa niente: sono richiami per scegliere la regione */
+.modo-radar path.conf-pulse,
+.modo-radar .panel-pulse,
+.modo-radar .panel-pulse-ring,
+.modo-radar #loc-input.loc-chiama,
+.modo-radar #geo-btn.loc-chiama{animation:none !important}
+/* il pannello legenda esiste solo con un'analisi: in modo radar serve sempre */
+/* ⚠️ Sparisce SOLO il riquadro di destra del desktop (`#channel-logo`, 157 px
+   prima delle date e 0 dopo): quello copre la mappa. La PILLOLA del telefono
+   (`#channel-pill`) resta, perche' non e' mai sparita nemmeno scegliendo un
+   periodo e non c'e' ragione di farla sparire qui. */
+.modo-radar #channel-logo{display:none !important}
+.modo-radar #legend-panel{display:block !important}
+@media(max-width:900px){.modo-radar #legend-panel{transform:translateY(0) !important}}
+@media(max-width:900px){
+  #reg-sheet .rd-d{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+  #reg-sheet .rd-d.on{background:#fff;color:#1b3f6e}
+}
+/* ⚠️ LE NUVOLE. L'immagine a infrarossi copre il 100% della tessera e il
+   cielo sereno non e' nero: e' un grigio medio (luminosita' 92 su 255,
+   misurata). Messa cosi' e' un velo sulla mappa, ed e' il motivo per cui
+   «non si vedevano». Rimedio in due tempi: prima si stira il contrasto in
+   modo che il sereno finisca a ZERO e le nuvole restino alte, poi si fonde
+   in `screen`, dove il nero non dipinge niente. Misurato sulla catena qui
+   sotto: sereno 92 -> 0, nuvola media -> 224, nuvola alta -> 255. */
+/* ⚠️ NUVOLE GRIGIE, non bianche. Prima si stira il contrasto (sereno a 0,
+   nuvole 224-255), poi si INVERTE — il sereno diventa bianco e le nuvole
+   scure — e si fonde in `multiply`, dove il bianco non dipinge niente e lo
+   scuro vela. Cielo sereno invisibile, nuvole grigie sopra la mappa: e' la
+   resa dei siti meteo. Con `screen` erano bianche e sparivano sulle zone
+   chiare della mappa. */
+.modo-radar.sat-on .leaflet-radar-pane{
+  filter:grayscale(1) brightness(.875) contrast(2.70) brightness(1.8) invert(1);
+  mix-blend-mode:multiply;
+}
+</style>
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   «MODO RADAR» — 31 agosto 2026
+   ⚠️ IN PROVA SUL SITO DI TEST dal 31/8/2026. Non e' in produzione.
+
+   ⚠️ IL DPC E' STATO TOLTO DEL TUTTO. Non per le cumulate sbagliate (quelle
+   erano gia' fuori), ma per una cosa che si vede a occhio e che ho misurato
+   contando i colori della stessa tessera:
+
+     livello      velo grigio   pioggia vera
+     DPC vmi        41,5%          0,02%
+     DPC sri        41,4% (nero)   0,06%
+     LibreWXR        0,6%          2,52%
+
+   Il DPC disegna la MASCHERA DELLA COPERTURA RADAR come un velo semitrasparente
+   su mezza Italia — `RGBA(130,130,130,51)` — e sotto, quando non piove, non c'e'
+   niente. Il risultato e' una coltre grigia addosso alla regione. LibreWXR
+   invece e' trasparente al 96% e colorato solo dove piove davvero.
+   Con lui cade anche il vantaggio dello zoom 13 del DPC: serviva a ingrandire
+   il velo grigio.
+
+   ⚠️ IL FLASH DELL'ANIMAZIONE ERA UN MIO ERRORE. Creavo uno strato nuovo per
+   ogni fotogramma e toglievo il vecchio al caricamento (o dopo 1,5 s) mentre
+   il passo era 700 ms: gli strati si accavallavano e fra l'uno e l'altro si
+   vedeva il vuoto. Ora gli strati si creano TUTTI UNA VOLTA con opacita' 0 e
+   si accende solo quello giusto: nessuna tessera viene ricaricata, nessun
+   buco fra un fotogramma e l'altro. E' la ricetta dell'esempio ufficiale.
+   Prezzo: i fotogrammi si scaricano tutti all'inizio (12 x ~40 tessere per le
+   2 ore), quindi l'animazione parte dopo un attimo invece che subito.
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+  var API='https://api.librewxr.net/public/weather-maps.json';
+  var acceso=false, scelta=null, vistaPrec=null;
+  var strati=[], idx=-1, timer=null, fisso=null;
+  var cache=null, cacheQuando=0, ultimoBuono=null;
+
+  /* ⚠️ LA SCORTA: cosa succede quando LibreWXR non risponde.
+     1. TETTO DI 3 SECONDI e una sola riprova (6 al peggio). Un tasto che gira all'infinito
+        e' peggio di un tasto che dice di no: e' la lezione del loader appeso
+        ad ARPA del 24/8/2026.
+     2. Se cade ENTRANDO, il modo NON si apre: si resta sulla mappa delle
+        piogge passate, che funziona sempre, e si dice perche' usando la riga
+        che c'e' gia' (#tp-status), la stessa di «Massimo 3 regioni».
+     3. Se cade mentre il radar e' GIA' acceso non si spegne niente: resta
+        l'ultimo fotogramma buono e la riga sotto dichiara di quando e'. Una
+        mappa vecchia dichiarata batte uno schermo vuoto.
+     4. La risposta si tiene 60 secondi in cache: cambiare tasto non deve
+        rifare la stessa domanda, e ogni domanda in meno e' un guasto in meno.
+     ⚠️ NESSUN RIPIEGO SU UN'ALTRA FONTE: RainViewer e' escluso per la licenza
+     («solo uso personale») e il DPC per il velo grigio su mezza Italia.
+     Ripiegare su una fonte gia' giudicata inadatta sarebbe peggio del
+     messaggio onesto. */
+  function chiedi(){
+    if(cache && Date.now()-cacheQuando<60000) return Promise.resolve(cache);
+    var una=function(){
+      return new Promise(function(ok,ko){
+        var scaduto=setTimeout(function(){ ko(new Error('tetto')); },3000);   // 3 s + una riprova = 6 al peggio
+        fetch(API).then(function(r){ return r.ok?r.json():Promise.reject(); })
+          .then(function(j){ clearTimeout(scaduto); ok(j); },
+                function(e){ clearTimeout(scaduto); ko(e); });
+      });
+    };
+    return una().catch(una).then(function(j){ cache=j; cacheQuando=Date.now(); return j; });
+  }
+  function caduta(){
+    if(ultimoBuono){ nota('⚠️ Radar non aggiornato: ultimo dato delle '+ultimoBuono); return; }
+    esci();
+    var a=el('tp-status');
+    if(a){ a.className='error'; a.textContent='⚠️ Radar non raggiungibile, riprova fra poco';
+           clearTimeout(a._t); a._t=setTimeout(function(){
+             if(a.textContent.indexOf('Radar non raggiungibile')>-1){ a.textContent=''; a.className=''; }
+           },3500); }
+  }
+
+  function map(){ return window._mapDebug; }
+  function el(id){ return document.getElementById(id); }
+  function regioniAttive(){
+    return [].map.call(document.querySelectorAll('#region-panel input[type=checkbox]:checked'),
+                       function(c){return c.value;});
+  }
+
+  function monta(){
+    var cu=el('btn-custom'); if(!cu) return;
+    var riga=document.createElement('div'); riga.className='rd-coppia';
+    cu.parentNode.insertBefore(riga,cu); riga.appendChild(cu);
+    cu.innerHTML='\uD83D\uDCC5 Scegli date';
+    var b=document.createElement('div');
+    // ⚠️ «Radar» da solo non dice niente a chi non sa cosa sia. La parola
+    //    resta (chi la conosce la cerca) ma accanto c'e' cosa mostra.
+    //    Misurato: nel tasto ci stanno 138 px, «Radar live» ne occupa 83.
+    b.className='tp-custom-btn rd-btn'; b.id='btn-radar'; b.innerHTML='\uD83C\uDF27\uFE0F Radar live';
+    riga.appendChild(b);
+    b.addEventListener('click',function(){ acceso?esci():entra(); });
+    [].forEach.call(document.querySelectorAll('#time-panel .tp-btn, #btn-custom, #btn-funghi'),
+      function(x){ x.addEventListener('click',function(){ if(acceso) esci(); }); });
+
+    var lp=el('legend-panel'); if(!lp) return;
+    var st=lp.querySelector('.stats-row');
+    var d=document.createElement('div'); d.className='rd-durate'; d.id='rd-durate';
+    [{id:'ora',  t:'Adesso',       tit:'la pioggia che sta cadendo adesso'},
+     {id:'due',  t:'\u25B6 2 ore',  tit:'le ultime due ore, animate'},
+     {id:'prev', t:'+40 min',      tit:'dove si sposta nei prossimi 40 minuti: previsione, non misura'},
+     {id:'sat',  t:'Nuvole',       tit:'satellite a infrarossi: dice dove sono le nuvole, NON dove piove'}
+    ].forEach(function(x){
+      var c=document.createElement('div');
+      c.className='rd-d'+(x.id==='prev'||x.id==='sat'?' rd-prev':''); c.dataset.id=x.id;
+      c.textContent=x.t; c.title=x.tit;
+      c.addEventListener('click',function(){
+        // ⚠️ Ripremendo il tasto gia' acceso si torna ad «Adesso»: durante
+        //    un'animazione quello e' il gesto naturale per fermarla, e non
+        //    serve un tasto in piu' per farlo.
+        if(scelta===x.id && x.id!=='ora') vai('ora'); else vai(x.id);
+      });
+      d.appendChild(c);
+    });
+    var sc=document.createElement('div'); sc.className='rd-scala'; sc.id='rd-scala';
+    sc.innerHTML='<div class="rd-barra"></div>'
+      +'<div class="rd-num"><span>0,5</span><span>3</span><span>6</span>'
+      +'<span>12</span><span>24</span><span>50 mm/h</span></div>';
+    var n=document.createElement('div'); n.className='rd-nota'; n.id='rd-nota';
+    st.parentNode.insertBefore(d,st); st.parentNode.insertBefore(sc,st); st.parentNode.insertBefore(n,st);
+  }
+
+  function entra(){
+    if(!map()) return;
+    if(!regioniAttive().length){
+      var a=el('tp-status');
+      if(a){ a.className='error'; a.textContent='\u26A0\uFE0F Prima scegli la regione';
+             clearTimeout(a._t); a._t=setTimeout(function(){
+               if(a.textContent.indexOf('Prima scegli')>-1){ a.textContent=''; a.className=''; }
+             },2800); }
+      return;
+    }
+    acceso=true;
+    document.body.classList.add('modo-radar');
+    el('btn-radar').innerHTML='\u2715 Chiudi radar';
+    heat(false); pallini(false);
+    var m=map();
+    vistaPrec={c:m.getCenter(),z:m.getZoom()};
+    var pts=[]; m.eachLayer(function(l){ if(l instanceof L.CircleMarker) pts.push(l.getLatLng()); });
+    if(pts.length>2){
+      m.fitBounds(L.latLngBounds(pts),{padding:[40,40],animate:false});
+      m.setZoom(Math.max(5,m.getZoom()-0.5),{animate:false});
+    }
+    if(typeof showLegendMobile==='function' && window.innerWidth<=900){ try{ showLegendMobile(); }catch(e){} }
+    vai('ora');
+  }
+  function esci(){
+    if(!acceso) return;
+    acceso=false; pulisci(); ultimoBuono=null; document.body.classList.remove('sat-on');
+    document.body.classList.remove('modo-radar');
+    el('btn-radar').innerHTML='\uD83C\uDF27\uFE0F Radar live';
+    heat(true); pallini(true);
+    if(vistaPrec){ map().setView(vistaPrec.c,vistaPrec.z,{animate:true}); vistaPrec=null; }
+    var t=el('leg-title'); if(t&&t._vecchio!=null){ t.textContent=t._vecchio; t._vecchio=null; }
+  }
+  function heat(si){
+    var c=document.querySelector('#map .leaflet-overlay-pane canvas'); if(c) c.style.display=si?'':'none';
+  }
+  function pallini(si){ var p=map().getPane('markerPane'); if(p) p.style.display=si?'':'none'; }
+
+  function pulisci(){
+    if(timer){ clearInterval(timer); timer=null; }
+    var m=map();
+    strati.forEach(function(l){ try{ m.removeLayer(l); }catch(e){} });
+    strati=[]; idx=-1;
+    if(fisso){ try{ m.removeLayer(fisso); }catch(e){} fisso=null; }
+  }
+
+  function vai(id){
+    pulisci(); scelta=id;
+    [].forEach.call(document.querySelectorAll('.rd-d'),function(c){ c.classList.toggle('on', c.dataset.id===id); });
+    var t=el('leg-title');
+    var tit={ora:'Radar \u00b7 adesso', due:'Radar \u00b7 ultime 2 ore',
+             prev:'Radar \u00b7 prossimi 40 minuti', sat:'Nuvole \u00b7 satellite'}[id];
+    if(t){ if(t._vecchio==null) t._vecchio=t.textContent; t.textContent=tit; }
+    nota('carico\u2026');
+    chiedi()
+      .then(function(j){
+        var h=j.host;
+        var lista, sat=(id==='sat');
+        if(id==='prev')      lista=(j.radar&&j.radar.nowcast)||[];
+        else if(id==='sat')  lista=((j.satellite&&j.satellite.infrared)||[]).slice(-1);
+        else if(id==='ora')  lista=((j.radar&&j.radar.past)||[]).slice(-1);
+        else                 lista=(j.radar&&j.radar.past)||[];
+        if(!lista.length) throw 0;
+        // ⚠️ satellite e radar hanno due formati di indirizzo diversi
+        var coda = sat ? '/256/{z}/{x}/{y}/0/0_0.png' : '/256/{z}/{x}/{y}/2/1_1.png';
+        crea(lista.map(function(f){ return {t:f.time, u:h+f.path+coda}; }), sat);
+      })
+      .catch(caduta);
+  }
+
+  // TUTTI gli strati insieme, opacita' 0, e si accende solo quello giusto:
+  // e' cosi' che si toglie il flash.
+  function crea(frames, sat){
+    var m=map();
+    if(!m.getPane('radar')){
+      m.createPane('radar');
+      m.getPane('radar').style.zIndex=450;
+      m.getPane('radar').style.pointerEvents='none';
+    }
+    document.body.classList.toggle('sat-on', !!sat);
+    // col trattamento sopra il satellite si puo' tenere pieno: il sereno sparisce
+    var OP = sat?0.62:0.95;   // in multiply il pieno annerirebbe troppo
+    strati=frames.map(function(f){
+      var l=L.tileLayer(f.u,{opacity:0,pane:'radar',maxNativeZoom:6,
+        attribution:'radar <a href="https://librewxr.net/" target="_blank" rel="noopener">LibreWXR</a> / OPERA (CC BY)'});
+      l._quando=f.t; l.addTo(m); return l;
+    });
+    var primo=strati.length-1;
+    if(frames.length>1 && scelta!=='ora') primo=0;
+    accendi(primo,OP);
+    if(frames.length>1){
+      // si parte ad animare solo quando il primo fotogramma e' davvero pronto
+      var avvia=function(){
+        if(timer||!acceso) return;
+        timer=setInterval(function(){ accendi((idx+1)%strati.length,OP); },700);
+      };
+      strati[0].on('load',avvia); setTimeout(avvia,2500);
+    }
+  }
+  function accendi(i,OP){
+    idx=i;
+    strati.forEach(function(l,k){ l.setOpacity(k===i?OP:0); });
+    var f=strati[i];
+    var ora=new Date(f._quando*1000).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    ultimoBuono=ora;   // lo usa la scorta: e' l'ora dell'ultimo fotogramma mostrato
+    // ⚠️ Le scritte non ripetono quello che dice gia' il tasto: «+40 min»
+    //    dichiara da solo che e' una previsione, e ribadirlo sotto suona come
+    //    una scusa. Stessa ragione per il satellite: si dice cos'e' e a che ora.
+    if(scelta==='sat')      nota('Mappa nuvole satellitare \u00b7 h '+ora);
+    else if(scelta==='prev')nota('Previsione per le '+ora+' \u00b7 LibreWXR');
+    else                    nota('Radar \u00b7 h '+ora+' \u00b7 composito europeo OPERA');
+  }
+  function nota(t){ var n=el('rd-nota'); if(n) n.textContent=t; }
+
+  var giri=0;
+  var att=setInterval(function(){
+    if(window._mapDebug&&window.L&&el('btn-custom')&&el('legend-panel')){ clearInterval(att); monta(); }
+    else if(++giri>75) clearInterval(att);
+  },200);
+}());
+</script>
 </body>
 </html>
