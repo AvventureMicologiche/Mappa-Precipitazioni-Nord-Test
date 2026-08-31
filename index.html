@@ -10011,10 +10011,17 @@ function loadDefaultMarkers(){
    (`#channel-pill`) resta, perche' non e' mai sparita nemmeno scegliendo un
    periodo e non c'e' ragione di farla sparire qui. */
 .modo-radar #channel-logo{display:none !important}
+/* i pallini delle stazioni sono cerchi SVG; il segnaposto della ricerca e
+   quello della posizione sono div, e restano */
+body.senza-pallini #map .leaflet-marker-pane svg{display:none}
 /* ⚠️ Sul telefono il pannello del periodo restava a sbucare sopra quello
    del radar: due intestazioni una sull'altra. In modo radar comanda uno
    solo, e il ritorno ai giorni si fa con «Indietro» o col tasto del radar. */
 @media(max-width:900px){.modo-radar #time-panel{display:none !important}}
+/* ⚠️ «↩ Indietro» deve esserci anche nel radar. Su desktop il sito lo
+   mostra solo con un'analisi in corso, quindi entrando nel radar senza
+   periodo non c'era modo di tornare indietro se non col tasto del radar. */
+@media(min-width:901px){.modo-radar #btn-reset-regions{display:block !important}}
 .modo-radar #legend-panel{display:block !important}
 @media(max-width:900px){.modo-radar #legend-panel{transform:translateY(0) !important}}
 @media(max-width:900px){
@@ -10172,6 +10179,11 @@ function loadDefaultMarkers(){
         navigator.clipboard.writeText(url).then(fatto,function(){});
       }
     },true);
+    /* ↩ Indietro del desktop: prima si esce dal radar, poi il sito fa il suo
+       resetToStart. Cosi' il tasto vuol dire la stessa cosa in tutti e due i
+       modi, che e' quello che uno si aspetta. */
+    var rr=el('btn-reset-regions');
+    if(rr) rr.addEventListener('click',function(){ if(acceso) esci(false); },true);
     var ind=el('leg-back-btn');
     if(ind) ind.addEventListener('click',function(e){
       if(acceso){ e.stopImmediatePropagation(); e.preventDefault(); esci(); }
@@ -10238,6 +10250,7 @@ function loadDefaultMarkers(){
     vistaPrec={c:m.getCenter(),z:m.getZoom()};
     var pts=[]; m.eachLayer(function(l){ if(l instanceof L.CircleMarker) pts.push(l.getLatLng()); });
     if(typeof showLegendMobile==='function' && window.innerWidth<=900){ try{ showLegendMobile(); }catch(e){} }
+    sorveglia(true);
     /* ⚠️ L'INQUADRATURA SI FA NELLA STRISCIA VISIBILE, non sulla mappa intera.
        Sul telefono il pannello copre meta' schermo: un fitBounds centrato
        mette la regione sotto al pannello, ed e' quello che si vedeva sulla
@@ -10246,20 +10259,8 @@ function loadDefaultMarkers(){
        Due tempi, perche' il pannello arriva con una transizione: subito con
        quello che c'e', e di nuovo dopo mezzo secondo a pannello fermo. */
     if(pts.length>2){
-      var bb=L.latLngBounds(pts);
-      var inquadra=function(){
-        var giu=24;
-        if(window.innerWidth<=900){
-          var lp=el('legend-panel'), mp=el('map');
-          if(lp&&mp){
-            var r=lp.getBoundingClientRect(), mb=mp.getBoundingClientRect();
-            if(r.height>40) giu=Math.max(24, mb.bottom-Math.max(r.top,mb.top)+16);
-          }
-        }
-        m.fitBounds(bb,{paddingTopLeft:L.point(24,24),paddingBottomRight:L.point(24,giu),animate:false});
-        m.setZoom(Math.max(5,m.getZoom()-0.5),{animate:false});
-      };
-      inquadra(); setTimeout(function(){ if(acceso) inquadra(); },550);
+      inquadra();
+      setTimeout(function(){ if(acceso) inquadra(); },550);
     }
     vai('ora');
   }
@@ -10273,7 +10274,7 @@ function loadDefaultMarkers(){
      e la lascia fare a chi di dovere. */
   function esci(ripristina){
     if(!acceso) return;
-    acceso=false; pulisci(); ultimoBuono=null; window._radarModo=null;
+    acceso=false; sorveglia(false); pulisci(); ultimoBuono=null; window._radarModo=null;
     document.body.classList.remove('modo-radar');
     el('btn-radar').innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar live';
     heat(true); pallini(true);
@@ -10281,10 +10282,56 @@ function loadDefaultMarkers(){
     vistaPrec=null;
     var t=el('leg-title'); if(t&&t._vecchio!=null){ t.textContent=t._vecchio; t._vecchio=null; }
   }
+  /* ⚠️ L'INQUADRATURA E' UNA FUNZIONE A SE', perche' la richiama anche il
+     sorvegliante qui sotto: in una data normale cambiare regione rifa'
+     l'inquadratura, e nel radar deve fare lo stesso. Si misura la striscia
+     lasciata libera dai pannelli, come centraRegioneInStriscia. */
+  function inquadra(){
+    var m=map(); if(!m) return;
+    var pts=[]; m.eachLayer(function(l){ if(l instanceof L.CircleMarker) pts.push(l.getLatLng()); });
+    if(pts.length<3) return;
+    var giu=24;
+    if(window.innerWidth<=900){
+      var lp=el('legend-panel'), mp=el('map');
+      if(lp&&mp){
+        var r=lp.getBoundingClientRect(), mb=mp.getBoundingClientRect();
+        if(r.height>40) giu=Math.max(24, mb.bottom-Math.max(r.top,mb.top)+16);
+      }
+    }
+    m.fitBounds(L.latLngBounds(pts),{paddingTopLeft:L.point(24,24),paddingBottomRight:L.point(24,giu),animate:false});
+    m.setZoom(Math.max(5,m.getZoom()-0.5),{animate:false});
+  }
+  /* ⚠️ SORVEGLIANTE DELLE REGIONI. Non si ascoltano le caselle, perche' su
+     telefono la regione si sceglie da una tendina che e' un altro pezzo di
+     interfaccia: si guarda il RISULTATO, cioe' quanti pallini ci sono in
+     mappa. Se cambiano, la regione e' cambiata e si riinquadra. Un giro al
+     secondo, solo mentre il radar e' acceso. */
+  var quanti=0, guardia=null;
+  function sorveglia(si){
+    if(guardia){ clearInterval(guardia); guardia=null; }
+    if(!si) return;
+    quanti=contaPallini();
+    guardia=setInterval(function(){
+      if(!acceso) return;
+      var n=contaPallini();
+      if(n!==quanti && n>2){ quanti=n; inquadra(); }
+    },1000);
+  }
+  function contaPallini(){
+    var n=0, m=map(); if(!m) return 0;
+    m.eachLayer(function(l){ if(l instanceof L.CircleMarker) n++; });
+    return n;
+  }
   function heat(si){
     var c=document.querySelector('#map .leaflet-overlay-pane canvas'); if(c) c.style.display=si?'':'none';
   }
-  function pallini(si){ var p=map().getPane('markerPane'); if(p) p.style.display=si?'':'none'; }
+  /* ⚠️ SI NASCONDONO SOLO I PALLINI, NON TUTTO IL PANNELLO. Prima spegnevo
+     `markerPane` intero, ma li' dentro non ci sono solo le stazioni: ci
+     stanno anche il SEGNAPOSTO della localita' cercata e quello de «La mia
+     posizione», che sono divIcon. Risultato: cercavi un paese e il
+     segnaposto non compariva. Adesso lo fa il CSS, che spegne il solo
+     disegno SVG dei cerchi e lascia in piedi i marcatori a div. */
+  function pallini(si){ document.body.classList.toggle('senza-pallini', !si); }
 
   function pulisci(){
     if(timer){ clearInterval(timer); timer=null; }
