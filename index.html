@@ -8785,6 +8785,12 @@ function buildShareUrl(){
   // SCARTATO: allargava di due livelli da PC a telefono e stringeva di due
   // nell'altro verso. Chi condivide si aspetta la stessa SCALA, non la stessa
   // area. Lo zoom viaggia grezzo.
+  // ⚠️ IN MODO RADAR IL LINK DEVE PORTARE IL RADAR (31/8/2026). Senza
+  //    questa riga si copiava il link dell'ANALISI di prima: guardavi il
+  //    radar e mandavi la mappa dei 10 giorni. Le date restano nel link e non
+  //    danno fastidio: chi riceve entra in radar e, chiudendolo, si ritrova
+  //    l'analisi.
+  if(window._radarModo) p.set('radar', window._radarModo);
   return location.origin+location.pathname+'?'+p.toString();
 }
 window.buildShareUrl=buildShareUrl;
@@ -9964,8 +9970,10 @@ function loadDefaultMarkers(){
   cursor:pointer;white-space:nowrap;
 }
 .rd-d.on{background:#1b3f6e;color:#fff;border-color:#1b3f6e}
-/* la previsione si veste diversa: non e' una misura */
-.rd-d.rd-prev{background:#fff;border-style:dashed}
+/* ⚠️ I due tasti che non sono una misura si distinguono col BORDO
+   TRATTEGGIATO, non col fondo: bianchi in mezzo agli altri azzurrini
+   sembravano spenti o di un'altra famiglia. */
+.rd-d.rd-prev{border-style:dashed}
 .rd-d.rd-prev.on{background:#5a6470;border-color:#5a6470;color:#fff}
 .rd-nota{display:none;font-size:11.5px;line-height:1.35;color:#5a6470;margin:0 0 4px}
 /* ⚠️ LA LEGENDA E' VERA, non inventata: i colori sono quelli della tabella
@@ -10029,7 +10037,7 @@ function loadDefaultMarkers(){
   /* la spinta finale e' 1.2 e non 1.8: cosi' le nuvole restano GRIGIO CHIARO
      invece di annerire. Col multiply al 35% una nuvola media scurisce la
      mappa al 79% e una densa al 65%: un velo, non una macchia. */
-  filter:grayscale(1) brightness(.875) contrast(2.70) brightness(1.2) invert(1) blur(1.4px);
+  filter:grayscale(1) brightness(.875) contrast(2.70) invert(1) blur(1.6px);
   mix-blend-mode:multiply;
 }
 /* ⚠️ Il blur va messo sul PANNELLO e non sulle singole tessere: applicato
@@ -10162,6 +10170,20 @@ function loadDefaultMarkers(){
     sc.innerHTML='<div class="rd-barra"></div>'
       +'<div class="rd-num"><span>0,5</span><span>3</span><span>6</span>'
       +'<span>12</span><span>24</span><span>50 mm/h</span></div>';
+    /* ⚠️ CHI RICEVE UN LINK COL RADAR entra in modo radar. Si aspetta che
+       la regione del link sia stata selezionata (il sito la spunta da solo
+       leggendo ?r=), poi si entra sulla durata scritta nel link. Tetto di
+       15 secondi e poi si lascia perdere in silenzio: un link vecchio o
+       storto non deve rompere l'apertura del sito. */
+    try{
+      var q=new URLSearchParams(location.search).get('radar');
+      if(q && ['ora','due','prev','sat'].indexOf(q)>-1){
+        var giri=0, att2=setInterval(function(){
+          if(regioniAttive().length){ clearInterval(att2); entra(); vai(q); }
+          else if(++giri>75) clearInterval(att2);
+        },200);
+      }
+    }catch(e){}
     var n=document.createElement('div'); n.className='rd-nota'; n.id='rd-nota';
     st.parentNode.insertBefore(d,st); st.parentNode.insertBefore(sc,st); st.parentNode.insertBefore(n,st);
   }
@@ -10178,6 +10200,7 @@ function loadDefaultMarkers(){
     }
     acceso=true;
     document.body.classList.add('modo-radar');
+    window._radarModo=scelta||'ora';   // lo legge buildShareUrl
     el('btn-radar').innerHTML='\u2715 Chiudi radar';
     heat(false); pallini(false);
     var m=map();
@@ -10219,7 +10242,8 @@ function loadDefaultMarkers(){
      e la lascia fare a chi di dovere. */
   function esci(ripristina){
     if(!acceso) return;
-    acceso=false; pulisci(); ultimoBuono=null; document.body.classList.remove('sat-on');
+    acceso=false; pulisci(); ultimoBuono=null; window._radarModo=null;
+    document.body.classList.remove('sat-on');
     document.body.classList.remove('modo-radar');
     el('btn-radar').innerHTML='\uD83C\uDF27\uFE0F Radar live';
     heat(true); pallini(true);
@@ -10242,6 +10266,7 @@ function loadDefaultMarkers(){
 
   function vai(id){
     pulisci(); scelta=id;
+    if(acceso) window._radarModo=id;   // il link segue il tasto scelto
     [].forEach.call(document.querySelectorAll('.rd-d'),function(c){ c.classList.toggle('on', c.dataset.id===id); });
     var t=el('leg-title');
     var tit={ora:'Radar \u00b7 adesso', due:'Radar \u00b7 ultime 2 ore',
@@ -10275,7 +10300,7 @@ function loadDefaultMarkers(){
     }
     document.body.classList.toggle('sat-on', !!sat);
     // col trattamento sopra il satellite si puo' tenere pieno: il sereno sparisce
-    var OP = sat?0.35:0.95;   // grigio leggero: sopra si legge ancora la mappa
+    var OP = sat?0.26:0.95;   // velo: nuvola media scurisce la mappa all'87%, densa al 79%
     strati=frames.map(function(f){
       var l=L.tileLayer(f.u,{opacity:0,pane:'radar',maxNativeZoom:6,
         attribution:'radar <a href="https://librewxr.net/" target="_blank" rel="noopener">LibreWXR</a> / OPERA (CC BY)'});
