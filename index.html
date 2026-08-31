@@ -10116,7 +10116,7 @@ function loadDefaultMarkers(){
     riga.appendChild(b);
     b.addEventListener('click',function(){ acceso?esci():entra(); });
     [].forEach.call(document.querySelectorAll('#time-panel .tp-btn, #btn-custom, #btn-funghi'),
-      function(x){ x.addEventListener('click',function(){ if(acceso) esci(); }); });
+      function(x){ x.addEventListener('click',function(){ if(acceso) esci(false); }); });
 
     var lp=el('legend-panel'); if(!lp) return;
     var st=lp.querySelector('.stats-row');
@@ -10169,13 +10169,21 @@ function loadDefaultMarkers(){
     if(typeof showLegendMobile==='function' && window.innerWidth<=900){ try{ showLegendMobile(); }catch(e){} }
     vai('ora');
   }
-  function esci(){
+  /* ⚠️ `ripristina` esiste per un difetto vero, visto il 31/8 sul test:
+     uscendo dal radar si rimetteva SEMPRE la vista di prima, anche quando si
+     usciva cliccando un periodo. Ma li' l'analisi sta gia' calcolando la SUA
+     inquadratura, e il setView animato le arrivava sopra: la regione restava
+     piccola in mezzo a mezza Europa. Stessa famiglia della corsa dei 50 ms:
+     due cose che muovono la mappa nello stesso istante. Chi esce per
+     scegliere un periodo NON tocca la vista. */
+  function esci(ripristina){
     if(!acceso) return;
     acceso=false; pulisci(); ultimoBuono=null; document.body.classList.remove('sat-on');
     document.body.classList.remove('modo-radar');
     el('btn-radar').innerHTML='\uD83C\uDF27\uFE0F Radar live';
     heat(true); pallini(true);
-    if(vistaPrec){ map().setView(vistaPrec.c,vistaPrec.z,{animate:true}); vistaPrec=null; }
+    if(ripristina!==false && vistaPrec){ map().setView(vistaPrec.c,vistaPrec.z,{animate:true}); }
+    vistaPrec=null;
     var t=el('leg-title'); if(t&&t._vecchio!=null){ t.textContent=t._vecchio; t._vecchio=null; }
   }
   function heat(si){
