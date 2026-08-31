@@ -10087,7 +10087,10 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
   var cache=null, cacheQuando=0, ultimoBuono=null;
 
   /* ⚠️ LA SCORTA: cosa succede quando LibreWXR non risponde.
-     1. TETTO DI 3 SECONDI e una sola riprova (6 al peggio). Un tasto che gira all'infinito
+     1. TETTO DI 3 SECONDI e una sola riprova. ⚠️ In teoria fa 6 secondi, MISURATO
+        ne fa 8-9: i timer di 3 s slittano di mezzo secondo l'uno perche' la pagina
+        sta caricando le sue tessere. Non e' un'attesa muta, la riga sotto dice
+        «carico...» per tutto il tempo. Un tasto che gira all'infinito
         e' peggio di un tasto che dice di no: e' la lezione del loader appeso
         ad ARPA del 24/8/2026.
      2. Se cade ENTRANDO, il modo NON si apre: si resta sulla mappa delle
@@ -10115,7 +10118,11 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
     return una().catch(una).then(function(j){ cache=j; cacheQuando=Date.now(); return j; });
   }
   function caduta(){
-    if(ultimoBuono){ nota('⚠️ Radar non aggiornato: ultimo dato delle '+ultimoBuono); return; }
+    /* ⚠️ `strati.length` NON E' UN DI PIU'. Senza, questa riga annunciava un
+       fotogramma che non c'era: dichiarare una cosa che lo schermo non
+       mostra e' peggio del guasto. Se non c'e' piu' niente a video si passa
+       oltre, e si dice la verita' scomoda invece di quella comoda. */
+    if(ultimoBuono && strati.length){ nota('⚠️ Radar non aggiornato: ultimo dato delle '+ultimoBuono); return; }
     esci();
     var a=el('tp-status');
     if(a){ a.className='error'; a.textContent='⚠️ Radar non raggiungibile, riprova fra poco';
@@ -10278,7 +10285,13 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
     document.body.classList.remove('modo-radar');
     el('btn-radar').innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar live';
     heat(true); pallini(true);
-    if(ripristina!==false && vistaPrec){ map().setView(vistaPrec.c,vistaPrec.z,{animate:true}); }
+    /* ⚠️ `stop()` PRIMA: se si esce mentre l'inquadratura d'ingresso sta ancora
+       volando (e' il caso della SCORTA, che cade dopo un istante), il setView
+       di ritorno arriva sopra un'animazione in corso e viene mangiato: la
+       mappa restava sulla regione invece di tornare dov'era. Misurato il
+       31/8: z6 di partenza, z8 dopo il finto guasto. */
+    if(ripristina!==false && vistaPrec){ try{ map().stop(); }catch(e){}
+      map().setView(vistaPrec.c,vistaPrec.z,{animate:false}); }
     vistaPrec=null;
     var t=el('leg-title'); if(t&&t._vecchio!=null){ t.textContent=t._vecchio; t._vecchio=null; }
   }
@@ -10344,13 +10357,18 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
   }
 
   function vai(id){
-    pulisci(); scelta=id;
+    /* \u26a0\ufe0f QUI C'ERA `pulisci()`, ED ERA IL BUCO DELLA SCORTA (visto il 31/8).
+       Buttavo gli strati PRIMA di chiedere: se poi la richiesta cadeva, la
+       riga annunciava \u00abultimo dato delle 17:50\u00bb con lo schermo vuoto, perche'
+       quel fotogramma l'avevo appena tolto io. Misurato: zero tessere a video.
+       Adesso si ferma la sola animazione, gli strati restano finche' i nuovi
+       non sono in mano (li toglie `crea`), e se si cade si torna a segnare il
+       tasto di prima: cosi' quello che si vede e' quello che dice la riga. */
+    var prima=scelta;
+    if(timer){ clearInterval(timer); timer=null; }
+    scelta=id;
     if(acceso) window._radarModo=id;   // il link segue il tasto scelto
-    [].forEach.call(document.querySelectorAll('.rd-d'),function(c){ c.classList.toggle('on', c.dataset.id===id); });
-    var t=el('leg-title');
-    var tit={ora:'Radar \u00b7 adesso', due:'Radar \u00b7 ultime 2 ore',
-             prev:'Radar \u00b7 prossimi 40 minuti'}[id];
-    if(t){ if(t._vecchio==null) t._vecchio=t.textContent; t.textContent=tit; }
+    segna(id);
     nota('carico\u2026');
     chiedi()
       .then(function(j){
@@ -10363,12 +10381,26 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
         var coda = '/256/{z}/{x}/{y}/2/1_1.png';
         crea(lista.map(function(f){ return {t:f.time, u:h+f.path+coda}; }));
       })
-      .catch(caduta);
+      .catch(function(){
+        // si e' rimasti col fotogramma di prima: il tasto acceso torna quello
+        if(ultimoBuono && strati.length && prima && prima!==id){
+          scelta=prima; if(acceso) window._radarModo=prima; segna(prima);
+        }
+        caduta();
+      });
+  }
+  function segna(id){
+    [].forEach.call(document.querySelectorAll('.rd-d'),function(c){ c.classList.toggle('on', c.dataset.id===id); });
+    var t=el('leg-title');
+    var tit={ora:'Radar · adesso', due:'Radar · ultime 2 ore',
+             prev:'Radar · prossimi 40 minuti'}[id];
+    if(t){ if(t._vecchio==null) t._vecchio=t.textContent; t.textContent=tit; }
   }
 
   // TUTTI gli strati insieme, opacita' 0, e si accende solo quello giusto:
   // e' cosi' che si toglie il flash.
   function crea(frames){
+    pulisci();          // i vecchi strati si tolgono SOLO adesso, a dati in mano
     var m=map();
     if(!m.getPane('radar')){
       m.createPane('radar');
