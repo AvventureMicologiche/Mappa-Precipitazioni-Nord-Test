@@ -8809,6 +8809,7 @@ window._boundsDebug=function(){return REGION_BOUNDS;};  // stesso scopo: solo ve
    si era gia' fatto con la mappa qui sopra. */
 window._fitRegioni=fitMapToRegions;
 window._regioniAttive=getActiveRegions;
+window._centraStriscia=centraRegioneInStriscia;
 // ── Immagine della mappa (canvas) per condivisione/download ────────────────
 // html2canvas si carica solo alla prima richiesta (pre-riscaldato all'hover/
 // touch dei bottoni, così il click resta dentro la finestra del gesto utente).
@@ -9809,11 +9810,14 @@ function loadDefaultMarkers(){
 
   var VETRINE={};
   VETRINE.guida={
-    // ⚠️ Stessa scadenza del video, per decisione dell'utente il 25/8: passata
-    // quella data escono di scena tutte e due e resta «Iscriviti». La guida
-    // potrebbe restare (non invecchia, spiega come si usa la mappa): per
-    // riaccenderla basta spostare avanti questa data.
-    fino:'2026-08-28T23:59:59+02:00',
+    // ⚠️ RIACCESA il 31/8/2026, e adesso si alterna con «Iscriviti».
+    // Il 25/8 era stata fatta scadere insieme al video, ma il commento di
+    // allora diceva gia' la cosa giusta: la guida NON invecchia, spiega come
+    // si usa la mappa e vale uguale fra sei mesi. Il video di una singola
+    // uscita invece invecchia, e infatti resta scaduto.
+    // Scadenza lunga apposta: quando arrivera', tornera' da sola la sola
+    // scheda «Iscriviti» senza che nessuno debba pubblicare niente.
+    fino:'2027-12-31T23:59:59+01:00',
     link:'https://youtu.be/fvsBZJ_Ylf4',
     id:'fvsBZJ_Ylf4',
     facebook:'',
@@ -9853,6 +9857,15 @@ function loadDefaultMarkers(){
     ['video','guida'].forEach(function(k){
       if(VETRINE[k] && ora <= new Date(VETRINE[k].fino).getTime()) scelte.push(k);
     });
+    /* ⚠️ ANCHE «ISCRIVITI» PARTECIPA AL SORTEGGIO (31/8/2026, su sua
+       richiesta). Fin qui il dado sceglieva solo FRA LE VETRINE, e la scheda
+       del canale si vedeva soltanto quando non ce n'era nessuna in corso:
+       cioe' o sempre vetrina, o mai. Adesso e' una faccia della moneta come
+       le altre, e con la sola guida in corso fa meta' e meta'.
+       Non serve altro codice: «iscriviti» non sta in VETRINE, quindi V resta
+       vuoto e il `return` qui sotto lascia in pagina la scheda com'e' gia'
+       scritta nel markup. */
+    scelte.push('iscriviti');
     if(!scelte.length) return;
     // ⚠️ IL DADO SI TIRA A OGNI APERTURA, e la scelta NON si ricorda.
     // Prima restava appiccicata alla persona (localStorage 'vetrina'): chi
@@ -10169,10 +10182,14 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
     cu.parentNode.insertBefore(riga,cu); riga.appendChild(cu);
     cu.innerHTML='<span class="rd-ic">\uD83D\uDCC5</span> Scegli date';
     var b=document.createElement('div');
-    // ⚠️ «Radar» da solo non dice niente a chi non sa cosa sia. La parola
-    //    resta (chi la conosce la cerca) ma accanto c'e' cosa mostra.
-    //    Misurato: nel tasto ci stanno 138 px, «Radar live» ne occupa 83.
-    b.className='tp-custom-btn rd-btn'; b.id='btn-radar'; b.innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar live';
+    /* ⚠️ IL NOME E' «RADAR METEO», E «LIVE» NON CI STA (31/8/2026).
+       Chiesto «Radar meteo live»: MISURATO a 360 px, quel testo va a capo e
+       fa il tasto alto 77 px contro i 54 del gemello «Scegli date», che e'
+       proprio lo scalino che si nota. Su una riga ci stanno «Radar meteo»,
+       «Radar pioggia» e «Radar live», tutti a 54 px.
+       Si tiene la sua parola e si lascia cadere «live», che il pannello
+       dice gia' da solo col primo tasto «Adesso». */
+    b.className='tp-custom-btn rd-btn'; b.id='btn-radar'; b.innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar meteo';
     riga.appendChild(b);
     b.addEventListener('click',function(){ acceso?esci():entra(); });
     // ⚠️ Il tasto «Indietro» della legenda chiama hideLegendMobile(), che in
@@ -10313,7 +10330,7 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
     if(!acceso) return;
     acceso=false; sorveglia(false); pulisci(); ultimoBuono=null; window._radarModo=null;
     document.body.classList.remove('modo-radar');
-    el('btn-radar').innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar live';
+    el('btn-radar').innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar meteo';
     heat(true); pallini(true);
     /* ⚠️ USCENDO SI TORNA ALL'INQUADRATURA STANDARD DELLA REGIONE, non alla
        vista che c'era prima di entrare (cambiato il 31/8/2026 su sua
@@ -10335,6 +10352,19 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
         if(_rk.length && typeof window._fitRegioni==='function') window._fitRegioni(_rk);
         else if(vistaPrec) map().setView(vistaPrec.c,vistaPrec.z,{animate:false});
       }catch(e){}
+      /* ⚠️ SUL TELEFONO NON BASTA `fitMapToRegions` (segnalato il 31/8 con la
+         Liguria mezza nascosta dietro al pannello: lo zoom era giusto, la
+         posizione no). Quella funzione inquadra la MAPPA INTERA, ma sul
+         telefono meta' mappa sta sotto al pannello del periodo: il sito
+         infatti la fa sempre seguire da `centraRegioneInStriscia`, che alza
+         il contenuto nella striscia che resta libera. Il radar la saltava.
+         Due tempi come fa il sito (subito e a pannelli fermi), perche' il
+         pannello torna alla sua altezza con una transizione e misurarlo
+         mentre si muove da' il numero sbagliato. */
+      if(window.innerWidth<=900 && typeof window._centraStriscia==='function'){
+        try{ window._centraStriscia(); }catch(e){}
+        setTimeout(function(){ try{ window._centraStriscia(); }catch(e){} },420);
+      }
     }
     vistaPrec=null;
     var t=el('leg-title'); if(t&&t._vecchio!=null){ t.textContent=t._vecchio; t._vecchio=null; }
