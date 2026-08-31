@@ -8799,6 +8799,16 @@ window.buildShareUrl=buildShareUrl;
 // nessun codice del sito lo usa.
 window._mapDebug=map;
 window._boundsDebug=function(){return REGION_BOUNDS;};  // stesso scopo: solo verifiche automatiche
+/* ⚠️ ESPOSTE PER IL BLOCCO RADAR (31/8/2026). Tutto questo script sta dentro
+   una IIFE che comincia a riga 1701, quindi le sue funzioni NON sono globali:
+   il radar, che e' un <script> separato in fondo, le vedeva `undefined` e il
+   suo `typeof ...==='function'` le scartava IN SILENZIO. Risultato: il radar
+   non inquadrava piu' niente e si limitava a togliere zoom a quello che
+   trovava, sommando le sottrazioni a ogni chiamata (misurato: 6 → 5 → 4).
+   Un guasto muto, il tipo peggiore. Si espongono le due che gli servono, come
+   si era gia' fatto con la mappa qui sopra. */
+window._fitRegioni=fitMapToRegions;
+window._regioniAttive=getActiveRegions;
 // ── Immagine della mappa (canvas) per condivisione/download ────────────────
 // html2canvas si carica solo alla prima richiesta (pre-riscaldato all'hover/
 // touch dei bottoni, così il click resta dentro la finestra del gesto utente).
@@ -9977,6 +9987,17 @@ function loadDefaultMarkers(){
    sembravano spenti o di un'altra famiglia. */
 .rd-d.rd-prev{border-style:dashed}
 .rd-d.rd-prev.on{background:#5a6470;border-color:#5a6470;color:#fff}
+/* La linea del tempo: una tacca per fotogramma, i capi scritti sotto. */
+/* ⚠️ Legata ALLA CLASSE DEL MODO, non a uno stile scritto a mano: con
+   `display:block` messo dal codice la linea restava a video anche dopo essere
+   usciti dal radar, come succedeva ai pallini prima del 31/8. */
+.rd-linea{display:none;margin:1px 0 5px}
+.modo-radar .rd-linea.viva{display:block}
+.rd-tacche{display:flex;gap:3px}
+.rd-tacche i{flex:1;height:6px;border-radius:3px;background:#dbe3ef;cursor:pointer;transition:background .12s}
+.rd-tacche i.vis{background:#a8c2e2}
+.rd-tacche i.on{background:#1b3f6e}
+.rd-capi{display:flex;justify-content:space-between;font-size:10.5px;color:#7a8698;margin-top:2px}
 .rd-nota{display:none;font-size:11.5px;line-height:1.35;color:#5a6470;margin:0 0 4px}
 /* ⚠️ LA LEGENDA E' VERA, non inventata: i colori sono quelli della tabella
    ufficiale dello schema «Universal Blue» (rainviewer_api_colors_table.csv,
@@ -10085,6 +10106,10 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
   var acceso=false, scelta=null, vistaPrec=null;
   var strati=[], idx=-1, timer=null, fisso=null;
   var cache=null, cacheQuando=0, ultimoBuono=null;
+  /* Quanto piu' largo sta il radar rispetto all'inquadratura normale della
+     regione, in livelli di zoom. 1 = il doppio di spazio per lato. E' la
+     manopola: 0,5 per stare piu' stretti, 1,5 per vedere mezza Europa. */
+  var LARGHEZZA = 1;
 
   /* ⚠️ LA SCORTA: cosa succede quando LibreWXR non risponde.
      1. TETTO DI 3 SECONDI e una sola riprova. ⚠️ In teoria fa 6 secondi, MISURATO
@@ -10234,8 +10259,10 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
         },200);
       }
     }catch(e){}
+    var ln=document.createElement('div'); ln.className='rd-linea'; ln.id='rd-linea';
     var n=document.createElement('div'); n.className='rd-nota'; n.id='rd-nota';
-    st.parentNode.insertBefore(d,st); st.parentNode.insertBefore(sc,st); st.parentNode.insertBefore(n,st);
+    st.parentNode.insertBefore(d,st); st.parentNode.insertBefore(ln,st);
+    st.parentNode.insertBefore(sc,st); st.parentNode.insertBefore(n,st);
   }
 
   function entra(){
@@ -10265,10 +10292,13 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
        e' la stessa cosa che fa centraRegioneInStriscia per le regioni.
        Due tempi, perche' il pannello arriva con una transizione: subito con
        quello che c'e', e di nuovo dopo mezzo secondo a pannello fermo. */
-    if(pts.length>2){
-      inquadra();
-      setTimeout(function(){ if(acceso) inquadra(); },550);
-    }
+    /* ⚠️ NON SI ASPETTANO PIU' I PALLINI (31/8/2026). Prima si inquadrava solo
+       se c'erano almeno tre CircleMarker: entrando mentre le stazioni stavano
+       ancora arrivando l'inquadratura saltava del tutto, oppure si calcolava
+       su tre pallini vicini e usciva uno zoom assurdo. Adesso la misura parte
+       dai CONFINI della regione, che ci sono da subito. */
+    inquadra();
+    setTimeout(function(){ if(acceso) inquadra(); },550);
     vai('ora');
   }
   /* ⚠️ `ripristina` esiste per un difetto vero, visto il 31/8: uscendo dal
@@ -10285,13 +10315,27 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
     document.body.classList.remove('modo-radar');
     el('btn-radar').innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar live';
     heat(true); pallini(true);
-    /* ⚠️ `stop()` PRIMA: se si esce mentre l'inquadratura d'ingresso sta ancora
-       volando (e' il caso della SCORTA, che cade dopo un istante), il setView
-       di ritorno arriva sopra un'animazione in corso e viene mangiato: la
-       mappa restava sulla regione invece di tornare dov'era. Misurato il
-       31/8: z6 di partenza, z8 dopo il finto guasto. */
-    if(ripristina!==false && vistaPrec){ try{ map().stop(); }catch(e){}
-      map().setView(vistaPrec.c,vistaPrec.z,{animate:false}); }
+    /* ⚠️ USCENDO SI TORNA ALL'INQUADRATURA STANDARD DELLA REGIONE, non alla
+       vista che c'era prima di entrare (cambiato il 31/8/2026 su sua
+       richiesta). Prima rimettevo `vistaPrec`, e siccome nel radar si sta
+       larghi apposta, uscire lasciava la regione lontana o storta a seconda
+       di dove stava la mappa un minuto prima. `fitMapToRegions` e' la stessa
+       funzione che il sito usa quando finisce di caricare un'analisi: uscire
+       dal radar e scegliere un periodo adesso finiscono nello stesso posto.
+       ⚠️ `stop()` PRIMA, perche' se si esce mentre l'inquadratura d'ingresso
+       sta ancora volando (e' il caso della SCORTA, che cade dopo un istante)
+       il movimento di ritorno arriva sopra un'animazione in corso e viene
+       mangiato: misurato il 31/8, z6 di partenza e z8 dopo il finto guasto.
+       Con `ripristina===false` non si tocca niente: chi esce cliccando un
+       periodo lascia inquadrare all'analisi, che lo fa da se'. */
+    if(ripristina!==false){
+      try{ map().stop(); }catch(e){}
+      try{
+        var _rk=regioniAttive();
+        if(_rk.length && typeof window._fitRegioni==='function') window._fitRegioni(_rk);
+        else if(vistaPrec) map().setView(vistaPrec.c,vistaPrec.z,{animate:false});
+      }catch(e){}
+    }
     vistaPrec=null;
     var t=el('leg-title'); if(t&&t._vecchio!=null){ t.textContent=t._vecchio; t._vecchio=null; }
   }
@@ -10301,19 +10345,34 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
      lasciata libera dai pannelli, come centraRegioneInStriscia. */
   function inquadra(){
     var m=map(); if(!m) return;
-    var pts=[]; m.eachLayer(function(l){ if(l instanceof L.CircleMarker) pts.push(l.getLatLng()); });
-    if(pts.length<3) return;
-    var giu=24;
+    var rk=regioniAttive(); if(!rk.length) return;
+    /* ⚠️ SI PARTE DALL'INQUADRATURA DEL SITO, NON DA UN FIT SUI PALLINI
+       (rifatto il 31/8/2026). Prima misuravo da solo il riquadro dei pallini
+       e toglievo delle tacche: ma quella base non c'entra niente con
+       l'inquadratura normale della regione, che riserva 420 px al pannello
+       su desktop e 70 px di bordo sul telefono. Misurato sulla Lombardia a
+       1366 px: il fit sui pallini dava 8,5 e lo standard del sito 6, cioe'
+       due tacche e mezzo di scarto che cambia con la finestra e con la
+       regione. Togliendo un numero fisso il radar finiva ora piu' stretto
+       ora identico allo standard, mai piu' largo: e' il difetto che si
+       vedeva. Adesso si chiede al sito la SUA inquadratura e si toglie un
+       livello pieno da li': cosi' «piu' largo di uno» vale su ogni regione e
+       su ogni schermo. */
+    if(typeof window._fitRegioni==='function'){ try{ window._fitRegioni(rk); }catch(e){} }
+    m.setZoom(Math.max(4, m.getZoom()-LARGHEZZA), {animate:false});
+    /* Sul telefono il pannello del radar copre la parte bassa della mappa:
+       si alza il contenuto di meta' di quello che copre, che e' la stessa
+       correzione di centraRegioneInStriscia. */
     if(window.innerWidth<=900){
       var lp=el('legend-panel'), mp=el('map');
       if(lp&&mp){
         var r=lp.getBoundingClientRect(), mb=mp.getBoundingClientRect();
-        if(r.height>40) giu=Math.max(24, mb.bottom-Math.max(r.top,mb.top)+16);
+        var coperto=mb.bottom-Math.max(r.top,mb.top);
+        if(r.height>40 && coperto>20) m.panBy([0, Math.round(coperto/2)], {animate:false});
       }
     }
-    m.fitBounds(L.latLngBounds(pts),{paddingTopLeft:L.point(24,24),paddingBottomRight:L.point(24,giu),animate:false});
-    m.setZoom(Math.max(5,m.getZoom()-0.5),{animate:false});
   }
+
   /* ⚠️ SORVEGLIANTE DELLE REGIONI. Non si ascoltano le caselle, perche' su
      telefono la regione si sceglie da una tendina che e' un altro pezzo di
      interfaccia: si guarda il RISULTATO, cioe' quanti pallini ci sono in
@@ -10353,6 +10412,7 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
       try{ m.removeLayer(l); }catch(e){}
     });
     strati=[]; idx=-1;
+    var box=el('rd-linea'); if(box){ box.classList.remove('viva'); box.innerHTML=''; }
     if(fisso){ try{ m.removeLayer(fisso); }catch(e){} fisso=null; }
   }
 
@@ -10416,20 +10476,67 @@ body.senza-pallini #map .leaflet-marker-pane svg{display:none}
     });
     var primo=strati.length-1;
     if(frames.length>1 && scelta!=='ora') primo=0;
+    linea(frames);
     accendi(primo,OP);
     if(frames.length>1){
-      // si parte ad animare solo quando il primo fotogramma e' davvero pronto
+      /* ⚠️ SI ASPETTA CHE SIANO PRONTI TUTTI, NON SOLO IL PRIMO (31/8/2026).
+         Prima si partiva al `load` del solo fotogramma zero: gli altri
+         stavano ancora scaricando le tessere e, quando toccava a loro, si
+         accendeva uno strato mezzo vuoto. E' il tremolio del «+40 min», che
+         ha solo sei fotogrammi e quindi ci ripassa sopra in fretta.
+         Adesso si conta quanti sono arrivati e si parte quando ci sono tutti.
+         Tetto di 8 secondi perche' una rete lenta non deve bloccare tutto:
+         meglio un giro con qualche buco che un'animazione che non parte. */
+      var pronti=0, tot=strati.length, partito=false;
       var avvia=function(){
-        if(timer||!acceso) return;
+        if(partito||timer||!acceso) return;
+        partito=true;
         timer=setInterval(function(){ accendi((idx+1)%strati.length,OP); },700);
       };
-      strati[0].on('load',avvia); setTimeout(avvia,2500);
+      strati.forEach(function(l){
+        l.once('load',function(){ if(++pronti>=tot) avvia(); });
+      });
+      setTimeout(avvia,8000);
     }
+  }
+  /* ⚠️ LA LINEA DEL TEMPO. Senza, appena l'animazione fa un giro non si sa
+     piu' dove si e': i sei fotogrammi del «+40 min» durano quattro secondi e
+     l'ora scritta sotto cambia troppo in fretta per raccapezzarsi. Una tacca
+     per fotogramma, quella accesa dice a che punto siamo, e ai due capi c'e'
+     scritto dove comincia e dove finisce. Le tacche si possono anche cliccare:
+     ferma il giro e resta li'. */
+  function linea(frames){
+    var box=el('rd-linea'); if(!box) return;
+    if(frames.length<2){ box.classList.remove('viva'); box.innerHTML=''; return; }
+    box.classList.add('viva');
+    var q=function(t){ return new Date(t*1000).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}); };
+    /* ⚠️ AI CAPI CI VA L'ORA, NON I MINUTI (31/8). Scrivendo «+50 min» a destra
+       si finiva con due numeri diversi a schermo nello stesso momento, perche'
+       il tasto dice «+40 min»: i fotogrammi del nowcast arrivano a 50 minuti,
+       il tasto e' un nome. Con l'ora dell'orologio non c'e' niente da
+       confrontare e si capisce meglio: «adesso -> 21:00». */
+    var sx=(scelta==='prev')?'adesso':q(frames[0].t);
+    var dx=(scelta==='prev')?q(frames[frames.length-1].t):'adesso';
+    var tacche='';
+    for(var i=0;i<frames.length;i++) tacche+='<i data-i="'+i+'" title="'+q(frames[i].t)+'"></i>';
+    box.innerHTML='<div class="rd-tacche">'+tacche+'</div>'
+      +'<div class="rd-capi"><span>'+sx+'</span><span>'+dx+'</span></div>';
+    [].forEach.call(box.querySelectorAll('.rd-tacche i'),function(t){
+      t.addEventListener('click',function(){
+        if(timer){ clearInterval(timer); timer=null; }   // si ferma dove lo metti
+        accendi(+t.dataset.i,0.95);
+      });
+    });
   }
   function accendi(i,OP){
     idx=i;
     strati.forEach(function(l,k){
       l.setOpacity(k===i?OP:0);
+    });
+    var box=el('rd-linea');
+    if(box) [].forEach.call(box.querySelectorAll('.rd-tacche i'),function(t,k){
+      t.classList.toggle('on',k===i);
+      t.classList.toggle('vis',k<=i);      // quanto se n'e' gia' visto
     });
     var f=strati[i];
     var ora=new Date(f._quando*1000).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
