@@ -1185,13 +1185,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     display:flex !important;
     flex-direction:column;
     align-items:stretch;
-    padding:8px 12px 6px;
+    /* ⚠️ Spazio ridotto (31/8/2026): fra il bordo del foglio e il primo
+       tasto c'erano 60 px di aria, misurati a 393. Tolti 3 sopra, 2 alla
+       barretta, 3 sotto e 5 al contenuto: 13 px in meno e niente di
+       leggibile perso. Il primo tasto ora sta a 47 px. */
+    padding:5px 12px 3px;
     cursor:pointer;
     width:100%;
     box-sizing:border-box;
   }
   .tp-handle-bar{
-    width:36px;height:4px;background:#ccc;border-radius:2px;margin-bottom:6px;align-self:center;
+    width:36px;height:4px;background:#ccc;border-radius:2px;margin-bottom:4px;align-self:center;
   }
   .tp-title-row{
     display:flex !important;
@@ -1231,7 +1235,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   .tp-title{margin-bottom:0 !important;font-size:13px !important;color:#123252 !important;white-space:nowrap;flex-shrink:0;line-height:1.2;}
   .nota-i{width:21px;height:21px;font-size:14px;vertical-align:-1px;}
   /* Contenuto nascosto quando collassato */
-  .tp-content{padding-top:10px;}
+  .tp-content{padding-top:5px;}
   #time-panel.open{transform:translateY(0);}
 
   /* Legenda: overlay slide-up — copre completamente il time-panel */
@@ -9998,6 +10002,10 @@ function loadDefaultMarkers(){
    (`#channel-pill`) resta, perche' non e' mai sparita nemmeno scegliendo un
    periodo e non c'e' ragione di farla sparire qui. */
 .modo-radar #channel-logo{display:none !important}
+/* ⚠️ Sul telefono il pannello del periodo restava a sbucare sopra quello
+   del radar: due intestazioni una sull'altra. In modo radar comanda uno
+   solo, e il ritorno ai giorni si fa con «Indietro» o col tasto del radar. */
+@media(max-width:900px){.modo-radar #time-panel{display:none !important}}
 .modo-radar #legend-panel{display:block !important}
 @media(max-width:900px){.modo-radar #legend-panel{transform:translateY(0) !important}}
 @media(max-width:900px){
@@ -10018,9 +10026,15 @@ function loadDefaultMarkers(){
    resa dei siti meteo. Con `screen` erano bianche e sparivano sulle zone
    chiare della mappa. */
 .modo-radar.sat-on .leaflet-radar-pane{
-  filter:grayscale(1) brightness(.875) contrast(2.70) brightness(1.8) invert(1);
+  /* la spinta finale e' 1.2 e non 1.8: cosi' le nuvole restano GRIGIO CHIARO
+     invece di annerire. Col multiply al 35% una nuvola media scurisce la
+     mappa al 79% e una densa al 65%: un velo, non una macchia. */
+  filter:grayscale(1) brightness(.875) contrast(2.70) brightness(1.2) invert(1) blur(1.4px);
   mix-blend-mode:multiply;
 }
+/* ⚠️ Il blur va messo sul PANNELLO e non sulle singole tessere: applicato
+   tessera per tessera sfuma anche i bordi e si vedono le cuciture. */
+.modo-radar.sat-on .leaflet-radar-pane img{image-rendering:auto}
 </style>
 <script>
 /* ═══════════════════════════════════════════════════════════════
@@ -10115,6 +10129,13 @@ function loadDefaultMarkers(){
     b.className='tp-custom-btn rd-btn'; b.id='btn-radar'; b.innerHTML='\uD83C\uDF27\uFE0F Radar live';
     riga.appendChild(b);
     b.addEventListener('click',function(){ acceso?esci():entra(); });
+    // ⚠️ Il tasto «Indietro» della legenda chiama hideLegendMobile(), che in
+    //    modo radar non fa niente perche' il pannello lo teniamo aperto a
+    //    forza: sembrava rotto. In modo radar deve uscire dal radar.
+    var ind=el('leg-back-btn');
+    if(ind) ind.addEventListener('click',function(e){
+      if(acceso){ e.stopImmediatePropagation(); e.preventDefault(); esci(); }
+    },true);
     [].forEach.call(document.querySelectorAll('#time-panel .tp-btn, #btn-custom, #btn-funghi'),
       function(x){ x.addEventListener('click',function(){ if(acceso) esci(false); }); });
 
@@ -10122,7 +10143,7 @@ function loadDefaultMarkers(){
     var st=lp.querySelector('.stats-row');
     var d=document.createElement('div'); d.className='rd-durate'; d.id='rd-durate';
     [{id:'ora',  t:'Adesso',       tit:'la pioggia che sta cadendo adesso'},
-     {id:'due',  t:'\u25B6 2 ore',  tit:'le ultime due ore, animate'},
+     {id:'due',  t:'\u25B6 -2 ore', tit:'le ultime due ore, animate'},   // il meno dice che e' passato
      {id:'prev', t:'+40 min',      tit:'dove si sposta nei prossimi 40 minuti: previsione, non misura'},
      {id:'sat',  t:'Nuvole',       tit:'satellite a infrarossi: dice dove sono le nuvole, NON dove piove'}
     ].forEach(function(x){
@@ -10162,20 +10183,40 @@ function loadDefaultMarkers(){
     var m=map();
     vistaPrec={c:m.getCenter(),z:m.getZoom()};
     var pts=[]; m.eachLayer(function(l){ if(l instanceof L.CircleMarker) pts.push(l.getLatLng()); });
-    if(pts.length>2){
-      m.fitBounds(L.latLngBounds(pts),{padding:[40,40],animate:false});
-      m.setZoom(Math.max(5,m.getZoom()-0.5),{animate:false});
-    }
     if(typeof showLegendMobile==='function' && window.innerWidth<=900){ try{ showLegendMobile(); }catch(e){} }
+    /* ⚠️ L'INQUADRATURA SI FA NELLA STRISCIA VISIBILE, non sulla mappa intera.
+       Sul telefono il pannello copre meta' schermo: un fitBounds centrato
+       mette la regione sotto al pannello, ed e' quello che si vedeva sulla
+       Lombardia. Si MISURA quanto copre e si spinge il contenuto sopra, che
+       e' la stessa cosa che fa centraRegioneInStriscia per le regioni.
+       Due tempi, perche' il pannello arriva con una transizione: subito con
+       quello che c'e', e di nuovo dopo mezzo secondo a pannello fermo. */
+    if(pts.length>2){
+      var bb=L.latLngBounds(pts);
+      var inquadra=function(){
+        var giu=24;
+        if(window.innerWidth<=900){
+          var lp=el('legend-panel'), mp=el('map');
+          if(lp&&mp){
+            var r=lp.getBoundingClientRect(), mb=mp.getBoundingClientRect();
+            if(r.height>40) giu=Math.max(24, mb.bottom-Math.max(r.top,mb.top)+16);
+          }
+        }
+        m.fitBounds(bb,{paddingTopLeft:L.point(24,24),paddingBottomRight:L.point(24,giu),animate:false});
+        m.setZoom(Math.max(5,m.getZoom()-0.5),{animate:false});
+      };
+      inquadra(); setTimeout(function(){ if(acceso) inquadra(); },550);
+    }
     vai('ora');
   }
-  /* ⚠️ `ripristina` esiste per un difetto vero, visto il 31/8 sul test:
-     uscendo dal radar si rimetteva SEMPRE la vista di prima, anche quando si
-     usciva cliccando un periodo. Ma li' l'analisi sta gia' calcolando la SUA
-     inquadratura, e il setView animato le arrivava sopra: la regione restava
-     piccola in mezzo a mezza Europa. Stessa famiglia della corsa dei 50 ms:
-     due cose che muovono la mappa nello stesso istante. Chi esce per
-     scegliere un periodo NON tocca la vista. */
+  /* ⚠️ `ripristina` esiste per un difetto vero, visto il 31/8: uscendo dal
+     radar rimettevo SEMPRE la vista di prima, anche quando si usciva
+     cliccando un periodo. Ma in quel caso l'analisi sta gia' calcolando la
+     SUA inquadratura, e il mio setView animato le arrivava sopra: la
+     regione restava piccola in mezzo a mezza Europa. E' la stessa famiglia
+     della corsa dei 50 ms: due cose che muovono la mappa nello stesso
+     istante. Rimedio: chi esce per scegliere un periodo NON tocca la vista
+     e la lascia fare a chi di dovere. */
   function esci(ripristina){
     if(!acceso) return;
     acceso=false; pulisci(); ultimoBuono=null; document.body.classList.remove('sat-on');
@@ -10234,7 +10275,7 @@ function loadDefaultMarkers(){
     }
     document.body.classList.toggle('sat-on', !!sat);
     // col trattamento sopra il satellite si puo' tenere pieno: il sereno sparisce
-    var OP = sat?0.62:0.95;   // in multiply il pieno annerirebbe troppo
+    var OP = sat?0.35:0.95;   // grigio leggero: sopra si legge ancora la mappa
     strati=frames.map(function(f){
       var l=L.tileLayer(f.u,{opacity:0,pane:'radar',maxNativeZoom:6,
         attribution:'radar <a href="https://librewxr.net/" target="_blank" rel="noopener">LibreWXR</a> / OPERA (CC BY)'});
