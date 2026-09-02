@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Piogge per funghi in Liguria: dove ha piovuto davvero</title>
+<meta name="description" content="Dove e' caduta l'acqua nelle zone da bosco della Liguria, misurata dai pluviometri di ARPA Liguria. La finestra da 13 a 20 giorni fa, quella che conta per i funghi.">
+<link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/liguria/">
+<meta property="og:title" content="Piogge per funghi in Liguria">
+<meta property="og:description" content="Dove e' caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
+<meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
+<meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/liguria/">
+<meta property="og:type" content="website">
+<!-- Google tag: come nelle pagine regione, il config sta dietro al controllo
+     sull'HOSTNAME, se no questa copia sul test manderebbe eventi alla
+     proprieta' vera. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  if (/(^|\.)avventuremicologiche\.it$/.test(location.hostname)) {
+    gtag('config', 'G-9R7MXXS0V4');
+  }
+</script>
+<style>
+:root{--blu:#1b3f6e;--blu-scuro:#123252;--grigio:#f0f4fb;--bordo:#d0d8e8;--verde:#2e7d32;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#222;background:#fff;font-size:17px;line-height:1.6;}
+header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+header a{color:#fff;text-decoration:none;}
+header .logo{font-weight:600;font-size:15px;}
+header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;}
+main{max-width:860px;margin:0 auto;padding:22px 16px 40px;}
+h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
+h2{color:var(--blu-scuro);font-size:21px;margin:32px 0 8px;}
+p,li,.patto,.metodo div,.avviso,.nota{text-wrap:pretty;}
+h1,h2,.capo .gr{text-wrap:balance;}
+.sotto{color:#555;font-size:17px;margin-bottom:18px;}
+.patto{background:var(--grigio);border:1px solid var(--bordo);border-left:4px solid var(--verde);
+  border-radius:8px;padding:13px 16px;margin:18px 0 24px;font-size:16px;}
+.patto b{color:var(--blu-scuro);}
+.patto p+p{margin-top:7px;}
+.capo{background:#0f2d4d;color:#fff;border-radius:10px;padding:16px 18px;margin:18px 0 6px;}
+.capo .et{font-size:14px;letter-spacing:.2px;opacity:.8;}
+.capo .gr{font-size:25px;font-weight:700;line-height:1.25;margin-top:3px;}
+.capo .pic{font-size:15px;opacity:.85;margin-top:5px;}
+.capo-btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px;}
+.capo-btn{display:inline-block;text-decoration:none;color:#0f2d4d;font-weight:700;font-size:14.5px;
+  padding:9px 15px 10px;border-radius:9px;border:1px solid #b9c7da;
+  background:linear-gradient(180deg,#ffffff 0%,#f5f8fd 48%,#e8eef8 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(15,45,77,.07),
+             0 3px 0 #aebfd4, 0 6px 13px rgba(0,0,0,.28);
+  text-shadow:0 1px 0 rgba(255,255,255,.7);transition:transform .06s, box-shadow .06s;}
+.capo-btn:active{transform:translateY(2px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 1px 0 #aebfd4, 0 3px 7px rgba(0,0,0,.25);}
+table{width:100%;border-collapse:collapse;font-size:15.5px;margin-top:6px;}
+th{background:var(--blu);color:#fff;font-weight:600;font-size:12.5px;text-align:left;padding:8px 7px;
+  text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;}
+td{padding:8px 7px;border-bottom:1px solid var(--bordo);vertical-align:middle;}
+tr:nth-child(even) td{background:#fafcff;}
+td.pos{color:#8a97ad;font-size:13px;width:26px;text-align:right;}
+td b{color:var(--blu-scuro);}
+.loc{text-decoration:none;display:block;}
+.loc b::after{content:' \2197';font-size:11px;color:#7a93b5;opacity:0;transition:opacity .12s;}
+.loc:hover b{text-decoration:underline;}
+.loc:hover b::after{opacity:1;}
+.com{display:block;color:#6a7789;font-size:13px;}
+td.mm{position:relative;min-width:118px;}
+.barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;
+  min-width:3px;background:#cfe0f5;border-radius:4px;}
+.mm .v{position:relative;font-weight:700;color:var(--blu-scuro);padding-left:7px;}
+.mm .v.zero{color:#a0aab8;font-weight:400;}
+td.ultima{font-size:14px;color:#42506a;white-space:nowrap;}
+.q2{color:var(--blu-scuro);font-weight:600;}
+.vuoto{color:#a0aab8;}
+.metodo{border:1px solid var(--bordo);border-radius:8px;overflow:hidden;margin-top:6px;}
+.metodo div{padding:11px 15px;border-bottom:1px solid var(--bordo);font-size:16px;}
+.metodo div:last-child{border-bottom:0;}
+.metodo b{color:var(--blu-scuro);}
+.metodo .n{display:inline-block;background:var(--blu);color:#fff;width:22px;height:22px;border-radius:50%;
+  text-align:center;line-height:22px;font-size:13px;font-weight:700;margin-right:8px;}
+.nota{color:#6a7789;font-size:14.5px;margin-top:10px;}
+.avviso{background:#fff6e5;border:1px solid #f0d9a8;border-radius:8px;padding:12px 15px;font-size:15px;margin:24px 0 0;}
+.avviso b{color:var(--blu-scuro);}
+.vai-mappa{display:block;text-align:center;color:#fff;font-size:19px;font-weight:700;
+  padding:15px 18px 17px;border-radius:10px;margin:14px 0 4px;border:1px solid #12365c;
+  background:linear-gradient(180deg,#2a5a91 0%,#1b3f6e 48%,#153558 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28), inset 0 -1px 0 rgba(0,0,0,.2),
+             0 4px 0 #0e2b4a, 0 8px 16px rgba(15,45,77,.35);
+  text-shadow:0 1px 2px rgba(0,0,0,.35);transition:transform .06s, box-shadow .06s;}
+a:active .vai-mappa{transform:translateY(2px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24), 0 2px 0 #0e2b4a, 0 4px 10px rgba(15,45,77,.3);}
+#attesa{color:#6a7789;font-size:16px;padding:18px 0;}
+#guasto{display:none;background:#fdecea;border:1px solid #f5c2bd;border-radius:8px;
+  padding:13px 16px;font-size:16px;color:#8a2b20;margin-top:10px;}
+@media(max-width:640px){
+  body{font-size:16px;} h1{font-size:24px;} main{padding:16px 12px 30px;}
+  .capo .gr{font-size:21px;}
+  table{font-size:14px;} th{font-size:11px;padding:7px 4px;} td{padding:7px 4px;}
+  th.tagl,td.tagl{display:none;}
+  td.mm{min-width:110px;}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="https://precipitazioni.avventuremicologiche.it/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
+  <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt">▶ Canale YouTube</a>
+</header>
+<main>
+
+<h1>Piogge per funghi in Liguria</h1>
+<p class="sotto">Quanta acqua è caduta davvero nelle zone da bosco, misurata dai pluviometri
+di ARPA Liguria e aggiornata ogni giorno.</p>
+
+<div class="patto">
+  <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
+  fa nessuno, e noi non ce la inventiamo.</p>
+  <p><b>Cosa trovi:</b> la pioggia vera, misurata, posto per posto, con la data. Il bosco poi
+  lo conosci tu meglio di qualunque sito.</p>
+</div>
+
+<div id="attesa">Sto leggendo i pluviometri…</div>
+<div id="guasto"></div>
+<div id="testa"></div>
+
+<h2>Le zone da bosco più bagnate</h2>
+<p class="sotto" style="margin-bottom:4px" id="finestra"></p>
+<div id="tabella"></div>
+<p class="nota" id="notaforte"></p>
+
+<h2>Ecco cosa vedi sulla mappa</h2>
+<a href="https://precipitazioni.avventuremicologiche.it/?r=liguria" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'funghi-liguria-anteprima'})}catch(e){}">
+  <img src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/liguria.jpg"
+       alt="La mappa delle piogge in Liguria: le zone più bagnate, stazione per stazione"
+       width="1600" height="1000" loading="lazy"
+       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
+  <span class="vai-mappa">Apri la mappa in Liguria →</span>
+</a>
+<p class="nota" style="text-align:center;margin-bottom:26px;">Più il colore è acceso, più acqua è
+caduta. Ogni pallino è un pluviometro: cliccalo e vedi il suo storico.</p>
+
+<h2>Come scegliamo i posti</h2>
+<p class="sotto" style="margin-bottom:4px">Non mettiamo in elenco tutti i pluviometri, perché
+in pianura e in città la pioggia non serve a niente: le condizioni sono tre, e sono tutte
+verificabili.</p>
+<div class="metodo">
+  <div><span class="n">1</span><b>C'è un pluviometro vero.</b> Non una stima su griglia: uno
+  strumento di un ente pubblico, col suo nome e la sua quota.</div>
+  <div><span class="n">2</span><b>Quota fra 200 e 1600 metri.</b> Sotto è pianura, sopra il bosco
+  finisce.</div>
+  <div><span class="n">3</span><b>Almeno il 40% di bosco entro 3 km</b>, misurato sulle mappe di
+  OpenStreetMap.</div>
+</div>
+
+<div class="avviso">
+  <b>Una cosa da tenere a mente.</b> Tanta pioggia non vuol dire tanti funghi: contano anche la
+  temperatura, il vento e il tipo di bosco. <b>La temperatura e il vento ce li abbiamo:</b>
+  clicca un pluviometro sulla mappa e vedi il suo storico, giorno per giorno, insieme alla
+  pioggia. Questa pagina ti dice <i>dove è arrivata l'acqua</i>, che è il pezzo che di solito
+  manca.
+</div>
+
+<p class="nota" style="margin-top:22px">Dati di ARPA Liguria (OMIRL) via il nostro archivio. Il
+bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dall'elenco dei comuni
+italiani (ISTAT).</p>
+
+</main>
+
+<script>
+(function(){
+  /* I posti che passano i tre criteri, cotti dentro: cambiano una volta
+     l'anno, non ogni giorno.
+     [ id, nome, comune, sigla, quota, lat, lon, bosco% ] */
+  var POSTI = [["MINUC","Minucciano","Minucciano","LU",666,44.171,10.2082,73],["VREGI","Valleregia","Serra Riccò","GE",407,44.5204,8.9474,52],["MANIE","Manie","Finale Ligure","SV",340,44.1933,8.3788,42],["VIGAN","Viganego","Bargagli","GE",430,44.4285,9.0635,57],["ROSGL","Rossiglione","Rossiglione","GE",289,44.5723,8.6578,57],["CNAVA","Colle di Nava","Pornassio","IM",927,44.0833,7.8733,68],["VALZE","Valzemola","Roccavignale","SV",480,44.3696,8.1911,44],["CRORE","Crocetta di Orero","Serra Riccò","GE",470,44.5201,8.9859,62],["VERDE","Verdeggia","Triora","IM",1120,44.0443,7.7211,44],["MAZLA","Mazzola","Fivizzano","MS",460,44.2111,10.1169,52],["CRETO","Creto","Montoggio","GE",630,44.4751,9.0071,51],["CMELO","Colle del Melogno","Magliolo","SV",1004,44.2323,8.2025,87],["AVOBB","Alpe Vobbia","Vobbia","GE",1082,44.5703,9.0749,69],["CASON","Casoni di Suvero","Zignago","SP",1070,44.3054,9.7658,55],["BELEN","Colle Belenda","Pigna","IM",1357,43.9815,7.6998,62],["LAVAG","Lavagnola","Savona","SV",253,44.3349,8.4752,41],["BRATT","Passo del Brattello","Pontremoli","MS",955,44.4562,9.8229,82],["AMBOR","Amborzasco","Santo Stefano d'Aveto","GE",908,44.5145,9.455,66],["CASRB","Castelvecchio di R. B.","Castelvecchio di Rocca Barbena","SV",432,44.132,8.1189,69],["PCERR","Passo del Cerreto","Fivizzano","MS",1250,44.3043,10.2168,55],["MURIA","Murialdo","Murialdo","SV",523,44.3132,8.1598,78],["AGORR","Alpe Gorreto","Gorreto","GE",915,44.6047,9.2363,66],["CABAN","Cabanne","Rezzoaglio","GE",809,44.4952,9.3465,67],["BARGO","Bargone","Casarza Ligure","GE",260,44.2951,9.4814,56],["ISOVE","Isoverde","Campomorone","GE",300,44.5301,8.8582,50],["TOGAR","Torriglia - Garaventa","Torriglia","GE",1032,44.5293,9.175,56],["CAMPL","Campo Ligure","Campo Ligure","GE",338,44.5426,8.6939,62],["PZGLI","Pizzeglio","Castel Vittorio","IM",655,43.9186,7.6945,42],["IERAA","Iera","Bagnone","MS",538,44.3333,10.0336,73],["BOROS","Bosco di Rossano","Zeri","MS",670,44.3049,9.7975,63],["TURAN","Turano","Fivizzano","MS",500,44.2464,10.1517,61],["VICOM","Vicomorasso","Sant'Olcese","GE",310,44.4856,8.9785,53],["TNDLA","Tendola","Fosdinovo","MS",410,44.156,10.0338,67],["RCSIG","Rocca Sigillina","Filattiera","MS",484,44.3667,9.9561,69],["EQUIT","Equi Terme","Fivizzano","MS",250,44.1694,10.1499,65],["TRRIG","Torriglia","Torriglia","GE",769,44.5169,9.1596,61],["NOVGA","Novegigola","Tresana","MS",420,44.2218,9.8998,68],["PARAN","Parana","Mulazzo","MS",695,44.2822,9.8633,82],["BRUGN","Brugneto Diga","Torriglia","GE",777,44.5364,9.2054,65],["ROVEG","Rovegno","Rovegno","GE",650,44.5772,9.2831,70],["SSTAV","S. Stefano d'Aveto","Santo Stefano d'Aveto","GE",1019,44.5489,9.4512,53],["BRGEL","Barbagelata","Lorsica","GE",1100,44.4822,9.242,83],["SCURT","Scurtabo'","Varese Ligure","SP",685,44.4068,9.5338,54],["SEGOD","Sesta Godano","Sesta Godano","SP",265,44.2985,9.6775,69],["MLARE","Mallare","Mallare","SV",467,44.2932,8.2979,80],["CCORM","Calice al C. - Molunghi","Calice al Cornoviglio","SP",425,44.2489,9.8387,71],["LGIAC","Giacopiane - Diga","Borzonasca","GE",1007,44.4627,9.3953,52],["FALLA","Fallarosa","Torriglia","GE",865,44.5172,9.1034,82],["BRZON","Borzone","Borzonasca","GE",386,44.4243,9.4101,66],["DAVAG","Davagna","Davagna","GE",467,44.4678,9.0954,64],["CARPG","Carpe - Case Garoni","Toirano","SV",445,44.1444,8.1634,66],["CCADB","Colle di Cadibona","Savona","SV",385,44.333,8.3829,68],["CEMBR","Cembrano","Maissana","SP",410,44.3524,9.5841,60],["MONTL","Montalto Ligure","Montalto Carpasio","IM",240,43.9307,7.842,51],["TRIOR","Triora","Triora","IM",789,43.9945,7.7624,66],["PIAMP","Piampaludo","Sassello","SV",882,44.4623,8.5809,62],["PTURC","Passo del Turchino","Mele","GE",590,44.4861,8.736,54],["SASSL","Sassello","Sassello","SV",385,44.4823,8.4857,58],["SEGIA","Sella Giassina","Neirone","GE",895,44.4876,9.1821,76],["REPPI","Reppia","Ne","GE",530,44.3749,9.4577,40],["ALPIC","Alpicella","Varazze","SV",435,44.4067,8.526,57],["OGNIO","Ognio","Neirone","GE",490,44.4437,9.1699,58],["CERPG","Passo Ghimbegna","Ceriana","IM",931,43.9046,7.7333,52],["FERRA","Ferrania","Cairo Montenotte","SV",358,44.3669,8.3225,55],["MATRA","Mattarana","Carrodano","SP",470,44.245,9.6147,72],["MNINF","Montenotte Inferiore","Cairo Montenotte","SV",564,44.4126,8.4118,76],["LFMTV","La Foce - Mte Viseggi","La Spezia","SP",350,44.1325,9.7903,51],["ALTOM","Alto - Madonna del lago","Alto","CN",1095,44.1228,7.9965,63],["TASNI","Tassani","Sestri Levante","GE",320,44.2955,9.4493,40],["PORNA","Pornassio","Pornassio","IM",475,44.0639,7.8664,71],["DEGIR","Dego - Girini","Dego","SV",450,44.4518,8.3394,50],["GIACO","Giacopiane - Lago","Borzonasca","GE",1040,44.4611,9.3877,54],["OSIGL","Osiglia","Osiglia","SV",620,44.2865,8.2025,79],["MONTA","Montagna","Quiliano","SV",253,44.2843,8.3714,79],["MSETT","Monte Settepani","Osiglia","SV",1375,44.244,8.1958,87],["GOUTA","Sella di Gouta","Apricale","IM",1212,43.9396,7.6081,65],["TESTI","Testico","Testico","SV",439,44.0065,8.0352,57],["PTECO","Pieve di Teco","Pieve di Teco","IM",263,44.0495,7.9147,63],["ORERO","Croce Orero","Orero","GE",640,44.4242,9.2849,63],["VERZI","Verzi Loano","Loano","SV",450,44.164,8.22,62],["SSGIU","Stella S. Giustina","Stella","SV",349,44.4158,8.4825,66],["SZIGN","Sero' di Zignago","Zignago","SP",580,44.2643,9.737,70],["URVAS","Urbe - Vara Sup.","Urbe","SV",810,44.4695,8.6274,63],["MTBNO","Montalbano","La Spezia","SP",330,44.1403,9.8308,46],["CUCCA","Cuccarello","Sesta Godano","SP",835,44.3497,9.6991,81],["CONNA","Conna","Andora","SV",350,43.9792,8.1036,44],["LAMAC","La Macchia","Varese Ligure","SP",270,44.3232,9.6148,72],["RANZO","Ranzo","Ranzo","IM",343,44.0654,8.0043,44],["BUSAL","Busalla","Busalla","GE",358,44.5713,8.9489,59],["MELEE","Mele","Mele","GE",270,44.4742,8.7331,52],["STALE","Statale","Ne","GE",593,44.3505,9.4808,50],["TAVRN","Tavarone","Maissana","SP",603,44.3127,9.5486,76],["VBGOR","Valbrevenna - Gorra","Valbrevenna","GE",680,44.5318,9.0233,62],["MTECA","Monte Cappellino","Savignone","GE",620,44.5486,8.9542,51],["CERIA","Ceriana","Ceriana","IM",370,43.8797,7.7739,51],["LOCOC","Loco Carchelli","Rovegno","GE",600,44.5542,9.2842,69],["VALIG","Varese Ligure","Varese Ligure","SP",345,44.3831,9.5842,61],["MONTG","Montoggio","Montoggio","GE",442,44.5156,9.0477,75],["PRAIC","Prai","Campo Ligure","GE",820,44.5178,8.6731,66],["CARRO","Carro","Carro","SP",437,44.2753,9.5977,77],["CODOG","Colle D'Oggia","Montalto Carpasio","IM",1163,43.9813,7.8667,43],["SALBE","Bargagli","Bargagli","GE",702,44.4385,9.1074,57],["CRCFI","Crocefieschi - Santuario","Crocefieschi","GE",762,44.5846,9.0182,64],["PIGNA","Pigna","Pigna","IM",250,43.9321,7.6561,51],["CALIZ","Calizzano","Calizzano","SV",647,44.2341,8.1182,80],["TAGLT","Taglieto","Varese Ligure","SP",895,44.4053,9.6205,45],["COMAN","Comano","Comano","MS",734,44.3038,10.1196,69],["PATIG","Patigno","Zeri","MS",744,44.3547,9.7645,58],["BGNNE","Bagnone","Bagnone","MS",320,44.3097,9.9842,50],["PPICC","Pietra Piccata","Pontremoli","MS",955,44.3396,9.8233,77],["PRMLO","Pratomollo","Borzonasca","GE",1520,44.4729,9.4588,55],["PACIS","Passo della Cisa","Pontremoli","MS",1014,44.4664,9.9204,72],["MIGNA","Mignanego","Mignanego","GE",270,44.5403,8.9382,53],["CCHER","Cichero","San Colombano Certenoli","GE",615,44.4211,9.3219,55]];
+
+  var RAW = 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/liguria/';
+  var MAPPA = 'https://precipitazioni.avventuremicologiche.it/';
+  var QUANTI = 15, FORTE = 30, GIORNI = 25;
+
+  function iso(d){ var p=function(n){return String(n).padStart(2,'0');};
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
+  function meno(n){ var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-n); return d; }
+  var MESI=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  function gg(d){ var p=d.split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
+  function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function uno(n){ return Math.round(n*10)/10; }
+
+  /* Si scaricano gli ultimi 25 giorni in parallelo. Un giorno che manca non e'
+     un guasto: capita che il piu' recente non ci sia ancora, e si va avanti
+     con quelli che ci sono. */
+  var giorni = [];
+  for (var n = 1; n <= GIORNI; n++) giorni.push(n);
+
+  Promise.all(giorni.map(function(n){
+    return fetch(RAW + iso(meno(n)) + '.json')
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){ return { n:n, j:j }; })
+      .catch(function(){ return { n:n, j:null }; });
+  })).then(function(res){
+    var buoni = res.filter(function(x){ return x.j && x.j.stations; });
+    if (buoni.length < 5) { guasto(buoni.length); return; }
+    disegna(buoni);
+  });
+
+  function guasto(quanti){
+    document.getElementById('attesa').style.display='none';
+    var g=document.getElementById('guasto');
+    g.style.display='block';
+    g.innerHTML='⚠️ Non riesco a leggere l\'archivio delle piogge in questo momento'
+      + (quanti ? ' (trovati solo '+quanti+' giorni su '+GIORNI+')' : '')
+      + '. Non dipende da te: riprova fra qualche minuto, oppure vai direttamente '
+      + '<a href="'+MAPPA+'?r=liguria">sulla mappa</a>.';
+  }
+
+  function disegna(buoni){
+    var perGiorno = {};
+    buoni.forEach(function(x){
+      var m = {};
+      x.j.stations.forEach(function(s){ m[s.id] = s.mm || 0; });
+      perGiorno[x.n] = m;
+    });
+
+    function somma(da, a, id){
+      var t = 0;
+      for (var n = da; n >= a; n--) if (perGiorno[n] && perGiorno[n][id] != null) t += perGiorno[n][id];
+      return t;
+    }
+    function ultimaForte(id){
+      for (var n = 1; n <= GIORNI; n++)
+        if (perGiorno[n] && perGiorno[n][id] >= FORTE) return { g:n, mm:uno(perGiorno[n][id]) };
+      return null;
+    }
+
+    var righe = POSTI.map(function(p){
+      return { id:p[0], n:p[1], com:p[2], sig:p[3], q:p[4], lat:p[5], lon:p[6], bosco:p[7],
+        mm:uno(somma(20,13,p[0])), mm7:uno(somma(6,0,p[0])), mm25:uno(somma(24,0,p[0])) };
+    }).sort(function(a,b){ return b.mm - a.mm; }).slice(0, QUANTI);
+
+    righe.forEach(function(r){ r.forte = ultimaForte(r.id); });
+    var maxMm = Math.max.apply(null, righe.map(function(r){ return Math.max(r.mm, r.mm7, r.mm25); }).concat([1]));
+
+    var daG = iso(meno(20)), aG = iso(meno(13)), a20 = iso(meno(1));
+    function link(r, dal, al){
+      return MAPPA + '?r=liguria&da=' + dal + '&a=' + al
+        + (r ? '&z=11&c=' + r.lat.toFixed(4) + ',' + r.lon.toFixed(4) : '');
+    }
+    function luogo(r){ return esc(r.com) + (r.sig ? ' (' + r.sig + ')' : ''); }
+    function cella(v, cls){
+      return '<td class="mm ' + (cls||'') + '">'
+        + (v > 0 ? '<span class="barra" style="width:' + Math.round(v/maxMm*100) + '%"></span>' : '')
+        + '<span class="v' + (v > 0 ? '' : ' zero') + '">' + (v > 0 ? v : '—') + '</span></td>';
+    }
+
+    var primo = righe[0];
+    document.getElementById('testa').innerHTML =
+      '<div class="capo"><div class="et">Dove ha piovuto di più 13-20 giorni fa?</div>'
+      + '<div class="gr">' + esc(primo.n) + ', ' + primo.mm + ' mm</div>'
+      + '<div class="pic">' + luogo(primo) + ' · ' + primo.q + ' MT'
+      + (primo.forte ? ' · ultima pioggia forte ' + (primo.forte.g===1?'ieri':primo.forte.g+' giorni fa')
+                        + ' (' + primo.forte.mm + ' mm)' : '') + '</div>'
+      + '<div class="capo-btns">'
+      + '<a class="capo-btn" href="' + link(primo, daG, aG) + '">Apri mappa · 13-20 gg fa</a>'
+      + '<a class="capo-btn" href="' + link(primo, daG, a20) + '">Apri mappa · ultimi 20 gg</a>'
+      + '<a class="capo-btn" href="' + link(null, daG, a20) + '">Liguria · ultimi 20 gg</a>'
+      + '</div></div>';
+
+    document.getElementById('finestra').innerHTML =
+      'Pioggia caduta fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG) + '</b>, in una finestra '
+      + 'che va da <b>13 a 20 giorni fa</b>, cioè il tempo ideale per lo sviluppo dei funghi.';
+
+    var trs = righe.map(function(r, i){
+      var quando = r.forte
+        ? (r.forte.g===1?'ieri':r.forte.g+' giorni fa') + ' <span class="q2">' + r.forte.mm + ' mm</span>'
+        : '<span class="vuoto">niente di forte</span>';
+      return '<tr><td class="pos">' + (i+1) + '</td>'
+        + '<td><a class="loc" href="' + link(r, daG, aG) + '" title="Apri la mappa su ' + esc(r.n) + '">'
+        + '<b>' + esc(r.n) + '</b><span class="com">' + luogo(r) + ' · ' + r.q + ' MT</span></a></td>'
+        + cella(r.mm) + cella(r.mm7) + cella(r.mm25, 'tagl')
+        + '<td class="ultima tagl">' + quando + '</td></tr>';
+    }).join('');
+
+    document.getElementById('tabella').innerHTML =
+      '<table><thead><tr><th class="num"></th><th>Località</th>'
+      + '<th>mm range 13-20 gg fa</th><th>Ultimi 7 gg</th>'
+      + '<th class="tagl">Ultimi 25 gg</th><th class="tagl">Ultima pioggia forte</th>'
+      + '</tr></thead><tbody>' + trs + '</tbody></table>';
+
+    var conForte = righe.filter(function(r){ return r.forte; }).length;
+    document.getElementById('notaforte').innerHTML =
+      '«Pioggia forte» vuol dire almeno ' + FORTE + ' mm in un giorno solo: è quella che bagna '
+      + 'davvero il terreno. ' + conForte + ' dei primi ' + righe.length + ' posti ne hanno avuta '
+      + 'una negli ultimi ' + GIORNI + ' giorni.';
+
+    document.getElementById('attesa').style.display = 'none';
+  }
+}());
+</script>
+</body>
+</html>
