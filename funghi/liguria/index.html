@@ -174,7 +174,7 @@ caduta. Ogni pallino è un pluviometro: cliccalo e vedi il suo storico.</p>
   strumento di un ente pubblico, col suo nome e la sua quota.</div>
   <div><span class="n">2</span><b>Quota fra 200 e 1600 metri.</b> Sotto è pianura, sopra il bosco
   finisce.</div>
-  <div><span class="n">3</span><b>Almeno il 40% di bosco entro 3 km</b>, misurato sulle mappe di
+  <div><span class="n">3</span><b>Almeno il 37% di bosco entro 3 km</b>, misurato sulle mappe di
   OpenStreetMap.</div>
 </div>
 
@@ -195,17 +195,27 @@ italiani (ISTAT).</p>
 <script>
 (function(){
   /* I posti che passano i tre criteri, cotti dentro: cambiano una volta
-     l'anno, non ogni giorno.
-     [ id, nome, comune, sigla, quota, lat, lon, bosco% ] */
-  var POSTI = [["MINUC","Minucciano","Minucciano","LU",666,44.171,10.2082,73],["VREGI","Valleregia","Serra Riccò","GE",407,44.5204,8.9474,52],["MANIE","Manie","Finale Ligure","SV",340,44.1933,8.3788,42],["VIGAN","Viganego","Bargagli","GE",430,44.4285,9.0635,57],["ROSGL","Rossiglione","Rossiglione","GE",289,44.5723,8.6578,57],["CNAVA","Colle di Nava","Pornassio","IM",927,44.0833,7.8733,68],["VALZE","Valzemola","Roccavignale","SV",480,44.3696,8.1911,44],["CRORE","Crocetta di Orero","Serra Riccò","GE",470,44.5201,8.9859,62],["VERDE","Verdeggia","Triora","IM",1120,44.0443,7.7211,44],["MAZLA","Mazzola","Fivizzano","MS",460,44.2111,10.1169,52],["CRETO","Creto","Montoggio","GE",630,44.4751,9.0071,51],["CMELO","Colle del Melogno","Magliolo","SV",1004,44.2323,8.2025,87],["AVOBB","Alpe Vobbia","Vobbia","GE",1082,44.5703,9.0749,69],["CASON","Casoni di Suvero","Zignago","SP",1070,44.3054,9.7658,55],["BELEN","Colle Belenda","Pigna","IM",1357,43.9815,7.6998,62],["LAVAG","Lavagnola","Savona","SV",253,44.3349,8.4752,41],["BRATT","Passo del Brattello","Pontremoli","MS",955,44.4562,9.8229,82],["AMBOR","Amborzasco","Santo Stefano d'Aveto","GE",908,44.5145,9.455,66],["CASRB","Castelvecchio di R. B.","Castelvecchio di Rocca Barbena","SV",432,44.132,8.1189,69],["PCERR","Passo del Cerreto","Fivizzano","MS",1250,44.3043,10.2168,55],["MURIA","Murialdo","Murialdo","SV",523,44.3132,8.1598,78],["AGORR","Alpe Gorreto","Gorreto","GE",915,44.6047,9.2363,66],["CABAN","Cabanne","Rezzoaglio","GE",809,44.4952,9.3465,67],["BARGO","Bargone","Casarza Ligure","GE",260,44.2951,9.4814,56],["ISOVE","Isoverde","Campomorone","GE",300,44.5301,8.8582,50],["TOGAR","Torriglia - Garaventa","Torriglia","GE",1032,44.5293,9.175,56],["CAMPL","Campo Ligure","Campo Ligure","GE",338,44.5426,8.6939,62],["PZGLI","Pizzeglio","Castel Vittorio","IM",655,43.9186,7.6945,42],["IERAA","Iera","Bagnone","MS",538,44.3333,10.0336,73],["BOROS","Bosco di Rossano","Zeri","MS",670,44.3049,9.7975,63],["TURAN","Turano","Fivizzano","MS",500,44.2464,10.1517,61],["VICOM","Vicomorasso","Sant'Olcese","GE",310,44.4856,8.9785,53],["TNDLA","Tendola","Fosdinovo","MS",410,44.156,10.0338,67],["RCSIG","Rocca Sigillina","Filattiera","MS",484,44.3667,9.9561,69],["EQUIT","Equi Terme","Fivizzano","MS",250,44.1694,10.1499,65],["TRRIG","Torriglia","Torriglia","GE",769,44.5169,9.1596,61],["NOVGA","Novegigola","Tresana","MS",420,44.2218,9.8998,68],["PARAN","Parana","Mulazzo","MS",695,44.2822,9.8633,82],["BRUGN","Brugneto Diga","Torriglia","GE",777,44.5364,9.2054,65],["ROVEG","Rovegno","Rovegno","GE",650,44.5772,9.2831,70],["SSTAV","S. Stefano d'Aveto","Santo Stefano d'Aveto","GE",1019,44.5489,9.4512,53],["BRGEL","Barbagelata","Lorsica","GE",1100,44.4822,9.242,83],["SCURT","Scurtabo'","Varese Ligure","SP",685,44.4068,9.5338,54],["SEGOD","Sesta Godano","Sesta Godano","SP",265,44.2985,9.6775,69],["MLARE","Mallare","Mallare","SV",467,44.2932,8.2979,80],["CCORM","Calice al C. - Molunghi","Calice al Cornoviglio","SP",425,44.2489,9.8387,71],["LGIAC","Giacopiane - Diga","Borzonasca","GE",1007,44.4627,9.3953,52],["FALLA","Fallarosa","Torriglia","GE",865,44.5172,9.1034,82],["BRZON","Borzone","Borzonasca","GE",386,44.4243,9.4101,66],["DAVAG","Davagna","Davagna","GE",467,44.4678,9.0954,64],["CARPG","Carpe - Case Garoni","Toirano","SV",445,44.1444,8.1634,66],["CCADB","Colle di Cadibona","Savona","SV",385,44.333,8.3829,68],["CEMBR","Cembrano","Maissana","SP",410,44.3524,9.5841,60],["MONTL","Montalto Ligure","Montalto Carpasio","IM",240,43.9307,7.842,51],["TRIOR","Triora","Triora","IM",789,43.9945,7.7624,66],["PIAMP","Piampaludo","Sassello","SV",882,44.4623,8.5809,62],["PTURC","Passo del Turchino","Mele","GE",590,44.4861,8.736,54],["SASSL","Sassello","Sassello","SV",385,44.4823,8.4857,58],["SEGIA","Sella Giassina","Neirone","GE",895,44.4876,9.1821,76],["REPPI","Reppia","Ne","GE",530,44.3749,9.4577,40],["ALPIC","Alpicella","Varazze","SV",435,44.4067,8.526,57],["OGNIO","Ognio","Neirone","GE",490,44.4437,9.1699,58],["CERPG","Passo Ghimbegna","Ceriana","IM",931,43.9046,7.7333,52],["FERRA","Ferrania","Cairo Montenotte","SV",358,44.3669,8.3225,55],["MATRA","Mattarana","Carrodano","SP",470,44.245,9.6147,72],["MNINF","Montenotte Inferiore","Cairo Montenotte","SV",564,44.4126,8.4118,76],["LFMTV","La Foce - Mte Viseggi","La Spezia","SP",350,44.1325,9.7903,51],["ALTOM","Alto - Madonna del lago","Alto","CN",1095,44.1228,7.9965,63],["TASNI","Tassani","Sestri Levante","GE",320,44.2955,9.4493,40],["PORNA","Pornassio","Pornassio","IM",475,44.0639,7.8664,71],["DEGIR","Dego - Girini","Dego","SV",450,44.4518,8.3394,50],["GIACO","Giacopiane - Lago","Borzonasca","GE",1040,44.4611,9.3877,54],["OSIGL","Osiglia","Osiglia","SV",620,44.2865,8.2025,79],["MONTA","Montagna","Quiliano","SV",253,44.2843,8.3714,79],["MSETT","Monte Settepani","Osiglia","SV",1375,44.244,8.1958,87],["GOUTA","Sella di Gouta","Apricale","IM",1212,43.9396,7.6081,65],["TESTI","Testico","Testico","SV",439,44.0065,8.0352,57],["PTECO","Pieve di Teco","Pieve di Teco","IM",263,44.0495,7.9147,63],["ORERO","Croce Orero","Orero","GE",640,44.4242,9.2849,63],["VERZI","Verzi Loano","Loano","SV",450,44.164,8.22,62],["SSGIU","Stella S. Giustina","Stella","SV",349,44.4158,8.4825,66],["SZIGN","Sero' di Zignago","Zignago","SP",580,44.2643,9.737,70],["URVAS","Urbe - Vara Sup.","Urbe","SV",810,44.4695,8.6274,63],["MTBNO","Montalbano","La Spezia","SP",330,44.1403,9.8308,46],["CUCCA","Cuccarello","Sesta Godano","SP",835,44.3497,9.6991,81],["CONNA","Conna","Andora","SV",350,43.9792,8.1036,44],["LAMAC","La Macchia","Varese Ligure","SP",270,44.3232,9.6148,72],["RANZO","Ranzo","Ranzo","IM",343,44.0654,8.0043,44],["BUSAL","Busalla","Busalla","GE",358,44.5713,8.9489,59],["MELEE","Mele","Mele","GE",270,44.4742,8.7331,52],["STALE","Statale","Ne","GE",593,44.3505,9.4808,50],["TAVRN","Tavarone","Maissana","SP",603,44.3127,9.5486,76],["VBGOR","Valbrevenna - Gorra","Valbrevenna","GE",680,44.5318,9.0233,62],["MTECA","Monte Cappellino","Savignone","GE",620,44.5486,8.9542,51],["CERIA","Ceriana","Ceriana","IM",370,43.8797,7.7739,51],["LOCOC","Loco Carchelli","Rovegno","GE",600,44.5542,9.2842,69],["VALIG","Varese Ligure","Varese Ligure","SP",345,44.3831,9.5842,61],["MONTG","Montoggio","Montoggio","GE",442,44.5156,9.0477,75],["PRAIC","Prai","Campo Ligure","GE",820,44.5178,8.6731,66],["CARRO","Carro","Carro","SP",437,44.2753,9.5977,77],["CODOG","Colle D'Oggia","Montalto Carpasio","IM",1163,43.9813,7.8667,43],["SALBE","Bargagli","Bargagli","GE",702,44.4385,9.1074,57],["CRCFI","Crocefieschi - Santuario","Crocefieschi","GE",762,44.5846,9.0182,64],["PIGNA","Pigna","Pigna","IM",250,43.9321,7.6561,51],["CALIZ","Calizzano","Calizzano","SV",647,44.2341,8.1182,80],["TAGLT","Taglieto","Varese Ligure","SP",895,44.4053,9.6205,45],["COMAN","Comano","Comano","MS",734,44.3038,10.1196,69],["PATIG","Patigno","Zeri","MS",744,44.3547,9.7645,58],["BGNNE","Bagnone","Bagnone","MS",320,44.3097,9.9842,50],["PPICC","Pietra Piccata","Pontremoli","MS",955,44.3396,9.8233,77],["PRMLO","Pratomollo","Borzonasca","GE",1520,44.4729,9.4588,55],["PACIS","Passo della Cisa","Pontremoli","MS",1014,44.4664,9.9204,72],["MIGNA","Mignanego","Mignanego","GE",270,44.5403,8.9382,53],["CCHER","Cichero","San Colombano Certenoli","GE",615,44.4211,9.3219,55]];
+     l'anno, non ogni giorno. Vengono da .github/scripts/funghi-posti.json, la
+     stessa anagrafe che usa genera-funghi.js per i numeri.
+     [ id, nome, sigla provincia, quota, lat, lon, bosco% ]
+     ⚠️ LA PROVINCIA VIENE DALLE COORDINATE, non dal campo del comune: quel
+        campo vuol dire cose diverse in ogni rete (sigla in Lombardia, «PROVINCIA
+        DI...» in Piemonte, il comune in Liguria, la sigla della REGIONE nelle
+        dieci reti MeteoHub). Il prezzo e' che si legge «Reppia — GE» e non
+        «Reppia (Ne)»: uniforme su diciannove regioni, un'informazione in meno
+        qui. Deciso il 2/9/2026. */
+  var POSTI = [["AGORR","Alpe Gorreto","GE",915,44.6047,9.2363,59],["AVOBB","Alpe Vobbia","GE",1082,44.5703,9.0749,63],["ALPIC","Alpicella","SV",435,44.4067,8.526,48],["ALTOM","Alto - Madonna del lago","CN",1095,44.1228,7.9965,59],["AMBOR","Amborzasco","GE",908,44.5145,9.455,59],["BGNNE","Bagnone","MS",320,44.3097,9.9842,48],["BRGEL","Barbagelata","GE",1100,44.4822,9.242,81],["SALBE","Bargagli","GE",702,44.4385,9.1074,53],["BARGO","Bargone","GE",260,44.2951,9.4814,52],["BRZON","Borzone","GE",386,44.4243,9.4101,61],["BOROS","Bosco di Rossano","MS",670,44.3049,9.7975,61],["BRUGN","Brugneto Diga","GE",777,44.5364,9.2054,61],["BUSAL","Busalla","GE",358,44.5713,8.9489,55],["CABAN","Cabanne","GE",809,44.4952,9.3465,64],["CCORM","Calice al C. - Molunghi","SP",425,44.2489,9.8387,70],["CALIZ","Calizzano","SV",647,44.2341,8.1182,75],["CAMPL","Campo Ligure","GE",338,44.5426,8.6939,58],["CARPG","Carpe - Case Garoni","SV",445,44.1444,8.1634,64],["CARRO","Carro","SP",437,44.2753,9.5977,72],["CASON","Casoni di Suvero","MS",1070,44.3054,9.7658,54],["CASRB","Castelvecchio di R. B.","SV",432,44.132,8.1189,67],["CEMBR","Cembrano","SP",410,44.3524,9.5841,56],["CERIA","Ceriana","IM",370,43.8797,7.7739,50],["CCHER","Cichero","GE",615,44.4211,9.3219,54],["BELEN","Colle Belenda","IM",1357,43.9815,7.6998,58],["CODOG","Colle D'Oggia","IM",1163,43.9813,7.8667,39],["CMELO","Colle del Melogno","SV",1004,44.2323,8.2025,83],["CCADB","Colle di Cadibona","SV",385,44.333,8.3829,58],["CNAVA","Colle di Nava","IM",927,44.0833,7.8733,67],["COMAN","Comano","MS",734,44.3038,10.1196,63],["CONNA","Conna","SV",350,43.9792,8.1036,42],["CRETO","Creto","GE",630,44.4751,9.0071,49],["ORERO","Croce Orero","GE",640,44.4242,9.2849,61],["CRCFI","Crocefieschi - Santuario","GE",762,44.5846,9.0182,56],["CRORE","Crocetta di Orero","GE",470,44.5201,8.9859,60],["CUCCA","Cuccarello","SP",835,44.3497,9.6991,76],["DAVAG","Davagna","GE",467,44.4678,9.0954,60],["DEGIR","Dego - Girini","SV",450,44.4518,8.3394,45],["EQUIT","Equi Terme","MS",250,44.1694,10.1499,66],["FALLA","Fallarosa","GE",865,44.5172,9.1034,80],["FERRA","Ferrania","SV",358,44.3669,8.3225,45],["LGIAC","Giacopiane - Diga","GE",1007,44.4627,9.3953,49],["GIACO","Giacopiane - Lago","GE",1040,44.4611,9.3877,52],["IERAA","Iera","MS",538,44.3333,10.0336,66],["ISOVE","Isoverde","GE",300,44.5301,8.8582,46],["LFMTV","La Foce - Mte Viseggi","SP",350,44.1325,9.7903,47],["LAMAC","La Macchia","SP",270,44.3232,9.6148,68],["LOCOC","Loco Carchelli","GE",600,44.5542,9.2842,66],["MLARE","Mallare","SV",467,44.2932,8.2979,74],["MANIE","Manie","SV",340,44.1933,8.3788,39],["MATRA","Mattarana","SP",470,44.245,9.6147,68],["MAZLA","Mazzola","MS",460,44.2111,10.1169,50],["MELEE","Mele","GE",270,44.4742,8.7331,48],["MIGNA","Mignanego","GE",270,44.5403,8.9382,50],["MINUC","Minucciano","LU",666,44.171,10.2082,72],["MONTA","Montagna","SV",253,44.2843,8.3714,75],["MTBNO","Montalbano","SP",330,44.1403,9.8308,45],["MONTL","Montalto Ligure","IM",240,43.9307,7.842,47],["MTECA","Monte Cappellino","GE",620,44.5486,8.9542,49],["MSETT","Monte Settepani","SV",1375,44.244,8.1958,83],["MNINF","Montenotte Inferiore","SV",564,44.4126,8.4118,71],["MONTG","Montoggio","GE",442,44.5156,9.0477,72],["MURIA","Murialdo","SV",523,44.3132,8.1598,72],["NOVGA","Novegigola","MS",420,44.2218,9.8998,68],["OGNIO","Ognio","GE",490,44.4437,9.1699,56],["OSIGL","Osiglia","SV",620,44.2865,8.2025,77],["PARAN","Parana","MS",695,44.2822,9.8633,78],["BRATT","Passo del Brattello","MS",955,44.4562,9.8229,77],["PCERR","Passo del Cerreto","MS",1250,44.3043,10.2168,45],["PTURC","Passo del Turchino","GE",590,44.4861,8.736,51],["PACIS","Passo della Cisa","MS",1014,44.4664,9.9204,66],["CERPG","Passo Ghimbegna","IM",931,43.9046,7.7333,48],["PATIG","Patigno","MS",744,44.3547,9.7645,54],["PIAMP","Piampaludo","SV",882,44.4623,8.5809,53],["PPICC","Pietra Piccata","MS",955,44.3396,9.8233,74],["PTECO","Pieve di Teco","IM",263,44.0495,7.9147,62],["PIGNA","Pigna","IM",250,43.9321,7.6561,49],["PZGLI","Pizzeglio","IM",655,43.9186,7.6945,41],["PORNA","Pornassio","IM",475,44.0639,7.8664,69],["PRAIC","Prai","GE",820,44.5178,8.6731,59],["PRMLO","Pratomollo","GE",1520,44.4729,9.4588,48],["RANZO","Ranzo","IM",343,44.0654,8.0043,44],["REPPI","Reppia","GE",530,44.3749,9.4577,37],["RCSIG","Rocca Sigillina","MS",484,44.3667,9.9561,66],["ROSGL","Rossiglione","GE",289,44.5723,8.6578,52],["ROVEG","Rovegno","GE",650,44.5772,9.2831,66],["SSTAV","S. Stefano d'Aveto","GE",1019,44.5489,9.4512,48],["SASSL","Sassello","SV",385,44.4823,8.4857,51],["SCURT","Scurtabo'","SP",685,44.4068,9.5338,49],["GOUTA","Sella di Gouta","IM",1212,43.9396,7.6081,60],["SEGIA","Sella Giassina","GE",895,44.4876,9.1821,76],["SZIGN","Sero' di Zignago","SP",580,44.2643,9.737,69],["SEGOD","Sesta Godano","SP",265,44.2985,9.6775,67],["STALE","Statale","GE",593,44.3505,9.4808,49],["SSGIU","Stella S. Giustina","SV",349,44.4158,8.4825,59],["TAGLT","Taglieto","SP",895,44.4053,9.6205,42],["TAVRN","Tavarone","SP",603,44.3127,9.5486,73],["TNDLA","Tendola","MS",410,44.156,10.0338,60],["TESTI","Testico","SV",439,44.0065,8.0352,56],["TRRIG","Torriglia","GE",769,44.5169,9.1596,56],["TOGAR","Torriglia - Garaventa","GE",1032,44.5293,9.175,52],["TRIOR","Triora","IM",789,43.9945,7.7624,62],["TURAN","Turano","MS",500,44.2464,10.1517,57],["URVAS","Urbe - Vara Sup.","SV",810,44.4695,8.6274,55],["VBGOR","Valbrevenna - Gorra","GE",680,44.5318,9.0233,59],["VREGI","Valleregia","GE",407,44.5204,8.9474,48],["VALZE","Valzemola","SV",480,44.3696,8.1911,41],["VALIG","Varese Ligure","SP",345,44.3831,9.5842,58],["VERDE","Verdeggia","IM",1120,44.0443,7.7211,43],["VERZI","Verzi Loano","SV",450,44.164,8.22,61],["VICOM","Vicomorasso","GE",310,44.4856,8.9785,50],["VIGAN","Viganego","GE",430,44.4285,9.0635,51]];
 
-  var RAW = 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/liguria/';
+  var REG = 'liguria', DIR = 'liguria';
+  var BASE = 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
   var MAPPA = 'https://precipitazioni.avventuremicologiche.it/';
   var QUANTI = 15, FORTE = 30, GIORNI = 25;
 
   function iso(d){ var p=function(n){return String(n).padStart(2,'0');};
     return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
   function meno(n){ var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-n); return d; }
+  function menoDa(s, n){ var p=String(s).split('-');
+    var d=new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return iso(d); }
   var MESI=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
   function gg(d){ var p=d.split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
   function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
@@ -240,66 +250,105 @@ italiani (ISTAT).</p>
     }
   }());
 
-  /* Si scaricano gli ultimi 25 giorni in parallelo. Un giorno che manca non e'
-     un guasto: capita che il piu' recente non ci sia ancora, e si va avanti
-     con quelli che ci sono. */
-  var giorni = [];
-  for (var n = 1; n <= GIORNI; n++) giorni.push(n);
+  /* ── STRADA NORMALE: i numeri gia' fatti, UNA richiesta ──────────────────
+     Fino al 2/9/2026 questa pagina scaricava i 25 file giornalieri e si faceva
+     il conto nel browser del visitatore. Misurato sulle 19 regioni: 500
+     richieste e 10,1 MB in tutto, e casi grotteschi — la Sicilia scaricava
+     1.387 KB per mostrare NOVE posti. Adesso il conto lo fa una volta al giorno
+     genera-funghi.js e qui arriva gia' pronto: 3,6 KB per la Liguria.
+     ⚠️ LA FRESCHEZZA SI MISURA SU QUANDO E' STATO SCRITTO (36 ore), non
+        sull'ultimo giorno che contiene: la Puglia ha giornate che MeteoHub non
+        consegna, e un file sanissimo puo' finire due giorni indietro. Sopra le
+        36 ore vuol dire invece workflow fermo, e allora si ricalcola.
+     ⚠️ LE DATE DELLA FINESTRA VENGONO DAL FILE (`oggi`), non dall'orologio del
+        visitatore: se il file e' di ieri, le etichette devono dire la finestra
+        su cui quei millimetri sono stati sommati davvero. */
+  function fresco(j){
+    if (!j || !j.generato || !j.posti || !j.oggi) return false;
+    var eta = Date.now() - new Date(j.generato).getTime();
+    return eta >= 0 && eta < 36*3600*1000;
+  }
 
-  Promise.all(giorni.map(function(n){
-    return fetch(RAW + iso(meno(n)) + '.json')
-      .then(function(r){ return r.ok ? r.json() : null; })
-      .then(function(j){ return { n:n, j:j }; })
-      .catch(function(){ return { n:n, j:null }; });
-  })).then(function(res){
-    var buoni = res.filter(function(x){ return x.j && x.j.stations; });
-    if (buoni.length < 5) { guasto(buoni.length); return; }
-    disegna(buoni);
-  });
+  fetch(BASE + 'funghi/' + REG + '.json')
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .catch(function(){ return null; })
+    .then(function(j){
+      if (j && fresco(j)) {
+        var righe = [];
+        POSTI.forEach(function(p){
+          var v = j.posti[p[0]];
+          if (!v) return;        // posto aggiunto dopo l'ultimo giro: si salta
+          righe.push({ id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5],
+            mm:v[0], mm7:v[1], mm25:v[2], forte: v[3] ? { g:v[3], mm:v[4] } : null });
+        });
+        if (righe.length) { mostra(righe, j.oggi); return; }
+      }
+      return daiFile();
+    })
+    .catch(function(){ return daiFile(); });
+
+  /* ── RIPIEGO: i giorni uno per uno, come faceva la pagina fino al 2/9/2026 ──
+     Serve se il file dei numeri manca o e' vecchio. Un giorno che manca non e'
+     un guasto: capita che il piu' recente non ci sia ancora.
+     ⚠️ QUESTA E' LA COPIA: quella che lavora tutti i giorni sta in
+        genera-funghi.js. Le due devono restare gemelle — stesse finestre,
+        stessa soglia, stesso modo di contare. */
+  function daiFile(){
+    var nn = [];
+    for (var n = 1; n <= GIORNI; n++) nn.push(n);
+    return Promise.all(nn.map(function(n){
+      return fetch(BASE + DIR + '/' + iso(meno(n)) + '.json')
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(j){ return { n:n, j:j }; })
+        .catch(function(){ return { n:n, j:null }; });
+    })).then(function(res){
+      var buoni = res.filter(function(x){ return x.j && x.j.stations; });
+      if (buoni.length < 5) { guasto(buoni.length); return; }
+
+      var perGiorno = {};
+      buoni.forEach(function(x){
+        var m = {};
+        x.j.stations.forEach(function(s){ m[s.id] = s.mm || 0; });
+        perGiorno[x.n] = m;
+      });
+      function somma(da, a, id){
+        var t = 0;
+        for (var n = da; n >= a; n--) if (perGiorno[n] && perGiorno[n][id] != null) t += perGiorno[n][id];
+        return uno(t);
+      }
+      function ultimaForte(id){
+        for (var n = 1; n <= GIORNI; n++)
+          if (perGiorno[n] && perGiorno[n][id] >= FORTE) return { g:n, mm:uno(perGiorno[n][id]) };
+        return null;
+      }
+      mostra(POSTI.map(function(p){
+        return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5],
+          mm:somma(20,13,p[0]), mm7:somma(7,1,p[0]), mm25:somma(GIORNI,1,p[0]),
+          forte:ultimaForte(p[0]) };
+      }), iso(meno(0)));
+    });
+  }
 
   function guasto(quanti){
     document.getElementById('attesa').style.display='none';
     var g=document.getElementById('guasto');
     g.style.display='block';
-    g.innerHTML='⚠️ Non riesco a leggere l\'archivio delle piogge in questo momento'
+    g.innerHTML='⚠️ Non riesco a leggere l’archivio delle piogge in questo momento'
       + (quanti ? ' (trovati solo '+quanti+' giorni su '+GIORNI+')' : '')
       + '. Non dipende da te: riprova fra qualche minuto, oppure vai direttamente '
-      + '<a href="'+MAPPA+'?r=liguria">sulla mappa</a>.';
+      + '<a href="'+MAPPA+'?r='+REG+'">sulla mappa</a>.';
   }
 
-  function disegna(buoni){
-    var perGiorno = {};
-    buoni.forEach(function(x){
-      var m = {};
-      x.j.stations.forEach(function(s){ m[s.id] = s.mm || 0; });
-      perGiorno[x.n] = m;
-    });
-
-    function somma(da, a, id){
-      var t = 0;
-      for (var n = da; n >= a; n--) if (perGiorno[n] && perGiorno[n][id] != null) t += perGiorno[n][id];
-      return t;
-    }
-    function ultimaForte(id){
-      for (var n = 1; n <= GIORNI; n++)
-        if (perGiorno[n] && perGiorno[n][id] >= FORTE) return { g:n, mm:uno(perGiorno[n][id]) };
-      return null;
-    }
-
-    var righe = POSTI.map(function(p){
-      return { id:p[0], n:p[1], com:p[2], sig:p[3], q:p[4], lat:p[5], lon:p[6], bosco:p[7],
-        mm:uno(somma(20,13,p[0])), mm7:uno(somma(6,0,p[0])), mm25:uno(somma(24,0,p[0])) };
-    }).sort(function(a,b){ return b.mm - a.mm; }).slice(0, QUANTI);
-
-    righe.forEach(function(r){ r.forte = ultimaForte(r.id); });
+  function mostra(righe, oggiISO){
+    righe = righe.sort(function(a,b){ return b.mm - a.mm; }).slice(0, QUANTI);
     var maxMm = Math.max.apply(null, righe.map(function(r){ return Math.max(r.mm, r.mm7, r.mm25); }).concat([1]));
 
-    var daG = iso(meno(20)), aG = iso(meno(13)), a20 = iso(meno(1));
+    var daG = menoDa(oggiISO,20), aG = menoDa(oggiISO,13), a20 = menoDa(oggiISO,1);
     function link(r, dal, al){
-      return MAPPA + '?r=liguria&da=' + dal + '&a=' + al
+      return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al
         + (r ? '&z=11&c=' + r.lat.toFixed(4) + ',' + r.lon.toFixed(4) : '');
     }
-    function luogo(r){ return esc(r.com) + (r.sig ? ' (' + r.sig + ')' : ''); }
+    function luogo(r){ return r.sig ? esc(r.sig) : ''; }
     function cella(v, cls){
       return '<td class="mm ' + (cls||'') + '">'
         + (v > 0 ? '<span class="barra" style="width:' + Math.round(v/maxMm*100) + '%"></span>' : '')
