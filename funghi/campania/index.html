@@ -386,9 +386,16 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dai c
       + '<a class="capo-btn" href="' + link(null, daG, a20) + '">' + NOME + ' · ultimi 20 gg</a>'
       + '</div></div>';
 
+    /* ⚠️ NIENTE APOSTROFI DRITTI QUI DENTRO: il testo esce da un template
+       literal del generatore, e un ' verrebbe consumato lasciando la stringa
+       spezzata e la pagina bianca. Si usa quello tipografico. */
     document.getElementById('finestra').innerHTML =
-      'Pioggia caduta fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG) + '</b>, in una finestra '
-      + 'che va da <b>13 a 20 giorni fa</b>, cioè il tempo ideale per lo sviluppo dei funghi.';
+      'Pioggia caduta fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG) + '</b>, cioè da '
+      + '<b>13 a 20 giorni fa</b>. Dopo l’acqua il fungo non spunta subito: per svilupparsi '
+      + 'gli servono <b>almeno 12-13 giorni</b>, e quanti di preciso dipende dalla temperatura. '
+      + 'È questa la pioggia che sta facendo nascere i funghi <b>adesso</b>: quella caduta da '
+      + 'meno di tredici giorni non ha ancora fatto in tempo, quella di più di venti ha già '
+      + 'dato quello che doveva.';
 
     var trs = righe.map(function(r, i){
       var quando = r.forte
