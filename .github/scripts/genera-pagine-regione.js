@@ -46,6 +46,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { scriviSitemap } = require('./genera-sitemap.js');
 
 // ⚠️ UNICA RIGA DIVERSA DA PRODUZIONE (24/8/2026): il dominio. Tutto il resto,
 // RAW compreso, deve restare IDENTICO — i dati e i riepiloghi si leggono da
@@ -410,29 +411,10 @@ footer a{color:var(--blu);}
 `;
 }
 
-// ⚠️ La sitemap NON si inventa da zero: esisteva dall'8/8/2026 con due voci
-// curate a mano, e `lastmod` va aggiornato quando cambia la PAGINA, non quando
-// arrivano dati nuovi (era scritto nel commento del file originale, e vale
-// ancora). Home e fonti.html tengono quindi le loro date e i loro changefreq;
-// le pagine regione nascono oggi e il loro HTML non cambia mai — i numeri li
-// mette il browser a ogni visita — quindi «weekly» e non «daily».
-const SITEMAP_FISSE = [
-  { loc: SITO + '/',           lastmod: '2026-08-14', freq: 'daily',   pri: '1.0' },
-  { loc: SITO + '/fonti.html', lastmod: '2026-08-07', freq: 'monthly', pri: '0.5' },
-];
-
-function sitemap(nascita){
-  const voce = v => `  <url>\n    <loc>${v.loc}</loc>\n    <lastmod>${v.lastmod}</lastmod>\n` +
-                    `    <changefreq>${v.freq}</changefreq>\n    <priority>${v.pri}</priority>\n  </url>`;
-  const righe = SITEMAP_FISSE.concat(
-    REGIONI.map(r => ({ loc: `${SITO}/${r.k}/`, lastmod: nascita, freq: 'weekly', pri: '0.8' }))
-  ).map(voce);
-  return `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<!-- Generata da .github/scripts/genera-pagine-regione.js — non modificare a mano.\n` +
-    `     lastmod = quando cambia la PAGINA, non quando arrivano dati nuovi: le\n` +
-    `     pagine regione sono gusci statici, i numeri li scarica il browser. -->\n` +
-    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${righe.join('\n')}\n</urlset>\n`;
-}
+// La sitemap sta in `genera-sitemap.js` dal 2/9/2026: da quando le famiglie di
+// pagine sono due (regione e funghi) la scrivono tutt'e due i generatori, e una
+// copia sola vuol dire che non possono divergere. Le date di nascita e la
+// regola del `lastmod` stanno li'.
 
 // ⚠️ Il repo ha fine riga MISTE e vanno rispettate, se no il diff esplode:
 // gli HTML (index.html, fonti.html) sono a CRLF, sitemap.xml e robots.txt a
@@ -457,8 +439,6 @@ if (require.main === module) {
     scrivi(path.join(radice, r.k, 'index.html'), pagina(r), true);
     console.log(`  /${r.k}/  ${r.nome} — ${r.staz} staz., ${r.dirs.join('+')}`);
   });
-  // Data di nascita delle pagine, fissa: rigenerare il modello non deve far
-  // credere a Google che siano cambiate tutte.
-  scrivi(path.join(radice, 'sitemap.xml'), sitemap('2026-08-14'), false);
-  console.log(`\n${REGIONI.length} pagine + sitemap.xml scritte.`);
+  const voci = scriviSitemap(SITO, radice);
+  console.log(`\n${REGIONI.length} pagine scritte, sitemap.xml con ${voci} indirizzi.`);
 }

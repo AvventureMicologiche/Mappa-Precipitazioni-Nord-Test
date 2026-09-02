@@ -38,6 +38,7 @@
 const fs = require('fs');
 const path = require('path');
 const { REGIONI } = require('./genera-pagine-regione.js');
+const { scriviSitemap } = require('./genera-sitemap.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
 const RADICE = path.resolve(__dirname, '..', '..');
@@ -553,5 +554,10 @@ if (require.main === module) {
     console.log(`  /funghi/${k}/`.padEnd(26) + String(POSTI[k].length).padStart(4) + ' posti  ' +
       r.dirs.join('+'));
   }
-  console.log(`\n${scritte} pagine scritte.`);
+  // La sitemap la scrivono tutt'e due i generatori: cosi' rigenerando solo
+  // queste pagine non resta indietro. Elenca solo quello che esiste davvero in
+  // questo repo, quindi in produzione le voci funghi non compariranno finche'
+  // le pagine non ci sono.
+  const voci = scriviSitemap(SITO, RADICE);
+  console.log(`\n${scritte} pagine scritte, sitemap.xml con ${voci} indirizzi.`);
 }
