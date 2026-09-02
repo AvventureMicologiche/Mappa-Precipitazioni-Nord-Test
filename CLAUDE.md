@@ -1,6 +1,21 @@
 # Mappa Precipitazioni Nord Italia — CLAUDE.md (REPO DI TEST)
 
-> **Allineamento a produzione del 17 agosto 2026.** `index.html`, `fonti.html`, `netlify.toml`, `.gitignore` e tutti gli script in `.github/scripts` sono stati ricopiati da prod. Nell'`index.html` restano diverse SOLO quattro righe: `og:image`, `twitter:image` (dominio test), `PILOT_DATA_BASE` e il `GITHUB_RAW` della Lombardia (repo Nord-Test). Il veto graduale provato il 16/8 e' stato scartato (resta nel commit `9361f354`); in test come in prod vale il veto secco a 6 km. Aggiunto `robots.txt` con `Disallow: /` (il sito di test non deve essere indicizzato come doppione). I workflow NON sono stati copiati: il test continua a raccogliere da solo solo i piloti + Lombardia e legge il resto da prod. Regola per il futuro: **prod e' la base, il test = prod + quelle quattro righe.**
+> ⚠️ **LA REGOLA «TEST = PROD + QUATTRO RIGHE» NON VALE PIÙ (2 settembre 2026).**
+> Il 31 agosto, portando il radar in produzione, i due `index.html` differivano di
+> **323 righe presenti solo in prod**, e dentro c'era codice vero: tutto il lavoro
+> dei **pallini di partenza reali** (`loadStazioniPallini`, `PALLINI_CARTELLE`,
+> `_pallEscluso`, Lombardia spostata su `data/lombardia`), fatto in produzione il
+> 30 agosto e mai portato qui. **Copiare questo `index.html` sopra quello di
+> produzione avrebbe cancellato quel lavoro in silenzio, senza un errore.**
+> Le modifiche si portano **a pezzi**, con uno script che sostituisce stringhe
+> esatte e **conta le occorrenze prima di sostituire**: se non ne trova
+> esattamente una, si ferma. Quello del 31/8 sta in `scratchpad/porta-in-prod.js`.
+> Il controllo su `Nord-Test` va fatto sul **conteggio** e non sulla presenza: in
+> prod ce n'è uno legittimo (la mappa nome-repo → sito).
+> Il paragrafo qui sotto è la fotografia del 17 agosto e si lascia per storia,
+> ma la sua ultima frase è superata.
+
+> **Allineamento a produzione del 17 agosto 2026.** `index.html`, `fonti.html`, `netlify.toml`, `.gitignore` e tutti gli script in `.github/scripts` sono stati ricopiati da prod. Nell'`index.html` restano diverse SOLO quattro righe: `og:image`, `twitter:image` (dominio test), `PILOT_DATA_BASE` e il `GITHUB_RAW` della Lombardia (repo Nord-Test). Il veto graduale provato il 16/8 e' stato scartato (resta nel commit `9361f354`); in test come in prod vale il veto secco a 6 km. Aggiunto `robots.txt` con `Disallow: /` (il sito di test non deve essere indicizzato come doppione). I workflow NON sono stati copiati: il test continua a raccogliere da solo solo i piloti + Lombardia e legge il resto da prod. Regola per il futuro: ~~prod e' la base, il test = prod + quelle quattro righe~~ — **SUPERATA il 2/9/2026, vedi l'avviso in cima.**
 
 > **Le PAGINE REGIONE ci sono anche qui, dal 24 agosto 2026.** Prima non esistevano: il generatore era fermo alla prima versione (schede a 15 giorni, titoli vecchi, niente anteprima) e nessuna cartella regione era mai stata scritta, quindi una modifica alle pagine non si poteva collaudare da nessuna parte. Ora `.github/scripts/genera-pagine-regione.js` è la copia esatta di quello di produzione **tranne una riga, il dominio**: un `diff` fra i due deve dare solo quella (più il commento che la spiega). ⚠️ **`RAW` resta quello di PROD apposta** — qui Alto Adige, Toscana, Liguria e le dieci reti MeteoHub non girano e i loro file sono fermi a luglio, quindi le pagine leggono i dati veri di produzione, come già fa `MH_DATA_BASE` nella mappa. Per lo stesso motivo **`data/meteohub-friuli` non manca: non deve esserci**. Il tag GA delle pagine ha ora il controllo sull'hostname come `index.html`, se no queste copie manderebbero eventi alla proprietà vera. Dal 24/8 i numeri delle schede arrivano da **`data/riepiloghi/<regione>.json` di PRODUZIONE** (una richiesta invece di 20 o 40): il workflow `riepiloghi.yml` qui non c'è e non deve esserci, per la stessa regola di tutto il resto che questo repo non raccoglie.
 
