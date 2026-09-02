@@ -1,15 +1,104 @@
-<!DOCTYPE html>
+#!/usr/bin/env node
+/**
+ * Scrive le pagine «Piogge per funghi»: funghi/<regione>/index.html
+ *
+ * COSA SONO. Una pagina per regione che dice DOVE E' PIOVUTO nelle zone da
+ * bosco, con i millimetri veri di un pluviometro pubblico e la data. E' la
+ * nostra risposta a 3bmeteo.com/meteo-funghi, che nella stessa pagina mette
+ * quindici righe con un'etichetta a parole («Scarsa o Localizzata»), zero
+ * numeri, e dichiara di essere sperimentale. La promessa qui e' DIVERSA, non
+ * la stessa in altra grafica: noi i funghi non li prevediamo, diciamo dov'e'
+ * piovuto e quanto.
+ *
+ * ⚠️ NON SONO ISTANTANEE. I numeri non sono cotti dentro: la pagina li legge
+ * da data/funghi/<regione>.json, che scrive genera-funghi.js una volta al
+ * giorno. Se quel file manca o e' stato scritto piu' di 36 ore fa, la pagina si
+ * ricalcola tutto da sola dai file giornalieri. Le due strade devono restare
+ * gemelle: stesse finestre, stessa soglia, stesso modo di contare.
+ *
+ * ⚠️ L'ANAGRAFE NON SI RICOPIA: le cartelle dati, i nomi e le agenzie vengono
+ * da `genera-pagine-regione.js`, i posti da `funghi-posti.json`. Qui dentro c'e'
+ * solo la lingua (il genitivo del nome della regione), che nell'anagrafe non
+ * c'e' e serve a una frase sola.
+ *
+ * ⚠️ NIENTE ABRUZZO: non abbiamo una fonte aperta per quella regione (POLARIS
+ * e' dietro un login, email del 19/8/2026 senza risposta). NIENTE MOLISE:
+ * nessuno dei suoi 24 pluviometri in fascia di quota arriva al 37% di bosco (il
+ * piu' boscoso e' Capracotta, 35%), e una pagina vuota e' peggio di nessuna
+ * pagina. Restano 19 regioni.
+ *
+ * ⚠️ QUESTE PAGINE FANNO PARTIRE UN DEPLOY: stanno fuori da `data/` e da
+ * `.github/`, quindi non sono nella regola ignore di netlify.toml. Pubblicarle
+ * costa ~15 crediti Netlify, che e' giusto — sono il sito — ma non si fa a
+ * ogni giro: i numeri cambiano in `data/`, i gusci no.
+ *
+ * Uso: `node .github/scripts/genera-pagine-funghi.js` (nessun parametro).
+ */
+
+const fs = require('fs');
+const path = require('path');
+const { REGIONI } = require('./genera-pagine-regione.js');
+
+const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
+const RADICE = path.resolve(__dirname, '..', '..');
+// ⚠️ UNICA RIGA DIVERSA DA PRODUZIONE: il dominio. Tutto il resto, l'indirizzo
+// dei dati compreso, deve restare IDENTICO — anche qui i numeri si leggono da
+// prod, perche' in questo repo Alto Adige, Toscana, Liguria e le dieci reti
+// MeteoHub non girano. Un diff fra i due generatori deve dare solo queste
+// righe: se ne compaiono altre, i due sono divergenti.
+const SITO = 'https://avventurepluvio-test.netlify.app';
+
+// Solo la lingua: «della Liguria», «delle Marche». Nell'anagrafe delle pagine
+// regione c'e' la preposizione semplice (prep), che basta per «in Liguria» ma
+// non per «l'acqua DELLA Liguria». Non e' un secondo elenco di regioni: se una
+// chiave qui non c'e', il generatore si ferma invece di scrivere una frase
+// storta.
+const GENITIVO = {
+  lombardia: 'della Lombardia', piemonte: 'del Piemonte', valledaosta: "della Valle d'Aosta",
+  liguria: 'della Liguria', emilia: "dell'Emilia-Romagna", veneto: 'del Veneto',
+  friuli: 'del Friuli Venezia Giulia', trentino: 'del Trentino', altoadige: "dell'Alto Adige",
+  toscana: 'della Toscana', umbria: "dell'Umbria", marche: 'delle Marche', lazio: 'del Lazio',
+  campania: 'della Campania', puglia: 'della Puglia', basilicata: 'della Basilicata',
+  calabria: 'della Calabria', sicilia: 'della Sicilia', sardegna: 'della Sardegna',
+};
+
+// ⚠️ ARPA PIEMONTE PUBBLICA I NOMI TUTTI IN MAIUSCOLO («ALA DI STURA»), ed e'
+// l'unica delle diciannove: sono tutti e 97 i suoi posti, e in una tabella da
+// leggere gridano. Si riscrivono in tondo SOLO quando il nome e' interamente
+// maiuscolo, cosi' le altre diciotto non si toccano e un domani un nome con una
+// sigla dentro resta com'e'. Le particelle restano minuscole: «Cellio con
+// Breia», non «Cellio Con Breia».
+// Non si tocca `funghi-posti.json`, che deve restare fedele alla fonte: questa
+// e' presentazione, e sta nel generatore delle pagine.
+const PARTICELLE = new Set(['di','de','del','dello','della','dei','degli','delle',
+  'da','dal','dalla','al','alla','allo','ai','agli','alle','in','e','ed','a','su',
+  'sul','sulla','con','per','il','lo','la','i','gli','le','d','l']);
+function bello(n) {
+  if (n !== n.toUpperCase() || !/[A-Z]{3}/.test(n)) return n;
+  return n.toLowerCase().replace(/[a-zàèéìòù]+/g,
+    (parola, i) => (i > 0 && PARTICELLE.has(parola))
+      ? parola : parola.charAt(0).toUpperCase() + parola.slice(1));
+}
+
+function pagina(r, posti) {
+  const nome = r.nomeTitolo || r.nome;
+  // La forma corta: se l'anagrafe non ne ha una, si toglie la parentesi finale
+  // («ARPA Liguria (OMIRL)» → «ARPA Liguria»). Cosi' non si tocca l'anagrafe
+  // condivisa, che e' anche quella delle pagine regione gia' in produzione.
+  const corta = r.agenziaCorta || r.agenzia.replace(/\s*\(.*\)$/, "");
+  const gen = GENITIVO[r.k];
+  return `<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Piogge per funghi in Liguria: dove ha piovuto davvero</title>
-<meta name="description" content="Dove e' caduta l'acqua nelle zone da bosco della Liguria, misurata dai pluviometri di ARPA Liguria. La finestra da 13 a 20 giorni fa, quella che conta per i funghi.">
-<link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/liguria/">
-<meta property="og:title" content="Piogge per funghi in Liguria">
+<title>Piogge per funghi ${r.prep} ${nome}: dove ha piovuto davvero</title>
+<meta name="description" content="Dove e' caduta l'acqua nelle zone da bosco ${gen}, misurata dai pluviometri di ${corta}. La finestra da 13 a 20 giorni fa, quella che conta per i funghi.">
+<link rel="canonical" href="${SITO}/funghi/${r.k}/">
+<meta property="og:title" content="Piogge per funghi ${r.prep} ${nome}">
 <meta property="og:description" content="Dove e' caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
-<meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
-<meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/liguria/">
+<meta property="og:image" content="${SITO}/preview.jpg">
+<meta property="og:url" content="${SITO}/funghi/${r.k}/">
 <meta property="og:type" content="website">
 <!-- Google tag: come nelle pagine regione, il config sta dietro al controllo
      sull'HOSTNAME, se no questa copia sul test manderebbe eventi alla
@@ -19,7 +108,7 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  if (/(^|\.)avventuremicologiche\.it$/.test(location.hostname)) {
+  if (/(^|\\.)avventuremicologiche\\.it$/.test(location.hostname)) {
     gtag('config', 'G-9R7MXXS0V4');
   }
 </script>
@@ -62,7 +151,7 @@ tr:nth-child(even) td{background:#fafcff;}
 td.pos{color:#8a97ad;font-size:13px;width:26px;text-align:right;}
 td b{color:var(--blu-scuro);}
 .loc{text-decoration:none;display:block;}
-.loc b::after{content:' \2197';font-size:11px;color:#7a93b5;opacity:0;transition:opacity .12s;}
+.loc b::after{content:' \\2197';font-size:11px;color:#7a93b5;opacity:0;transition:opacity .12s;}
 .loc:hover b{text-decoration:underline;}
 .loc:hover b::after{opacity:1;}
 .com{display:block;color:#6a7789;font-size:13px;}
@@ -135,9 +224,9 @@ a:active .vai-mappa{transform:translateY(2px);
 </header>
 <main>
 
-<h1>Piogge per funghi in Liguria</h1>
+<h1>Piogge per funghi ${r.prep} ${nome}</h1>
 <p class="sotto">Quanta acqua è caduta davvero nelle zone da bosco, misurata dai pluviometri
-di ARPA Liguria e aggiornata ogni giorno.</p>
+di ${corta} e aggiornata ogni giorno.</p>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -157,13 +246,13 @@ di ARPA Liguria e aggiornata ogni giorno.</p>
 <p class="nota" id="notaforte"></p>
 
 <h2>Ecco cosa vedi sulla mappa</h2>
-<a href="https://precipitazioni.avventuremicologiche.it/?r=liguria" style="display:block;text-decoration:none;"
-   onclick="try{gtag('event','apri_mappa',{da:'funghi-liguria-anteprima'})}catch(e){}">
-  <img src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/liguria.jpg"
-       alt="La mappa delle piogge in Liguria: le zone più bagnate, stazione per stazione"
+<a href="https://precipitazioni.avventuremicologiche.it/?r=${r.k}" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'funghi-${r.k}-anteprima'})}catch(e){}">
+  <img src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/${r.k}.jpg"
+       alt="La mappa delle piogge ${r.prep} ${nome}: le zone più bagnate, stazione per stazione"
        width="1600" height="1000" loading="lazy"
        style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
-  <span class="vai-mappa">Apri la mappa in Liguria →</span>
+  <span class="vai-mappa">Apri la mappa ${r.prep} ${nome} →</span>
 </a>
 <p class="nota" style="text-align:center;margin-bottom:26px;">Più il colore è acceso, più acqua è
 caduta. Ogni pallino è un pluviometro: cliccalo e vedi il suo storico.</p>
@@ -186,7 +275,7 @@ caduta. Ogni pallino è un pluviometro: cliccalo e vedi il suo storico.</p>
   manca.
 </div>
 
-<p class="nota" style="margin-top:22px">Dati di ARPA Liguria (OMIRL) via il nostro archivio. Il
+<p class="nota" style="margin-top:22px">Dati di ${r.agenzia} via il nostro archivio. Il
 bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</p>
 
 </main>
@@ -203,16 +292,16 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dai c
         dieci reti MeteoHub). Il prezzo e' che si legge «Reppia — GE» e non
         «Reppia (Ne)»: uniforme su diciannove regioni, un'informazione in meno
         qui. Deciso il 2/9/2026. */
-  var POSTI = [["AGORR","Alpe Gorreto","GE",915,44.6047,9.2363,59],["AVOBB","Alpe Vobbia","GE",1082,44.5703,9.0749,63],["ALPIC","Alpicella","SV",435,44.4067,8.526,48],["ALTOM","Alto - Madonna del lago","CN",1095,44.1228,7.9965,59],["AMBOR","Amborzasco","GE",908,44.5145,9.455,59],["BGNNE","Bagnone","MS",320,44.3097,9.9842,48],["BRGEL","Barbagelata","GE",1100,44.4822,9.242,81],["SALBE","Bargagli","GE",702,44.4385,9.1074,53],["BARGO","Bargone","GE",260,44.2951,9.4814,52],["BRZON","Borzone","GE",386,44.4243,9.4101,61],["BOROS","Bosco di Rossano","MS",670,44.3049,9.7975,61],["BRUGN","Brugneto Diga","GE",777,44.5364,9.2054,61],["BUSAL","Busalla","GE",358,44.5713,8.9489,55],["CABAN","Cabanne","GE",809,44.4952,9.3465,64],["CCORM","Calice al C. - Molunghi","SP",425,44.2489,9.8387,70],["CALIZ","Calizzano","SV",647,44.2341,8.1182,75],["CAMPL","Campo Ligure","GE",338,44.5426,8.6939,58],["CARPG","Carpe - Case Garoni","SV",445,44.1444,8.1634,64],["CARRO","Carro","SP",437,44.2753,9.5977,72],["CASON","Casoni di Suvero","MS",1070,44.3054,9.7658,54],["CASRB","Castelvecchio di R. B.","SV",432,44.132,8.1189,67],["CEMBR","Cembrano","SP",410,44.3524,9.5841,56],["CERIA","Ceriana","IM",370,43.8797,7.7739,50],["CCHER","Cichero","GE",615,44.4211,9.3219,54],["BELEN","Colle Belenda","IM",1357,43.9815,7.6998,58],["CODOG","Colle D'Oggia","IM",1163,43.9813,7.8667,39],["CMELO","Colle del Melogno","SV",1004,44.2323,8.2025,83],["CCADB","Colle di Cadibona","SV",385,44.333,8.3829,58],["CNAVA","Colle di Nava","IM",927,44.0833,7.8733,67],["COMAN","Comano","MS",734,44.3038,10.1196,63],["CONNA","Conna","SV",350,43.9792,8.1036,42],["CRETO","Creto","GE",630,44.4751,9.0071,49],["ORERO","Croce Orero","GE",640,44.4242,9.2849,61],["CRCFI","Crocefieschi - Santuario","GE",762,44.5846,9.0182,56],["CRORE","Crocetta di Orero","GE",470,44.5201,8.9859,60],["CUCCA","Cuccarello","SP",835,44.3497,9.6991,76],["DAVAG","Davagna","GE",467,44.4678,9.0954,60],["DEGIR","Dego - Girini","SV",450,44.4518,8.3394,45],["EQUIT","Equi Terme","MS",250,44.1694,10.1499,66],["FALLA","Fallarosa","GE",865,44.5172,9.1034,80],["FERRA","Ferrania","SV",358,44.3669,8.3225,45],["LGIAC","Giacopiane - Diga","GE",1007,44.4627,9.3953,49],["GIACO","Giacopiane - Lago","GE",1040,44.4611,9.3877,52],["IERAA","Iera","MS",538,44.3333,10.0336,66],["ISOVE","Isoverde","GE",300,44.5301,8.8582,46],["LFMTV","La Foce - Mte Viseggi","SP",350,44.1325,9.7903,47],["LAMAC","La Macchia","SP",270,44.3232,9.6148,68],["LOCOC","Loco Carchelli","GE",600,44.5542,9.2842,66],["MLARE","Mallare","SV",467,44.2932,8.2979,74],["MANIE","Manie","SV",340,44.1933,8.3788,39],["MATRA","Mattarana","SP",470,44.245,9.6147,68],["MAZLA","Mazzola","MS",460,44.2111,10.1169,50],["MELEE","Mele","GE",270,44.4742,8.7331,48],["MIGNA","Mignanego","GE",270,44.5403,8.9382,50],["MINUC","Minucciano","LU",666,44.171,10.2082,72],["MONTA","Montagna","SV",253,44.2843,8.3714,75],["MTBNO","Montalbano","SP",330,44.1403,9.8308,45],["MONTL","Montalto Ligure","IM",240,43.9307,7.842,47],["MTECA","Monte Cappellino","GE",620,44.5486,8.9542,49],["MSETT","Monte Settepani","SV",1375,44.244,8.1958,83],["MNINF","Montenotte Inferiore","SV",564,44.4126,8.4118,71],["MONTG","Montoggio","GE",442,44.5156,9.0477,72],["MURIA","Murialdo","SV",523,44.3132,8.1598,72],["NOVGA","Novegigola","MS",420,44.2218,9.8998,68],["OGNIO","Ognio","GE",490,44.4437,9.1699,56],["OSIGL","Osiglia","SV",620,44.2865,8.2025,77],["PARAN","Parana","MS",695,44.2822,9.8633,78],["BRATT","Passo del Brattello","MS",955,44.4562,9.8229,77],["PCERR","Passo del Cerreto","MS",1250,44.3043,10.2168,45],["PTURC","Passo del Turchino","GE",590,44.4861,8.736,51],["PACIS","Passo della Cisa","MS",1014,44.4664,9.9204,66],["CERPG","Passo Ghimbegna","IM",931,43.9046,7.7333,48],["PATIG","Patigno","MS",744,44.3547,9.7645,54],["PIAMP","Piampaludo","SV",882,44.4623,8.5809,53],["PPICC","Pietra Piccata","MS",955,44.3396,9.8233,74],["PTECO","Pieve di Teco","IM",263,44.0495,7.9147,62],["PIGNA","Pigna","IM",250,43.9321,7.6561,49],["PZGLI","Pizzeglio","IM",655,43.9186,7.6945,41],["PORNA","Pornassio","IM",475,44.0639,7.8664,69],["PRAIC","Prai","GE",820,44.5178,8.6731,59],["PRMLO","Pratomollo","GE",1520,44.4729,9.4588,48],["RANZO","Ranzo","IM",343,44.0654,8.0043,44],["REPPI","Reppia","GE",530,44.3749,9.4577,37],["RCSIG","Rocca Sigillina","MS",484,44.3667,9.9561,66],["ROSGL","Rossiglione","GE",289,44.5723,8.6578,52],["ROVEG","Rovegno","GE",650,44.5772,9.2831,66],["SSTAV","S. Stefano d'Aveto","GE",1019,44.5489,9.4512,48],["SASSL","Sassello","SV",385,44.4823,8.4857,51],["SCURT","Scurtabo'","SP",685,44.4068,9.5338,49],["GOUTA","Sella di Gouta","IM",1212,43.9396,7.6081,60],["SEGIA","Sella Giassina","GE",895,44.4876,9.1821,76],["SZIGN","Sero' di Zignago","SP",580,44.2643,9.737,69],["SEGOD","Sesta Godano","SP",265,44.2985,9.6775,67],["STALE","Statale","GE",593,44.3505,9.4808,49],["SSGIU","Stella S. Giustina","SV",349,44.4158,8.4825,59],["TAGLT","Taglieto","SP",895,44.4053,9.6205,42],["TAVRN","Tavarone","SP",603,44.3127,9.5486,73],["TNDLA","Tendola","MS",410,44.156,10.0338,60],["TESTI","Testico","SV",439,44.0065,8.0352,56],["TRRIG","Torriglia","GE",769,44.5169,9.1596,56],["TOGAR","Torriglia - Garaventa","GE",1032,44.5293,9.175,52],["TRIOR","Triora","IM",789,43.9945,7.7624,62],["TURAN","Turano","MS",500,44.2464,10.1517,57],["URVAS","Urbe - Vara Sup.","SV",810,44.4695,8.6274,55],["VBGOR","Valbrevenna - Gorra","GE",680,44.5318,9.0233,59],["VREGI","Valleregia","GE",407,44.5204,8.9474,48],["VALZE","Valzemola","SV",480,44.3696,8.1911,41],["VALIG","Varese Ligure","SP",345,44.3831,9.5842,58],["VERDE","Verdeggia","IM",1120,44.0443,7.7211,43],["VERZI","Verzi Loano","SV",450,44.164,8.22,61],["VICOM","Vicomorasso","GE",310,44.4856,8.9785,50],["VIGAN","Viganego","GE",430,44.4285,9.0635,51]];
+  var POSTI = ${JSON.stringify(posti.map(p => [p[0], bello(p[1])].concat(p.slice(2))))};
 
-  var REG = 'liguria', DIRS = ["liguria"], NOME = "Liguria";
+  var REG = '${r.k}', DIRS = ${JSON.stringify(r.dirs)}, NOME = ${JSON.stringify(nome)};
   /* In locale i dati si leggono dalla cartella del repo, sul sito dal raw di
      GitHub. Stesso trucco del tag di Google qui sopra: si guarda l'HOSTNAME.
-     Serve perche' le prove si fanno con `node server-locale.js` sul repo, a
+     Serve perche' le prove si fanno con \`node server-locale.js\` sul repo, a
      zero deploy e zero crediti, e senza questo si sarebbe dovuta doctorare una
      copia della pagina apposta — cioe' provare un file diverso da quello che
      poi si pubblica. */
-  var LOCALE = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  var LOCALE = /^(localhost|127\\.0\\.0\\.1|\\[::1\\])$/.test(location.hostname);
   var BASE = LOCALE ? '/data/'
     : 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
   var MAPPA = 'https://precipitazioni.avventuremicologiche.it/';
@@ -267,7 +356,7 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dai c
         sull'ultimo giorno che contiene: la Puglia ha giornate che MeteoHub non
         consegna, e un file sanissimo puo' finire due giorni indietro. Sopra le
         36 ore vuol dire invece workflow fermo, e allora si ricalcola.
-     ⚠️ LE DATE DELLA FINESTRA VENGONO DAL FILE (`oggi`), non dall'orologio del
+     ⚠️ LE DATE DELLA FINESTRA VENGONO DAL FILE (\`oggi\`), non dall'orologio del
         visitatore: se il file e' di ieri, le etichette devono dire la finestra
         su cui quei millimetri sono stati sommati davvero. */
   function fresco(j){
@@ -433,4 +522,36 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dai c
 }());
 </script>
 </body>
-</html>
+</html>`;
+}
+
+if (require.main === module) {
+  let scritte = 0;
+  for (const k of Object.keys(POSTI)) {
+    const r = REGIONI.find(x => x.k === k);
+    if (!r) { console.error(`⚠️ «${k}» non e' in genera-pagine-regione.js`); process.exit(1); }
+    if (!GENITIVO[k]) { console.error(`⚠️ manca il genitivo di «${k}»`); process.exit(1); }
+    const html = pagina(r, POSTI[k]);
+
+    // ⚠️ SI CONTROLLA CHE LO SCRIPT DELLA PAGINA GIRI, prima di scriverla.
+    // Il 2/9/2026 la Valle d'Aosta usciva con NOME = 'Valle d'Aosta': apostrofo
+    // dritto dentro una stringa a virgolette singole, script morto, pagina
+    // bianca ferma su «Sto leggendo i pluviometri». Un guscio che non gira e'
+    // peggio di un guscio che manca, perche' sembra pubblicato. Un nome nuovo
+    // con un apostrofo lo rifarebbe: adesso il generatore si ferma invece.
+    const i = html.lastIndexOf('<script>'), j = html.lastIndexOf('</script>');
+    try { new Function(html.slice(i + 8, j)); }
+    catch (e) {
+      console.error(`⚠️ ${k}: lo script della pagina non gira — ${e.message}`);
+      process.exit(1);
+    }
+
+    const dir = path.join(RADICE, 'funghi', k);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'index.html'), html, 'utf8');
+    scritte++;
+    console.log(`  /funghi/${k}/`.padEnd(26) + String(POSTI[k].length).padStart(4) + ' posti  ' +
+      r.dirs.join('+'));
+  }
+  console.log(`\n${scritte} pagine scritte.`);
+}
