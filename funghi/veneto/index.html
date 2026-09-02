@@ -41,6 +41,9 @@ h1,h2,.capo .gr{text-wrap:balance;}
   border-radius:8px;padding:13px 16px;margin:18px 0 24px;font-size:16px;}
 .patto b{color:var(--blu-scuro);}
 .patto p+p{margin-top:7px;}
+.spiega{background:var(--grigio);border:1px solid var(--bordo);border-left:4px solid var(--blu);
+  border-radius:8px;padding:12px 15px;margin:14px 0 10px;font-size:16px;color:#333;}
+.spiega b{color:var(--blu-scuro);}
 .capo{background:#0f2d4d;color:#fff;border-radius:10px;padding:16px 18px;margin:18px 0 6px;}
 .capo .et{font-size:14px;letter-spacing:.2px;opacity:.8;}
 .capo .gr{font-size:25px;font-weight:700;line-height:1.25;margin-top:3px;}
@@ -152,7 +155,7 @@ di ARPA Veneto e aggiornata ogni giorno.</p>
 <div id="testa"></div>
 
 <h2>Le zone da bosco più bagnate</h2>
-<p class="sotto" style="margin-bottom:4px" id="finestra"></p>
+<div class="spiega" id="finestra"></div>
 <div id="tabella"></div>
 <p class="nota" id="notaforte"></p>
 
@@ -392,10 +395,8 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dai c
     document.getElementById('finestra').innerHTML =
       'Pioggia caduta fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG) + '</b>, cioè da '
       + '<b>13 a 20 giorni fa</b>. Dopo l’acqua il fungo non spunta subito: per svilupparsi '
-      + 'gli servono <b>almeno 12-13 giorni</b>, e quanti di preciso dipende dalla temperatura. '
-      + 'È questa la pioggia che sta facendo nascere i funghi <b>adesso</b>: quella caduta da '
-      + 'meno di tredici giorni non ha ancora fatto in tempo, quella di più di venti ha già '
-      + 'dato quello che doveva.';
+      + 'gli servono <b>almeno 12-13 giorni</b>, a seconda della temperatura. È questa la '
+      + 'pioggia che fa nascere i funghi <b>adesso</b>.';
 
     var trs = righe.map(function(r, i){
       var quando = r.forte
