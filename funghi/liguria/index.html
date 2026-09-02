@@ -98,6 +98,11 @@ td.ultima{font-size:14px;color:#42506a;white-space:nowrap;}
   text-shadow:0 1px 2px rgba(0,0,0,.35);transition:transform .06s, box-shadow .06s;}
 a:active .vai-mappa{transform:translateY(2px);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.24), 0 2px 0 #0e2b4a, 0 4px 10px rgba(15,45,77,.3);}
+/* La riga di stagione: c'e' solo nei mesi in cui la pagina non serve a
+   molto, e lo dice invece di far finta di niente. */
+#stagione{display:none;background:#eef2f8;border:1px solid #ccd7e6;border-left:4px solid #7a93b5;
+  border-radius:8px;padding:12px 15px;font-size:15.5px;color:#42506a;margin:0 0 20px;}
+#stagione b{color:var(--blu-scuro);}
 #attesa{color:#6a7789;font-size:16px;padding:18px 0;}
 #guasto{display:none;background:#fdecea;border:1px solid #f5c2bd;border-radius:8px;
   padding:13px 16px;font-size:16px;color:#8a2b20;margin-top:10px;}
@@ -141,6 +146,7 @@ di ARPA Liguria e aggiornata ogni giorno.</p>
   lo conosci tu meglio di qualunque sito.</p>
 </div>
 
+<div id="stagione"></div>
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="guasto"></div>
 <div id="testa"></div>
@@ -204,6 +210,35 @@ italiani (ISTAT).</p>
   function gg(d){ var p=d.split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
   function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function uno(n){ return Math.round(n*10)/10; }
+
+  /* ⚠️ LA RIGA DI STAGIONE. Da dicembre a febbraio questa pagina non serve a
+     molto e dirlo e' piu' onesto che far finta di niente: 3bmeteo negli
+     stessi mesi tiene su la sua e stampa quindici righe di «Assente»
+     (controllato negli archivi del web, copie del 5 e del 31 gennaio 2026).
+     La pagina pero' NON si toglie: un indirizzo tolto e ripubblicato perde
+     l'indicizzazione, e quella si ricostruisce in mesi.
+     Novembre e marzo sono di passaggio e hanno un tono piu' morbido.
+     ⚠️ NIENTE APOSTROFI DRITTI DENTRO QUESTE STRINGHE. Il testo esce da un
+     template literal: un ' scritto qui viene consumato dal generatore e
+     nella pagina arriva un apostrofo NUDO, che spezza la stringa e rompe
+     TUTTO il blocco (pagina bianca, ferma su «Sto leggendo i pluviometri»).
+     Successo il 2/9/2026 con «a quest'epoca». Si usa quello tipografico. */
+  (function(){
+    var m = new Date().getMonth() + 1;
+    var testo = null;
+    if (m === 12 || m === 1 || m === 2)
+      testo = '<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi '
+        + 'ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano '
+        + 'veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.';
+    else if (m === 11 || m === 3)
+      testo = '<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto '
+        + 'dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in '
+        + 'autunno pieno.';
+    if (testo) {
+      var s = document.getElementById('stagione');
+      s.innerHTML = testo; s.style.display = 'block';
+    }
+  }());
 
   /* Si scaricano gli ultimi 25 giorni in parallelo. Un giorno che manca non e'
      un guasto: capita che il piu' recente non ci sia ancora, e si va avanti
