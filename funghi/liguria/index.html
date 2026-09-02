@@ -66,6 +66,13 @@ td b{color:var(--blu-scuro);}
 .loc:hover b{text-decoration:underline;}
 .loc:hover b::after{opacity:1;}
 .com{display:block;color:#6a7789;font-size:13px;}
+.forte-m{display:none;}
+/* ⚠️ DUE VERSIONI DELL'INTESTAZIONE. Non e' vezzo: le intestazioni non
+   vanno a capo (serve, se no restano appese le codine «fa» e «gg»), e a
+   360 px erano LORO a tenere aperte le colonne, non i numeri. Con la
+   scritta lunga il nome della localita' aveva 99 px e «San Colombano
+   Certenoli» andava su quattro righe. */
+.hd-c{display:none;}
 td.mm{position:relative;min-width:118px;}
 .barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;
   min-width:3px;background:#cfe0f5;border-radius:4px;}
@@ -99,7 +106,20 @@ a:active .vai-mappa{transform:translateY(2px);
   .capo .gr{font-size:21px;}
   table{font-size:14px;} th{font-size:11px;padding:7px 4px;} td{padding:7px 4px;}
   th.tagl,td.tagl{display:none;}
-  td.mm{min-width:110px;}
+  /* ⚠️ 110 px per colonna schiacciavano il nome a un centinaio di pixel e
+     «San Colombano Certenoli» andava su QUATTRO righe. Le barre non hanno
+     bisogno di tutto quello spazio: a 74 px il nome ne guadagna 72. */
+  td.mm{min-width:74px;}
+  .hd-l{display:none;}
+  .hd-c{display:inline;}
+  td.mm .v{padding-left:5px;font-size:13.5px;}
+  .forte-m{display:block;color:#42506a;}
+  /* ⚠️ Sul telefono i tre tasti vanno a capo comunque, e larghi a misura del
+     testo restavano di tre lunghezze diverse: sembravano di importanza
+     diversa. Impilati e tutti larghi uguale si leggono come tre scelte
+     alla pari, che e' quello che sono. */
+  .capo-btns{flex-direction:column;}
+  .capo-btn{width:100%;text-align:center;}
 }
 </style>
 </head>
@@ -277,22 +297,37 @@ italiani (ISTAT).</p>
         : '<span class="vuoto">niente di forte</span>';
       return '<tr><td class="pos">' + (i+1) + '</td>'
         + '<td><a class="loc" href="' + link(r, daG, aG) + '" title="Apri la mappa su ' + esc(r.n) + '">'
-        + '<b>' + esc(r.n) + '</b><span class="com">' + luogo(r) + ' · ' + r.q + ' MT</span></a></td>'
+        + '<b>' + esc(r.n) + '</b><span class="com">' + luogo(r) + ' · ' + r.q + ' MT</span>'
+        /* ⚠️ SUL TELEFONO la colonna «ultima pioggia forte» e' nascosta, e senza
+           questa riga la nota che la spiega parlava di una cosa invisibile.
+           Qui sotto il nome lo spazio c'e', e il dato e' piu' utile della
+           colonna dei 25 giorni che resta comunque fuori. */
+        + '<span class="com forte-m">' + (r.forte
+             ? 'forte ' + (r.forte.g===1?'ieri':r.forte.g+' gg') + ' · ' + r.forte.mm + ' mm'
+             : 'niente di forte') + '</span>'
+        + '</a></td>'
         + cella(r.mm) + cella(r.mm7) + cella(r.mm25, 'tagl')
         + '<td class="ultima tagl">' + quando + '</td></tr>';
     }).join('');
 
     document.getElementById('tabella').innerHTML =
       '<table><thead><tr><th class="num"></th><th>Località</th>'
-      + '<th>mm range 13-20 gg fa</th><th>Ultimi 7 gg</th>'
+      + '<th><span class="hd-l">mm range 13-20 gg fa</span><span class="hd-c">13-20 gg fa</span></th>'
+      + '<th><span class="hd-l">Ultimi 7 gg</span><span class="hd-c">7 gg</span></th>'
       + '<th class="tagl">Ultimi 25 gg</th><th class="tagl">Ultima pioggia forte</th>'
       + '</tr></thead><tbody>' + trs + '</tbody></table>';
 
+    /* ⚠️ «15 dei primi 15» era un modo storto di dire «tutti»: quando il conto
+       coincide col totale si scrive cosi', se no «12 posti su 15». */
     var conForte = righe.filter(function(r){ return r.forte; }).length;
+    var quanti = (conForte === righe.length)
+      ? 'Tutti e ' + righe.length + ' i posti in elenco ne hanno avuta una'
+      : (conForte === 0)
+        ? 'Nessuno dei ' + righe.length + ' posti in elenco ne ha avuta una'
+        : conForte + ' posti su ' + righe.length + ' ne hanno avuta una';
     document.getElementById('notaforte').innerHTML =
       '«Pioggia forte» vuol dire almeno ' + FORTE + ' mm in un giorno solo: è quella che bagna '
-      + 'davvero il terreno. ' + conForte + ' dei primi ' + righe.length + ' posti ne hanno avuta '
-      + 'una negli ultimi ' + GIORNI + ' giorni.';
+      + 'davvero il terreno. ' + quanti + ' negli ultimi ' + GIORNI + ' giorni.';
 
     document.getElementById('attesa').style.display = 'none';
   }
