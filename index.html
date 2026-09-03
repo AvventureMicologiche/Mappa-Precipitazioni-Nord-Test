@@ -1784,80 +1784,8 @@ var REGIONS = {
     geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'piemon',
     dataSource: 'arpa_piemonte',
-    stations: [
-      // ── Torino e cintura ──
-      {n:"Torino",            lat:45.070,lon:7.686, q:240, p:"TO"},
-      {n:"Moncalieri",        lat:44.998,lon:7.687, q:260, p:"TO"},
-      {n:"Rivoli",            lat:45.072,lon:7.516, q:390, p:"TO"},
-      {n:"Chieri",            lat:44.963,lon:7.822, q:315, p:"TO"},
-      {n:"Ivrea",             lat:45.467,lon:7.873, q:253, p:"TO"},
-      {n:"Chivasso",          lat:45.192,lon:7.888, q:188, p:"TO"},
-      {n:"Settimo Torinese",  lat:45.141,lon:7.773, q:207, p:"TO"},
-      {n:"Collegno",          lat:45.079,lon:7.574, q:305, p:"TO"},
-      // ── Valli TO ovest ──
-      {n:"Pinerolo",          lat:44.884,lon:7.329, q:376, p:"TO"},
-      {n:"Sestriere",         lat:44.958,lon:6.878, q:2024,p:"TO"},
-      {n:"Ceresole Reale",    lat:45.426,lon:7.226, q:1616,p:"TO"},
-      {n:"Susa",              lat:45.138,lon:7.048, q:503, p:"TO"},
-      {n:"Bardonecchia",      lat:45.080,lon:6.702, q:1312,p:"TO"},
-      {n:"Lanzo Torinese",    lat:45.270,lon:7.476, q:515, p:"TO"},
-      {n:"Ala di Stura",      lat:45.329,lon:7.330, q:1035,p:"TO"},
-      {n:"Locana",            lat:45.415,lon:7.460, q:607, p:"TO"},
-      {n:"Cantoira",          lat:45.363,lon:7.334, q:745, p:"TO"},
-      {n:"Coazze",            lat:45.018,lon:7.290, q:752, p:"TO"},
-      // ── Cuneo e valli ──
-      {n:"Cuneo",             lat:44.385,lon:7.542, q:534, p:"CN"},
-      {n:"Saluzzo",           lat:44.645,lon:7.490, q:395, p:"CN"},
-      {n:"Fossano",           lat:44.551,lon:7.725, q:400, p:"CN"},
-      {n:"Mondovì",           lat:44.388,lon:7.819, q:399, p:"CN"},
-      {n:"Alba",              lat:44.700,lon:8.033, q:172, p:"CN"},
-      {n:"Bra",               lat:44.697,lon:7.855, q:290, p:"CN"},
-      {n:"Borgo San Dalmazzo",lat:44.329,lon:7.487, q:649, p:"CN"},
-      {n:"Demonte",           lat:44.314,lon:7.295, q:770, p:"CN"},
-      {n:"Entracque",         lat:44.237,lon:7.390, q:904, p:"CN"},
-      {n:"Limone Piemonte",   lat:44.200,lon:7.570, q:1010,p:"CN"},
-      {n:"Vinadio",           lat:44.307,lon:7.179, q:905, p:"CN"},
-      {n:"Valdieri",          lat:44.273,lon:7.390, q:772, p:"CN"},
-      {n:"Garessio",          lat:44.205,lon:8.024, q:626, p:"CN"},
-      {n:"Ceva",              lat:44.388,lon:8.036, q:330, p:"CN"},
-      {n:"Dronero",           lat:44.467,lon:7.363, q:622, p:"CN"},
-      {n:"Verzuolo",          lat:44.599,lon:7.481, q:430, p:"CN"},
-      // ── Asti e Alessandria ──
-      {n:"Asti",              lat:44.900,lon:8.207, q:123, p:"AT"},
-      {n:"Nizza Monferrato",  lat:44.776,lon:8.354, q:138, p:"AT"},
-      {n:"Canelli",           lat:44.720,lon:8.293, q:156, p:"AT"},
-      {n:"Alessandria",       lat:44.912,lon:8.615, q:95,  p:"AL"},
-      {n:"Casale Monf.",      lat:45.133,lon:8.452, q:113, p:"AL"},
-      {n:"Acqui Terme",       lat:44.674,lon:8.469, q:156, p:"AL"},
-      {n:"Tortona",           lat:44.896,lon:8.866, q:122, p:"AL"},
-      {n:"Novi Ligure",       lat:44.760,lon:8.795, q:197, p:"AL"},
-      {n:"Ovada",             lat:44.638,lon:8.647, q:186, p:"AL"},
-      {n:"Vignale Monf.",     lat:45.016,lon:8.375, q:247, p:"AL"},
-      {n:"Valenza",           lat:45.016,lon:8.640, q:125, p:"AL"},
-      // ── Novara e Vercelli ──
-      {n:"Novara",            lat:45.446,lon:8.621, q:162, p:"NO"},
-      {n:"Arona",             lat:45.762,lon:8.556, q:212, p:"NO"},
-      {n:"Borgomanero",       lat:45.696,lon:8.465, q:307, p:"NO"},
-      {n:"Verbania",          lat:45.921,lon:8.552, q:197, p:"VB"},
-      {n:"Domodossola",       lat:46.113,lon:8.294, q:272, p:"VB"},
-      {n:"Villadossola",      lat:46.069,lon:8.260, q:303, p:"VB"},
-      {n:"Omegna",            lat:45.878,lon:8.407, q:301, p:"VB"},
-      {n:"Macugnaga",         lat:45.964,lon:7.963, q:1327,p:"VB"},
-      {n:"Formazza",          lat:46.381,lon:8.429, q:1280,p:"VB"},
-      {n:"Baceno",            lat:46.257,lon:8.314, q:908, p:"VB"},
-      {n:"Vercelli",          lat:45.326,lon:8.418, q:130, p:"VC"},
-      {n:"Borgosesia",        lat:45.716,lon:8.275, q:354, p:"VC"},
-      {n:"Varallo",           lat:45.818,lon:8.254, q:453, p:"VC"},
-      {n:"Alagna Valsesia",   lat:45.864,lon:7.940, q:1195,p:"VC"},
-      {n:"Riva Valdobbia",    lat:45.831,lon:7.958, q:1108,p:"VC"},
-      {n:"Rimella",           lat:45.830,lon:8.151, q:1042,p:"VC"},
-      // ── Biella ──
-      {n:"Biella",            lat:45.563,lon:8.058, q:420, p:"BI"},
-      {n:"Oropa",             lat:45.621,lon:8.006, q:1180,p:"BI"},
-      {n:"Pray",              lat:45.674,lon:8.235, q:450, p:"BI"},
-      {n:"Trivero",           lat:45.702,lon:8.175, q:600, p:"BI"}
-    ]
-  },
+// le stazioni si leggono dall'ultimo file dati: vedi PALLINI_CARTELLE
+      },
 
   veneto: {
     name: 'Veneto',
@@ -1866,70 +1794,8 @@ var REGIONS = {
     geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'veneto',
     dataSource: 'arpa_veneto',
-    stations: [
-      {n:"Venezia",           lat:45.438,lon:12.335,q:2,   p:"VE"},
-      {n:"Verona",            lat:45.438,lon:11.002,q:59,  p:"VR"},
-      {n:"Padova",            lat:45.407,lon:11.868,q:12,  p:"PD"},
-      {n:"Vicenza",           lat:45.548,lon:11.546,q:39,  p:"VI"},
-      {n:"Treviso",           lat:45.671,lon:12.243,q:15,  p:"TV"},
-      {n:"Belluno",           lat:46.144,lon:12.218,q:389, p:"BL"},
-      {n:"Rovigo",            lat:45.071,lon:11.790,q:5,   p:"RO"},
-      {n:"Cortina",           lat:46.536,lon:12.136,q:1224,p:"BL"},
-      {n:"Asiago",            lat:45.874,lon:11.511,q:1001,p:"VI"},
-      {n:"Bassano del Grappa",lat:45.766,lon:11.735,q:129, p:"VI"},
-      {n:"Castelfranco V.",   lat:45.671,lon:11.928,q:42,  p:"TV"},
-      {n:"Conegliano",        lat:45.888,lon:12.297,q:72,  p:"TV"},
-      {n:"Este",              lat:45.226,lon:11.656,q:14,  p:"PD"},
-      {n:"Chioggia",          lat:45.219,lon:12.279,q:1,   p:"VE"},
-      {n:"Adria",             lat:45.054,lon:12.053,q:4,   p:"RO"},
-      {n:"Vittorio Veneto",   lat:45.989,lon:12.299,q:138, p:"TV"},
-      {n:"Montebelluna",      lat:45.777,lon:12.043,q:109, p:"TV"},
-      {n:"Mestre",            lat:45.491,lon:12.238,q:3,   p:"VE"},
-      {n:"Mogliano Veneto",   lat:45.562,lon:12.234,q:12,  p:"TV"},
-      {n:"San Donà di Piave", lat:45.629,lon:12.565,q:3,   p:"VE"},
-      {n:"Portogruaro",       lat:45.776,lon:12.836,q:8,   p:"VE"},
-      {n:"Eraclea",           lat:45.578,lon:12.678,q:3,   p:"VE"},
-      {n:"Jesolo",            lat:45.536,lon:12.641,q:2,   p:"VE"},
-      {n:"Mirano",            lat:45.496,lon:12.102,q:11,  p:"VE"},
-      {n:"Dolo",              lat:45.428,lon:12.077,q:6,   p:"VE"},
-      {n:"Monselice",         lat:45.238,lon:11.741,q:9,   p:"PD"},
-      {n:"Abano Terme",       lat:45.362,lon:11.789,q:14,  p:"PD"},
-      {n:"Cittadella",        lat:45.647,lon:11.784,q:49,  p:"PD"},
-      {n:"Camposampiero",     lat:45.574,lon:11.929,q:17,  p:"PD"},
-      {n:"Piazzola sul Brenta",lat:45.541,lon:11.837,q:26, p:"PD"},
-      {n:"Thiene",            lat:45.709,lon:11.476,q:65,  p:"VI"},
-      {n:"Schio",             lat:45.710,lon:11.356,q:89,  p:"VI"},
-      {n:"Valdagno",          lat:45.649,lon:11.302,q:219, p:"VI"},
-      {n:"Lonigo",            lat:45.385,lon:11.381,q:31,  p:"VI"},
-      {n:"Montecchio Mag.",   lat:45.505,lon:11.405,q:73,  p:"VI"},
-      {n:"Arzignano",         lat:45.516,lon:11.336,q:75,  p:"VI"},
-      {n:"Bussolengo",        lat:45.472,lon:10.856,q:68,  p:"VR"},
-      {n:"Legnago",           lat:45.192,lon:11.313,q:17,  p:"VR"},
-      {n:"San Bonifacio",     lat:45.394,lon:11.272,q:31,  p:"VR"},
-      {n:"Soave",             lat:45.418,lon:11.246,q:55,  p:"VR"},
-      {n:"Bardolino",         lat:45.548,lon:10.726,q:65,  p:"VR"},
-      {n:"Malcesine",         lat:45.763,lon:10.810,q:90,  p:"VR"},
-      {n:"Boscochiesanuova",  lat:45.627,lon:11.055,q:1027,p:"VR"},
-      {n:"Ala",               lat:45.758,lon:11.004,q:169, p:"TN"},
-      {n:"Feltre",            lat:46.018,lon:11.905,q:340, p:"BL"},
-      {n:"Agordo",            lat:46.274,lon:12.039,q:611, p:"BL"},
-      {n:"Pieve di Cadore",   lat:46.427,lon:12.369,q:879, p:"BL"},
-      {n:"Longarone",         lat:46.273,lon:12.298,q:478, p:"BL"},
-      {n:"Auronzo di Cadore", lat:46.559,lon:12.443,q:864, p:"BL"},
-      {n:"Taibon Agordino",   lat:46.266,lon:11.988,q:641, p:"BL"},
-      {n:"Cencenighe Agord.", lat:46.343,lon:12.059,q:773, p:"BL"},
-      {n:"Vallada Agordina",  lat:46.378,lon:11.965,q:1014,p:"BL"},
-      {n:"Comelico Sup.",     lat:46.595,lon:12.487,q:1218,p:"BL"},
-      {n:"Oderzo",            lat:45.779,lon:12.488,q:15,  p:"TV"},
-      {n:"Spresiano",         lat:45.786,lon:12.247,q:43,  p:"TV"},
-      {n:"Valdobbiadene",     lat:45.898,lon:11.998,q:255, p:"TV"},
-      {n:"Pieve di Soligo",   lat:45.900,lon:12.178,q:132, p:"TV"},
-      {n:"Ponte di Piave",    lat:45.722,lon:12.447,q:8,   p:"TV"},
-      {n:"Porto Tolle",       lat:44.961,lon:12.327,q:1,   p:"RO"},
-      {n:"Badia Polesine",    lat:45.094,lon:11.502,q:8,   p:"RO"},
-      {n:"Lendinara",         lat:45.081,lon:11.600,q:8,   p:"RO"}
-    ]
-  },
+// le stazioni si leggono dall'ultimo file dati: vedi PALLINI_CARTELLE
+      },
 
   liguria: {
     name: 'Liguria',
@@ -1938,39 +1804,8 @@ var REGIONS = {
     geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'ligur',
     dataSource: 'arpa_liguria',
-    stations: [
-      {n:"Genova",          lat:44.407,lon:8.934, q:19,  p:"GE"},
-      {n:"Savona",          lat:44.307,lon:8.482, q:4,   p:"SV"},
-      {n:"La Spezia",       lat:44.102,lon:9.824, q:5,   p:"SP"},
-      {n:"Imperia",         lat:43.889,lon:8.026, q:30,  p:"IM"},
-      {n:"Sanremo",         lat:43.816,lon:7.776, q:10,  p:"IM"},
-      {n:"Albenga",         lat:44.050,lon:8.213, q:9,   p:"SV"},
-      {n:"Chiavari",        lat:44.315,lon:9.323, q:14,  p:"GE"},
-      {n:"Rapallo",         lat:44.351,lon:9.230, q:30,  p:"GE"},
-      {n:"Sestri Levante",  lat:44.270,lon:9.395, q:7,   p:"GE"},
-      {n:"Voltri",          lat:44.420,lon:8.757, q:10,  p:"GE"},
-      {n:"Varazze",         lat:44.361,lon:8.578, q:9,   p:"SV"},
-      {n:"Finale Ligure",   lat:44.168,lon:8.342, q:8,   p:"SV"},
-      {n:"Loano",           lat:44.129,lon:8.259, q:7,   p:"SV"},
-      {n:"Pietra Ligure",   lat:44.148,lon:8.282, q:5,   p:"SV"},
-      {n:"Portofino",       lat:44.303,lon:9.209, q:5,   p:"GE"},
-      {n:"Arenzano",        lat:44.407,lon:8.686, q:10,  p:"GE"},
-      {n:"Ventimiglia",     lat:43.790,lon:7.604, q:5,   p:"IM"},
-      {n:"Sarzana",         lat:44.112,lon:9.959, q:14,  p:"SP"},
-      {n:"Levanto",         lat:44.170,lon:9.611, q:5,   p:"SP"},
-      {n:"Moneglia",        lat:44.234,lon:9.492, q:7,   p:"GE"},
-      {n:"Pieve di Teco",   lat:44.051,lon:7.919, q:262, p:"IM"},
-      {n:"Ceva",            lat:44.387,lon:8.036, q:450, p:"CN"},
-      {n:"Sassello",        lat:44.477,lon:8.490, q:386, p:"SV"},
-      {n:"Triora",          lat:43.992,lon:7.765, q:780, p:"IM"},
-      {n:"Rezzoaglio",      lat:44.501,lon:9.353, q:831, p:"GE"},
-      {n:"Santo Stefano dAveto",lat:44.552,lon:9.393,q:1015,p:"GE"},
-      {n:"Borzonasca",      lat:44.434,lon:9.413, q:370, p:"GE"},
-      {n:"Bedonia",         lat:44.501,lon:9.626, q:450, p:"PR"},
-      {n:"Torriglia",       lat:44.519,lon:9.155, q:777, p:"GE"},
-      {n:"Masone",          lat:44.497,lon:8.710, q:433, p:"GE"}
-    ]
-  },
+// le stazioni si leggono dall'ultimo file dati: vedi PALLINI_CARTELLE
+      },
 
   emilia: {
     name: 'Emilia-Romagna',
@@ -1979,39 +1814,8 @@ var REGIONS = {
     geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'emilia',
     dataSource: 'arpa_emilia',
-    stations: [
-      {n:"Bologna",         lat:44.494,lon:11.343,q:54,  p:"BO"},
-      {n:"Ferrara",         lat:44.836,lon:11.620,q:9,   p:"FE"},
-      {n:"Modena",          lat:44.646,lon:10.926,q:34,  p:"MO"},
-      {n:"Reggio Emilia",   lat:44.698,lon:10.631,q:58,  p:"RE"},
-      {n:"Parma",           lat:44.801,lon:10.328,q:57,  p:"PR"},
-      {n:"Piacenza",        lat:45.052,lon:9.693, q:61,  p:"PC"},
-      {n:"Ravenna",         lat:44.418,lon:12.204,q:4,   p:"RA"},
-      {n:"Rimini",          lat:44.059,lon:12.565,q:8,   p:"RN"},
-      {n:"Forlì",           lat:44.222,lon:12.041,q:33,  p:"FC"},
-      {n:"Cesena",          lat:44.133,lon:12.243,q:44,  p:"FC"},
-      {n:"Imola",           lat:44.352,lon:11.714,q:47,  p:"BO"},
-      {n:"Faenza",          lat:44.286,lon:11.883,q:35,  p:"RA"},
-      {n:"Lugo",            lat:44.420,lon:11.904,q:14,  p:"RA"},
-      {n:"Comacchio",       lat:44.695,lon:12.183,q:2,   p:"FE"},
-      {n:"Fidenza",         lat:44.865,lon:10.063,q:75,  p:"PR"},
-      {n:"Guastalla",       lat:44.921,lon:10.660,q:24,  p:"RE"},
-      {n:"Carpi",           lat:44.782,lon:10.886,q:26,  p:"MO"},
-      {n:"Sassuolo",        lat:44.547,lon:10.785,q:121, p:"MO"},
-      {n:"Pavullo",         lat:44.337,lon:10.834,q:682, p:"MO"},
-      {n:"Lago Scaffaiolo", lat:44.175,lon:10.714,q:1773,p:"MO"},
-      {n:"Porretta Terme",  lat:44.157,lon:11.026,q:348, p:"BO"},
-      {n:"Castel S.Pietro", lat:44.401,lon:11.583,q:75,  p:"BO"},
-      {n:"Argenta",         lat:44.614,lon:11.833,q:2,   p:"FE"},
-      {n:"Boretto",         lat:44.898,lon:10.554,q:25,  p:"RE"},
-      {n:"Castelnovo Monti",lat:44.432,lon:10.410,q:724, p:"RE"},
-      {n:"Fiumalbo",        lat:44.166,lon:10.637,q:953, p:"MO"},
-      {n:"Riccione",        lat:44.003,lon:12.655,q:4,   p:"RN"},
-      {n:"Cattolica",       lat:43.966,lon:12.730,q:4,   p:"RN"},
-      {n:"Sasso Marconi",   lat:44.399,lon:11.253,q:124, p:"BO"},
-      {n:"Vergato",         lat:44.281,lon:11.108,q:280, p:"BO"}
-    ]
-  },
+// le stazioni si leggono dall'ultimo file dati: vedi PALLINI_CARTELLE
+      },
 
   valledaosta: {
     name: "Valle d'Aosta",
@@ -2020,52 +1824,8 @@ var REGIONS = {
     geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'aosta',
     dataSource: 'cf_valledaosta',
-    stations: [
-      {n:"Aosta",                lat:45.737, lon:7.315,  q:583},
-      {n:"Saint-Vincent",        lat:45.751, lon:7.640,  q:575},
-      {n:"Chatillon",            lat:45.747, lon:7.618,  q:549},
-      {n:"Pont-Saint-Martin",    lat:45.597, lon:7.796,  q:345},
-      {n:"Verres",               lat:45.665, lon:7.688,  q:391},
-      {n:"Courmayeur",           lat:45.796, lon:6.970,  q:1224},
-      {n:"La Thuile",            lat:45.714, lon:6.952,  q:1441},
-      {n:"Morgex",               lat:45.754, lon:7.043,  q:923},
-      {n:"Pre-Saint-Didier",     lat:45.766, lon:6.988,  q:1004},
-      {n:"Sarre",                lat:45.716, lon:7.269,  q:631},
-      {n:"Charvensod",           lat:45.712, lon:7.353,  q:762},
-      {n:"Gressan",              lat:45.700, lon:7.317,  q:893},
-      {n:"Brissogne",            lat:45.694, lon:7.419,  q:585},
-      {n:"Fenis",                lat:45.730, lon:7.497,  q:537},
-      {n:"Chambave",             lat:45.745, lon:7.572,  q:497},
-      {n:"Montjovet",            lat:45.715, lon:7.669,  q:398},
-      {n:"Bard",                 lat:45.608, lon:7.743,  q:400},
-      {n:"Donnas",               lat:45.603, lon:7.764,  q:322},
-      {n:"Gressoney-Saint-Jean", lat:45.787, lon:7.829,  q:1385},
-      {n:"Champoluc",            lat:45.828, lon:7.726,  q:1568},
-      {n:"Brusson",              lat:45.762, lon:7.742,  q:1338},
-      {n:"Antagnod",             lat:45.816, lon:7.748,  q:1699},
-      {n:"Rhemes-Notre-Dame",    lat:45.598, lon:7.132,  q:1731},
-      {n:"Valsavarenche",        lat:45.591, lon:7.224,  q:1540},
-      {n:"Cogne",                lat:45.608, lon:7.358,  q:1534},
-      {n:"Villeneuve",           lat:45.697, lon:7.199,  q:747},
-      {n:"Introd",               lat:45.654, lon:7.199,  q:850},
-      {n:"Arvier",               lat:45.693, lon:7.160,  q:775},
-      {n:"Avise",                lat:45.724, lon:7.108,  q:905},
-      {n:"Valpelline",           lat:45.831, lon:7.330,  q:960},
-      {n:"Cervinia",             lat:45.937, lon:7.626,  q:2050},
-      {n:"Antey-Saint-Andre",    lat:45.814, lon:7.619,  q:1080},
-      {n:"Torgnon",              lat:45.839, lon:7.570,  q:1489},
-      {n:"Etroubles",            lat:45.822, lon:7.233,  q:1280},
-      {n:"Saint-Oyen",           lat:45.835, lon:7.194,  q:1370},
-      {n:"Gran-San-Bernardo",    lat:45.869, lon:7.171,  q:2469},
-      {n:"Entrevès",             lat:45.834, lon:6.990,  q:1306},
-      {n:"La-Palud",             lat:45.820, lon:6.970,  q:1370},
-      {n:"Nus",                  lat:45.737, lon:7.471,  q:549},
-      {n:"Quart",                lat:45.737, lon:7.415,  q:623},
-      {n:"Saint-Christophe",     lat:45.737, lon:7.370,  q:631},
-      {n:"Jovençan",             lat:45.680, lon:7.290,  q:870},
-      {n:"Roisan",               lat:45.800, lon:7.280,  q:1080}
-    ]
-  },
+// le stazioni si leggono dall'ultimo file dati: vedi PALLINI_CARTELLE
+      },
 
   friuli: {
     name: 'Friuli V.G.',
@@ -2074,24 +1834,8 @@ var REGIONS = {
     geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'friuli',
     dataSource: 'osmer_fvg',
-    stations: [
-      {n:"Trieste",           lat:45.649, lon:13.764, q:30,  p:"TS"},
-      {n:"Udine",             lat:46.063, lon:13.235, q:113, p:"UD"},
-      {n:"Pordenone",         lat:45.954, lon:12.661, q:24,  p:"PN"},
-      {n:"Gorizia",           lat:45.940, lon:13.622, q:84,  p:"GO"},
-      {n:"Monfalcone",        lat:45.800, lon:13.537, q:5,   p:"GO"},
-      {n:"Tolmezzo",          lat:46.399, lon:13.006, q:324, p:"UD"},
-      {n:"Tarvisio",          lat:46.506, lon:13.573, q:754, p:"UD"},
-      {n:"Piancavallo",       lat:46.115, lon:12.524, q:1275,p:"PN"},
-      {n:"Sappada",           lat:46.570, lon:12.708, q:1265,p:"UD"},
-      {n:"Forni di Sopra",    lat:46.425, lon:12.579, q:907, p:"UD"},
-      {n:"Gemona del Friuli", lat:46.275, lon:13.137, q:272, p:"UD"},
-      {n:"Cividale del Friuli",lat:46.094,lon:13.432, q:135, p:"UD"},
-      {n:"Lignano",           lat:45.690, lon:13.133, q:2,   p:"UD"},
-      {n:"Muggia",            lat:45.604, lon:13.762, q:2,   p:"TS"},
-      {n:"Codroipo",          lat:45.960, lon:13.001, q:36,  p:"UD"}
-    ]
-  },
+// le stazioni si leggono dall'ultimo file dati: vedi PALLINI_CARTELLE
+      },
 
   altoadige: {
     name: 'Alto Adige',
@@ -2101,39 +1845,8 @@ var REGIONS = {
     geojsonFilter: 'Bolzano',
     geojsonFilterField: 'prov_name',
     dataSource: 'meteo_altoadige',
-    stations: [
-      {n:"Bolzano",           lat:46.498, lon:11.313, q:262},
-      {n:"Merano",            lat:46.671, lon:11.159, q:323},
-      {n:"Bressanone",        lat:46.715, lon:11.657, q:559},
-      {n:"Brunico",           lat:46.797, lon:11.936, q:838},
-      {n:"Silandro",          lat:46.627, lon:10.777, q:720},
-      {n:"Vipiteno",          lat:46.895, lon:11.433, q:948},
-      {n:"Corvara",           lat:46.550, lon:11.874, q:1568},
-      {n:"Dobbiaco",          lat:46.731, lon:12.219, q:1256},
-      {n:"Glorenza",          lat:46.671, lon:10.555, q:920},
-      {n:"Passo Resia",       lat:46.838, lon:10.524, q:1504},
-      {n:"Solda",             lat:46.529, lon:10.587, q:1906},
-      {n:"Malles Venosta",    lat:46.691, lon:10.543, q:1050},
-      {n:"Naturno",           lat:46.648, lon:10.991, q:554},
-      {n:"Appiano",           lat:46.448, lon:11.259, q:418},
-      {n:"Egna",              lat:46.319, lon:11.278, q:222},
-      {n:"Nova Ponente",      lat:46.428, lon:11.427, q:1388},
-      {n:"Castelrotto",       lat:46.567, lon:11.568, q:1060},
-      {n:"Sarentino",         lat:46.633, lon:11.357, q:970},
-      {n:"Chiusa",            lat:46.641, lon:11.563, q:525},
-      {n:"Campo Tures",       lat:46.918, lon:11.960, q:860},
-      {n:"Selva Val Gardena", lat:46.556, lon:11.762, q:1563},
-      {n:"Monguelfo",         lat:46.751, lon:12.124, q:1087},
-      {n:"Rasun Anterselva",  lat:46.873, lon:12.083, q:1054},
-      {n:"Salorno",           lat:46.236, lon:11.186, q:212},
-      {n:"Laives",            lat:46.426, lon:11.335, q:250},
-      {n:"Lana",              lat:46.614, lon:11.148, q:350},
-      {n:"Passo Brennero",    lat:47.004, lon:11.508, q:1374},
-      {n:"Sexten",            lat:46.692, lon:12.358, q:1322},
-      {n:"Monguelfo",         lat:46.751, lon:12.124, q:1087},
-      {n:"Ortisei",           lat:46.575, lon:11.672, q:1236}
-    ]
-  },
+// le stazioni si leggono dall'ultimo file dati: vedi PALLINI_CARTELLE
+      },
 
   trentino: {
     name: 'Trentino',
@@ -2143,59 +1856,8 @@ var REGIONS = {
     geojsonFilter: 'Trento',
     geojsonFilterField: 'prov_name',
     dataSource: 'meteotrentino',
-    stations: [
-      {n:"Trento",              lat:46.067, lon:11.121, q:194},
-      {n:"Rovereto",            lat:45.890, lon:11.043, q:203},
-      {n:"Riva del Garda",      lat:45.886, lon:10.843, q:70},
-      {n:"Arco",                lat:45.917, lon:10.880, q:91},
-      {n:"Canazei",             lat:46.478, lon:11.767, q:1465},
-      {n:"Cavalese",            lat:46.284, lon:11.451, q:958},
-      {n:"Predazzo",            lat:46.298, lon:11.598, q:1000},
-      {n:"Moena",               lat:46.376, lon:11.662, q:1175},
-      {n:"Passo Tonale",        lat:46.263, lon:10.597, q:1875},
-      {n:"Madonna di Campiglio",lat:46.230, lon:10.827, q:1510},
-      {n:"Malè",                lat:46.352, lon:10.918, q:720},
-      {n:"Cles",                lat:46.361, lon:11.040, q:655},
-      {n:"Fondo",               lat:46.438, lon:11.130, q:910},
-      {n:"Mezzolombardo",       lat:46.187, lon:11.104, q:204},
-      {n:"Pinzolo",             lat:46.157, lon:10.757, q:760},
-      {n:"Tione",               lat:46.041, lon:10.731, q:533},
-      {n:"Pergine Valsugana",   lat:46.063, lon:11.236, q:498},
-      {n:"Borgo Valsugana",     lat:46.053, lon:11.454, q:385},
-      {n:"San Martino di Castrozza", lat:46.261, lon:11.796, q:1450},
-      {n:"Lavarone",            lat:45.940, lon:11.253, q:1155},
-      {n:"Folgaria",            lat:45.915, lon:11.164, q:1121},
-      {n:"Storo",               lat:45.847, lon:10.562, q:385},
-      {n:"Passo Mendola",       lat:46.419, lon:11.189, q:1315},
-      {n:"Passo Rolle",         lat:46.298, lon:11.787, q:2012},
-      {n:"Careser Diga",        lat:46.423, lon:10.699, q:2600},
-      {n:"Peio",                lat:46.364, lon:10.678, q:1585},
-      {n:"Rabbi S. Bernardo",   lat:46.401, lon:10.850, q:1132},
-      {n:"Mezzana",             lat:46.313, lon:10.796, q:905},
-      {n:"Passo Costalunga",    lat:46.405, lon:11.614, q:1750},
-      {n:"Canal San Bovo",      lat:46.150, lon:11.735, q:750},
-      {n:"Passo Cereda",        lat:46.196, lon:11.916, q:1322},
-      {n:"Castello Tesino",     lat:46.057, lon:11.630, q:801},
-      {n:"Levico Terme",        lat:46.010, lon:11.305, q:502},
-      {n:"Molveno",             lat:46.142, lon:10.958, q:835},
-      {n:"Rifugio Graffer",     lat:46.218, lon:10.890, q:2258},
-      {n:"Tremalzo",            lat:45.842, lon:10.684, q:1560},
-      {n:"Passo Brocon",        lat:46.117, lon:11.663, q:1610},
-      {n:"Sant Orsola Terme",   lat:46.107, lon:11.302, q:925},
-      {n:"Tenno",               lat:45.919, lon:10.831, q:415},
-      {n:"Centa San Nicolo",    lat:45.970, lon:11.234, q:805},
-      {n:"Spormaggiore",        lat:46.220, lon:11.047, q:561},
-      {n:"Tres",                lat:46.321, lon:11.101, q:838},
-      {n:"Romeno",              lat:46.391, lon:11.119, q:958},
-      {n:"Aldeno",              lat:45.968, lon:11.091, q:182},
-      {n:"Monte Bondone",       lat:46.014, lon:11.054, q:1490},
-      {n:"Passo Valles",        lat:46.338, lon:11.800, q:2032},
-      {n:"Val di Breguzzo",     lat:46.032, lon:10.641, q:1148},
-      {n:"Montagne",            lat:46.059, lon:10.752, q:955},
-      {n:"Torbole Belvedere",   lat:45.870, lon:10.877, q:90},
-      {n:"Passo Pian Fugazze",  lat:45.759, lon:11.175, q:1170}
-    ]
-  },
+// le stazioni si leggono dall'ultimo file dati: vedi PALLINI_CARTELLE
+      },
 
   // Svizzera intera (pilota dal 3/8/2026): sotto un solo bottone due fonti —
   // il Ticino resta OASI (data/ticino, repo prod), il resto del paese è
@@ -2400,39 +2062,8 @@ var REGIONS = {
     geojson: '/italia-regioni-confine.geojson',
     geojsonFilter: 'toscan',
     dataSource: 'cfr_toscana',
-    stations: [
-      {n:"Firenze Università",  lat:43.799,lon:11.251,q:50,  p:"FI"},
-      {n:"Pisa (Fac. Agraria)", lat:43.711,lon:10.412,q:4,   p:"PI"},
-      {n:"Livorno Mareografo",  lat:43.548,lon:10.316,q:3,   p:"LI"},
-      {n:"Arezzo",              lat:43.463,lon:11.878,q:296, p:"AR"},
-      {n:"Siena Poggio al Vento",lat:43.320,lon:11.313,q:322,p:"SI"},
-      {n:"Ponte Tura",          lat:42.765,lon:11.166,q:10,  p:"GR"},
-      {n:"Lucca (Orto Botanico)",lat:43.843,lon:10.503,q:19, p:"LU"},
-      {n:"Pontelungo valle",    lat:43.920,lon:10.896,q:65,  p:"PT"},
-      {n:"Prato Università",    lat:43.886,lon:11.099,q:63,  p:"PO"},
-      {n:"Candia Scurtarola",   lat:44.048,lon:10.110,q:65,  p:"MS"},
-      {n:"Torano",              lat:44.091,lon:10.103,q:100, p:"MS"},
-      {n:"Viareggio Lungomare", lat:43.867,lon:10.233,q:3,   p:"LU"},
-      {n:"Empoli",              lat:43.717,lon:10.950,q:27,  p:"FI"},
-      {n:"Volterra Balze",      lat:43.400,lon:10.867,q:531, p:"PI"},
-      {n:"Populonia",           lat:42.989,lon:10.490,q:10,  p:"LI"},
-      {n:"Orbetello",           lat:42.434,lon:11.203,q:3,   p:"GR"},
-      {n:"Montalcino",          lat:43.050,lon:11.483,q:567, p:"SI"},
-      {n:"Montepulciano",       lat:43.100,lon:11.783,q:605, p:"SI"},
-      {n:"Cortona",             lat:43.269,lon:11.996,q:494, p:"AR"},
-      {n:"Anghiari",            lat:43.559,lon:12.097,q:330, p:"AR"},
-      {n:"Boscolungo",          lat:44.139,lon:10.674,q:1388,p:"PT"},
-      {n:"S. Marcello Pistoiese",lat:44.055,lon:10.789,q:623,p:"PT"},
-      {n:"Barga",               lat:44.070,lon:10.459,q:410, p:"LU"},
-      {n:"Pontremoli",          lat:44.369,lon:9.893, q:236, p:"MS"},
-      {n:"Cecina",              lat:43.317,lon:10.517,q:15,  p:"LI"},
-      {n:"Follonica",           lat:42.917,lon:10.767,q:10,  p:"GR"},
-      {n:"Vallombrosa",         lat:43.731,lon:11.557,q:390, p:"FI"},
-      {n:"Borgo S. Lorenzo",    lat:43.958,lon:11.391,q:193, p:"FI"},
-      {n:"Firenzuola",          lat:44.120,lon:11.375,q:422, p:"FI"},
-      {n:"Zoo di Poppi",        lat:43.736,lon:11.783,q:437, p:"AR"}
-    ]
-  },
+// le stazioni si leggono dall'ultimo file dati: vedi PALLINI_CARTELLE
+      },
 
   // ───────── CENTRO-SUD (MeteoHub / Agenzia ItaliaMeteo) — pilota, repo TEST ─────────
   // Un solo loader generico (loadMeteoHubRegion) legge data/meteohub-<regione> dal
@@ -2838,7 +2469,6 @@ function aggiornaCrediti(testo){
 var activeRegions   = ['lombardia','piemonte']; // regioni con checkbox spuntata
 var DEFAULT_REGION = 'lombardia'; // ripiego se nessuna regione risulta spuntata
 var lastUsedFonte  = '—'; // fonte effettiva usata nell'ultimo render
-var ARPA_STATIONS    = null; // stazioni ARPA Lombardia
 // ARPA_PIE_STATIONS tolta il 24/8/2026: era scritta al boot e mai letta.
 var lombardiaRings = [];
 var regionRings    = {};   // cache GeoJSON per regione
@@ -5351,6 +4981,18 @@ function copFiltro(cop){
   return function(key){ return max>0 && (cop[key]||0)<minimo; };
 }
 
+// ⚠️ FUORI dal loader dal 30/8/2026, come EMILIA_ESCLUSE: la legge anche
+// loadStazioniPallini(). Dentro la funzione era irraggiungibile, e i pallini
+// di partenza mostravano i tre sensori con le coordinate corrotte.
+// Sensori esclusi: hanno coordinate corrotte nell'anagrafe ARPA (nome e
+// provincia di un posto, coordinate di un altro). Oggi sono tutti e tre morti
+// da sempre, quindi il filtro non cambia nulla — serve a non ritrovarseli in
+// mezzo alla mappa se un giorno tornassero a riportare.
+//   2239 "Ispra prato" (VA)             → coordinate di Gandellino Tezzi (BG)
+//   2206 "Ispra tetto" (VA)             → colline bergamasche, non Ispra
+//   2535 "Virgilio Mantova Cerese" (MN) → coordinate di Dorio (LC)
+// Attenzione: "Ispra JRC" (32355) è invece corretta e riporta ogni giorno.
+var LOMB_ESCLUSE={'2239':1,'2206':1,'2535':1};
 function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
   // Dal 24/7/2026 la Lombardia legge file giornalieri come le altre regioni,
   // invece di interrogare Socrata live a ogni caricamento (lento sui periodi
@@ -5373,15 +5015,6 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
   // ha piovuto 13-20 giorni fa è il difetto peggiore possibile.
   // NB in produzione il RAW va cambiato in Mappa-Precipitazioni-Nord.
   //
-  // Sensori esclusi: hanno coordinate corrotte nell'anagrafe ARPA (nome e
-  // provincia di un posto, coordinate di un altro). Oggi sono tutti e tre morti
-  // da sempre, quindi il filtro non cambia nulla — serve a non ritrovarseli in
-  // mezzo alla mappa se un giorno tornassero a riportare.
-  //   2239 "Ispra prato" (VA)             → coordinate di Gandellino Tezzi (BG)
-  //   2206 "Ispra tetto" (VA)             → colline bergamasche, non Ispra
-  //   2535 "Virgilio Mantova Cerese" (MN) → coordinate di Dorio (LC)
-  // Attenzione: "Ispra JRC" (32355) è invece corretta e riporta ogni giorno.
-  var LOMB_ESCLUSE={'2239':1,'2206':1,'2535':1};
   var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/lombardia';
   function _fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
   var todayStr=_fmt(new Date());
@@ -5753,43 +5386,69 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
 }
 
 // ═══════════════════════════════════════════════════════════════
+// ⚠️ FUORI dal loader dal 30/8/2026: la stessa lista la legge anche
+// loadStazioniPallini(), che disegna i pallini di partenza. Dentro la
+// funzione era irraggiungibile, e i pallini mostravano le escluse.
+// Le 8 stazioni che l'ARPAE ospita in provincia di GENOVA: sono le "gemelle",
+// gli stessi pluviometri che OMIRL pubblica in data/liguria a meno di 600 m.
+// Fuori dal rendering Emilia per due motivi: con Emilia e Liguria insieme
+// venivano disegnate e pesate due volte nell'IDW, e su Alpe Gorreto il feed
+// ARPAE ha dato 0 invece di "dato assente" per quattro giorni (29/6→2/7/2026).
+// I file data/emilia restano intatti: servono da verifica ai check periodici.
+// 3014 Ferriere Pluvio (PC): pluviometro fermo. In 46 giorni ha totalizzato
+// 8,7 mm contro i 100,8 di mediana dei vicini entro 15 km, cioe' il 9%, e il
+// 20/8/2026 dava 0 mentre intorno cadevano 11 mm. Trovata col check dei picchi
+// isolati del 21/8. A 4 km c'e' Selva Ferriere, che funziona (125 mm).
+// 12863 Lugo RA e 14719 Corte Centrale (FE): fermi anche loro, trovati dal
+// controllo automatico del 21/8/2026 (check-stazioni-ferme.js). Lugo misurava
+// 38,8 mm a maggio e 20,9 a luglio, poi PIU' NIENTE: ultima pioggia l'11
+// luglio, 7,3 mm in 45 giorni contro i 54,8 dei vicini. Corte Centrale e'
+// ferma dal 26 luglio, 1,2 mm contro 81,6 (Codigoro a 7,7 km ne ha fatti 101).
+// Da ricontrollare se tornassero a misurare, come MONTE MALANOTTE in Piemonte.
+var EMILIA_ESCLUSE={
+  // Gemelle liguri: le porta OMIRL, vedi sotto
+  '5317':1,'5565':1,'5566':1,'5561':1,'5568':1,'3080':1,'3077':1,'12307':1,
+  // Pluviometri fermi trovati a mano e col controllo del lunedi'
+  '3014':1,    // Ferriere Pluvio (PC): 9% dei vicini in 46 giorni
+  '12863':1,   // Lugo RA
+  '14719':1,   // Corte Centrale (FE)
+  '14729':1,   // Imola2 (BO): 0,0 mm in 99 giorni di dato, ultima pioggia misurata il 10 maggio, mentre Imola a 6,1 km ne faceva 86 nei soli ultimi 45. Trovata il 22/8/2026 dalla porta «zero assoluto» di check-stazioni-ferme.js, che e' nata proprio per lei: la porta di sopra non la vedeva perche' in pianura la mediana dei vicini non arriva ai 50 mm di MIN_VICINI_MM. Conferma indipendente: ARPAE ha messo a null i suoi valori di agosto.
+  // ── 21/8/2026: la regola nata in Toscana passata anche qui ──────────────
+  // Sotto il 40% della mediana dei cinque vicini E sotto la meta' del vicino
+  // piu' prossimo, contando solo i giorni che la stazione ha consegnato, e
+  // solo dove restano almeno tre pluviometri EMILIANI entro 10 km.
+  '53207':1,   // GUALDO (FE): 0,2 mm nei suoi 19 giorni, mentre Sellarino Voghiera a 3,3 km ne faceva 101 negli stessi giorni. In pianura non esiste un gradiente cosi'.
+  '12875':1,   // Poggio Renatico (FE): 16,2 mm nei suoi 28 giorni, il 23% di 70. Malalbergo, a 4,7 km, ne ha fatti 114.
+  '5467':1,    // Campora di Sasso (PR): 28,8 mm, il 34% di 84. Vetto, a 5,3 km, ne fa 87 e Vetto Pluvio 89.
+  '3056':1,    // Montriolo (FC): 24,0 mm, il 36% di 66. Lastra, a 5,0 km, ne fa 75.
+  '8':1,       // Loiano (BO): 24,0 mm contro i 66 di Loiano Renana, che sta a 1,1 km. Due pluviometri cosi' vicini non vedono due piogge diverse.
+  // ── 30/8/2026: DUE PLUVIOMETRI ALLO STESSO IDENTICO PUNTO ──────────────
+  // «Giralda» #3730 e «GIRALDA meteo» #53432 stanno tutt'e due a 44.8138,
+  // 12.2483: zero metri, l'UNICA coppia sotto i 50 m dentro la stessa rete in
+  // tutto il progetto (cercata su 5.700 stazioni e 40 cartelle). Due pallini
+  // nello stesso pixel: se ne clicca uno solo, e il punto pesa doppio nell'IDW
+  // in una zona del delta dove il vicino piu' prossimo sta a 12 km.
+  // ⚠️ NESSUNA DELLE DUE E' ROTTA: su 22 giorni bagnati in comune, 11 sono
+  // identici entro 0,3 mm e solo 2 si scostano di piu' di 3 mm. Sono due
+  // strumenti veri sullo stesso sito, uno della rete idrometrica e uno della
+  // stazione meteo. Il controllo del lunedi' non le vede, ed e' giusto: 84%.
+  // CHI SI TOGLIE, e col criterio gia' scritto in togliGemelleDiConfine (vince
+  // il record PIU' RICCO DI SENSORI): la 3730 ha solo la pioggia, la 53432
+  // porta anche temperatura, vento e umidita'. Toglierla avrebbe lasciato quel
+  // sito senza grafici.
+  // ⚠️ IL PREZZO, misurato e accettato il 30/8: la 53432 ha 4 giorni mancanti
+  // sugli ultimi 40 (22, 23, 25 e 26 agosto) e il 25 la 3730 misurava 9,8 mm,
+  // che adesso in quel punto non ci sono piu'. Sulle finestre corte questo
+  // costa il pallino: 5 finestre da 7 giorni su 54 lo fanno cadere sotto il
+  // 60% di copertura. Da 10 giorni in su, mai.
+  // ⚠️ DI «GIRALDA» CE NE SONO TRE, e due hanno lo STESSO NOME in due posti
+  // diversi: la 14727 sta 3,8 km piu' a ovest ed e' ferma dal 20/8. Qui si
+  // ragiona per ID e mai per nome — vedi la nota sulle invalidazioni ARPAE.
+  '3730':1     // Giralda (FE), solo pioggia: la sostituisce GIRALDA meteo #53432
+};
 // ─── ARPA Emilia Romagna (file storici da GitHub) ───────────────
 function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
   var GITHUB_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/emilia';
-  // Le 8 stazioni che l'ARPAE ospita in provincia di GENOVA: sono le "gemelle",
-  // gli stessi pluviometri che OMIRL pubblica in data/liguria a meno di 600 m.
-  // Fuori dal rendering Emilia per due motivi: con Emilia e Liguria insieme
-  // venivano disegnate e pesate due volte nell'IDW, e su Alpe Gorreto il feed
-  // ARPAE ha dato 0 invece di "dato assente" per quattro giorni (29/6→2/7/2026).
-  // I file data/emilia restano intatti: servono da verifica ai check periodici.
-  // 3014 Ferriere Pluvio (PC): pluviometro fermo. In 46 giorni ha totalizzato
-  // 8,7 mm contro i 100,8 di mediana dei vicini entro 15 km, cioe' il 9%, e il
-  // 20/8/2026 dava 0 mentre intorno cadevano 11 mm. Trovata col check dei picchi
-  // isolati del 21/8. A 4 km c'e' Selva Ferriere, che funziona (125 mm).
-  // 12863 Lugo RA e 14719 Corte Centrale (FE): fermi anche loro, trovati dal
-  // controllo automatico del 21/8/2026 (check-stazioni-ferme.js). Lugo misurava
-  // 38,8 mm a maggio e 20,9 a luglio, poi PIU' NIENTE: ultima pioggia l'11
-  // luglio, 7,3 mm in 45 giorni contro i 54,8 dei vicini. Corte Centrale e'
-  // ferma dal 26 luglio, 1,2 mm contro 81,6 (Codigoro a 7,7 km ne ha fatti 101).
-  // Da ricontrollare se tornassero a misurare, come MONTE MALANOTTE in Piemonte.
-  var EMILIA_ESCLUSE={
-    // Gemelle liguri: le porta OMIRL, vedi sotto
-    '5317':1,'5565':1,'5566':1,'5561':1,'5568':1,'3080':1,'3077':1,'12307':1,
-    // Pluviometri fermi trovati a mano e col controllo del lunedi'
-    '3014':1,    // Ferriere Pluvio (PC): 9% dei vicini in 46 giorni
-    '12863':1,   // Lugo RA
-    '14719':1,   // Corte Centrale (FE)
-    '14729':1,   // Imola2 (BO): 0,0 mm in 99 giorni di dato, ultima pioggia misurata il 10 maggio, mentre Imola a 6,1 km ne faceva 86 nei soli ultimi 45. Trovata il 22/8/2026 dalla porta «zero assoluto» di check-stazioni-ferme.js, che e' nata proprio per lei: la porta di sopra non la vedeva perche' in pianura la mediana dei vicini non arriva ai 50 mm di MIN_VICINI_MM. Conferma indipendente: ARPAE ha messo a null i suoi valori di agosto.
-    // ── 21/8/2026: la regola nata in Toscana passata anche qui ──────────────
-    // Sotto il 40% della mediana dei cinque vicini E sotto la meta' del vicino
-    // piu' prossimo, contando solo i giorni che la stazione ha consegnato, e
-    // solo dove restano almeno tre pluviometri EMILIANI entro 10 km.
-    '53207':1,   // GUALDO (FE): 0,2 mm nei suoi 19 giorni, mentre Sellarino Voghiera a 3,3 km ne faceva 101 negli stessi giorni. In pianura non esiste un gradiente cosi'.
-    '12875':1,   // Poggio Renatico (FE): 16,2 mm nei suoi 28 giorni, il 23% di 70. Malalbergo, a 4,7 km, ne ha fatti 114.
-    '5467':1,    // Campora di Sasso (PR): 28,8 mm, il 34% di 84. Vetto, a 5,3 km, ne fa 87 e Vetto Pluvio 89.
-    '3056':1,    // Montriolo (FC): 24,0 mm, il 36% di 66. Lastra, a 5,0 km, ne fa 75.
-    '8':1        // Loiano (BO): 24,0 mm contro i 66 di Loiano Renana, che sta a 1,1 km. Due pluviometri cosi' vicini non vedono due piogge diverse.
-  };
   function _fmt(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
 
   var todayStr=_fmt(new Date());
@@ -9501,16 +9160,14 @@ if(_btnShot){
   //    Lombardia esce con ~100 stazioni in meno (successo al test del 29/7);
   // 2) confini GeoJSON — senza, la griglia viene ritagliata su un confine
   //    assente e la heatmap non compare.
-  function whenLombardiaReady(cb){
-    if(keys.indexOf('lombardia')<0){cb();return;}
-    // L'anagrafe non si carica piu' all'apertura: la si chiede QUI, e si
-    // parte comunque dopo 8 s se la function non risponde (con la lista
-    // statica di riserva, che caricaAnagrafeLombardia mette da sola).
-    var fatto=false;
-    var vai=function(){ if(fatto)return; fatto=true; cb(); };
-    setTimeout(vai,8000);
-    caricaAnagrafeLombardia(vai);
-  }
+  // ⚠️ NON SI ASPETTA PIU' L'ANAGRAFE ARPA LOMBARDIA (30/8/2026).
+  // La si chiedeva qui, con 8 s di tetto, perche' ai tempi della Lombardia
+  // «live» senza di lei la regione usciva con ~100 stazioni in meno (test del
+  // 29/7). Ma dal 24/7/2026 i dati vengono dai FILE, e da allora ARPA_STATIONS
+  // non lo leggeva piu' NESSUNO: era un'attesa per un valore che non serviva a
+  // niente, piazzata in mezzo all'apertura di un link condiviso. Restano i
+  // confini, che invece servono davvero.
+  function whenLombardiaReady(cb){ cb(); }
   whenLombardiaReady(function(){
     loadAllBorders(keys,function(){
       var z=parseFloat(q.get('z')),c=(q.get('c')||'').split(',').map(Number);
@@ -9591,40 +9248,142 @@ setTimeout(function(){
   if(l) l.style.display='none';
 },8000);
 
-// Anagrafe ARPA Lombardia — serve SOLO ai pallini grigi della Lombardia prima
-// che si scelga un periodo: i dati veri li legge loadARPALombardiaRegion dai
-// file giornalieri (dal 24/7/2026) e questa lista non la tocca nemmeno. Si
-// carica alla PRIMA richiesta e una volta sola.
-var _anagLombardia=null;
-function caricaAnagrafeLombardia(cb){
-  cb=cb||function(){};
-  if(ARPA_STATIONS){ cb(ARPA_STATIONS); return; }
-  if(!_anagLombardia){
-    var stUrl='/.netlify/functions/arpa?endpoint=nf78-nj6b.json&$limit=500&$select=idsensore,nomestazione,lat,lng,quota,provincia&$where=tipologia=%27Precipitazione%27';
-    _anagLombardia=fetch(stUrl)
-      .then(function(r){if(!r.ok)throw new Error('HTTP');return r.json();})
-      .then(function(data){
-        var stazioni=[];
-        data.forEach(function(s){
-          var lat=parseFloat(s.lat),lon=parseFloat(s.lng);
-          if(!isNaN(lat)&&!isNaN(lon)&&lat>44&&lat<47&&lon>7&&lon<12){
-            stazioni.push({n:s.nomestazione||'—',lat:lat,lon:lon,q:parseInt(s.quota)||0,p:s.provincia||'—',idsensore:s.idsensore});
-          }
-        });
-        stazioni=selectUniform(stazioni,200);
-        if(stazioni.length>=5){
-          ARPA_STATIONS=stazioni;
-          console.log('[ARPA Lombardia] Stazioni caricate:',stazioni.length);
-        } else throw new Error('poche stazioni');
-      })
-      .catch(function(e){
-        console.warn('[ARPA Lombardia] fallback:',e.message);
-        ARPA_STATIONS=LOMBARDIA_STATIONS;
-      });
-  }
-  _anagLombardia.then(function(){ cb(ARPA_STATIONS||LOMBARDIA_STATIONS); });
-}
+// ⚠️ QUI C'ERA caricaAnagrafeLombardia(), TOLTA IL 30/8/2026.
+// Chiedeva l'anagrafe dei 326 pluviometri alla function Netlify /arpa e la
+// assottigliava a 200 per disegnare i pallini di partenza della Lombardia.
+// Era l'ultima chiamata a quella function rimasta nel sito, e portava dentro
+// un difetto: l'anagrafe contiene ancora i tre sensori con le coordinate
+// corrotte di LOMB_ESCLUSE, che il loader dei dati scarta e lei no — «Ispra
+// prato» compariva a 45.996/9.955, cioe' nel bergamasco, e «Virgilio Mantova
+// Cerese» a Dorio in provincia di Lecco, 150 km da Mantova. Adesso anche la
+// Lombardia legge i pallini dall'ultimo file dati, come le altre.
+// LOMBARDIA_STATIONS resta: e' l'elenco dei punti su cui si chiedono le
+// stime a Open-Meteo se i file mancassero.
 
+/* ═══════════════════════════════════════════════════════════════
+   ⚠️ I PALLINI DI PARTENZA SONO LE STAZIONI VERE (30 agosto 2026)
+
+   Fino a oggi i pallini bianchi che si vedono DOPO aver scelto la regione e
+   PRIMA di aver scelto il periodo uscivano da `cfg.stations`, una lista
+   scritta a mano dentro questo file. Non erano pluviometri: erano NOMI DI
+   PAESI, con le coordinate del centro abitato e la quota battuta a mano.
+   Misurato il 30/8 contro la rete vera:
+
+     regione      voci   su un pluviometro vero (<200 m)
+     Piemonte      65    0        ← nessuna, e 30 stavano oltre 3 km
+     Veneto        61    0
+     Emilia        30    1
+     Liguria       30    1
+     Friuli        15    2
+     Alto Adige    30    6
+     Toscana       30    20
+     Trentino      50    42       ← l'unica quasi sana
+
+   Il caso che l'ha fatto scoprire: «Acqui Terme» nella lista sta a 44.674,
+   8.469 con quota 156; la stazione ARPA vera sta a 44.6786, 8.4797 con quota
+   217, cioe' 989 m piu' in la' e 61 m piu' in alto. Il peggiore e' Vinadio:
+   905 m scritti contro i 1.433 veri, quasi tre chilometri di distanza.
+   Il tooltip dichiarava nome, provincia e quota di una stazione inesistente,
+   con sotto la fonte vera («ARPA Piemonte»).
+
+   ⚠️ NON e' una lista nuova: si legge l'ULTIMO FILE GIORNALIERO della
+   cartella dati, esattamente come fanno gia' Austria, Slovenia, Svizzera,
+   Francia e MeteoHub (loadAustriaStations e' il modello). Quindi i pallini di
+   partenza sono gli stessi che poi si colorano quando si sceglie il periodo,
+   e si aggiornano da soli quando una rete cresce: il 17/8 l'ARPAE ha aggiunto
+   dieci stazioni e la lista a mano non lo avrebbe mai saputo.
+
+   ⚠️ Se il file non si scarica NON si disegna niente, come per le estere:
+   meglio nessun pallino che pallini finti. La riserva Netlify copre comunque
+   il caso di raw irraggiungibile.
+
+   ⚠️ Le liste di esclusione valgono anche qui: senza, l'Emilia mostrava in
+   partenza le 8 gemelle liguri e i pluviometri fermi, che poi sparivano al
+   clic sul periodo. E' il motivo per cui EMILIA_ESCLUSE e' stata portata
+   fuori dal suo loader.
+
+   Fuori da questo giro restano due regioni, per due motivi diversi:
+   · LOMBARDIA — i suoi pallini vengono dall'anagrafe ARPA vera (Socrata via
+     Netlify function), non da una lista inventata. ⚠️ Ha pero' un difetto
+     suo: l'anagrafe contiene ancora i tre sensori con le coordinate corrotte
+     di LOMB_ESCLUSE («Ispra prato» in provincia di Bergamo, «Virgilio Mantova
+     Cerese» a Dorio), che il loader dei dati scarta e quello dei pallini no.
+     Da decidere a parte.
+   · ABRUZZO — li' la lista NON e' un abbellimento: e' l'elenco dei punti su
+     cui si chiedono le stime a Open-Meteo, cioe' la fonte stessa. Non si
+     tocca finche' l'Abruzzo non ha una rete vera.
+   ═══════════════════════════════════════════════════════════════ */
+var PALLINI_CARTELLE={
+  lombardia:['lombardia'],
+  piemonte:['piemonte'], veneto:['veneto'], liguria:['liguria'],
+  emilia:['emilia'], toscana:['toscana'], altoadige:['altoadige'],
+  trentino:['trentino'], valledaosta:['valledaosta-cf'],
+  // ⚠️ Due cartelle, come la Svizzera: la rete OSMER e le ~137 stazioni che
+  // la stessa ARPA FVG pubblica su MeteoHub. I doppioni si scartano sotto il
+  // chilometro e VINCE OSMER, che e' la fonte di casa — la stessa regola e
+  // la stessa tolleranza di loadOSMERFriuliRegion, che resta il posto dove
+  // quella regola e' spiegata.
+  friuli:['friuli-osmer','meteohub-friuli']
+};
+function _pallEscluso(rk,s){
+  if(rk==='lombardia')return !s.id||!!LOMB_ESCLUSE[String(s.id)];  // coordinate corrotte
+  if(rk==='piemonte') return !!PIEMONTE_ESCLUSE[s.n];          // per NOME, vedi la sua nota
+  if(rk==='liguria')  return !!(s.id&&LIGURIA_ESCLUSE[String(s.id)]);
+  if(rk==='emilia')   return !!(s.id&&EMILIA_ESCLUSE[String(s.id)]);
+  if(rk==='toscana')  return !!TOSCANA_ESCLUSE[s.id||s.n];     // per ID: quattro nomi doppi
+  return false;
+}
+var _pallCache={};
+function loadStazioniPallini(rk,cb){
+  if(_pallCache[rk]){ cb(_pallCache[rk]); return; }
+  var dirs=PALLINI_CARTELLE[rk];
+  if(!dirs){ cb([]); return; }
+  var parti=new Array(dirs.length), fatte=0;
+  function pronta(i,st){
+    parti[i]=st; fatte++;
+    if(fatte<dirs.length) return;
+    var out=[];
+    parti.forEach(function(lista,i){
+      (lista||[]).forEach(function(s){
+        if(i>0&&_troppoVicina(out,s)) return;   // gemella di una cartella precedente
+        out.push(s);
+      });
+    });
+    _pallCache[rk]=out; cb(out);
+  }
+  dirs.forEach(function(dir,i){
+    var tries=[], now=new Date();
+    for(var g=1;g<=6;g++){ var d=new Date(now.getTime()-g*86400000);
+      tries.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')); }
+    var idx=0;
+    (function attempt(){
+      if(idx>=tries.length){ pronta(i,[]); return; }
+      fetch(PILOT_DATA_BASE+dir+'/'+tries[idx]+'.json')
+        .then(function(r){return r.ok?r.json():Promise.reject();})
+        .then(function(data){
+          var st=(data.stations||[]).filter(function(s){
+            return typeof s.lat==='number'&&typeof s.lon==='number'&&!_pallEscluso(rk,s);
+          }).map(function(s){
+            // w/u/t servono a selectUniformRicche, che a parita' di posizione
+            // tiene la stazione con piu' sensori
+            return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||''};
+          });
+          pronta(i,st);
+        })
+        .catch(function(){ idx++; attempt(); });
+    })();
+  });
+}
+// Distanza piatta, come in togliGemelleDiConfine: sotto il chilometro e a
+// queste latitudini l'errore e' di qualche metro.
+function _troppoVicina(gia,s){
+  for(var i=0;i<gia.length;i++){
+    var dy=(gia[i].lat-s.lat)*110.57;
+    var dx=(gia[i].lon-s.lon)*111.32*Math.cos((gia[i].lat+s.lat)/2*Math.PI/180);
+    if(dx*dx+dy*dy<1) return true;   // meno di 1 km
+  }
+  return false;
+}
 var meteohubStationsCache={};
 // Anagrafe stazioni MeteoHub per i puntini di default (prima di scegliere un
 // periodo): non c'è lista statica, si prende da un file recente (in cache).
@@ -9728,6 +9487,13 @@ function loadFranciaStations(regionKey,cb){
 }
 function addDefaultMarkersForRegion(regionKey){
   var cfg=REGIONS[regionKey];
+  // Le nove regioni che avevano la lista di paesi scritta a mano: dal
+  // 30/8/2026 leggono le stazioni VERE dall'ultimo file dati. Il perche' sta
+  // nel blocco «I PALLINI DI PARTENZA SONO LE STAZIONI VERE», piu' sopra.
+  if(PALLINI_CARTELLE[regionKey]){
+    loadStazioniPallini(regionKey,function(st){ drawDefaultMarkers(st,cfg); });
+    return;
+  }
   // MeteoHub non ha lista stations statica: prende l'anagrafe da un file recente
   // (async). Le altre regioni usano cfg.stations (o l'anagrafe ARPA per Lombardia).
   if(cfg && cfg.dataSource==='meteohub'){
@@ -9754,20 +9520,18 @@ function addDefaultMarkersForRegion(regionKey){
     loadFranciaStations(regionKey,function(st){ drawDefaultMarkers(st,cfg); });
     return;
   }
-  // Lombardia: l'anagrafe ARPA non e' piu' precaricata all'apertura (vedi la
-  // nota su caricaAnagrafeLombardia), quindi anche qui si aspetta — con la
-  // lista statica di riserva se la function non risponde.
-  if(regionKey==='lombardia'){
-    caricaAnagrafeLombardia(function(st){ drawDefaultMarkers(st||LOMBARDIA_STATIONS,cfg); });
-    return;
-  }
   var stazioni=(cfg&&cfg.stations)?cfg.stations:[];
   drawDefaultMarkers(stazioni,cfg);
 }
 function drawDefaultMarkers(stazioni,cfg){
-  // Cap uniforme a 150 (come i dati e le altre regioni): reti fitte tipo Sicilia
-  // (426 staz.) coprivano tutta la mappa rendendo i puntini illeggibili e inutili.
-  if(stazioni && stazioni.length>150) stazioni=selectUniformRicche(stazioni,150);
+  // Tetto 400, allineato a quello dei dati (alzato da 150 il 27/8/2026: a 150
+  // si nascondeva il 44% della Liguria, Santo Stefano d'Aveto compresa). Qui era
+  // rimasto 150 e non si notava, perche' le liste a mano erano corte; con le
+  // stazioni vere il Piemonte ne ha 269 e la Toscana 379, e i pallini si
+  // sarebbero DIRADATI alla scelta della regione per poi infittirsi al clic sul
+  // periodo. Il caso per cui il tetto esiste resta la Sicilia (431 su un'isola
+  // compatta), e a 400 e' gia' quello che si vede dopo il clic.
+  if(stazioni && stazioni.length>400) stazioni=selectUniformRicche(stazioni,400);
   stazioni.forEach(function(s){
     var m=L.circleMarker([s.lat,s.lon],{
       radius:5,fillColor:'#fff',fillOpacity:0.9,
