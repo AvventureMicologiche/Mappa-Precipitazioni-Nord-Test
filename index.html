@@ -7062,20 +7062,78 @@ var GEO_REGIONI = {
   'Puglia':'puglia', 'Basilicata':'basilicata', 'Calabria':'calabria',
   'Sicilia':'sicilia', 'Sardegna':'sardegna'
 };
+/* ⚠️ E FUORI DALL'ITALIA NON SI TROVAVA NIENTE, fino al 3/9/2026.
+   La mappa copre cinque nazioni e **il 40% dei pluviometri sta fuori dai
+   confini italiani** (misurato: 2.291 su 5.747 — Francia 1.714, Svizzera 308,
+   Austria 269, Slovenia ~115). Ma l'elenco dei paesi ha i soli 8.610 comuni
+   italiani e questa chiamata era inchiodata a `countryCode=IT`: chi scriveva
+   «Zermatt», «Chamonix» o «Innsbruck» si sentiva rispondere **«Nessuna
+   localita' trovata»**, cioe' proprio il messaggio che qui sopra e' annotato
+   come da evitare perche' «si legge come non esiste». A un ticinese dicevamo
+   che Lugano non esiste.
+
+   ⚠️ PERCHE' NON UN SECONDO ELENCO. La strada ovvia era un `elenco-estero.txt`
+   coi comuni di CH, AT, SI e FR. Costruito e MISURATO il 3/9: 44.886 posti,
+   il file passava da 133 a 791 KB compressi e la prima ricerca a cache vuota,
+   su telefono e rete 3G, da **3,0 a 9,8 secondi**. Per un fungaiolo in
+   montagna con una tacca di segnale e' inaccettabile, e soprattutto **e'
+   inutile**: questa chiamata la facciamo GIA' a ogni ricerca, per le frazioni.
+   Bastava smettere di filtrare per paese. Zero byte in piu', e le ricerche
+   italiane restano identiche al millisecondo (misurato: 485 ms prima, 485 dopo).
+
+   ⚠️ LA REGIONE FRANCESE SI PRENDE DALL'`admin1_id`, NON DAL NOME. Open-Meteo
+   risponde in italiano e per due regioni usa ancora i nomi PRE-2016
+   («Aquitania-Limosino-Poitou-Charentes» invece di Nuova Aquitania,
+   «Nord-Passo di Calais-Piccardia» invece di Alta Francia): una tabella di nomi
+   si sarebbe rotta in silenzio proprio la' dove i nomi cambiano. Gli id di
+   GeoNames sono numeri stabili e non hanno lingua. */
+var GEO_ESTERO = { CH: 'svizzera', AT: 'austria', SI: 'slovenia' };
+var GEO_FRANCIA = {
+  11071625: 'francia-aura',      11071619: 'francia-bfc',
+  3030293:  'francia-bretagna',  3027939:  'francia-centro',
+  3023519:  'francia-corsica',   11071622: 'francia-grandest',
+  11071624: 'francia-hdf',       3012874:  'francia-idf',
+  2988289:  'francia-loira',     11071620: 'francia-naq',
+  11071621: 'francia-normandia', 11071623: 'francia-occitania',
+  2985244:  'francia-provenza'
+};
 function locDaGeocoder(testo) {
   return fetch('https://geocoding-api.open-meteo.com/v1/search?name=' +
-               encodeURIComponent(testo) + '&count=10&language=it&countryCode=IT')
+               encodeURIComponent(testo) + '&count=10&language=it')
     .then(function (r) { return r.json(); })
     .then(function (j) {
       return (j.results || []).map(function (x) {
-        var a1 = x.admin1 || '', a2 = x.admin2 || '';
-        var k = a1.indexOf('Trentino') === 0
-          ? (a2.indexOf('Bolzano') >= 0 ? 'altoadige' : 'trentino')
-          : GEO_REGIONI[a1];
+        var a1 = x.admin1 || '', a2 = x.admin2 || '', paese = x.country_code || '';
+        var k;
+        if (paese === 'IT') {
+          k = a1.indexOf('Trentino') === 0
+            ? (a2.indexOf('Bolzano') >= 0 ? 'altoadige' : 'trentino')
+            : GEO_REGIONI[a1];
+        } else if (paese === 'FR') {
+          k = GEO_FRANCIA[x.admin1_id];
+        } else {
+          k = GEO_ESTERO[paese];
+        }
+        /* Il filtro vero e' questo: si tiene solo cio' che la mappa sa
+           disegnare. Senza casella, niente riga — cosi' l'elenco non si riempie
+           di paesi di mezzo mondo ora che non c'e' piu' il filtro sul paese. */
         if (!k || !document.getElementById('chk-' + k)) return null;
-        return { n: x.name, lat: x.latitude, lon: x.longitude,
-                 sg: a2.replace(/^Provincia (di |dell'|della |del )?/i, '').slice(0, 14),
-                 reg: k, pop: x.population || 0, q: locNormalizza(x.name), frazione: true };
+        /* La sigla: in Italia la provincia, fuori il cantone / Land / obcina o
+           il dipartimento. ⚠️ In Slovenia `admin2` non c'e' e a1 arriva in
+           INGLESE come «Municipality of Bled»: si toglie il prefisso, e se
+           quello che resta e' il nome stesso del posto non si scrive niente —
+           «Bled · Bled» non dice niente a nessuno. */
+        var sig = (a2 || a1).replace(/^Provincia (di |dell'|della |del )?/i, '')
+                            .replace(/^Municipality of /i, '');
+        if (locNormalizza(sig) === locNormalizza(x.name)) sig = '';
+        return { n: x.name, lat: x.latitude, lon: x.longitude, sg: sig.slice(0, 16),
+                 reg: k, pop: x.population || 0, q: locNormalizza(x.name),
+                 estero: paese !== 'IT',
+                 /* «frazione» e' un'etichetta che ha senso solo in Italia: il
+                    nostro elenco ha i comuni italiani, quindi cio' che arriva
+                    di qui e in piu' e' una frazione. Fuori no: li' l'elenco non
+                    c'e' proprio, e Zermatt non e' la frazione di nessuno. */
+                 frazione: paese === 'IT' };
       }).filter(Boolean);
     })
     .catch(function () { return []; });
@@ -7208,7 +7266,7 @@ function locDisegna(res, testo, intestazione, nota) {
     return '<div class="loc-riga" role="option" data-i="' + i + '">' +
              '<span class="loc-nome">' + nome + '</span>' +
              (p.t === 'z' ? '' :   // la parola «valle»/«zona» sta gia' al posto della sigla
-               (p.frazione ? '<span class="loc-ex">frazione</span>' : (p.pop ? '' : '<span class="loc-ex">ex comune</span>'))) +
+               (p.frazione ? '<span class="loc-ex">frazione</span>' : ((p.pop || p.estero) ? '' : '<span class="loc-ex">ex comune</span>'))) +
              '<span class="loc-dove">' + p.sg + ' · ' + reg + '</span>' +
            '</div>';
   }).join('');
