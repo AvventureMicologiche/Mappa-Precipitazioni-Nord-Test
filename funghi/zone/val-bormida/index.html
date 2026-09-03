@@ -173,13 +173,28 @@ nav.altre a{color:var(--blu);}
 <p class="nota" id="notaforte"></p>
 
 <h2>Ecco cosa vedi sulla mappa</h2>
-<a href="https://avventurepluvio-test.netlify.app/?r=liguria" style="display:block;text-decoration:none;">
+<a href="https://avventurepluvio-test.netlify.app/?r=liguria,piemonte&amp;g=20&amp;pl=44.4,8.26667&amp;pn=Val%20Bormida&amp;pz=1&amp;z=10&amp;c=44.4,8.26667" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-val-bormida-20gg'})}catch(e){}">
   <img src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/liguria.jpg"
        alt="La mappa delle piogge in Liguria"
        width="1600" height="1000" loading="lazy"
        style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
-  <span class="vai-mappa">Apri la mappa su questa zona →</span>
+  <span class="vai-mappa">Apri la mappa · ultimi 20 giorni →</span>
 </a>
+
+<h2>Sta piovendo adesso?</h2>
+<p>Questa pagina conta i millimetri dei giorni <b>già chiusi</b>: la giornata di oggi è esclusa,
+perché i pluviometri la stanno ancora misurando. Per la pioggia <b>in corso</b> c'è la diretta
+radar, che mostra dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti
+seguenti.</p>
+<a href="https://avventurepluvio-test.netlify.app/?r=liguria&amp;pl=44.4,8.26667&amp;pn=Val%20Bormida&amp;pz=1&amp;radar=ora" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-val-bormida-radar'})}catch(e){}">
+  <span class="vai-mappa">Guarda la diretta radar in Val Bormida →</span>
+</a>
+<p class="nota">⚠️ Il radar <b>non è un pluviometro</b>: è una misura presa dal cielo, a 2 km di
+risoluzione, e inquadra tutta la regione. Serve a vedere <i>dove</i> sta piovendo adesso, non a
+contare quanta acqua è caduta. I millimetri di questa pagina restano quelli misurati a terra
+da ARPA Piemonte, ARPA Veneto e ARPA Liguria.</p>
 
 <h2 style="margin-bottom:12px">Come scegliamo i pluviometri di una zona</h2>
 <div class="metodo">
@@ -218,6 +233,7 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
   var SITO = "https://avventurepluvio-test.netlify.app", MAPPA = SITO + "/";
   var ZONA = "Val Bormida", DOVE = "in Val Bormida";
   var CASA = "liguria", REGIONI = ["piemonte","veneto","liguria"];
+  var REGS = "liguria,piemonte", ZNOME = "Val Bormida";
   var LAT = 44.4, LON = 8.26667;
   /* [ id, nome, sigla, quota, lat, lon, slug, regione ] */
   var POSTI = [["325","Bergalli","CN",385,44.4067,8.1822,"bergalli","piemonte"],["246","Costalta","BL",1232,46.5788,12.5756,"costalta","veneto"],["S3758","Mombasiglio Mongia","CN",438,44.3681,7.9644,"mombasiglio-mongia","piemonte"],["363","Paroldo","CN",795,44.4458,8.0811,"paroldo","piemonte"],["136","Perlo","CN",700,44.3303,8.0833,"perlo","piemonte"],["243","Ponzone Cimaferle","AL",705,44.5536,8.4922,"ponzone-cimaferle","piemonte"],["314","Priero","CN",610,44.3772,8.1081,"priero","piemonte"],["322","Prunetto","CN",751,44.5097,8.1631,"prunetto","piemonte"],["135","Rifugio la Guardia (Recoaro Terme)","VI",1130,45.7189,11.1813,"rifugio-la-guardia-recoaro-terme","veneto"],["ALPIC","Alpicella","SV",435,44.4067,8.526,"alpicella","liguria"],["CCADB","Colle di Cadibona","SV",385,44.333,8.3829,"colle-di-cadibona","liguria"],["DEGIR","Dego - Girini","SV",450,44.4518,8.3394,"dego-girini","liguria"],["FERRA","Ferrania","SV",358,44.3669,8.3225,"ferrania","liguria"],["MLARE","Mallare","SV",467,44.2932,8.2979,"mallare","liguria"],["MONTA","Montagna","SV",253,44.2843,8.3714,"montagna","liguria"],["MNINF","Montenotte Inferiore","SV",564,44.4126,8.4118,"montenotte-inferiore","liguria"],["MURIA","Murialdo","SV",523,44.3132,8.1598,"murialdo","liguria"],["OSIGL","Osiglia","SV",620,44.2865,8.2025,"osiglia","liguria"],["SASSL","Sassello","SV",385,44.4823,8.4857,"sassello","liguria"],["SSGIU","Stella Santa Giustina","SV",349,44.4158,8.4825,"stella-santa-giustina","liguria"],["VALZE","Valzemola","SV",480,44.3696,8.1911,"valzemola","liguria"]];
@@ -268,7 +284,7 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
     g.style.display="block";
     g.innerHTML="⚠️ Non riesco a leggere l’archivio delle piogge in questo momento. Non dipende "
       + "da te: riprova fra qualche minuto, oppure vai direttamente "
-      + "<a href=\"" + MAPPA + "?r=" + CASA + "\">sulla mappa</a>.";
+      + "<a href=\"" + MAPPA + "?r=" + REGS + "\">sulla mappa</a>.";
   }
 
   function disegna(serie, oggi, righe){
@@ -285,8 +301,19 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
     var primo = dati[0];
 
     function link(x, dal, al){
-      return MAPPA + "?r=" + (x ? x.reg : CASA) + "&da=" + dal + "&a=" + al
-        + "&z=10&c=" + (x ? x.lat.toFixed(4)+","+x.lon.toFixed(4) : LAT.toFixed(4)+","+LON.toFixed(4));
+      /* pl/pn = il segnaposto. Senza, questi bottoni aprivano la mappa sul
+         punto giusto ma SENZA la puntina, e chi arriva non sa quale pallino
+         sia il suo (segnalato il 3/9/2026). */
+      var la = x ? x.lat : LAT, lo = x ? x.lon : LON;
+      var nome = x ? x.n : ZNOME;
+      /* La stazione cliccata sta in una regione sola, ma la zona no: si
+         tengono anche le vicine, la sua per prima. Tetto di 3, il massimo
+         che la mappa accetta. */
+      var rr = x ? [x.reg].concat(REGS.split(",").filter(function(k){return k!==x.reg;})).slice(0,3).join(",") : REGS;
+      return MAPPA + "?r=" + rr + "&da=" + dal + "&a=" + al
+        + "&pl=" + la.toFixed(4) + "," + lo.toFixed(4)
+        + "&pn=" + encodeURIComponent(nome) + (x ? "" : "&pz=1")
+        + "&z=10&c=" + la.toFixed(4) + "," + lo.toFixed(4);
     }
 
     document.getElementById("testa").innerHTML =

@@ -9362,6 +9362,30 @@ if(_btnShot){
 (function(){
   var q=new URLSearchParams(location.search);
   var r=q.get('r'),da=q.get('da'),a=q.get('a');
+  /* ⚠️ IL SEGNAPOSTO DEL PAESE STA IN UNA FUNZIONE SOLA (3/9/2026).
+     Fino a oggi lo leggevano solo i link COMPLETI di date, e i link corti
+     delle 948 pagine localita' e delle 114 di zona le date non le hanno: la
+     puntina non compariva e chi arrivava da «Ovada» si trovava la Liguria
+     intera senza sapere dove guardare. Adesso lo leggono tutt'e due i rami.
+     Una regola in due copie diverge, quindi qui ce n'e' una sola.
+     `pz=1` dice che il posto e' un'AREA (una zona, non un paese) e si
+     inquadra piu' larga. */
+  function pinDaLink(qq){
+    var _pl=(qq.get('pl')||'').split(',').map(Number), _pn=qq.get('pn')||'';
+    if(!(_pl.length===2 && isFinite(_pl[0]) && isFinite(_pl[1]))) return false;
+    _vistaPaese={lat:_pl[0],lon:_pl[1],n:_pn,z:qq.get('pz')==='1'};
+    try{ locSegnaposto(_pl[0],_pl[1]); }catch(e){}
+    var _li=document.getElementById('loc-input');
+    if(_li&&_pn){ _li.value=_pn; document.getElementById('loc-box').classList.add('pieno');
+                  if(typeof locFermaChiamata==='function') locFermaChiamata(); }
+    if(typeof regEtichetta==='function'){
+      var _sel=document.getElementById('region-select');
+      if(_sel&&_pn){ var _o=_sel.querySelector('option[value="__paese"]');
+        if(!_o){ _o=document.createElement('option'); _o.value='__paese'; _sel.insertBefore(_o,_sel.firstChild); }
+        _o.textContent='📍 '+_pn; _sel.value='__paese'; regEtichetta(); }
+    }
+    return true;
+  }
   // ── Link dalle PAGINE REGIONE (22/8/2026) ──────────────────────────────
   // Quelle pagine sono statiche e non possono scrivere le date del giorno,
   // quindi portano `r` e, quando vogliono anche l'analisi, `g` = quanti
@@ -9383,14 +9407,49 @@ if(_btnShot){
       if(!_kk.length) return;
       document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){cb.checked=false;});
       _kk.forEach(function(k){document.getElementById('chk-'+k).checked=true;});
+      /* ⚠️ IL SEGNAPOSTO VA PRIMA DEL `change`, ESATTAMENTE COME IN locVai.
+         Provato a metterlo dopo, dentro l'attesa dei confini: il gestore del
+         change spegne il segnaposto (`if(!_daRicerca) _vistaPaese=null`) e fa
+         la sua mezza inquadratura sulle regioni, cosi' la puntina arrivava al
+         quarto secondo e la mappa faceva un salto. `_daRicerca` esiste
+         apposta: e' la stessa correzione del 22/8/2026 per la ricerca per
+         localita', «un istante sull'inquadratura vecchia, poi lo scatto sul
+         paese». Qui il caso e' identico, cambia solo da dove arriva il posto. */
+      var _pin=pinDaLink(q);
+      var _conRadar=['ora','due','prev'].indexOf(q.get('radar'))>-1;
+      /* ⚠️ `_daRicerca` ALZATO ANCHE COL RADAR, non solo col segnaposto. Il
+         gestore del change fa la «mezza inquadratura» sulle regioni (lo zoom
+         in due tempi del 27/7), e col radar quella mezza inquadratura si vede
+         come uno sfarfallio: misurato sulla Puglia il 3/9, 7,25 e subito 7,50
+         appena il radar rifa' la sua. Il tasto «Diretta radar» dentro al sito
+         non sfarfalla proprio perche' li' di inquadrature ne parte una sola. */
+      if(_pin || _conRadar) _daRicerca=true;
       // change sull'ultima: il gestore di sempre disegna i confini e valida
       document.getElementById('chk-'+_kk[_kk.length-1]).dispatchEvent(new Event('change'));
-      // Chi arriva da «Apri la mappa in Lombardia» si aspetta di VEDERE la
-      // Lombardia, non l'Italia con una regione spuntata: qui si inquadra
-      // subito, senza aspettare il click del periodo.
-      try{ fitMapToRegions(_kk); }catch(e){}
-      var _sr=document.getElementById('region-select');
-      if(_sr && _kk.length===1){ _sr.value=_kk[0]; if(typeof regEtichetta==='function') regEtichetta(); }
+      _daRicerca=false;
+      /* Chi arriva da «Apri la mappa in Lombardia» si aspetta di VEDERE la
+         Lombardia, non l'Italia con una regione spuntata: si inquadra subito,
+         senza aspettare il click del periodo. Col segnaposto il bersaglio e'
+         il POSTO, che e' quello che l'utente e' venuto a vedere.
+         ⚠️ COL RADAR NO: l'inquadratura del radar e' del radar, che si
+         riquadra da solo sulla regione e lo rifa' a ogni cambio di pallini.
+         Stringere sul paese li' voleva dire vedere la mappa avvicinarsi e
+         riallargarsi mezzo secondo dopo (misurato il 3/9 sulla Garfagnana:
+         z7,25 → z8,5 → z7,25). La puntina invece resta, ed e' l'unica cosa
+         che dice dove sei mentre guardi una regione intera. */
+      if(_conRadar){
+        /* ⚠️ NIENTE INQUADRATURA QUI: la fa il radar, e una nostra prima
+           inquadratura si vede come uno scatto appena lui rifa' la sua
+           (misurato il 3/9 sulla Puglia: 7,25 e subito 7,50, mentre il tasto
+           «Diretta radar» dentro al sito non scatta perche' inquadra una volta
+           sola). Il radar entra al primo giro del suo controllo, 200 ms. */
+      } else if(_pin && typeof fitMapToPunto==='function'){
+        try{ fitMapToPunto(_vistaPaese.lat,_vistaPaese.lon,_vistaPaese.z?LOC_TACCA_ZONA:LOC_TACCA_FINE); }catch(e){}
+      } else { try{ fitMapToRegions(_kk); }catch(e){} }
+      if(!_pin){
+        var _sr=document.getElementById('region-select');
+        if(_sr && _kk.length===1){ _sr.value=_kk[0]; if(typeof regEtichetta==='function') regEtichetta(); }
+      }
       try{gtag('event','open_region_link',{regioni:_kk.join(',')})}catch(e){}
       return;
     }
@@ -9473,20 +9532,7 @@ if(_btnShot){
       // Il segnaposto del paese, se il link lo porta. Va DOPO la vista, che
       // se no il fit delle regioni se lo mangerebbe, e mette anche il nome
       // nella casella: chi apre deve leggere DI CHE POSTO si parla.
-      var _pl=(q.get('pl')||'').split(',').map(Number), _pn=q.get('pn')||'';
-      if(_pl.length===2 && isFinite(_pl[0]) && isFinite(_pl[1])){
-        _vistaPaese={lat:_pl[0],lon:_pl[1],n:_pn};
-        try{ locSegnaposto(_pl[0],_pl[1]); }catch(e){}
-        var _li=document.getElementById('loc-input');
-        if(_li&&_pn){ _li.value=_pn; document.getElementById('loc-box').classList.add('pieno');
-                      if(typeof locFermaChiamata==='function') locFermaChiamata(); }
-        if(typeof regEtichetta==='function'){
-          var _sel=document.getElementById('region-select');
-          if(_sel&&_pn){ var _o=_sel.querySelector('option[value="__paese"]');
-            if(!_o){ _o=document.createElement('option'); _o.value='__paese'; _sel.insertBefore(_o,_sel.firstChild); }
-            _o.textContent='📍 '+_pn; _sel.value='__paese'; regEtichetta(); }
-        }
-      } else if(window.innerWidth<=900){
+      if(!pinDaLink(q) && window.innerWidth<=900){
         try{ fitMapToRegions(keys); }catch(e){}
       }
     });
@@ -10145,6 +10191,14 @@ function loadDefaultMarkers(){
 /* il velo azzurro della regione si mangerebbe le macchie di pioggia */
 .modo-radar #map path{fill-opacity:0 !important}
 .modo-radar path.conf-pulse{stroke-opacity:1 !important;stroke-width:2.6px}
+/* ⚠️ IL SEGNAPOSTO DEL PAESE E' DISEGNATO IN SVG, e col radar acceso spariva:
+   se lo mangiavano le due regole qui sopra e sotto, nate per i pallini delle
+   stazioni. La riga sotto dice «i pallini sono svg, quelli del paese e della
+   posizione sono div»: e' vera per il contenitore, non per il disegno dentro.
+   Il difetto c'era gia' prima delle pagine localita' (3/9/2026): chi cercava
+   un paese e poi accendeva il radar perdeva la puntina. E col radar serve piu'
+   che mai, perche' li' si guarda una regione intera. */
+.modo-radar #map .loc-pin path{fill-opacity:1 !important}
 /* col radar acceso non pulsa niente: sono richiami per scegliere la regione */
 .modo-radar path.conf-pulse,
 .modo-radar .panel-pulse,
@@ -10160,6 +10214,7 @@ function loadDefaultMarkers(){
 /* i pallini delle stazioni sono cerchi SVG; il segnaposto della ricerca e
    quello della posizione sono div, e restano */
 body.senza-pallini #map .leaflet-marker-pane svg{display:none}
+body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
 /* ⚠️ Sul telefono il pannello del periodo restava a sbucare sopra quello
    del radar: due intestazioni una sull'altra. In modo radar comanda uno
    solo, e il ritorno ai giorni si fa con «Indietro» o col tasto del radar. */

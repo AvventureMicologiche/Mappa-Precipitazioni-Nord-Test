@@ -173,13 +173,28 @@ nav.altre a{color:var(--blu);}
 <p class="nota" id="notaforte"></p>
 
 <h2>Ecco cosa vedi sulla mappa</h2>
-<a href="https://avventurepluvio-test.netlify.app/?r=liguria" style="display:block;text-decoration:none;">
+<a href="https://avventurepluvio-test.netlify.app/?r=liguria,toscana,emilia&amp;g=20&amp;pl=44.2956,9.95&amp;pn=Val%20di%20Magra&amp;pz=1&amp;z=10&amp;c=44.2956,9.95" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-val-di-magra-20gg'})}catch(e){}">
   <img src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/liguria.jpg"
        alt="La mappa delle piogge in Liguria"
        width="1600" height="1000" loading="lazy"
        style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
-  <span class="vai-mappa">Apri la mappa su questa zona →</span>
+  <span class="vai-mappa">Apri la mappa · ultimi 20 giorni →</span>
 </a>
+
+<h2>Sta piovendo adesso?</h2>
+<p>Questa pagina conta i millimetri dei giorni <b>già chiusi</b>: la giornata di oggi è esclusa,
+perché i pluviometri la stanno ancora misurando. Per la pioggia <b>in corso</b> c'è la diretta
+radar, che mostra dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti
+seguenti.</p>
+<a href="https://avventurepluvio-test.netlify.app/?r=liguria&amp;pl=44.2956,9.95&amp;pn=Val%20di%20Magra&amp;pz=1&amp;radar=ora" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-val-di-magra-radar'})}catch(e){}">
+  <span class="vai-mappa">Guarda la diretta radar in Val di Magra →</span>
+</a>
+<p class="nota">⚠️ Il radar <b>non è un pluviometro</b>: è una misura presa dal cielo, a 2 km di
+risoluzione, e inquadra tutta la regione. Serve a vedere <i>dove</i> sta piovendo adesso, non a
+contare quanta acqua è caduta. I millimetri di questa pagina restano quelli misurati a terra
+da ARPA Liguria e SIR Toscana.</p>
 
 <h2 style="margin-bottom:12px">Come scegliamo i pluviometri di una zona</h2>
 <div class="metodo">
@@ -218,6 +233,7 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
   var SITO = "https://avventurepluvio-test.netlify.app", MAPPA = SITO + "/";
   var ZONA = "Val di Magra", DOVE = "in Val di Magra";
   var CASA = "liguria", REGIONI = ["liguria","toscana"];
+  var REGS = "liguria,toscana,emilia", ZNOME = "Val di Magra";
   var LAT = 44.2956, LON = 9.95;
   /* [ id, nome, sigla, quota, lat, lon, slug, regione ] */
   var POSTI = [["BGNNE","Bagnone","MS",320,44.3097,9.9842,"bagnone","liguria"],["IERAA","Iera","MS",538,44.3333,10.0336,"iera","liguria"],["MAZLA","Mazzola","MS",460,44.2111,10.1169,"mazzola","liguria"],["RCSIG","Rocca Sigillina","MS",484,44.3667,9.9561,"rocca-sigillina","liguria"],["TURAN","Turano","MS",500,44.2464,10.1517,"turano","liguria"],["TOS09001130","Iera","MS",538,44.333,10.034,"iera","toscana"],["TOS09001200","Mazzola","MS",460,44.211,10.117,"mazzola","toscana"],["TOS09001088","Rocca Sigillina","MS",484,44.366,9.956,"rocca-sigillina","toscana"],["TOS09001180","Turano","MS",500,44.246,10.152,"turano","toscana"]];
@@ -268,7 +284,7 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
     g.style.display="block";
     g.innerHTML="⚠️ Non riesco a leggere l’archivio delle piogge in questo momento. Non dipende "
       + "da te: riprova fra qualche minuto, oppure vai direttamente "
-      + "<a href=\"" + MAPPA + "?r=" + CASA + "\">sulla mappa</a>.";
+      + "<a href=\"" + MAPPA + "?r=" + REGS + "\">sulla mappa</a>.";
   }
 
   function disegna(serie, oggi, righe){
@@ -285,8 +301,19 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
     var primo = dati[0];
 
     function link(x, dal, al){
-      return MAPPA + "?r=" + (x ? x.reg : CASA) + "&da=" + dal + "&a=" + al
-        + "&z=10&c=" + (x ? x.lat.toFixed(4)+","+x.lon.toFixed(4) : LAT.toFixed(4)+","+LON.toFixed(4));
+      /* pl/pn = il segnaposto. Senza, questi bottoni aprivano la mappa sul
+         punto giusto ma SENZA la puntina, e chi arriva non sa quale pallino
+         sia il suo (segnalato il 3/9/2026). */
+      var la = x ? x.lat : LAT, lo = x ? x.lon : LON;
+      var nome = x ? x.n : ZNOME;
+      /* La stazione cliccata sta in una regione sola, ma la zona no: si
+         tengono anche le vicine, la sua per prima. Tetto di 3, il massimo
+         che la mappa accetta. */
+      var rr = x ? [x.reg].concat(REGS.split(",").filter(function(k){return k!==x.reg;})).slice(0,3).join(",") : REGS;
+      return MAPPA + "?r=" + rr + "&da=" + dal + "&a=" + al
+        + "&pl=" + la.toFixed(4) + "," + lo.toFixed(4)
+        + "&pn=" + encodeURIComponent(nome) + (x ? "" : "&pz=1")
+        + "&z=10&c=" + la.toFixed(4) + "," + lo.toFixed(4);
     }
 
     document.getElementById("testa").innerHTML =

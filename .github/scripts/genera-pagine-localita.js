@@ -39,6 +39,7 @@ const fs = require('fs');
 const path = require('path');
 const { REGIONI } = require('./genera-pagine-regione.js');
 const { LOCALITA, bello, slugRegione } = require('./lib-nomi.js');
+const { perLink } = require('./lib-vicine.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const RADICE = path.join(__dirname, '..', '..');
@@ -84,6 +85,17 @@ function pagina(r, posto, slug) {
   const CORTA = r.agenziaCorta || r.agenzia.replace(/\s*\(.*\)$/, '');
   const GEN = GENITIVO[REG];
   const DOVE = aPosto(nomePosto);
+
+  // ⚠️ IL SEGNAPOSTO NEL LINK (3/9/2026). pl = coordinate, pn = nome: la mappa
+  // ci mette la puntina, scrive il nome nella casella di ricerca e lo fa
+  // comparire in cima alla tendina. Senza, chi cliccava da una pagina di paese
+  // si trovava la regione intera senza sapere dove guardare. La mappa lo legge
+  // anche sui link corti (senza date) solo dal 3/9: prima serviva il periodo.
+  const PIN = 'pl=' + lat + ',' + lon + '&amp;pn=' + encodeURIComponent(nomePosto);
+  // ⚠️ NON la sola regione di casa: un pluviometro sul confine ha meta' dei
+  // vicini dall'altra parte, e chi arriva vede mezza mappa vuota. Stesso
+  // criterio della ricerca per localita' del sito, stessa griglia (lib-vicine).
+  const REGS = perLink(REG, lat, lon);
 
   // ⚠️ Limiti che Google taglia: titolo <= 62 caratteri, descrizione <= 158.
   // Il nome di un posto puo' essere lungo, quindi la coda del titolo si toglie
@@ -185,13 +197,28 @@ pluviometro di ${esc(CORTA)}, aggiornata ogni giorno.</p>
 <p class="nota" id="notavicini"></p>
 
 <h2>Ecco cosa vedi sulla mappa</h2>
-<a href="${SITO}/?r=${REG}" style="display:block;text-decoration:none;">
+<a href="${SITO}/?r=${REG}&amp;g=20" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'localita-${REG}-20gg'})}catch(e){}">
   <img src="${ANTEPRIME}/${REG}.jpg"
        alt="La mappa delle piogge ${r.prep} ${esc(NOME)}: le zone più bagnate, stazione per stazione"
        width="1600" height="1000" loading="lazy"
        style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
-  <span class="vai-mappa">Apri la mappa su questo pluviometro →</span>
+  <span class="vai-mappa">Apri mappa ${esc(NOME)} · ultimi 20 gg →</span>
 </a>
+
+<h2>Sta piovendo adesso?</h2>
+<p>Questa pagina conta i millimetri dei giorni <b>già chiusi</b>: la giornata di oggi è esclusa,
+perché il pluviometro la sta ancora misurando. Per la pioggia <b>in corso</b> c'è la diretta
+radar, che mostra dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti
+seguenti.</p>
+<a href="${SITO}/?r=${REG}&amp;${PIN}&amp;radar=ora" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'localita-${REG}-radar'})}catch(e){}">
+  <span class="vai-mappa">Guarda la diretta radar ${esc(DOVE)} →</span>
+</a>
+<p class="nota">⚠️ Il radar <b>non è un pluviometro</b>: è una misura presa dal cielo, a 2 km di
+risoluzione, e inquadra tutta la regione. Serve a vedere <i>dove</i> sta piovendo adesso, non a
+contare quanta acqua è caduta. I millimetri di questa pagina restano quelli misurati a terra
+da ${esc(CORTA)}.</p>
 
 <h2 style="margin-bottom:12px">Perché proprio questo posto</h2>
 <div class="metodo">
@@ -228,6 +255,7 @@ provinciali ISTAT.</p>
 <script>
 (function(){
   var REG = ${JSON.stringify(REG)}, ID = ${JSON.stringify(ID)}, NOME = ${JSON.stringify(NOME)};
+  var REGS = ${JSON.stringify(REGS)}, POSTO = ${JSON.stringify(nomePosto)};
   var LAT = ${lat}, LON = ${lon};
   var SITO = ${JSON.stringify(SITO)}, MAPPA = SITO + '/';
   var LOCALE = /^(localhost|127\\.0\\.0\\.1|\\[::1\\])$/.test(location.hostname);
@@ -278,7 +306,7 @@ provinciali ISTAT.</p>
     g.style.display='block';
     g.innerHTML='⚠️ Non riesco a leggere l’archivio delle piogge in questo momento. Non dipende '
       + 'da te: riprova fra qualche minuto, oppure vai direttamente '
-      + '<a href="'+MAPPA+'?r='+REG+'">sulla mappa</a>.';
+      + '<a href="'+MAPPA+'?r='+REGS+'">sulla mappa</a>.';
     document.getElementById('altri').innerHTML =
       '<p class="nota"><a href="'+SITO+'/funghi/'+REG+'/">Vedi tutti i posti da bosco</a></p>';
   }
@@ -293,8 +321,17 @@ provinciali ISTAT.</p>
     var quando = forte ? (forte.g===1 ? 'ieri' : forte.g+' giorni fa') : null;
 
     function link(dal, al, centra){
-      return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al
-        + (centra ? '&z=11&c=' + LAT.toFixed(4) + ',' + LON.toFixed(4) : '');
+      /* ⚠️ pl/pn = il segnaposto. Senza, questi tre bottoni aprivano la
+         mappa sul posto giusto ma SENZA la puntina, e chi arriva non sa quale
+         dei pallini e' il suo (segnalato il 3/9/2026). Il bottone «Tutta la
+         regione» la puntina non la vuole: li' si guarda l'insieme. */
+      /* ⚠️ «Tutta la <regione>» apre UNA regione: le vicine servono a chi
+         guarda il suo paese sul confine, non a chi ha chiesto l'insieme, e
+         il bottone prometterebbe una cosa e ne farebbe un'altra. */
+      return MAPPA + '?r=' + (centra ? REGS : REG) + '&da=' + dal + '&a=' + al
+        + (centra ? '&pl=' + LAT.toFixed(4) + ',' + LON.toFixed(4)
+                  + '&pn=' + encodeURIComponent(POSTO)
+                  + '&z=11&c=' + LAT.toFixed(4) + ',' + LON.toFixed(4) : '');
     }
 
     document.getElementById('testa').innerHTML =
@@ -305,7 +342,11 @@ provinciali ISTAT.</p>
       + '<div class="capo-btns">'
       + '<a class="capo-btn" href="' + link(daG, aG, true) + '">Apri mappa · 13-20 gg fa</a>'
       + '<a class="capo-btn" href="' + link(daG, a20, true) + '">Apri mappa · ultimi 20 gg</a>'
-      + '<a class="capo-btn" href="' + link(daG, a20, false) + '">Tutta la ' + NOME + '</a>'
+      /* ⚠️ QUI C'ERA UN TERZO BOTTONE, «Tutta la <regione>», tolto il 3/9/2026.
+         Dal 3/9 il bottone sotto l'anteprima della mappa fa esattamente la
+         stessa cosa (regione sola, 20 giorni, niente segnaposto) e i due erano
+         gemelli a mezza pagina di distanza. Se un giorno servisse di nuovo, lo
+         costruiva la funzione link qui sopra col terzo argomento a false. */
       + '</div></div>';
 
     /* ⚠️ Perche' 13-20 e non un altro numero: il fungo non spunta subito dopo

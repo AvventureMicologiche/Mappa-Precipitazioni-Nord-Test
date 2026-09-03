@@ -49,6 +49,7 @@ const fs = require('fs');
 const path = require('path');
 const { REGIONI } = require('./genera-pagine-regione.js');
 const { bello, slug, slugRegione } = require('./lib-nomi.js');
+const { perLink } = require('./lib-vicine.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const RADICE = path.join(__dirname, '..', '..');
@@ -106,6 +107,16 @@ function pagina(z) {
   const regioni = [...new Set(z.posti.map(id => REG_DI[id]))].filter(Boolean);
   const casa = REGIONI.find(x => x.k === z.reg) || REGIONI.find(x => x.k === regioni[0]);
   const nomeReg = casa.nomeTitolo || casa.nome;
+
+  // IL SEGNAPOSTO NEL LINK (3/9/2026). pl = coordinate del centro della zona,
+  // pn = nome, pz=1 = e' un AREA e non un paese, quindi la mappa la inquadra
+  // piu' larga (una tacca di zoom in meno). Senza, chi cliccava da una pagina
+  // di zona si trovava la regione intera senza sapere dove guardare.
+  const PIN = 'pl=' + z.lat + ',' + z.lon + '&amp;pn=' + encodeURIComponent(z.n) + '&amp;pz=1';
+  // NON la sola regione di casa: una valle sul crinale ha meta' dei suoi
+  // pluviometri dall'altra parte (la Garfagnana ne ha di Emilia e Liguria).
+  // Stesso criterio della ricerca per localita' del sito, vedi lib-vicine.
+  const REGS = perLink(casa.k, z.lat, z.lon);
   const agenzie = [...new Set(regioni.map(k => {
     const r = REGIONI.find(x => x.k === k);
     return r ? (r.agenziaCorta || r.agenzia.replace(/\s*\(.*\)$/, '')) : null;
@@ -182,13 +193,28 @@ function pagina(z) {
 '<div id="tabella"></div>\n' +
 '<p class="nota" id="notaforte"></p>\n\n' +
 '<h2>Ecco cosa vedi sulla mappa</h2>\n' +
-'<a href="' + SITO + '/?r=' + casa.k + '" style="display:block;text-decoration:none;">\n' +
+'<a href="' + SITO + '/?r=' + REGS + '&amp;g=20&amp;' + PIN + '&amp;z=10&amp;c=' + z.lat + ',' + z.lon + '" style="display:block;text-decoration:none;"\n' +
+'   onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'zona-' + zslug + '-20gg\'})}catch(e){}">\n' +
 '  <img src="' + ANTEPRIME + '/' + casa.k + '.jpg"\n' +
 '       alt="La mappa delle piogge ' + casa.prep + ' ' + esc(nomeReg) + '"\n' +
 '       width="1600" height="1000" loading="lazy"\n' +
 '       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">\n' +
-'  <span class="vai-mappa">Apri la mappa su questa zona →</span>\n' +
+'  <span class="vai-mappa">Apri la mappa · ultimi 20 giorni →</span>\n' +
 '</a>\n\n' +
+
+'<h2>Sta piovendo adesso?</h2>\n' +
+"<p>Questa pagina conta i millimetri dei giorni <b>già chiusi</b>: la giornata di oggi è esclusa,\n" +
+"perché i pluviometri la stanno ancora misurando. Per la pioggia <b>in corso</b> c'è la diretta\n" +
+'radar, che mostra dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti\n' +
+'seguenti.</p>\n' +
+'<a href="' + SITO + '/?r=' + casa.k + '&amp;' + PIN + '&amp;radar=ora" style="display:block;text-decoration:none;"\n' +
+'   onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'zona-' + zslug + '-radar\'})}catch(e){}">\n' +
+'  <span class="vai-mappa">Guarda la diretta radar ' + esc(z.dove) + ' →</span>\n' +
+'</a>\n' +
+"<p class=\"nota\">⚠️ Il radar <b>non è un pluviometro</b>: è una misura presa dal cielo, a 2 km di\n" +
+'risoluzione, e inquadra tutta la regione. Serve a vedere <i>dove</i> sta piovendo adesso, non a\n' +
+'contare quanta acqua è caduta. I millimetri di questa pagina restano quelli misurati a terra\n' +
+'da ' + esc(elenco(agenzie)) + '.</p>\n\n' +
 '<h2 style="margin-bottom:12px">Come scegliamo i pluviometri di una zona</h2>\n' +
 '<div class="metodo">\n' +
 '  <div><span class="n">1</span><b>Ognuno va alla zona più vicina, e a una sola.</b> Non un cerchio\n' +
@@ -225,6 +251,7 @@ function pagina(z) {
 '  var SITO = ' + JSON.stringify(SITO) + ', MAPPA = SITO + "/";\n' +
 '  var ZONA = ' + JSON.stringify(z.n) + ', DOVE = ' + JSON.stringify(z.dove) + ';\n' +
 '  var CASA = ' + JSON.stringify(casa.k) + ', REGIONI = ' + JSON.stringify(regioni) + ';\n' +
+'  var REGS = ' + JSON.stringify(REGS) + ', ZNOME = ' + JSON.stringify(z.n) + ';\n' +
 '  var LAT = ' + z.lat + ', LON = ' + z.lon + ';\n' +
 '  /* [ id, nome, sigla, quota, lat, lon, slug, regione ] */\n' +
 '  var POSTI = ' + JSON.stringify(anag) + ';\n' +
@@ -271,7 +298,7 @@ function pagina(z) {
 '    g.style.display="block";\n' +
 '    g.innerHTML="⚠️ Non riesco a leggere l’archivio delle piogge in questo momento. Non dipende "\n' +
 '      + "da te: riprova fra qualche minuto, oppure vai direttamente "\n' +
-'      + "<a href=\\"" + MAPPA + "?r=" + CASA + "\\">sulla mappa</a>.";\n' +
+'      + "<a href=\\"" + MAPPA + "?r=" + REGS + "\\">sulla mappa</a>.";\n' +
 '  }\n\n' +
 '  function disegna(serie, oggi, righe){\n' +
 '    var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13)), a20 = iso(menoDa(oggi,1));\n' +
@@ -285,8 +312,19 @@ function pagina(z) {
 '    var med = function(c){ var t=0; dati.forEach(function(x){ t+=x[c]; }); return uno(t/dati.length); };\n' +
 '    var primo = dati[0];\n\n' +
 '    function link(x, dal, al){\n' +
-'      return MAPPA + "?r=" + (x ? x.reg : CASA) + "&da=" + dal + "&a=" + al\n' +
-'        + "&z=10&c=" + (x ? x.lat.toFixed(4)+","+x.lon.toFixed(4) : LAT.toFixed(4)+","+LON.toFixed(4));\n' +
+'      /* pl/pn = il segnaposto. Senza, questi bottoni aprivano la mappa sul\n' +
+'         punto giusto ma SENZA la puntina, e chi arriva non sa quale pallino\n' +
+'         sia il suo (segnalato il 3/9/2026). */\n' +
+'      var la = x ? x.lat : LAT, lo = x ? x.lon : LON;\n' +
+'      var nome = x ? x.n : ZNOME;\n' +
+'      /* La stazione cliccata sta in una regione sola, ma la zona no: si\n' +
+'         tengono anche le vicine, la sua per prima. Tetto di 3, il massimo\n' +
+'         che la mappa accetta. */\n' +
+'      var rr = x ? [x.reg].concat(REGS.split(",").filter(function(k){return k!==x.reg;})).slice(0,3).join(",") : REGS;\n' +
+'      return MAPPA + "?r=" + rr + "&da=" + dal + "&a=" + al\n' +
+'        + "&pl=" + la.toFixed(4) + "," + lo.toFixed(4)\n' +
+'        + "&pn=" + encodeURIComponent(nome) + (x ? "" : "&pz=1")\n' +
+'        + "&z=10&c=" + la.toFixed(4) + "," + lo.toFixed(4);\n' +
 '    }\n\n' +
 '    document.getElementById("testa").innerHTML =\n' +
 '      "<div class=\\"capo\\"><div class=\\"et\\">Dove ha piovuto di più " + esc(DOVE) + " fra 13 e 20 giorni fa?</div>"\n' +

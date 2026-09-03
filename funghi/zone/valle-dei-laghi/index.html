@@ -173,13 +173,28 @@ nav.altre a{color:var(--blu);}
 <p class="nota" id="notaforte"></p>
 
 <h2>Ecco cosa vedi sulla mappa</h2>
-<a href="https://avventurepluvio-test.netlify.app/?r=trentino" style="display:block;text-decoration:none;">
+<a href="https://avventurepluvio-test.netlify.app/?r=trentino,veneto&amp;g=20&amp;pl=46,10.96667&amp;pn=Valle%20dei%20Laghi&amp;pz=1&amp;z=10&amp;c=46,10.96667" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-valle-dei-laghi-20gg'})}catch(e){}">
   <img src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/trentino.jpg"
        alt="La mappa delle piogge in Trentino"
        width="1600" height="1000" loading="lazy"
        style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
-  <span class="vai-mappa">Apri la mappa su questa zona →</span>
+  <span class="vai-mappa">Apri la mappa · ultimi 20 giorni →</span>
 </a>
+
+<h2>Sta piovendo adesso?</h2>
+<p>Questa pagina conta i millimetri dei giorni <b>già chiusi</b>: la giornata di oggi è esclusa,
+perché i pluviometri la stanno ancora misurando. Per la pioggia <b>in corso</b> c'è la diretta
+radar, che mostra dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti
+seguenti.</p>
+<a href="https://avventurepluvio-test.netlify.app/?r=trentino&amp;pl=46,10.96667&amp;pn=Valle%20dei%20Laghi&amp;pz=1&amp;radar=ora" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-valle-dei-laghi-radar'})}catch(e){}">
+  <span class="vai-mappa">Guarda la diretta radar in Valle dei Laghi →</span>
+</a>
+<p class="nota">⚠️ Il radar <b>non è un pluviometro</b>: è una misura presa dal cielo, a 2 km di
+risoluzione, e inquadra tutta la regione. Serve a vedere <i>dove</i> sta piovendo adesso, non a
+contare quanta acqua è caduta. I millimetri di questa pagina restano quelli misurati a terra
+da Meteotrentino.</p>
 
 <h2 style="margin-bottom:12px">Come scegliamo i pluviometri di una zona</h2>
 <div class="metodo">
@@ -218,6 +233,7 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
   var SITO = "https://avventurepluvio-test.netlify.app", MAPPA = SITO + "/";
   var ZONA = "Valle dei Laghi", DOVE = "in Valle dei Laghi";
   var CASA = "trentino", REGIONI = ["trentino"];
+  var REGS = "trentino,veneto", ZNOME = "Valle dei Laghi";
   var LAT = 46, LON = 10.96667;
   /* [ id, nome, sigla, quota, lat, lon, slug, regione ] */
   var POSTI = [["T0368","Monte Bondone (Viote)","TN",1490,46.0137,11.0549,"monte-bondone-viote","trentino"],["T0414","San Lorenzo In Banale (Pergoletti)","TN",685,46.0663,10.9113,"san-lorenzo-in-banale-pergoletti","trentino"],["T0189","Santa Massenza (Centrale)","TN",252,46.0652,10.9803,"santa-massenza-centrale","trentino"]];
@@ -268,7 +284,7 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
     g.style.display="block";
     g.innerHTML="⚠️ Non riesco a leggere l’archivio delle piogge in questo momento. Non dipende "
       + "da te: riprova fra qualche minuto, oppure vai direttamente "
-      + "<a href=\"" + MAPPA + "?r=" + CASA + "\">sulla mappa</a>.";
+      + "<a href=\"" + MAPPA + "?r=" + REGS + "\">sulla mappa</a>.";
   }
 
   function disegna(serie, oggi, righe){
@@ -285,8 +301,19 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
     var primo = dati[0];
 
     function link(x, dal, al){
-      return MAPPA + "?r=" + (x ? x.reg : CASA) + "&da=" + dal + "&a=" + al
-        + "&z=10&c=" + (x ? x.lat.toFixed(4)+","+x.lon.toFixed(4) : LAT.toFixed(4)+","+LON.toFixed(4));
+      /* pl/pn = il segnaposto. Senza, questi bottoni aprivano la mappa sul
+         punto giusto ma SENZA la puntina, e chi arriva non sa quale pallino
+         sia il suo (segnalato il 3/9/2026). */
+      var la = x ? x.lat : LAT, lo = x ? x.lon : LON;
+      var nome = x ? x.n : ZNOME;
+      /* La stazione cliccata sta in una regione sola, ma la zona no: si
+         tengono anche le vicine, la sua per prima. Tetto di 3, il massimo
+         che la mappa accetta. */
+      var rr = x ? [x.reg].concat(REGS.split(",").filter(function(k){return k!==x.reg;})).slice(0,3).join(",") : REGS;
+      return MAPPA + "?r=" + rr + "&da=" + dal + "&a=" + al
+        + "&pl=" + la.toFixed(4) + "," + lo.toFixed(4)
+        + "&pn=" + encodeURIComponent(nome) + (x ? "" : "&pz=1")
+        + "&z=10&c=" + la.toFixed(4) + "," + lo.toFixed(4);
     }
 
     document.getElementById("testa").innerHTML =

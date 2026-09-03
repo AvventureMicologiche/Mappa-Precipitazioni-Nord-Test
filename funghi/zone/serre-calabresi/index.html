@@ -173,13 +173,28 @@ nav.altre a{color:var(--blu);}
 <p class="nota" id="notaforte"></p>
 
 <h2>Ecco cosa vedi sulla mappa</h2>
-<a href="https://avventurepluvio-test.netlify.app/?r=calabria" style="display:block;text-decoration:none;">
+<a href="https://avventurepluvio-test.netlify.app/?r=calabria&amp;g=20&amp;pl=38.52917,16.345&amp;pn=Serre%20calabresi&amp;pz=1&amp;z=10&amp;c=38.52917,16.345" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-serre-calabresi-20gg'})}catch(e){}">
   <img src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/calabria.jpg"
        alt="La mappa delle piogge in Calabria"
        width="1600" height="1000" loading="lazy"
        style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
-  <span class="vai-mappa">Apri la mappa su questa zona →</span>
+  <span class="vai-mappa">Apri la mappa · ultimi 20 giorni →</span>
 </a>
+
+<h2>Sta piovendo adesso?</h2>
+<p>Questa pagina conta i millimetri dei giorni <b>già chiusi</b>: la giornata di oggi è esclusa,
+perché i pluviometri la stanno ancora misurando. Per la pioggia <b>in corso</b> c'è la diretta
+radar, che mostra dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti
+seguenti.</p>
+<a href="https://avventurepluvio-test.netlify.app/?r=calabria&amp;pl=38.52917,16.345&amp;pn=Serre%20calabresi&amp;pz=1&amp;radar=ora" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-serre-calabresi-radar'})}catch(e){}">
+  <span class="vai-mappa">Guarda la diretta radar sulle Serre calabresi →</span>
+</a>
+<p class="nota">⚠️ Il radar <b>non è un pluviometro</b>: è una misura presa dal cielo, a 2 km di
+risoluzione, e inquadra tutta la regione. Serve a vedere <i>dove</i> sta piovendo adesso, non a
+contare quanta acqua è caduta. I millimetri di questa pagina restano quelli misurati a terra
+da MeteoHub.</p>
 
 <h2 style="margin-bottom:12px">Come scegliamo i pluviometri di una zona</h2>
 <div class="metodo">
@@ -218,6 +233,7 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
   var SITO = "https://avventurepluvio-test.netlify.app", MAPPA = SITO + "/";
   var ZONA = "Serre calabresi", DOVE = "sulle Serre calabresi";
   var CASA = "calabria", REGIONI = ["calabria"];
+  var REGS = "calabria", ZNOME = "Serre calabresi";
   var LAT = 38.52917, LON = 16.345;
   /* [ id, nome, sigla, quota, lat, lon, slug, regione ] */
   var POSTI = [["38.44444_16.29167","Cassari","VV",1036,38.4444,16.2917,"cassari","calabria"],["38.73361_16.34389","Cenadi - Serralta","VV",998,38.7336,16.3439,"cenadi-serralta","calabria"],["38.49167_16.30278","Fabrizia","VV",898,38.4917,16.3028,"fabrizia","calabria"],["38.43778_16.14306","Giffone","RC",486,38.4378,16.1431,"giffone","calabria"],["38.37139_16.18917","Limina","RC",704,38.3714,16.1892,"limina","calabria"],["38.51667_16.31944","Mongiana P.","VV",955,38.5167,16.3194,"mongiana-p","calabria"],["38.56611_16.31250","Serra San Bruno","VV",826,38.5661,16.3125,"serra-san-bruno","calabria"]];
@@ -268,7 +284,7 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
     g.style.display="block";
     g.innerHTML="⚠️ Non riesco a leggere l’archivio delle piogge in questo momento. Non dipende "
       + "da te: riprova fra qualche minuto, oppure vai direttamente "
-      + "<a href=\"" + MAPPA + "?r=" + CASA + "\">sulla mappa</a>.";
+      + "<a href=\"" + MAPPA + "?r=" + REGS + "\">sulla mappa</a>.";
   }
 
   function disegna(serie, oggi, righe){
@@ -285,8 +301,19 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
     var primo = dati[0];
 
     function link(x, dal, al){
-      return MAPPA + "?r=" + (x ? x.reg : CASA) + "&da=" + dal + "&a=" + al
-        + "&z=10&c=" + (x ? x.lat.toFixed(4)+","+x.lon.toFixed(4) : LAT.toFixed(4)+","+LON.toFixed(4));
+      /* pl/pn = il segnaposto. Senza, questi bottoni aprivano la mappa sul
+         punto giusto ma SENZA la puntina, e chi arriva non sa quale pallino
+         sia il suo (segnalato il 3/9/2026). */
+      var la = x ? x.lat : LAT, lo = x ? x.lon : LON;
+      var nome = x ? x.n : ZNOME;
+      /* La stazione cliccata sta in una regione sola, ma la zona no: si
+         tengono anche le vicine, la sua per prima. Tetto di 3, il massimo
+         che la mappa accetta. */
+      var rr = x ? [x.reg].concat(REGS.split(",").filter(function(k){return k!==x.reg;})).slice(0,3).join(",") : REGS;
+      return MAPPA + "?r=" + rr + "&da=" + dal + "&a=" + al
+        + "&pl=" + la.toFixed(4) + "," + lo.toFixed(4)
+        + "&pn=" + encodeURIComponent(nome) + (x ? "" : "&pz=1")
+        + "&z=10&c=" + la.toFixed(4) + "," + lo.toFixed(4);
     }
 
     document.getElementById("testa").innerHTML =
