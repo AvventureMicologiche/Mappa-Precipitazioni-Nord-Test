@@ -45,6 +45,7 @@ const FUNGHI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.jso
 const NASCITA_REGIONI = '2026-08-14';
 const NASCITA_FUNGHI = '2026-09-02';
 const NASCITA_LOCALITA = '2026-09-02';
+const NASCITA_ZONE = '2026-09-03';
 
 function scriviSitemap(SITO, RADICE) {
   const { REGIONI } = require('./genera-pagine-regione.js');
@@ -80,6 +81,17 @@ function scriviSitemap(SITO, RADICE) {
     for (const d of fs.readdirSync(base).sort()) {
       if (!c_e(path.join('funghi', k, d, 'index.html'))) continue;
       voci.push({ loc: `${SITO}/funghi/${k}/${d}/`, lastmod: NASCITA_LOCALITA, freq: 'weekly', pri: '0.6' });
+    }
+  }
+
+  // Le pagine di ZONA (Garfagnana, Val Trebbia...), dal 3/9/2026. Stessa
+  // priorita' delle localita': sono risposte strette come loro, e per lo
+  // stesso motivo si elencano guardando la cartella invece che un elenco.
+  const zone = path.join(RADICE, 'funghi', 'zone');
+  if (fs.existsSync(zone)) {
+    for (const d of fs.readdirSync(zone).sort()) {
+      if (!c_e(path.join('funghi', 'zone', d, 'index.html'))) continue;
+      voci.push({ loc: SITO + '/funghi/zone/' + d + '/', lastmod: NASCITA_ZONE, freq: 'weekly', pri: '0.6' });
     }
   }
 
