@@ -48,10 +48,10 @@ const fs = require('fs');
 const path = require('path');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
-// ⚠️ UNICA RIGA DIVERSA DA PRODUZIONE (24/8/2026): il dominio. Tutto il resto,
-// RAW compreso, deve restare IDENTICO — i dati e i riepiloghi si leggono da
-// prod anche qui, perche' in questo repo Alto Adige, Toscana, Liguria e le
-// dieci reti MeteoHub non girano e i loro file sono fermi a luglio. Un `diff`
+// ⚠️ UNICA RIGA DIVERSA DA PRODUZIONE: il dominio. Tutto il resto,
+// l'indirizzo dei dati compreso, deve restare IDENTICO — anche qui i numeri si
+// leggono da prod, perche' in questo repo Alto Adige, Toscana, Liguria e le
+// dieci reti MeteoHub non girano e i loro file sono fermi a luglio. Un diff
 // fra i due generatori deve dare solo queste righe: se ne compaiono altre, i
 // due sono divergenti.
 const SITO = 'https://avventurepluvio-test.netlify.app';
@@ -95,6 +95,41 @@ const REGIONI = [
   { k:'austria',     nome:'Austria',                prep:'in',   dirs:['austria'],              agenzia:'GeoSphere Austria',     url:'', staz:'quasi 270',        geo:'dai ghiacciai del Tirolo alle colline del Burgenland' },
   { k:'slovenia',    nome:'Slovenia',               prep:'in',   dirs:['slovenia'],             agenzia:'ARSO Slovenia',         url:'', staz:'oltre 110',        geo:'dalle Alpi Giulie al Carso', nota:'ARSO pubblica con circa 36 ore di ritardo: nei riepiloghi qui sotto gli ultimi uno o due giorni possono mancare, ed è normale.' },
 ];
+
+// ── I LINK FRA LE PAGINE ────────────────────────────────────────────────────
+// ⚠️ Fino al 2/9/2026 le 42 pagine del sito erano ORFANE: nessuna ne linkava
+// un'altra, nemmeno la mappa, e l'unica porta d'ingresso era la sitemap.
+// Misurato quel giorno: sulla pagina di una regione l'unico href con dentro
+// «funghi» era il suo stesso canonico. La sitemap ti fa SCOPRIRE, i link
+// interni ti danno PESO: sono due mestieri diversi, e il secondo mancava.
+//
+// ⚠️ SI LINKA SOLO QUELLO CHE ESISTE. Le pagine funghi sono 19 e le regione 23:
+// il Molise non arriva alla soglia di bosco, e Austria, Svizzera e Slovenia non
+// sono cose italiane. L'elenco vero e' `funghi-posti.json`, non un elenco
+// scritto a mano qui che poi si scorda di aggiornarsi: un link a
+// /funghi/molise/ sarebbe un 404 servito ai motori di ricerca.
+const FUNGHI = Object.keys(JSON.parse(
+  fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8')));
+
+const nomeDi = r => r.nomeTitolo || r.nome;
+
+// `qui` = chiave della pagina che si sta scrivendo, `tipo` = 'regione'|'funghi'.
+// La pagina non linka se' stessa, ma la regione linka la sua funghi e viceversa:
+// e' proprio il ponte che mancava.
+function navAltre(qui, tipo) {
+  const reg = REGIONI
+    .filter(r => !(tipo === 'regione' && r.k === qui))
+    .map(r => `<a href="${SITO}/${r.k}/">${nomeDi(r)}</a>`).join(' · ');
+  const fun = REGIONI
+    .filter(r => FUNGHI.includes(r.k) && !(tipo === 'funghi' && r.k === qui))
+    .map(r => `<a href="${SITO}/funghi/${r.k}/">${nomeDi(r)}</a>`).join(' · ');
+  return `<nav class="altre">
+  <b>Dove ha piovuto, regione per regione</b>
+  <p>${reg}</p>
+  <b>Piogge per funghi, regione per regione</b>
+  <p>${fun}</p>
+</nav>`;
+}
 
 function pagina(r){
   // ⚠️ TITOLO E DESCRIZIONE rifatti il 23/8/2026 sui dati di Search Console, e
@@ -175,6 +210,11 @@ p{margin-bottom:12px;}
 .top-staz li{margin:4px 0 4px 20px;}
 footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;font-size:14px;color:#555;text-align:center;}
 footer a{color:var(--blu);}
+nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
+nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
+nav.altre p{line-height:1.9;}
+nav.altre a{color:var(--blu);}
+footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 @media(max-width:480px){h1{font-size:25px;}body{font-size:16px;}}
 </style>
 </head>
@@ -235,9 +275,13 @@ footer a{color:var(--blu);}
    onclick="try{gtag('event','click_youtube',{pulsante:'pagina-${r.k}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
 <p><a href="${VIDEO_FAQ}" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;"
    onclick="try{gtag('event','click_youtube',{pulsante:'faq-pagina-${r.k}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Video FAQ: come si usa la mappa (2 minuti)</a></p>
+${FUNGHI.includes(r.k) ? `
+<h2>Piogge per funghi ${r.prep} ${nomeCorto}</h2>
+<p>Se cerchi funghi ti serve un altro taglio degli stessi dati: <a href="${SITO}/funghi/${r.k}/">dove ha piovuto nelle zone da bosco ${r.prep} ${nomeCorto}</a>. Solo i pluviometri in mezzo al bosco, e la finestra da 13 a 20 giorni fa, che è quella che conta: dopo la pioggia il fungo non spunta subito, per svilupparsi gli servono almeno dodici o tredici giorni.</p>` : ''}
 </main>
 
 <footer>
+${navAltre(r.k, 'regione')}
   Dati: ${fonteFooter} ·
   <a href="${SITO}/fonti.html">tutte le fonti e licenze</a> ·
   <a href="https://avventuremicologiche.it">Avventure Micologiche</a><br>
@@ -431,7 +475,7 @@ function scrivi(dest, testo, crlf){
 // elenchi di cartelle che divergono darebbero pagina e riepilogo diversi sullo
 // stesso indirizzo. Per questo il file si lascia anche richiedere come modulo,
 // e la scrittura vera parte solo se lo si lancia a mano.
-module.exports = { REGIONI };
+module.exports = { REGIONI, FUNGHI, navAltre };
 
 if (require.main === module) {
   const radice = path.resolve(__dirname, '..', '..');

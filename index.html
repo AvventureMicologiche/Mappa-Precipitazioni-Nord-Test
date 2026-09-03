@@ -972,6 +972,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .fonte{font-size:9px;color:#6b80a0;padding:2px 10px;
   border-top:1px solid #eee;text-align:center;background:#fff;flex-shrink:0;}
 .fonte a{color:#1b3f6e}
+.fonte-reg{border-top:none;padding-bottom:4px;line-height:1.7;}
 
 /* ══════════════════════════════════════
    TABLET (601-900px)
@@ -1709,6 +1710,45 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   <a href="/fonti.html">Fonti e licenze</a> ·
   <a href="/fonti.html#feedback" onclick="try{gtag('event','click_feedback',{pulsante:'mappa-footer'})}catch(e){}">Feedback e contatti</a> ·
   Mappa: <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap</a>
+</div>
+
+<!-- ⚠️ LA PORTA VERSO LE PAGINE REGIONE, aggiunta il 2/9/2026.
+     Fino a quel giorno la mappa non linkava NESSUNA delle 23 pagine: erano
+     orfane, e l'unica strada per arrivarci era la sitemap. La sitemap ti fa
+     scoprire, i link interni ti danno peso.
+     ⚠️ Qui stanno solo le 23 REGIONE, non anche le 19 funghi: la strada giusta
+     e' mappa -> regione -> funghi, e mettendo tutt'e 42 in fondo alla mappa la
+     striscia diventava alta il doppio rubendo spazio alla mappa. Le funghi le
+     linka la pagina della loro regione, che e' anche il posto dove ha senso.
+     ⚠️ Sotto i 600px questa striscia e' display:none come .fonte, e Google
+     indicizza col crawler MOBILE: questi link li segue ma li pesa meno. Per
+     valere pieno dovrebbero stare in un punto visibile anche sul telefono, e
+     sulla mappa quel punto non c'e' senza rimpicciolire la mappa. -->
+<div class="fonte fonte-reg">
+  Dove ha piovuto:
+  <a href="/lombardia/">Lombardia</a> ·
+  <a href="/piemonte/">Piemonte</a> ·
+  <a href="/valledaosta/">Valle d'Aosta</a> ·
+  <a href="/liguria/">Liguria</a> ·
+  <a href="/emilia/">Emilia-Romagna</a> ·
+  <a href="/veneto/">Veneto</a> ·
+  <a href="/friuli/">Friuli</a> ·
+  <a href="/trentino/">Trentino</a> ·
+  <a href="/altoadige/">Alto Adige</a> ·
+  <a href="/toscana/">Toscana</a> ·
+  <a href="/umbria/">Umbria</a> ·
+  <a href="/marche/">Marche</a> ·
+  <a href="/lazio/">Lazio</a> ·
+  <a href="/molise/">Molise</a> ·
+  <a href="/campania/">Campania</a> ·
+  <a href="/puglia/">Puglia</a> ·
+  <a href="/basilicata/">Basilicata</a> ·
+  <a href="/calabria/">Calabria</a> ·
+  <a href="/sicilia/">Sicilia</a> ·
+  <a href="/sardegna/">Sardegna</a> ·
+  <a href="/svizzera/">Svizzera</a> ·
+  <a href="/austria/">Austria</a> ·
+  <a href="/slovenia/">Slovenia</a>
 </div>
 
 <script>

@@ -44,6 +44,7 @@ const FUNGHI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.jso
 // quando la sitemap fu scritta a mano la prima volta.
 const NASCITA_REGIONI = '2026-08-14';
 const NASCITA_FUNGHI = '2026-09-02';
+const NASCITA_LOCALITA = '2026-09-02';
 
 function scriviSitemap(SITO, RADICE) {
   const { REGIONI } = require('./genera-pagine-regione.js');
@@ -65,6 +66,21 @@ function scriviSitemap(SITO, RADICE) {
   for (const k of Object.keys(FUNGHI)) {
     if (c_e(path.join('funghi', k, 'index.html')))
       voci.push({ loc: `${SITO}/funghi/${k}/`, lastmod: NASCITA_FUNGHI, freq: 'weekly', pri: '0.7' });
+  }
+
+  // Le pagine di LOCALITA', dal 2/9/2026. Si trovano guardando le cartelle,
+  // non un elenco: e' lo stesso principio del resto del file, «si elenca solo
+  // quello che c'e' davvero». Cosi' aprire una regione nuova in `lib-nomi.js`
+  // non richiede di ricordarsi anche di questo file.
+  // ⚠️ Priorita' 0.6, sotto le funghi (0.7) e le regione (0.8): la priorita' e'
+  // un peso RELATIVO dentro il sito, e queste sono le risposte piu' strette.
+  for (const k of Object.keys(FUNGHI)) {
+    const base = path.join(RADICE, 'funghi', k);
+    if (!fs.existsSync(base)) continue;
+    for (const d of fs.readdirSync(base).sort()) {
+      if (!c_e(path.join('funghi', k, d, 'index.html'))) continue;
+      voci.push({ loc: `${SITO}/funghi/${k}/${d}/`, lastmod: NASCITA_LOCALITA, freq: 'weekly', pri: '0.6' });
+    }
   }
 
   const voce = v => `  <url>\n    <loc>${v.loc}</loc>\n    <lastmod>${v.lastmod}</lastmod>\n` +
