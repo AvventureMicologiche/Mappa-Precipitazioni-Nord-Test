@@ -88,6 +88,18 @@ td.ultima{font-size:14px;color:#42506a;white-space:nowrap;}
 .nota{color:#6a7789;font-size:14.5px;margin-top:10px;}
 .avviso{background:#fff6e5;border:1px solid #f0d9a8;border-radius:8px;padding:12px 15px;font-size:15px;margin:24px 0 0;}
 .avviso b{color:var(--blu-scuro);}
+/* ⚠️ IL PIE' DI PAGINA NON AVEVA NESSUNA REGOLA (corretto il 3/9/2026). Il
+   tag <footer> c'era su tutte e tre le famiglie di pagine, ma niente lo
+   nominava: il browser lo disegnava a modo suo, tutto a sinistra, senza
+   riga di separazione e coi link viola da «gia' visitato». Sono le stesse
+   regole che le pagine regione hanno da sempre.
+   ⚠️ Questo foglio di stile lo COPIANO anche le pagine di paese e di zona
+   (lo leggono da qui, vedi genera-pagine-localita.js): una regola scritta
+   qui vale per tutte e 1.081. */
+footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;
+  font-size:14px;color:#555;text-align:center;}
+footer a{color:var(--blu);}
+footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .vai-mappa{display:block;text-align:center;color:#fff;font-size:19px;font-weight:700;
   padding:15px 18px 17px;border-radius:10px;margin:14px 0 4px;border:1px solid #12365c;
   background:linear-gradient(180deg,#2a5a91 0%,#1b3f6e 48%,#153558 100%);
@@ -169,7 +181,15 @@ nav.altre a{color:var(--blu);}
 <p class="nota" id="notamedia"></p>
 
 <h2>I pluviometri della zona, dal più bagnato</h2>
-<div id="tabella"></div>
+<table class="vic"><thead><tr><th>Località</th><th>13-20 gg fa</th><th>Ultimi 7</th><th class="tagl">Ultimi 25</th></tr></thead>
+<tbody id="tabella">
+<tr data-id="46.25922_12.83135"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/friuli/campone/"><b>Campone</b></a><span class="com">PN · 452 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="osmer_ENE"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/friuli/enemonzo/"><b>Enemonzo</b></a><span class="com">UD · 439 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="46.31249_12.93636"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/friuli/san-francesco-t-p/"><b>San Francesco T.P.</b></a><span class="com">PN · 386 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="46.35890_12.94029"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/friuli/sella-chianzutan/"><b>Sella Chianzutan</b></a><span class="com">UD · 951 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="46.29817_12.79312"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/friuli/tramonti-di-sotto/"><b>Tramonti di Sotto</b></a><span class="com">PN · 340 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="46.24056_12.75028"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/friuli/tramonti-invaso/"><b>Tramonti Invaso</b></a><span class="com">PN · 303 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+</tbody></table>
 <p class="nota" id="notaforte"></p>
 
 <h2>Ecco cosa vedi sulla mappa</h2>
@@ -189,7 +209,7 @@ radar, che mostra dove sta piovendo in questo momento, le ultime due ore e i qua
 seguenti.</p>
 <a href="https://avventurepluvio-test.netlify.app/?r=friuli&amp;pl=46.39444,12.77417&amp;pn=Carnia&amp;pz=1&amp;radar=ora" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'zona-carnia-radar'})}catch(e){}">
-  <span class="vai-mappa">Guarda la diretta radar in Carnia →</span>
+  <span class="vai-mappa">Guarda il radar della pioggia in Carnia →</span>
 </a>
 <p class="nota">⚠️ Il radar <b>non è un pluviometro</b>: è una misura presa dal cielo, a 2 km di
 risoluzione, e inquadra tutta la regione. Serve a vedere <i>dove</i> sta piovendo adesso, non a
@@ -206,6 +226,16 @@ da ARPA FVG.</p>
   <div><span class="n">3</span><b>Almeno tre.</b> Sotto i tre pluviometri una zona non ha una
   pagina: un numero solo non racconta una valle.</div>
 </div>
+
+<h2 style="margin-top:30px">Quanto piove in Carnia, secondo il nostro archivio</h2>
+<p>In cima alla pagina c'è la finestra corta, quella che serve per i funghi. Ma di questi pluviometri
+teniamo tutti i giorni da quando li leggiamo. Da luglio 2026 a settembre 2026, in 40 giorni di misura, i 5 pluviometri della Carnia che leggiamo dallo stesso giorno hanno contato <b>194 mm</b> di pioggia a testa,
+in media. Il più bagnato è <b>Campone</b> con 230 mm, il più asciutto Tramonti di Sotto con 150.</p>
+<p>La giornata più violenta di tutto l'archivio è stata il <b>20 agosto 2026</b> a Campone, con <b>150,7 mm</b> in
+ventiquattro ore.</p>
+<p class="nota">Non è una media climatica: è quello che questi strumenti hanno misurato in quei
+giorni, e basta. L'archivio parte dal 27 luglio 2026 e si allunga di un giorno al
+giorno.</p>
 
 <div class="avviso">
   <b>Una cosa da tenere a mente.</b> Tanta pioggia non vuol dire tanti funghi: contano anche la
@@ -342,17 +372,28 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
       + "finestra dei funghi è <b>" + esc(primo.n) + "</b> con " + num(primo.mm) + " mm, il più asciutto "
       + "<b>" + esc(dati[dati.length-1].n) + "</b> con " + num(dati[dati.length-1].mm) + ".";
 
-    document.getElementById("tabella").innerHTML =
-      "<table class=\"vic\"><thead><tr><th>Località</th><th>13-20 gg fa</th>"
-      + "<th>Ultimi 7</th><th class=\"tagl\">Ultimi 25</th></tr></thead><tbody>"
-      + dati.map(function(r){
-          return "<tr><td><a class=\"loc\" href=\"" + SITO + "/funghi/" + r.reg + "/" + r.slug + "/\"><b>"
-            + esc(r.n) + "</b></a><span class=\"com\">" + esc(r.sig) + " · " + r.q + " MT</span></td>"
-            + "<td class=\"mm\"><span class=\"v" + (r.mm>0?"":" zero") + "\">" + (r.mm>0?num(r.mm):"—") + "</span></td>"
-            + "<td class=\"mm\"><span class=\"v" + (r.mm7>0?"":" zero") + "\">" + (r.mm7>0?num(r.mm7):"—") + "</span></td>"
-            + "<td class=\"mm tagl\"><span class=\"v\">" + num(r.mm25) + "</span></td></tr>";
-        }).join("")
-      + "</tbody></table>";
+    /* ⚠️ La tabella e' GIA' NELL'HTML, coi nomi e i link verso le pagine
+       di paese: qui si riempiono le caselle e si RIORDINA dal più bagnato,
+       spostando le righe. Rifacendola con innerHTML si cancellerebbero i link
+       dalla pagina che Google ha in mano dopo il rendering. */
+    var corpo = document.getElementById("tabella");
+    var perId = {};
+    for (var iv = 0; iv < dati.length; iv++) perId[dati[iv].id] = dati[iv];
+    var trs = corpo ? [].slice.call(corpo.querySelectorAll("tr[data-id]")) : [];
+    for (var it = 0; it < trs.length; it++) {
+      var d = perId[trs[it].getAttribute("data-id")];
+      var cel = trs[it].querySelectorAll(".mm .v");
+      if (cel.length < 3) continue;
+      if (!d) { for (var ic = 0; ic < 3; ic++) { cel[ic].textContent = "—"; cel[ic].className = "v zero"; } continue; }
+      cel[0].textContent = d.mm > 0 ? num(d.mm) : "—";  cel[0].className = d.mm > 0 ? "v" : "v zero";
+      cel[1].textContent = d.mm7 > 0 ? num(d.mm7) : "—"; cel[1].className = d.mm7 > 0 ? "v" : "v zero";
+      cel[2].textContent = num(d.mm25); cel[2].className = "v";
+    }
+    trs.sort(function(a, b){
+      var x = perId[a.getAttribute("data-id")], y = perId[b.getAttribute("data-id")];
+      return (y ? y.mm : -1) - (x ? x.mm : -1);
+    });
+    for (var iq = 0; iq < trs.length; iq++) corpo.appendChild(trs[iq]);
 
     var conForte = dati.filter(function(r){ return r.forte; }).length;
     document.getElementById("notaforte").innerHTML =

@@ -51,6 +51,9 @@ const { REGIONI } = require('./genera-pagine-regione.js');
 const { bello, slug, slugRegione } = require('./lib-nomi.js');
 const { perLink } = require('./lib-vicine.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
+// Il ritratto dell'archivio, cotto dentro la pagina: il perche' sta in cima
+// a lib-clima.js. Qui e' di zona, cioe' la media dei suoi pluviometri.
+const { clima, buono, dataBella, meseBello, migliaia, virgola } = require('./lib-clima.js');
 
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
@@ -141,6 +144,58 @@ function pagina(z) {
     return [id, bello(p[1]), p[2], p[3], p[4], p[5], SLUG_DI[id], REG_DI[id]];
   });
 
+  // ⚠️ IL RITRATTO DI UNA ZONA E' LA MEDIA DEI SUOI PLUVIOMETRI, e si fa solo
+  // su quelli che hanno lo STESSO periodo alle spalle: uno entrato in archivio
+  // a meta' abbasserebbe la media per un motivo che con la pioggia non c'entra.
+  // Una zona sta anche a cavallo di piu' regioni, quindi l'archivio si chiede
+  // regione per regione.
+  const climi = {};
+  for (const k of regioni) {
+    const r = REGIONI.find(x => x.k === k);
+    if (r) climi[k] = clima(r.dirs);
+  }
+  const perZona = z.posti
+    .map(id => ({ id, n: bello((POSTI[REG_DI[id]].find(x => x[0] === id) || [])[1] || ''),
+                  c: (climi[REG_DI[id]] || {})[id] }))
+    .filter(x => buono(x.c));
+  let RITRATTO = null;
+  if (perZona.length >= 3) {
+    // ⚠️ Il gruppo e' il PIU' NUMEROSO a pari periodo, non il piu' lungo: una
+    // zona a cavallo di due regioni ha due archivi che partono in giorni
+    // diversi (la Garfagnana: 90 giorni in Emilia, 55 in Toscana) e prendendo
+    // i piu' lunghi restavano due pluviometri, cioe' nessun ritratto.
+    let pari = [];
+    for (const x of perZona) {
+      const g = perZona.filter(y => y.c.giorni >= x.c.giorni * 0.9 && y.c.giorni <= x.c.giorni * 1.1);
+      if (g.length > pari.length) pari = g;
+    }
+    if (pari.length >= 3) {
+      const ord = pari.slice().sort((a, b) => b.c.mm - a.c.mm);
+      const forte = pari.slice().sort((a, b) => b.c.maxMm - a.c.maxMm)[0];
+      RITRATTO = {
+        quanti: pari.length,
+        giorni: Math.min(...pari.map(x => x.c.giorni)),
+        dal: pari.map(x => x.c.dal).sort()[0],
+        al: pari.map(x => x.c.al).sort().slice(-1)[0],
+        media: Math.round(pari.reduce((s, x) => s + x.c.mm, 0) / pari.length),
+        alto: ord[0], basso: ord[ord.length - 1], forte,
+      };
+    }
+  }
+  const meseIso = s => { const [a, m] = s.split('-'); return meseBello(a + '-' + m); };
+
+  // La tabella dei pluviometri, cotta con i suoi link. Fino al 4/9/2026
+  // nasceva a pagina aperta: nell'HTML servito la zona non linkava NESSUNA
+  // delle sue localita', e le 114 zone erano un vicolo cieco per chi indicizza.
+  // I millimetri e l'ordine restano al javascript: quelli cambiano ogni giorno.
+  const righeTab = anag.slice().sort((a, b) => a[1].localeCompare(b[1], 'it'))
+    .map(a => '<tr data-id="' + esc(a[0]) + '"><td><a class="loc" href="' + SITO + '/funghi/' +
+      a[7] + '/' + a[6] + '/"><b>' + esc(a[1]) + '</b></a><span class="com">' + esc(a[2]) +
+      ' · ' + a[3] + ' MT</span></td>' +
+      '<td class="mm"><span class="v">…</span></td>' +
+      '<td class="mm"><span class="v">…</span></td>' +
+      '<td class="mm tagl"><span class="v">…</span></td></tr>').join('\n');
+
   return '<!DOCTYPE html>\n<html lang="it">\n<head>\n' +
 '<meta charset="utf-8">\n' +
 '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
@@ -190,7 +245,9 @@ function pagina(z) {
 '<div class="tre" id="tre"></div>\n' +
 '<p class="nota" id="notamedia"></p>\n\n' +
 '<h2>I pluviometri della zona, dal più bagnato</h2>\n' +
-'<div id="tabella"></div>\n' +
+'<table class="vic"><thead><tr><th>Località</th><th>13-20 gg fa</th>' +
+'<th>Ultimi 7</th><th class="tagl">Ultimi 25</th></tr></thead>\n' +
+'<tbody id="tabella">\n' + righeTab + '\n</tbody></table>\n' +
 '<p class="nota" id="notaforte"></p>\n\n' +
 '<h2>Ecco cosa vedi sulla mappa</h2>\n' +
 '<a href="' + SITO + '/?r=' + REGS + '&amp;g=20&amp;' + PIN + '&amp;z=10&amp;c=' + z.lat + ',' + z.lon + '" style="display:block;text-decoration:none;"\n' +
@@ -209,7 +266,7 @@ function pagina(z) {
 'seguenti.</p>\n' +
 '<a href="' + SITO + '/?r=' + casa.k + '&amp;' + PIN + '&amp;radar=ora" style="display:block;text-decoration:none;"\n' +
 '   onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'zona-' + zslug + '-radar\'})}catch(e){}">\n' +
-'  <span class="vai-mappa">Guarda la diretta radar ' + esc(z.dove) + ' →</span>\n' +
+'  <span class="vai-mappa">Guarda il radar della pioggia ' + esc(z.dove) + ' →</span>\n' +
 '</a>\n' +
 "<p class=\"nota\">⚠️ Il radar <b>non è un pluviometro</b>: è una misura presa dal cielo, a 2 km di\n" +
 'risoluzione, e inquadra tutta la regione. Serve a vedere <i>dove</i> sta piovendo adesso, non a\n' +
@@ -225,6 +282,20 @@ function pagina(z) {
 '  <div><span class="n">3</span><b>Almeno tre.</b> Sotto i tre pluviometri una zona non ha una\n' +
 '  pagina: un numero solo non racconta una valle.</div>\n' +
 '</div>\n\n' +
+(RITRATTO ? '<h2 style="margin-top:30px">Quanto piove ' + esc(z.dove) + ', secondo il nostro archivio</h2>\n' +
+  '<p>In cima alla pagina c\'è la finestra corta, quella che serve per i funghi. Ma di questi pluviometri\n' +
+  'teniamo tutti i giorni da quando li leggiamo. Da ' + meseIso(RITRATTO.dal) + ' a ' + meseIso(RITRATTO.al) +
+  ', in ' + RITRATTO.giorni + ' giorni di misura, i ' + RITRATTO.quanti + ' pluviometri ' +
+  esc(diZona(z.dove)) + (RITRATTO.quanti < z.posti.length ? ' che leggiamo dallo stesso giorno' : '') +
+  ' hanno contato <b>' + migliaia(RITRATTO.media) + ' mm</b> di pioggia a testa,\n' +
+  'in media. Il più bagnato è <b>' + esc(RITRATTO.alto.n) + '</b> con ' + migliaia(RITRATTO.alto.c.mm) +
+  ' mm, il più asciutto ' + esc(RITRATTO.basso.n) + ' con ' + migliaia(RITRATTO.basso.c.mm) + '.</p>\n' +
+  '<p>La giornata più violenta di tutto l\'archivio è stata il <b>' + dataBella(RITRATTO.forte.c.maxData) +
+  '</b> a ' + esc(RITRATTO.forte.n) + ', con <b>' + virgola(RITRATTO.forte.c.maxMm) + ' mm</b> in\n' +
+  'ventiquattro ore.</p>\n' +
+  '<p class="nota">Non è una media climatica: è quello che questi strumenti hanno misurato in quei\n' +
+  'giorni, e basta. L\'archivio parte dal ' + dataBella(RITRATTO.dal) + ' e si allunga di un giorno al\n' +
+  'giorno.</p>\n\n' : '') +
 '<div class="avviso">\n' +
 '  <b>Una cosa da tenere a mente.</b> Tanta pioggia non vuol dire tanti funghi: contano anche la\n' +
 '  temperatura, il vento e il tipo di bosco. <b>La temperatura e il vento ce li abbiamo:</b>\n' +
@@ -348,17 +419,28 @@ function pagina(z) {
 '      "Medie sui <b>" + dati.length + " pluviometri</b> da bosco della zona. Il più bagnato nella "\n' +
 '      + "finestra dei funghi è <b>" + esc(primo.n) + "</b> con " + num(primo.mm) + " mm, il più asciutto "\n' +
 '      + "<b>" + esc(dati[dati.length-1].n) + "</b> con " + num(dati[dati.length-1].mm) + ".";\n\n' +
-'    document.getElementById("tabella").innerHTML =\n' +
-'      "<table class=\\"vic\\"><thead><tr><th>Località</th><th>13-20 gg fa</th>"\n' +
-'      + "<th>Ultimi 7</th><th class=\\"tagl\\">Ultimi 25</th></tr></thead><tbody>"\n' +
-'      + dati.map(function(r){\n' +
-'          return "<tr><td><a class=\\"loc\\" href=\\"" + SITO + "/funghi/" + r.reg + "/" + r.slug + "/\\"><b>"\n' +
-'            + esc(r.n) + "</b></a><span class=\\"com\\">" + esc(r.sig) + " · " + r.q + " MT</span></td>"\n' +
-'            + "<td class=\\"mm\\"><span class=\\"v" + (r.mm>0?"":" zero") + "\\">" + (r.mm>0?num(r.mm):"—") + "</span></td>"\n' +
-'            + "<td class=\\"mm\\"><span class=\\"v" + (r.mm7>0?"":" zero") + "\\">" + (r.mm7>0?num(r.mm7):"—") + "</span></td>"\n' +
-'            + "<td class=\\"mm tagl\\"><span class=\\"v\\">" + num(r.mm25) + "</span></td></tr>";\n' +
-'        }).join("")\n' +
-'      + "</tbody></table>";\n\n' +
+'    /* ⚠️ La tabella e\' GIA\' NELL\'HTML, coi nomi e i link verso le pagine\n' +
+'       di paese: qui si riempiono le caselle e si RIORDINA dal più bagnato,\n' +
+'       spostando le righe. Rifacendola con innerHTML si cancellerebbero i link\n' +
+'       dalla pagina che Google ha in mano dopo il rendering. */\n' +
+'    var corpo = document.getElementById("tabella");\n' +
+'    var perId = {};\n' +
+'    for (var iv = 0; iv < dati.length; iv++) perId[dati[iv].id] = dati[iv];\n' +
+'    var trs = corpo ? [].slice.call(corpo.querySelectorAll("tr[data-id]")) : [];\n' +
+'    for (var it = 0; it < trs.length; it++) {\n' +
+'      var d = perId[trs[it].getAttribute("data-id")];\n' +
+'      var cel = trs[it].querySelectorAll(".mm .v");\n' +
+'      if (cel.length < 3) continue;\n' +
+'      if (!d) { for (var ic = 0; ic < 3; ic++) { cel[ic].textContent = "—"; cel[ic].className = "v zero"; } continue; }\n' +
+'      cel[0].textContent = d.mm > 0 ? num(d.mm) : "—";  cel[0].className = d.mm > 0 ? "v" : "v zero";\n' +
+'      cel[1].textContent = d.mm7 > 0 ? num(d.mm7) : "—"; cel[1].className = d.mm7 > 0 ? "v" : "v zero";\n' +
+'      cel[2].textContent = num(d.mm25); cel[2].className = "v";\n' +
+'    }\n' +
+'    trs.sort(function(a, b){\n' +
+'      var x = perId[a.getAttribute("data-id")], y = perId[b.getAttribute("data-id")];\n' +
+'      return (y ? y.mm : -1) - (x ? x.mm : -1);\n' +
+'    });\n' +
+'    for (var iq = 0; iq < trs.length; iq++) corpo.appendChild(trs[iq]);\n\n' +
 '    var conForte = dati.filter(function(r){ return r.forte; }).length;\n' +
 '    document.getElementById("notaforte").innerHTML =\n' +
 '      "«Pioggia forte» vuol dire almeno " + FORTE + " mm in un giorno solo: è quella che bagna "\n' +

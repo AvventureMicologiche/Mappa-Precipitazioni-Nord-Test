@@ -446,7 +446,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 /* ⚠️ L'attesa NON e' un guasto: grigio, non rosso. Un messaggio rosso
    mentre il sito sta ancora lavorando fa credere che sia gia' finita male. */
 #geo-btn.attesa .gb-nota{color:#5a6470;font-weight:500;}
-/* ⚠️ LA CODA DEL TITOLO (30/8/2026, in prova sul TEST). Sta sulla STESSA
+/* ⚠️ LA CODA DEL TITOLO (30/8/2026, in produzione). Sta sulla STESSA
    riga di «La mia posizione», non sotto: cosi' il blocco resta di 114 px in
    tutti e tre i casi, cioe' identico a com'era. La versione a riga separata,
    provata prima, ne costava 13 e portava la tendina a 15 px dal fondo.
@@ -697,7 +697,23 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .sh-x{display:flex;gap:2px;margin-top:3px;padding-right:28px}
 .sh-x span{flex:1;text-align:center;font-size:9px;color:#aaa}
 .sh-note{font-size:9px;color:#999;margin-top:5px}
-.sh-fonte{font-size:9px;color:#888;margin-top:5px;padding-top:5px;border-top:1px solid #333}
+.sh-fonte{font-size:9px;color:#888;margin-top:5px;padding-top:5px;border-top:1px solid #333;
+  display:flex;align-items:center;justify-content:space-between;gap:8px}
+/* 3/9/2026: il tasto che porta alla pagina del posto. Sta sulla RIGA
+   della fonte, a destra: non si prende una riga sua, e la fonte da sola non
+   riempiva la larghezza. */
+/* ⚠️ LA SCRITTA DEVE ESSERE CHIARA DA SUBITO. Prima ereditava il colore
+   dei link del pannello e restava scura: si accendeva solo passandoci
+   sopra, quindi da fermo non si capiva che fosse un link, e col dito non
+   si passa sopra niente. Ora e' bianca sempre, e al passaggio del mouse
+   cambiano sfondo, bordo e freccia: il segnale c'e' in tutti e due gli
+   stati invece che in uno solo. */
+.sh-funghi{flex:0 0 auto;padding:3px 9px;border-radius:999px;
+  background:#2d5a8c;color:#fff !important;text-decoration:none;font-size:10.5px;
+  font-weight:700;white-space:nowrap;border:1px solid #5b8ec4;line-height:1.55;
+  transition:background .12s,border-color .12s}
+.sh-funghi:hover,.sh-funghi:focus{background:#3f7ec0;border-color:#9cc4e8}
+.sh-funghi:active{background:#24476e}
 .sh-load{font-size:11px;color:#888;padding:18px 0;text-align:center}
 /* Schede del pannello stazione: Pioggia / Temperatura / Vento (10/8/2026).
    I bottoni stanno FUORI da sh-body, così sopravvivono ai re-render del corpo. */
@@ -1200,10 +1216,6 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     display:flex !important;
     flex-direction:column;
     align-items:stretch;
-    /* ⚠️ Spazio ridotto (31/8/2026): fra il bordo del foglio e il primo
-       tasto c'erano 60 px di aria, misurati a 393. Tolti 3 sopra, 2 alla
-       barretta, 3 sotto e 5 al contenuto: 13 px in meno e niente di
-       leggibile perso. Il primo tasto ora sta a 47 px. */
     padding:5px 12px 3px;
     cursor:pointer;
     width:100%;
@@ -1422,7 +1434,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <button class="sh-tab" data-t="u">💦 Umidità</button>
       </div>
       <div id="sh-body"></div>
-      <div class="sh-fonte" id="sh-fonte"></div>
+      <div class="sh-fonte">
+        <span id="sh-fonte"></span>
+        <!-- 3/9/2026: il ponte fra la mappa e le 948 pagine di paese.
+             Compare solo per i pluviometri che una pagina ce l'hanno. -->
+        <a class="sh-funghi" id="sh-funghi" href="#" style="display:none"></a>
+      </div>
     </div>
     <div class="fonte-tag" id="fonte-tag">Fonte: —</div>
     <div id="beta-note">🧪 Sicilia e Lazio in fase di test: dati MeteoHub in validazione</div>
@@ -1441,7 +1458,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
           <div class="v-nome">Avventure Micologiche</div>
         </div>
       </div>
-      <div class="v-grazie"><b>Grazie a tutti:</b> avete fatto oltre <b>35.000 analisi</b> in poche settimane. Se vi siamo stati utili, lasciate un like e un'iscrizione.</div>
+      <div class="v-grazie"><b>Grazie a tutti:</b> avete fatto oltre <b>40.000 analisi</b> in poche settimane. Se vi siamo stati utili, lasciate un like e un'iscrizione.</div>
       <div class="v-btn v-iscr">ISCRIVITI</div>
     </a>
 
@@ -1692,7 +1709,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
          onclick="try{gtag('event','click_youtube',{pulsante:'pillola-mobile'})}catch(e){}"
          id="channel-pill">
         <img src="archie-avatar.png" alt="Archie">
-        <div class="cp-t">Grazie: oltre 35.000 analisi<small>Lasciate un like e un'iscrizione</small></div>
+        <div class="cp-t">Grazie: oltre 40.000 analisi<small>Lasciate un like e un'iscrizione</small></div>
         <div class="cp-yt">
           <svg width="26" height="19" viewBox="0 0 42 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <rect width="42" height="30" rx="6" fill="#FF0000"/>
@@ -3140,8 +3157,20 @@ function histAsseX(days){
   return h+'</div>';
 }
 
-function histNote(regionKey,days,notaPeriodo){
+function histNote(regionKey,days,notaPeriodo,station){
   var note=[];
+  // ⚠️ L'ALTEZZA DELL'ANEMOMETRO, quando la fonte la dichiara (30/8/2026).
+  // Piu' si sale da terra e piu' il vento e' forte: lo standard sono 10 m, ma
+  // ARPA Veneto misura anche a 5 e a 2, e lo scrive nel nome del sensore.
+  // Contate tutte e 190 le stazioni venete: 39 a 10 m, 64 a 5 m, 16 a 2 m
+  // (71 non hanno anemometro). Nei nostri dati di agosto quelle a 5 m danno il
+  // 18% in meno di quelle a 10, quelle a 2 m il 40% in meno — quindi due
+  // stazioni vicine possono dare numeri diversi con lo stesso vento.
+  // ⚠️ NON si normalizza a 10 m: la formula esiste ma vuole la rugosita' del
+  // terreno, che non sappiamo, e infilerebbe un modello dentro un dato
+  // misurato (regola 4). Si dichiara e basta, come il ~ della quota dedotta.
+  // Le altre reti l'altezza non la dichiarano: li' la riga non compare.
+  if(histTab==='v'&&station&&typeof station.wh==='number') note.push('anemometro a '+station.wh+' m');
   // ⚠️ Dal 27/8/2026 la finestra e' SEMPRE gli ultimi 30 giorni, mai «del
   // periodo»: il vecchio testo era giusto solo finche' finiva col periodo.
   if(notaPeriodo==='fuori') note.push('grafico: ultimi 30 giorni, il periodo scelto è più indietro');
@@ -3150,9 +3179,9 @@ function histNote(regionKey,days,notaPeriodo){
     if(HIST_REAL_FROM[regionKey]) note.push('storico dal '+HIST_REAL_FROM[regionKey].split('-').reverse().join('/'));
   }else{
     // le 13 régions francesi condividono la data: chiave unica 'francia'
-    var da=(histTab==='u')?umidDa(regionKey):(histTab==='w'&&ventoDa(regionKey))?ventoDa(regionKey)
+    var da=(histTab==='u')?umidDa(regionKey):(histTab==='v'&&ventoDa(regionKey))?ventoDa(regionKey)
       :(METEO_HIST_FROM[regionKey]||(regionKey&&regionKey.indexOf('francia')===0?METEO_HIST_FROM.francia:null));
-    if(da&&days[0]<da) note.push(((histTab==='u')?'umidità dal ':(histTab==='w'&&ventoDa(regionKey))?'vento dal ':'temperatura e vento dal ')+da.split('-').reverse().join('/'));
+    if(da&&days[0]<da) note.push(((histTab==='u')?'umidità dal ':(histTab==='v'&&ventoDa(regionKey))?'vento dal ':'temperatura e vento dal ')+da.split('-').reverse().join('/'));
   }
   return note.length?'<div class="sh-note">'+note.join(' · ')+'</div>':'';
 }
@@ -3347,7 +3376,7 @@ function histMessaggioVuoto(region,region2,station,days){
   // falso (il Piemonte ha t/w dal 9/8: chi guarda luglio non trova nulla, ma
   // quelle stazioni il termometro ce l'hanno). La nota sotto al pannello dice
   // già da quando esistono, quindi qui basta il passato.
-  var da=(histTab==='u')?umidDa(region2):(histTab==='w'&&ventoDa(region2))?ventoDa(region2)
+  var da=(histTab==='u')?umidDa(region2):(histTab==='v'&&ventoDa(region2))?ventoDa(region2)
     :(METEO_HIST_FROM[region2]||(region2&&region2.indexOf('francia')===0?METEO_HIST_FROM.francia:null));
   if(da&&days[days.length-1]<da) return ora;
   var campo=(histTab==='t')?'t':((histTab==='u')?'u':'w');
@@ -3384,10 +3413,10 @@ function histRender(station,regionKey,days,serie,selFrom,selTo,notaPeriodo,histR
   else h=histRenderLinee(days,serie,histTab);
   if(h===null){
     body.innerHTML='<div class="sh-load">'+histMessaggioVuoto(histRegion||regionKey,regionKey,station,days)+'</div>'
-                  +histNote(regionKey,days,notaPeriodo);
+                  +histNote(regionKey,days,notaPeriodo,station);
     return;
   }
-  body.innerHTML=h+histNote(regionKey,days,notaPeriodo);
+  body.innerHTML=h+histNote(regionKey,days,notaPeriodo,station);
 }
 
 function histPosition(mx,my){
@@ -3498,6 +3527,36 @@ function openStationHistory(s,rank,mx,my){
   document.getElementById('sh-quota').textContent=testoQuota(s);
   document.getElementById('sh-rank').textContent=rank?('#'+rank+' / '+totalStations):'—';
   document.getElementById('sh-fonte').textContent=lastUsedFonte||'—';
+  /* 3/9/2026 — il ponte verso la pagina del posto.
+     L'indice id → indirizzo si chiede UNA volta sola e solo al primo clic su
+     un pallino: chi guarda la mappa e non apre nessuna stazione non lo scarica
+     mai. 940 voci, 32 KB, 11 compressi. */
+  (function(){
+    var a=document.getElementById('sh-funghi'); if(!a) return;
+    a.style.display='none';
+    /* ⚠️ LA CHIAVE SONO LE COORDINATE, NON L'ID. I loader della mappa
+       ricostruiscono la stazione campo per campo e l'id NON lo copiano: nel
+       pannello ci sono n, lat, lon, q, qt, t, w, u, p e basta. Latitudine e
+       longitudine invece ci sono sempre, e vengono dagli stessi file dati da
+       cui esce funghi-posti.json, quindi combaciano al quarto decimale. */
+    function mostra(){
+      if(s.lat==null||s.lon==null) return;
+      var v=window._indiceFunghi && window._indiceFunghi[s.lat.toFixed(4)+','+s.lon.toFixed(4)];
+      if(!v) return;                       // questo pluviometro la pagina non ce l'ha
+      a.href='/funghi/'+v+'/';
+      a.textContent='vai alla scheda →';
+      a.style.display='block';
+    }
+    if(window._indiceFunghi) return mostra();
+    if(window._indiceFunghiInCorso) return;
+    window._indiceFunghiInCorso=true;
+    /* In locale si legge dalla cartella del repo: cosi' l'indice si prova
+       senza aspettare che sia online. */
+    var _base=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'/data/':PILOT_DATA_BASE;
+    fetch(_base+'funghi/indice.json').then(function(r){return r.json();})
+      .then(function(j){ window._indiceFunghi=j; mostra(); })
+      .catch(function(){ window._indiceFunghi={}; });
+  }());
   var gg=Math.round((end-currentPast)/(24*3600000))+1;
   document.getElementById('sh-per').textContent=
     fmtBreve(currentPast)+' – '+fmtBreve(end)+' · '+gg+(gg===1?' giorno':' giorni');
@@ -5180,7 +5239,7 @@ function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
       if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,wh:s.wh,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -5212,6 +5271,7 @@ function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
@@ -5253,7 +5313,7 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
       if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,wh:s.wh,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -5280,6 +5340,7 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
@@ -5340,7 +5401,7 @@ function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
       if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,wh:s.wh,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -5372,6 +5433,7 @@ function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
@@ -5471,7 +5533,7 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
       if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,wh:s.wh,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -5499,6 +5561,7 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
@@ -5550,6 +5613,7 @@ function loadAustriaRegion(pastDate,nowDate,labelPeriodo,cb){
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'AT'};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
@@ -5598,6 +5662,7 @@ function loadSloveniaRegion(pastDate,nowDate,labelPeriodo,cb){
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'SI'};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
@@ -5648,6 +5713,7 @@ function loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'FR'};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
@@ -5708,6 +5774,7 @@ function loadSvizzeraRegion(pastDate,nowDate,labelPeriodo,cb){
               if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||srcCfg.pDef,_src:srcCfg.src};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
               if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
               rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
             });
           }
@@ -5761,6 +5828,7 @@ function loadOpenMeteoStorico(regionKey,pastDate,nowDate,labelPeriodo,cb){
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
@@ -5923,6 +5991,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'BL',_src:'veneto'};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         })
@@ -5958,6 +6027,7 @@ function loadCFValdostaRegion(pastDate,nowDate,labelPeriodo,cb){
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'AO'};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
@@ -6035,6 +6105,7 @@ function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
@@ -6084,6 +6155,7 @@ function loadAltoAdigeRegion(pastDate,nowDate,labelPeriodo,cb){
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'BZ'};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
@@ -6134,6 +6206,7 @@ function loadMeteotrentino(pastDate,nowDate,labelPeriodo,cb){
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'TN'};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
@@ -6261,7 +6334,7 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
       if(_scarsa(key))return null;
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
+      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,wh:s.wh,p:s.p||'',
               mm:mm<0.5?0:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
@@ -6283,6 +6356,7 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
             if(s.w)stMeta[key].w=1; if(s.u)stMeta[key].u=1; if(s.t)stMeta[key].t=1;  // per selectUniformRicche
+            if(typeof s.wh==='number')stMeta[key].wh=s.wh;   // altezza anemometro (solo Veneto la dichiara)
             rainTot[key]=(rainTot[key]||0)+(s.mm||0); cop[key]=(cop[key]||0)+1;
           });
         }
@@ -6925,6 +6999,9 @@ function locDisegna(res, testo, intestazione, nota) {
     return '<div class="loc-riga" role="option" data-i="' + i + '">' +
              '<span class="loc-nome">' + nome + '</span>' +
              (p.t === 'z' ? '' :   // la parola «valle»/«zona» sta gia' al posto della sigla
+               // ⚠️ «ex comune» si deduce dagli abitanti a zero, e vale SOLO in
+               // Italia: fuori, il geocoder lascia la popolazione vuota su un
+               // sacco di paesi vivissimi, e Zermatt sarebbe uscita «ex comune».
                (p.frazione ? '<span class="loc-ex">frazione</span>' : ((p.pop || p.estero) ? '' : '<span class="loc-ex">ex comune</span>'))) +
              '<span class="loc-dove">' + p.sg + ' · ' + reg + '</span>' +
            '</div>';
@@ -7782,7 +7859,7 @@ function geoNota(msg, attesa){
   if(typeof collocaCanale === 'function') collocaCanale();
 }
 
-/* ⚠️ L'ETICHETTA DEL TASTO, tre stati — IN PROVA SUL TEST dal 30/8/2026.
+/* ⚠️ L'ETICHETTA DEL TASTO, tre stati — IN PRODUZIONE dal 30/8/2026.
    Perche': in GA4, sui primi tre giorni, 26 tentativi su 49 finiscono con
    `esito=negato`, cioe' UNO SU DUE preme il tasto e poi dice no al permesso
    del browser. L'ipotesi e' che non se lo aspetti.
@@ -8556,11 +8633,6 @@ function buildShareUrl(){
   // SCARTATO: allargava di due livelli da PC a telefono e stringeva di due
   // nell'altro verso. Chi condivide si aspetta la stessa SCALA, non la stessa
   // area. Lo zoom viaggia grezzo.
-  // ⚠️ IN MODO RADAR IL LINK DEVE PORTARE IL RADAR (31/8/2026). Senza
-  //    questa riga si copiava il link dell'ANALISI di prima: guardavi il
-  //    radar e mandavi la mappa dei 10 giorni. Le date restano nel link e non
-  //    danno fastidio: chi riceve entra in radar e, chiudendolo, si ritrova
-  //    l'analisi.
   if(window._radarModo) p.set('radar', window._radarModo);
   return location.origin+location.pathname+'?'+p.toString();
 }
@@ -9728,17 +9800,23 @@ function loadDefaultMarkers(){
   // un deploy per metterla e poi zero, per sempre. Quando le date di scadenza
   // saranno passate tutte e due, la scheda «Iscriviti» torna da sola senza che
   // nessuno pubblichi niente.
+  // 5/9/2026: arrivano lo Short sul Butyriboletus regius e, nel pomeriggio,
+  // quello sugli ovoli. Per decisione dell'utente in gara restano SOLO i
+  // video, adesso tre: fuori la guida al pluviometro e fuori la scheda
+  // «Iscriviti» (che resta il ripiego).
+  // 4/9/2026: sorteggio a tre. Fino a ieri era inchiodato su 'video' per
+  // l'uscita dei Porcini, cioe' la guida e la scheda «Iscriviti» non
+  // uscivano mai. Con 'alterna' partecipano tutt'e tre, e quando il video
+  // scade il 7 settembre la terna si riduce da sola a guida + Iscriviti
+  // senza che nessuno pubblichi niente.
   var MOSTRA='alterna';
 
   var VETRINE={};
   VETRINE.guida={
-    // ⚠️ RIACCESA il 31/8/2026, e adesso si alterna con «Iscriviti».
-    // Il 25/8 era stata fatta scadere insieme al video, ma il commento di
-    // allora diceva gia' la cosa giusta: la guida NON invecchia, spiega come
-    // si usa la mappa e vale uguale fra sei mesi. Il video di una singola
-    // uscita invece invecchia, e infatti resta scaduto.
-    // Scadenza lunga apposta: quando arrivera', tornera' da sola la sola
-    // scheda «Iscriviti» senza che nessuno debba pubblicare niente.
+    // ⚠️ Stessa scadenza del video, per decisione dell'utente il 25/8: passata
+    // quella data escono di scena tutte e due e resta «Iscriviti». La guida
+    // potrebbe restare (non invecchia, spiega come si usa la mappa): per
+    // riaccenderla basta spostare avanti questa data.
     fino:'2027-12-31T23:59:59+01:00',
     link:'https://youtu.be/fvsBZJ_Ylf4',
     id:'fvsBZJ_Ylf4',
@@ -9754,40 +9832,138 @@ function loadDefaultMarkers(){
     canale:'Avventure Micologiche'
   };
   VETRINE.video={
-    fino:'2026-08-28T23:59:59+02:00',
-    link:'https://youtu.be/moADfe6fWGw',
-    id:'moADfe6fWGw',
-    // Lo stesso video ripubblicato altrove. ⚠️ VANNO GLI INDIRIZZI DEL VIDEO,
-    // non dei profili: mandare qualcuno sulla bacheca a cercarselo e' peggio
-    // che non dargli il pulsante. Se un'uscita non va su un social, si lascia
-    // la stringa vuota e quel bottone non viene disegnato; se restano vuoti
-    // tutti e due, la pillola resta quella di sempre a link unico.
-    facebook:'https://www.facebook.com/reel/1323432696274400',
-    instagram:'https://www.instagram.com/p/DcbWMJMNu_3/',
-    copertina:'vetrina-video.jpg',
-    gancio1:'Prima uscita dopo i temporali:',
-    gancio2:'stanno nascendo?',
+    // Uscita del 2/9/2026 alle 18: video LUNGO, non uno Short.
+    // ⚠️ `da` e' la manopola dell'ACCENSIONE, aggiunta il 2/9. Prima c'era la
+    // sola scadenza, quindi per accendere una vetrina all'ora giusta bisognava
+    // stare li' a pubblicare a quell'ora. Adesso si pubblica prima e la scheda
+    // si accende DA SOLA sul browser di chi apre: un deploy solo, e all'ora
+    // esatta. Come lo spegnimento, non costa niente (lo valuta il browser).
+    da:'2026-09-02T18:00:00+02:00',
+    fino:'2026-09-07T23:59:59+02:00',
+    link:'https://youtu.be/2tl0g4bhWG8',
+    id:'2tl0g4bhWG8',
+    // ⚠️ VUOTI APPOSTA, deciso dall'utente il 2/9. I due corti su Facebook e
+    // Instagram sono ALTRI video, non questo: coi tre bottoni chi clicca non
+    // trova quello che gli e' stato promesso. E i clic si spezzerebbero (il
+    // 29/8: 19 clic, di cui solo 6 al canale) proprio nell'ora di lancio, per
+    // mandarli dove il lungo non prende minuti guardati. I due corti, semmai,
+    // si spingono con una pillola loro fra qualche giorno.
+    facebook:'',
+    instagram:'',
+    // Video lungo, quindi copertina NORMALE: `maxresdefault.jpg` e' gia' 16:9
+    // (1280x720) e basta ridurlo a 480x270. Il ritaglio da `oardefault.jpg`
+    // serve solo per gli SHORT, vedi vetrina-short.jpg.
+    copertina:'vetrina-porcini.jpg',
+    // Titolo vero: «PORCINI 2026 BOTTA DI AEREUS ED AESTIVALIS DOPO I
+    // TEMPORALI», che nella colonna da 199 px non ci sta in nessun modo. Due
+    // righe, a capo DECISO sui due <b> in nowrap: si spezza dopo i due punti.
+    gancio1:'Porcini 2026:',
+    gancio2:'la botta dopo i temporali',
+    // ⚠️ IL CORPO LO DETTA LA RIGA PIU' LUNGA, e qui e' la SECONDA. Misurato
+    // il 2/9 sulla colonna da 199 px: «la botta dopo i temporali» fa 191,6 px
+    // a 16,5 e 197,4 a 17, cioe' a 17 restano 1,6 px e non bastano (i font
+    // resi altrove escono un filo piu' larghi). Si tengono 16,5, che lascia
+    // 7,4 px: lo stesso margine gia' lasciato alla guida.
+    // ⚠️ La spezzatura costa corpo: con «Porcini 2026: la botta» + «dopo i
+    // temporali» la riga lunga e' la prima e si sarebbe potuti salire a 19,
+    // ma il testo restava sfrangiato. Provate tutt'e due e scelta questa
+    // dall'utente il 2/9. La scheda passa da 159 a 167 px.
+    ganciopx:16.5,
     canale:'Avventure Micologiche'
   };
-
+  VETRINE.regius = {
+    // Short del 5/9/2026, pubblicato anche su Facebook e Instagram: e' lo
+    // STESSO video su tutt'e tre, quindi qui i bottoni social CI VANNO (a
+    // differenza dell'uscita del 2/9, dove i corti social erano altri video e
+    // i campi erano vuoti apposta).
+    // ⚠️ Nessun `da`: il video e' gia' online, la vetrina parte subito.
+    // Scadenza lontana perche' uno Short cosi' non invecchia: per toglierlo
+    // prima basta spostare indietro questa data, e non costa un deploy
+    // perche' la valuta il browser.
+    fino: '2027-12-31T23:59:59+01:00',
+    link: 'https://youtube.com/shorts/Uvpf0knhgAw',
+    id: 'Uvpf0knhgAw',
+    facebook: 'https://www.facebook.com/reel/938650065978701',
+    instagram: 'https://www.instagram.com/reel/Dc3_tWkwlID/',
+    // ⚠️ Copertina di uno SHORT: la sorgente e' VERTICALE (`oar2.jpg`,
+    // 1080x1920) e si ritaglia la fascia centrale a 480x270, che e' il formato
+    // di tutte le copertine del sito. `maxresdefault.jpg` di uno Short e'
+    // ORIZZONTALE e mostra il fotogramma sbagliato.
+    copertina: 'vetrina-regius.jpg',
+    occhiello: 'Short',
+    occhielloP: 'Short',
+    bottone: 'GUARDA LO SHORT',
+    // Titolo vero: «Butyriboletus Regius il fungo piu' sottovalutato e
+    // ribaltato». Nella colonna da 199 px non ci sta: due righe, a capo
+    // DECISO dopo il nome.
+    gancio1: 'Butyriboletus regius:',
+    gancio2: 'il più calpestato',
+    // ⚠️ IL CORPO LO DETTA LA RIGA PIU' LUNGA, e qui e' la PRIMA: col titolo
+    // del 5/9 «il piu' calpestato» sta in 139,8 px mentre il nome latino ne
+    // vuole 186,1 (a 18,5) sulla colonna da 199. A 19 la prima riga fa
+    // 191,1 px e ne restano 7,9: lo stesso margine tenuto sui Porcini, che
+    // e' la prudenza giusta per i font resi un filo piu' larghi altrove.
+    ganciopx: 19,
+    canale: 'Avventure Micologiche'
+  };
+  VETRINE.ovoli = {
+    // Short degli OVOLI del 5/9/2026, uscito anche su Facebook e Instagram:
+    // stesso video su tutt'e tre, quindi i bottoni social ci vanno.
+    // ⚠️ Nessun `da`: e' gia' online, la vetrina parte subito. Scadenza
+    // lontana come per il regius, perche' uno Short cosi' non invecchia.
+    fino: '2027-12-31T23:59:59+01:00',
+    link: 'https://youtube.com/shorts/y0P_TxcIKuQ',
+    id: 'y0P_TxcIKuQ',
+    // ⚠️ L'indirizzo di Facebook e' quello CANONICO del reel, non il link
+    // `share/r/...` che si copia dall'app: quello e' una redirezione con
+    // dentro i parametri di tracciamento di chi l'ha condiviso.
+    facebook: 'https://www.facebook.com/reel/1119754967245480',
+    instagram: 'https://www.instagram.com/reel/Dc6VzA1N_VJ/',
+    // Copertina di uno SHORT, stessa ricetta del regius: sorgente verticale
+    // (`oar2.jpg`, 1080x1920) e ritaglio della fascia centrale a 480x270.
+    // ⚠️ La fascia centrale serve anche a TOGLIERE il timbro «ANTEPRIMA»
+    // che sta in alto a sinistra nel fotogramma: qui dentro e' il video di
+    // adesso, non l'anticipo di un altro, e quel timbro confonderebbe.
+    copertina: 'vetrina-ovoli.jpg',
+    occhiello: 'Short',
+    occhielloP: 'Short',
+    bottone: 'GUARDA LO SHORT',
+    // Titolo vero: «OVOLI IN DIRETTA, 16 GIORNI DOPO LA PIOGGIA». Due righe,
+    // a capo DECISO sulla virgola.
+    gancio1: 'Ovoli in diretta:',
+    gancio2: '16 giorni dopo la pioggia',
+    // ⚠️ IL CORPO LO DETTA LA RIGA PIU' LUNGA, e qui e' la SECONDA.
+    // Misurato sulla colonna da 199 px: «16 giorni dopo la pioggia» fa
+    // 190,7 px a 16 e 196,7 a 16,5, cioe' a 16,5 restano 2,3 px e non
+    // bastano. A 16 ne restano 8,3, lo stesso margine tenuto sugli altri
+    // due. E' piu' piccolo del regius (19) solo perche' la riga e' piu'
+    // lunga: la regola non cambia.
+    // ⚠️ Provato ad accorciare in «16 giorni dopo l'acqua», che avrebbe
+    // retto 18 px, e scartato: «pioggia» e' la parola del sito.
+    ganciopx: 16,
+    canale: 'Avventure Micologiche'
+  };
   var V=null, QUALE='';
   if(MOSTRA==='alterna'){
     // Solo le vetrine ancora in corso partecipano: quando il video scade,
     // l'alternanza si riduce da sola alla guida, e quando scade anche quella
     // non resta nessuno e si esce.
     var ora=Date.now(), scelte=[];
-    ['video','guida'].forEach(function(k){
-      if(VETRINE[k] && ora <= new Date(VETRINE[k].fino).getTime()) scelte.push(k);
+    ['video','regius','ovoli'].forEach(function(k){
+      var v=VETRINE[k]; if(!v) return;
+      if(v.da && ora < new Date(v.da).getTime()) return;   // non ancora accesa
+      if(ora <= new Date(v.fino).getTime()) scelte.push(k);
     });
-    /* ⚠️ ANCHE «ISCRIVITI» PARTECIPA AL SORTEGGIO (31/8/2026, su sua
-       richiesta). Fin qui il dado sceglieva solo FRA LE VETRINE, e la scheda
-       del canale si vedeva soltanto quando non ce n'era nessuna in corso:
-       cioe' o sempre vetrina, o mai. Adesso e' una faccia della moneta come
-       le altre, e con la sola guida in corso fa meta' e meta'.
-       Non serve altro codice: «iscriviti» non sta in VETRINE, quindi V resta
-       vuoto e il `return` qui sotto lascia in pagina la scheda com'e' gia'
-       scritta nel markup. */
-    scelte.push('iscriviti');
+    // ⚠️ DAL 5/9/2026 IN GARA CI SONO SOLO I VIDEO. Decisione dell'utente:
+    // fuori la guida al pluviometro e fuori la scheda «Iscriviti», che dal
+    // 31/8 pescava una volta su tre e si mangiava le aperture delle vetrine.
+    // La scheda «Iscriviti» resta comunque il RIPIEGO: se nessun video e' in
+    // corso `scelte` e' vuoto, si esce, e in pagina resta il markup di sempre.
+    // ⚠️ SONO TRE, dal pomeriggio del 5/9: il lungo dei Porcini, il regius
+    // e gli ovoli. Il lungo scade il 7/9 e da li' in poi la moneta e' a due
+    // facce, senza che nessuno pubblichi niente.
+    // Per rimetterle in gara: la chiave `guida` nell'elenco qui sopra e la
+    // riga `scelte.push('iscriviti')` qui.
     if(!scelte.length) return;
     // ⚠️ IL DADO SI TIRA A OGNI APERTURA, e la scelta NON si ricorda.
     // Prima restava appiccicata alla persona (localStorage 'vetrina'): chi
@@ -9815,7 +9991,12 @@ function loadDefaultMarkers(){
   V.occhielloP=V.occhielloP||V.occhiello;
   V.bottone=V.bottone||'GUARDA IL VIDEO';
   try{
-    if(!(Date.now() <= new Date(V.fino).getTime())) return;
+    // ⚠️ Due estremi, non uno: `da` (se c'e') e `fino`. Li valuta il browser a
+    // ogni apertura, quindi ne' l'accensione ne' lo spegnimento costano un
+    // deploy. Prima dell'ora di `da` si esce e resta la scheda «Iscriviti».
+    var _ora=Date.now();
+    if(V.da && _ora < new Date(V.da).getTime()) return;
+    if(!(_ora <= new Date(V.fino).getTime())) return;
 
     var ytPieno='<svg width="16" height="12" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#FF0000"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>';
 
@@ -9845,7 +10026,7 @@ function loadDefaultMarkers(){
         +'<div class="v-cop" style="background-image:url('+V.copertina+')"></div>'
         +'<div class="v-dx">'
           +'<div class="v-occhio">'+ytPieno+' '+V.occhiello+'</div>'
-          +'<div class="v-gancio'+(V.gancio2?'':' v-uno')+'"><b>'+V.gancio1+'</b>'+(V.gancio2?'<b>'+V.gancio2+'</b>':'')+'</div>'
+          +'<div class="v-gancio'+(V.gancio2?'':' v-uno')+'"'+(V.ganciopx?' style="font-size:'+V.ganciopx+'px"':'')+'><b>'+V.gancio1+'</b>'+(V.gancio2?'<b>'+V.gancio2+'</b>':'')+'</div>'
           +'<div class="v-canale"><img src="archie-avatar.png" alt="">'+V.canale+'</div>'
         +'</div></div>'
         +'<div class="v-btn">'+V.bottone+'</div>';
@@ -9895,7 +10076,7 @@ function loadDefaultMarkers(){
 </script>
 
 <style>
-/* Modo radar — in prova sul sito di test dal 31/8/2026 */
+/* Modo radar — in produzione dal 31/8/2026 */
 .rd-coppia{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .rd-coppia > *{margin:0 !important;width:auto !important}
 .rd-btn{text-align:center;cursor:pointer;position:relative;overflow:visible}
@@ -10113,17 +10294,24 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     cu.parentNode.insertBefore(riga,cu); riga.appendChild(cu);
     cu.innerHTML='<span class="rd-ic">\uD83D\uDCC5</span> Scegli date';
     var b=document.createElement('div');
-    /* ⚠️ IL NOME E' «DIRETTA RADAR» (31/8/2026, sua proposta).
-       MISURATO a 360 px, altezza del tasto contro i 54 px del gemello
-       «Scegli date»: «Radar meteo» 54, «Diretta radar» 54, ma
-       «Radar in diretta» 77 e «Radar meteo live» 77, cioe' vanno a capo
-       e fanno lo scalino che si nota subito. Restano quindi solo le
-       forme corte.
-       Fra le due si sceglie «Diretta radar» perche' messa accanto
-       all'altro tasto la coppia si legge «Scegli date | Diretta radar»:
-       il passato e l'adesso, che e' esattamente la differenza fra i due
-       modi. E dice «live» in italiano, che era la parola chiesta. */
-    b.className='tp-custom-btn rd-btn'; b.id='btn-radar'; b.innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Diretta radar';
+    /* ⚠️ IL NOME DICE «PIOGGIA», dal 5/9/2026, e il motivo e' un
+       fraintendimento vero: «radar» da solo fa aspettare le NUVOLE, e noi
+       mostriamo dove sta CADENDO l'acqua. Chi apre e vede le macchie
+       colorate deve gia' sapere cosa sono.
+       ⚠️ MISURATO a 360 px (l'altezza del tasto contro i 55 del gemello
+       «Scegli date»: se cresce a 77 il nome e' andato a capo e si vede lo
+       scalino). Su UNA riga ci stanno solo quattro nomi: «Diretta radar»,
+       «Radar pioggia», «Radar piogge» e «Pioggia ora». Vanno a capo
+       «Dove piove ora», «Pioggia adesso», «Piogge in diretta» e
+       «Radar delle piogge» — a 390 px alcune reggono, ma il tetto lo
+       detta il telefono piu' stretto.
+       Fra le quattro si tiene «Radar pioggia»: dice tutt'e due le cose
+       (che e' un radar e che si guarda l'acqua) e accanto all'altro tasto
+       la coppia resta leggibile, «Scegli date | Radar pioggia».
+       ⚠️ Il nome sta in DUE posti, qui e nel ripristino di `esci()`:
+       cambiarne uno solo lascia il tasto col nome vecchio dopo la prima
+       uscita dal radar. */
+    b.className='tp-custom-btn rd-btn'; b.id='btn-radar'; b.innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar pioggia';
     riga.appendChild(b);
     b.addEventListener('click',function(){ acceso?esci():entra(); });
     // ⚠️ Il tasto «Indietro» della legenda chiama hideLegendMobile(), che in
@@ -10264,7 +10452,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     if(!acceso) return;
     acceso=false; sorveglia(false); pulisci(); ultimoBuono=null; window._radarModo=null;
     document.body.classList.remove('modo-radar');
-    el('btn-radar').innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Diretta radar';
+    el('btn-radar').innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar pioggia';
     heat(true); pallini(true);
     /* ⚠️ USCENDO SI TORNA ALL'INQUADRATURA STANDARD DELLA REGIONE, non alla
        vista che c'era prima di entrare (cambiato il 31/8/2026 su sua
@@ -10416,8 +10604,13 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   function segna(id){
     [].forEach.call(document.querySelectorAll('.rd-d'),function(c){ c.classList.toggle('on', c.dataset.id===id); });
     var t=el('leg-title');
-    var tit={ora:'Radar · adesso', due:'Radar · ultime 2 ore',
-             prev:'Radar · prossimi 40 minuti'}[id];
+    /* ⚠️ «RADAR» DA SOLO NON BASTA (5/9/2026): chi legge «radar» si
+       aspetta le nuvole, e invece le macchie colorate sono la PIOGGIA che
+       cade. Il titolo del pannello e' l'unico posto sopra la scala dei
+       colori, quindi lo dice li' — e non costa un pixel, perche' la riga
+       c'era gia'. */
+    var tit={ora:'Radar pioggia · adesso', due:'Radar pioggia · ultime 2 ore',
+             prev:'Radar pioggia · prossimi 40 minuti'}[id];
     if(t){ if(t._vecchio==null) t._vecchio=t.textContent; t.textContent=tit; }
   }
 

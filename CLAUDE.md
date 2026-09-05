@@ -613,3 +613,51 @@ Spostare `data/slovenia` + collector + workflow + confine nel repo prod,
 `PILOT_DATA_BASE`, voce in `fonti.html` di produzione, `check-fonti.js` esteso
 (soglia generosa: col ritardo di 34h il file di ieri non esiste MAI, quindi la
 soglia va almeno a 4 giorni), e decidere se l'header diventa «… e Slovenia».
+
+## Allineamento a produzione del 5 settembre 2026
+
+Portato qui tutto il lavoro fatto in prod fra il **3 e il 5 settembre**: le 114
+zone non piu' orfane, temperatura e vento sulle pagine di paese, il **ritratto
+del pluviometro**, i vicini scritti nell'HTML, la **sitemap a indice** (quattro
+figlie), la vetrina del Butyriboletus regius e il tasto che dice **«Radar
+pioggia»** invece di «Diretta radar», anche sulle 1.085 pagine.
+
+**Come e' stato fatto, e perche' si puo' controllare.** Prima di copiare
+qualsiasi cosa e' stato letto **riga per riga** il diff dei due `index.html`:
+231 righe c'erano solo in prod e 77 solo qui, ma quelle 77 erano **tutte
+codice di produzione piu' vecchio** (le 35.000 analisi, la vetrina del video
+di agosto, «Diretta radar»), non lavoro nato qui. Le uniche due righe davvero
+di questo repo sono `og:image` e `twitter:image` col dominio del test. Quindi
+`index.html` e' stato preso da produzione e quelle due rimesse: **il diff
+adesso da' esattamente due righe**, ed e' il controllo da rifare ogni volta.
+Per i quattro generatori vale la stessa cosa con il blocco del dominio: un
+diff con prod deve dare **solo** quel blocco.
+
+⚠️ **IL RITRATTO SI COTTURA CON I DATI DI PRODUZIONE, non con i nostri.**
+E' la trappola nuova di questo allineamento. Dal 4/9 dentro le pagine di paese
+e di zona c'e' il ritratto del pluviometro (totale dell'archivio, giorno piu'
+bagnato, mese piu' piovoso), e lo calcola `lib-clima.js` leggendo la cartella
+`data/` **locale**. Qui dentro `data/` e' ferma a **meta' luglio** per quasi
+tutte le regioni, perche' i collector non girano: rigenerando alla cieca, le
+pagine avrebbero avuto un ritratto fermo al 16 luglio accanto ai grafici che,
+leggendo il raw di produzione, mostrano settembre. **La pagina si
+contraddirebbe da sola.** Le 1.104 pagine sono state quindi rigenerate con
+`lib-giorni.DATI` puntato all'archivio di prod, con un preload di node
+(`--require`) che **non tocca nessun file dei due repo**. Chi rigenera qui
+deve rifare la stessa cosa, se no il ritratto torna indietro di due mesi.
+
+**Controllo fatto**: ogni pagina generata e' stata confrontata byte a byte con
+la gemella di produzione dopo aver normalizzato il dominio. Identiche 23 su 23
+regione, 19 su 19 funghi, e le 5 sitemap. Le 243 pagine di paese e di zona che
+differiscono lo fanno **per un giorno solo di archivio in piu'** («in 46 giorni
+di misura» invece di 45): sono state cotte oggi pomeriggio, quelle di prod
+stamattina alle 9:11.
+
+**Cosa NON e' stato portato, di proposito**: il workflow
+`rinnova-pagine.yml`. Qui i cron dei collector non ci sono per scelta, e un
+cron trimestrale che riscrive le pagine spenderebbe crediti Netlify su una
+vetrina. Lo script `rinnova-pagine.js` invece c'e', e si lancia a mano.
+
+⚠️ Aggiunta anche `data/funghi/` **no**: le pagine la leggono da `/data/` solo
+su localhost, e pubblicate vanno al raw di produzione. In locale il ripiego lo
+fa il server di prova, non il repo.

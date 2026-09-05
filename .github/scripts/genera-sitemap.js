@@ -1,6 +1,14 @@
 #!/usr/bin/env node
 /**
- * Scrive `sitemap.xml`.
+ * Scrive `sitemap.xml` (un INDICE) e le quattro sitemap di famiglia.
+ *
+ * PERCHE' UN INDICE, dal 4/9/2026. Con 1.106 indirizzi in un file solo, il
+ * rapporto Pagine di Search Console li conta tutti insieme: non si vede se le
+ * 948 localita' entrano nell'indice e le 114 zone no, o viceversa. Diviso per
+ * famiglia, ognuna ha la sua riga con «scoperte / indicizzate / escluse», che
+ * e' il numero su cui si decide se una famiglia ha un problema. Non accelera
+ * niente da sola: serve a MISURARE. Il limite del formato e' 50.000 indirizzi
+ * per file, quindi non e' il peso il motivo.
  *
  * PERCHE' STA IN UN FILE SUO. Fino al 2/9/2026 la sitemap la scriveva
  * `genera-pagine-regione.js`, che era l'unico a fare pagine. Da quando ci sono
@@ -40,21 +48,30 @@ const path = require('path');
 
 const FUNGHI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
 
-// Le date di nascita, fisse. Home e fonti.html tengono le loro dall'8/8/2026,
-// quando la sitemap fu scritta a mano la prima volta.
-const NASCITA_REGIONI = '2026-08-14';
-const NASCITA_FUNGHI = '2026-09-02';
-const NASCITA_LOCALITA = '2026-09-02';
-const NASCITA_ZONE = '2026-09-03';
+// ⚠️ LE DATE STANNO IN `pagine-lastmod.json`, e sono l'ultima volta che il
+// GUSCIO di quella famiglia e' stato riscritto — non il giorno in cui arrivano
+// dati nuovi: i numeri li scarica il browser e l'HTML resta identico. Se ci si
+// mettesse la data di oggi a ogni giro, a Google risulterebbe un sito che
+// riscrive mille pagine ogni notte e smetterebbe di crederci.
+// Le aggiorna da solo `rinnova-pagine.js` (una volta a stagione), e si possono
+// cambiare a mano quando si tocca un modello.
+const LASTMOD = JSON.parse(fs.readFileSync(path.join(__dirname, 'pagine-lastmod.json'), 'utf8'));
+const NASCITA_REGIONI = LASTMOD.regioni;
+const NASCITA_FUNGHI = LASTMOD.funghi;
+const NASCITA_LOCALITA = LASTMOD.localita;
+const NASCITA_ZONE = LASTMOD.zone;
 
 function scriviSitemap(SITO, RADICE) {
   const { REGIONI } = require('./genera-pagine-regione.js');
   const c_e = rel => fs.existsSync(path.join(RADICE, rel));
 
-  const voci = [
-    { loc: SITO + '/', lastmod: '2026-08-14', freq: 'daily', pri: '1.0' },
-    { loc: SITO + '/fonti.html', lastmod: '2026-08-07', freq: 'monthly', pri: '0.5' },
-  ];
+  // Quattro famiglie, quattro file. La prima tiene anche la home e le fonti:
+  // sono due pagine, non meritano una sitemap loro.
+  const fam = { mappa: [], funghi: [], localita: [], zone: [] };
+  const voci = fam.mappa;
+
+  voci.push({ loc: SITO + '/', lastmod: '2026-08-14', freq: 'daily', pri: '1.0' });
+  voci.push({ loc: SITO + '/fonti.html', lastmod: '2026-08-07', freq: 'monthly', pri: '0.5' });
 
   for (const r of REGIONI) {
     if (c_e(path.join(r.k, 'index.html')))
@@ -66,7 +83,7 @@ function scriviSitemap(SITO, RADICE) {
   // piu' stretta.
   for (const k of Object.keys(FUNGHI)) {
     if (c_e(path.join('funghi', k, 'index.html')))
-      voci.push({ loc: `${SITO}/funghi/${k}/`, lastmod: NASCITA_FUNGHI, freq: 'weekly', pri: '0.7' });
+      fam.funghi.push({ loc: `${SITO}/funghi/${k}/`, lastmod: NASCITA_FUNGHI, freq: 'weekly', pri: '0.7' });
   }
 
   // Le pagine di LOCALITA', dal 2/9/2026. Si trovano guardando le cartelle,
@@ -80,7 +97,7 @@ function scriviSitemap(SITO, RADICE) {
     if (!fs.existsSync(base)) continue;
     for (const d of fs.readdirSync(base).sort()) {
       if (!c_e(path.join('funghi', k, d, 'index.html'))) continue;
-      voci.push({ loc: `${SITO}/funghi/${k}/${d}/`, lastmod: NASCITA_LOCALITA, freq: 'weekly', pri: '0.6' });
+      fam.localita.push({ loc: `${SITO}/funghi/${k}/${d}/`, lastmod: NASCITA_LOCALITA, freq: 'weekly', pri: '0.6' });
     }
   }
 
@@ -91,21 +108,41 @@ function scriviSitemap(SITO, RADICE) {
   if (fs.existsSync(zone)) {
     for (const d of fs.readdirSync(zone).sort()) {
       if (!c_e(path.join('funghi', 'zone', d, 'index.html'))) continue;
-      voci.push({ loc: SITO + '/funghi/zone/' + d + '/', lastmod: NASCITA_ZONE, freq: 'weekly', pri: '0.6' });
+      fam.zone.push({ loc: SITO + '/funghi/zone/' + d + '/', lastmod: NASCITA_ZONE, freq: 'weekly', pri: '0.6' });
     }
   }
 
   const voce = v => `  <url>\n    <loc>${v.loc}</loc>\n    <lastmod>${v.lastmod}</lastmod>\n` +
                     `    <changefreq>${v.freq}</changefreq>\n    <priority>${v.pri}</priority>\n  </url>`;
-  const testo = `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<!-- Generata da .github/scripts/genera-sitemap.js — non modificare a mano.\n` +
+  const INTESTA = `<!-- Generata da .github/scripts/genera-sitemap.js — non modificare a mano.\n` +
     `     lastmod = quando cambia la PAGINA, non quando arrivano dati nuovi: le\n` +
-    `     pagine sono gusci statici, i numeri li scarica il browser. -->\n` +
-    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-    voci.map(voce).join('\n') + `\n</urlset>\n`;
+    `     pagine sono gusci statici, i numeri li scarica il browser. -->`;
 
-  fs.writeFileSync(path.join(RADICE, 'sitemap.xml'), testo.replace(/\r\n/g, '\n'), 'utf8');
-  return voci.length;
+  // ⚠️ Le figlie si scrivono SOLO se hanno voci, e l'indice elenca solo quelle
+  // scritte: un repo che non ha ancora una famiglia (il test, quando una
+  // famiglia nasce in produzione) dichiarerebbe un file inesistente.
+  const NOMI = { mappa: 'sitemap-mappa.xml', funghi: 'sitemap-funghi.xml',
+                 localita: 'sitemap-localita.xml', zone: 'sitemap-zone.xml' };
+  const figlie = [];
+  let totale = 0;
+  for (const k of Object.keys(NOMI)) {
+    const v = fam[k];
+    if (!v.length) continue;
+    const testo = `<?xml version="1.0" encoding="UTF-8"?>\n${INTESTA}\n` +
+      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+      v.map(voce).join('\n') + `\n</urlset>\n`;
+    fs.writeFileSync(path.join(RADICE, NOMI[k]), testo.replace(/\r\n/g, '\n'), 'utf8');
+    figlie.push({ nome: NOMI[k], lastmod: v.map(x => x.lastmod).sort().slice(-1)[0] });
+    totale += v.length;
+  }
+
+  const indice = `<?xml version="1.0" encoding="UTF-8"?>\n${INTESTA}\n` +
+    `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+    figlie.map(f => `  <sitemap>\n    <loc>${SITO}/${f.nome}</loc>\n` +
+                    `    <lastmod>${f.lastmod}</lastmod>\n  </sitemap>`).join('\n') +
+    `\n</sitemapindex>\n`;
+  fs.writeFileSync(path.join(RADICE, 'sitemap.xml'), indice.replace(/\r\n/g, '\n'), 'utf8');
+  return totale;
 }
 
 module.exports = { scriviSitemap };

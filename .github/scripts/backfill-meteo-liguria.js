@@ -64,6 +64,13 @@ function oreCoperte(punti, w) {
   punti.forEach(p => { if (p[0] >= w.start && p[0] < w.end && p[1] != null) ore.add(Math.floor((p[0] - w.start) / 3600000)); });
   return ore.size;
 }
+function senzaZeriFinti(v) {
+  if (v.length < 3) return v;
+  const noZero = v.filter(x => x !== 0);
+  if (noZero.length === v.length || !noZero.length) return v;
+  return Math.min(...noZero) > 5 ? noZero : v;
+}
+
 function valoriIn(punti, w, lo, hi) {
   return punti.filter(p => p[0] >= w.start && p[0] < w.end && p[1] != null && p[1] >= lo && p[1] <= hi).map(p => p[1]);
 }
@@ -95,7 +102,12 @@ async function main() {
       const med = (ds[0] && ds[0].data) || [], mn = (ds[1] && ds[1].data) || [], mx = (ds[2] && ds[2].data) || [];
       finestre.forEach(({ g, w }) => {
         if (oreCoperte(med, w) < MIN_ORE) return;
-        const mins = valoriIn(mn.length ? mn : med, w, -45, 50);
+        // ⚠️ Stessa regola del collector: lo zero esatto e' un buco, non una
+        //    temperatura, quando la lettura piu' bassa vera sta sopra i 5 °C.
+        //    Vedi il commento lungo in collect-liguria.js: le due copie devono
+        //    restare uguali, se no il ripristino rimette gli zeri che il
+        //    collector toglie.
+        const mins = senzaZeriFinti(valoriIn(mn.length ? mn : med, w, -45, 50));
         const maxs = valoriIn(mx.length ? mx : med, w, -45, 50);
         if (!mins.length || !maxs.length) return;
         (meteo[g][s.shortCode] = meteo[g][s.shortCode] || {}).t =

@@ -78,6 +78,35 @@ function valoriIn(punti, startMs, endMs, lo, hi) {
               .map(function(p) { return p[1]; });
 }
 
+/* ⚠️ LO ZERO NON E' UNA TEMPERATURA, E' UN BUCO (3/9/2026).
+   Sette stazioni liguri davano minima 0,0 °C ad agosto a 700-1.100 m:
+   Brugneto Diga, Rovegno, Barbagelata, Cabanne, S. Stefano d'Aveto,
+   Torriglia e Alpe Gorreto. Sono le stesse stazioni che ARPAE ospita nel
+   suo feed, e li' la minima e' giusta (14,4 · 14,6 · 17,4 …), col MASSIMO
+   identico al decimale: quindi non e' il sensore, e' come OMIRL le pubblica.
+   Misurato sul grezzo: una stazione sana espone TRE serie (media, minima,
+   massima), queste ne espongono UNA sola, e dentro ha due valori 0,0 esatti
+   su 1.437. Il collector cadeva giustamente sul ripiego della media, ma poi
+   il Math.min pescava quello zero.
+   Il filtro di sanita' -45..50 non lo prendeva: 0 e' un valore legittimo
+   d'inverno. Quindi si buttano gli zeri ESATTI solo quando il resto della
+   giornata sta bene sopra lo zero, che e' l'unico caso in cui uno zero non
+   puo' essere vero. E' la stessa lezione dell'Emilia e di Alpe Gorreto:
+   «assente non e' zero».
+   ⚠️ IL METRO E' IL VALORE PIU' BASSO VERO, NON LA MEDIANA. Con la mediana
+   una giornata di primavera (0 di notte, 7 a mezzogiorno) perdeva lo zero
+   buono. Con questo invece si butta lo zero solo se la lettura piu' bassa
+   che NON e' zero sta sopra i 5 °C: a mezz'ora di distanza la temperatura
+   non scende di quindici gradi e non risale, quindi li' lo zero e' un buco.
+   Se la giornata sfiora davvero lo zero, la lettura piu' bassa vera sara'
+   0,3 o 1,2 e non si tocca niente. */
+function senzaZeriFinti(v) {
+  if (v.length < 3) return v;
+  var noZero = v.filter(function(x) { return x !== 0; });
+  if (noZero.length === v.length || !noZero.length) return v;
+  return Math.min.apply(null, noZero) > 5 ? noZero : v;
+}
+
 /** Aggiunge t/w ai record del giorno (byId: shortCode → record del file). */
 async function aggiungiMeteoLiguria(byId, dayStartMs, dayEndMs) {
   var termo = await fetchWithRetry(OMIRL_BASE + '/stations/Termo');
@@ -96,7 +125,7 @@ async function aggiungiMeteoLiguria(byId, dayStartMs, dayEndMs) {
         // serie 0 = media 30', 1 = minima, 2 = massima
         var med = (ds[0] && ds[0].data) || [], mn = (ds[1] && ds[1].data) || [], mx = (ds[2] && ds[2].data) || [];
         if (oreCoperte(med, dayStartMs, dayEndMs) < MIN_ORE_METEO) return null;
-        var mins = valoriIn(mn.length ? mn : med, dayStartMs, dayEndMs, -45, 50);
+        var mins = senzaZeriFinti(valoriIn(mn.length ? mn : med, dayStartMs, dayEndMs, -45, 50));
         var maxs = valoriIn(mx.length ? mx : med, dayStartMs, dayEndMs, -45, 50);
         if (!mins.length || !maxs.length) return null;
         return { code: code, t: [Math.round(Math.min.apply(null, mins) * 10) / 10,
@@ -180,12 +209,28 @@ async function main() {
       var url = OMIRL_BASE + '/charts/' + s.shortCode + '/Pluvio';
       return fetchWithRetry(url).then(function(chart) {
         var hourly = (chart.dataSeries && chart.dataSeries[0] && chart.dataSeries[0].data) || [];
-        var mm = 0;
+        var mm = 0, ore = 0;
         hourly.forEach(function(p) {
-          if (p[0] >= dayStartMs && p[0] < dayEndMs && p[1] > 0) {
-            mm += p[1];
-          }
+          if (p[0] < dayStartMs || p[0] >= dayEndMs) return;
+          if (p[1] === null || p[1] === undefined) return;   // ora non misurata
+          ore++;
+          if (p[1] > 0) mm += p[1];
         });
+        // ⚠️ ASSENTE NON E' ZERO (25/8/2026). Prima una serie vuota dava
+        // mm = 0 come una serie di zeri veri, e le due cose non si
+        // distinguevano: se OMIRL fosse rimasta muta, il file sarebbe uscito
+        // con 199 stazioni asciutte nel giorno della pioggia. E' esattamente
+        // il bug dell'Emilia del 21/8 (169 stazioni a zero nel giorno del
+        // diluvio), stessa trappola su un'altra rete.
+        // OMIRL non usa mai `null`: quando una stazione non misura, la serie
+        // semplicemente non ha punti in quelle ore (verificato su 25 stazioni
+        // il 25/8: 1.345 punti a zero, 80 con pioggia, zero null). Quindi il
+        // segnale giusto e' il NUMERO DI ORE PRESENTI nella finestra del
+        // giorno: se sono zero, la stazione si salta come una fallita.
+        // Con la rete muta nessuna stazione arriva in fondo, output resta
+        // sotto le 10 e lo script esce senza salvare: il file del giro
+        // precedente resta intatto.
+        if (ore === 0) return null;
         return { station: s, mm: Math.round(mm * 10) / 10 };
       }).catch(function() {
         return null;
@@ -231,6 +276,30 @@ async function main() {
 
   // Step 4: salva
   var outFile = path.join(DATA_DIR, yesterdayDate + '.json');
+
+  // ⚠️ SI FONDE COL FILE GIA' SCRITTO. Questo collector gira SEI volte al
+  // giorno (ogni 4 ore) e riscrive il file da zero. Da quando le stazioni
+  // assenti si saltano invece di valere zero, senza questo passaggio una
+  // stazione che a QUESTO giro non risponde perderebbe il valore che un giro
+  // precedente aveva gia' raccolto — si sarebbe tappato un buco aprendone un
+  // altro. Si tiene il record vecchio solo per le stazioni che ora mancano:
+  // quelle che rispondono vengono sempre riscritte col dato fresco, perche'
+  // durante la giornata il totale cresce di ora in ora.
+  var tenuti = 0;
+  if (fs.existsSync(outFile)) {
+    try {
+      var vecchio = JSON.parse(fs.readFileSync(outFile, 'utf8'));
+      var presenti = {};
+      output.forEach(function(s) { presenti[s.id] = true; });
+      (vecchio.stations || []).forEach(function(s) {
+        if (s && s.id && !presenti[s.id]) { output.push(s); tenuti++; }
+      });
+    } catch (e) {
+      console.warn('  Warn: file precedente illeggibile, si riscrive da capo');
+    }
+  }
+  if (tenuti) console.log('  Tenute dal giro precedente (ora assenti in OMIRL): ' + tenuti);
+
   fs.writeFileSync(outFile, JSON.stringify({
     date:      yesterdayDate,
     collected: new Date().toISOString(),

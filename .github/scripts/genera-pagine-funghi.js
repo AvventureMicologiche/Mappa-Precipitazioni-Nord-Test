@@ -38,10 +38,14 @@
 const fs = require('fs');
 const path = require('path');
 const { REGIONI, navAltre } = require('./genera-pagine-regione.js');
-const { LOCALITA, bello, slugRegione } = require('./lib-nomi.js');
+const { LOCALITA, bello, slug, slugRegione } = require('./lib-nomi.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
+// Le zone, per non lasciarle orfane: fino al 3/9/2026 le 114 pagine di zona
+// non le linkava NESSUNO e le trovava solo la sitemap. E' lo stesso errore
+// delle 42 pagine di agosto, ripetuto identico.
+const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
 const RADICE = path.resolve(__dirname, '..', '..');
 // ⚠️ UNICA RIGA DIVERSA DA PRODUZIONE: il dominio. Tutto il resto,
 // l'indirizzo dei dati compreso, deve restare IDENTICO — anche qui i numeri si
@@ -179,6 +183,18 @@ td.ultima{font-size:14px;color:#42506a;white-space:nowrap;}
 .nota{color:#6a7789;font-size:14.5px;margin-top:10px;}
 .avviso{background:#fff6e5;border:1px solid #f0d9a8;border-radius:8px;padding:12px 15px;font-size:15px;margin:24px 0 0;}
 .avviso b{color:var(--blu-scuro);}
+/* ⚠️ IL PIE' DI PAGINA NON AVEVA NESSUNA REGOLA (corretto il 3/9/2026). Il
+   tag <footer> c'era su tutte e tre le famiglie di pagine, ma niente lo
+   nominava: il browser lo disegnava a modo suo, tutto a sinistra, senza
+   riga di separazione e coi link viola da «gia' visitato». Sono le stesse
+   regole che le pagine regione hanno da sempre.
+   ⚠️ Questo foglio di stile lo COPIANO anche le pagine di paese e di zona
+   (lo leggono da qui, vedi genera-pagine-localita.js): una regola scritta
+   qui vale per tutte e 1.081. */
+footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;
+  font-size:14px;color:#555;text-align:center;}
+footer a{color:var(--blu);}
+footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .vai-mappa{display:block;text-align:center;color:#fff;font-size:19px;font-weight:700;
   padding:15px 18px 17px;border-radius:10px;margin:14px 0 4px;border:1px solid #12365c;
   background:linear-gradient(180deg,#2a5a91 0%,#1b3f6e 48%,#153558 100%);
@@ -283,14 +299,31 @@ caduta. Ogni pallino è un pluviometro: cliccalo e vedi il suo storico.</p>
 bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</p>
 
 ${LOCALITA.includes(r.k) ? `
-<h2 style="margin-top:30px">Tutti i posti da bosco ${gen}</h2>
-<p class="nota">Ognuno ha la sua pagina, con la pioggia giorno per giorno e i pluviometri vicini.</p>
+${/* ⚠️ Il titolo dice «quanto ha piovuto» perche' sono le parole con cui la
+     gente cerca davvero («quanto ha piovuto a Imperia»), e questa e' una
+     intestazione che Google legge. Prima diceva «Tutti i posti da bosco»:
+     giusto ma muto, senza la parola pioggia e senza un verbo. Il criterio
+     del bosco resta spiegato piu' sotto, dove si racconta come scegliamo. */''}
+<h2 style="margin-top:30px">Quanto ha piovuto? Trova la località più vicina</h2>
+<p class="nota">Ogni posto ha la sua pagina, con la pioggia giorno per giorno e i
+pluviometri vicini. Sono i pluviometri in mezzo al bosco ${gen}.</p>
 <nav class="altre"><p>${(function(){
   const sl = slugRegione(posti);
   return posti.map(p => [bello(p[1]), sl[p[0]]])
     .sort((a, b) => a[0].localeCompare(b[0], 'it'))
     .map(([n, s]) => `<a href="${SITO}/funghi/${r.k}/${s}/">${n}</a>`).join(' · ');
 }())}</p></nav>` : ''}
+
+${(function(){
+  const zz = ZONE.filter(z => z.reg === r.k).sort((a, b) => a.n.localeCompare(b.n, 'it'));
+  if (!zz.length) return '';
+  return `
+<h2 style="margin-top:30px">Le valli e le zone ${gen}</h2>
+<p class="nota">Una zona mette insieme i pluviometri di tutta la valle: comoda quando
+il posto preciso non l'hai ancora scelto.</p>
+<nav class="altre"><p>` + zz.map(z =>
+  `<a href="${SITO}/funghi/zone/${slug(z.n)}/">${z.n}</a>`).join(' · ') + `</p></nav>`;
+}())}
 
 <h2 style="margin-top:30px">Tutta la pioggia ${r.prep} ${nome}</h2>
 <p>Questa pagina guarda solo i pluviometri in mezzo al bosco. Per la regione intera, pianura compresa, c'è <a href="${SITO}/${r.k}/">dove ha piovuto ${r.prep} ${nome}</a>: ${r.staz} pluviometri di ${r.agenzia}.</p>

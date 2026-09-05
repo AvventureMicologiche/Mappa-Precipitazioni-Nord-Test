@@ -8,7 +8,7 @@
  * TEMPERATURA E VENTO (dall'11/8/2026 — grafici stazione):
  * valley.json ha solo il valore ISTANTANEO, quindi min/max/media giornalieri
  * si calcolano dalle timeseries a 10 minuti dell'Open Data provinciale
- * (daten.buergernetz.bz.it/services/meteo/v1/timeseries — interrogabile
+ * (geoservices.buergernetz.bz.it/services/meteo/v1/timeseries — interrogabile
  * anche sui giorni passati, timestamp in ora locale CEST/CET):
  *   LT     → temperatura → t: [min, max] °C
  *   WG     → vento medio (m/s ×3,6)  ┐
@@ -64,7 +64,7 @@ function fetchJSON(url) {
 }
 
 // ── Temperatura e vento dalle timeseries a 10 minuti ─────────────────
-const TS_URL = 'https://daten.buergernetz.bz.it/services/meteo/v1/timeseries';
+const TS_URL = 'https://geoservices.buergernetz.bz.it/services/meteo/v1/timeseries';
 const MIN_ORE_METEO = 20;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 

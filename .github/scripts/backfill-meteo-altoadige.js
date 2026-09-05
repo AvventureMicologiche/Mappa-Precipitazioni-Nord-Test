@@ -14,7 +14,7 @@ const fs    = require('fs');
 const path  = require('path');
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'altoadige');
-const TS_URL   = 'https://daten.buergernetz.bz.it/services/meteo/v1/timeseries';
+const TS_URL   = 'https://geoservices.buergernetz.bz.it/services/meteo/v1/timeseries';
 const MIN_ORE  = 20;
 const GIORNI   = parseInt(process.env.GIORNI || '45', 10);
 const PASSO    = 15; // giorni per richiesta (finestre corte, risposte leggere)
