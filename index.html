@@ -1386,14 +1386,15 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      regioni la riga delle fonti («ARPA Liguria + OASI Ticino +
      MeteoSvizzera + ARPA Piemonte») usciva dallo schermo tagliata.
      Difetto vecchio, ma il multiregione la fa vedere spesso. */
-  /* ⚠️ `width:max-content` CI VUOLE, se no si stringe a meta' schermo:
-     la targhetta e' `left:50%` con la traslazione, quindi lo spazio che il
-     browser considera disponibile e' solo la meta' destra (180 px su 360),
-     e con tre fonti andava su TRE righe pur restando dentro i bordi. Cosi'
-     invece cresce fino a tutta la larghezza e va a capo solo se serve. */
+  /* ⚠️ UNA RIGA SOLA, MAI DUE: due righe coprono troppa mappa. Le fonti
+     che non ci stanno le toglie `accorciaFonti()` da destra, lasciando
+     un «…». `width:max-content` ci vuole lo stesso: la targhetta e'
+     `left:50%` con la traslazione, e senza quello il browser le da' per
+     disponibile la sola meta' destra (180 px su 360). E `overflow:hidden`
+     serve a misurare se sfora (scrollWidth contro clientWidth). */
   .fonte-tag{bottom:auto;top:66px;font-size:10px;background:rgba(255,255,255,.92);
-    white-space:normal;width:max-content;max-width:calc(100% - 16px);
-    text-align:center;line-height:1.3;}
+    white-space:nowrap;width:max-content;max-width:calc(100% - 16px);
+    overflow:hidden;text-align:center;}
 }
 
 /* ── AGGIUNGI LA CONFINANTE (6/9/2026, solo test) ─────────────────── */
@@ -1414,7 +1415,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     font-family:inherit;}
   .vic-chip.on{background:#1b3f6e;border-color:#1b3f6e;color:#fff;}
   .vic-chip.altre{background:#eef2f8;border-color:#c3cfe2;}
-  .vic-nota{flex:0 0 auto;font-size:12.5px;color:#4f6480;font-weight:700;
+  /* Larghe uguali: a parita' di larghezza il testo sta piu' stretto,
+     quindi carattere e imbottitura calano un filo. Si mette solo dopo
+     aver controllato che i nomi ci stiano ancora tutti. */
+  .vic-chip.pari{font-size:13px;padding:8px 6px;text-align:center;
+    overflow:hidden;}
+  .vic-nota{flex:0 0 auto;font-size:14px;color:#3f5470;font-weight:700;
     white-space:nowrap;padding-left:2px;}
   #vic-altre{display:none;position:fixed;z-index:2200;background:#fff;
     border:1px solid #cfd8ea;border-radius:12px;padding:5px;
@@ -1427,14 +1433,19 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   #vic-altre button+button{border-top:1px solid #eef2f8;}
   #vic-velo{display:none;position:fixed;inset:0;z-index:2150;}
   #vic-velo.c{display:block;}
-  #naz-riga{display:flex;flex-wrap:wrap;gap:6px;padding:0 0 9px;}
+  /* ⚠️ UNA RIGA SOLA. Con i nomi per esteso cinque pastiglie non ci
+     stanno in 346 px e la Francia andava a capo da sola. Con bandierina
+     e sigla ci stanno, e restano bersagli larghi perche' si dividono
+     tutta la riga in parti uguali. */
+  #naz-riga{display:flex;flex-wrap:nowrap;gap:5px;padding:0 0 9px;}
   /* La tendina ha il fondo BLU SCURO, quindi qui i colori vanno al
      contrario delle pastiglie sulla barra: se no la pastiglia accesa era
      blu su blu e spariva, e le spente sembravano tutte scelte. */
-  .naz-chip{flex:0 0 auto;border:1px solid rgba(255,255,255,.45);
+  .naz-chip{flex:1 1 0;min-width:0;border:1px solid rgba(255,255,255,.45);
     background:transparent;color:#fff;font-size:14px;font-weight:700;
-    padding:8px 13px;border-radius:18px;line-height:1;white-space:nowrap;
-    cursor:pointer;font-family:inherit;}
+    padding:9px 4px;border-radius:18px;line-height:1;white-space:nowrap;
+    cursor:pointer;font-family:inherit;text-align:center;
+    overflow:hidden;}
   .naz-chip.on{background:#fff;border-color:#fff;color:#1b3f6e;}
 }
 </style>
@@ -11117,18 +11128,29 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
         b2.onclick=function(ev){ ev.stopPropagation(); apriAltre(tutti.slice(quante)); };
         riga.appendChild(b2);
       }
-      /* ⚠️ QUELLO CHE AVANZA NON LO DEVE PRENDERE IL VUOTO. Il posto per una
-         pastiglia in piu' non c'e' quasi mai, e quel che resta lasciava un
-         buco a destra (visto in Lombardia: due pastiglie corte e mezza riga
-         vuota). Se lo dividono le pastiglie da aggiungere, che diventano
-         anche bersagli piu' grandi per il dito. Le «✕» e «altre» no: quelle
-         restano della loro misura, se no la riga sembra un altro affare. */
-      var totale=0;
-      [].slice.call(riga.children).forEach(function(c){ totale+=c.offsetWidth+6; });
-      var avanza=riga.clientWidth-4-totale;
-      var crescono=[].slice.call(riga.querySelectorAll('.vic-chip:not(.on):not(.altre)'));
-      if(avanza>8 && crescono.length){
-        crescono.forEach(function(c){ c.style.flexGrow='1'; });
+      /* ⚠️ TUTTE LARGHE UGUALI, «altre» compreso: la riga si riempie e i
+         bersagli diventano tutti della stessa misura. Le larghezze si
+         calcolano e si scrivono a mano, perche' `flex:1` da sole restano
+         proporzionali ai nomi. Le «✕» no: quelle tengono la loro misura.
+         ⚠️ POI SI CONTROLLA CHE IL TESTO CI STIA ANCORA. A 360 px un terzo
+         di riga fa 111 px e «＋ Piemonte» ne vuole 125: per questo la
+         classe `pari` stringe carattere e imbottitura. Se anche cosi' non
+         basta si torna alle larghezze naturali, che e' sempre meglio di un
+         nome tagliato a meta'. */
+      var pari=[].slice.call(riga.querySelectorAll('.vic-chip:not(.on)'));
+      var croci=0;
+      [].slice.call(riga.querySelectorAll('.vic-chip.on')).forEach(function(c){
+        croci+=c.offsetWidth+6;
+      });
+      if(pari.length){
+        var largo=Math.floor((riga.clientWidth-4-croci-6*pari.length)/pari.length);
+        if(largo>40){
+          pari.forEach(function(c){ c.classList.add('pari'); c.style.width=largo+'px'; });
+          var stretto=pari.some(function(c){ return c.scrollWidth>c.clientWidth+1; });
+          if(stretto) pari.forEach(function(c){
+            c.classList.remove('pari'); c.style.width=''; c.style.flexGrow='1';
+          });
+        }
       }
     }
     etichetta();
@@ -11178,11 +11200,14 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
    chiusura della tendina e scelta della regione restano quelli del sito. */
 (function(){
   var NAZ=[
-    {k:'italia',    t:'Italia'},
-    {k:'svizzera',  t:'Svizzera'},
-    {k:'austria',   t:'Austria'},
-    {k:'slovenia',  t:'Slovenia'},
-    {k:'__francia', t:'Francia'}
+    /* Bandierina piu' sigla. Su Windows la bandierina non c'e' e si
+       vedono le due lettere regionali (cioe' «IT IT»): sul telefono,
+       che e' dove questa tendina si usa, si vede la bandiera. */
+    {k:'italia',    t:'\ud83c\uddee\ud83c\uddf9 IT'},
+    {k:'svizzera',  t:'\ud83c\udde8\ud83c\udded CH'},
+    {k:'austria',   t:'\ud83c\udde6\ud83c\uddf9 AT'},
+    {k:'slovenia',  t:'\ud83c\uddf8\ud83c\uddee SI'},
+    {k:'__francia', t:'\ud83c\uddeb\ud83c\uddf7 FR'}
   ];
   // Le righe che ora hanno una pastiglia: si nascondono, non si tolgono.
   var COPERTE=['austria','slovenia','svizzera','__francia','__indietro'];
@@ -11227,6 +11252,47 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       .observe(l,{childList:true});
     copri();
   })();
+})();
+</script>
+<script>
+/* ── LE FONTI STANNO SU UNA RIGA (6/9/2026, solo sito di test) ─────────
+   Con tre regioni la riga delle fonti e' lunga il doppio dello schermo.
+   Andare a capo copriva troppa mappa, quindi si tolgono le fonti da destra
+   finche' la riga non ci sta e si lascia un «…»: cosi' si vede che ne
+   manca qualcuna invece di credere che siano tutte li'. L'elenco completo
+   resta sulla pagina delle fonti. */
+(function(){
+  var tag=document.getElementById('fonte-tag'); if(!tag) return;
+  var tutto='', mio='';
+  function accorcia(){
+    if(!tutto) return;
+    if(innerWidth>600){ scrivi(tutto); return; }   // sul computer sta in basso e ci sta
+    scrivi(tutto);
+    if(tag.scrollWidth<=tag.clientWidth+1) return;
+    /* ⚠️ NON SI SPEZZA SU OGNI « + ». La Svizzera e' «OASI Ticino +
+       MeteoSvizzera», cioe' UNA fonte con un piu' dentro: tagliando li'
+       restava «OASI Ticino» senza MeteoSvizzera, che e' la principale.
+       Ogni blocco comincia con la sua emoji di stato (verde dati veri,
+       mappamondo stime), quindi si spezza solo davanti a un carattere che
+       non e' una lettera. */
+    var pezzi=tutto.replace(/^Fonte: /,'').split(/ \+ (?=[^A-Za-z])/);
+    while(pezzi.length>1){
+      pezzi.pop();
+      scrivi('Fonte: '+pezzi.join(' + ')+' + \u2026');
+      if(tag.scrollWidth<=tag.clientWidth+1) return;
+    }
+  }
+  function scrivi(t){ mio=t; tag.textContent=t; }
+  /* Il testo lo scrive il sito a ogni analisi. Si guarda quando cambia, e
+     si sta attenti a non rincorrere le proprie scritture: il confronto con
+     `mio` basta, perche' la sentinella arriva sempre dopo. */
+  new MutationObserver(function(){
+    var t=tag.textContent;
+    if(t===mio) return;
+    tutto=t;
+    accorcia();
+  }).observe(tag,{childList:true,characterData:true,subtree:true});
+  window.addEventListener('resize', function(){ setTimeout(accorcia,120); });
 })();
 </script>
 </body>
