@@ -387,7 +387,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    Stessa tavolozza dei pannelli (blu #1b3f6e, fondo #f0f4fb, bordo #d0d8e8):
    la casella deve sembrare parte del pannello, non un pezzo appiccicato. */
 /* Su DESKTOP la casella sta in alto a DESTRA, appoggiata sopra il pannello
-   «Iscriviti» e allineata a lui (right:14px, width:368px): formano una colonna
+   «Iscriviti» e allineata a lui (right:14px, width:414px): formano una colonna
    sola. Il primo giro l'aveva messa in alto a sinistra, di fianco ai tasti
    dello zoom, ma quel lato è già la colonna del lavoro — hint, periodo,
    legenda — e la casella ci finiva in mezzo. A destra sopra c'era il vuoto. */
@@ -396,7 +396,9 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    della localita' (che stava gia' qui) e «La mia posizione». Le coordinate
    assolute sono passate dalla casella alla CORNICE, ed e' la cornice che
    trasloca dentro la tendina sotto i 900px. */
-#novita-box{position:absolute;top:52px;right:14px;width:368px;z-index:1001;box-sizing:border-box;
+/* ⚠️ Larga quanto la scheda qui sotto (414 px dal 6/9/2026): le due formano
+   una colonna sola, e se una delle due cambia larghezza si sfalsano. */
+#novita-box{position:absolute;top:52px;right:14px;width:414px;z-index:1001;box-sizing:border-box;
   background:rgba(255,255,255,.96);border:1px solid #378ADD;border-radius:10px;
   padding:8px 9px 9px;box-shadow:0 2px 10px rgba(0,0,0,.13);}
 #novita-testa{display:flex;align-items:center;margin-bottom:7px;}
@@ -773,7 +775,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 #channel-logo{
   position:absolute;top:100px;right:14px;z-index:1000;
   display:block;
-  width:368px;padding:12px 13px 13px;
+  width:414px;padding:12px 13px 13px;
   background:rgba(255,255,255,.92);
   border:1px solid rgba(226,224,216,.85);
   border-radius:13px;
@@ -792,8 +794,12 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   100%{transform:scale(1);}
 }
 #channel-logo:hover .ch-ava{animation:archieTada .85s ease;}
+/* ⚠️ LA FACCIA E' DA 104 DAL 6/9/2026, e non e' un vezzo: allargando la
+   scheda a 414 la colonna del nome e' cresciuta di 46 px e quelli sono
+   diventati aria. Con la faccia da 104 la colonna torna a 268 e il blocco
+   e' pieno. */
 #channel-logo .ch-ava{
-  width:80px;height:80px;border-radius:50%;flex:none;
+  width:104px;height:104px;border-radius:50%;flex:none;
   border:2px solid #1b3f6e;object-fit:cover;background:#f3efe6;
 }
 /* Le righe che esistono solo nella scheda «Iscriviti». La classe `v-iscr` sta
@@ -803,14 +809,22 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    piccole e distanziate lasciava un buco bianco in mezzo alla scheda. */
 #channel-logo .v-alto.v-iscr{align-items:center;}
 #channel-logo .v-occhio.v-iscr{font-size:12px;margin-bottom:3px;}
+/* ⚠️ QUESTA MISURA NON COMANDA: piu' sotto c'e' un'altra regola sul
+   nome, e in CSS vince l'ultima. Il corpo vero si cambia li'. */
 #channel-logo .v-nome{font-size:23px;line-height:1.02;color:#1b3f6e;letter-spacing:-.3px;
   font-family:'Segoe UI Black','Arial Black','Segoe UI',Arial,sans-serif;font-weight:900;}
-#channel-logo .v-sotto{font-size:13px;font-weight:600;color:#3f5a7a;margin-top:4px;line-height:1.15;}
-/* ⚠️ 21 E NON 23 (31/8/2026). A 23 px «Avventure Micologiche» NON ci sta nella
-   colonna accanto ad Archie e va a capo in «Avventure» / «Micologiche»: era cosi'
-   da sempre. Misurato: la colonna e' larga 249 px, a 23 px il nome ne chiede di
-   piu', a 21 ci sta su UNA riga. Archie resta 80 px. */
-#channel-logo .v-nome{font-size:21px;}
+#channel-logo .v-sotto{font-size:13.5px;font-weight:600;color:#3f5a7a;margin-top:4px;line-height:1.15;}
+/* ⚠️ LA REGOLA CHE COMANDA sul nome del canale: e' l'ultima, quindi vince
+   su quella scritta piu' in alto.
+   ~~21 e non 23 (31/8/2026)~~ — 21 era giusto quando la colonna era larga
+   249 px. Dal 6/9/2026 la scheda e' 414 e la faccia 104, la colonna e'
+   diventata 268, e a 23 px il nome ne chiede 256,3: ci sta con 11,7 px di
+   margine, su UNA riga.
+   ⚠️ NON si sale a 24: ne chiede 267,7 su 268, restano 0,3 px, e i
+   caratteri resi altrove escono un filo piu' larghi.
+   ⚠️ Sotto i 900 px la scheda torna a 368 e la faccia a 80: li' la colonna
+   e' di nuovo 249 e il nome torna a 21, nel blocco @media piu' sotto. */
+#channel-logo .v-nome{font-size:23px;}
 /* Il ringraziamento sta SOTTO, a tutta larghezza: nella colonna stretta
    andrebbe a capo quattro volte e la scheda diventerebbe una colonna
    sbilenca. ⚠️ Quando parte la vetrina l'innerHTML di #channel-logo viene
@@ -818,7 +832,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    cambia di un pixel. */
 #channel-logo .v-grazie{margin-top:9px;padding-top:9px;
   border-top:1px solid rgba(27,63,110,.14);
-  font-size:13px;line-height:1.35;color:#3f5a7a;font-weight:600;}
+  font-size:14.5px;line-height:1.4;color:#3f5a7a;font-weight:600;}
 #channel-logo .v-grazie b{color:#1b3f6e;font-weight:800;}
 #channel-logo .v-btn.v-iscr{font-size:17px;margin-top:9px;padding:9px 0 10px;
   font-family:'Segoe UI Black','Arial Black','Segoe UI',Arial,sans-serif;}
@@ -907,8 +921,29 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    la scheda in tutte e due le versioni, video e «Iscriviti». */
 #channel-logo.nascosta{display:none;}
 #channel-logo .v-alto{display:flex;gap:11px;align-items:stretch;}
-#channel-logo .v-cop{width:130px;height:73px;flex:none;border-radius:7px;
+/* ⚠️ LA COPERTINA E LA LARGHEZZA DELLA SCHEDA SI MUOVONO INSIEME (6/9/2026).
+   La colonna del testo qui accanto e' `flex:1`, cioe' si prende quello che
+   avanza: allargando solo la copertina si sarebbe mangiata il testo, e i
+   `ganciopx` delle vetrine sono tutti misurati sui suoi 199 px. Allargando
+   invece anche `#channel-logo` della stessa quantita', la colonna resta
+   199 e non si tocca nessun titolo. Se un giorno si cambia una di queste
+   due misure, va cambiata anche l'altra, e con loro `#novita-box`. */
+#channel-logo .v-cop{width:176px;height:99px;flex:none;border-radius:7px;
   background:#e8e5dc center/cover no-repeat;box-shadow:0 1px 5px rgba(0,0,0,.28);}
+/* ⚠️ SOTTO I 900 px LA SCHEDA TORNA ALLA MISURA VECCHIA. MISURATO a 734 px:
+   il pannello del periodo arriva a 328 e la scheda larga 414 parte da 192,
+   cioe' se ne fa coprire 136 px invece dei 90 di prima. La copertina grande
+   e' un lusso da schermo largo: sotto i 600 la scheda non si vede proprio,
+   e in mezzo si tiene quella che non da' fastidio. */
+@media (max-width:900px){
+  #channel-logo{width:368px;}
+  #channel-logo .v-cop{width:130px;height:73px;}
+  /* Con la scheda stretta torna stretta anche la scheda del canale: con la
+     faccia da 104 la colonna del nome scende a 227 px e «Avventure
+     Micologiche» va a capo. Misurato a 800 px. */
+  #channel-logo .ch-ava{width:80px;height:80px;}
+  #channel-logo .v-nome{font-size:21px;}
+}
 #channel-logo .v-dx{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between;}
 #channel-logo .v-occhio{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;
   letter-spacing:.8px;color:#FF0000;text-transform:uppercase;}
@@ -1350,6 +1385,38 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   .fonte-tag{bottom:auto;top:66px;font-size:10px;background:rgba(255,255,255,.92);}
 }
 
+/* ── AGGIUNGI LA CONFINANTE (6/9/2026, solo test) ─────────────────── */
+/* Sul computer non si vede: li' ci sono le caselle da spuntare. */
+#vic-riga{display:none;}
+@media(max-width:900px){
+  /* ⚠️ SENZA min-width:0 LA RIGA NON TAGLIA E QUINDI NON SCORRE: dentro un
+     contenitore flex un elemento non scende sotto la larghezza del proprio
+     contenuto (misurato: 1077 px di riga su uno schermo da 375). */
+  #region-panel .tp-content{min-width:0;}
+  #vic-riga.c{display:flex;gap:6px;align-items:center;overflow-x:auto;
+    padding:7px 2px 1px;margin:0;scrollbar-width:none;
+    width:100%;max-width:100%;min-width:0;box-sizing:border-box;}
+  #vic-riga.c::-webkit-scrollbar{display:none;}
+  .vic-chip{flex:0 0 auto;border:1px solid #cfd8ea;background:#fff;
+    color:#1b3f6e;font-size:14px;font-weight:700;padding:7px 12px;
+    border-radius:17px;line-height:1;white-space:nowrap;cursor:pointer;
+    font-family:inherit;}
+  .vic-chip.on{background:#1b3f6e;border-color:#1b3f6e;color:#fff;}
+  .vic-chip.altre{background:#eef2f8;border-color:#c3cfe2;}
+  .vic-nota{flex:0 0 auto;font-size:12px;color:#7a8699;font-weight:600;
+    white-space:nowrap;padding-left:2px;}
+  #vic-altre{display:none;position:fixed;z-index:2200;background:#fff;
+    border:1px solid #cfd8ea;border-radius:12px;padding:5px;
+    box-shadow:0 12px 30px rgba(16,35,60,.24);max-height:52vh;
+    overflow-y:auto;}
+  #vic-altre.c{display:block;}
+  #vic-altre button{display:block;width:100%;text-align:left;border:0;
+    background:none;font-family:inherit;font-size:15px;font-weight:700;
+    color:#1b3f6e;padding:12px;border-radius:8px;cursor:pointer;}
+  #vic-altre button+button{border-top:1px solid #eef2f8;}
+  #vic-velo{display:none;position:fixed;inset:0;z-index:2150;}
+  #vic-velo.c{display:block;}
+}
 </style>
 </head>
 <body>
@@ -1456,9 +1523,10 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <div class="v-dx">
           <div class="v-occhio v-iscr"><svg width="16" height="12" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#FF0000"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg> Canale YouTube</div>
           <div class="v-nome">Avventure Micologiche</div>
+          <div class="v-sotto">Oltre 5.700 pluviometri veri</div>
         </div>
       </div>
-      <div class="v-grazie"><b>Grazie a tutti:</b> avete fatto oltre <b>40.000 analisi</b> in poche settimane. Se vi siamo stati utili, lasciate un like e un'iscrizione.</div>
+      <div class="v-grazie"><b>Grazie a tutti</b>, più di <b>1.000 analisi al giorno</b>. Se serve anche a te, <b>iscriviti al canale</b>: le uscite le raccontiamo lì.</div>
       <div class="v-btn v-iscr">ISCRIVITI</div>
     </a>
 
@@ -1522,6 +1590,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         </div>
         <!-- Mobile: select dropdown -->
         <button id="reg-apri" type="button">Tocca qui per scegliere la regione ▼</button>
+        <div id="vic-riga"></div>
         <select id="region-select" class="region-select-mobile">
           <option value="">Tocca qui per scegliere la regione ▼</option>
           <!-- Prima l'estero, poi le regioni italiane (ordine scelto il 6/8/2026).
@@ -1709,7 +1778,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
          onclick="try{gtag('event','click_youtube',{pulsante:'pillola-mobile'})}catch(e){}"
          id="channel-pill">
         <img src="archie-avatar.png" alt="Archie">
-        <div class="cp-t">Grazie: oltre 40.000 analisi<small>Lasciate un like e un'iscrizione</small></div>
+        <div class="cp-t">Più di 1.000 analisi al giorno<small>Grazie a tutti · iscriviti al canale</small></div>
         <div class="cp-yt">
           <svg width="26" height="19" viewBox="0 0 42 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <rect width="42" height="30" rx="6" fill="#FF0000"/>
@@ -9771,23 +9840,45 @@ function loadDefaultMarkers(){
   // Vale SEMPRE, non solo durante la vetrina: dal 28/8 la vetrina scade ma la
   // scheda «Iscriviti» e' alta uguale, e resterebbe piantata sopra la mappa.
   // I segnali sono quelli che il sito gia' produce: il badge dell'header
-  // (svuotato da setBadge('') dentro resetToStart, cioe' «Indietro») e la
-  // rotella sulla mappa, che si accende al primo istante del calcolo. Servono
-  // tutti e due: con la sola rotella la scheda tornerebbe a fine analisi, col
-  // solo badge resterebbe li' per tutta l'attesa. Non si tocca nessuna
-  // funzione esistente, si guardano gli elementi.
+  // (svuotato da setBadge('') dentro resetToStart, cioe' «Indietro»), la
+  // rotella sulla mappa, che si accende al primo istante del calcolo, e la
+  // riga di stato del pannello periodo. Servono tutti e tre: con la sola
+  // rotella la scheda tornerebbe a fine analisi, col solo badge resterebbe
+  // li' per tutta l'attesa. Non si tocca nessuna funzione esistente, si
+  // guardano gli elementi.
+  //
+  // ⚠️ LA RIGA DI STATO E' STATA AGGIUNTA IL 5/9/2026, e serve a togliere un
+  // LAMPO segnalato dall'utente: con la data gia' scelta, aggiungendo o
+  // togliendo una regione sulla mappa la vetrina ricompariva per un attimo e
+  // spariva di nuovo. Misurato in locale aggiungendo l'Umbria a un'analisi
+  // finita: a 30 ms setBadge('') svuota il badge mentre la rotella e' ancora
+  // spenta, quindi i due soli segnali dicevano «nessuna analisi»; il
+  // caricamento parte solo dopo, per via del debounce di 550 ms che aspetta
+  // le altre spunte. In mezzo la scheda tornava.
+  // In quella finestra pero' la riga di stato dice gia' «⏳ aggiorno (3
+  // regioni)», e durante il calcolo dice «⏳ Calcolo mappa…»: la clessidra e'
+  // quindi il segnale esatto di «c'e' qualcosa in corso», e non serve
+  // inventarsi un ritardo a occhio. I tre segnali si sovrappongono senza
+  // buchi: la rotella si accende nello stesso millisecondo in cui la riga di
+  // stato si svuota (misurato: 1.884 ms tutt'e due).
+  // ⚠️ Basta CERCARE la clessidra, non guardare l'inizio della riga: i
+  // messaggi che non sono un'attesa («Nessuna pioggia», «Caricamento
+  // timeout») hanno altri simboli e non la contengono.
   try{
     var scheda=document.getElementById('channel-logo');
     var _badge=document.getElementById('badge');
     var _rotella=document.getElementById('map-spinner');
+    var _stato=document.getElementById('tp-status');
     if(scheda){
       var aggiornaScheda=function(){
         var analisi=(_badge && _badge.textContent.trim()!=='')
-                 || (_rotella && _rotella.style.display==='flex');
+                 || (_rotella && _rotella.style.display==='flex')
+                 || (_stato && _stato.textContent.indexOf('⏳')>-1);
         scheda.classList.toggle('nascosta',!!analisi);
       };
       if(_badge) new MutationObserver(aggiornaScheda).observe(_badge,{childList:true,characterData:true,subtree:true});
       if(_rotella) new MutationObserver(aggiornaScheda).observe(_rotella,{attributes:true,attributeFilter:['style']});
+      if(_stato) new MutationObserver(aggiornaScheda).observe(_stato,{childList:true,characterData:true,subtree:true});
       aggiornaScheda();
     }
   }catch(e){}
@@ -9839,7 +9930,9 @@ function loadDefaultMarkers(){
     // si accende DA SOLA sul browser di chi apre: un deploy solo, e all'ora
     // esatta. Come lo spegnimento, non costa niente (lo valuta il browser).
     da:'2026-09-02T18:00:00+02:00',
-    fino:'2026-09-07T23:59:59+02:00',
+    // ⚠️ ANTICIPATA dal 7/9 al 6/9 alle 17:59: si fa da parte nel minuto
+    // esatto in cui si accende l'uscita nuova, cosi' non si sovrappongono.
+    fino:'2026-09-06T17:59:59+02:00',
     link:'https://youtu.be/2tl0g4bhWG8',
     id:'2tl0g4bhWG8',
     // ⚠️ VUOTI APPOSTA, deciso dall'utente il 2/9. I due corti su Facebook e
@@ -9880,6 +9973,10 @@ function loadDefaultMarkers(){
     // Scadenza lontana perche' uno Short cosi' non invecchia: per toglierlo
     // prima basta spostare indietro questa data, e non costa un deploy
     // perche' la valuta il browser.
+    // ⚠️ FUORI DAL SORTEGGIO dal 6/9/2026, per decisione dell'utente: in
+    // vetrina resta il solo video lungo, e si cambia a mano. Questa scheda
+    // e' pronta e non scade: per rimetterla in gara basta riaggiungere
+    // 'regius' all'elenco del sorteggio, piu' sotto.
     fino: '2027-12-31T23:59:59+01:00',
     link: 'https://youtube.com/shorts/Uvpf0knhgAw',
     id: 'Uvpf0knhgAw',
@@ -9911,7 +10008,11 @@ function loadDefaultMarkers(){
     // stesso video su tutt'e tre, quindi i bottoni social ci vanno.
     // ⚠️ Nessun `da`: e' gia' online, la vetrina parte subito. Scadenza
     // lontana come per il regius, perche' uno Short cosi' non invecchia.
-    fino: '2027-12-31T23:59:59+01:00',
+    // ⚠️ IN VETRINA FINO A STASERA, poi si fa da parte per il video lungo
+    // di cui e' l'anteprima. Non e' una scadenza definitiva: per
+    // riaccenderlo un altro giorno basta spostare avanti questa data, e
+    // non costa un deploy perche' la valuta il browser.
+    fino: '2026-09-06T17:59:59+02:00',
     link: 'https://youtube.com/shorts/y0P_TxcIKuQ',
     id: 'y0P_TxcIKuQ',
     // ⚠️ L'indirizzo di Facebook e' quello CANONICO del reel, non il link
@@ -9943,25 +10044,75 @@ function loadDefaultMarkers(){
     ganciopx: 16,
     canale: 'Avventure Micologiche'
   };
+  VETRINE.lungo16 = {
+    // Uscita LUNGA del 6/9/2026 alle 18: «PORCINI E OVOLI 2026 16 GIORNI DOPO
+    // I TEMPORALI». E' il video di cui i due Short (regius e ovoli) sono
+    // l'anteprima, e infatti da domani sera si alternano con lui.
+    da: '2026-09-06T18:00:00+02:00',
+    fino: '2027-12-31T23:59:59+01:00',
+    link: 'https://youtu.be/oCgBZBEwi4k',
+    id: 'oCgBZBEwi4k',
+    // ⚠️ VUOTI APPOSTA, come per l'uscita lunga del 2/9. Su Facebook e
+    // Instagram ci sono i CORTI, che sono altri video: coi tre bottoni chi
+    // clicca non trova quello che gli e' stato promesso, e i clic si
+    // spezzerebbero proprio nell'ora di lancio. Se un giorno il lungo esce
+    // anche li', questi due campi si riempiono e i bottoni compaiono da soli.
+    facebook: '',
+    instagram: '',
+    // Video lungo, quindi copertina NORMALE: `maxresdefault.jpg` e' gia' 16:9
+    // (1280x720) e basta ridurlo a 480x270. Il ritaglio da `oar2.jpg` serve
+    // solo per gli Short.
+    copertina: 'vetrina-16gg.jpg',
+    // Titolo vero: «PORCINI E OVOLI 2026 16 GIORNI DOPO I TEMPORALI». Due
+    // righe, a capo DECISO dopo il nome.
+    gancio1: 'Porcini e ovoli 2026:',
+    gancio2: '16 giorni dopo i temporali',
+    // ⚠️ IL CORPO LO DETTA LA RIGA PIU' LUNGA, e qui e' la SECONDA.
+    // Misurato sulla colonna da 199 px: «16 giorni dopo i temporali» fa
+    // 191,9 px a 15,5 e 198,1 a 16, cioe' a 16 resta meno di un pixel.
+    // ⚠️ E' il corpo piu' piccolo delle quattro vetrine, e si e' scelto lo
+    // stesso: spezzando in «Porcini e ovoli: 16 giorni» + «dopo i temporali»
+    // si sarebbe saliti a 16,5, ma l'a capo cadeva in mezzo alla frase e il
+    // testo restava sfrangiato. E' la stessa scelta fatta il 2/9 sui Porcini.
+    // Togliere «i temporali» avrebbe retto 20 px, ma quella e' la parola che
+    // lega la pioggia ai funghi, cioe' il senso del sito.
+    ganciopx: 15.5,
+    canale: 'Avventure Micologiche'
+  };
   var V=null, QUALE='';
   if(MOSTRA==='alterna'){
     // Solo le vetrine ancora in corso partecipano: quando il video scade,
     // l'alternanza si riduce da sola alla guida, e quando scade anche quella
     // non resta nessuno e si esce.
     var ora=Date.now(), scelte=[];
-    ['video','regius','ovoli'].forEach(function(k){
+    ['lungo16','ovoli'].forEach(function(k){
       var v=VETRINE[k]; if(!v) return;
       if(v.da && ora < new Date(v.da).getTime()) return;   // non ancora accesa
       if(ora <= new Date(v.fino).getTime()) scelte.push(k);
     });
+    // ⚠️ LA SCHEDA «ISCRIVITI» IN GARA, MA SOLO FINO ALLE 17:59 DI OGGI.
+    // Il `push` sta dentro un controllo sull'ora e non fuori: senza quel
+    // controllo resterebbe in gara per sempre e si mangerebbe meta' delle
+    // aperture del video nuovo, che e' esattamente quello che era successo
+    // dal 31/8 al 5/9. Quando la data passa, il ramo si spegne da solo e
+    // non serve pubblicare niente.
+    // ⚠️ Non e' una vetrina e non sta in VETRINE: quando vince, `V` resta
+    // vuoto, il `return` qui sotto lascia in pagina il markup di sempre,
+    // che e' gia' la scheda del canale.
+    if(ora <= new Date('2026-09-06T17:59:59+02:00').getTime()) scelte.push('iscriviti');
     // ⚠️ DAL 5/9/2026 IN GARA CI SONO SOLO I VIDEO. Decisione dell'utente:
     // fuori la guida al pluviometro e fuori la scheda «Iscriviti», che dal
     // 31/8 pescava una volta su tre e si mangiava le aperture delle vetrine.
     // La scheda «Iscriviti» resta comunque il RIPIEGO: se nessun video e' in
     // corso `scelte` e' vuoto, si esce, e in pagina resta il markup di sempre.
-    // ⚠️ SONO TRE, dal pomeriggio del 5/9: il lungo dei Porcini, il regius
-    // e gli ovoli. Il lungo scade il 7/9 e da li' in poi la moneta e' a due
-    // facce, senza che nessuno pubblichi niente.
+    // ⚠️ IN GARA CE N'E' UNA SOLA PER VOLTA, dal 6/9/2026. Il cambio della
+    // guardia di stasera lo fanno le date, senza pubblicare niente:
+    //   fino alle 17:59  -> il lungo dei Porcini del 2/9, che li' scade;
+    //   dalle 18:00      -> l'uscita nuova, e RESTA finche' non la cambia
+    //                       lui a mano (decisione del 6/9).
+    // I due Short sono scritti qui sopra ma NON sono in questo elenco,
+    // quindi non partecipano: per rimetterli in rotazione si aggiungono
+    // qui, e da quel momento la moneta torna a tre facce.
     // Per rimetterle in gara: la chiave `guida` nell'elenco qui sopra e la
     // riga `scelte.push('iscriviti')` qui.
     if(!scelte.length) return;
@@ -10712,6 +10863,263 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     else if(++giri>75) clearInterval(att);
   },200);
 }());
+</script>
+<script>
+/* ── AGGIUNGI LA CONFINANTE (6/9/2026, solo sito di test) ──────────────
+   Le pastiglie NON aprono una strada nuova: spuntano lo stesso checkbox
+   che spunterebbe un dito sulla mappa, quindi il tetto dei 3, il debounce
+   dei 550 ms, i bordi e il ricaricamento continuano a funzionare senza
+   sapere che esistono. E' la stessa regola della ricerca per localita'. */
+(function(){
+  // Copia di REGION_ADJ, che sta dentro la IIFE del sito e da fuori non si
+  // vede. Se un giorno questa roba entra in produzione, le due tabelle
+  // vanno unite: una regola in due copie diverge.
+  var ADJ={
+    valledaosta:['piemonte','svizzera','francia-aura'],
+    piemonte:['valledaosta','lombardia','liguria','svizzera','francia-aura','francia-provenza'],
+    liguria:['piemonte','emilia','toscana','francia-provenza'],
+    lombardia:['piemonte','emilia','veneto','trentino','svizzera'],
+    trentino:['lombardia','veneto','altoadige'],
+    altoadige:['trentino','veneto','svizzera','austria'],
+    veneto:['lombardia','trentino','altoadige','friuli','emilia','austria'],
+    friuli:['veneto','austria','slovenia'],
+    emilia:['lombardia','veneto','piemonte','liguria','toscana','marche'],
+    toscana:['liguria','emilia','marche','umbria','lazio'],
+    umbria:['toscana','marche','lazio','abruzzo'],
+    marche:['emilia','toscana','umbria','abruzzo','lazio'],
+    lazio:['toscana','umbria','abruzzo','molise','campania'],
+    abruzzo:['marche','umbria','lazio','molise'],
+    molise:['abruzzo','lazio','campania','puglia'],
+    campania:['lazio','molise','puglia','basilicata'],
+    puglia:['molise','campania','basilicata'],
+    basilicata:['campania','puglia','calabria'],
+    calabria:['basilicata','sicilia'],
+    sicilia:['calabria'],
+    sardegna:['francia-corsica'],
+    svizzera:['valledaosta','piemonte','lombardia','altoadige','austria'],
+    austria:['altoadige','veneto','friuli','slovenia','svizzera'],
+    slovenia:['friuli','austria']
+  };
+  var COMBO={'piemonte-vda':['piemonte','valledaosta'],
+             'trentino-aa':['trentino','altoadige']};
+  /* Nomi accorciati per le sole francesi: «Provenza-Costa Azzurra (FR)» e'
+     una pastiglia da 236 px su uno schermo da 375. */
+  var CORTI={'francia-provenza':'Provenza (FR)','francia-aura':'Alvernia (FR)',
+             'francia-bfc':'Borgogna (FR)','francia-grandest':'Grand Est (FR)',
+             'francia-corsica':'Corsica (FR)'};
+  /* Le combinazioni che la gente usa DAVVERO, dai link aperti in 28 giorni
+     (GA4, 6/9/2026): liguria+emilia+piemonte 157, liguria+piemonte 141,
+     lombardia+emilia+piemonte 130, emilia+toscana 55. Servono a non far
+     seppellire dal solo costo di zoom quello che la gente cerca: da
+     Liguria+Piemonte l'Emilia sarebbe SESTA (0,83 di costo) ed e' la terna
+     piu' aperta del sito. */
+  var USATE=[['liguria','emilia','piemonte'],['liguria','piemonte'],
+    ['lombardia','emilia','piemonte'],['emilia','toscana'],
+    ['toscana','umbria'],['piemonte','valledaosta'],
+    ['austria','altoadige'],['trentino','altoadige'],['veneto','trentino']];
+  var aggiunte=[];
+
+  function esp(k){ return COMBO[k]||[k]; }
+  function nome(k){
+    if(CORTI[k]) return CORTI[k];
+    var s=document.querySelector('#chk-'+k+' ~ .rcheck-name');
+    return s?s.textContent.trim():k;
+  }
+  function scelte(){
+    return [].slice.call(document.querySelectorAll('.rcheck-wrap input[type=checkbox]:checked'))
+      .map(function(c){return c.value;});
+  }
+  function reali(){
+    var v=[];
+    scelte().forEach(function(k){ esp(k).forEach(function(r){ if(v.indexOf(r)<0) v.push(r); }); });
+    return v;
+  }
+  function usata(ins){
+    return USATE.some(function(c){
+      return ins.every(function(k){ return c.indexOf(k)>=0; });
+    });
+  }
+  /* Il COSTO di una vicina: di quanto si allarga l'inquadratura ad
+     aggiungerla, con la matematica di getBoundsZoom sullo schermo vero.
+     Sul telefono comanda quasi sempre la LARGHEZZA (315 px utili contro
+     626 in altezza), quindi una vicina a nord o a sud spesso costa zero. */
+  function pyy(lat){ var s=Math.sin(lat*Math.PI/180);
+    return (0.5-Math.log((1+s)/(1-s))/(4*Math.PI))*256; }
+  function pxx(lon){ return (lon+180)/360*256; }
+  function zoomDi(keys){
+    var B=null; try{ B=window._boundsDebug(); }catch(e){ return null; }
+    var la1=90,la2=-90,lo1=180,lo2=-180,c=0;
+    keys.forEach(function(k){ var b=B[k]; if(!b) return; c++;
+      if(b[0][0]<la1)la1=b[0][0]; if(b[1][0]>la2)la2=b[1][0];
+      if(b[0][1]<lo1)lo1=b[0][1]; if(b[1][1]>lo2)lo2=b[1][1]; });
+    if(!c) return null;
+    var W=innerWidth-60, H=(innerHeight-46)-140;
+    var dx=Math.abs(pxx(lo2)-pxx(lo1)), dy=Math.abs(pyy(la1)-pyy(la2));
+    if(!dx||!dy) return null;
+    return Math.min(Math.log2(W/dx), Math.log2(H/dy));
+  }
+  function costo(cand){
+    var B=null; try{ B=window._boundsDebug(); }catch(e){}
+    if(!B || !esp(cand).some(function(r){ return B[r]; })) return 9;
+    var ora=reali(), poi=ora.concat(esp(cand));
+    var a=zoomDi(ora), b=zoomDi(poi);
+    if(a===null||b===null) return 9;
+    return (a-b) - (usata(poi)?1.0:0);
+  }
+  function candidate(){
+    var dentro=reali(), fuori=[];
+    dentro.forEach(function(r){ (ADJ[r]||[]).forEach(function(v){
+      if(dentro.indexOf(v)>=0) return;
+      if(!document.getElementById('chk-'+v)) return;
+      if(fuori.indexOf(v)<0) fuori.push(v);
+    }); });
+    return fuori.map(function(k){ return [k,costo(k)]; })
+      .sort(function(a,b){ return a[1]-b[1]; })
+      .map(function(x){ return x[0]; });
+  }
+  function tocca(k,acceso){
+    var cb=document.getElementById('chk-'+k); if(!cb) return;
+    cb.checked=!acceso;
+    cb.dispatchEvent(new Event('change'));
+    if(cb.checked){ if(aggiunte.indexOf(k)<0) aggiunte.push(k); }
+    else aggiunte=aggiunte.filter(function(x){return x!==k;});
+    /* ⚠️ SUL TELEFONO L'INQUADRATURA LA RIFACCIAMO NOI. In loadData il fit
+       sta dentro un `if(window.innerWidth>900)`: sul telefono inquadra la
+       TENDINA, alla scelta, con un setView scritto a mano regione per
+       regione. Senza queste righe la vicina appena aggiunta restava fuori
+       dallo schermo (misurato: zoom 7,25 prima e dopo, centro fermo).
+       Poi `_centraStriscia`, che misura da solo quanto e' alta la barra e
+       compensa anche questa riga nuova. */
+    setTimeout(function(){
+      if(innerWidth<=900){ try{ window._fitRegioni(window._regioniAttive()); }catch(e){} }
+      disegna();
+      setTimeout(function(){ try{ window._centraStriscia(); }catch(e){} },420);
+    },60);
+  }
+  function chiudiAltre(){
+    var p=document.getElementById('vic-altre'), v=document.getElementById('vic-velo');
+    if(p) p.className=''; if(v) v.className='';
+  }
+  function apriAltre(lista){
+    var p=document.getElementById('vic-altre'), v=document.getElementById('vic-velo');
+    var riga=document.getElementById('vic-riga');
+    if(!p||!riga) return;
+    p.innerHTML='';
+    lista.forEach(function(k){
+      var b=document.createElement('button');
+      b.type='button'; b.textContent='\uff0b '+nome(k);
+      b.onclick=function(){ chiudiAltre(); tocca(k,false); };
+      p.appendChild(b);
+    });
+    var r=riga.getBoundingClientRect();
+    p.style.left=Math.round(r.left+6)+'px';
+    p.style.top=Math.round(r.bottom+4)+'px';
+    p.style.width=Math.min(268, innerWidth-24)+'px';
+    p.className='c'; if(v) v.className='c';
+  }
+  function etichetta(){
+    var b=document.getElementById('reg-apri'); if(!b) return;
+    var s=scelte();
+    if(!s.length) return;
+    // Nell'ordine in cui le ha toccate lui, non in quello del documento.
+    var base=s.filter(function(k){ return aggiunte.indexOf(k)<0; });
+    b.textContent=base.concat(aggiunte).map(nome).join(' + ')+' \u25bc';
+  }
+  function disegna(){
+    var riga=document.getElementById('vic-riga'); if(!riga) return;
+    var s=scelte();
+    aggiunte=aggiunte.filter(function(k){ return s.indexOf(k)>=0; });
+    if(!s.length){ riga.className=''; riga.innerHTML=''; chiudiAltre(); return; }
+    riga.className='c'; riga.innerHTML='';
+    var pieno=s.length>=3;
+    aggiunte.forEach(function(k){
+      var b=document.createElement('button');
+      b.type='button'; b.className='vic-chip on';
+      b.textContent=nome(k)+'  \u2715';
+      b.onclick=function(){ tocca(k,true); };
+      riga.appendChild(b);
+    });
+    if(pieno){
+      var n=document.createElement('span');
+      n.className='vic-nota'; n.textContent='massimo 3, togline una';
+      riga.appendChild(n);
+    } else {
+      /* ⚠️ NIENTE PASTIGLIE TAGLIATE A META'. Una pastiglia mozzata sul
+         bordo non la si legge e non viene in mente di strisciare: e' come
+         se non ci fosse. Entra solo quello che ci sta davvero, misurato,
+         e il resto va sotto «altre N». Cosi' non serve ne' scorrere ne'
+         una seconda riga, che costerebbe altri 38 px di schermo. */
+      var tutti=candidate(), messe=[];
+      tutti.forEach(function(k){
+        var b=document.createElement('button');
+        b.type='button'; b.className='vic-chip';
+        b.textContent='\uff0b '+nome(k);
+        b.onclick=function(){ tocca(k,false); };
+        riga.appendChild(b); messe.push(b);
+      });
+      var spazio=riga.clientWidth-4, usato=0, quante=0;
+      var prova=document.createElement('button');
+      prova.type='button'; prova.className='vic-chip altre';
+      prova.textContent='altre \u25be'; riga.appendChild(prova);
+      var largAltre=prova.offsetWidth+6;
+      riga.removeChild(prova);
+      [].slice.call(riga.querySelectorAll('.vic-chip.on')).forEach(function(b){
+        usato+=b.offsetWidth+6;
+      });
+      for(var i=0;i<messe.length;i++){
+        var w=messe[i].offsetWidth+6;
+        var restano=messe.length-i-1;
+        if(usato+w+(restano>0?largAltre:0)>spazio) break;
+        usato+=w; quante++;
+      }
+      if(quante<messe.length){
+        for(var j=quante;j<messe.length;j++) riga.removeChild(messe[j]);
+        var b2=document.createElement('button');
+        b2.type='button'; b2.className='vic-chip altre';
+        b2.textContent='altre '+(messe.length-quante)+' \u25be';
+        b2.onclick=function(ev){ ev.stopPropagation(); apriAltre(tutti.slice(quante)); };
+        riga.appendChild(b2);
+      }
+    }
+    etichetta();
+  }
+  /* ⚠️ LA BARRA VA PORTATA FUORI DA #map, O IL DITO NON SCORRE. Leaflet
+     mette `touch-action:none` sul contenitore della mappa e quella regola
+     vale per tutto quello che sta dentro. Misurato con un dito vero:
+     dentro scrollLeft resta 0, fuori arriva a 262. Stessa medicina del
+     22/8/2026 per la tendina delle regioni. Solo sul telefono. */
+  function collocaBarra(){
+    var rp=document.getElementById('region-panel'); if(!rp) return;
+    var m=document.getElementById('map');
+    if(innerWidth<=900){ if(rp.parentElement!==document.body) document.body.appendChild(rp); }
+    else if(m && rp.parentElement!==m) m.appendChild(rp);
+  }
+  collocaBarra();
+  window.addEventListener('resize', collocaBarra);
+  (function(){
+    var p=document.createElement('div'); p.id='vic-altre';
+    var v=document.createElement('div'); v.id='vic-velo';
+    v.addEventListener('click', chiudiAltre);
+    document.body.appendChild(v); document.body.appendChild(p);
+    window.addEventListener('resize', chiudiAltre);
+  })();
+  var sel=document.getElementById('region-select');
+  if(sel) sel.addEventListener('change', function(){ aggiunte=[]; setTimeout(disegna,0); });
+  document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){
+    cb.addEventListener('change', function(){ setTimeout(disegna,0); });
+  });
+  /* ⚠️ RONDA, e non cinque agganci diversi. Le spunte le mettono in cinque
+     modi (tendina, mappa, ricerca, «la mia posizione», link) e non tutti
+     passano da un evento ascoltabile: il link, per dirne uno, spunta la
+     casella e basta, senza `change`. Se questa roba va in produzione, gli
+     agganci si fanno per bene e la ronda si toglie. */
+  var ultimo="";
+  setInterval(function(){
+    var f=scelte().join(',');
+    if(f!==ultimo){ ultimo=f; disegna(); }
+  },500);
+  setTimeout(disegna,600);
+})();
 </script>
 </body>
 </html>
