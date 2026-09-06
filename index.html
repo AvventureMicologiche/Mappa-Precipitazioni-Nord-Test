@@ -1382,7 +1382,18 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      ARPA Lombardia». Qui resta solo come valore di partenza.
      Il corpo passa da 8 a 10px: a 8 non si legge (segnalato dall'utente
      su Android), a 10 si legge e resta una scritta di servizio. */
-  .fonte-tag{bottom:auto;top:66px;font-size:10px;background:rgba(255,255,255,.92);}
+  /* ⚠️ VA A CAPO, NON ESCE. Era `nowrap` come sul computer, e con tre
+     regioni la riga delle fonti («ARPA Liguria + OASI Ticino +
+     MeteoSvizzera + ARPA Piemonte») usciva dallo schermo tagliata.
+     Difetto vecchio, ma il multiregione la fa vedere spesso. */
+  /* ⚠️ `width:max-content` CI VUOLE, se no si stringe a meta' schermo:
+     la targhetta e' `left:50%` con la traslazione, quindi lo spazio che il
+     browser considera disponibile e' solo la meta' destra (180 px su 360),
+     e con tre fonti andava su TRE righe pur restando dentro i bordi. Cosi'
+     invece cresce fino a tutta la larghezza e va a capo solo se serve. */
+  .fonte-tag{bottom:auto;top:66px;font-size:10px;background:rgba(255,255,255,.92);
+    white-space:normal;width:max-content;max-width:calc(100% - 16px);
+    text-align:center;line-height:1.3;}
 }
 
 /* ── AGGIUNGI LA CONFINANTE (6/9/2026, solo test) ─────────────────── */
@@ -1403,7 +1414,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     font-family:inherit;}
   .vic-chip.on{background:#1b3f6e;border-color:#1b3f6e;color:#fff;}
   .vic-chip.altre{background:#eef2f8;border-color:#c3cfe2;}
-  .vic-nota{flex:0 0 auto;font-size:12px;color:#7a8699;font-weight:600;
+  .vic-nota{flex:0 0 auto;font-size:12.5px;color:#4f6480;font-weight:700;
     white-space:nowrap;padding-left:2px;}
   #vic-altre{display:none;position:fixed;z-index:2200;background:#fff;
     border:1px solid #cfd8ea;border-radius:12px;padding:5px;
@@ -1416,6 +1427,15 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   #vic-altre button+button{border-top:1px solid #eef2f8;}
   #vic-velo{display:none;position:fixed;inset:0;z-index:2150;}
   #vic-velo.c{display:block;}
+  #naz-riga{display:flex;flex-wrap:wrap;gap:6px;padding:0 0 9px;}
+  /* La tendina ha il fondo BLU SCURO, quindi qui i colori vanno al
+     contrario delle pastiglie sulla barra: se no la pastiglia accesa era
+     blu su blu e spariva, e le spente sembravano tutte scelte. */
+  .naz-chip{flex:0 0 auto;border:1px solid rgba(255,255,255,.45);
+    background:transparent;color:#fff;font-size:14px;font-weight:700;
+    padding:8px 13px;border-radius:18px;line-height:1;white-space:nowrap;
+    cursor:pointer;font-family:inherit;}
+  .naz-chip.on{background:#fff;border-color:#fff;color:#1b3f6e;}
 }
 </style>
 </head>
@@ -1674,6 +1694,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <div class="reg-testa"><span>DOVE VUOI GUARDARE?</span><button id="reg-chiudi" type="button" aria-label="Chiudi">×</button></div>
         <div id="reg-cerca-slot"></div>
         <div class="reg-oppure">OPPURE SCEGLI LA REGIONE</div>
+        <div id="naz-riga"></div>
         <div id="reg-lista"></div>
       </div>
     </div>
@@ -11017,13 +11038,15 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     p.style.width=Math.min(268, innerWidth-24)+'px';
     p.className='c'; if(v) v.className='c';
   }
+  // Nell'ordine in cui le ha toccate lui, non in quello del documento.
+  function ordine(){
+    var s=scelte();
+    return s.filter(function(k){ return aggiunte.indexOf(k)<0; }).concat(aggiunte);
+  }
   function etichetta(){
     var b=document.getElementById('reg-apri'); if(!b) return;
-    var s=scelte();
-    if(!s.length) return;
-    // Nell'ordine in cui le ha toccate lui, non in quello del documento.
-    var base=s.filter(function(k){ return aggiunte.indexOf(k)<0; });
-    b.textContent=base.concat(aggiunte).map(nome).join(' + ')+' \u25bc';
+    var o=ordine(); if(!o.length) return;
+    b.textContent=o.map(nome).join(' + ')+' \u25bc';
   }
   function disegna(){
     var riga=document.getElementById('vic-riga'); if(!riga) return;
@@ -11032,7 +11055,12 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     if(!s.length){ riga.className=''; riga.innerHTML=''; chiudiAltre(); return; }
     riga.className='c'; riga.innerHTML='';
     var pieno=s.length>=3;
-    aggiunte.forEach(function(k){
+    /* ⚠️ SI TOGLIE TUTTO MENO LA PRIMA, non solo quello che ho aggiunto
+       io. Chi apre un link a tre regioni non ha «aggiunto» niente: la riga
+       gli veniva con la sola scritta «massimo 3» e nessuna croce, cioe' un
+       vicolo cieco. La prima resta l'ancora: sotto una regione non si
+       scende, e il sito stesso rimette la spunta se togli l'ultima. */
+    ordine().slice(1).forEach(function(k){
       var b=document.createElement('button');
       b.type='button'; b.className='vic-chip on';
       b.textContent=nome(k)+'  \u2715';
@@ -11040,9 +11068,18 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       riga.appendChild(b);
     });
     if(pieno){
+      /* ⚠️ PRIMA SI MISURA, POI SI SCRIVE. «massimo 3, togline una» con due
+         nomi lunghi (Piemonte + Svizzera) usciva dallo schermo e si leggeva
+         «massimo 3, togline un». Una scritta tagliata e' peggio di nessuna
+         scritta: se non ci sta, la ✕ sulle pastiglie dice gia' come si fa. */
+      var largOn=0;
+      [].slice.call(riga.querySelectorAll('.vic-chip.on')).forEach(function(c){
+        largOn+=c.offsetWidth+6;
+      });
       var n=document.createElement('span');
-      n.className='vic-nota'; n.textContent='massimo 3, togline una';
+      n.className='vic-nota'; n.textContent='massimo 3';
       riga.appendChild(n);
+      if(largOn+n.offsetWidth+6>riga.clientWidth-4) riga.removeChild(n);
     } else {
       /* ⚠️ NIENTE PASTIGLIE TAGLIATE A META'. Una pastiglia mozzata sul
          bordo non la si legge e non viene in mente di strisciare: e' come
@@ -11079,6 +11116,19 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
         b2.textContent='altre '+(messe.length-quante)+' \u25be';
         b2.onclick=function(ev){ ev.stopPropagation(); apriAltre(tutti.slice(quante)); };
         riga.appendChild(b2);
+      }
+      /* ⚠️ QUELLO CHE AVANZA NON LO DEVE PRENDERE IL VUOTO. Il posto per una
+         pastiglia in piu' non c'e' quasi mai, e quel che resta lasciava un
+         buco a destra (visto in Lombardia: due pastiglie corte e mezza riga
+         vuota). Se lo dividono le pastiglie da aggiungere, che diventano
+         anche bersagli piu' grandi per il dito. Le «✕» e «altre» no: quelle
+         restano della loro misura, se no la riga sembra un altro affare. */
+      var totale=0;
+      [].slice.call(riga.children).forEach(function(c){ totale+=c.offsetWidth+6; });
+      var avanza=riga.clientWidth-4-totale;
+      var crescono=[].slice.call(riga.querySelectorAll('.vic-chip:not(.on):not(.altre)'));
+      if(avanza>8 && crescono.length){
+        crescono.forEach(function(c){ c.style.flexGrow='1'; });
       }
     }
     etichetta();
@@ -11119,6 +11169,64 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     if(f!==ultimo){ ultimo=f; disegna(); }
   },500);
   setTimeout(disegna,600);
+})();
+</script>
+<script>
+/* ── LE NAZIONI IN CIMA ALLA TENDINA (6/9/2026, solo sito di test) ─────
+   Le pastiglie non rifanno niente: nascondono la riga corrispondente
+   dell'elenco e poi la CLICCANO. Cambio lista, sottomenu Francia,
+   chiusura della tendina e scelta della regione restano quelli del sito. */
+(function(){
+  var NAZ=[
+    {k:'italia',    t:'Italia'},
+    {k:'svizzera',  t:'Svizzera'},
+    {k:'austria',   t:'Austria'},
+    {k:'slovenia',  t:'Slovenia'},
+    {k:'__francia', t:'Francia'}
+  ];
+  // Le righe che ora hanno una pastiglia: si nascondono, non si tolgono.
+  var COPERTE=['austria','slovenia','svizzera','__francia','__indietro'];
+  function lista(){ return document.getElementById('reg-lista'); }
+  function riga(v){
+    var l=lista();
+    return l?l.querySelector('.reg-riga[data-v="'+v+'"]'):null;
+  }
+  // Nell'elenco delle regions francesi c'e' «Indietro», nell'altro no.
+  function inFrancia(){ return !!riga('__indietro'); }
+  function dipingi(){
+    var fr=inFrancia();
+    [].slice.call(document.querySelectorAll('#naz-riga .naz-chip')).forEach(function(b){
+      var k=b.getAttribute('data-k');
+      b.classList.toggle('on', fr ? (k==='__francia') : (k==='italia'));
+    });
+  }
+  function copri(){
+    if(!lista()) return;
+    COPERTE.forEach(function(v){ var r=riga(v); if(r) r.style.display='none'; });
+    dipingi();
+  }
+  function vai(k){
+    var r=riga(k==='italia'?'__indietro':k);
+    if(!r) return;          // Italia quando sei gia' in Italia: niente da fare
+    r.click();
+    setTimeout(copri,0);
+  }
+  (function(){
+    var riq=document.getElementById('naz-riga'); if(!riq) return;
+    NAZ.forEach(function(n){
+      var b=document.createElement('button');
+      b.type='button'; b.className='naz-chip';
+      b.setAttribute('data-k', n.k); b.textContent=n.t;
+      b.onclick=function(){ vai(n.k); };
+      riq.appendChild(b);
+    });
+    /* L'elenco lo ridisegna il sito (all'apertura e a ogni giro dentro la
+       Francia): si guarda quando cambia invece di indovinare quando. */
+    var l=lista();
+    if(l) new MutationObserver(function(){ copri(); })
+      .observe(l,{childList:true});
+    copri();
+  })();
 })();
 </script>
 </body>
