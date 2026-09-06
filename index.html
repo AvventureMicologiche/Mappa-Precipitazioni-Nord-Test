@@ -3962,6 +3962,13 @@ window.hideLegendMobile=hideLegendMobile;
 // pannello copre la mappa (tablet coi pannelli laterali) non tocca nulla.
 function centraRegioneInStriscia(){
   if(window.innerWidth>900) return;
+  /* ⚠️ COL RADAR ACCESO SI STA FERMI: l'inquadratura se la fa lui, che
+     chiama _fitRegioni, toglie un livello pieno e si corregge da solo il
+     pannello che copre il basso. Questa funzione in mezzo alzava lo zoom a
+     riempire la striscia e mezzo secondo dopo il radar riallargava
+     (misurato il 6/9/2026: 7,5 a 935 ms, 6,75 a 1554). Due movimenti dove
+     ne basta uno, ed e' proprio lo sfarfallio segnalato. */
+  if(document.body.classList.contains('modo-radar')) return;
   if(_vistaDaLink) return;   // la vista arriva da un link condiviso: comanda quella
   if(typeof getActiveRegions!=='function') return;
   var rks=getActiveRegions(); if(!rks.length) return;
@@ -8399,7 +8406,14 @@ document.getElementById('region-select').addEventListener('change', function(){
   // (la Liguria usciva a zoom 8 invece di 7.75). Con la vista istantanea la
   // misura trova la mappa ferma.
   var NOA={animate:false};
-  if(rk==='lombardia') map.setView([45.3, 9.85], 7.5, NOA);
+  /* ⚠️ COL RADAR ACCESO NON SI INQUADRA: ci pensa lui, che si riquadra da
+     solo sulla regione e lo rifa' a ogni cambio. Senza questa riga la mappa
+     stringeva sulla vista fissa qui sotto e mezzo secondo dopo il radar la
+     riallargava (misurato il 6/9/2026, uguale in produzione: 6,25 poi 7,5 a
+     550 ms, poi 6,75 a 1520). E' la stessa regola gia' scritta il 3/9 per i
+     link col radar, che qui mancava. */
+  if(document.body.classList.contains('modo-radar')){ /* inquadra il radar */ }
+  else if(rk==='lombardia') map.setView([45.3, 9.85], 7.5, NOA);
   else if(rk==='piemonte') map.setView([44.8, 7.9], 7.5, NOA);
   else if(rk==='veneto') map.setView([45.5, 11.8], 7.5, NOA);
   else if(rk==='liguria') map.setView([43.9, 8.8], window.innerWidth<=375 ? 7.25 : 7.75, NOA);
@@ -10339,6 +10353,11 @@ function loadDefaultMarkers(){
    (`#channel-pill`) resta, perche' non e' mai sparita nemmeno scegliendo un
    periodo e non c'e' ragione di farla sparire qui. */
 .modo-radar #channel-logo{display:none !important}
+/* ⚠️ LA TARGHETTA DELLE FONTI NON C'ENTRA NIENTE COL RADAR (6/9/2026).
+   Diceva «Fonte: ARPA Lombardia» sopra una mappa che di pluviometri non
+   ne mostra nemmeno uno: quella che si vede e' la pioggia del composito
+   europeo OPERA, e lo dice gia' la riga del radar. */
+.modo-radar .fonte-tag{display:none !important}
 /* i pallini delle stazioni sono cerchi SVG; il segnaposto della ricerca e
    quello della posizione sono div, e restano */
 body.senza-pallini #map .leaflet-marker-pane svg{display:none}
@@ -11022,10 +11041,20 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
        dallo schermo (misurato: zoom 7,25 prima e dopo, centro fermo).
        Poi `_centraStriscia`, che misura da solo quanto e' alta la barra e
        compensa anche questa riga nuova. */
+    /* ⚠️ COL RADAR ACCESO NON SI INQUADRA NIENTE. Il radar si riquadra da
+       solo sulla regione e lo rifa' a ogni cambio: la nostra inquadratura
+       in mezzo faceva quattro zoom in un secondo e mezzo (misurato il 6/9:
+       6,25 poi 7, poi 6, poi 7), che e' esattamente lo sfarfallio gia'
+       descritto il 3/9 per i link col radar. La regola c'era, mancava qui. */
+    var conRadar=document.body.classList.contains('modo-radar');
     setTimeout(function(){
-      if(innerWidth<=900){ try{ window._fitRegioni(window._regioniAttive()); }catch(e){} }
+      if(innerWidth<=900 && !conRadar){
+        try{ window._fitRegioni(window._regioniAttive()); }catch(e){}
+      }
       disegna();
-      setTimeout(function(){ try{ window._centraStriscia(); }catch(e){} },420);
+      if(!conRadar) setTimeout(function(){
+        try{ window._centraStriscia(); }catch(e){}
+      },420);
     },60);
   }
   function chiudiAltre(){
