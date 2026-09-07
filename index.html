@@ -9383,7 +9383,18 @@ if(_btnShot){
       // Il segnaposto del paese, se il link lo porta. Va DOPO la vista, che
       // se no il fit delle regioni se lo mangerebbe, e mette anche il nome
       // nella casella: chi apre deve leggere DI CHE POSTO si parla.
-      if(!pinDaLink(q) && window.innerWidth<=900){
+      /* ⚠️ IL FIT SOLO SE IL LINK NON PORTA LA VISTA. Con `z` e `c` dentro,
+         questo fit buttava via l'inquadratura del mittente e ne rifaceva una
+         sulla scatola INTERA della mappa, che i pannelli coprono sopra e
+         sotto: chi riceveva vedeva il contenuto piu' in basso (misurato il
+         7/9/2026 a 360x800: 90 px sotto il centro della striscia in
+         produzione, 71 sul test). E centraRegioneInStriscia non lo
+         raddrizza, perche' si ferma apposta sui link. Resta per i link
+         corti delle pagine regione, che la vista non ce l'hanno.
+         ⚠️ `pinDaLink` va chiamata SEMPRE: oltre a rispondere, piazza il
+         segnaposto e riempie la casella. Il cortocircuito la salterebbe. */
+      var _pin=pinDaLink(q);
+      if(!vistaDalLink && !_pin && window.innerWidth<=900){
         try{ fitMapToRegions(keys); }catch(e){}
       }
     });
