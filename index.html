@@ -1420,8 +1420,15 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
      aver controllato che i nomi ci stiano ancora tutti. */
   .vic-chip.pari{font-size:13px;padding:8px 6px;text-align:center;
     overflow:hidden;}
-  .vic-nota{flex:0 0 auto;font-size:14px;color:#3f5470;font-weight:700;
+  /* ⚠️ STRETTA DI SUO, LARGA SOLO DOPO LA MISURA. Al centro dello spazio
+     che avanza ci va con `flex:1`, ma se glielo si da' subito la sua
+     larghezza a video diventa tutto lo spazio libero e il controllo che
+     serve a non farla sforare la butta via sempre. Prima si misura
+     stretta, poi le si da' la classe `larga`. */
+  .vic-nota{flex:0 0 auto;font-size:15.5px;color:#3f5470;font-weight:700;
     white-space:nowrap;padding-left:2px;}
+  .vic-nota.larga{flex:1 1 auto;min-width:0;text-align:center;
+    padding-left:0;}
   #vic-altre{display:none;position:fixed;z-index:2200;background:#fff;
     border:1px solid #cfd8ea;border-radius:12px;padding:5px;
     box-shadow:0 12px 30px rgba(16,35,60,.24);max-height:52vh;
@@ -10714,15 +10721,30 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
        su ogni schermo. */
     if(typeof window._fitRegioni==='function'){ try{ window._fitRegioni(rk); }catch(e){} }
     m.setZoom(Math.max(4, m.getZoom()-LARGHEZZA), {animate:false});
-    /* Sul telefono il pannello del radar copre la parte bassa della mappa:
-       si alza il contenuto di meta' di quello che copre, che e' la stessa
-       correzione di centraRegioneInStriscia. */
+    /* Sul telefono i pannelli coprono la mappa sopra e sotto: si alza il
+       contenuto di meta' della DIFFERENZA fra i due, che e' la stessa
+       correzione di centraRegioneInStriscia.
+       ⚠️ ANCHE QUELLA DI SOPRA. Fin qui si guardava solo il pannello del
+       radar, che copre dal basso, e si alzava di meta' di quello: ma la
+       barra delle regioni copre dall'alto, e alzando di troppo le regioni
+       finivano sopra il centro della striscia libera (misurato il 7/9/2026
+       con tre regioni a 360x800: alzava 126 px quando ne servivano 80, e le
+       regioni restavano 47 px troppo in alto). E' la stessa lezione del
+       25/8/2026 su centraRegioneInStriscia, mai applicata a questa copia. */
     if(window.innerWidth<=900){
-      var lp=el('legend-panel'), mp=el('map');
+      var lp=el('legend-panel'), mp=el('map'), rp=el('region-panel');
       if(lp&&mp){
         var r=lp.getBoundingClientRect(), mb=mp.getBoundingClientRect();
         var coperto=mb.bottom-Math.max(r.top,mb.top);
-        if(r.height>40 && coperto>20) m.panBy([0, Math.round(coperto/2)], {animate:false});
+        var sopra=0;
+        if(rp){
+          var rr=rp.getBoundingClientRect();
+          var cs=getComputedStyle(rp);
+          if(cs.display!=='none' && rr.height>10)
+            sopra=Math.max(0, Math.min(rr.bottom, mb.bottom)-mb.top);
+        }
+        var alza=Math.round((coperto-sopra)/2);
+        if(r.height>40 && alza>10) m.panBy([0, alza], {animate:false});
       }
     }
   }
@@ -10949,7 +10971,31 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     sardegna:['francia-corsica'],
     svizzera:['valledaosta','piemonte','lombardia','altoadige','austria'],
     austria:['altoadige','veneto','friuli','slovenia','svizzera'],
-    slovenia:['friuli','austria']
+    slovenia:['friuli','austria'],
+    /* ⚠️ LE REGIONS FRANCESI MANCAVANO DEL TUTTO, e partendo da una di
+       loro non usciva nessuna pastiglia (visto da lui il 7/9/2026). Qui
+       ci sono tutte e tredici: quelle che toccano casa nostra portano
+       anche i vicini italiani e la Svizzera. */
+    'francia-aura':['francia-bfc','francia-centro','francia-naq',
+      'francia-occitania','francia-provenza','svizzera','valledaosta','piemonte'],
+    'francia-provenza':['francia-aura','francia-occitania','piemonte','liguria'],
+    'francia-bfc':['francia-aura','francia-centro','francia-grandest',
+      'francia-idf','svizzera'],
+    'francia-grandest':['francia-bfc','francia-hdf','francia-idf'],
+    'francia-hdf':['francia-grandest','francia-idf','francia-normandia'],
+    'francia-idf':['francia-bfc','francia-centro','francia-grandest',
+      'francia-hdf','francia-normandia'],
+    'francia-centro':['francia-aura','francia-bfc','francia-idf',
+      'francia-loira','francia-naq','francia-normandia'],
+    'francia-normandia':['francia-bretagna','francia-centro','francia-hdf',
+      'francia-idf','francia-loira'],
+    'francia-bretagna':['francia-loira','francia-normandia'],
+    'francia-loira':['francia-bretagna','francia-centro','francia-naq',
+      'francia-normandia'],
+    'francia-naq':['francia-aura','francia-centro','francia-loira',
+      'francia-occitania'],
+    'francia-occitania':['francia-aura','francia-naq','francia-provenza'],
+    'francia-corsica':['sardegna']
   };
   var COMBO={'piemonte-vda':['piemonte','valledaosta'],
              'trentino-aa':['trentino','altoadige']};
@@ -11119,7 +11165,9 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       var n=document.createElement('span');
       n.className='vic-nota'; n.textContent='massimo 3';
       riga.appendChild(n);
+      // misurata stretta: se ci sta, si prende lo spazio e si centra dentro
       if(largOn+n.offsetWidth+6>riga.clientWidth-4) riga.removeChild(n);
+      else n.classList.add('larga');
     } else {
       /* ⚠️ NIENTE PASTIGLIE TAGLIATE A META'. Una pastiglia mozzata sul
          bordo non la si legge e non viene in mente di strisciare: e' come
@@ -11260,10 +11308,27 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     dipingi();
   }
   function vai(k){
-    var r=riga(k==='italia'?'__indietro':k);
-    if(!r) return;          // Italia quando sei gia' in Italia: niente da fare
-    r.click();
-    setTimeout(copri,0);
+    /* ⚠️ DALLA FRANCIA SI TORNA INDIETRO PRIMA. Le pastiglie cliccano la
+       riga corrispondente dell'elenco, ma con l'elenco delle regions
+       aperto le righe di Svizzera, Austria e Slovenia non esistono: si
+       toccava e non succedeva niente, funzionava solo Italia perche' e'
+       la riga «Indietro» (visto da lui il 7/9/2026). Quindi prima si
+       torna all'elenco principale, poi si sceglie il paese. */
+    if(k==='italia'){
+      var ind=riga('__indietro');
+      if(ind){ ind.click(); setTimeout(copri,0); }
+      return;
+    }
+    var r=riga(k);
+    if(r){ r.click(); setTimeout(copri,0); return; }
+    var ind2=riga('__indietro');
+    if(!ind2) return;
+    ind2.click();
+    setTimeout(function(){
+      copri();
+      var r2=riga(k);
+      if(r2){ r2.click(); setTimeout(copri,0); }
+    },120);
   }
   (function(){
     var riq=document.getElementById('naz-riga'); if(!riq) return;
