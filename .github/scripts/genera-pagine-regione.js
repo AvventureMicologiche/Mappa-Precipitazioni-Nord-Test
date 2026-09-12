@@ -48,12 +48,6 @@ const fs = require('fs');
 const path = require('path');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
-// ⚠️ UNICA RIGA DIVERSA DA PRODUZIONE: il dominio. Tutto il resto,
-// l'indirizzo dei dati compreso, deve restare IDENTICO — anche qui i numeri si
-// leggono da prod, perche' in questo repo Alto Adige, Toscana, Liguria e le
-// dieci reti MeteoHub non girano e i loro file sono fermi a luglio. Un diff
-// fra i due generatori deve dare solo queste righe: se ne compaiono altre, i
-// due sono divergenti.
 const SITO = 'https://avventurepluvio-test.netlify.app';
 const GA_ID = 'G-9R7MXXS0V4';
 const VIDEO_FAQ = 'https://youtu.be/fvsBZJ_Ylf4';
@@ -113,21 +107,68 @@ const FUNGHI = Object.keys(JSON.parse(
 
 const nomeDi = r => r.nomeTitolo || r.nome;
 
-// `qui` = chiave della pagina che si sta scrivendo, `tipo` = 'regione'|'funghi'.
-// La pagina non linka se' stessa, ma la regione linka la sua funghi e viceversa:
-// e' proprio il ponte che mancava.
-function navAltre(qui, tipo) {
-  const reg = REGIONI
-    .filter(r => !(tipo === 'regione' && r.k === qui))
-    .map(r => `<a href="${SITO}/${r.k}/">${nomeDi(r)}</a>`).join(' · ');
-  const fun = REGIONI
-    .filter(r => FUNGHI.includes(r.k) && !(tipo === 'funghi' && r.k === qui))
-    .map(r => `<a href="${SITO}/funghi/${r.k}/">${nomeDi(r)}</a>`).join(' · ');
+// ⚠️ UNA LISTA SOLA, E SEMPRE QUELLA DELL'ALTRA FAMIGLIA (8/9/2026).
+// Fino a oggi ogni pagina ne elencava DUE: «Dove ha piovuto, regione per
+// regione» e «Piogge per funghi, regione per regione». Stessa forma, stessa
+// faccia, gli stessi nomi due volte di fila. Non si capiva che sono due tagli
+// diversi degli stessi dati: si leggeva un doppione, e basta.
+// Adesso una pagina non ripete MAI la propria famiglia. Su una pagina regione
+// c'e' solo il blocco verde dei funghi, su una pagina funghi solo quello della
+// pioggia. Il doppione sparisce perche' non c'e' piu' niente di ripetuto, e i
+// ponti fra le due famiglie restano tutti.
+//
+// ⚠️ PERCHE' NON «SOLO I FUNGHI DAPPERTUTTO», che era la proposta piu' netta:
+// contato sui file, le pagine regione sarebbero scese da 43 link in entrata
+// (minimo) a UNO. Austria, Molise e Slovenia non hanno una pagina funghi,
+// quindi nessuno le nominerebbe piu' tranne la striscia della mappa, e sono
+// pagine vive (Slovenia 26 viste in 28 giorni, Austria 21). Con la lista
+// incrociata il minimo resta 20, che e' abbondante.
+//
+// ⚠️ IL NOME NON PROMETTE FUNGHI. «Le zone piu' promettenti» sarebbe piaciuto,
+// ma il patto in cima a ogni pagina dice a chiare lettere che non prevediamo
+// quanti funghi ci saranno: l'etichetta dice dove ha PIOVUTO di piu', che e'
+// l'unica cosa che misuriamo.
+// ⚠️ E BAGNATE, non PIOVOSE: «zone piovose» suona come una caratteristica del
+// posto, cioe' una media climatica, mentre qui si parla degli otto giorni che
+// abbiamo misurato. La stessa frase sta in tre punti — qui, sulla pastiglia in
+// fondo alla mappa e sul bottone della home del sito — e devono restare uguali.
+//
+// ⚠️ LO STILE STA QUI DENTRO, in due attributi, e non nei fogli di stile. Le
+// due famiglie hanno fogli separati, quindi la regola andrebbe scritta due
+// volte e tenuta allineata a mano; ma soprattutto quello delle pagine funghi lo
+// COPIANO anche le 948 pagine di paese e le 114 di zona, che navAltre non la
+// chiamano nemmeno: sei righe di CSS inutile avrebbero riscritto 1.062 file.
+const BOSCO = 'background:#f4fbf3;border:1px solid #cfe8cf;border-radius:9px;' +
+              'padding:1px 15px 11px;margin-top:16px;';
+
+// L'elenco delle 19 pagine funghi e quello delle 23 pagine regione, scritti in
+// un posto solo perche' li usa anche il ponte dentro `fonti.html`.
+const listaFunghi = () => REGIONI.filter(r => FUNGHI.includes(r.k))
+  .map(r => `<a href="${SITO}/funghi/${r.k}/">${nomeDi(r)}</a>`).join(' · ');
+const listaRegioni = () => REGIONI
+  .map(r => `<a href="${SITO}/${r.k}/">${nomeDi(r)}</a>`).join(' · ');
+
+// `tipo` = 'regione' | 'funghi': la famiglia della pagina che si sta scrivendo.
+// Si elenca l'ALTRA.
+function navAltre(tipo) {
+  if (tipo === 'regione') {
+    // ⚠️ DUE STRADE, E SI DEVE CAPIRE CHE SONO DUE. La riga porta a cose
+    // diverse: «La nostra selezione» e' la classifica nazionale delle localita'
+    // piu' bagnate, i diciannove nomi sono il riepilogo di UNA regione. Finche'
+    // c'era la sola etichetta, chi leggeva non aveva modo di indovinarlo, e un
+    // link di cui non si sa dove porta non lo clicca nessuno. Stessa forma
+    // della striscia in fondo alla mappa: domanda, la selezione, il riepilogo.
+    return `<nav class="altre">
+  <div style="${BOSCO}">
+    <b style="color:#2d6a30">🍄 Dove ha piovuto di più?</b>
+    <p><a href="${SITO}/funghi/" style="color:#2d6a30;font-weight:600">La nostra selezione, le località più bagnate</a>
+    <span style="color:#7a8b9a">·</span> oppure il riepilogo delle regioni: ${listaFunghi()}</p>
+  </div>
+</nav>`;
+  }
   return `<nav class="altre">
-  <b>Dove ha piovuto, regione per regione</b>
-  <p>${reg}</p>
-  <b>Piogge per funghi, regione per regione</b>
-  <p>${fun}</p>
+  <b>Dove ha piovuto: tutti i pluviometri, pianura compresa</b>
+  <p>${listaRegioni()}</p>
 </nav>`;
 }
 
@@ -293,7 +334,7 @@ ${FUNGHI.includes(r.k) ? `
 </main>
 
 <footer>
-${navAltre(r.k, 'regione')}
+${navAltre('regione')}
   Dati: ${fonteFooter} ·
   <a href="${SITO}/fonti.html">tutte le fonti e licenze</a> ·
   <a href="https://avventuremicologiche.it">Avventure Micologiche</a><br>
@@ -487,7 +528,76 @@ function scrivi(dest, testo, crlf){
 // elenchi di cartelle che divergono darebbero pagina e riepilogo diversi sullo
 // stesso indirizzo. Per questo il file si lascia anche richiedere come modulo,
 // e la scrittura vera parte solo se lo si lancia a mano.
-module.exports = { REGIONI, FUNGHI, navAltre };
+/* ── LA BRICIOLA, VERSIONE PER I MOTORI DI RICERCA (8/9/2026) ───────────────
+   Il pezzetto di dati strutturati che descrive il percorso della pagina. In
+   pagina non si vede: serve a far comparire nei risultati di ricerca la riga
+   «Piogge per funghi › Umbria › Cascia» al posto dell'indirizzo nudo. Chi cerca
+   il nome di un paese capisce a colpo d'occhio che quella e' la scheda di quel
+   posto e non una pagina qualunque del sito.
+   ⚠️ L'ULTIMA voce e' la pagina stessa e va SENZA indirizzo: e' la forma che
+   Google documenta, e mettendoci l'indirizzo corrente il controllo dei
+   risultati arricchiti la segnala come errore.
+   ⚠️ Deve dire ESATTAMENTE quello che dice la briciola visibile in cima alla
+   pagina: se le due divergono, e' Google a dirlo e lo dice tardi. */
+function briciolaJson(voci) {
+  const dati = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: voci.map(([name, item], i) => {
+      const v = { '@type': 'ListItem', position: i + 1, name };
+      if (item) v.item = item;
+      return v;
+    }),
+  };
+  return `<script type="application/ld+json">${JSON.stringify(dati)}</script>`;
+}
+
+/* ── LA MAPPA DEL SITO, in fondo a `fonti.html` (9/9/2026) ──────────────────
+   PERCHE' PROPRIO LI'. Misurato rendendo ogni pagina a 390 px, la finestra con
+   cui Google le scansiona: su tutte le famiglie i link interni sono accesi al
+   100% (indice 180 su 180, paese 35 su 35, zona 27 su 28, regione 27 su 27),
+   TRANNE la mappa, che ne ha 1 acceso su 23. La striscia coi 20 link e le due
+   voci del pie' di pagina sono display:none sotto i 600 px, e l'unico link che
+   sopravvive e' «invia feedback», che porta qui. Per il programma che indicizza
+   il sito, quindi, la mappa rimanda a una pagina sola, e quella pagina finora
+   rimandava soltanto indietro alla mappa: un vicolo cieco.
+
+   ⚠️ SI CHIAMA «MAPPA DEL SITO» e non «Tutte le pagine»: e' una sezione che i
+   siti hanno da sempre e nessuno trova fuori posto in fondo a una pagina di
+   servizio. La prima versione, provata l'8/9, aveva l'altro titolo ed e' stata
+   scartata perche' sembrava messa li' a caso.
+
+   ⚠️ SI SCRIVE FRA DUE SEGNAPOSTI e non si batte a mano: un secondo elenco di
+   regioni da tenere allineato al primo e' la trappola che questo progetto ha
+   gia' pagato. Se i segnaposti non ci sono si dice e non si scrive niente, che
+   e' meglio di riscrivere il file a caso.
+   ⚠️ `fonti.html` e' a CRLF: si riscrive con lo stesso `scrivi(..., true)`. */
+function mappaDelSito(radice) {
+  const F = path.join(radice, 'fonti.html');
+  const A = '<!-- PAGINE:INIZIO -->', B = '<!-- PAGINE:FINE -->';
+  if (!fs.existsSync(F)) { console.log('  ⚠️ fonti.html non c\'e\': mappa del sito saltata'); return; }
+  const testo = fs.readFileSync(F, 'utf8');
+  const i = testo.indexOf(A), j = testo.indexOf(B);
+  if (i < 0 || j < 0 || j < i) {
+    console.log('  ⚠️ fonti.html senza segnaposti PAGINE: mappa del sito saltata');
+    return;
+  }
+  const dentro = [
+    A,
+    '<p><b>Dove ha piovuto: tutti i pluviometri, pianura compresa</b></p>',
+    `<p>${listaRegioni()}</p>`,
+    '<div class="bosco">',
+    '<p><b>🍄 Dove potrebbero esserci le prime nascite di funghi</b></p>',
+    `<p><a href="${SITO}/funghi/">La nostra selezione, le località più bagnate</a> · ${listaFunghi()}</p>`,
+    '</div>',
+  ].join('\r\n') + '\r\n';
+  const nuovo = testo.slice(0, i) + dentro + testo.slice(j);
+  if (nuovo === testo) { console.log('  fonti.html  (invariato)'); return; }
+  scrivi(F, nuovo, true);
+  console.log(`  fonti.html  mappa del sito: ${REGIONI.length} regioni e ${FUNGHI.length} funghi`);
+}
+
+module.exports = { REGIONI, FUNGHI, navAltre, briciolaJson };
 
 if (require.main === module) {
   const radice = path.resolve(__dirname, '..', '..');
@@ -495,6 +605,7 @@ if (require.main === module) {
     scrivi(path.join(radice, r.k, 'index.html'), pagina(r), true);
     console.log(`  /${r.k}/  ${r.nome} — ${r.staz} staz., ${r.dirs.join('+')}`);
   });
+  mappaDelSito(radice);
   const voci = scriviSitemap(SITO, radice);
   console.log(`\n${REGIONI.length} pagine scritte, sitemap.xml con ${voci} indirizzi.`);
 }

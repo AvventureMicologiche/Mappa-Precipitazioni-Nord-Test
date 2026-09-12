@@ -11,6 +11,7 @@
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/trentino/">
 <meta property="og:type" content="website">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Piogge per funghi","item":"https://avventurepluvio-test.netlify.app/funghi/"},{"@type":"ListItem","position":2,"name":"Trentino"}]}</script>
 <!-- Google tag: come nelle pagine regione, il config sta dietro al controllo
      sull'HOSTNAME, se no questa copia sul test manderebbe eventi alla
      proprieta' vera. -->
@@ -154,9 +155,21 @@ nav.altre a{color:var(--blu);}
 </header>
 <main>
 
-<h1>Piogge per funghi in Trentino</h1>
-<p class="sotto">Quanta acqua è caduta davvero nelle zone da bosco, misurata dai pluviometri
-di Meteotrentino e aggiornata ogni giorno.</p>
+
+<p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi, tutte le regioni</a></p>
+
+<h1>Dove potrebbero esserci le prime nascite di funghi in Trentino</h1>
+<p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
+dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella <b>da 13 a 20
+giorni fa</b>, misurata dai pluviometri di Meteotrentino nei posti da bosco del Trentino. In cima alla
+classifica ci sono quelli dove ne è caduta di più.</p>
+
+
+<div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo solo
+gli otto giorni della finestra dei funghi. Per la pioggia di ieri, quella degli ultimi 20 giorni
+o un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=trentino&amp;g=20"
+style="color:var(--blu);font-weight:700">apri la mappa in Trentino</a> e cambia le date
+da lì.</div>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -170,7 +183,7 @@ di Meteotrentino e aggiornata ogni giorno.</p>
 <div id="guasto"></div>
 <div id="testa"></div>
 
-<h2>Le zone da bosco più bagnate</h2>
+<h2>La classifica: i posti da bosco più bagnati del Trentino</h2>
 <div class="spiega" id="finestra"></div>
 <div id="tabella"></div>
 <p class="nota" id="notaforte"></p>
@@ -225,10 +238,8 @@ il posto preciso non l'hai ancora scelto.</p>
 <p>Questa pagina guarda solo i pluviometri in mezzo al bosco. Per la regione intera, pianura compresa, c'è <a href="https://avventurepluvio-test.netlify.app/trentino/">dove ha piovuto in Trentino</a>: oltre 100 pluviometri di Meteotrentino.</p>
 
 <nav class="altre">
-  <b>Dove ha piovuto, regione per regione</b>
+  <b>Dove ha piovuto: tutti i pluviometri, pianura compresa</b>
   <p><a href="https://avventurepluvio-test.netlify.app/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.netlify.app/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.netlify.app/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.netlify.app/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.netlify.app/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.netlify.app/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.netlify.app/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.netlify.app/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.netlify.app/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.netlify.app/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.netlify.app/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.netlify.app/marche/">Marche</a> · <a href="https://avventurepluvio-test.netlify.app/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.netlify.app/molise/">Molise</a> · <a href="https://avventurepluvio-test.netlify.app/campania/">Campania</a> · <a href="https://avventurepluvio-test.netlify.app/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.netlify.app/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.netlify.app/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.netlify.app/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.netlify.app/sardegna/">Sardegna</a> · <a href="https://avventurepluvio-test.netlify.app/svizzera/">Svizzera</a> · <a href="https://avventurepluvio-test.netlify.app/austria/">Austria</a> · <a href="https://avventurepluvio-test.netlify.app/slovenia/">Slovenia</a></p>
-  <b>Piogge per funghi, regione per regione</b>
-  <p><a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/sardegna/">Sardegna</a></p>
 </nav>
 </main>
 
@@ -430,11 +441,14 @@ il posto preciso non l'hai ancora scelto.</p>
     /* ⚠️ NIENTE APOSTROFI DRITTI QUI DENTRO: il testo esce da un template
        literal del generatore, e un ' verrebbe consumato lasciando la stringa
        spezzata e la pagina bianca. Si usa quello tipografico. */
+    /* ⚠️ QUI NON SI RIPETE LA REGOLA DEI 12-13 GIORNI: dal 9/9/2026 sta nelle
+       tre righe in cima, ed e' la prima cosa che si legge. Scritta due volte a
+       mezza pagina di distanza sembrava che la pagina si fosse dimenticata di
+       averla gia' detta. Qui restano le DATE, che in cima non ci possono
+       stare: cambiano ogni giorno e il titolo e' cotto nel guscio. */
     document.getElementById('finestra').innerHTML =
-      'Pioggia caduta fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG) + '</b>, cioè da '
-      + '<b>13 a 20 giorni fa</b>. Dopo l’acqua il fungo non spunta subito: per svilupparsi '
-      + 'gli servono <b>almeno 12-13 giorni</b>, a seconda della temperatura. È questa la '
-      + 'pioggia che fa nascere i funghi <b>adesso</b>.';
+      'Gli otto giorni della finestra sono fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG)
+      + '</b>. Sono millimetri misurati a terra dai pluviometri, non una previsione.';
 
     var trs = righe.map(function(r, i){
       var quando = r.forte

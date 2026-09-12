@@ -37,7 +37,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { REGIONI } = require('./genera-pagine-regione.js');
+const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
 // ⚠️ `slug` si chiama qui `slugDaNome`: dentro pagina() c'e' gia' un parametro
 // che si chiama slug ed e' una STRINGA. Importandola col suo nome la funzione
 // veniva coperta e usciva «slug is not a function» solo a generazione avviata,
@@ -60,12 +60,6 @@ const { scriviSitemap } = require('./genera-sitemap.js');
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
 
-// ⚠️ UNICA RIGA DIVERSA DA PRODUZIONE: il dominio. Tutto il resto,
-// l'indirizzo dei dati compreso, deve restare IDENTICO — anche qui i numeri si
-// leggono da prod, perche' in questo repo Alto Adige, Toscana, Liguria e le
-// dieci reti MeteoHub non girano e i loro file sono fermi a luglio. Un diff
-// fra i due generatori deve dare solo queste righe: se ne compaiono altre, i
-// due sono divergenti.
 const SITO = 'https://avventurepluvio-test.netlify.app';
 const GA_ID = 'G-9R7MXXS0V4';
 const CANALE = 'https://www.youtube.com/@avventuremicologiche';
@@ -202,6 +196,11 @@ function pagina(r, posto, slug, sl) {
 <meta property="og:image" content="${SITO}/preview.jpg">
 <meta property="og:url" content="${SITO}/funghi/${REG}/${slug}/">
 <meta property="og:type" content="website">
+${briciolaJson([
+  ['Piogge per funghi', SITO + '/funghi/'],
+  [NOME, SITO + '/funghi/' + REG + '/'],
+  [bello(nomePosto), null],
+])}
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
@@ -247,6 +246,14 @@ ${STILE}
 .tre{display:flex;gap:10px;margin:18px 0 6px;flex-wrap:wrap;}
 .tre > div{flex:1;min-width:150px;background:var(--grigio);border:1px solid var(--bordo);
   border-radius:9px;padding:12px 14px;}
+/* La quarta casella, «ultima pioggia sopra i 30 mm», e' piu' larga apposta:
+   a 13 px la sua etichetta chiede 170,2 px e una casella normale ne offre
+   169, quindi andava a capo e abbassava il numero rispetto agli altri tre.
+   Si allarga la casella invece di rimpicciolire il testo. Sotto i 600 px va
+   a tutta larghezza, dove le caselle stanno a due a due. Stesse regole in
+   genera-pagine-zona.js: se si toccano qui si toccano anche li'. */
+.tre > div.secco{flex:1.25;border-left:4px solid var(--verde);}
+@media(max-width:600px){.tre > div.secco{flex-basis:100%;}}
 .tre .et{font-size:13px;color:#5a6b80;}
 .tre .n{font-size:26px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}
 .vic td:last-child,.vic th:last-child{text-align:right;}
@@ -267,11 +274,45 @@ nav.altre .io{font-weight:700;color:var(--blu-scuro);}
 </header>
 
 <main>
-<p class="nota" style="margin-bottom:6px"><a href="${SITO}/funghi/${REG}/" style="color:var(--blu)">‹ Piogge per funghi ${r.prep} ${esc(NOME)}</a></p>
+${/* ⚠️ BRICIOLA A DUE LIVELLI dall'8/9/2026, e non e' un vezzo di navigazione.
+     Prima questa riga puntava solo alla regione. Misurato quel giorno: l'indice
+     `/funghi/` aveva 21 link in entrata; con questa riga sulle 948 pagine di
+     paese e sulle 114 di zona ne prende oltre mille, e sono link dentro il
+     TESTO, visibili anche sul telefono. Sulla mappa invece 26 link interni su
+     27 sono display:none sotto i 600 px, e Google scansiona col programma del
+     telefono: la' il peso non passa quasi. Qui si'.
+     Costa zero spazio: la riga c'era gia'. */''}
+<p class="nota" style="margin-bottom:6px"><a href="${SITO}/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="${SITO}/funghi/${REG}/" style="color:var(--blu)">${esc(NOME)}</a></p>
 
-<h1>Piogge per funghi ${esc(DOVE)}</h1>
-<p class="sotto">${esc(sigla)} · ${quota} m slm · ${bosco}% di bosco entro 3 km. Pioggia misurata dal
-pluviometro di ${esc(CORTA)}, aggiornata ogni giorno.</p>
+${/* ⚠️ LA FINESTRA NELLE PRIME RIGHE (9/9/2026), come sull'indice e sulle
+     pagine di regione. Prima il titolo diceva «Piogge per funghi a Cascia» e
+     sotto c'erano provincia, quota e bosco: chi arrivava da Google non capiva
+     che sta guardando la pioggia di due settimane fa e non quella di ieri.
+     ⚠️ QUI IL TITOLO E' DIVERSO da quello delle regioni, e non per svista.
+     «Dove potrebbero esserci le prime nascite» ha senso su un territorio, dove
+     c'e' da scegliere fra piu' posti; su UN pluviometro non c'e' nessun
+     «dove», il posto e' quello. E la domanda che la gente scrive davvero, col
+     nome del paese, e' «quanto ha piovuto a Cascia»: il titolo la ricalca e ci
+     aggiunge la finestra. */''}
+<h1>Quanta pioggia è caduta ${esc(DOVE)} da 13 a 20 giorni fa</h1>
+<p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
+dodici o tredici giorni. Per questo conta la pioggia di due settimane fa e non quella di ieri.
+I millimetri li misura il pluviometro di ${esc(CORTA)}: ${esc(sigla)} · ${quota} m slm ·
+${bosco}% di bosco entro 3 km.</p>
+
+${/* ⚠️ LA VIA D'USCITA PER CHI CERCAVA ALTRO (9/9/2026). Chi arriva da Google
+     cercando «quanto ha piovuto a Cascia» spesso vuole IERI, non la finestra
+     dei funghi, e questa pagina gli mostra otto giorni di due settimane fa
+     senza dirgli come averne altri. I bottoni per gli ultimi 20 giorni ci sono
+     gia', ma mezza pagina piu' sotto e dentro il riquadro scuro: chi non
+     trova subito quello che cerca se ne va prima di arrivarci.
+     ⚠️ Sta PRIMA del patto e non dopo: e' la risposta a chi si e' appena
+     accorto di essere sulla pagina sbagliata, e va data subito. */''}
+<div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo solo
+gli otto giorni della finestra dei funghi. Per la pioggia di ieri, quella degli ultimi 20 giorni
+o un periodo scelto da te, <a href="${SITO}/?r=${REGS}&amp;g=20&amp;${PIN}"
+style="color:var(--blu);font-weight:700">apri ${esc(bello(nomePosto))} sulla mappa</a> e cambia
+le date da lì.</div>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -444,9 +485,16 @@ provinciali ISTAT.</p>
     var mm = somma(s,20,13), mm7 = somma(s,7,1), mm25 = somma(s,GIORNI,1);
     var daG = iso(menoDa(j.oggi,20)), aG = iso(menoDa(j.oggi,13)), a20 = iso(menoDa(j.oggi,1));
 
-    var forte = null;
-    for (var n=1; n<=GIORNI; n++) if (s[n-1] >= FORTE) { forte = {g:n, mm:s[n-1]}; break; }
-    var quando = forte ? (forte.g===1 ? 'ieri' : forte.g+' giorni fa') : null;
+    /* ⚠️ L'ULTIMA PIOGGIA FORTE ARRIVA DAL FILE, non si cerca nella serie.
+       La serie e' di 25 giorni, e cercandola li' dentro un posto asciutto da
+       un mese rispondeva «negli ultimi 25 giorni nessuna» invece di dire da
+       quanto. Il generatore la cerca fino a 150 giorni indietro e scrive due
+       numeri per pluviometro, e cercatoFino dice fin dove ha guardato.
+       (Niente apici inversi qui dentro: questo file e' un modello backtick.) */
+    var ff = (j.forte || {})[ID];
+    var forte = ff ? {g:ff[0], mm:ff[1]} : null;
+    var quando = forte ? (forte.g===1 ? 'ieri' : forte.g===2 ? 'l’altro ieri'
+                                                             : forte.g+' giorni fa') : null;
 
     function link(dal, al, centra){
       /* ⚠️ pl/pn = il segnaposto. Senza, questi tre bottoni aprivano la
@@ -481,11 +529,13 @@ provinciali ISTAT.</p>
        la pioggia, gli servono almeno 12-13 giorni e quanti dipende dalla
        temperatura. Dirlo e' il punto della pagina: senza, la finestra sembra
        scelta a caso. */
+        /* ⚠️ QUI NON SI RIPETE LA REGOLA DEI 12-13 GIORNI: dal 9/9/2026 sta
+       nelle tre righe in cima, ed e' la prima cosa che si legge. Restano le
+       DATE, che in cima non possono stare perche' cambiano ogni giorno. */
     document.getElementById('finestra').innerHTML =
       'Qui la pioggia è caduta fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG) + '</b>, cioè da '
-      + '<b>13 a 20 giorni fa</b>. Dopo l’acqua il fungo non spunta subito: per svilupparsi gli '
-      + 'servono <b>almeno 12-13 giorni</b>, a seconda della temperatura. È questa la pioggia '
-      + 'che fa nascere i funghi <b>adesso</b>.';
+      + '<b>13 a 20 giorni fa</b>. Sono millimetri misurati a terra dal pluviometro, non una '
+      + 'previsione.';
 
     /* ── il grafico: 25 barre, ieri a destra ── */
     var max = Math.max.apply(null, s.concat([1]));
@@ -592,12 +642,27 @@ provinciali ISTAT.</p>
     document.getElementById('tre').innerHTML =
       '<div><div class="et">13-20 giorni fa</div><div class="n">' + num(mm) + ' mm</div></div>'
       + '<div><div class="et">Ultimi 7 giorni</div><div class="n">' + num(mm7) + ' mm</div></div>'
-      + '<div><div class="et">Ultimi 25 giorni</div><div class="n">' + num(mm25) + ' mm</div></div>';
+      + '<div><div class="et">Ultimi 25 giorni</div><div class="n">' + num(mm25) + ' mm</div></div>'
+      + '<div class="secco"><div class="et">Ultima pioggia sopra i ' + FORTE + ' mm</div>'
+        + '<div class="n">' + (quando || 'mai') + '</div></div>';
 
+    /* ⚠️ Il ramo «mai» dice FIN DOVE si e' guardato: senza quel numero e'
+       un «mai» campato in aria, e al sud, dove l'archivio reale comincia a
+       luglio, sarebbe pure ingiusto verso il pluviometro. */
     document.getElementById('notaforte').innerHTML = forte
       ? 'L’ultima pioggia forte è caduta <b>' + quando + '</b>: ' + num(forte.mm) + ' mm in un giorno solo, '
-        + 'che è quella che bagna davvero il terreno.'
-      : 'Negli ultimi ' + GIORNI + ' giorni qui non è caduta nessuna pioggia forte (almeno ' + FORTE + ' mm in un giorno).';
+        + 'che è quella che bagna davvero il terreno, mentre sotto i ' + FORTE + ' mm l’acqua resta '
+        + 'nella lettiera e se ne va.'
+      : 'Qui non cade una pioggia forte (almeno ' + FORTE + ' mm in un giorno solo) da <b>'
+        + (j.cercatoFino || GIORNI) + ' giorni</b>'
+        /* ⚠️ DUE FRASI DIVERSE, e la differenza e' vera. Se la ricerca si e'
+           fermata al nostro tetto (150 giorni) l'archivio continua: dire «da
+           quando abbiamo archivio» sarebbe falso, ed e' quello che scriveva la
+           prima versione su Alpicella. Se invece si e' fermata prima, li'
+           l'archivio finisce per davvero (la Sicilia: 114 giorni). */
+        + (j.tetto && j.cercatoFino >= j.tetto
+           ? ', che è fin dove siamo andati a guardare.'
+           : ', cioè da quando abbiamo archivio su questo pluviometro.');
 
     /* ── posizione in classifica e posti vicini ──
        L'anagrafe arriva dal file: [id, nome, sigla, quota, lat, lon, bosco%, slug] */

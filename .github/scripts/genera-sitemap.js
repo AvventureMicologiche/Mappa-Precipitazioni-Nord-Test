@@ -81,6 +81,13 @@ function scriviSitemap(SITO, RADICE) {
   // dentro il sito, e la pagina regione e' quella che vogliamo far uscire
   // quando uno cerca «pioggia in Liguria». Questa e' la risposta a una domanda
   // piu' stretta.
+  // La radice della famiglia, dall'8/9/2026: sta in cima alla sua sitemap e
+  // porta 0.8 come le pagine regione, perche' e' una PORTA — da li' si arriva
+  // alle 19 regioni e alle 114 zone. Ha una data sua: il rinnovo stagionale non
+  // la tocca, non avendo il ritratto dell'archivio dentro.
+  if (c_e(path.join('funghi', 'index.html')))
+    fam.funghi.push({ loc: `${SITO}/funghi/`, lastmod: LASTMOD.indice, freq: 'weekly', pri: '0.8' });
+
   for (const k of Object.keys(FUNGHI)) {
     if (c_e(path.join('funghi', k, 'index.html')))
       fam.funghi.push({ loc: `${SITO}/funghi/${k}/`, lastmod: NASCITA_FUNGHI, freq: 'weekly', pri: '0.7' });

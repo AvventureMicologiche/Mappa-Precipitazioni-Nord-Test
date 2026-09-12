@@ -4,13 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Piogge per funghi nel Mugello</title>
-<meta name="description" content="Quanta pioggia è caduta nel Mugello, misurata da 18 pluviometri nelle zone da bosco. La finestra da 13 a 20 giorni fa, quella che conta per i funghi.">
+<meta name="description" content="Quanta pioggia è caduta nel Mugello, misurata da 13 pluviometri nelle zone da bosco. La finestra da 13 a 20 giorni fa, quella che conta per i funghi.">
 <link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/zone/mugello/">
 <meta property="og:title" content="Piogge per funghi nel Mugello">
 <meta property="og:description" content="La pioggia vera, misurata dai pluviometri nelle zone da bosco.">
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/zone/mugello/">
 <meta property="og:type" content="website">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Piogge per funghi","item":"https://avventurepluvio-test.netlify.app/funghi/"},{"@type":"ListItem","position":2,"name":"Toscana","item":"https://avventurepluvio-test.netlify.app/funghi/toscana/"},{"@type":"ListItem","position":3,"name":"Mugello"}]}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
@@ -143,6 +144,8 @@ nav.altre a{color:var(--blu);}
 
 .tre{display:flex;gap:10px;margin:18px 0 6px;flex-wrap:wrap;}
 .tre > div{flex:1;min-width:150px;background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:12px 14px;}
+.tre > div.secco{flex:1.25;border-left:4px solid var(--verde);}
+@media(max-width:600px){.tre > div.secco{flex-basis:100%;}}
 .tre .et{font-size:13px;color:#5a6b80;}
 .tre .n{font-size:26px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}
 nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
@@ -160,10 +163,17 @@ nav.altre a{color:var(--blu);}
 </header>
 
 <main>
-<p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/toscana/" style="color:var(--blu)">‹ Piogge per funghi in Toscana</a></p>
+<p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/" style="color:var(--blu)">Toscana</a></p>
 
-<h1>Piogge per funghi nel Mugello</h1>
-<p class="sotto">Toscana · <b>18 pluviometri di ARPAE Emilia-Romagna e SIR Toscana</b>, nelle zone da bosco del Mugello. Pioggia misurata, aggiornata ogni giorno.</p>
+<h1>Dove potrebbero esserci le prime nascite di funghi nel Mugello</h1>
+<p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono
+almeno dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella
+<b>da 13 a 20 giorni fa</b>, misurata dai <b>13 pluviometri</b> di SIR Toscana nelle zone da bosco del Mugello, in Toscana. In cima alla classifica c’è quello dove ne è caduta di più.</p>
+
+<div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo
+solo gli otto giorni della finestra dei funghi. Per la pioggia di ieri, quella degli ultimi
+20 giorni o un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=toscana,emilia&amp;g=20&amp;pl=43.95,11.3833&amp;pn=Mugello&amp;pz=1" style="color:var(--blu);font-weight:700">apri Mugello sulla mappa</a> e cambia
+le date da lì.</div>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -183,18 +193,13 @@ nav.altre a{color:var(--blu);}
 <h2>I pluviometri della zona, dal più bagnato</h2>
 <table class="vic"><thead><tr><th>Località</th><th>13-20 gg fa</th><th>Ultimi 7</th><th class="tagl">Ultimi 25</th></tr></thead>
 <tbody id="tabella">
-<tr data-id="5452"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/emilia/barco/"><b>Barco</b></a><span class="com">FI · 720 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="TOS30287500"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/toscana/barco/"><b>Barco</b></a><span class="com">FI · 780 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
-<tr data-id="3049"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/emilia/bibbiana/"><b>Bibbiana</b></a><span class="com">FI · 858 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="TOS30248000"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/toscana/bibbiana/"><b>Bibbiana</b></a><span class="com">FI · 786 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
-<tr data-id="3054"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/emilia/casaglia/"><b>Casaglia</b></a><span class="com">FI · 750 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="TOS30248400"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/toscana/casaglia/"><b>Casaglia</b></a><span class="com">FI · 749 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="TOS11000108"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/toscana/giogo/"><b>Giogo</b></a><span class="com">FI · 880 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="TOS01000916"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-di-fo/"><b>Monte di Fò</b></a><span class="com">FI · 820 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
-<tr data-id="5454"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/emilia/monte-faggiola/"><b>Monte Faggiola</b></a><span class="com">FI · 929 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="TOS30287700"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-faggiola/"><b>Monte Faggiola</b></a><span class="com">FI · 882 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="TOS03001001"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-giovi/"><b>Monte Giovi</b></a><span class="com">FI · 960 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
-<tr data-id="5348"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/emilia/palazzuolo-sul-senio/"><b>Palazzuolo sul Senio</b></a><span class="com">FI · 500 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="TOS30290400"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/toscana/palazzuolo-sul-senio/"><b>Palazzuolo sul Senio</b></a><span class="com">FI · 496 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="TOS01000931"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/toscana/ponte-a-olmo/"><b>Ponte a Olmo</b></a><span class="com">FI · 459 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="TOS01000979"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/toscana/razzuolo/"><b>Razzuolo</b></a><span class="com">FI · 637 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
@@ -226,7 +231,7 @@ seguenti.</p>
 <p class="nota">⚠️ Il radar <b>non è un pluviometro</b>: è una misura presa dal cielo, a 2 km di
 risoluzione, e inquadra tutta la regione. Serve a vedere <i>dove</i> sta piovendo adesso, non a
 contare quanta acqua è caduta. I millimetri di questa pagina restano quelli misurati a terra
-da ARPAE Emilia-Romagna e SIR Toscana.</p>
+da SIR Toscana.</p>
 
 <h2 style="margin-bottom:12px">Come scegliamo i pluviometri di una zona</h2>
 <div class="metodo">
@@ -241,8 +246,8 @@ da ARPAE Emilia-Romagna e SIR Toscana.</p>
 
 <h2 style="margin-top:30px">Quanto piove nel Mugello, secondo il nostro archivio</h2>
 <p>In cima alla pagina c'è la finestra corta, quella che serve per i funghi. Ma di questi pluviometri
-teniamo tutti i giorni da quando li leggiamo. Da luglio 2026 a settembre 2026, in 54 giorni di misura, i 13 pluviometri del Mugello che leggiamo dallo stesso giorno hanno contato <b>96 mm</b> di pioggia a testa,
-in media. Il più bagnato è <b>Razzuolo</b> con 146 mm, il più asciutto Giogo con 53.</p>
+teniamo tutti i giorni da quando li leggiamo. Da luglio 2026 a settembre 2026, in 60 giorni di misura, i 13 pluviometri del Mugello hanno contato <b>158 mm</b> di pioggia a testa,
+in media. Il più bagnato è <b>Barco</b> con 203 mm, il più asciutto Giogo con 55.</p>
 <p>La giornata più violenta di tutto l'archivio è stata il <b>21 agosto 2026</b> a Barco, con <b>70,5 mm</b> in
 ventiquattro ore.</p>
 <p class="nota">Non è una media climatica: è quello che questi strumenti hanno misurato in quei
@@ -256,9 +261,9 @@ giorno.</p>
 </div>
 
 <h2 style="margin-top:30px">Le altre zone della Toscana</h2>
-<nav class="altre"><p><a href="https://avventurepluvio-test.netlify.app/funghi/zone/alpe-di-poti/">Alpe di Poti</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/alpi-apuane/">Alpi Apuane</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/calvana/">Calvana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/candalla/">Candalla</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/casentino/">Casentino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/colline-livornesi/">Colline Livornesi</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/colline-metallifere/">Colline Metallifere</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/colline-metallifere-grossetane/">Colline Metallifere grossetane</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/garfagnana/">Garfagnana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/media-valle-del-serchio/">Media Valle del Serchio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/monte-pisano/">Monte Pisano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/stretti-di-giaredo/">Stretti di Giaredo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-d-orcia/">Val d'Orcia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-luce/">Val di Luce</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-merse/">Val di Merse</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valdarno/">Valdarno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valdelsa/">Valdelsa</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valdinievole/">Valdinievole</a></p></nav>
+<nav class="altre"><p><a href="https://avventurepluvio-test.netlify.app/funghi/zone/alpe-di-poti/">Alpe di Poti</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/alpi-apuane/">Alpi Apuane</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/calvana/">Calvana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/candalla/">Candalla</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/casentino/">Casentino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/colline-livornesi/">Colline Livornesi</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/colline-metallifere/">Colline Metallifere</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/colline-metallifere-grossetane/">Colline Metallifere grossetane</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/garfagnana/">Garfagnana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/lunigiana/">Lunigiana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/media-valle-del-serchio/">Media Valle del Serchio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/monte-pisano/">Monte Pisano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/stretti-di-giaredo/">Stretti di Giaredo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-d-orcia/">Val d'Orcia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-luce/">Val di Luce</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-magra/">Val di Magra</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-merse/">Val di Merse</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valdarno/">Valdarno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valdelsa/">Valdelsa</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valdinievole/">Valdinievole</a></p></nav>
 
-<p class="nota" style="margin-top:22px">Dati di ARPAE Emilia-Romagna e SIR Toscana via il nostro archivio. Il
+<p class="nota" style="margin-top:22px">Dati di SIR Toscana via il nostro archivio. Il
 bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
 </main>
 
@@ -274,11 +279,11 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
 (function(){
   var SITO = "https://avventurepluvio-test.netlify.app", MAPPA = SITO + "/";
   var ZONA = "Mugello", DOVE = "nel Mugello";
-  var CASA = "toscana", REGIONI = ["emilia","toscana"];
+  var CASA = "toscana", REGIONI = ["toscana"];
   var REGS = "toscana,emilia", ZNOME = "Mugello";
   var LAT = 43.95, LON = 11.3833;
   /* [ id, nome, sigla, quota, lat, lon, slug, regione ] */
-  var POSTI = [["5452","Barco","FI",720,44.0609,11.3976,"barco","emilia"],["3049","Bibbiana","FI",858,44.1297,11.5135,"bibbiana","emilia"],["3054","Casaglia","FI",750,44.0381,11.5176,"casaglia","emilia"],["5454","Monte Faggiola","FI",929,44.1444,11.4967,"monte-faggiola","emilia"],["5348","Palazzuolo sul Senio","FI",500,44.1165,11.5461,"palazzuolo-sul-senio","emilia"],["TOS30287500","Barco","FI",780,44.054,11.392,"barco","toscana"],["TOS30248000","Bibbiana","FI",786,44.124,11.508,"bibbiana","toscana"],["TOS30248400","Casaglia","FI",749,44.037,11.518,"casaglia","toscana"],["TOS11000108","Giogo","FI",880,44.047,11.389,"giogo","toscana"],["TOS01000916","Monte di Fò","FI",820,44.08,11.281,"monte-di-fo","toscana"],["TOS30287700","Monte Faggiola","FI",882,44.136,11.493,"monte-faggiola","toscana"],["TOS03001001","Monte Giovi","FI",960,43.877,11.448,"monte-giovi","toscana"],["TOS30290400","Palazzuolo sul Senio","FI",496,44.11,11.542,"palazzuolo-sul-senio","toscana"],["TOS01000931","Ponte a Olmo","FI",459,44.049,11.304,"ponte-a-olmo","toscana"],["TOS01000979","Razzuolo","FI",637,44.032,11.468,"razzuolo","toscana"],["TOS01000991","Ronta","FI",380,44.009,11.436,"ronta","toscana"],["TOS01001059","Santa Brigida all'Opaco","FI",407,43.849,11.402,"santa-brigida-all-opaco","toscana"],["TOS01001011","Villore","FI",365,43.964,11.541,"villore","toscana"]];
+  var POSTI = [["TOS30287500","Barco","FI",780,44.054,11.392,"barco","toscana"],["TOS30248000","Bibbiana","FI",786,44.124,11.508,"bibbiana","toscana"],["TOS30248400","Casaglia","FI",749,44.037,11.518,"casaglia","toscana"],["TOS11000108","Giogo","FI",880,44.047,11.389,"giogo","toscana"],["TOS01000916","Monte di Fò","FI",820,44.08,11.281,"monte-di-fo","toscana"],["TOS30287700","Monte Faggiola","FI",882,44.136,11.493,"monte-faggiola","toscana"],["TOS03001001","Monte Giovi","FI",960,43.877,11.448,"monte-giovi","toscana"],["TOS30290400","Palazzuolo sul Senio","FI",496,44.11,11.542,"palazzuolo-sul-senio","toscana"],["TOS01000931","Ponte a Olmo","FI",459,44.049,11.304,"ponte-a-olmo","toscana"],["TOS01000979","Razzuolo","FI",637,44.032,11.468,"razzuolo","toscana"],["TOS01000991","Ronta","FI",380,44.009,11.436,"ronta","toscana"],["TOS01001059","Santa Brigida all'Opaco","FI",407,43.849,11.402,"santa-brigida-all-opaco","toscana"],["TOS01001011","Villore","FI",365,43.964,11.541,"villore","toscana"]];
   var LOCALE = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   var BASE = LOCALE ? "/data/"
     : "https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/";
@@ -312,12 +317,20 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
   })).then(function(js){
     var buoni = js.filter(function(j){ return j && fresco(j); });
     if(buoni.length !== REGIONI.length) return guasto();
-    var serie = {}, oggi = null;
+    var serie = {}, oggi = null, forti = {}, fino = null, tetto = null;
     buoni.forEach(function(j){ Object.keys(j.serie).forEach(function(id){ serie[id] = j.serie[id]; });
+                               var f = j.forte || {};
+                               Object.keys(f).forEach(function(id){ forti[id] = f[id]; });
+                               /* ⚠️ Fin dove si e' guardato indietro: se la zona sta a cavallo
+                                  di due regioni con archivi lunghi diversi vale il PIU CORTO,
+                                  se no si prometterebbe una ricerca che per meta della valle
+                                  non e stata fatta. */
+                               if(j.cercatoFino && (fino === null || j.cercatoFino < fino)) fino = j.cercatoFino;
+                               if(j.tetto && (tetto === null || j.tetto < tetto)) tetto = j.tetto;
                                if(!oggi || j.oggi < oggi) oggi = j.oggi; });
     var righe = POSTI.filter(function(p){ return serie[p[0]]; });
     if(righe.length < 2) return guasto();
-    disegna(serie, oggi, righe);
+    disegna(serie, oggi, righe, forti, fino, tetto);
   }).catch(function(){ guasto(); });
 
   function guasto(){
@@ -329,18 +342,34 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
       + "<a href=\"" + MAPPA + "?r=" + REGS + "\">sulla mappa</a>.";
   }
 
-  function disegna(serie, oggi, righe){
+  function disegna(serie, oggi, righe, forti, fino, tetto){
     var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13)), a20 = iso(menoDa(oggi,1));
     var dati = righe.map(function(p){
       var s = serie[p[0]];
-      var forte = null;
-      for(var n=1;n<=GIORNI;n++) if(s[n-1] >= FORTE){ forte = {g:n, mm:s[n-1]}; break; }
+      /* ⚠️ L ULTIMA PIOGGIA FORTE ARRIVA DAL FILE, non si cerca nella serie.
+         La serie e di 25 giorni: cercandola li dentro, una valle asciutta da
+         un mese risponderebbe «mai» invece di «trentadue giorni fa». Il
+         generatore la cerca fino a 150 giorni indietro e scrive due numeri. */
+      var ff = forti && forti[p[0]];
+      var forte = ff ? {g:ff[0], mm:ff[1]} : null;
       return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5], slug:p[6], reg:p[7],
                mm:somma(s,20,13), mm7:somma(s,7,1), mm25:somma(s,GIORNI,1), forte:forte };
     }).sort(function(a,b){ return b.mm - a.mm; });
 
     var med = function(c){ var t=0; dati.forEach(function(x){ t+=x[c]; }); return uno(t/dati.length); };
     var primo = dati[0];
+
+    /* ⚠️ IL VALORE DELLA ZONA E LA MEDIANA DEI GIORNI, non il piu recente.
+       Col piu recente basterebbe un temporale su un pluviometro solo per
+       dichiarare bagnata tutta la valle, e per i funghi conta che l acqua
+       sia arrivata dappertutto. Chi non ne ha mai avuta una entra nel conto
+       come «piu indietro di tutti», cosi non sparisce e non falsa la meta. */
+    var gForti = dati.map(function(x){ return x.forte ? x.forte.g : 1e9; })
+                     .sort(function(a,b){ return a-b; });
+    var mez = gForti.length % 2 ? gForti[(gForti.length-1)/2]
+                                : Math.round((gForti[gForti.length/2-1] + gForti[gForti.length/2]) / 2);
+    var mediaG = mez >= 1e9 ? null : mez;
+    function quandoG(n){ return n===1 ? "ieri" : n===2 ? "l'altro ieri" : n + " giorni fa"; }
 
     function link(x, dal, al){
       /* pl/pn = il segnaposto. Senza, questi bottoni aprivano la mappa sul
@@ -370,14 +399,15 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
 
     document.getElementById("finestra").innerHTML =
       "Qui la pioggia è caduta fra il <b>" + gg(daG) + "</b> e il <b>" + gg(aG) + "</b>, cioè da "
-      + "<b>13 a 20 giorni fa</b>. Dopo l’acqua il fungo non spunta subito: per svilupparsi gli "
-      + "servono <b>almeno 12-13 giorni</b>, a seconda della temperatura. È questa la pioggia "
-      + "che fa nascere i funghi <b>adesso</b>.";
+      + "<b>13 a 20 giorni fa</b>. Sono millimetri misurati a terra dai pluviometri, non una "
+      + "previsione.";
 
     document.getElementById("tre").innerHTML =
       "<div><div class=\"et\">Media 13-20 giorni fa</div><div class=\"n\">" + num(med("mm")) + " mm</div></div>"
       + "<div><div class=\"et\">Media ultimi 7 giorni</div><div class=\"n\">" + num(med("mm7")) + " mm</div></div>"
-      + "<div><div class=\"et\">Media ultimi 25 giorni</div><div class=\"n\">" + num(med("mm25")) + " mm</div></div>";
+      + "<div><div class=\"et\">Media ultimi 25 giorni</div><div class=\"n\">" + num(med("mm25")) + " mm</div></div>"
+      + "<div class=\"secco\"><div class=\"et\">Ultima pioggia sopra i " + FORTE + " mm</div>"
+        + "<div class=\"n\">" + (mediaG === null ? "mai" : quandoG(mediaG)) + "</div></div>";
 
     document.getElementById("notamedia").innerHTML =
       "Medie sui <b>" + dati.length + " pluviometri</b> da bosco della zona. Il più bagnato nella "
@@ -407,13 +437,21 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
     });
     for (var iq = 0; iq < trs.length; iq++) corpo.appendChild(trs[iq]);
 
-    var conForte = dati.filter(function(r){ return r.forte; }).length;
+    /* ⚠️ QUI SI DICE «DA QUANTO NON PIOVE SUL SERIO», e la frase e cambiata
+       l 11/9/2026: prima diceva «negli ultimi 25 giorni ne hanno avuta N su
+       M», che con la ricerca estesa a 150 giorni sarebbe diventata FALSA
+       senza dare nessun errore. Adesso dice da quanto, che era la domanda. */
     document.getElementById("notaforte").innerHTML =
       "«Pioggia forte» vuol dire almeno " + FORTE + " mm in un giorno solo: è quella che bagna "
-      + "davvero il terreno. Negli ultimi " + GIORNI + " giorni ne hanno avuta "
-      + (conForte === dati.length ? "<b>tutti</b> i pluviometri della zona"
-         : conForte === 0 ? "<b>nessun</b> pluviometro della zona"
-         : "<b>" + conForte + " pluviometri su " + dati.length + "</b>") + ". "
+      + "davvero il terreno, mentre sotto quella soglia l’acqua resta nella lettiera e se ne va. "
+      + (mediaG === null
+         ? "In " + ZONA + " più di metà dei <b>" + dati.length + " pluviometri</b> non ne vede una "
+           + "da almeno <b>" + (fino || GIORNI) + " giorni</b>"
+           + (tetto && fino >= tetto ? ", che è fin dove siamo andati a guardare. "
+                                     : ", cioè da quando abbiamo archivio qui. ")
+         : "In " + ZONA + " l’ultima è di <b>" + quandoG(mediaG) + "</b>, il valore di mezzo fra i "
+           + "<b>" + dati.length + " pluviometri</b> della zona: metà l’ha avuta più di recente, "
+           + "metà più indietro. ")
       + "Ogni nome della tabella porta alla sua pagina, con la pioggia giorno per giorno.";
 
     document.getElementById("attesa").style.display = "none";

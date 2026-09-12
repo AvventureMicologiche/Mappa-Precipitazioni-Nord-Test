@@ -11,6 +11,7 @@
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/zone/valsassina/">
 <meta property="og:type" content="website">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Piogge per funghi","item":"https://avventurepluvio-test.netlify.app/funghi/"},{"@type":"ListItem","position":2,"name":"Lombardia","item":"https://avventurepluvio-test.netlify.app/funghi/lombardia/"},{"@type":"ListItem","position":3,"name":"Valsassina"}]}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
@@ -143,6 +144,8 @@ nav.altre a{color:var(--blu);}
 
 .tre{display:flex;gap:10px;margin:18px 0 6px;flex-wrap:wrap;}
 .tre > div{flex:1;min-width:150px;background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:12px 14px;}
+.tre > div.secco{flex:1.25;border-left:4px solid var(--verde);}
+@media(max-width:600px){.tre > div.secco{flex-basis:100%;}}
 .tre .et{font-size:13px;color:#5a6b80;}
 .tre .n{font-size:26px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}
 nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
@@ -160,10 +163,17 @@ nav.altre a{color:var(--blu);}
 </header>
 
 <main>
-<p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/" style="color:var(--blu)">‹ Piogge per funghi in Lombardia</a></p>
+<p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/" style="color:var(--blu)">Lombardia</a></p>
 
-<h1>Piogge per funghi in Valsassina</h1>
-<p class="sotto">Lombardia · <b>3 pluviometri di ARPA Lombardia</b>, nelle zone da bosco della Valsassina. Pioggia misurata, aggiornata ogni giorno.</p>
+<h1>Dove potrebbero esserci le prime nascite di funghi in Valsassina</h1>
+<p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono
+almeno dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella
+<b>da 13 a 20 giorni fa</b>, misurata dai <b>3 pluviometri</b> di ARPA Lombardia nelle zone da bosco della Valsassina, in Lombardia. In cima alla classifica c’è quello dove ne è caduta di più.</p>
+
+<div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo
+solo gli otto giorni della finestra dei funghi. Per la pioggia di ieri, quella degli ultimi
+20 giorni o un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=lombardia,svizzera&amp;g=20&amp;pl=45.983,9.4&amp;pn=Valsassina&amp;pz=1" style="color:var(--blu);font-weight:700">apri Valsassina sulla mappa</a> e cambia
+le date da lì.</div>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -226,8 +236,8 @@ da ARPA Lombardia.</p>
 
 <h2 style="margin-top:30px">Quanto piove in Valsassina, secondo il nostro archivio</h2>
 <p>In cima alla pagina c'è la finestra corta, quella che serve per i funghi. Ma di questi pluviometri
-teniamo tutti i giorni da quando li leggiamo. Da gennaio 2026 a settembre 2026, in 245 giorni di misura, i 3 pluviometri della Valsassina hanno contato <b>940 mm</b> di pioggia a testa,
-in media. Il più bagnato è <b>Premana v.Luciani papa</b> con 1.074 mm, il più asciutto Sueglio Monte Letee con 826.</p>
+teniamo tutti i giorni da quando li leggiamo. Da gennaio 2026 a settembre 2026, in 251 giorni di misura, i 3 pluviometri della Valsassina hanno contato <b>1.006 mm</b> di pioggia a testa,
+in media. Il più bagnato è <b>Premana v.Luciani papa</b> con 1.128 mm, il più asciutto Sueglio Monte Letee con 936.</p>
 <p>La giornata più violenta di tutto l'archivio è stata il <b>20 agosto 2026</b> a Cortenova, con <b>87,2 mm</b> in
 ventiquattro ore.</p>
 <p class="nota">Non è una media climatica: è quello che questi strumenti hanno misurato in quei
@@ -297,12 +307,20 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
   })).then(function(js){
     var buoni = js.filter(function(j){ return j && fresco(j); });
     if(buoni.length !== REGIONI.length) return guasto();
-    var serie = {}, oggi = null;
+    var serie = {}, oggi = null, forti = {}, fino = null, tetto = null;
     buoni.forEach(function(j){ Object.keys(j.serie).forEach(function(id){ serie[id] = j.serie[id]; });
+                               var f = j.forte || {};
+                               Object.keys(f).forEach(function(id){ forti[id] = f[id]; });
+                               /* ⚠️ Fin dove si e' guardato indietro: se la zona sta a cavallo
+                                  di due regioni con archivi lunghi diversi vale il PIU CORTO,
+                                  se no si prometterebbe una ricerca che per meta della valle
+                                  non e stata fatta. */
+                               if(j.cercatoFino && (fino === null || j.cercatoFino < fino)) fino = j.cercatoFino;
+                               if(j.tetto && (tetto === null || j.tetto < tetto)) tetto = j.tetto;
                                if(!oggi || j.oggi < oggi) oggi = j.oggi; });
     var righe = POSTI.filter(function(p){ return serie[p[0]]; });
     if(righe.length < 2) return guasto();
-    disegna(serie, oggi, righe);
+    disegna(serie, oggi, righe, forti, fino, tetto);
   }).catch(function(){ guasto(); });
 
   function guasto(){
@@ -314,18 +332,34 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
       + "<a href=\"" + MAPPA + "?r=" + REGS + "\">sulla mappa</a>.";
   }
 
-  function disegna(serie, oggi, righe){
+  function disegna(serie, oggi, righe, forti, fino, tetto){
     var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13)), a20 = iso(menoDa(oggi,1));
     var dati = righe.map(function(p){
       var s = serie[p[0]];
-      var forte = null;
-      for(var n=1;n<=GIORNI;n++) if(s[n-1] >= FORTE){ forte = {g:n, mm:s[n-1]}; break; }
+      /* ⚠️ L ULTIMA PIOGGIA FORTE ARRIVA DAL FILE, non si cerca nella serie.
+         La serie e di 25 giorni: cercandola li dentro, una valle asciutta da
+         un mese risponderebbe «mai» invece di «trentadue giorni fa». Il
+         generatore la cerca fino a 150 giorni indietro e scrive due numeri. */
+      var ff = forti && forti[p[0]];
+      var forte = ff ? {g:ff[0], mm:ff[1]} : null;
       return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5], slug:p[6], reg:p[7],
                mm:somma(s,20,13), mm7:somma(s,7,1), mm25:somma(s,GIORNI,1), forte:forte };
     }).sort(function(a,b){ return b.mm - a.mm; });
 
     var med = function(c){ var t=0; dati.forEach(function(x){ t+=x[c]; }); return uno(t/dati.length); };
     var primo = dati[0];
+
+    /* ⚠️ IL VALORE DELLA ZONA E LA MEDIANA DEI GIORNI, non il piu recente.
+       Col piu recente basterebbe un temporale su un pluviometro solo per
+       dichiarare bagnata tutta la valle, e per i funghi conta che l acqua
+       sia arrivata dappertutto. Chi non ne ha mai avuta una entra nel conto
+       come «piu indietro di tutti», cosi non sparisce e non falsa la meta. */
+    var gForti = dati.map(function(x){ return x.forte ? x.forte.g : 1e9; })
+                     .sort(function(a,b){ return a-b; });
+    var mez = gForti.length % 2 ? gForti[(gForti.length-1)/2]
+                                : Math.round((gForti[gForti.length/2-1] + gForti[gForti.length/2]) / 2);
+    var mediaG = mez >= 1e9 ? null : mez;
+    function quandoG(n){ return n===1 ? "ieri" : n===2 ? "l'altro ieri" : n + " giorni fa"; }
 
     function link(x, dal, al){
       /* pl/pn = il segnaposto. Senza, questi bottoni aprivano la mappa sul
@@ -355,14 +389,15 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
 
     document.getElementById("finestra").innerHTML =
       "Qui la pioggia è caduta fra il <b>" + gg(daG) + "</b> e il <b>" + gg(aG) + "</b>, cioè da "
-      + "<b>13 a 20 giorni fa</b>. Dopo l’acqua il fungo non spunta subito: per svilupparsi gli "
-      + "servono <b>almeno 12-13 giorni</b>, a seconda della temperatura. È questa la pioggia "
-      + "che fa nascere i funghi <b>adesso</b>.";
+      + "<b>13 a 20 giorni fa</b>. Sono millimetri misurati a terra dai pluviometri, non una "
+      + "previsione.";
 
     document.getElementById("tre").innerHTML =
       "<div><div class=\"et\">Media 13-20 giorni fa</div><div class=\"n\">" + num(med("mm")) + " mm</div></div>"
       + "<div><div class=\"et\">Media ultimi 7 giorni</div><div class=\"n\">" + num(med("mm7")) + " mm</div></div>"
-      + "<div><div class=\"et\">Media ultimi 25 giorni</div><div class=\"n\">" + num(med("mm25")) + " mm</div></div>";
+      + "<div><div class=\"et\">Media ultimi 25 giorni</div><div class=\"n\">" + num(med("mm25")) + " mm</div></div>"
+      + "<div class=\"secco\"><div class=\"et\">Ultima pioggia sopra i " + FORTE + " mm</div>"
+        + "<div class=\"n\">" + (mediaG === null ? "mai" : quandoG(mediaG)) + "</div></div>";
 
     document.getElementById("notamedia").innerHTML =
       "Medie sui <b>" + dati.length + " pluviometri</b> da bosco della zona. Il più bagnato nella "
@@ -392,13 +427,21 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
     });
     for (var iq = 0; iq < trs.length; iq++) corpo.appendChild(trs[iq]);
 
-    var conForte = dati.filter(function(r){ return r.forte; }).length;
+    /* ⚠️ QUI SI DICE «DA QUANTO NON PIOVE SUL SERIO», e la frase e cambiata
+       l 11/9/2026: prima diceva «negli ultimi 25 giorni ne hanno avuta N su
+       M», che con la ricerca estesa a 150 giorni sarebbe diventata FALSA
+       senza dare nessun errore. Adesso dice da quanto, che era la domanda. */
     document.getElementById("notaforte").innerHTML =
       "«Pioggia forte» vuol dire almeno " + FORTE + " mm in un giorno solo: è quella che bagna "
-      + "davvero il terreno. Negli ultimi " + GIORNI + " giorni ne hanno avuta "
-      + (conForte === dati.length ? "<b>tutti</b> i pluviometri della zona"
-         : conForte === 0 ? "<b>nessun</b> pluviometro della zona"
-         : "<b>" + conForte + " pluviometri su " + dati.length + "</b>") + ". "
+      + "davvero il terreno, mentre sotto quella soglia l’acqua resta nella lettiera e se ne va. "
+      + (mediaG === null
+         ? "In " + ZONA + " più di metà dei <b>" + dati.length + " pluviometri</b> non ne vede una "
+           + "da almeno <b>" + (fino || GIORNI) + " giorni</b>"
+           + (tetto && fino >= tetto ? ", che è fin dove siamo andati a guardare. "
+                                     : ", cioè da quando abbiamo archivio qui. ")
+         : "In " + ZONA + " l’ultima è di <b>" + quandoG(mediaG) + "</b>, il valore di mezzo fra i "
+           + "<b>" + dati.length + " pluviometri</b> della zona: metà l’ha avuta più di recente, "
+           + "metà più indietro. ")
       + "Ogni nome della tabella porta alla sua pagina, con la pioggia giorno per giorno.";
 
     document.getElementById("attesa").style.display = "none";

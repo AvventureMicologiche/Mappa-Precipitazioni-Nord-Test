@@ -1,0 +1,53 @@
+# I RIMANDI DELLE PAGINE DI PAESE DOPPIE — 12/9/2026
+#
+# Trentasette paesi avevano DUE pagine perche' due agenzie pubblicano lo stesso
+# pluviometro: Cabanne stava sotto la Liguria (OMIRL) e sotto l'Emilia (ARPAE),
+# Marradi sotto la Toscana (SIR) e sotto l'Emilia. Si e' tenuta quella
+# dell'agenzia della regione dove il paese sta davvero, e la gemella e' sparita
+# dall'anagrafe (.github/scripts/funghi-posti.json).
+#
+# ⚠️ SERVONO DAVVERO, non sono cortesia: al 12/9 Google mostrava gia' tre di
+# questi indirizzi (Lago Paduli 13 viste, Passo della Cisa 11, Alpe Gorreto 2).
+# Senza il rimando diventavano 404 con le loro impressioni in mano.
+#
+# ⚠️ QUESTO E' IL SECONDO POSTO DOVE STANNO I RIMANDI: l'altro e' netlify.toml,
+# che Netlify legge per primo. Li' ce ne sono due, generali; qui i trentasette
+# di questa faccenda, che in TOML sarebbero centottantacinque righe.
+#
+/funghi/campania/giffoni/ /funghi/campania/giffoni-valle-piana/ 301
+/funghi/emilia/alpe-gorreto/ /funghi/liguria/alpe-gorreto/ 301
+/funghi/emilia/barbagelata/ /funghi/liguria/barbagelata/ 301
+/funghi/emilia/barco/ /funghi/toscana/barco/ 301
+/funghi/emilia/bibbiana/ /funghi/toscana/bibbiana/ 301
+/funghi/emilia/cabanne/ /funghi/liguria/cabanne/ 301
+/funghi/emilia/casaglia/ /funghi/toscana/casaglia/ 301
+/funghi/emilia/cottede/ /funghi/toscana/cottede/ 301
+/funghi/emilia/diga-del-brugneto/ /funghi/liguria/brugneto-diga/ 301
+/funghi/emilia/lago-paduli/ /funghi/toscana/lago-paduli/ 301
+/funghi/emilia/loco-carchelli/ /funghi/liguria/loco-carchelli/ 301
+/funghi/emilia/marradi/ /funghi/toscana/marradi/ 301
+/funghi/emilia/monte-faggiola/ /funghi/toscana/monte-faggiola/ 301
+/funghi/emilia/palazzuolo-sul-senio/ /funghi/toscana/palazzuolo-sul-senio/ 301
+/funghi/emilia/pracchia/ /funghi/toscana/pracchia/ 301
+/funghi/emilia/rovegno/ /funghi/liguria/rovegno/ 301
+/funghi/emilia/santo-stefano-d-aveto/ /funghi/liguria/santo-stefano-d-aveto/ 301
+/funghi/emilia/torriglia/ /funghi/liguria/torriglia/ 301
+/funghi/emilia/treppio/ /funghi/toscana/treppio/ 301
+/funghi/liguria/bosco-di-rossano/ /funghi/toscana/bosco-di-rossano/ 301
+/funghi/liguria/comano/ /funghi/toscana/comano/ 301
+/funghi/liguria/equi-terme/ /funghi/toscana/equi-terme/ 301
+/funghi/liguria/iera/ /funghi/toscana/iera/ 301
+/funghi/liguria/mazzola/ /funghi/toscana/mazzola/ 301
+/funghi/liguria/minucciano/ /funghi/toscana/minucciano/ 301
+/funghi/liguria/novegigola/ /funghi/toscana/novegigola/ 301
+/funghi/liguria/parana/ /funghi/toscana/parana/ 301
+/funghi/liguria/passo-del-brattello/ /funghi/toscana/passo-del-brattello/ 301
+/funghi/liguria/passo-del-cerreto/ /funghi/toscana/passo-del-cerreto/ 301
+/funghi/liguria/passo-della-cisa/ /funghi/toscana/passo-della-cisa/ 301
+/funghi/liguria/patigno/ /funghi/toscana/patigno/ 301
+/funghi/liguria/pietra-piccata/ /funghi/toscana/pietra-piccata/ 301
+/funghi/liguria/rocca-sigillina/ /funghi/toscana/rocca-sigillina/ 301
+/funghi/liguria/tendola/ /funghi/toscana/tendola/ 301
+/funghi/liguria/turano/ /funghi/toscana/turano/ 301
+/funghi/marche/casteldelci/ /funghi/emilia/casteldelci/ 301
+/funghi/toscana/passo-radici/ /funghi/emilia/passo-delle-radici/ 301

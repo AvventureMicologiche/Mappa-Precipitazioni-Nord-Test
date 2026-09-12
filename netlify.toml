@@ -9,6 +9,12 @@
   to = "/"
   status = 301
 
+# ⚠️ CI SONO ALTRI RIMANDI, e non stanno qui: il file `_redirects` nella
+# radice ne porta trentasette, uno per ogni pagina di paese che era doppia
+# perche' due agenzie pubblicano lo stesso pluviometro (12/9/2026). In TOML
+# sarebbero state centottantacinque righe. Netlify legge prima questo file e
+# poi `_redirects`, quindi le due regole qui sopra vincono comunque.
+
 [[redirects]]
   from = "/.netlify/functions/*"
   to = "/.netlify/functions/:splat"

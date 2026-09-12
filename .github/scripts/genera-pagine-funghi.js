@@ -37,7 +37,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { REGIONI, navAltre } = require('./genera-pagine-regione.js');
+const { REGIONI, navAltre, briciolaJson } = require('./genera-pagine-regione.js');
 const { LOCALITA, bello, slug, slugRegione } = require('./lib-nomi.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
@@ -47,12 +47,6 @@ const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json
 // delle 42 pagine di agosto, ripetuto identico.
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
 const RADICE = path.resolve(__dirname, '..', '..');
-// ⚠️ UNICA RIGA DIVERSA DA PRODUZIONE: il dominio. Tutto il resto,
-// l'indirizzo dei dati compreso, deve restare IDENTICO — anche qui i numeri si
-// leggono da prod, perche' in questo repo Alto Adige, Toscana, Liguria e le
-// dieci reti MeteoHub non girano e i loro file sono fermi a luglio. Un diff
-// fra i due generatori deve dare solo queste righe: se ne compaiono altre, i
-// due sono divergenti.
 const SITO = 'https://avventurepluvio-test.netlify.app';
 
 // Solo la lingua: «della Liguria», «delle Marche». Nell'anagrafe delle pagine
@@ -101,6 +95,10 @@ function pagina(r, posti) {
 <meta property="og:image" content="${SITO}/preview.jpg">
 <meta property="og:url" content="${SITO}/funghi/${r.k}/">
 <meta property="og:type" content="website">
+${briciolaJson([
+  ['Piogge per funghi', `${SITO}/funghi/`],
+  [nome, null],
+])}
 <!-- Google tag: come nelle pagine regione, il config sta dietro al controllo
      sull'HOSTNAME, se no questa copia sul test manderebbe eventi alla
      proprieta' vera. -->
@@ -244,9 +242,37 @@ nav.altre a{color:var(--blu);}
 </header>
 <main>
 
-<h1>Piogge per funghi ${r.prep} ${nome}</h1>
-<p class="sotto">Quanta acqua è caduta davvero nelle zone da bosco, misurata dai pluviometri
-di ${corta} e aggiornata ogni giorno.</p>
+${/* La briciola verso la radice della famiglia, dall'8/9/2026. Stessa forma di
+     quella che le pagine di paese hanno verso qui: e' il solo link che le 19
+     regioni mandano all'indice, e senza di lui l'indice sarebbe una pagina che
+     nessuno nomina. */''}
+<p class="nota" style="margin-bottom:6px"><a href="${SITO}/funghi/" style="color:var(--blu)">‹ Piogge per funghi, tutte le regioni</a></p>
+${/* ⚠️ LA FINESTRA E LA CLASSIFICA NELLE PRIME TRE RIGHE (9/9/2026), come
+     sull'indice. Prima il titolo diceva «Piogge per funghi in Umbria» e sotto
+     «quanta acqua e' caduta davvero nelle zone da bosco»: chi arrivava da
+     Google non capiva ne' che sta guardando la pioggia di due settimane fa, ne'
+     che sotto c'e' una classifica. Il perche' dei 13-20 giorni stava solo nel
+     riquadro sopra la tabella, cioe' dopo il patto e dopo l'attesa.
+     ⚠️ Il tag `title` NON cambia: «Piogge per funghi ${r.prep} <nome>» e' la
+     frase esatta con cui la gente cerca, e la versione col titolo nuovo per
+     esteso sforerebbe i 62 caratteri sulle regioni dal nome lungo. */''}
+<h1>Dove potrebbero esserci le prime nascite di funghi ${r.prep} ${nome}</h1>
+<p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
+dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella <b>da 13 a 20
+giorni fa</b>, misurata dai pluviometri di ${corta} nei posti da bosco ${gen}. In cima alla
+classifica ci sono quelli dove ne è caduta di più.</p>
+
+${/* ⚠️ LA VIA D'USCITA PER CHI CERCAVA ALTRO (9/9/2026), la stessa che sta
+     sulle pagine di paese e di zona: chi arriva da Google puo' voler sapere
+     quanto e' piovuto IERI, e qui trova otto giorni di due settimane fa. Il
+     bottone per gli ultimi 20 giorni c'era gia' ma mezza pagina piu' sotto,
+     dentro il riquadro scuro. Sta PRIMA del patto perche' e' la risposta a chi
+     si e' appena accorto di essere sulla pagina sbagliata. */''}
+<div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo solo
+gli otto giorni della finestra dei funghi. Per la pioggia di ieri, quella degli ultimi 20 giorni
+o un periodo scelto da te, <a href="${SITO}/?r=${r.k}&amp;g=20"
+style="color:var(--blu);font-weight:700">apri la mappa ${r.prep} ${nome}</a> e cambia le date
+da lì.</div>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -260,7 +286,7 @@ di ${corta} e aggiornata ogni giorno.</p>
 <div id="guasto"></div>
 <div id="testa"></div>
 
-<h2>Le zone da bosco più bagnate</h2>
+<h2>La classifica: i posti da bosco più bagnati ${gen}</h2>
 <div class="spiega" id="finestra"></div>
 <div id="tabella"></div>
 <p class="nota" id="notaforte"></p>
@@ -328,7 +354,7 @@ il posto preciso non l'hai ancora scelto.</p>
 <h2 style="margin-top:30px">Tutta la pioggia ${r.prep} ${nome}</h2>
 <p>Questa pagina guarda solo i pluviometri in mezzo al bosco. Per la regione intera, pianura compresa, c'è <a href="${SITO}/${r.k}/">dove ha piovuto ${r.prep} ${nome}</a>: ${r.staz} pluviometri di ${r.agenzia}.</p>
 
-${navAltre(r.k, 'funghi')}
+${navAltre('funghi')}
 </main>
 
 <script>
@@ -529,11 +555,14 @@ ${navAltre(r.k, 'funghi')}
     /* ⚠️ NIENTE APOSTROFI DRITTI QUI DENTRO: il testo esce da un template
        literal del generatore, e un ' verrebbe consumato lasciando la stringa
        spezzata e la pagina bianca. Si usa quello tipografico. */
+    /* ⚠️ QUI NON SI RIPETE LA REGOLA DEI 12-13 GIORNI: dal 9/9/2026 sta nelle
+       tre righe in cima, ed e' la prima cosa che si legge. Scritta due volte a
+       mezza pagina di distanza sembrava che la pagina si fosse dimenticata di
+       averla gia' detta. Qui restano le DATE, che in cima non ci possono
+       stare: cambiano ogni giorno e il titolo e' cotto nel guscio. */
     document.getElementById('finestra').innerHTML =
-      'Pioggia caduta fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG) + '</b>, cioè da '
-      + '<b>13 a 20 giorni fa</b>. Dopo l’acqua il fungo non spunta subito: per svilupparsi '
-      + 'gli servono <b>almeno 12-13 giorni</b>, a seconda della temperatura. È questa la '
-      + 'pioggia che fa nascere i funghi <b>adesso</b>.';
+      'Gli otto giorni della finestra sono fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG)
+      + '</b>. Sono millimetri misurati a terra dai pluviometri, non una previsione.';
 
     var trs = righe.map(function(r, i){
       var quando = r.forte

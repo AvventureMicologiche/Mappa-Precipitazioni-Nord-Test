@@ -11,6 +11,7 @@
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/friuli/clauzetto/">
 <meta property="og:type" content="website">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Piogge per funghi","item":"https://avventurepluvio-test.netlify.app/funghi/"},{"@type":"ListItem","position":2,"name":"Friuli","item":"https://avventurepluvio-test.netlify.app/funghi/friuli/"},{"@type":"ListItem","position":3,"name":"Clauzetto"}]}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
@@ -178,6 +179,14 @@ nav.altre a{color:var(--blu);}
 .tre{display:flex;gap:10px;margin:18px 0 6px;flex-wrap:wrap;}
 .tre > div{flex:1;min-width:150px;background:var(--grigio);border:1px solid var(--bordo);
   border-radius:9px;padding:12px 14px;}
+/* La quarta casella, «ultima pioggia sopra i 30 mm», e' piu' larga apposta:
+   a 13 px la sua etichetta chiede 170,2 px e una casella normale ne offre
+   169, quindi andava a capo e abbassava il numero rispetto agli altri tre.
+   Si allarga la casella invece di rimpicciolire il testo. Sotto i 600 px va
+   a tutta larghezza, dove le caselle stanno a due a due. Stesse regole in
+   genera-pagine-zona.js: se si toccano qui si toccano anche li'. */
+.tre > div.secco{flex:1.25;border-left:4px solid var(--verde);}
+@media(max-width:600px){.tre > div.secco{flex-basis:100%;}}
 .tre .et{font-size:13px;color:#5a6b80;}
 .tre .n{font-size:26px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}
 .vic td:last-child,.vic th:last-child{text-align:right;}
@@ -198,11 +207,22 @@ nav.altre .io{font-weight:700;color:var(--blu-scuro);}
 </header>
 
 <main>
-<p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/friuli/" style="color:var(--blu)">‹ Piogge per funghi in Friuli</a></p>
 
-<h1>Piogge per funghi a Clauzetto</h1>
-<p class="sotto">PN · 583 m slm · 67% di bosco entro 3 km. Pioggia misurata dal
-pluviometro di ARPA FVG, aggiornata ogni giorno.</p>
+<p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="https://avventurepluvio-test.netlify.app/funghi/friuli/" style="color:var(--blu)">Friuli</a></p>
+
+
+<h1>Quanta pioggia è caduta a Clauzetto da 13 a 20 giorni fa</h1>
+<p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
+dodici o tredici giorni. Per questo conta la pioggia di due settimane fa e non quella di ieri.
+I millimetri li misura il pluviometro di ARPA FVG: PN · 583 m slm ·
+67% di bosco entro 3 km.</p>
+
+
+<div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo solo
+gli otto giorni della finestra dei funghi. Per la pioggia di ieri, quella degli ultimi 20 giorni
+o un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=friuli&amp;g=20&amp;pl=46.2299,12.918&amp;pn=Clauzetto"
+style="color:var(--blu);font-weight:700">apri Clauzetto sulla mappa</a> e cambia
+le date da lì.</div>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -283,13 +303,13 @@ da ARPA FVG.</p>
 <h2 style="margin-top:30px">Quanto piove a Clauzetto, secondo il nostro archivio</h2>
 <p>In cima alla pagina c'è la finestra corta, quella che serve per i funghi. Ma di questo pluviometro
 teniamo tutti i giorni da quando lo leggiamo, e messi in fila raccontano un'altra cosa:
-<b>da luglio 2026 a settembre 2026</b>, in 40 giorni di misura,
-ha contato <b>181 mm</b> di pioggia in <b>9 giornate</b> bagnate. Nelle altre 31 non è caduto niente, o così poco da non contare.</p>
-<p>Il giorno più bagnato di tutto l'archivio è stato il <b>20 agosto 2026</b>,
-con <b>77,3 mm</b> in ventiquattro ore. Il mese più piovoso,
+<b>da luglio 2026 a settembre 2026</b>, in 46 giorni di misura,
+ha contato <b>309 mm</b> di pioggia in <b>11 giornate</b> bagnate. Nelle altre 35 non è caduto niente, o così poco da non contare.</p>
+<p>Il giorno più bagnato di tutto l'archivio è stato il <b>10 settembre 2026</b>,
+con <b>97,4 mm</b> in ventiquattro ore. Il mese più piovoso,
 fra quelli che abbiamo per intero, è <b>agosto 2026</b> con
-180 mm. Su 52 pluviometri
-da bosco del Friuli con lo stesso periodo alle spalle, questo è il <b>21º</b>
+180 mm. Su 51 pluviometri
+da bosco del Friuli con lo stesso periodo alle spalle, questo è il <b>10º</b>
 per acqua caduta.</p>
 <p class="nota">Non è una media climatica: è quello che questo strumento ha misurato in quei
 giorni, e basta. L'archivio parte dal 27 luglio 2026 e si allunga di un giorno al
@@ -384,9 +404,16 @@ provinciali ISTAT.</p>
     var mm = somma(s,20,13), mm7 = somma(s,7,1), mm25 = somma(s,GIORNI,1);
     var daG = iso(menoDa(j.oggi,20)), aG = iso(menoDa(j.oggi,13)), a20 = iso(menoDa(j.oggi,1));
 
-    var forte = null;
-    for (var n=1; n<=GIORNI; n++) if (s[n-1] >= FORTE) { forte = {g:n, mm:s[n-1]}; break; }
-    var quando = forte ? (forte.g===1 ? 'ieri' : forte.g+' giorni fa') : null;
+    /* ⚠️ L'ULTIMA PIOGGIA FORTE ARRIVA DAL FILE, non si cerca nella serie.
+       La serie e' di 25 giorni, e cercandola li' dentro un posto asciutto da
+       un mese rispondeva «negli ultimi 25 giorni nessuna» invece di dire da
+       quanto. Il generatore la cerca fino a 150 giorni indietro e scrive due
+       numeri per pluviometro, e cercatoFino dice fin dove ha guardato.
+       (Niente apici inversi qui dentro: questo file e' un modello backtick.) */
+    var ff = (j.forte || {})[ID];
+    var forte = ff ? {g:ff[0], mm:ff[1]} : null;
+    var quando = forte ? (forte.g===1 ? 'ieri' : forte.g===2 ? 'l’altro ieri'
+                                                             : forte.g+' giorni fa') : null;
 
     function link(dal, al, centra){
       /* ⚠️ pl/pn = il segnaposto. Senza, questi tre bottoni aprivano la
@@ -421,11 +448,13 @@ provinciali ISTAT.</p>
        la pioggia, gli servono almeno 12-13 giorni e quanti dipende dalla
        temperatura. Dirlo e' il punto della pagina: senza, la finestra sembra
        scelta a caso. */
+        /* ⚠️ QUI NON SI RIPETE LA REGOLA DEI 12-13 GIORNI: dal 9/9/2026 sta
+       nelle tre righe in cima, ed e' la prima cosa che si legge. Restano le
+       DATE, che in cima non possono stare perche' cambiano ogni giorno. */
     document.getElementById('finestra').innerHTML =
       'Qui la pioggia è caduta fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG) + '</b>, cioè da '
-      + '<b>13 a 20 giorni fa</b>. Dopo l’acqua il fungo non spunta subito: per svilupparsi gli '
-      + 'servono <b>almeno 12-13 giorni</b>, a seconda della temperatura. È questa la pioggia '
-      + 'che fa nascere i funghi <b>adesso</b>.';
+      + '<b>13 a 20 giorni fa</b>. Sono millimetri misurati a terra dal pluviometro, non una '
+      + 'previsione.';
 
     /* ── il grafico: 25 barre, ieri a destra ── */
     var max = Math.max.apply(null, s.concat([1]));
@@ -532,12 +561,27 @@ provinciali ISTAT.</p>
     document.getElementById('tre').innerHTML =
       '<div><div class="et">13-20 giorni fa</div><div class="n">' + num(mm) + ' mm</div></div>'
       + '<div><div class="et">Ultimi 7 giorni</div><div class="n">' + num(mm7) + ' mm</div></div>'
-      + '<div><div class="et">Ultimi 25 giorni</div><div class="n">' + num(mm25) + ' mm</div></div>';
+      + '<div><div class="et">Ultimi 25 giorni</div><div class="n">' + num(mm25) + ' mm</div></div>'
+      + '<div class="secco"><div class="et">Ultima pioggia sopra i ' + FORTE + ' mm</div>'
+        + '<div class="n">' + (quando || 'mai') + '</div></div>';
 
+    /* ⚠️ Il ramo «mai» dice FIN DOVE si e' guardato: senza quel numero e'
+       un «mai» campato in aria, e al sud, dove l'archivio reale comincia a
+       luglio, sarebbe pure ingiusto verso il pluviometro. */
     document.getElementById('notaforte').innerHTML = forte
       ? 'L’ultima pioggia forte è caduta <b>' + quando + '</b>: ' + num(forte.mm) + ' mm in un giorno solo, '
-        + 'che è quella che bagna davvero il terreno.'
-      : 'Negli ultimi ' + GIORNI + ' giorni qui non è caduta nessuna pioggia forte (almeno ' + FORTE + ' mm in un giorno).';
+        + 'che è quella che bagna davvero il terreno, mentre sotto i ' + FORTE + ' mm l’acqua resta '
+        + 'nella lettiera e se ne va.'
+      : 'Qui non cade una pioggia forte (almeno ' + FORTE + ' mm in un giorno solo) da <b>'
+        + (j.cercatoFino || GIORNI) + ' giorni</b>'
+        /* ⚠️ DUE FRASI DIVERSE, e la differenza e' vera. Se la ricerca si e'
+           fermata al nostro tetto (150 giorni) l'archivio continua: dire «da
+           quando abbiamo archivio» sarebbe falso, ed e' quello che scriveva la
+           prima versione su Alpicella. Se invece si e' fermata prima, li'
+           l'archivio finisce per davvero (la Sicilia: 114 giorni). */
+        + (j.tetto && j.cercatoFino >= j.tetto
+           ? ', che è fin dove siamo andati a guardare.'
+           : ', cioè da quando abbiamo archivio su questo pluviometro.');
 
     /* ── posizione in classifica e posti vicini ──
        L'anagrafe arriva dal file: [id, nome, sigla, quota, lat, lon, bosco%, slug] */
