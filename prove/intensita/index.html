@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intensità della pioggia - mockup</title>
+<style>
+:root{--blu:#1b3f6e;--blu-scuro:#123252;--grigio:#f0f4fb;--bordo:#d0d8e8;--verde:#2e7d32;--dim:#5a7192;--rosso:#c0392b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#222;background:#fff;font-size:17px;line-height:1.6;}
+header{background:var(--blu);color:#fff;padding:12px 16px;}
+header b{font-size:15px;}
+header span{font-size:13px;opacity:.85;display:block;}
+main{max-width:940px;margin:0 auto;padding:22px 16px 60px;}
+h2{font-size:23px;color:var(--blu);margin:34px 0 6px;line-height:1.25;}
+h2:first-of-type{margin-top:10px;}
+h3{font-size:17px;color:var(--blu-scuro);margin:20px 0 6px;}
+p{margin:9px 0;}
+.sotto{color:var(--dim);font-size:15px;margin-top:0;}
+.avviso{background:#fff8e1;border-left:4px solid #f0a000;padding:11px 14px;margin:16px 0;font-size:15px;border-radius:0 6px 6px 0;}
+.buono{background:#eef7ee;border-left:4px solid var(--verde);padding:11px 14px;margin:16px 0;font-size:15px;border-radius:0 6px 6px 0;}
+
+/* i due pluviometri a confronto */
+.duo{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 6px;}
+.duo > div{flex:1 1 380px;border:1px solid var(--bordo);border-radius:8px;padding:13px 15px;background:#fff;}
+.duo h4{font-size:16px;color:var(--blu);margin-bottom:1px;}
+.duo .luogo{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.4px;}
+.tot{font-size:27px;font-weight:700;color:var(--blu);line-height:1.1;margin:8px 0 2px;}
+.tot small{font-size:13px;font-weight:400;color:var(--dim);}
+.ore{height:74px;display:flex;align-items:flex-end;gap:1px;margin:12px 0 0;border-bottom:1px solid var(--bordo);}
+.ore i{flex:1;background:#9ec9ef;border-radius:1px 1px 0 0;min-height:1px;position:relative;}
+.ore i.max{background:var(--rosso);}
+.assex{display:flex;font-size:10px;color:var(--dim);margin-top:3px;}
+.assex span{flex:1;text-align:center;}
+.assex span{visibility:hidden;}
+/* Con 24 caselle larghe 14 px le ore si accavallano: si scrivono solo le
+   quattro che servono a orientarsi (notte, mattina, mezzogiorno, sera). */
+.assex span:nth-child(1),.assex span:nth-child(7),.assex span:nth-child(13),.assex span:nth-child(19){visibility:visible;}
+.verdetto{margin-top:10px;font-size:15px;padding-top:9px;border-top:1px dashed var(--bordo);}
+.tag{display:inline-block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:11px;}
+.tag.lenta{background:#e3f1e3;color:#1b5e20;}
+.tag.media{background:#e6effa;color:#123252;}
+.tag.forte{background:#fde8e4;color:#9b2d1f;}
+
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px;}
+th,td{border-bottom:1px solid var(--bordo);padding:7px 9px;text-align:left;}
+th{background:var(--grigio);color:var(--blu-scuro);font-size:13px;text-transform:uppercase;letter-spacing:.4px;}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;}
+
+pre{background:#1e1e1e;color:#e6e6e6;padding:13px 15px;border-radius:7px;overflow-x:auto;font-size:13px;line-height:1.5;margin:12px 0;}
+pre b{color:#8fd48f;font-weight:600;}
+pre i{color:#888;font-style:normal;}
+
+/* il pannello scuro della mappa, classi vere del sito */
+.finto{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;margin:14px 0;}
+.sh{width:296px;background:#1e1e1e;color:#fff;border-radius:7px;padding:10px 13px;box-shadow:0 4px 20px rgba(0,0,0,.35);font-size:17px;}
+.sh-nome{font-size:13px;font-weight:700;border-bottom:1px solid #3a3a3a;padding-bottom:5px;margin-bottom:6px;}
+.sh-meta{font-size:10px;color:#888;font-weight:400;}
+.sh-big{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
+.sh-mm{font-size:22px;font-weight:700;color:#7ec8f8;}
+.sh-unit2{font-size:11px;color:#888;}
+.sh-row{display:flex;justify-content:space-between;font-size:10px;padding:1px 0;color:#aaa;}
+.sh-row b{color:#ddd;font-weight:600;}
+.sh-row.nuova b{color:#8fd48f;}
+.sh-per{font-size:10px;color:#888;margin:7px 0 0;}
+.spiega{flex:1 1 300px;font-size:15px;color:#333;}
+.spiega b{color:var(--blu);}
+
+/* la casella della pagina di paese, stile vero */
+.tre{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;}
+.tre > div{flex:1;background:var(--grigio);border-radius:8px;padding:10px 12px;border-left:4px solid var(--blu);}
+.tre > div.secco{flex:1.25;border-left:4px solid var(--verde);}
+.tre .eti{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.4px;}
+.tre .val{font-size:21px;font-weight:700;color:var(--blu);}
+.notaforte{background:var(--grigio);border-left:4px solid var(--verde);padding:11px 14px;margin:14px 0;border-radius:0 6px 6px 0;font-size:16px;}
+.notaint{background:var(--grigio);border-left:4px solid #6aa3d8;padding:11px 14px;margin:14px 0;border-radius:0 6px 6px 0;font-size:16px;}
+@media(max-width:600px){.tre > div{flex-basis:100%;}}
+.mini{font-size:14px;color:var(--dim);}
+ul{margin:9px 0 9px 22px;}
+li{margin:4px 0;}
+</style>
+</head>
+<body>
+<header>
+  <b>Intensità della pioggia · mockup del 12 settembre 2026</b>
+  <span>Tutti i numeri di questa pagina sono veri, scaricati stamattina da OMIRL con la stessa chiamata che il collector fa già.</span>
+</header>
+<main>
+
+<div class="avviso" style="margin-top:0">
+  <b>Questa e' una PROVA, non una pagina del sito.</b> Sta sul sito di test, che
+  e' chiuso ai motori di ricerca (robots.txt vieta tutto). Si cancella appena
+  la funzione e' decisa. Niente di quello che c'e' qui dentro e' in produzione.
+</div>
+
+<h2>La stessa pioggia non è la stessa pioggia</h2>
+<p class="sotto">Due pluviometri liguri, martedì 10 settembre. Stessi millimetri, due giornate diverse.</p>
+
+<div class="duo">
+  <div>
+    <h4>Fontana Fresca</h4>
+    <div class="luogo">Sori (GE) · 791 m</div>
+    <div class="tot">35,6 <small>mm in tutto il giorno</small></div>
+    <div class="ore" id="ore-a"></div>
+    <div class="assex" id="x-a"></div>
+    <div class="verdetto">
+      Caduti in <b>3 ore</b>, con una punta di <b>19,8 mm in un'ora sola</b>.<br>
+      <span class="tag forte">11,9 mm all'ora</span>
+      <span class="mini">più della metà è arrivata fra le 10 e le 11.</span>
+    </div>
+  </div>
+  <div>
+    <h4>Passo della Cisa</h4>
+    <div class="luogo">Pontremoli (MS) · 1.014 m</div>
+    <div class="tot">34,6 <small>mm in tutto il giorno</small></div>
+    <div class="ore" id="ore-b"></div>
+    <div class="assex" id="x-b"></div>
+    <div class="verdetto">
+      Caduti in <b>8 ore</b>, sparse dalle 3 del mattino alle 7 di sera.<br>
+      <span class="tag media">4,3 mm all'ora</span>
+      <span class="mini">acqua che ha avuto il tempo di entrare.</span>
+    </div>
+  </div>
+</div>
+
+<p>Oggi il sito dice 35,6 e 34,6, e sembra la stessa giornata. Per chi cerca funghi
+non lo è: nel primo caso gran parte dell'acqua è corsa via, nel secondo è entrata.
+Questa è l'idea, ed è di Antonio Pio D'Aloia di labuttata.it.</p>
+
+<div class="buono">
+  <b>Il caso limite dello stesso giorno:</b> Barbagelata (Lorsica, GE, 1.100 m) ha
+  contato <b>124,2 mm</b>, e <b>102,1 di quelli sono caduti fra le 11 e le 12</b>.
+  Un pluviometro che segna 124 mm oggi sulla mappa è il più bagnato della regione.
+  Non vuol dire che sotto il bosco ci siano 124 mm d'acqua.
+</div>
+
+<h2>I tre numeri, e quanto costano</h2>
+<p>Il collector della Liguria scarica già la serie ORARIA di ogni pluviometro e la
+percorre tutta per fare la somma del giorno. Conta perfino le ore valide, perché
+è così che distingue una stazione asciutta da una stazione muta. Dentro quel ciclo
+mancano due righe.</p>
+
+<pre>hourly.forEach(function(p) {
+  if (p[0] &lt; dayStartMs || p[0] &gt;= dayEndMs) return;
+  if (p[1] === null || p[1] === undefined) return;   <i>// ora non misurata</i>
+  ore++;
+  if (p[1] &gt; 0) mm += p[1];
+<b>  if (p[1] &gt; 0) bagnate++;                           // NUOVO
+  if (p[1] &gt; punta) punta = p[1];                    // NUOVO</b>
+});</pre>
+
+<p><b>Zero richieste in più.</b> È la stessa ricetta con cui sono entrati temperatura,
+vento e umidità: il dato passa già di lì e lo stiamo buttando via. Nel file del
+giorno diventano due campi accanto a <code>mm</code>, cioè qualche decina di byte
+per stazione.</p>
+
+<table>
+  <tr><th>Numero</th><th>Cos'è</th><th>Serve a dire</th></tr>
+  <tr><td><b>ore bagnate</b></td><td>quante ore del giorno hanno misurato più di zero</td><td>se è stata una rovesciata o una giornata di pioggia</td></tr>
+  <tr><td><b>punta oraria</b></td><td>i millimetri dell'ora più carica</td><td>se c'è stato uno scroscio che è corso via</td></tr>
+  <tr><td><b>mm all'ora</b></td><td>il totale diviso le ore bagnate</td><td>il riassunto in un numero solo</td></tr>
+</table>
+
+<h2>Dove si mette</h2>
+
+<h3>1. Il pannello del pluviometro sulla mappa</h3>
+<div class="finto">
+  <div class="sh">
+    <div class="sh-nome">Passo della Cisa <span class="sh-meta">· Pontremoli</span></div>
+    <div class="sh-big"><span>💧</span><span class="sh-mm">34,6</span><span class="sh-unit2">mm</span></div>
+    <div class="sh-row"><span>Provincia</span><b>Pontremoli</b></div>
+    <div class="sh-row"><span>Quota</span><b>1.014 m</b></div>
+    <div class="sh-row nuova"><span>Durata</span><b>8 ore</b></div>
+    <div class="sh-row nuova"><span>Punta oraria</span><b>15,8 mm</b></div>
+    <div class="sh-row"><span>Ranking</span><b>34º su 198</b></div>
+    <div class="sh-per">10 settembre 2026</div>
+  </div>
+  <div class="spiega">
+    <p>Due righe in più fra quelle che ci sono già, nello stesso stile. Niente
+    aggettivo qui: nel pannello c'è posto per i numeri e basta.</p>
+    <p><b>⚠️ Niente colori nuovi sui pallini.</b> Il colore del pallino significa già
+    i millimetri. Un secondo significato sullo stesso oggetto va spiegato, e non c'è
+    dove spiegarlo. Deciso il 10 settembre, resta così.</p>
+    <p class="mini">Le due righe compaiono solo quando la rete pubblica l'ora. Dove non
+    la pubblica il pannello resta com'è oggi, senza righe vuote e senza scuse.</p>
+  </div>
+</div>
+
+<h3>2. La pagina di paese, sotto la risposta</h3>
+<p class="sotto">Qui l'aggettivo serve, perché la pagina la legge chi deve decidere se andare.</p>
+
+<div class="tre">
+  <div><div class="eti">13-20 giorni fa</div><div class="val">34,6 mm</div></div>
+  <div><div class="eti">Ultimi 7 giorni</div><div class="val">51,2 mm</div></div>
+  <div><div class="eti">Ultimi 25 giorni</div><div class="val">168,4 mm</div></div>
+  <div class="secco"><div class="eti">Ultima pioggia sopra i 30 mm</div><div class="val">2 giorni fa</div></div>
+</div>
+
+<div class="notaint">
+  Quei 34,6 mm sono caduti in <b>8 ore</b>, con una punta di <b>15,8 mm in un'ora</b>:
+  poco più di 4 mm all'ora, <b>pioggia media</b>. È il ritmo con cui l'acqua fa in
+  tempo a entrare nel terreno invece di correre via lungo il pendio.
+</div>
+
+<div class="notaforte">
+  L'ultima pioggia forte è caduta 2 giorni fa: 30,8 mm in un giorno solo, che è
+  quella che bagna davvero il terreno, mentre sotto i 30 mm l'acqua resta nella
+  lettiera e se ne va.
+</div>
+
+<p><b>Una frase sola, non una quinta casella.</b> Le caselle sono già quattro e la
+riga è piena: la quarta ha dovuto allargarsi a 1,25 per non andare a capo. La frase
+va sotto, accanto a quella della pioggia forte, e dice le due cose insieme: quanta
+acqua e con che ritmo.</p>
+
+<div class="avviso">
+  <b>⚠️ Sulle pagine di paese questo numero arriva in ritardo, e il ritardo è di tre
+  settimane.</b> La finestra dei funghi guarda da 13 a 20 giorni fa. Il giorno in
+  cui pubblichiamo cominciamo a salvare le ore, quindi la prima finestra 13-20
+  interamente coperta si chiude venti giorni dopo. Fino ad allora la frase non
+  compare: meglio niente che una frase costruita su tre giorni su otto.
+  <br>Sulla mappa invece funziona dal giorno dopo, perché lì si guarda ieri.
+</div>
+
+<h3>3. La scheda Pioggia del grafico stazione</h3>
+<p>Stesso posto, stessa forma: sotto le barre dei giorni, la riga del giorno che
+si sta guardando. Da fare nello stesso giro, costa niente perché il dato è nel file.</p>
+
+<h2>La scala, e una taratura da decidere</h2>
+
+<div class="avviso">
+  <b>Le soglie che avevamo detto il 10 settembre non reggono alla prova.</b>
+  Avevamo detto: sotto 1 mm all'ora lenta, da 1 a 4 media, sopra 4 forte. Le ho
+  provate sulle 87 stazioni liguri che il 10 settembre hanno superato i 5 mm:
+  <b>4 sarebbero risultate lente e 45 forti</b>. Una scala dove la prima fascia è
+  quasi sempre vuota non serve a niente.
+</div>
+
+<p>Ecco come si distribuiscono quelle 87 stazioni al variare delle due soglie.
+Dimmi due numeri e metto quelli.</p>
+
+<table>
+  <tr><th>Soglie</th><th class="n">Lenta</th><th class="n">Media</th><th class="n">Forte</th><th>Come suona</th></tr>
+  <tr><td>1 e 4 <span class="mini">(quelle di lunedì)</span></td><td class="n">4</td><td class="n">38</td><td class="n">45</td><td>quasi tutto forte</td></tr>
+  <tr><td><b>2 e 6</b></td><td class="n">16</td><td class="n">42</td><td class="n">29</td><td>il centro è il caso normale</td></tr>
+  <tr><td>2 e 5</td><td class="n">16</td><td class="n">35</td><td class="n">36</td><td>metà giornata forte</td></tr>
+  <tr><td>3 e 8</td><td class="n">31</td><td class="n">37</td><td class="n">19</td><td>forte solo il temporale vero</td></tr>
+</table>
+
+<p class="mini">⚠️ Il 10 settembre in Liguria è stato un giorno di temporali, quindi
+è l'estremo violento: su una pioggia da fronte la stessa scala darebbe quasi tutte
+lente, ed è giusto così. Una taratura seria vuole qualche settimana di giorni
+diversi, ed è un altro motivo per partire presto e decidere le parole dopo.</p>
+
+<p>Sotto i <b>5 mm</b> nel giorno l'aggettivo non si scrive: 0,2 mm in un'ora fanno
+0,2 mm all'ora, cioè tecnicamente «lenta», ma è una pioggia che non conta e
+chiamarla in qualche modo sarebbe rumore.</p>
+
+<h2>Chi può e chi non può</h2>
+<table>
+  <tr><th>Possono, il dato orario ce l'hanno</th><th>Non possono</th></tr>
+  <tr>
+    <td>Piemonte, Liguria, Lombardia, Svizzera, Austria, Francia, Slovenia, OSMER Friuli, le 11 reti MeteoHub</td>
+    <td>Toscana (solo la differenza su 24 ore), Emilia e Trentino (solo l'aggregato del giorno)</td>
+  </tr>
+</table>
+<p class="mini">Da verificare Veneto e Alto Adige: sono contatori cumulativi letti sei
+o sette volte al giorno, e con sette letture l'ora non si ricostruisce. Sono quasi
+le stesse reti rimaste fuori dal vento.</p>
+
+<div class="avviso">
+  <b>⚠️ La scadenza è vera e l'ho appena misurata.</b> Stamattina ho chiesto a OMIRL
+  le ore del <b>10 settembre</b> e ha risposto con 198 stazioni; quelle dell'<b>11</b>
+  con 198; quelle del <b>9 settembre</b> con <b>zero</b>. La finestra è di circa 69
+  ore e il passato non si recupera in nessun modo. Ogni giorno che passa senza
+  pubblicare è un giorno di ore perse per sempre, e la stagione dei porcini finisce
+  fra circa sei settimane.
+</div>
+
+<h2>Cosa non si fa</h2>
+<ul>
+  <li><b>Nessuna scala di colori sui pallini.</b> Deciso il 10 settembre.</li>
+  <li><b>Nessun modello di infiltrazione.</b> Quanto entra dipende dal suolo, dalla
+  pendenza, dalla chioma e dalla lettiera, e noi quelle cose non le misuriamo.
+  Diciamo il ritmo della pioggia, che è misurato, e ci fermiamo lì.</li>
+  <li><b>Nessun decimale sull'aggettivo.</b> «Media» non diventa «media 3,8».</li>
+</ul>
+
+<script>
+function barre(id, xid, serie, scala) {
+  /* La scala e' COMUNE ai due grafici, se no il confronto e' un imbroglio;
+     la barra rossa invece e' il massimo di QUESTO pluviometro. */
+  var mio = serie.reduce(function (m, p) { return Math.max(m, p[1]); }, 0);
+  var el = document.getElementById(id), x = document.getElementById(xid);
+  var ore = {};
+  serie.forEach(function (p) { ore[p[0]] = p[1]; });
+  var h = '', hx = '';
+  for (var i = 0; i < 24; i++) {
+    var k = (i < 10 ? '0' + i : i) + ':00';
+    var v = ore[k] || 0;
+    var alt = v > 0 ? Math.max(2, Math.round(v / scala * 72)) : 0;
+    h += '<i class="' + (v === mio && v > 0 ? 'max' : '') + '" style="height:' + alt + 'px" title="' + k + ' · ' + String(v).replace('.', ',') + ' mm"></i>';
+    hx += '<span>' + (i < 10 ? '0' + i : i) + '</span>';
+  }
+  el.innerHTML = h;
+  x.innerHTML = hx;
+}
+barre('ore-a', 'x-a', [['06:00', 4.6], ['10:00', 19.8], ['11:00', 11.2]], 19.8);
+barre('ore-b', 'x-b', [['03:00', 0.2], ['04:00', 4.8], ['05:00', 5], ['11:00', 2.2], ['14:00', 0.6], ['15:00', 1.8], ['16:00', 4.2], ['19:00', 15.8]], 19.8);
+</script>
+</main>
+</body>
+</html>
