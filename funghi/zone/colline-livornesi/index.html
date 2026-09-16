@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Piogge per funghi sulle Colline Livornesi</title>
-<meta name="description" content="Quanta pioggia è caduta sulle Colline Livornesi, misurata da 4 pluviometri nelle zone da bosco. La finestra da 13 a 20 giorni fa, quella che conta per i funghi.">
+<title>Funghi sulle Colline Livornesi oggi: dove andare</title>
+<meta name="description" content="Dove andare a funghi sulle Colline Livornesi oggi: la pioggia caduta da 13 a 20 giorni fa, misurata da 4 pluviometri da bosco.">
 <link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/zone/colline-livornesi/">
-<meta property="og:title" content="Piogge per funghi sulle Colline Livornesi">
+<meta property="og:title" content="Funghi sulle Colline Livornesi oggi: dove andare">
 <meta property="og:description" content="La pioggia vera, misurata dai pluviometri nelle zone da bosco.">
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/zone/colline-livornesi/">
@@ -138,6 +138,11 @@ a:active .vai-mappa{transform:translateY(2px);
   .capo-btn{width:100%;text-align:center;}
 }
 nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
+ol.zone-dove{list-style:none;margin:10px 0 26px;padding:0;counter-reset:z;}
+ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
+ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
+ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
+ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;}
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
@@ -165,15 +170,17 @@ nav.altre a{color:var(--blu);}
 <main>
 <p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/" style="color:var(--blu)">Toscana</a></p>
 
-<h1>Dove potrebbero esserci le prime nascite di funghi sulle Colline Livornesi</h1>
+<h1>Dove andare a funghi sulle Colline Livornesi oggi</h1>
+<div id="stagione"></div>
+<script>(function(){var m=new Date().getMonth()+1,t=null;if(m===12||m===1||m===2)t="<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.";else if(m===11||m===3)t="<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in autunno pieno.";if(t){var s=document.getElementById("stagione");s.innerHTML=t;s.style.display="block";}})();</script>
 <p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono
 almeno dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella
 <b>da 13 a 20 giorni fa</b>, misurata dai <b>4 pluviometri</b> di SIR Toscana nelle zone da bosco delle Colline Livornesi, in Toscana. In cima alla classifica c’è quello dove ne è caduta di più.</p>
 
 <div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo
-solo gli otto giorni della finestra dei funghi. Per la pioggia di ieri, quella degli ultimi
-20 giorni o un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=toscana&amp;g=20&amp;pl=43.52083,10.41611&amp;pn=Colline%20Livornesi&amp;pz=1" style="color:var(--blu);font-weight:700">apri Colline Livornesi sulla mappa</a> e cambia
-le date da lì.</div>
+solo gli otto giorni della finestra dei funghi. Per la pioggia di ieri e degli ultimi 30 giorni
+c’è <a href="https://avventurepluvio-test.netlify.app/zone/colline-livornesi/" style="color:var(--blu);font-weight:700">dove ha piovuto sulle Colline Livornesi</a>;
+per un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=toscana&amp;g=20&amp;pl=43.52083,10.41611&amp;pn=Colline%20Livornesi&amp;pz=1" style="color:var(--blu)">apri Colline Livornesi sulla mappa</a>.</div>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -237,7 +244,7 @@ da SIR Toscana.</p>
 
 <h2 style="margin-top:30px">Quanto piove sulle Colline Livornesi, secondo il nostro archivio</h2>
 <p>In cima alla pagina c'è la finestra corta, quella che serve per i funghi. Ma di questi pluviometri
-teniamo tutti i giorni da quando li leggiamo. Da luglio 2026 a settembre 2026, in 62 giorni di misura, i 4 pluviometri delle Colline Livornesi hanno contato <b>64 mm</b> di pioggia a testa,
+teniamo tutti i giorni da quando li leggiamo. Da luglio 2026 a settembre 2026, in 66 giorni di misura, i 4 pluviometri delle Colline Livornesi hanno contato <b>65 mm</b> di pioggia a testa,
 in media. Il più bagnato è <b>Valle Benedetta</b> con 90 mm, il più asciutto Gabbro con 0.</p>
 <p>La giornata più violenta di tutto l'archivio è stata il <b>10 settembre 2026</b> a Riparbella, con <b>62,5 mm</b> in
 ventiquattro ore.</p>

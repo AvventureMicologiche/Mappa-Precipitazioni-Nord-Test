@@ -23,7 +23,7 @@
 </script>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <!-- Canonico: vedi la nota in index.html. -->
-  <link rel="canonical" href="https://precipitazioni.avventuremicologiche.it/fonti.html">
+  <link rel="canonical" href="https://avventurepluvio-test.netlify.app/fonti.html">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',Arial,sans-serif;color:#223;background:#f5f7fa;line-height:1.55}
@@ -41,6 +41,12 @@ td a{color:#1b5db0;text-decoration:none}
 td a:hover{text-decoration:underline}
 .nota{background:#fff;border-left:4px solid #1b3f6e;padding:10px 14px;margin:14px 0;font-size:14px;border-radius:0 8px 8px 0;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .mini{font-size:12.5px;color:#667}
+.pagine p{margin:8px 0 0;font-size:14.5px;line-height:1.95}
+.pagine a{color:#1b5db0;text-decoration:none}
+.pagine a:hover{text-decoration:underline}
+.pagine .bosco{background:#f4fbf3;border:1px solid #cfe8cf;border-radius:9px;
+  padding:4px 14px 13px;margin-top:16px}
+.pagine .bosco b{color:#2d6a30}
 @media(max-width:640px){
   table,thead,tbody,tr{display:block}
   thead{display:none}
@@ -100,24 +106,60 @@ td a:hover{text-decoration:underline}
 <thead><tr><th>Cosa</th><th>Fonte</th><th>Licenza</th></tr></thead>
 <tbody>
 <tr><td>Stime di riempimento</td><td><a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a></td><td>CC BY 4.0. Usate solo per: storico precedente all'avvio della raccolta reale, e rari giorni in cui la fonte ufficiale non ha pubblicato (nei dati sono sempre marcate come stime, mai spacciate per misure)</td></tr>
-<tr><td>Radar «Diretta radar»</td><td><a href="https://librewxr.net/" target="_blank" rel="noopener">LibreWXR</a>, che serve il composito radar europeo <a href="https://www.eumetnet.eu/" target="_blank" rel="noopener">EUMETNET OPERA</a> (155 radar, 24 paesi)</td><td>CC BY 4.0. Alimenta il tasto «Diretta radar»: la pioggia in corso, le ultime due ore e i quaranta minuti seguenti. È una misura radar a 2 km di risoluzione, quindi <b>non sostituisce i pluviometri</b>, che restano la fonte di tutto il resto del sito; la previsione a 40 minuti è dichiarata come tale e non è una misura</td></tr>
-<tr><td>Ricerca per località</td><td><a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noopener">Open-Meteo Geocoding API</a>, che pubblica i nomi di <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a></td><td>CC BY 4.0. È la casella «Cerca località»: l'elenco dei comuni italiani sta nel sito, mentre le frazioni e i posti di Svizzera, Austria, Slovenia e Francia si chiedono a loro. Serve a <b>trovare un posto sulla mappa</b>, non è una fonte di misure</td></tr>
 <tr><td>Cartografia di base</td><td><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a></td><td>ODbL</td></tr>
 <tr><td>Confini regionali</td><td><a href="https://github.com/openpolis/geojson-italy" target="_blank" rel="noopener">openpolis / geojson-italy</a> (da dati ISTAT)</td><td>dati aperti</td></tr>
 <tr><td>Confine del Ticino</td><td><a href="https://www.swisstopo.admin.ch" target="_blank" rel="noopener">swisstopo — swissBOUNDARIES3D</a></td><td>open government data</td></tr>
 <tr><td>Libreria mappa</td><td><a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a></td><td>BSD-2</td></tr>
+<tr><td>Radar «Diretta radar»</td><td><a href="https://librewxr.net/" target="_blank" rel="noopener">LibreWXR</a>, che serve il composito radar europeo <a href="https://www.eumetnet.eu/" target="_blank" rel="noopener">EUMETNET OPERA</a> (155 radar, 24 paesi)</td><td>CC BY 4.0. Alimenta il tasto «Diretta radar»: la pioggia in corso, le ultime due ore e i quaranta minuti seguenti. È una misura radar a 2 km di risoluzione, quindi <b>non sostituisce i pluviometri</b>, che restano la fonte di tutto il resto del sito; la previsione a 40 minuti è dichiarata come tale e non è una misura</td></tr>
+<tr><td>Ricerca per località</td><td><a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noopener">Open-Meteo Geocoding API</a>, che pubblica i nomi di <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a></td><td>CC BY 4.0. È la casella «Cerca località»: l'elenco dei comuni italiani sta nel sito, mentre le frazioni e i posti di Svizzera, Austria, Slovenia e Francia si chiedono a loro. Serve a <b>trovare un posto sulla mappa</b>, non è una fonte di misure</td></tr>
 </tbody>
 </table>
 
+<h2>Mappa boschi</h2>
+<p>Il tasto «Mappa boschi» colora i boschi per tipo: faggete, castagneti, querceti, abetine e peccete, lariceti, pinete, robinieti e altri boschi. I disegni vengono dalle <b>carte forestali delle Regioni</b>, una per regione: ognuna ha le sue categorie, che abbiamo raggruppato noi negli otto colori della legenda. Dove una regione non ha ancora una carta utilizzabile, la legenda lo dice.</p>
+<table>
+<thead><tr><th>Regione</th><th>Carta</th><th>Licenza e note</th></tr></thead>
+<tbody>
+<tr><td>Piemonte</td><td><a href="https://www.geoportale.piemonte.it/geonetwork/srv/ita/catalog.search#/metadata/r_piemon:63e5c800-e35e-4d3d-bbba-8384ee5e6910" target="_blank" rel="noopener">Carta forestale regionale 2024, Regione Piemonte e IPLA</a></td><td>CC BY 4.0</td></tr>
+<tr><td>Valle d&#x27;Aosta</td><td><a href="https://geodati.gov.it/resource/id/r_vda:04259-META:20211029:091000" target="_blank" rel="noopener">Tipi forestali 2020, Regione Autonoma Valle d'Aosta</a></td><td>CC BY</td></tr>
+<tr><td>Lombardia</td><td><a href="https://www.geoportale.regione.lombardia.it/" target="_blank" rel="noopener">Carta forestale regionale 2026, Regione Lombardia</a></td><td>CC BY 4.0</td></tr>
+<tr><td>Trentino</td><td><a href="https://geodati.gov.it/resource/id/p_TN:920383ad-092c-4f8f-8f8a-1c9db904b36f" target="_blank" rel="noopener">Tipi forestali 2021, Provincia autonoma di Trento</a></td><td>CC BY 4.0</td></tr>
+<tr><td>Veneto</td><td><a href="https://www.regione.veneto.it/web/agricoltura-e-foreste/carta-regionale-delle-categorie-forestali" target="_blank" rel="noopener">Carta regionale delle categorie forestali, Regione del Veneto, Direzione Foreste ed Economia Montana</a></td><td>dati aggiornati al 2005; pubblicazione con citazione obbligatoria del proprietario dei diritti</td></tr>
+<tr><td>Friuli V.G.</td><td><a href="https://geodati.gov.it/resource/id/r_friuve:m2182-cc-i10191" target="_blank" rel="noopener">Tipi forestali, Regione Autonoma Friuli Venezia Giulia</a></td><td>CC BY 4.0; dati del 1998, completati nel 2013</td></tr>
+<tr><td>Liguria</td><td><a href="https://www.regione.liguria.it/homepage-opendata/opendata-per-tipo/opendata-cartografia/item/43711-tipi-forestali-liguria-2025.html" target="_blank" rel="noopener">Tipi forestali della Regione Liguria, scala 1:10.000, edizione 2025</a></td><td>CC BY 4.0</td></tr>
+<tr><td>Emilia-Romagna</td><td><a href="https://ambiente.regione.emilia-romagna.it/it/parchi-natura2000/foreste/quadro-conoscitivo/sistema-informativo-regionale/carta-forestale-regionale" target="_blank" rel="noopener">Carta forestale regionale 2025, Regione Emilia-Romagna</a></td><td>CC BY</td></tr>
+<tr><td>Lazio</td><td><a href="https://dati.lazio.it/dataset/carta-forestale-su-base-tipologica-della-regione-lazio" target="_blank" rel="noopener">Carta forestale su base tipologica, Regione Lazio</a></td><td>CC BY 4.0</td></tr>
+</tbody>
+</table>
 <h2>Come vengono trattati i dati</h2>
 <p>I collettori interrogano le fonti <b>poche volte al giorno</b>, con richieste distanziate e riprove gentili: il carico sui server delle agenzie è una frazione di quello di un singolo visitatore dei loro siti. I valori vengono archiviati come totali giornalieri per stazione e conservati per <b>730 giorni</b> (due anni, finestra scorrevole). La mappa mostra da ieri all'indietro: la giornata in corso, per definizione incompleta, è esclusa.</p>
 <p class="mini">I valori possono differire da quelli pubblicati dalle agenzie per via dei diversi orari di consolidamento o di correzioni successive dei dati alla fonte. In caso di discrepanza fa fede il dato dell'agenzia titolare.</p>
+<p class="mini">Questo non è un sito ufficiale di nessun ente: non abbiamo rapporti né accordi con le agenzie, usiamo i loro dati pubblici e li citiamo uno per uno qui sopra.</p>
 
 <h2 id="feedback">Feedback e contatti</h2>
 <p>Hai visto un dato che non torna, una stazione sbagliata o un giorno mancante? Scrivici: le segnalazioni sugli errori sono la cosa più utile che puoi darci.</p>
 <p style="font-size:17px;font-weight:600;margin:14px 0"><a href="mailto:avventuremicologiche@gmail.com">avventuremicologiche@gmail.com</a></p>
 <p><b>Enti titolari dei dati:</b> le vostre richieste hanno precedenza su tutto e vengono accolte subito. Scrivete allo stesso indirizzo.</p>
 <p class="mini">Per domande sull’uso della mappa c’è anche il canale <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener">Avventure Micologiche</a>.</p>
+
+<h2>Mappa del sito</h2>
+<p>Ogni regione ha due pagine: una con <b>tutta la pioggia</b>, pianura compresa, e una
+con i <b>soli posti da bosco</b>, nella finestra da 13 a 20 giorni fa che serve per i funghi.</p>
+<!-- ⚠️ ELENCO SCRITTO DA .github/scripts/genera-pagine-regione.js fra i due
+     segnaposti qui sotto: NON modificarlo a mano. Batterlo a mano vorrebbe dire
+     un secondo elenco di regioni da tenere allineato al primo, ed e' l'errore
+     che questo progetto ha gia' pagato. Se una regione si aggiunge o si toglie,
+     si rilancia il generatore e questa sezione si riscrive da sola. -->
+<div class="pagine">
+<!-- PAGINE:INIZIO -->
+<p><b>Dove ha piovuto: tutti i pluviometri, pianura compresa</b></p>
+<p><a href="https://avventurepluvio-test.netlify.app/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.netlify.app/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.netlify.app/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.netlify.app/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.netlify.app/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.netlify.app/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.netlify.app/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.netlify.app/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.netlify.app/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.netlify.app/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.netlify.app/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.netlify.app/marche/">Marche</a> · <a href="https://avventurepluvio-test.netlify.app/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.netlify.app/molise/">Molise</a> · <a href="https://avventurepluvio-test.netlify.app/campania/">Campania</a> · <a href="https://avventurepluvio-test.netlify.app/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.netlify.app/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.netlify.app/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.netlify.app/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.netlify.app/sardegna/">Sardegna</a> · <a href="https://avventurepluvio-test.netlify.app/svizzera/">Svizzera</a> · <a href="https://avventurepluvio-test.netlify.app/austria/">Austria</a> · <a href="https://avventurepluvio-test.netlify.app/slovenia/">Slovenia</a></p>
+<div class="bosco">
+<p><b>🍄 Dove potrebbero esserci le prime nascite di funghi</b></p>
+<p><a href="https://avventurepluvio-test.netlify.app/funghi/">La nostra selezione, le località più bagnate</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/sardegna/">Sardegna</a></p>
+</div>
+<!-- PAGINE:FINE -->
+</div>
 
 <p class="mini" style="margin-top:26px">Dati © delle rispettive agenzie ed enti. Questo sito li aggrega e li visualizza citando la fonte, senza fini di lucro.</p>
 

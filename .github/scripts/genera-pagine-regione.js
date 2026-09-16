@@ -47,6 +47,11 @@
 const fs = require('fs');
 const path = require('path');
 const { scriviSitemap } = require('./genera-sitemap.js');
+const { slug } = require('./lib-nomi.js');
+// Le zone, per l'elenco «dove ha piovuto, zona per zona» (13/9/2026): ogni
+// regione rimanda alle pagine piogge delle sue zone, che senza questi link
+// sarebbero orfane.
+const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
 
 const SITO = 'https://avventurepluvio-test.netlify.app';
 const GA_ID = 'G-9R7MXXS0V4';
@@ -183,14 +188,25 @@ function pagina(r){
   // previsione. Limiti da rispettare: titolo <= 62, descrizione <= 158.
   const nomeCorto = r.nomeTitolo || r.nome;
   const titolo = `Dove ha piovuto ${r.prep} ${r.nome}`;
-  const titoloTag = `Dove ha piovuto ${r.prep} ${nomeCorto}: la mappa dei pluviometri`;
+  // ⚠️ 13/9/2026: «PLUVIOMETRIA» IN TESTA. Search Console, 28 giorni: la gente
+  // cerca «pluviometria toscana» (1.527 viste, nono posto, 0,6% di clic),
+  // «pluviometria emilia romagna», «dati pluviometrici basilicata», e il
+  // titolo quelle parole non le aveva in nessuna regione. «Dove ha piovuto»
+  // resta, perche' e' la ricerca dei funghi. Tetto 62 caratteri come prima:
+  // si prova la forma lunga e si accorcia solo dove il nome non ci sta
+  // (Valle d'Aosta, Emilia-Romagna).
+  const titoloTag = [
+    `Pluviometria ${nomeCorto}: dove ha piovuto e dati dei pluviometri`,
+    `Pluviometria ${nomeCorto}: dove ha piovuto, dati pluviometrici`,
+    `Pluviometria ${nomeCorto}: dove ha piovuto e i pluviometri`,
+  ].find(t => t.length <= 62) || `Pluviometria ${nomeCorto}: dove ha piovuto`;
   const agMeta = r.agenziaCorta || r.agenzia;
   const code = ['Le zone più bagnate, aggiornate ogni giorno.', 'Zone più bagnate, aggiornate ogni giorno.',
-                'Zone più bagnate, ogni giorno.', 'Aggiornate ogni giorno.'];
+                'Zone più bagnate, ogni giorno.', 'Aggiornate ogni giorno.', ''];
   const prep2 = /^(Provincia|Centro)/.test(agMeta) ? (agMeta.startsWith('Provincia') ? 'della' : 'del') : 'di';
   let descr = '';
   for (const coda of code) {
-    descr = `Quanta pioggia è caduta ${r.prep} ${nomeCorto} negli ultimi 7 e 20 giorni, misurata da ${r.staz} pluviometri ${prep2} ${agMeta}. ${coda}`;
+    descr = `Dove ha piovuto ieri ${r.prep} ${nomeCorto} e negli ultimi 7, 20 e 30 giorni: dati pluviometrici di ${r.staz} pluviometri ${prep2} ${agMeta}. ${coda}`.trim();
     if (descr.length <= 158) break;
   }
   const fonteFooter = r.url
@@ -204,8 +220,8 @@ function pagina(r){
 <title>${titoloTag}</title>
 <meta name="description" content="${descr}">
 <link rel="canonical" href="${SITO}/${r.k}/">
-<meta property="og:title" content="${titolo} — piogge per funghi">
-<meta property="og:description" content="Riepilogo degli ultimi 7 e 20 giorni con le zone più bagnate, da ${r.staz} pluviometri di ${r.agenzia}.">
+<meta property="og:title" content="${titolo}: ieri e negli ultimi giorni">
+<meta property="og:description" content="Riepilogo degli ultimi 7, 20 e 30 giorni con le zone più bagnate, da ${r.staz} pluviometri di ${r.agenzia}.">
 <meta property="og:image" content="${SITO}/preview.jpg">
 <meta property="og:url" content="${SITO}/${r.k}/">
 <meta property="og:type" content="website">
@@ -242,6 +258,7 @@ p{margin-bottom:12px;}
 .cta:hover{background:#2a5490;}
 .griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:18px 0;}
 .card{background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:16px;display:flex;flex-direction:column;}
+.card.largo{grid-column:1/-1;}
 .card h2{margin:0 0 6px;font-size:20px;}
 .numerone{font-size:32px;font-weight:700;color:var(--blu-scuro);}
 .numerone small{font-size:15px;font-weight:400;color:#555;}
@@ -249,6 +266,8 @@ p{margin-bottom:12px;}
 .nota{font-size:14px;color:#666;margin-top:8px;}
 .top-staz{margin:6px 0 0;}
 .top-staz li{margin:4px 0 4px 20px;}
+.altre-zone{font-size:16px;line-height:1.9;color:#555;}
+.altre-zone a{color:var(--blu);}
 footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;font-size:14px;color:#555;text-align:center;}
 footer a{color:var(--blu);}
 nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
@@ -267,9 +286,21 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 </header>
 <main>
 <h1>${titolo}</h1>
-<p class="sotto">Ieri e negli ultimi 20 giorni, da <b>${r.staz} pluviometri di ${r.agenzia}</b>, ${r.geo}.</p>${r.nota ? `\n<p class="nota" style="margin:-16px 0 20px;">${r.nota}</p>` : ''}
+<p class="sotto">Ieri e negli ultimi 30 giorni, da <b>${r.staz} pluviometri di ${r.agenzia}</b>, ${r.geo}.</p>${r.nota ? `\n<p class="nota" style="margin:-16px 0 20px;">${r.nota}</p>` : ''}
 
 <div class="griglia">
+  <!-- 13/9/2026: IERI. Chi cerca «dove ha piovuto ieri in Campania» trovava 7
+       e 20 giorni e un sottotitolo che prometteva «ieri» senza darlo. Il titolo
+       della scheda lo riscrive il javascript con la data vera se il riepilogo
+       e' di altroieri (ieri non ancora arrivato da tutte le reti). -->
+  <div class="card" id="card1">
+    <h2 id="tit1">Ieri</h2>
+    <div class="numerone" id="rip1-media"><span class="attesa">calcolo in corso…</span></div>
+    <div id="rip1-top"></div>
+    <p class="nota" id="rip1-date"></p>
+    <a class="cta" id="cta1" style="margin:14px 0 2px;margin-top:auto;" href="${SITO}/?r=${r.k}&amp;g=1"
+       onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-1gg'})}catch(e){}">Apri la mappa di ieri →</a>
+  </div>
   <div class="card">
     <h2>Ultimi 7 giorni</h2>
     <div class="numerone" id="rip7-media"><span class="attesa">calcolo in corso…</span></div>
@@ -293,8 +324,28 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
     <a class="cta" id="cta15" style="margin:14px 0 2px;margin-top:auto;" href="${SITO}/?r=${r.k}&amp;g=20"
        onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-20gg'})}catch(e){}">Apri la mappa a 20 giorni →</a>
   </div>
+  <!-- 13/9/2026: il mese. Chi cerca «pluviometria toscana ultimo mese» o
+       «ultimi trenta giorni» sulla pagina trovava solo 7 e 20. Sta sotto e
+       largo, perche' la colonna e' da 760 px e tre schede affiancate andrebbero
+       a capo nei nomi delle stazioni. -->
+  <div class="card" id="card30">
+    <h2>Ultimi 30 giorni</h2>
+    <div class="numerone" id="rip30-media"><span class="attesa">calcolo in corso…</span></div>
+    <div id="rip30-top"></div>
+    <p class="nota" id="rip30-date"></p>
+    <a class="cta" id="cta30" style="margin:14px 0 2px;margin-top:auto;" href="${SITO}/?r=${r.k}&amp;g=30"
+       onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-30gg'})}catch(e){}">Apri la mappa a 30 giorni →</a>
+  </div>
 </div>
 
+${(() => {
+  const zz = ZONE.filter(z => z.reg === r.k).sort((a, b) => a.n.localeCompare(b.n, 'it'));
+  if (!zz.length) return '';
+  return `<h2>Dove ha piovuto, zona per zona</h2>
+<p class="nota" style="margin-top:0">Ieri, ultimi 7 e 30 giorni, con i pluviometri di ogni valle.</p>
+<p class="altre-zone">${zz.map(z => `<a href="${SITO}/zone/${slug(z.n)}/">${z.n}</a>`).join(' · ')}</p>
+`;
+})()}
 <h2>Ecco cosa vedi sulla mappa</h2>
 <a href="${SITO}/?r=${r.k}" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-anteprima'})}catch(e){}">
@@ -321,13 +372,13 @@ misurati a terra, pluviometro per pluviometro.</p>
 <p>Il colore mostra i millimetri <b>cumulati</b> nel periodo che scegli.</p>
 <p>Cliccando una stazione trovi quota, grafico della pioggia degli ultimi 30 giorni e, dove ci sono i sensori, temperatura minima e massima, vento e umidità.</p>
 
-<h2>Da dove arrivano i dati</h2>
+<h2>Dati pluviometrici: da dove arrivano</h2>
 <p>Sono <b>${r.staz} pluviometri di ${r.agenzia}</b>, strumenti a terra, non stime da modello.</p>
 
 <p style="margin-bottom:6px;"><a href="${CANALE}" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;"
    onclick="try{gtag('event','click_youtube',{pulsante:'pagina-${r.k}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
-<p><a href="${VIDEO_FAQ}" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;"
-   onclick="try{gtag('event','click_youtube',{pulsante:'faq-pagina-${r.k}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Video FAQ: come si usa la mappa (2 minuti)</a></p>
+<p><a href="${SITO}/guida/" style="color:var(--blu);font-weight:600;"
+   onclick="try{gtag('event','click_guida',{pulsante:'pagina-${r.k}'})}catch(e){}">📖 Guida alla mappa: come si usa, tutte le funzioni →</a></p>
 ${FUNGHI.includes(r.k) ? `
 <h2>Piogge per funghi ${r.prep} ${nomeCorto}</h2>
 <p>Se cerchi funghi ti serve un altro taglio degli stessi dati: <a href="${SITO}/funghi/${r.k}/">dove ha piovuto nelle zone da bosco ${r.prep} ${nomeCorto}</a>. Solo i pluviometri in mezzo al bosco, e la finestra da 13 a 20 giorni fa, che è quella che conta: dopo la pioggia il fungo non spunta subito, per svilupparsi gli servono almeno dodici o tredici giorni.</p>` : ''}
@@ -344,7 +395,9 @@ ${navAltre('regione')}
 <script>
 (function(){
   var DIRS=${JSON.stringify(r.dirs)};
-  var BASE='${RAW}';
+  // In locale si legge la cartella del repo, come fa la mappa per l'indice dei
+  // funghi: cosi' un riepilogo appena rigenerato si prova senza pubblicarlo.
+  var BASE=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'/data/':'${RAW}';
   var MESI=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
   function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
   // breve() legge una data ISO 'AAAA-MM-GG': e' la forma in cui arrivano dal
@@ -352,6 +405,8 @@ ${navAltre('regione')}
   // di dire la stessa cosa.
   function breve(s){ var p=String(s).split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
   function giornoFa(n){ var d=new Date(); d.setDate(d.getDate()-n); return d; }
+  // «l’8» e «l’11»: davanti a una vocale l'articolo si elide.
+  function ilGiorno(s){ var g=+String(s).split('-')[2]; return (g===8||g===11?'l’':'il ')+breve(s); }
   // Una regione puo' leggere piu' cartelle (la Svizzera somma MeteoSvizzera e
   // OASI Ticino): si scaricano tutte e si uniscono, con la chiave stazione
   // prefissata dalla cartella per non far collidere id di reti diverse.
@@ -401,18 +456,27 @@ ${navAltre('regione')}
   // Indirizzi di partenza dei pulsanti: portano gia' alla regione col periodo
   // giusto anche prima che arrivino i numeri. disegna() li riscrive poi con le
   // date VERE del riepilogo, che possono essere di un giorno indietro.
+  document.getElementById('cta1').href='${SITO}/?r=${r.k}&da='+iso(giornoFa(1))+'&a='+iso(giornoFa(1));
   document.getElementById('cta7').href='${SITO}/?r=${r.k}&da='+iso(giornoFa(7))+'&a='+iso(giornoFa(1));
   document.getElementById('cta15').href='${SITO}/?r=${r.k}&da='+iso(giornoFa(20))+'&a='+iso(giornoFa(1));
+  document.getElementById('cta30').href='${SITO}/?r=${r.k}&da='+iso(giornoFa(30))+'&a='+iso(giornoFa(1));
 
   // Il disegno e' uno solo per tutt'e due le strade: prende sempre
   // {media, top:[{n,mm}], primo, ultimo, giorni} e non sa da dove viene.
+  var GIORNI=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+  // «Ieri» solo se e' davvero ieri: il riepilogo puo' essere di altroieri.
+  function nomeGiorno(s){
+    if(s===iso(giornoFa(1))) return 'Ieri';
+    var p=String(s).split('-'), d=new Date(+p[0],+p[1]-1,+p[2]);
+    return GIORNI[d.getDay()]+' '+breve(s);
+  }
   function disegna(prefisso, d){
     var el=document.getElementById(prefisso+'-media');
     if(!d||!d.giorni){ el.innerHTML='<span class="attesa">dati non disponibili al momento</span>'; return; }
     el.innerHTML=Math.round(d.media)+' mm <small>di media regionale</small>';
     var cont=document.getElementById(prefisso+'-top');
     if(!d.top||!d.top.length||d.top[0].mm<1){
-      cont.innerHTML='<p class="nota">Periodo quasi asciutto su tutta la regione.</p>';
+      cont.innerHTML='<p class="nota">'+(prefisso==='rip1'?'Giornata quasi asciutta':'Periodo quasi asciutto')+' su tutta la regione.</p>';
     }else{
       var ol=document.createElement('ol'); ol.className='top-staz';
       d.top.forEach(function(s){
@@ -423,14 +487,24 @@ ${navAltre('regione')}
       cont.innerHTML='<p style="margin:8px 0 2px"><b>Dove ha piovuto di più:</b></p>';
       cont.appendChild(ol);
     }
-    document.getElementById(prefisso+'-date').textContent='Dal '+breve(d.primo)+' al '+breve(d.ultimo)+', su '+d.giorni+' giornate di dati. La giornata odierna è esclusa.';
-    var cta=document.getElementById(prefisso==='rip7'?'cta7':'cta15');
+    if(prefisso==='rip1'){
+      var t=nomeGiorno(d.ultimo);
+      document.getElementById('tit1').textContent=t;
+      document.getElementById('rip1-date').textContent= t==='Ieri'
+        ? 'Giornata di ieri, '+breve(d.ultimo)+'.'
+        : 'I dati di ieri non sono ancora arrivati da tutte le reti: questa è l’ultima giornata intera, '+ilGiorno(d.ultimo)+'.';
+    }else{
+      // «dall’8», «all’11»: davanti a otto e undici la preposizione si apostrofa
+      var apo=function(s){ return /^(8|11) /.test(s); };
+      document.getElementById(prefisso+'-date').textContent=(apo(breve(d.primo))?'Dall’':'Dal ')+breve(d.primo)+(apo(breve(d.ultimo))?' all’':' al ')+breve(d.ultimo)+', su '+d.giorni+' giornate di dati. La giornata odierna è esclusa.';
+    }
+    var cta=document.getElementById({rip1:'cta1',rip7:'cta7',rip15:'cta15',rip30:'cta30'}[prefisso]);
     if(cta&&d.primo&&d.ultimo) cta.href='${SITO}/?r=${r.k}&da='+d.primo+'&a='+d.ultimo;
   }
 
   // ── RIPIEGO: i giorni uno per uno, come faceva la pagina fino al 24/8/2026 ──
   function calcolaDaiFile(){
-    var giorni=[]; for(var i=1;i<=20;i++) giorni.push(giornoFa(i));
+    var giorni=[]; for(var i=1;i<=30;i++) giorni.push(giornoFa(i));
     return Promise.all(giorni.map(prendi)).then(function(files){
       var gemelle=scartaGemelle(files);
       function riepilogo(quanti, prefisso){
@@ -474,8 +548,10 @@ ${navAltre('regione')}
                       .map(function(id){ return {n:etichetta(id), mm:somma[id]}; });
         disegna(prefisso,{media:media, top:top, primo:iso(primo), ultimo:iso(ultimo), giorni:presenti});
       }
+      riepilogo(1,'rip1');
       riepilogo(7,'rip7');
       riepilogo(20,'rip15');
+      riepilogo(30,'rip30');
     });
   }
 
@@ -497,7 +573,17 @@ ${navAltre('regione')}
     .then(function(res){ return res.ok?res.json():null; })
     .catch(function(){ return null; })
     .then(function(j){
-      if(j&&fresco(j)){ disegna('rip7',j.periodi['7']); disegna('rip15',j.periodi['20']); return; }
+      if(j&&fresco(j)){
+        disegna('rip7',j.periodi['7']); disegna('rip15',j.periodi['20']);
+        // ⚠️ Un riepilogo scritto PRIMA del 13/9 il mese non ce l'ha: si
+        // nasconde la scheda invece di dire «dati non disponibili», che
+        // sarebbe falso. Il giro successivo del workflow la riaccende.
+        if(j.periodi['30']) disegna('rip30',j.periodi['30']);
+        else document.getElementById('card30').style.display='none';
+        if(j.periodi['1']) disegna('rip1',j.periodi['1']);
+        else document.getElementById('card1').style.display='none';
+        return;
+      }
       return calcolaDaiFile();
     })
     .catch(function(){ return calcolaDaiFile(); });
@@ -573,13 +659,20 @@ function briciolaJson(voci) {
    e' meglio di riscrivere il file a caso.
    ⚠️ `fonti.html` e' a CRLF: si riscrive con lo stesso `scrivi(..., true)`. */
 function mappaDelSito(radice) {
-  const F = path.join(radice, 'fonti.html');
+  /* Dal 12/9/2026 i file sono DUE: `fonti.html` e la guida. L'elenco e' lo
+     stesso e si scrive nello stesso modo, quindi si cicla invece di copiare la
+     funzione: due elenchi che divergono sono la trappola gia' pagata. */
+  for (const rel of ['fonti.html', path.join('guida', 'index.html')]) mappaInUnFile(radice, rel);
+}
+
+function mappaInUnFile(radice, rel) {
+  const F = path.join(radice, rel);
   const A = '<!-- PAGINE:INIZIO -->', B = '<!-- PAGINE:FINE -->';
-  if (!fs.existsSync(F)) { console.log('  ⚠️ fonti.html non c\'e\': mappa del sito saltata'); return; }
+  if (!fs.existsSync(F)) { console.log(`  ⚠️ ${rel} non c'e': mappa del sito saltata`); return; }
   const testo = fs.readFileSync(F, 'utf8');
   const i = testo.indexOf(A), j = testo.indexOf(B);
   if (i < 0 || j < 0 || j < i) {
-    console.log('  ⚠️ fonti.html senza segnaposti PAGINE: mappa del sito saltata');
+    console.log(`  ⚠️ ${rel} senza segnaposti PAGINE: mappa del sito saltata`);
     return;
   }
   const dentro = [
@@ -592,9 +685,9 @@ function mappaDelSito(radice) {
     '</div>',
   ].join('\r\n') + '\r\n';
   const nuovo = testo.slice(0, i) + dentro + testo.slice(j);
-  if (nuovo === testo) { console.log('  fonti.html  (invariato)'); return; }
+  if (nuovo === testo) { console.log(`  ${rel}  (invariato)`); return; }
   scrivi(F, nuovo, true);
-  console.log(`  fonti.html  mappa del sito: ${REGIONI.length} regioni e ${FUNGHI.length} funghi`);
+  console.log(`  ${rel}  mappa del sito: ${REGIONI.length} regioni e ${FUNGHI.length} funghi`);
 }
 
 module.exports = { REGIONI, FUNGHI, navAltre, briciolaJson };

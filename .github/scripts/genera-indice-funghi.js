@@ -42,6 +42,7 @@ const path = require('path');
 const { REGIONI } = require('./genera-pagine-regione.js');
 const { LOCALITA, slug } = require('./lib-nomi.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
+const { rigaStagione } = require('./lib-stagione.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
@@ -84,11 +85,14 @@ ${/* ⚠️ TITOLO IN PAGINA E TITOLO DI RICERCA SONO DUE COSE DIVERSE, e qui so
      di Google, la ripete ma tiene davanti «Piogge per funghi», che e' la frase
      esatta con cui la gente cerca ed e' l'ancora di tutte e 1.081 le pagine.
      Perderla per far entrare la frase intera vorrebbe dire farsi male da soli.
-     Limiti da rispettare: titolo <= 62 caratteri, descrizione <= 158. */''}
-<title>Piogge per funghi: dove potrebbero esserci le prime nascite</title>
-<meta name="description" content="Le piogge da 13 a 20 giorni fa, la finestra che conta per i funghi, misurate a terra in ${N_POSTI} posti da bosco di ${CON_FUNGHI.length} regioni. Non previsioni: millimetri veri.">
+     Limiti da rispettare: titolo <= 62 caratteri, descrizione <= 158.
+     ⚠️ 13/9/2026: la domanda e' «dove andare a funghi oggi», e «Piogge per
+     funghi» resta dentro il titolo. «Oggi» tutto l'anno: a gennaio ci tutela
+     la riga di stagione sotto il titolo (lib-stagione.js). */''}
+<title>Dove andare a funghi oggi: le piogge per funghi in Italia</title>
+<meta name="description" content="Dove andare a funghi oggi: le piogge per funghi da 13 a 20 giorni fa, misurate a terra in ${N_POSTI} posti da bosco di ${CON_FUNGHI.length} regioni. Aggiornato ogni giorno.">
 <link rel="canonical" href="${SITO}/funghi/">
-<meta property="og:title" content="Dove potrebbero esserci le prime nascite di funghi">
+<meta property="og:title" content="Dove andare a funghi oggi">
 <meta property="og:description" content="Dove e' caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
 <meta property="og:image" content="${SITO}/preview.jpg">
 <meta property="og:url" content="${SITO}/funghi/">
@@ -135,7 +139,8 @@ ${/* ⚠️ LA FINESTRA DEVE ESSERE CHIARA NELLE PRIME TRE RIGHE, non dopo due
      capiva che stava guardando la pioggia di due settimane fa e non quella di
      ieri. Adesso il titolo pone la domanda e le tre righe sotto dicono subito
      la regola, la finestra e da dove vengono i numeri. */''}
-<h1>Dove potrebbero esserci le prime nascite di funghi</h1>
+<h1>Dove andare a funghi oggi</h1>
+${rigaStagione()}
 <p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
 dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella <b>da 13 a 20
 giorni fa</b>, misurata a terra dai pluviometri di ${N_POSTI} posti da bosco in ${CON_FUNGHI.length}

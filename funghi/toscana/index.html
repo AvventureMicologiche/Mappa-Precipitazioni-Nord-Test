@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Piogge per funghi in Toscana: dove ha piovuto davvero</title>
-<meta name="description" content="Dove e' caduta l'acqua nelle zone da bosco della Toscana, misurata dai pluviometri di SIR Toscana. La finestra da 13 a 20 giorni fa, quella che conta per i funghi.">
+<title>Dove andare a funghi in Toscana oggi: le zone dove ha piovuto</title>
+<meta name="description" content="Dove andare a funghi in Toscana oggi: le piogge per funghi zona per zona, cioè dove è piovuto da 13 a 20 giorni fa nei posti da bosco. Aggiornato ogni giorno.">
 <link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/toscana/">
-<meta property="og:title" content="Piogge per funghi in Toscana">
+<meta property="og:title" content="Dove andare a funghi in Toscana oggi">
 <meta property="og:description" content="Dove e' caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/toscana/">
@@ -143,6 +143,11 @@ a:active .vai-mappa{transform:translateY(2px);
   .capo-btn{width:100%;text-align:center;}
 }
 nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
+ol.zone-dove{list-style:none;margin:10px 0 26px;padding:0;counter-reset:z;}
+ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
+ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
+ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
+ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;}
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
@@ -158,18 +163,20 @@ nav.altre a{color:var(--blu);}
 
 <p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi, tutte le regioni</a></p>
 
-<h1>Dove potrebbero esserci le prime nascite di funghi in Toscana</h1>
-<p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
+<h1>Dove andare a funghi in Toscana oggi</h1>
+<div id="stagione"></div>
+<script>(function(){var m=new Date().getMonth()+1,t=null;if(m===12||m===1||m===2)t="<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.";else if(m===11||m===3)t="<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in autunno pieno.";if(t){var s=document.getElementById("stagione");s.innerHTML=t;s.style.display="block";}})();</script>
+<p class="sotto">Si va dove ha piovuto al momento giusto. Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
 dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella <b>da 13 a 20
 giorni fa</b>, misurata dai pluviometri di SIR Toscana nei posti da bosco della Toscana. In cima alla
 classifica ci sono quelli dove ne è caduta di più.</p>
 
 
 <div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo solo
-gli otto giorni della finestra dei funghi. Per la pioggia di ieri, quella degli ultimi 20 giorni
-o un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=toscana&amp;g=20"
-style="color:var(--blu);font-weight:700">apri la mappa in Toscana</a> e cambia le date
-da lì.</div>
+gli otto giorni della finestra dei funghi. Per la pioggia di ieri e degli ultimi 30 giorni c’è
+<a href="https://avventurepluvio-test.netlify.app/toscana/" style="color:var(--blu);font-weight:700">dove ha piovuto in Toscana</a>;
+per un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=toscana&amp;g=20"
+style="color:var(--blu)">apri la mappa in Toscana</a>.</div>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -178,12 +185,40 @@ da lì.</div>
   lo conosci tu meglio di qualunque sito.</p>
 </div>
 
-<div id="stagione"></div>
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="guasto"></div>
 <div id="testa"></div>
 
-<h2>La classifica: i posti da bosco più bagnati della Toscana</h2>
+
+<h2>Le zone dove andare a funghi della Toscana</h2>
+<p class="nota">Le valli da bosco della Toscana, <b>dalla più bagnata</b>. Il numero è la pioggia
+caduta da 13 a 20 giorni fa, in media sui pluviometri della zona: lo stesso che trovi
+aprendola.</p>
+<ol class="zone-dove" id="zone-dove">
+<li data-posti="toscana:TOS03000775,toscana:TOS03000755,toscana:TOS03000653,toscana:TOS19000703,umbria:43.34750_12.15917"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/alpe-di-poti/">Alpe di Poti</a><span class="zmm"></span></li>
+<li data-posti="toscana:TOS02000083,toscana:TOS02000081,toscana:TOS02000078,toscana:TOS01000056"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/alpi-apuane/">Alpi Apuane</a><span class="zmm"></span></li>
+<li data-posti="emilia:53443,emilia:53448,toscana:TOS11000094,toscana:TOS01001263,toscana:TOS01001151,toscana:TOS01001102,toscana:TOS30290100,toscana:TOS01001273,toscana:TOS01001161,toscana:TOS01001189,toscana:TOS01000921,toscana:TOS03001241,toscana:TOS30290700,toscana:TOS01000941,toscana:TOS11000503,toscana:TOS01001171"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/calvana/">Calvana</a><span class="zmm"></span></li>
+<li data-posti="toscana:TOS02000241,toscana:TOS02000077,toscana:TOS02000515,toscana:TOS02000483,toscana:TOS02000281,toscana:TOS02000494,toscana:TOS02000329,toscana:TOS02000075,toscana:TOS02000079,toscana:TOS02000064,toscana:TOS02000108"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/candalla/">Candalla</a><span class="zmm"></span></li>
+<li data-posti="emilia:3031,emilia:53138,toscana:TOS01000621,toscana:TOS01000639,toscana:TOS01000601,toscana:TOS01000651"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/casentino/">Casentino</a><span class="zmm"></span></li>
+<li data-posti="toscana:TOS03001965,toscana:TOS01002011,toscana:TOS01002231,toscana:TOS01001961"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/colline-livornesi/">Colline Livornesi</a><span class="zmm"></span></li>
+<li data-posti="toscana:TOS01002085,toscana:TOS01002171,toscana:TOS11000056,toscana:TOS01002071,toscana:TOS01002161,toscana:TOS11000050,toscana:TOS01002371,toscana:TOS01001711,toscana:TOS01005377,toscana:TOS03002476,toscana:TOS01002181,toscana:TOS01002381"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/colline-metallifere/">Colline Metallifere</a><span class="zmm"></span></li>
+<li data-posti="toscana:TOS01002779,toscana:TOS03002073,toscana:TOS03002531,toscana:TOS11000015"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/colline-metallifere-grossetane/">Colline Metallifere grossetane</a><span class="zmm"></span></li>
+<li data-posti="emilia:5509,emilia:5569,toscana:TOS02004115,toscana:TOS02000161,toscana:TOS11000096,toscana:TOS02000221,toscana:TOS09001210,toscana:TOS02000171,toscana:TOS11000097,toscana:TOS02000177,toscana:TOS11000034,toscana:TOS03000278,toscana:TOS02000191,toscana:TOS02000203"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/garfagnana/">Garfagnana</a><span class="zmm"></span></li>
+<li data-posti="liguria:LFMTV,liguria:MTBNO,toscana:TOS11000029,toscana:TOS09001220,toscana:TOS11000099,toscana:TOS09001230"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/lunigiana/">Lunigiana</a><span class="zmm"></span></li>
+<li data-posti="toscana:TOS11000092,toscana:TOS02000332,toscana:TOS03001841,toscana:TOS11000032,toscana:TOS02000339"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/media-valle-del-serchio/">Media Valle del Serchio</a><span class="zmm"></span></li>
+<li data-posti="toscana:TOS03001802,toscana:TOS11000512,toscana:TOS11000020"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/monte-pisano/">Monte Pisano</a><span class="zmm"></span></li>
+<li data-posti="toscana:TOS30287500,toscana:TOS30248000,toscana:TOS30248400,toscana:TOS11000108,toscana:TOS01000916,toscana:TOS30287700,toscana:TOS03001001,toscana:TOS30290400,toscana:TOS01000931,toscana:TOS01000979,toscana:TOS01000991,toscana:TOS01001059,toscana:TOS01001011"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/mugello/">Mugello</a><span class="zmm"></span></li>
+<li data-posti="emilia:3172,toscana:TOS09000024,toscana:TOS09001053,toscana:TOS09000022"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/stretti-di-giaredo/">Stretti di Giaredo</a><span class="zmm"></span></li>
+<li data-posti="toscana:TOS11000114,toscana:TOS07000001,toscana:TOS11000058,toscana:TOS11000059,toscana:TOS03002819,toscana:TOS10002910"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-d-orcia/">Val d'Orcia</a><span class="zmm"></span></li>
+<li data-posti="emilia:5499,emilia:3012,toscana:TOS02000351,toscana:TOS02004215,toscana:TOS02000421,toscana:TOS02000275,toscana:TOS02004231,toscana:TOS02000431,toscana:TOS02000401"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-luce/">Val di Luce</a><span class="zmm"></span></li>
+<li data-posti="liguria:BGNNE,toscana:TOS09001130,toscana:TOS09001200,toscana:TOS09001088,toscana:TOS09001180"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-magra/">Val di Magra</a><span class="zmm"></span></li>
+<li data-posti="toscana:TOS03002733,toscana:TOS03002742,toscana:TOS03002789,toscana:TOS11000080"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-merse/">Val di Merse</a><span class="zmm"></span></li>
+<li data-posti="toscana:TOS01000811,toscana:TOS11000087,toscana:TOS11000023,toscana:TOS03002643,toscana:TOS01000831,toscana:TOS01000881,toscana:TOS03001135,toscana:TOS11000078,toscana:TOS01001284,toscana:TOS03001137,toscana:TOS03000855,toscana:TOS01000901"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/valdarno/">Valdarno</a><span class="zmm"></span></li>
+<li data-posti="toscana:TOS11000022,toscana:TOS03001286,toscana:TOS01001679,toscana:TOS01002115,toscana:TOS03002640"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/valdelsa/">Valdelsa</a><span class="zmm"></span></li>
+<li data-posti="toscana:TOS11000077,toscana:TOS01001253,toscana:TOS02000441,toscana:TOS01001561,toscana:TOS11000091"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/valdinievole/">Valdinievole</a><span class="zmm"></span></li>
+</ol>
+
+<h2>Piogge per funghi: i posti da bosco più bagnati della Toscana</h2>
 <div class="spiega" id="finestra"></div>
 <div id="tabella"></div>
 <p class="nota" id="notaforte"></p>
@@ -228,11 +263,6 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dai c
 pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
 <nav class="altre"><p><a href="https://avventurepluvio-test.netlify.app/funghi/toscana/abbadia-san-salvatore/">Abbadia San Salvatore</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/abbadia-san-salvatore-laghetto-verde-1/">Abbadia San Salvatore - Laghetto Verde 1</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/acquerino/">Acquerino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/albano/">Albano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/alpe-di-poti/">Alpe di Poti</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/anqua/">Anqua</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/argentario/">Argentario</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/azzano/">Azzano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/badia-agnano/">Badia Agnano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/badia-prataglia/">Badia Prataglia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/badia-tedalda/">Badia Tedalda</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/baggio/">Baggio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/bagni-di-lucca/">Bagni di Lucca</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/barberino/">Barberino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/barco/">Barco</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/bibbiana/">Bibbiana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/bosco-di-rossano/">Bosco di Rossano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/boscolungo/">Boscolungo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/camaldoli/">Camaldoli</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/campagrina/">Campagrina</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/campiano/">Campiano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/campocecina/">Campocecina</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/camporgiano/">Camporgiano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/canneto-9/">Canneto 9</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/cantagallo/">Cantagallo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/capanne-di-sillano/">Capanne di Sillano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/cardoso/">Cardoso</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/careggine/">Careggine</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/casaglia/">Casaglia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/casone-di-profecchia/">Casone di Profecchia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/casotti-di-cutigliano/">Casotti di Cutigliano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/castellina-in-chianti/">Castellina in Chianti</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/castelnuovo-val-di-cecina/">Castelnuovo Val di Cecina</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/castiglione-d-orcia/">Castiglione d'Orcia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/cercina/">Cercina</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/cervaiole/">Cervaiole</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/chiatri/">Chiatri</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/cimone-monte-serra/">Cimone - Monte Serra</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/comano/">Comano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/consuma/">Consuma</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/convalle/">Convalle</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/cottede/">Cottede</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/croce-di-lignano/">Croce di Lignano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/equi-terme/">Equi Terme</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/fabbriche-di-vallico/">Fabbriche di Vallico</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/fattoria-iavello/">Fattoria Iavello</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/fornovolasco/">Fornovolasco</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/gabbro/">Gabbro</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/gaiole-in-chianti/">Gaiole in Chianti</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/gallena/">Gallena</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/gavigno/">Gavigno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/gerfalco/">Gerfalco</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/giogo/">Giogo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/gombitelli/">Gombitelli</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/iera/">Iera</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/la-madonnina/">La Madonnina</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/la-verna/">La Verna</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/lago-paduli/">Lago Paduli</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/lamole/">Lamole</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/le-croci-di-calenzano/">Le Croci di Calenzano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/libbiano/">Libbiano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/madonna-a-brolio/">Madonna a Brolio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/mangona/">Mangona</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/marradi/">Marradi</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/massa-marittima-filetto/">Massa Marittima Filetto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/mazzola/">Mazzola</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/melo/">Melo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/mensano/">Mensano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/miemo/">Miemo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/minucciano/">Minucciano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/montagnana/">Montagnana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/montalcinello/">Montalcinello</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-castellino/">Monte Castellino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-di-fo/">Monte di Fò</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-faggiola/">Monte Faggiola</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-ginezzo/">Monte Ginezzo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-giovi/">Monte Giovi</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-oliveto/">Monte Oliveto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-oppio/">Monte Oppio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-perone/">Monte Perone</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-pisano-nord/">Monte Pisano Nord</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-romecchio/">Monte Romecchio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/monte-serra/">Monte Serra</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/montecchio/">Montecchio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/montemignaio/">Montemignaio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/monterotondo/">Monterotondo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/monticiano-la-pineta/">Monticiano La Pineta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/novegigola/">Novegigola</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/nusenna-in-chianti/">Nusenna in Chianti</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/orciatico/">Orciatico</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/orecchiella/">Orecchiella</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/ortignano/">Ortignano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/orto-di-donna/">Orto di Donna</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/palagnana/">Palagnana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/palazzo-del-pero-1/">Palazzo del Pero 1</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/palazzuolo-sul-senio/">Palazzuolo sul Senio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/parana/">Parana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/pari/">Pari</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/passo-del-brattello/">Passo del Brattello</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/passo-del-cerreto/">Passo del Cerreto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/passo-della-cisa/">Passo della Cisa</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/passo-pradarena/">Passo Pradarena</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/patigno/">Patigno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/pentolina/">Pentolina</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/pian-della-fioba/">Pian della Fioba</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/pian-di-sco/">Pian di Scò</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/piazza-al-serchio/">Piazza al Serchio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/pietra-piccata/">Pietra Piccata</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/pieve-santo-stefano/">Pieve Santo Stefano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/pieve-santo-stefano-ar/">Pieve Santo Stefano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/pizzorne/">Pizzorne</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/poggio-aglione/">Poggio Aglione</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/poggio-alla-croce/">Poggio alla Croce</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/pomezzana/">Pomezzana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/ponsano/">Ponsano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/ponte-a-olmo/">Ponte a Olmo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/ponte-di-lucchio/">Ponte di Lucchio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/pracchia/">Pracchia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/prata/">Prata</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/pratomagno/">Pratomagno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/prunetta/">Prunetta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/radda-in-chianti/">Radda in Chianti</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/razzuolo/">Razzuolo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/renaio/">Renaio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/retignano/">Retignano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/rigomagno/">Rigomagno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/ripa-d-orcia/">Ripa d'Orcia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/riparbella/">Riparbella</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/rocca-sigillina/">Rocca Sigillina</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/roccastrada/">Roccastrada</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/roccatederighi/">Roccatederighi</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/ronta/">Ronta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/salutio/">Salutio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/sammomme/">Sammommè</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/san-dalmazio/">San Dalmazio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/san-donato-in-collina/">San Donato in Collina</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/san-ferdinando/">San Ferdinando</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/san-marcello-pistoiese/">San Marcello Pistoiese</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/san-pietro-a-marcigliano/">San Pietro a Marcigliano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/santa-brigida-all-opaco/">Santa Brigida all'Opaco</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/santa-fiora-1/">Santa Fiora 1</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/sassa/">Sassa</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/sassetta/">Sassetta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/selva-dei-porci/">Selva dei Porci</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/serra-pistoiese/">Serra Pistoiese</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/simignano/">Simignano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/sorana/">Sorana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/spineta/">Spineta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/stia-monte/">Stia Monte</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/tendola/">Tendola</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/tereglio/">Tereglio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/terrinca/">Terrinca</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/trappola/">Trappola</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/treppio/">Treppio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/turano/">Turano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/vagli-di-sotto/">Vagli di Sotto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/vaglia/">Vaglia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/vagliagli/">Vagliagli</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/vaiano-acquedotto/">Vaiano acquedotto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/valle-benedetta/">Valle Benedetta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/vallelunga/">Vallelunga</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/vallombrosa/">Vallombrosa</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/vallucciole/">Vallucciole</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/vernio/">Vernio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/villacollemandina/">Villacollemandina</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/villore/">Villore</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/vinci/">Vinci</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/vivo-d-orcia/">Vivo d'Orcia</a></p></nav>
 
-
-<h2 style="margin-top:30px">Le valli e le zone della Toscana</h2>
-<p class="nota">Una zona mette insieme i pluviometri di tutta la valle: comoda quando
-il posto preciso non l'hai ancora scelto.</p>
-<nav class="altre"><p><a href="https://avventurepluvio-test.netlify.app/funghi/zone/alpe-di-poti/">Alpe di Poti</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/alpi-apuane/">Alpi Apuane</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/calvana/">Calvana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/candalla/">Candalla</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/casentino/">Casentino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/colline-livornesi/">Colline Livornesi</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/colline-metallifere/">Colline Metallifere</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/colline-metallifere-grossetane/">Colline Metallifere grossetane</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/garfagnana/">Garfagnana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/lunigiana/">Lunigiana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/media-valle-del-serchio/">Media Valle del Serchio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/monte-pisano/">Monte Pisano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/mugello/">Mugello</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/stretti-di-giaredo/">Stretti di Giaredo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-d-orcia/">Val d'Orcia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-luce/">Val di Luce</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-magra/">Val di Magra</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-merse/">Val di Merse</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valdarno/">Valdarno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valdelsa/">Valdelsa</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valdinievole/">Valdinievole</a></p></nav>
 
 <h2 style="margin-top:30px">Tutta la pioggia in Toscana</h2>
 <p>Questa pagina guarda solo i pluviometri in mezzo al bosco. Per la regione intera, pianura compresa, c'è <a href="https://avventurepluvio-test.netlify.app/toscana/">dove ha piovuto in Toscana</a>: oltre 350 pluviometri di SIR Toscana.</p>
@@ -280,34 +310,8 @@ il posto preciso non l'hai ancora scelto.</p>
   function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function uno(n){ return Math.round(n*10)/10; }
 
-  /* ⚠️ LA RIGA DI STAGIONE. Da dicembre a febbraio questa pagina non serve a
-     molto e dirlo e' piu' onesto che far finta di niente: 3bmeteo negli
-     stessi mesi tiene su la sua e stampa quindici righe di «Assente»
-     (controllato negli archivi del web, copie del 5 e del 31 gennaio 2026).
-     La pagina pero' NON si toglie: un indirizzo tolto e ripubblicato perde
-     l'indicizzazione, e quella si ricostruisce in mesi.
-     Novembre e marzo sono di passaggio e hanno un tono piu' morbido.
-     ⚠️ NIENTE APOSTROFI DRITTI DENTRO QUESTE STRINGHE. Il testo esce da un
-     template literal: un ' scritto qui viene consumato dal generatore e
-     nella pagina arriva un apostrofo NUDO, che spezza la stringa e rompe
-     TUTTO il blocco (pagina bianca, ferma su «Sto leggendo i pluviometri»).
-     Successo il 2/9/2026 con «a quest'epoca». Si usa quello tipografico. */
-  (function(){
-    var m = new Date().getMonth() + 1;
-    var testo = null;
-    if (m === 12 || m === 1 || m === 2)
-      testo = '<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi '
-        + 'ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano '
-        + 'veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.';
-    else if (m === 11 || m === 3)
-      testo = '<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto '
-        + 'dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in '
-        + 'autunno pieno.';
-    if (testo) {
-      var s = document.getElementById('stagione');
-      s.innerHTML = testo; s.style.display = 'block';
-    }
-  }());
+  /* La riga di stagione non sta piu' qui: dal 13/9/2026 la scrive
+     lib-stagione.js subito sotto il titolo, uguale per regioni e zone. */
 
   /* ── STRADA NORMALE: i numeri gia' fatti, UNA richiesta ──────────────────
      Fino al 2/9/2026 questa pagina scaricava i 25 file giornalieri e si faceva
@@ -409,7 +413,53 @@ il posto preciso non l'hai ancora scelto.</p>
       + '<a href="'+MAPPA+'?r='+REG+'">sulla mappa</a>.';
   }
 
+  /* LE ZONE DOVE ANDARE (13/9/2026). Qui si scrivono i millimetri e si
+     RIORDINANO i nodi, non si rifa la lista con innerHTML: i link devono
+     restare quelli cotti, che sono quelli che Google legge anche dopo il
+     rendering. Si chiama PRIMA del taglio ai primi 15 posti.
+     ⚠️ IL NUMERO E LA MEDIA DI TUTTI I PLUVIOMETRI DELLA ZONA, anche di altre
+     regioni: e quello che mostra la pagina della zona, e chi clicca deve
+     ritrovarlo uguale. I file delle regioni vicine sono pochi chilobyte e si
+     chiedono solo se una zona li nomina. */
+  function ordinaZone(tutte){
+    var lista = document.getElementById('zone-dove');
+    if (!lista) return;
+    var mm = {};
+    mm[REG] = {};
+    tutte.forEach(function(r){ mm[REG][r.id] = r.mm; });
+    var voci = [].slice.call(lista.children);
+    var altre = {};
+    voci.forEach(function(li){
+      li.posti = li.getAttribute('data-posti').split(',').filter(Boolean)
+        .map(function(x){ var k = x.split(':'); return { reg: k[0], id: k[1] }; });
+      li.posti.forEach(function(q){ if (q.reg !== REG) altre[q.reg] = 1; });
+    });
+    Promise.all(Object.keys(altre).map(function(reg){
+      return fetch(BASE + 'funghi/' + reg + '.json')
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .catch(function(){ return null; })
+        .then(function(j){
+          mm[reg] = {};
+          if (j && j.posti) Object.keys(j.posti).forEach(function(id){ mm[reg][id] = j.posti[id][0]; });
+        });
+    })).then(function(){
+      voci.forEach(function(li){
+        var v = li.posti.map(function(q){ return (mm[q.reg] || {})[q.id]; })
+          .filter(function(x){ return x != null; });
+        li.valore = v.length ? v.reduce(function(a,b){ return a + b; }, 0) / v.length : null;
+        li.querySelector('.zmm').textContent =
+          li.valore == null ? '' : uno(li.valore).toFixed(1).replace('.', ',') + ' mm';
+      });
+      voci.sort(function(a,b){
+        if (a.valore == null) return 1;
+        if (b.valore == null) return -1;
+        return b.valore - a.valore;
+      }).forEach(function(li){ lista.appendChild(li); });
+    });
+  }
+
   function mostra(righe, oggiISO){
+    ordinaZone(righe);
     righe = righe.sort(function(a,b){ return b.mm - a.mm; }).slice(0, QUANTI);
     var maxMm = Math.max.apply(null, righe.map(function(r){ return Math.max(r.mm, r.mm7, r.mm25); }).concat([1]));
 

@@ -93,11 +93,17 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .hdr-soc{color:#fff;display:flex;line-height:0;text-decoration:none;opacity:.9;transition:opacity .15s;}
 .hdr-soc:hover{opacity:1;}
 .hdr-soc svg{width:20px;height:20px;fill:currentColor;}
-/* Video FAQ "come si usa la mappa": UNA sola porta per volta.
+/* «Guida»: UNA sola porta per volta.
    Sul desktop e' il bottone rosso in coda alle icone social — sta dentro
    .hdr-socials, quindi sotto i 600px sparisce da solo insieme a loro.
    Sul telefono al suo posto c'e' la scritta #faq-funghi sotto "Piogge per
-   funghi", che infatti compare solo alla stessa soglia. */
+   funghi", che infatti compare solo alla stessa soglia.
+   ⚠️ Dal 12/9/2026 i due link portano alla PAGINA /guida/, non piu' al video:
+   il video sta in cima alla guida. Motivo: sotto i 600px questa scritta e'
+   l'unico link interno visibile che la mappa ha, e Google scansiona col
+   crawler mobile — mandandolo su YouTube quel peso si buttava via.
+   Gli id restano quelli (#hdr-faq, #faq-funghi) perche' li citano le regole
+   qui sotto e tenereVisibileLoStato(); e' il nome, non il bersaglio. */
 #hdr-faq{display:inline-flex;align-items:center;background:#e12b2b;color:#fff;font-size:12px;font-weight:600;padding:6px 11px;border-radius:7px;text-decoration:none;line-height:1;white-space:nowrap;margin-left:4px;}
 #hdr-faq:hover{background:#f4433a;}
 #tp-links{display:none;}   /* la coppia FAQ + feedback: solo mobile */
@@ -699,6 +705,13 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .sh-x{display:flex;gap:2px;margin-top:3px;padding-right:28px}
 .sh-x span{flex:1;text-align:center;font-size:9px;color:#aaa}
 .sh-note{font-size:9px;color:#999;margin-top:5px}
+/* 13/9/2026: la riga dell'intensita' sotto le barre, e la barra del giorno raccontato */
+.sh-int{font-size:10px;color:#bbb;margin-top:5px}
+.sh-int:empty{display:none}
+.sh-int b{color:#eee;font-weight:600}
+.sh-invito{display:block;font-size:9px;color:#8a8a8a;margin-top:2px}
+.sh-bar.scelto{box-shadow:0 0 0 1px #fff}
+.sh-bars .sh-hits div{cursor:pointer}
 .sh-fonte{font-size:9px;color:#888;margin-top:5px;padding-top:5px;border-top:1px solid #333;
   display:flex;align-items:center;justify-content:space-between;gap:8px}
 /* 3/9/2026: il tasto che porta alla pagina del posto. Sta sulla RIGA
@@ -1023,7 +1036,35 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
 .fonte{font-size:9px;color:#6b80a0;padding:2px 10px;
   border-top:1px solid #eee;text-align:center;background:#fff;flex-shrink:0;}
 .fonte a{color:#1b3f6e}
-.fonte-reg{border-top:none;padding-bottom:4px;line-height:1.7;}
+/* ⚠️ LA PASTIGLIA E' L'ETICHETTA DELLA FILA, non un blocco a se'.
+   Storia in due passi. L'8/9/2026 la voce dei funghi stava in coda ai 23 nomi
+   delle pagine REGIONE, dopo un puntino, e si leggeva come una
+   ventiquattresima regione: allora le si diede `flex:1` alla lista, che la
+   spingeva contro il bordo opposto — erano due famiglie diverse ed era lo
+   SPAZIO a separarle. Poche ore dopo la fila e' diventata quella delle 19
+   pagine FUNGHI, cioe' la stessa famiglia dell'indice a cui la pastiglia
+   porta: adesso quel buco dividerebbe cose che vanno lette insieme, e si
+   sta tutto attaccato e centrato, come una frase sola. */
+.fonte-reg{border-top:none;padding-bottom:4px;line-height:1.7;
+  display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:1px 12px;}
+.fonte-reg .fr-lista{flex:0 1 auto;}
+/* La domanda che apre la riga: e' lei a dire che le due strade rispondono
+   alla stessa cosa in due modi diversi. Un filo piu' scura e in neretto,
+   perche' sia chiaro che e' l'attacco e non un link. */
+/* Le DUE scritte della riga, non i link: stesso peso e stesso colore, perche
+   sono le due meta' della stessa frase. Prima la domanda era in neretto scuro
+   e il ponte in tondo chiaro, e sembravano di importanza diversa. */
+.fonte-reg .fr-dom,.fonte-reg .fr-pon{font-weight:700;color:#42506a;}
+.fonte-reg .fr-dom{flex:0 0 auto;}
+/* Il verde e' quello del bottone «Piogge per funghi» del pannello, apposta. */
+/* ⚠️ `line-height:1` e non il valore ereditato: e' cio' che rende la
+   pastiglia alta 15 px come la riga di testo accanto, e la striscia resta
+   di 21 px esatti, gli stessi che aveva senza. Col line-height ereditato
+   saliva a 26, cioe' cinque pixel rubati alla mappa per un bordo. */
+.fonte a.fr-funghi{flex:0 0 auto;background:#eef9ed;border:1px solid #b7dcb8;
+  color:#2d6a30;font-weight:700;border-radius:999px;padding:2px 10px;line-height:1;
+  text-decoration:none;white-space:nowrap;}
+.fonte a.fr-funghi:hover{background:#ddf1dc;border-color:#7bc67e;}
 
 /* ══════════════════════════════════════
    TABLET (601-900px)
@@ -1498,9 +1539,9 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       <a href="https://www.facebook.com/avventuremicologiche/" target="_blank" rel="noopener" aria-label="Facebook" class="hdr-soc" onclick="try{gtag('event','click_facebook',{pulsante:'icona-social'})}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.41 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.32l-.53 3.5h-2.79V24C19.61 23.1 24 18.1 24 12.07z"/></svg></a>
       <a href="https://www.instagram.com/avventuremicologiche/" target="_blank" rel="noopener" aria-label="Instagram" class="hdr-soc" onclick="try{gtag('event','click_instagram',{pulsante:'icona-social'})}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
       <a href="https://suno.com/@avventuremicologiche" target="_blank" rel="noopener" aria-label="Suno" class="hdr-soc" onclick="try{gtag('event','click_suno',{pulsante:'icona-social'})}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></a>
-      <a href="https://youtu.be/fvsBZJ_Ylf4" target="_blank" rel="noopener" id="hdr-faq"
-         title="Come si usa la mappa — video di 2 minuti"
-         onclick="try{gtag('event','click_youtube',{pulsante:'faq-desktop'})}catch(e){}">FAQ video</a>
+      <a href="/guida/" target="_blank" rel="noopener" id="hdr-faq"
+         title="Guida: come si usa la mappa, tutte le funzioni"
+         onclick="try{gtag('event','click_guida',{pulsante:'guida-desktop'})}catch(e){}">Guida</a>
     </div>
   </div>
 </header>
@@ -1530,6 +1571,10 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       </div>
       <div class="sh-row"><span id="sh-prov-lbl">Provincia</span><b id="sh-prov"></b></div>
       <div class="sh-row"><span>Quota</span><b id="sh-quota"></b></div>
+      <!-- 13/9/2026: durata e punta, solo col periodo di UN giorno e solo se
+           la rete pubblica l'ora. Le accende histRender, a serie arrivata. -->
+      <div class="sh-row sh-ore" style="display:none"><span>Durata</span><b id="sh-durata"></b></div>
+      <div class="sh-row sh-ore" style="display:none"><span>Punta oraria</span><b id="sh-punta"></b></div>
       <div class="sh-row"><span>Ranking</span><b id="sh-rank"></b></div>
       <div class="sh-per" id="sh-per"></div>
       <div class="sh-tabs">
@@ -1765,8 +1810,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         <div id="tp-status"></div>
         <div id="tp-spinner"><div class="mini-spin"></div><span>Caricamento…</span></div>
         <div id="tp-links">
-          <a href="https://youtu.be/fvsBZJ_Ylf4" target="_blank" rel="noopener" id="faq-funghi"
-             onclick="try{gtag('event','click_youtube',{pulsante:'faq-mobile'})}catch(e){}">FAQ video</a>
+          <a href="/guida/" target="_blank" rel="noopener" id="faq-funghi"
+             onclick="try{gtag('event','click_guida',{pulsante:'guida-mobile'})}catch(e){}">Guida</a>
           <a href="/fonti.html#feedback" id="tp-feedback"
              onclick="try{gtag('event','click_feedback',{pulsante:'mappa-mobile'})}catch(e){}">invia feedback</a>
         </div>
@@ -1837,43 +1882,56 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   Mappa: <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap</a>
 </div>
 
-<!-- ⚠️ LA PORTA VERSO LE PAGINE REGIONE, aggiunta il 2/9/2026.
-     Fino a quel giorno la mappa non linkava NESSUNA delle 23 pagine: erano
-     orfane, e l'unica strada per arrivarci era la sitemap. La sitemap ti fa
-     scoprire, i link interni ti danno peso.
-     ⚠️ Qui stanno solo le 23 REGIONE, non anche le 19 funghi: la strada giusta
-     e' mappa -> regione -> funghi, e mettendo tutt'e 42 in fondo alla mappa la
-     striscia diventava alta il doppio rubendo spazio alla mappa. Le funghi le
-     linka la pagina della loro regione, che e' anche il posto dove ha senso.
+<!-- ⚠️ LA PORTA VERSO LE PAGINE «PIOGGE PER FUNGHI».
+     STORIA. Il 2/9/2026 qui erano nate le 23 pagine REGIONE, che fino a quel
+     giorno la mappa non linkava affatto: erano orfane e le trovava solo la
+     sitemap. L'8/9 la striscia cambia famiglia ed elenca le 19 pagine funghi.
+
+     ⚠️ PERCHE'. Misurate tutte e tre le strade, quel giorno:
+       23 regione (com'era)  1.249 px   regione 21 link a 1 clic, funghi 26 a 2
+       19 funghi  (questa)   1.033 px   regione 20 link a 2 clic, funghi 27 A 1
+       tutt'e due            2.036 px   regione 21 a 1 clic,      funghi 27 a 1
+     Le 19 sono piu' CORTE delle 23 (niente Svizzera, Austria, Slovenia e
+     Molise): la riga resta singola gia' dai ~1.050 px invece che dai ~1.270.
+     Tenerle tutt'e due sarebbe stato il meglio per i link, ma costava due
+     righe fisse su qualunque schermo, cioe' 16 px di mappa sempre.
+
+     ⚠️ LE 23 REGIONE NON RESTANO ORFANE, controllate una per una: le nomina
+     l'elenco in fondo a tutte e 19 le pagine funghi, piu' l'indice. Molise e
+     Austria, le piu' esposte perche' una pagina funghi non ce l'hanno,
+     tengono 20 link a testa. Quello che si perde e' il clic diretto dalla
+     mappa a «dove ha piovuto in Liguria»: chi e' sulla mappa pero' e' gia'
+     dentro lo strumento della pioggia, e da Google ci si arriva lo stesso.
+
      ⚠️ Sotto i 600px questa striscia e' display:none come .fonte, e Google
-     indicizza col crawler MOBILE: questi link li segue ma li pesa meno. Per
-     valere pieno dovrebbero stare in un punto visibile anche sul telefono, e
-     sulla mappa quel punto non c'e' senza rimpicciolire la mappa. -->
+     indicizza col crawler MOBILE: questi link li segue ma li pesa meno. Il
+     peso vero alla famiglia funghi lo danno le briciole delle 1.062 pagine di
+     paese e di zona, che sono testo visibile. Qui si guadagna il clic dalla
+     pagina piu' forte del sito, che e' un'altra cosa e vale sul desktop. -->
 <div class="fonte fonte-reg">
-  Dove ha piovuto:
-  <a href="/lombardia/">Lombardia</a> ·
-  <a href="/piemonte/">Piemonte</a> ·
-  <a href="/valledaosta/">Valle d'Aosta</a> ·
-  <a href="/liguria/">Liguria</a> ·
-  <a href="/emilia/">Emilia-Romagna</a> ·
-  <a href="/veneto/">Veneto</a> ·
-  <a href="/friuli/">Friuli</a> ·
-  <a href="/trentino/">Trentino</a> ·
-  <a href="/altoadige/">Alto Adige</a> ·
-  <a href="/toscana/">Toscana</a> ·
-  <a href="/umbria/">Umbria</a> ·
-  <a href="/marche/">Marche</a> ·
-  <a href="/lazio/">Lazio</a> ·
-  <a href="/molise/">Molise</a> ·
-  <a href="/campania/">Campania</a> ·
-  <a href="/puglia/">Puglia</a> ·
-  <a href="/basilicata/">Basilicata</a> ·
-  <a href="/calabria/">Calabria</a> ·
-  <a href="/sicilia/">Sicilia</a> ·
-  <a href="/sardegna/">Sardegna</a> ·
-  <a href="/svizzera/">Svizzera</a> ·
-  <a href="/austria/">Austria</a> ·
-  <a href="/slovenia/">Slovenia</a>
+  <span class="fr-dom">Dove ha piovuto di più?</span>
+  <a href="/funghi/" class="fr-funghi">🍄 La nostra selezione</a>
+  <span class="fr-lista"><span class="fr-pon">oppure guarda il riepilogo delle regioni:</span>
+  <a href="/funghi/lombardia/">Lombardia</a> ·
+  <a href="/funghi/piemonte/">Piemonte</a> ·
+  <a href="/funghi/valledaosta/">Valle d'Aosta</a> ·
+  <a href="/funghi/liguria/">Liguria</a> ·
+  <a href="/funghi/emilia/">Emilia-Romagna</a> ·
+  <a href="/funghi/veneto/">Veneto</a> ·
+  <a href="/funghi/friuli/">Friuli</a> ·
+  <a href="/funghi/trentino/">Trentino</a> ·
+  <a href="/funghi/altoadige/">Alto Adige</a> ·
+  <a href="/funghi/toscana/">Toscana</a> ·
+  <a href="/funghi/umbria/">Umbria</a> ·
+  <a href="/funghi/marche/">Marche</a> ·
+  <a href="/funghi/lazio/">Lazio</a> ·
+  <a href="/funghi/campania/">Campania</a> ·
+  <a href="/funghi/puglia/">Puglia</a> ·
+  <a href="/funghi/basilicata/">Basilicata</a> ·
+  <a href="/funghi/calabria/">Calabria</a> ·
+  <a href="/funghi/sicilia/">Sicilia</a> ·
+  <a href="/funghi/sardegna/">Sardegna</a>
+  </span>
 </div>
 
 <script>
@@ -3183,7 +3241,7 @@ function histFromFiles(region,station,days,cb){
       .then(function(d){
         var m={};
         if(d&&d.stations) d.stations.forEach(function(s){
-          m[s.n]={mm:(typeof s.mm==='number')?s.mm:0,t:s.t||null,w:s.w||null,u:s.u||null};
+          m[s.n]={mm:(typeof s.mm==='number')?s.mm:0,t:s.t||null,w:s.w||null,u:s.u||null,i:s.i||null};
         });
         histFileCache[region+'/'+ds]=m;
       })
@@ -3318,10 +3376,64 @@ function histRenderPioggia(days,serie,selFrom,selTo){
     var col=(v===null)?'#262626':(sel?histColor(v):(v>0?'#5f5f5f':'#2f2f2f'));
     var hh=(v===null)?2:Math.max(2,Math.round(v/scale*100));
     var lbl=(v===null)?'dato non disponibile':(v+' mm');
-    h+='<div class="sh-bar" style="height:'+hh+'%;background:'+col+'" title="'+ds+' · '+lbl+'"></div>';
+    h+='<div class="sh-bar" data-d="'+ds+'" style="height:'+hh+'%;background:'+col+'" title="'+ds+' · '+lbl+'"></div>';
   });
-  h+='</div></div>'+histAsseX(days);
+  // Colonne trasparenti a tutta altezza: una barra da 2 px col dito non si
+  // prende, la colonna si'. Toccandola la riga dell'intensita' passa a quel giorno.
+  h+='<div class="sh-hits">';
+  days.forEach(function(ds){ h+='<div data-d="'+ds+'"></div>'; });
+  h+='</div></div></div>'+histAsseX(days)+'<div class="sh-int" id="sh-int"></div>';
   return h;
+}
+
+// ── L'intensita' nel pannello (13/9/2026) ────────────────────────────────
+// Il campo i:[ore bagnate, punta oraria mm] sta nei file dal 10/9/2026, solo
+// per le reti che pubblicano l'ora (vedi «L'intensita' della pioggia» nel
+// CLAUDE.md). Qui si mostrano SOLO NUMERI, come deciso nel mockup del 12/9:
+// l'aggettivo lenta/media/battente sta sulle pagine di paese, dove c'e' posto
+// per spiegarlo. ⚠️ L'intensita' e' di UN giorno: su un periodo di sette non
+// si sommano le ore, si racconta il giorno piu' piovoso del periodo.
+function histNum(v){ return String(v).replace('.',','); }
+function histGiorno(ds){
+  var m=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  return (+ds.substring(8,10))+' '+m[+ds.substring(5,7)-1];
+}
+function histReteHaOre(days,serie){
+  return days.some(function(ds){ return serie[ds]&&serie[ds].i; });
+}
+function histRigaIntensita(ds){
+  var el=document.getElementById('sh-int'); if(!el||!histCurrent) return;
+  var serie=histCurrent.serie,o=ds&&serie[ds];
+  document.querySelectorAll('#sh-body .sh-bar.scelto').forEach(function(b){b.classList.remove('scelto');});
+  if(!o||!histReteHaOre(histCurrent.days,serie)){ el.innerHTML=''; return; }
+  var b=document.querySelector('#sh-body .sh-bar[data-d="'+ds+'"]'); if(b) b.classList.add('scelto');
+  var t='<b>'+histGiorno(ds)+'</b> · '+histNum(o.mm)+' mm';
+  if(o.i) t+=' in <b>'+o.i[0]+(o.i[0]===1?' ora':' ore')+'</b> · punta <b>'+histNum(o.i[1])+' mm</b> in un’ora';
+  else if(o.mm>0) t+=' · durata non misurata';
+  // ⚠️ L'invito a toccare: senza, nessuno scopre che le barre rispondono.
+  var dito=!(window.matchMedia&&matchMedia('(hover:hover) and (pointer:fine)').matches);
+  el.innerHTML=t+'<span class="sh-invito">'+(dito?'Tocca':'Clicca')+' una barra per un altro giorno</span>';
+}
+// Col periodo di un giorno la riga sotto il grafico parte vuota: l'invito
+// serve lo stesso, se la rete ha le ore.
+function histSoloInvito(){
+  var el=document.getElementById('sh-int'); if(!el||!histCurrent||el.innerHTML) return;
+  if(!histReteHaOre(histCurrent.days,histCurrent.serie)) return;
+  var dito=!(window.matchMedia&&matchMedia('(hover:hover) and (pointer:fine)').matches);
+  el.innerHTML='<span class="sh-invito" style="margin-top:0">'+(dito?'Tocca':'Clicca')+' una barra per durata e punta di quel giorno</span>';
+}
+// Il giorno da raccontare all'apertura: il piu' piovoso del periodo scelto fra
+// quelli che hanno le ore. Col periodo di un giorno solo la riga resta vuota,
+// perche' durata e punta stanno gia' nelle righe in alto.
+function histGiornoDaMostrare(c){
+  if(c.selFrom===c.selTo) return null;
+  var best=null;
+  c.days.forEach(function(ds){
+    var o=c.serie[ds];
+    if(ds<c.selFrom||ds>c.selTo||!o||!o.i) return;
+    if(!best||o.mm>c.serie[best].mm) best=ds;
+  });
+  return best;
 }
 
 // Linee di temperatura ('t': [min,max] °C) o vento ('v': [media,raffica] km/h).
@@ -3515,6 +3627,14 @@ function histRender(station,regionKey,days,serie,selFrom,selTo,notaPeriodo,histR
   document.querySelectorAll('#st-history .sh-tab').forEach(function(b){
     b.classList.toggle('on',b.getAttribute('data-t')===histTab);
   });
+  // Durata e punta nelle righe in alto: solo col periodo di un giorno solo.
+  (function(){
+    var o=(selFrom===selTo)&&serie[selTo], ok=!!(o&&o.i);
+    document.querySelectorAll('#st-history .sh-ore').forEach(function(r){ r.style.display=ok?'':'none'; });
+    if(!ok) return;
+    document.getElementById('sh-durata').textContent=o.i[0]+(o.i[0]===1?' ora':' ore');
+    document.getElementById('sh-punta').textContent=histNum(o.i[1])+' mm in un’ora';
+  }());
   var body=document.getElementById('sh-body');
   var h;
   if(histTab==='mm') h=histRenderPioggia(days,serie,selFrom,selTo);
@@ -3525,6 +3645,7 @@ function histRender(station,regionKey,days,serie,selFrom,selTo,notaPeriodo,histR
     return;
   }
   body.innerHTML=h+histNote(regionKey,days,notaPeriodo,station);
+  if(histTab==='mm'){ histRigaIntensita(histGiornoDaMostrare(histCurrent)); histSoloInvito(); }
 }
 
 function histPosition(mx,my){
@@ -3714,6 +3835,12 @@ document.querySelectorAll('#st-history .sh-tab').forEach(function(b){
       histCurrent.serie,histCurrent.selFrom,histCurrent.selTo,histCurrent.notaPeriodo,
       histCurrent.histRegion);
   });
+});
+// 13/9/2026: toccando una colonna del grafico Pioggia la riga dell'intensita'
+// racconta quel giorno. Delega sul corpo, che si riscrive a ogni render.
+document.getElementById('sh-body').addEventListener('click',function(e){
+  var c=e.target&&e.target.closest&&e.target.closest('.sh-bars .sh-hits [data-d]');
+  if(c&&histTab==='mm') histRigaIntensita(c.getAttribute('data-d'));
 });
 // Col mouse dentro al pannello non si chiude (serve per leggerlo e per il
 // tooltip dei valori sulle singole barre)
@@ -5166,7 +5293,12 @@ function copFiltro(cop){
 //   2206 "Ispra tetto" (VA)             → colline bergamasche, non Ispra
 //   2535 "Virgilio Mantova Cerese" (MN) → coordinate di Dorio (LC)
 // Attenzione: "Ispra JRC" (32355) è invece corretta e riporta ogni giorno.
-var LOMB_ESCLUSE={'2239':1,'2206':1,'2535':1};
+// 15/9/2026, PLUVIOMETRO MORTO CON UNA DATA:
+//   7043 "Ponti sul Mincio v.San Martino" (MN) → da gennaio a luglio all'80-96%
+//   di Monzambano (2,9 km), dal 22/7 0,0 mm tutti i giorni (agosto 0 contro 49,
+//   settembre 0 contro 51). Temperatura e umidita' arrivano ancora: la stazione
+//   e' viva, il pluviometro no. Restano Monzambano a 2,9 km e Peschiera a 1,3.
+var LOMB_ESCLUSE={'2239':1,'2206':1,'2535':1,'7043':1};
 function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
   // Dal 24/7/2026 la Lombardia legge file giornalieri come le altre regioni,
   // invece di interrogare Socrata live a ogni caricamento (lento sui periodi
@@ -5325,7 +5457,18 @@ var PIEMONTE_ESCLUSE={
   'FINIERE':true,              // 13,0 mm, il 24% di VAL CLAREA che sta a 2,6 km. Nei 45 giorni precedenti era al 91%: e' crollata.
   'MEUGLIANO':true,            // 35,1 mm, il 37% della mediana (CAVALLARIA 112 a 5,2 km). Nei 45 giorni precedenti era al 111%.
   'PERRERO GERMANASCA':true,   // 34,0 mm, il 33% di 102. MASSELLO, a 7,8 km nella stessa valle, ne fa 143.
-  "BORGOFRANCO D'IVREA":true   // 24,2 mm, il 39% di 62. CAVALLARIA, a 3,1 km, ne fa 109.
+  "BORGOFRANCO D'IVREA":true,  // 24,2 mm, il 39% di 62. CAVALLARIA, a 3,1 km, ne fa 109.
+  // ── 7/9/2026: segnalata dal controllo del lunedi', esclusa sul confronto
+  // ALL'INDIETRO e non su quello coi vicini. Mese per mese contro la mediana
+  // dei cinque piu' prossimi: maggio 100,6%, giugno 80,0%, luglio 63,4%,
+  // agosto 10,8%, e dal 23 agosto non consegna piu'. Un punto asciutto e'
+  // asciutto anche a maggio: questo e' un imbuto che si intasa piano.
+  // ⚠️ La regola del 21/8 qui NON si applica per intero: vuole tre
+  // pluviometri piemontesi entro 10 km, e il piu' vicino (Tricerro) sta a
+  // 11,0 km. Quella condizione serve a non accusare i fondovalle, e in mezzo
+  // alle risaie non c'entra: e' una scelta fatta a ragion veduta, non
+  // l'applicazione automatica della regola.
+  'VERCELLI':true              // 12,1 mm nei 30 giorni consegnati su 45, il 13,8% della mediana dei vicini (88,0)
 };
 
 function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
@@ -5805,6 +5948,18 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
 // climatologici, stessa banca dati dell'API): il loader è il gemello di
 // quello austriaco, si legge sempre dai file.
 // ═══════════════════════════════════════════════════════════════
+// ── PLUVIOMETRI FRANCESI ESCLUSI (lista nata il 15/9/2026) ──────────────
+// Per ID Meteo-France, che e' unico su tutte e 13 le régions: una lista sola.
+// Stessa regola delle liste italiane: si esclude chi consegna ma non misura
+// piu', solo se intorno restano pluviometri a coprire il posto.
+var FRANCIA_ESCLUSE={
+  // Les Mayons (Var): 13 mesi buoni (80-180% dei vicini), poi i due temporali
+  // di agosto l'hanno trovata a zero mentre bagnavano tutti e quattro i vicini:
+  // 21/8 Bormes 33,4, Collobrieres 33,1, Le Luc 24, Cogolin 18,3 -> lei 0;
+  // 24/8 12,9-24,4 -> lei 0. Ultimo giorno sopra 1 mm il 4/6. Restano Le Luc
+  // a 7,7 km e gli altri tre fra 12 e 14 km.
+  '83075001':true
+};
 function loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
   var FR_RAW=PILOT_DATA_BASE+(REGIONS[regionKey].dataDir||regionKey);
   var rainTot={}, stMeta={}, cop={};
@@ -5824,6 +5979,7 @@ function loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
+            if(s.id&&FRANCIA_ESCLUSE[String(s.id)])return;
             var key=s.id||s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||'FR'};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
@@ -6190,10 +6346,50 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
 // 58,9 e 79,8 mm in 45 giorni (San Giovanni a 3,8 km ne fa 59, Ponticelli a
 // 5,7 km ne fa 109). Non e' una zona asciutta, e' un pluviometro che non
 // riporta. Da ricontrollare se tornassero a misurare.
+// ⚠️ SI AGGANCIA ALL'ID, NON AL NOME (dal 10/9/2026). L'id di MeteoHub e' la
+// coppia `lat_lon`, e i nomi doppi esistono: in Sicilia «Agira», «Bisacquino»
+// e «Montalbano Elicona», in Umbria «S.Gemini». Le due Agira stanno a 4,4 km,
+// una misura e l'altra no: agganciando al nome sarebbero sparite tutt'e due.
+// E' la stessa lezione delle due Giralda in Emilia e dei quattro nomi doppi
+// in Toscana. Verificato il 10/9 che tutte e 1.583 le stazioni MeteoHub hanno
+// l'id, quindi non serve nessun ripiego sul nome.
 var MH_ESCLUSE={
-  calabria:{'Sellia Superiore':true},
-  marche:{'Poggio San Vicino':true},
-  umbria:{'Ponte S.Maria':true}
+  // Sellia Superiore (CZ): 41,4 mm negli ultimi 45 giorni, il 30% della
+  // mediana dei cinque vicini (136,8) e il 30% di Sant'Elia-Jano, che sta a
+  // 4,9 km. Ne restano 7 entro 10 km. Ricontrollata il 10/9/2026.
+  calabria:{'38.98528_16.62083':true},
+  // Ponte S.Maria (PG): 0,2 mm in 57 giorni consegnati, una sola giornata
+  // bagnata (0,2 mm il 18/8). Campogrande a 4,8 km ne fa 77,8 e Ponticelli a
+  // 5,7 km 89,6. ⚠️ Entro 10 km ne restano solo DUE, meno dei tre che la
+  // regola chiede: si tiene fuori lo stesso perche' 0,2 mm in 57 giorni non
+  // e' un dato da sostituire, e' gia' un buco adesso — e i due vicini sono a
+  // 5 km, non a 15.
+  // Cassa Molino di Bagni (TR), 42.79042/12.11868, esclusa il 15/9/2026: SORDA.
+  // Consegna ancora ma sempre un'inezia: 21/8 0,2 contro 19-30 mm dei quattro
+  // vicini entro 8 km, 25/8 1,2 contro 35-58, 10/9 4,2 contro 44-62. Agosto
+  // al 3%, settembre all'8%. Ne restano 4 entro 10 km (Allerona, Orvieto,
+  // Orvieto Scalo, Ponte Adunata; gli ultimi due danno sempre lo stesso numero).
+  umbria:{'42.89595_12.02092':true,'42.79042_12.11868':true},
+  // Osini - Punta su Scrau (NU), esclusa il 15/9/2026: MAI una goccia. In
+  // archivio dal 19/7, mai un giorno sopra 1 mm; in agosto zero in tutti e 7 i
+  // giorni di pioggia dei vicini (3/8 Gairo 39,7; 5/8 Lanusei 34 e Jerzu 27,2;
+  // 7/8 Jerzu 27,6). Restano Punta Tricoli, Jerzu, Gairo e Lanusei entro 9 km.
+  sardegna:{'39.83719_9.47661':true},
+  // Agira (EN), quella a 37.655/14.528: 0,0 mm in 53 giorni consegnati, MAI
+  // una goccia. L'ALTRA «Agira», a 4,4 km, ne fa 61,2 negli ultimi 45 giorni
+  // ed e' sana. Ne restano 3 entro 10 km. Trovata dal controllo del lunedi'
+  // il 31/8/2026, chiusa il 10/9.
+  sicilia:{'37.65500_14.52833':true}
+  // ── RIENTRATA il 10/9/2026: Poggio San Vicino (MC, 43.36842_13.07953) ────
+  // Esclusa il 21/8/2026 perche' faceva 0,0 mm in 37 giorni. Ha ripreso a
+  // misurare quello stesso giorno: 21,8 mm il 21/8, 36,4 il 25/8, 18,0 il
+  // 9/9. Sono 76,2 mm negli ultimi 45 giorni, il 147% della mediana dei
+  // cinque vicini e l'85% di San Giovanni, che sta a 3,8 km; nei 45 giorni
+  // precedenti era a zero secco.
+  // ⚠️ QUESTA LISTA E' A MANO E NESSUNO LA RILEGGE: il registro del
+  // controllo del lunedi' tace quando una stazione rientra, ma qui dentro
+  // resta fuori per sempre. Quando si tocca questa lista si ricontrollano
+  // TUTTE le voci contro i vicini, non solo quella che si sta aggiungendo.
 };
 function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
   var RAW=MH_DATA_BASE+'meteohub-'+regionKey;
@@ -6215,7 +6411,7 @@ function loadMeteoHubRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
       .then(function(data){
         if(data.stations){
           data.stations.forEach(function(s){
-            if(escluse[s.n]) return;                 // pluviometro guasto, vedi MH_ESCLUSE
+            if(escluse[s.id]) return;                // pluviometro guasto, vedi MH_ESCLUSE (per ID)
             var key=s.id||s.n;
             if(!stMeta[key]) stMeta[key]={n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p||''};
 else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la quota arriva anche da un file dopo
@@ -6766,6 +6962,12 @@ var LOC_TACCA_FINE  = 10;   // al click del periodo
 // Le ZONE e le VALLI sono aree, non punti: la Valtellina e' lunga 120 km e
 // col riquadro di un paese se ne vedrebbe un pezzo. Una tacca piu' larga.
 var LOC_TACCA_ZONA  = 8;    // al posto della 10 quando il posto e' una zona
+// La MAPPA BOSCHI su un paese (16/9/2026): i boschi si leggono da vicino, e la
+// tacca 10 (325 km di larghezza) li mostra come una macchia. La 18 vale zoom 12
+// circa, una quarantina di km: il paese e i suoi versanti. Le zone una tacca
+// piu' larga, come sopra.
+var LOC_TACCA_BOSCHI      = 18;
+var LOC_TACCA_BOSCHI_ZONA = 15;
 // Quanto vale UNA tacca, in livelli di zoom di Leaflet. Tarato perche' la
 // tacca 10 cadesse esattamente sulla vista del 22/8/2026: zoom 9 su una
 // mappa 1536x697, cioe' 325x148 km. Questa e' la scala, non la preferenza:
@@ -8756,6 +8958,7 @@ function buildShareUrl(){
   // nell'altro verso. Chi condivide si aspetta la stessa SCALA, non la stessa
   // area. Lo zoom viaggia grezzo.
   if(window._radarModo) p.set('radar', window._radarModo);
+  if(window._boschiAcceso) p.set('boschi', '1');   // retino «Tipi di bosco», 15/9/2026
   return location.origin+location.pathname+'?'+p.toString();
 }
 window.buildShareUrl=buildShareUrl;
@@ -8774,7 +8977,17 @@ window._boundsDebug=function(){return REGION_BOUNDS;};  // stesso scopo: solo ve
    si era gia' fatto con la mappa qui sopra. */
 window._fitRegioni=fitMapToRegions;
 window._regioniAttive=getActiveRegions;
+window._nomeRegione=function(k){ return (REGIONS[k]&&REGIONS[k].name)||k; };   // per la legenda della Mappa boschi, 15/9/2026
 window._centraStriscia=centraRegioneInStriscia;
+/* Per la Mappa boschi (16/9/2026): chi arriva da una pagina di paese col link
+   `boschi=1`, o ha cercato un paese e poi preme il tasto, deve vedere i boschi
+   INTORNO AL PAESE e non la regione intera. Restituisce false se un paese non
+   c'e', e allora il blocco boschi inquadra la regione come prima. */
+window._fitPaeseBoschi=function(){
+  if(!_vistaPaese) return false;
+  fitMapToPunto(_vistaPaese.lat,_vistaPaese.lon,_vistaPaese.z?LOC_TACCA_BOSCHI_ZONA:LOC_TACCA_BOSCHI);
+  return true;
+};
 // ── Immagine della mappa (canvas) per condivisione/download ────────────────
 // html2canvas si carica solo alla prima richiesta (pre-riscaldato all'hover/
 // touch dei bottoni, così il click resta dentro la finestra del gesto utente).
@@ -8890,6 +9103,7 @@ function captureMapBlob(scala){
     for(var i=0;i<tiles.length;i++){
       var t=tiles[i];
       if(!t.complete||!t.naturalWidth||!visibile(t)) continue;
+      if(t.closest('.leaflet-boschi-pane')) continue;   // il retino dei boschi va sopra la pioggia, piu' giu'
       var r=rel(t);
       try{ ctx.drawImage(t,r.x,r.y,r.w,r.h); }catch(e){}
     }
@@ -8910,6 +9124,16 @@ function captureMapBlob(scala){
       sotto.forEach(function(d){ if(d.im){ try{ ctx.drawImage(d.im,d.r.x,d.r.y,d.r.w,d.r.h); }catch(e){} } });
       var heat=mapEl.querySelector('.leaflet-overlay-pane canvas');
       if(heat&&visibile(heat)){ var rh=rel(heat); try{ ctx.drawImage(heat,rh.x,rh.y,rh.w,rh.h); }catch(e){} }
+      // retino «Tipi di bosco» (15/9/2026): sopra la pioggia, sotto i pallini, come a schermo
+      var bt=window._boschiTessere?window._boschiTessere():[];
+      if(bt.length){
+        ctx.save(); ctx.globalAlpha=window._boschiOpacita||1;
+        bt.forEach(function(t){
+          if(!t.complete||!t.naturalWidth) return;
+          var rb=rel(t); try{ ctx.drawImage(t,rb.x,rb.y,rb.w,rb.h); }catch(e){}
+        });
+        ctx.restore();
+      }
       return raster(svgSopra);
     });
   }).then(function(dis){
@@ -9601,7 +9825,7 @@ function loadMeteoHubStations(regionKey,cb){
     if(idx>=tries.length){ cb([]); return; }
     fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
       .then(function(data){ var escl=MH_ESCLUSE[regionKey]||{};
-                             var st=(data.stations||[]).filter(function(s){return !escl[s.n];})
+                             var st=(data.stations||[]).filter(function(s){return !escl[s.id];})
                                      .map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
                                                               w:s.w,u:s.u,t:s.t};});  // i sensori servono a selectUniformRicche
                              meteohubStationsCache[regionKey]=st; cb(st); })
@@ -9684,7 +9908,8 @@ function loadFranciaStations(regionKey,cb){
     if(idx>=tries.length){ cb([]); return; }
     fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
       .then(function(data){
-        var st=(data.stations||[]).map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'FR'};});
+        var st=(data.stations||[]).filter(function(s){return !(s.id&&FRANCIA_ESCLUSE[String(s.id)]);})
+          .map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'FR'};});
         franciaStationsCache[regionKey]=st; cb(st);
       })
       .catch(function(){ idx++; attempt(); });
@@ -10113,7 +10338,11 @@ function loadDefaultMarkers(){
     // I TEMPORALI». E' il video di cui i due Short (regius e ovoli) sono
     // l'anteprima, e infatti da domani sera si alternano con lui.
     da: '2026-09-06T18:00:00+02:00',
-    fino: '2027-12-31T23:59:59+01:00',
+    // ⚠️ ANTICIPATA dal 31/12/2027 al 10/9 alle 17:59: si fa da parte nel
+    // minuto esatto in cui si accende l'uscita nuova, come il lungo dei
+    // Porcini si era fatto da parte per lei. Il cambio della guardia lo
+    // fanno le date, senza pubblicare niente.
+    fino: '2026-09-10T17:59:59+02:00',
     link: 'https://youtu.be/oCgBZBEwi4k',
     id: 'oCgBZBEwi4k',
     // ⚠️ VUOTI APPOSTA, come per l'uscita lunga del 2/9. Su Facebook e
@@ -10143,13 +10372,70 @@ function loadDefaultMarkers(){
     ganciopx: 15.5,
     canale: 'Avventure Micologiche'
   };
+  VETRINE.lungo20 = {
+    // Uscita LUNGA del 10/9/2026 alle 18: «PORCINI 2026 PINICOLA ED
+    // AESTIVALIS 20 GG DOPO I TEMPORALI». Terza uscita lunga di fila sullo
+    // stesso filone: 16 giorni il 6/9, 20 giorni adesso.
+    da: '2026-09-10T18:00:00+02:00',
+    // ⚠️ ANTICIPATA al 14/9 alle 17:29:59: si fa da parte nel minuto in cui
+    // si accende l'uscita dei 25 giorni. Il cambio lo fanno le date.
+    fino: '2026-09-14T17:29:59+02:00',
+    link: 'https://youtu.be/rpLBWflVgPE',
+    id: 'rpLBWflVgPE',
+    // ⚠️ VUOTI APPOSTA, come per le due uscite lunghe precedenti: all'ora di
+    // lancio la vetrina non si divide, e il lungo deve prendere minuti
+    // guardati, che fuori da YouTube non arrivano.
+    facebook: '',
+    instagram: '',
+    // Video lungo, quindi copertina NORMALE: `maxresdefault.jpg` e' gia' 16:9
+    // (1280x720) ridotto a 480x270 con PIL. Il ritaglio da `oar2.jpg` serve
+    // solo per gli Short — e qui `oardefault.jpg` risponde 404, che e' la
+    // conferma che non e' uno Short.
+    copertina: 'vetrina-20gg.jpg',
+    gancio1: 'Porcini 2026:',
+    // ⚠️ IL TAGLIO E' SCELTA SUA, ed e' il primo che non finisce con «dopo i
+    // temporali». Le due uscite lunghe precedenti dicevano «16 giorni dopo i
+    // temporali» e «la botta dopo i temporali»: un terzo uguale sembrava lo
+    // stesso video della settimana prima. Qui in seconda riga vanno le due
+    // specie, che sono la cosa nuova, e il corpo sale da 15,5 a 20 px.
+    gancio2: 'pinicola e aestivalis',
+    // Misurato sulla colonna da 199 px: la riga lunga fa 187,9 px a 20, cioe'
+    // restano 11,1 px. E' il corpo piu' grande di tutte le vetrine finora.
+    ganciopx: 20,
+    canale: 'Avventure Micologiche'
+  };
+  VETRINE.lungo25 = {
+    // Uscita LUNGA del 14/9/2026 alle 17:30: «PORCINI 2026 25 GIORNI DOPO LA
+    // PIOGGIA Edulis ovunque negli abeti». Quarta uscita lunga del filone.
+    da: '2026-09-14T17:30:00+02:00',
+    fino: '2027-12-31T23:59:59+01:00',
+    link: 'https://youtu.be/RMHalRmChGg',
+    id: 'RMHalRmChGg',
+    // ⚠️ VUOTI APPOSTA, come per le uscite lunghe precedenti.
+    facebook: '',
+    instagram: '',
+    // Video lungo (`oardefault.jpg` risponde 404): maxresdefault 1280x720
+    // ridotto a 480x270 con PIL.
+    copertina: 'vetrina-25gg.jpg',
+    // Taglio A, scelta sua fra quattro misurati: il nome in prima riga come
+    // nelle uscite lunghe precedenti, la cosa nuova (edulis negli abeti) in
+    // seconda. Scartati D (20 px, «edulis» in prima riga), B (troppo simile a
+    // «16 giorni dopo i temporali») e C.
+    gancio1: 'Porcini 2026:',
+    gancio2: 'edulis ovunque negli abeti',
+    // Misurato sulla colonna da 199 px: la riga lunga fa 188,4 px a 15.
+    ganciopx: 15,
+    // La pillola del telefono va a capo da sola: si decide qui, come sulla scheda.
+    gancioP: 'Porcini 2026:<br>edulis ovunque negli abeti',
+    canale: 'Avventure Micologiche'
+  };
   var V=null, QUALE='';
   if(MOSTRA==='alterna'){
     // Solo le vetrine ancora in corso partecipano: quando il video scade,
     // l'alternanza si riduce da sola alla guida, e quando scade anche quella
     // non resta nessuno e si esce.
     var ora=Date.now(), scelte=[];
-    ['lungo16','ovoli'].forEach(function(k){
+    ['lungo20','lungo25'].forEach(function(k){
       var v=VETRINE[k]; if(!v) return;
       if(v.da && ora < new Date(v.da).getTime()) return;   // non ancora accesa
       if(ora <= new Date(v.fino).getTime()) scelte.push(k);
@@ -10260,7 +10546,9 @@ function loadDefaultMarkers(){
     if(pill && !altri.length){
       var t=pill.querySelector('.cp-t');
       if(t){
-        t.innerHTML=V.gancio+'<small>\u25B6 '+V.occhielloP+' \u00B7 '+V.canale+'</small>';
+        // \u26A0\uFE0F `gancioP`: l'a capo DECISO per la pillola (14/9/2026). Senza, la
+        // riga va a capo dove capita e lascia una parola sola sotto (\u00ABabeti\u00BB).
+        t.innerHTML=(V.gancioP||V.gancio)+'<small>\u25B6 '+V.occhielloP+' \u00B7 '+V.canale+'</small>';
         pill.href=V.link;
         pill.setAttribute('onclick',tracc('vetrina-mobile'));
       }
@@ -10281,7 +10569,7 @@ function loadDefaultMarkers(){
       nuova.innerHTML=
         '<a class="cp-alto" href="'+V.link+'" target="_blank" rel="noopener" onclick="'+tracc('vetrina-mobile').replace(/"/g,'&quot;')+'">'
         +'<img src="archie-avatar.png" alt="Archie">'
-        +'<div class="cp-t">'+V.gancio+'<small>\u25B6 '+V.occhielloP+' \u00B7 '+V.canale+'</small></div>'
+        +'<div class="cp-t">'+(V.gancioP||V.gancio)+'<small>\u25B6 '+V.occhielloP+' \u00B7 '+V.canale+'</small></div>'
         +'</a>'
         +'<div class="cp-riga">'+riga+'</div>';
       pill.replaceWith(nuova);
@@ -10300,10 +10588,13 @@ function loadDefaultMarkers(){
 /* ⚠️ Il «new» e' uno pseudo-elemento, non testo dentro il tasto: cosi'
    sopravvive all'innerHTML che cambia entrando in modo radar, e sparisce da
    solo quando il tasto diventa «Chiudi radar». */
-#btn-radar::after{content:'new';position:absolute;top:-6px;right:-4px;
+#btn-radar::after,#btn-boschi::after{content:'new';position:absolute;top:-6px;right:-4px;
   background:#e12b2b;color:#fff;font-size:8.5px;font-weight:700;letter-spacing:.3px;
   padding:1px 4px;border-radius:6px;line-height:1.35;pointer-events:none}
 .modo-radar #btn-radar::after{display:none}
+/* anche la Mappa boschi (16/9/2026, sua richiesta: «lascialo su entrambi»);
+   sparisce quando il tasto diventa «Chiudi mappa», come quello del radar */
+.modo-boschi #btn-boschi::after{display:none}
 /* tre tasti al posto della riga delle statistiche: il pannello non cresce */
 .rd-durate{display:none;grid-template-columns:repeat(3,1fr);gap:5px;margin:6px 0 4px}
 .modo-radar .rd-durate{display:grid}
@@ -10945,6 +11236,322 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   var att=setInterval(function(){
     if(window._mapDebug&&window.L&&el('btn-custom')&&el('legend-panel')){ clearInterval(att); monta(); }
     else if(++giri>75) clearInterval(att);
+  },200);
+}());
+</script>
+<style>
+/* Modo «Mappa forestale» — PROVA Piemonte, 15/9/2026 */
+/* ⚠️ UN SOLO RIQUADRO: IN ALTO IMMAGINE E COPIA LINK, SOTTO LA LEGENDA.
+   Provato il 15/9/2026 un riquadro a parte per la legenda, con sopra un
+   pannello «Mappa forestale» coi soli due tasti: bocciato («che senso ha?»).
+   Il titolo del pannello legenda sparisce e il posto lo prende la legenda. */
+.bo-leg{display:none}
+.modo-boschi .bo-leg{display:block;margin-top:2px}
+.modo-boschi #leg-title{display:none !important}
+.modo-boschi #btn-shot{margin-left:0}
+@media(min-width:901px){.modo-boschi .leg-header{justify-content:flex-start}}
+.bo-tit{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#1b3f6e;margin:2px 0 6px}
+.bo-griglia{display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;font-size:12.5px;color:#33404f}
+.bo-riga{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.bo-sw{width:13px;height:13px;border-radius:3px;flex:none}
+.bo-nota{font-size:11px;line-height:1.35;color:#5a6470;margin-top:5px}
+.bo-lontano{display:none;font-size:11.5px;font-weight:600;color:#9a5a00;margin-top:4px}
+.modo-boschi.bo-lontano-on .bo-lontano{display:block}
+/* ⚠️ MAPPA FORESTALE E PIOGGIA NON STANNO INSIEME (deciso dall'utente il
+   15/9/2026, dopo averle viste sovrapposte: «è bella ma non si può fare
+   insieme alla heatmap»). Col modo acceso spariscono la macchia della
+   pioggia, la barra dei millimetri e i numeri; pallini e confini restano.
+   Scegliere un periodo, «Indietro» o il radar riportano alla pioggia. */
+.modo-boschi #map .leaflet-overlay-pane canvas{display:none !important}
+/* il velo della regione, che sotto la pioggia non si nota, sopra i boschi
+   li ingrigiva tutti (stessa regola del radar, ma solo per i confini: i
+   pallini stanno nel marker pane e restano pieni) */
+.modo-boschi #map .leaflet-overlay-pane path{fill-opacity:0 !important}
+/* ⚠️ VIA ANCHE I PALLINI (chiesto dall'utente il 15/9/2026): in multiregione,
+   da lontano, coprivano meta' dei boschi. Restano il segnaposto del paese
+   cercato e quello della posizione, che sono div e non cerchi SVG (stessa
+   regola di `senza-pallini` del radar). */
+.modo-boschi #map .leaflet-marker-pane svg{display:none !important}
+.modo-boschi #map .leaflet-marker-pane .loc-pin svg{display:block !important}
+.modo-boschi .grad,
+.modo-boschi .grad-l,
+.modo-boschi .stats-row{display:none !important}
+/* il pannello legenda esiste solo con un'analisi: col modo acceso serve sempre */
+.modo-boschi #legend-panel{display:block !important}
+@media(max-width:900px){
+  .modo-boschi #time-panel{display:none !important}
+  .modo-boschi #legend-panel{transform:translateY(0) !important}
+}
+@media(min-width:901px){.modo-boschi #btn-reset-regions{display:block !important}}
+/* col radar acceso le tessere non c'entrano */
+.modo-radar .leaflet-boschi-pane{display:none !important}
+</style>
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   «MAPPA FORESTALE» — PROVA PIEMONTE, 15 settembre 2026
+   ═══════════════════════════════════════════════════════════════
+   Un tasto del pannello, in coppia con «Radar pioggia» (scelto dall'utente
+   fra tre disposizioni: niente domanda all'apertura, niente clic in piu').
+   E' un MODO come il radar: si entra col tasto, si esce col tasto stesso
+   («✕ Chiudi mappa»), con «Indietro» o scegliendo un periodo.
+
+   Fonte: Carta forestale regionale 2024, Regione Piemonte / IPLA, CC BY 4.0.
+   Le 20 categorie IPLA raggruppate in 8 colori.
+
+   ⚠️ LE TESSERE SONO NOSTRE, non del servizio della Regione: il loro WMS
+   disegna i boschi solo sotto i ~15 m a pixel (zoom 13) e piu' da lontano
+   manda un'immagine VUOTA senza errori. Le fa `tessere-boschi-piemonte.py`
+   nella cartella di lavoro: scarica la carta una volta al livello 14 e
+   rimpicciolisce fino al 7. 2.157 tessere a z13, 11 MB in tutto, PNG a
+   tavolozza da 9 colori. Oltre lo z13 Leaflet ingrandisce le tessere del 13.
+   `indice.json` elenca le tessere che esistono: dove non c'e' bosco la
+   tessera non c'e', e senza indice sarebbero centinaia di 404 in console. */
+(function(){
+  // ⚠️ UNA SOLA SERIE DI TESSERE PER TUTTA ITALIA (dal 15/9/2026, con la
+  // Lombardia): le fa `tessere-boschi.py` fondendo le carte regionali, cosi'
+  // ai confini fra due regioni non ci sono tessere doppie. Quali regioni ci
+  // sono dentro lo dice indice.json, e la legenda lo dichiara.
+  var BASE='tessere-boschi/italia/', OPACITA=0.7;
+  var strato=null, acceso=false, indice=null, esistono={}, titoloVecchio=null, displayVecchio=null;
+  var VUOTA='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+  /* ⚠️ «MAPPA BOSCHI» E NON «MAPPA FORESTALE»: misurato a 360 px, il nome
+     lungo andava a capo e la coppia di tasti saliva da 55 a 77 px (lo
+     stesso tetto di 13 caratteri trovato col radar il 5/9). */
+  var ETICHETTA='<span class="rd-ic">🌲</span> Mappa boschi';
+
+  function map(){ return window._mapDebug; }
+  function el(id){ return document.getElementById(id); }
+
+  function creaStrato(){
+    var m=map();
+    if(!m.getPane('boschi')){
+      m.createPane('boschi');
+      m.getPane('boschi').style.zIndex=440;
+      m.getPane('boschi').style.pointerEvents='none';
+    }
+    var Tessere=L.TileLayer.extend({
+      getTileUrl:function(c){
+        return esistono[c.z+'/'+c.x+'/'+c.y] ? BASE+c.z+'/'+c.x+'/'+c.y+'.png' : VUOTA;
+      }
+    });
+    // ⚠️ i crediti NON stanno sullo strato: li gestisce aggiornaCrediti() secondo
+    // le regioni scelte (con sei fonti tutte insieme occupavano tre righe sopra la mappa)
+    return new Tessere('',{pane:'boschi',opacity:OPACITA,minZoom:indice.z_min,maxNativeZoom:indice.z_max,maxZoom:19});
+  }
+
+  var creditoBoschi=null;
+  function aggiornaCrediti(){
+    var ac=map() && map().attributionControl; if(!ac||!indice) return;
+    if(creditoBoschi){ ac.removeAttribution(creditoBoschi); creditoBoschi=null; }
+    if(!acceso) return;
+    var rk=(window._regioniAttive?window._regioniAttive():[]).filter(function(k){ return indice.regioni[k]; });
+    if(!rk.length) return;
+    creditoBoschi='boschi: '+rk.map(function(k){
+      var r=indice.regioni[k];
+      return '<a href="'+r.link+'" target="_blank" rel="noopener">'+r.fonte+'</a> ('+r.licenza+')';
+    }).join(', ');
+    ac.addAttribution(creditoBoschi);
+  }
+
+  /* La nota in fondo alla legenda segue le regioni SCELTE: per ognuna la sua
+     carta, e per quelle che non ce l'hanno ancora lo si dice. In multiregione
+     ognuna mostra quello che ha (deciso dall'utente il 15/9/2026). */
+  function notaFonti(){
+    var n=el('bo-fonti'); if(!n||!indice) return;
+    var nome=window._nomeRegione||function(k){return k;};
+    var rk=(window._regioniAttive?window._regioniAttive():[]);
+    var con=[], senza=[];
+    rk.forEach(function(k){ (indice.regioni[k]?con:senza).push(k); });
+    var righe=con.map(function(k){ return nome(k)+': '+indice.regioni[k].fonte.replace(/, (Regione|Provincia) .*$/,'').replace(/ regionale/,''); });
+    if(senza.length) righe.push('<b>'+senza.map(nome).join(', ')+': carta non ancora disponibile</b>');
+    if(!rk.length) righe.push('Carte forestali regionali');
+    n.innerHTML=righe.join('<br>');
+    aggiornaCrediti();
+  }
+
+  function aggiornaLontano(){
+    var lont=acceso && indice && map().getZoom()<indice.z_min;
+    document.body.classList.toggle('bo-lontano-on',!!lont);
+  }
+
+  function legenda(){
+    var box=el('bo-leg'); if(!box||!indice) return;
+    box.innerHTML='<div class="bo-tit">Legenda boschi</div><div class="bo-griglia">'+indice.gruppi.map(function(g){
+        return '<div class="bo-riga"><span class="bo-sw" style="background:'+g[1]+';opacity:'+OPACITA+'"></span>'+g[0]+'</div>';
+      }).join('')+'</div>'
+      +'<div class="bo-lontano">Avvicinati per vedere i boschi</div>'
+      +'<div class="bo-nota" id="bo-fonti"></div>';
+    notaFonti();
+  }
+
+  function conIndice(cb){
+    if(indice) return cb();
+    fetch(BASE+'indice.json').then(function(r){ return r.json(); }).then(function(j){
+      indice=j;
+      Object.keys(j.tessere).forEach(function(z){
+        j.tessere[z].forEach(function(xy){ esistono[z+'/'+xy[0]+'/'+xy[1]]=1; });
+      });
+      legenda(); cb();
+    }).catch(function(){});
+  }
+
+  function analisiInCorso(){ return !!(window.buildShareUrl && window.buildShareUrl()); }
+  /* ⚠️ I PANNELLI DEL DESKTOP SI METTONO IN COLONNA A MANO (positionPanels,
+     dentro lo script grande, non raggiungibile da qui) e solo al resize o a
+     fine analisi. La riga di tasti in piu' allunga il pannello del periodo
+     DOPO quella misura, e la legenda gli finiva sopra di una decina di pixel.
+     Il resize finto fa rimisurare la colonna; gli altri gestori del resize
+     sono tutti idempotenti. */
+  function riposiziona(){ setTimeout(function(){ window.dispatchEvent(new Event('resize')); },30); }
+
+
+  function entra(){
+    var m=map(); if(!m||acceso) return;
+    /* ⚠️ SENZA REGIONE NON SI ENTRA (16/9/2026, segnalato dall'utente): il modo
+       si accendeva sull'Italia intera, con la legenda senza fonti e nessuna
+       inquadratura. Stesso avviso e stessa durata del radar. */
+    var rkPrima=window._regioniAttive?window._regioniAttive():[];
+    if(!rkPrima.length){
+      var a=el('tp-status');
+      if(a){ a.className='error'; a.textContent='⚠️ Prima scegli la regione';
+             clearTimeout(a._t); a._t=setTimeout(function(){
+               if(a.textContent.indexOf('Prima scegli')>-1){ a.textContent=''; a.className=''; }
+             },2800); }
+      return;
+    }
+    // col radar acceso prima si esce dal radar: un modo alla volta
+    if(document.body.classList.contains('modo-radar') && el('btn-radar')) el('btn-radar').click();
+    conIndice(function(){
+      acceso=true; window._boschiAcceso=true;
+      document.body.classList.add('modo-boschi');
+      if(!strato) strato=creaStrato();
+      strato.addTo(m);
+      el('btn-boschi').innerHTML='✕ Chiudi mappa';
+      var t=el('leg-title');
+      if(t){ if(titoloVecchio==null) titoloVecchio=t.textContent; t.textContent='Mappa forestale'; }
+      if(typeof showLegendMobile==='function' && window.innerWidth<=900){ try{ showLegendMobile(); }catch(e){} }
+      /* ⚠️ positionPanels mette la legenda in colonna SOLO se il suo stile in
+         linea non dice `none`: mostrarla col solo CSS la lasciava dov'era,
+         36 px sopra il fondo del pannello del periodo. Si scrive in linea e
+         all'uscita si rimette com'era. */
+      var lp=el('legend-panel');
+      if(lp && window.innerWidth>900){ displayVecchio=lp.style.display; lp.style.display='block'; }
+      aggiornaLontano();
+      notaFonti();
+      riposiziona();
+      /* ⚠️ SI INQUADRA LA REGIONE, come a fine analisi (segnalato il 15/9:
+         «la mappa non zooma quando clicchi Mappa boschi»). Sotto lo zoom 7
+         le tessere non ci sono, e dalla vista d'Italia il tasto sembrava
+         non fare niente. Stessa funzione che usa il sito, e il telefono si
+         ricentra poi da solo nella striscia libera sopra il foglio. */
+      /* ⚠️ COL PAESE SI INQUADRA IL PAESE (16/9/2026): i link delle pagine di
+         paese portano `pl` e `boschi=1`, e inquadrando la regione il posto per
+         cui uno e' venuto finiva un puntino in mezzo a 200 km di boschi. */
+      var rk=window._regioniAttive?window._regioniAttive():[];
+      var sulPaese=false;
+      try{ m.stop(); sulPaese=!!(window._fitPaeseBoschi && window._fitPaeseBoschi()); }catch(e){}
+      if(!sulPaese && rk.length && typeof window._fitRegioni==='function'){ try{ window._fitRegioni(rk); }catch(e){} }
+      try{ gtag('event','click_boschi',{stato:'acceso'}); }catch(_){}
+    });
+  }
+
+  // `perPeriodo`: si esce perche' e' stato scelto un periodo, e l'analisi
+  // nuova si sistema pannelli e inquadratura da se'
+  function esci(perPeriodo){
+    if(!acceso) return;
+    acceso=false; window._boschiAcceso=false;
+    document.body.classList.remove('modo-boschi','bo-lontano-on');
+    if(strato) map().removeLayer(strato);
+    aggiornaCrediti();
+    el('btn-boschi').innerHTML=ETICHETTA;
+    var t=el('leg-title');
+    if(t && titoloVecchio!=null){ t.textContent=titoloVecchio; titoloVecchio=null; }
+    // sul telefono, senza un'analisi dietro, si torna al pannello del periodo
+    if(!perPeriodo && !analisiInCorso() && typeof hideLegendMobile==='function'){ try{ hideLegendMobile(); }catch(e){} }
+    var lp=el('legend-panel');
+    if(lp && displayVecchio!=null){ if(!analisiInCorso() && !perPeriodo) lp.style.display=displayVecchio; displayVecchio=null; }
+    riposiziona();
+  }
+
+  function monta(){
+    var br=el('btn-radar'), cu=el('btn-custom');
+    if(!br||!cu) return false;
+    var riga=br.parentNode;
+    // «Scegli date» esce dalla coppia e prende la riga intera; nella coppia
+    // restano i due modi: «Radar pioggia | Mappa forestale»
+    riga.parentNode.insertBefore(cu,riga);
+    // con la riga intera c'e' spazio per il nome lungo (chiesto dall'utente il 15/9/2026).
+    // ⚠️ Lo stesso nome sta nella guida (/guida/: testo, tabella e foto del pannello).
+    cu.innerHTML='<span class="rd-ic">📅</span> Date personalizzate';
+    var b=document.createElement('div');
+    b.className='tp-custom-btn rd-btn'; b.id='btn-boschi'; b.innerHTML=ETICHETTA;
+    b.title='Mostra i tipi di bosco al posto della pioggia';
+    riga.appendChild(b);
+    b.addEventListener('click',function(){ acceso?esci():entra(); });
+    riposiziona();
+
+    var lp=el('legend-panel'), st=lp&&lp.querySelector('.stats-row');
+    if(st){ var d=document.createElement('div'); d.className='bo-leg'; d.id='bo-leg'; st.parentNode.insertBefore(d,st); }
+
+    // periodi e radar riportano alla pioggia (in fase di cattura: l'analisi
+    // nuova si disegna gia' fuori dal modo)
+    document.addEventListener('click',function(e){
+      if(acceso && e.target.closest && e.target.closest('.tp-btn,#btn-funghi,#cd-apply,#btn-radar')) esci(true);
+    },true);
+    // «Indietro» della legenda (telefono) e del desktop: prima si esce dal modo
+    var ind=el('leg-back-btn');
+    if(ind) ind.addEventListener('click',function(e){
+      if(acceso){ e.stopImmediatePropagation(); e.preventDefault(); esci(); }
+    },true);
+    var rr=el('btn-reset-regions');
+    if(rr) rr.addEventListener('click',function(){ if(acceso) esci(); },true);
+    /* «Copia link» senza un'analisi: buildShareUrl torna null e il tasto non
+       farebbe niente (stesso difetto gia' visto col radar). Il link lo
+       costruiamo qui: regione, vista e il modo. */
+    var bs=el('btn-share');
+    if(bs) bs.addEventListener('click',function(e){
+      if(!acceso || analisiInCorso()) return;
+      e.stopImmediatePropagation(); e.preventDefault();
+      var mm=map(), c=mm.getCenter(), q=new URLSearchParams();
+      var rk=(window._regioniAttive?window._regioniAttive():[]);
+      if(rk.length) q.set('r', rk.join(','));
+      q.set('z', String(Math.round(mm.getZoom()*100)/100));
+      q.set('c', c.lat.toFixed(4)+','+c.lng.toFixed(4));
+      q.set('boschi','1');
+      var url=location.origin+location.pathname+'?'+q.toString();
+      if(navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) navigator.share({url:url}).catch(function(){});
+      else if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).catch(function(){});
+    },true);
+
+    map().on('zoomend',aggiornaLontano);
+    // aggiungere o togliere una regione a modo acceso aggiorna la nota delle fonti
+    document.addEventListener('change',function(e){
+      if(acceso && e.target.closest && e.target.closest('#region-panel')) setTimeout(notaFonti,50);
+    },true);
+    // per lo scatto dell'«Immagine»: le tessere del modo e la loro opacita'
+    window._boschiTessere=function(){
+      if(!acceso||!strato) return [];
+      return [].slice.call(map().getPane('boschi').querySelectorAll('img.leaflet-tile'));
+    };
+    window._boschiOpacita=OPACITA;
+    /* Dal link si aspetta che il sito abbia spuntato le regioni di ?r=, come fa
+       il radar: con la guardia qui sopra, entrare prima voleva dire l'avviso
+       «Prima scegli la regione» su un link giusto. Tetto 15 secondi, poi niente. */
+    if(new URLSearchParams(location.search).get('boschi')==='1'){
+      var giri=0, att=setInterval(function(){
+        var rk=window._regioniAttive?window._regioniAttive():[];
+        if(rk.length){ clearInterval(att); entra(); }
+        else if(++giri>75) clearInterval(att);
+      },200);
+    }
+    return true;
+  }
+
+  // si monta DOPO il radar, che costruisce la coppia di tasti
+  var giri=0;
+  var att=setInterval(function(){
+    if(window._mapDebug&&window.L&&el('btn-radar')&&el('legend-panel')){ clearInterval(att); monta(); }
+    else if(++giri>100) clearInterval(att);
   },200);
 }());
 </script>

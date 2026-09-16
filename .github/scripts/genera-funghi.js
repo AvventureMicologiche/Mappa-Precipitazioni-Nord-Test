@@ -81,11 +81,11 @@ const MINIMO = 5;                   // sotto questi giorni buoni non si scrive
 // filtro delle gemelle e' univoco — perche' l'Alto Adige e il Friuli hanno
 // pluviometri che una sola delle due fonti pubblica.
 function perGiorno(dirs, giorni) {
-  const out = {}, outT = {}, outW = {};
+  const out = {}, outT = {}, outW = {}, outI = {};
   let presenti = 0, primo = null, ultimo = null;
   giorni.forEach((g, i) => {
     const n = i + 1;
-    const m = {}, mt = {}, mw = {};
+    const m = {}, mt = {}, mw = {}, mi = {};
     let qualcosa = false;
     for (const dir of dirs) {
       const staz = leggi(dir, g);
@@ -97,15 +97,19 @@ function perGiorno(dirs, giorni) {
         // due cartelle sullo stesso id si somma, una temperatura no.
         if (Array.isArray(s.t) && s.t.some(v => v != null) && !mt[s.id]) mt[s.id] = s.t;
         if (Array.isArray(s.w) && s.w.some(v => v != null) && !mw[s.id]) mw[s.id] = s.w;
+        // L'intensita' segue la regola di t e w, non quella della pioggia:
+        // due cartelle sullo stesso id danno due misure della stessa
+        // giornata, e una durata non si somma.
+        if (Array.isArray(s.i) && !mi[s.id]) mi[s.id] = s.i;
       }
     }
     if (!qualcosa) return;
-    out[n] = m; outT[n] = mt; outW[n] = mw;
+    out[n] = m; outT[n] = mt; outW[n] = mw; outI[n] = mi;
     presenti++;
     if (!ultimo) ultimo = g;        // giorni e' ordinato dal piu' recente
     primo = g;
   });
-  return { mm: out, t: outT, w: outW, presenti, primo, ultimo };
+  return { mm: out, t: outT, w: outW, i: outI, presenti, primo, ultimo };
 }
 
 const uno = n => Math.round(n * 10) / 10;
@@ -133,7 +137,7 @@ function forteIndietro(dirs, oggi, mancanti) {
   const giorni = giorniIndietro(oggi, FINESTRA_FORTE);
   for (let n = GIORNI + 1; n <= FINESTRA_FORTE && restano.size; n++) {
     const g = giorni[n - 1];
-    const somma = {};
+    const somma = {}, inte = {};
     let qualcosa = false;
     for (const dir of dirs) {
       const staz = leggi(dir, g);
@@ -141,12 +145,18 @@ function forteIndietro(dirs, oggi, mancanti) {
       qualcosa = true;
       // ⚠️ Si somma per id come fa perGiorno: dove una regione legge due
       // cartelle lo stesso pluviometro puo' comparire in tutt'e due.
-      for (const s of staz) if (s.mm != null && restano.has(String(s.id)))
+      for (const s of staz) if (s.mm != null && restano.has(String(s.id))) {
         somma[s.id] = (somma[s.id] || 0) + s.mm;
+        if (Array.isArray(s.i) && !inte[s.id]) inte[s.id] = s.i;
+      }
     }
     if (qualcosa) arrivatoA = n;
     for (const id of Object.keys(somma)) {
-      if (somma[id] >= FORTE) { trovati[id] = [n, uno(somma[id])]; restano.delete(id); }
+      if (somma[id] >= FORTE) {
+        trovati[id] = inte[id] ? [n, uno(somma[id]), inte[id][0], inte[id][1]]
+                                : [n, uno(somma[id])];
+        restano.delete(id);
+      }
     }
   }
   return { trovati, arrivatoA };
@@ -184,12 +194,19 @@ for (const k of Object.keys(POSTI)) {
     if (!f) senzaForte.push(String(id));
     posti[id] = [somma(g.mm, DA, A, id), somma(g.mm, 7, 1, id), somma(g.mm, GIORNI, 1, id),
                  f ? f[0] : 0, f ? f[1] : 0];
+    // L'intensita' DI QUEL GIORNO, se quel giorno ce l'ha. Esiste solo
+    // dai file scritti dal 12/9/2026: sui giorni piu' vecchi manca, e la
+    // pagina in quel caso scrive la frase di prima.
+    const fi = f && g.i[f[0]] && g.i[f[0]][id];
+    if (fi) { posti[id][5] = fi[0]; posti[id][6] = fi[1]; }
   }
   // Chi non ha preso 30 mm negli ultimi 25 giorni si cerca piu' indietro.
   const oltre = forteIndietro(r.dirs, oggi, senzaForte);
   for (const id of Object.keys(oltre.trovati)) {
-    posti[id][3] = oltre.trovati[id][0];
-    posti[id][4] = oltre.trovati[id][1];
+    const tr = oltre.trovati[id];
+    posti[id][3] = tr[0];
+    posti[id][4] = tr[1];
+    if (tr.length > 2) { posti[id][5] = tr[2]; posti[id][6] = tr[3]; }
   }
 
   // ⚠️ Entrano solo le regioni che hanno le pagine di paese: la classifica
@@ -251,6 +268,22 @@ for (const k of Object.keys(POSTI)) {
       if (haT) serieT[p[0]] = t;
       if (haW) serieW[p[0]] = w;
     }
+    /* ⚠️ L'INTENSITA' GIORNO PER GIORNO (13/9/2026), per la riga sotto il
+       grafico: {id: {indice: [ore bagnate, punta oraria]}}, con l'indice della
+       serie (0 = ieri). SOLO i giorni con almeno 5 mm: la serie piena costava
+       +51% sul file in Liguria, questa a regime circa +15-20%, e sotto i 5 mm
+       durata e punta non raccontano niente. Chi non ha nessun giorno non c'e'. */
+    const serieI = {};
+    for (const p of POSTI[k]) {
+      const o = {};
+      let ha = false;
+      for (let n = 1; n <= GIORNI; n++) {
+        const vi = g.i[n] && g.i[n][p[0]];
+        const mm = (g.mm[n] && g.mm[n][p[0]]) || 0;
+        if (vi && mm >= 5) { o[n - 1] = [vi[0], uno(vi[1])]; ha = true; }
+      }
+      if (ha) serieI[p[0]] = o;
+    }
     const sl = slugRegione(POSTI[k]);
     const anagrafe = POSTI[k].map(p => [p[0], bello(p[1]), p[2], p[3], p[4], p[5], p[6], sl[p[0]]]);
     /* ⚠️ L'ULTIMA PIOGGIA FORTE VA SCRITTA QUI, non lasciata calcolare alla
@@ -258,13 +291,19 @@ for (const k of Object.keys(POSTI)) {
        potrebbe mai dire «21 giorni fa» per una valle asciutta da un mese.
        Sono due numeri per pluviometro, e solo per quelli che ce l'hanno. */
     const forteMap = {};
-    for (const p of POSTI[k]) if (posti[p[0]][3]) forteMap[p[0]] = [posti[p[0]][3], posti[p[0]][4]];
+    for (const p of POSTI[k]) {
+      const v = posti[p[0]];
+      if (!v[3]) continue;
+      // Quattro numeri se di quel giorno sappiamo anche quanto e' durata
+      // la pioggia, due se no. La pagina guarda la lunghezza.
+      forteMap[p[0]] = v[5] ? [v[3], v[4], v[5], v[6]] : [v[3], v[4]];
+    }
     const testoG = JSON.stringify({
       regione: k, generato: new Date().toISOString(),
       oggi, giorni: g.presenti, primo: g.primo, ultimo: g.ultimo,
       cercatoFino: oltre.arrivatoA, tetto: FINESTRA_FORTE,
       anagrafe, serie, forte: forteMap,
-      serieT, serieW,
+      serieT, serieW, serieI,
     }) + '\n';
     const destG = path.join(USCITA, k + '-giorni.json');
     const primaG = fs.existsSync(destG) ? fs.readFileSync(destG, 'utf8') : '';

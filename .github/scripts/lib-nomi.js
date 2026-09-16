@@ -154,4 +154,29 @@ function slugRegione(posti, avvisa) {
   return out;
 }
 
-module.exports = { LOCALITA, bello, slug, slugRegione, santiIgnoti };
+// «ARPA Liguria, ARPAE Emilia-Romagna e SIR Toscana»: l'ultimo con la «e», gli
+// altri con la virgola. ⚠️ Prima erano uniti tutti con « e » e con tre enti
+// usciva «ARPA Liguria e ARPAE Emilia-Romagna e SIR Toscana», due «e» di fila.
+function elenco(v) {
+  return v.length < 2 ? (v[0] || '') : v.slice(0, -1).join(', ') + ' e ' + v[v.length - 1];
+}
+
+// Il genitivo della zona, ricavato dalla preposizione che gia' abbiamo:
+// «in Garfagnana» -> «della Garfagnana», «nel Mugello» -> «del Mugello»,
+// «sui Monti Lattari» -> «dei Monti Lattari», «sulle Alpi Apuane» -> «delle».
+// ⚠️ Anche questo NON si deduce dal genere del nome, si deduce dall'articolo
+// che il nome si porta gia' dietro: e' il motivo per cui la preposizione sta
+// nell'anagrafe invece di essere ricalcolata ogni volta.
+function diZona(dove) {
+  const m = dove.match(/^(sull'|negli |nelle |sulle |sui |nel |sul |in )(.*)$/);
+  if (!m) return 'della ' + dove;
+  const pre = m[1], n = m[2];
+  if (pre === 'negli ') return 'degli ' + n;
+  if (pre === 'nelle ' || pre === 'sulle ') return 'delle ' + n;
+  if (pre === 'sui ') return 'dei ' + n;
+  if (pre === 'nel ' || pre === 'sul ') return 'del ' + n;
+  if (pre === "sull'") return "dell'" + n;
+  return /^[AEIOUÀÈÉÌÒÙ]/.test(n) ? "dell'" + n : 'della ' + n;
+}
+
+module.exports = { LOCALITA, bello, slug, slugRegione, santiIgnoti, elenco, diZona };

@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Piogge per funghi in Riviera di Levante</title>
-<meta name="description" content="Quanta pioggia è caduta in Riviera di Levante, misurata da 3 pluviometri nelle zone da bosco. La finestra da 13 a 20 giorni fa, quella che conta per i funghi.">
+<title>Funghi in Riviera di Levante oggi: dove andare</title>
+<meta name="description" content="Dove andare a funghi in Riviera di Levante oggi: la pioggia caduta da 13 a 20 giorni fa, misurata da 3 pluviometri da bosco.">
 <link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/zone/riviera-di-levante/">
-<meta property="og:title" content="Piogge per funghi in Riviera di Levante">
+<meta property="og:title" content="Funghi in Riviera di Levante oggi: dove andare">
 <meta property="og:description" content="La pioggia vera, misurata dai pluviometri nelle zone da bosco.">
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/zone/riviera-di-levante/">
@@ -138,6 +138,11 @@ a:active .vai-mappa{transform:translateY(2px);
   .capo-btn{width:100%;text-align:center;}
 }
 nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
+ol.zone-dove{list-style:none;margin:10px 0 26px;padding:0;counter-reset:z;}
+ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
+ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
+ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
+ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;}
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
@@ -165,15 +170,17 @@ nav.altre a{color:var(--blu);}
 <main>
 <p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="https://avventurepluvio-test.netlify.app/funghi/liguria/" style="color:var(--blu)">Liguria</a></p>
 
-<h1>Dove potrebbero esserci le prime nascite di funghi in Riviera di Levante</h1>
+<h1>Dove andare a funghi in Riviera di Levante oggi</h1>
+<div id="stagione"></div>
+<script>(function(){var m=new Date().getMonth()+1,t=null;if(m===12||m===1||m===2)t="<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.";else if(m===11||m===3)t="<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in autunno pieno.";if(t){var s=document.getElementById("stagione");s.innerHTML=t;s.style.display="block";}})();</script>
 <p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono
 almeno dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella
 <b>da 13 a 20 giorni fa</b>, misurata dai <b>3 pluviometri</b> di ARPA Liguria nelle zone da bosco della Riviera di Levante, in Liguria. In cima alla classifica c’è quello dove ne è caduta di più.</p>
 
 <div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo
-solo gli otto giorni della finestra dei funghi. Per la pioggia di ieri, quella degli ultimi
-20 giorni o un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=liguria,emilia,piemonte&amp;g=20&amp;pl=44.42,9.24&amp;pn=Riviera%20di%20Levante&amp;pz=1" style="color:var(--blu);font-weight:700">apri Riviera di Levante sulla mappa</a> e cambia
-le date da lì.</div>
+solo gli otto giorni della finestra dei funghi. Per la pioggia di ieri e degli ultimi 30 giorni
+c’è <a href="https://avventurepluvio-test.netlify.app/zone/riviera-di-levante/" style="color:var(--blu);font-weight:700">dove ha piovuto in Riviera di Levante</a>;
+per un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=liguria,emilia,piemonte&amp;g=20&amp;pl=44.42,9.24&amp;pn=Riviera%20di%20Levante&amp;pz=1" style="color:var(--blu)">apri Riviera di Levante sulla mappa</a>.</div>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -209,6 +216,21 @@ le date da lì.</div>
   <span class="vai-mappa">Apri la mappa · ultimi 20 giorni →</span>
 </a>
 
+<h2>Che boschi ci sono nella zona?</h2>
+<p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti
+e abetine non danno gli stessi funghi. La mappa boschi colora i boschi in Riviera di Levante per tipo,
+con i disegni della carta forestale della Regione.</p>
+<a href="https://avventurepluvio-test.netlify.app/?r=liguria&amp;pl=44.42,9.24&amp;pn=Riviera%20di%20Levante&amp;pz=1&amp;boschi=1" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-riviera-di-levante-boschi'})}catch(e){}">
+  <img src="https://avventurepluvio-test.netlify.app/tessere-boschi/anteprime/liguria.jpg"
+       alt="La mappa boschi in Liguria: faggete, castagneti, querceti e abetine colorati per tipo"
+       width="1600" height="1000" loading="lazy"
+       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
+  <span class="vai-mappa">Guarda i boschi in Riviera di Levante →</span>
+</a>
+<p class="nota">La fonte è la carta «Tipi forestali 2025»: dice che bosco c'è, non se
+quest'anno ci sono nati funghi. Per quello servono la pioggia di questa pagina e un giro a piedi.</p>
+
 <h2>Sta piovendo adesso?</h2>
 <p>Questa pagina conta i millimetri dei giorni <b>già chiusi</b>: la giornata di oggi è esclusa,
 perché i pluviometri la stanno ancora misurando. Per la pioggia <b>in corso</b> c'è la diretta
@@ -236,7 +258,7 @@ da ARPA Liguria.</p>
 
 <h2 style="margin-top:30px">Quanto piove in Riviera di Levante, secondo il nostro archivio</h2>
 <p>In cima alla pagina c'è la finestra corta, quella che serve per i funghi. Ma di questi pluviometri
-teniamo tutti i giorni da quando li leggiamo. Da giugno 2026 a settembre 2026, in 84 giorni di misura, i 3 pluviometri della Riviera di Levante hanno contato <b>444 mm</b> di pioggia a testa,
+teniamo tutti i giorni da quando li leggiamo. Da giugno 2026 a settembre 2026, in 88 giorni di misura, i 3 pluviometri della Riviera di Levante hanno contato <b>444 mm</b> di pioggia a testa,
 in media. Il più bagnato è <b>Barbagelata</b> con 553 mm, il più asciutto Sella Giassina con 266.</p>
 <p>La giornata più violenta di tutto l'archivio è stata il <b>9 settembre 2026</b> a Ognio, con <b>171,4 mm</b> in
 ventiquattro ore.</p>

@@ -44,6 +44,8 @@ const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
 // non al controllo di sintassi.
 const { LOCALITA, bello, slug: slugDaNome, slugRegione } = require('./lib-nomi.js');
 const { perLink } = require('./lib-vicine.js');
+const { rigaStagione } = require('./lib-stagione.js');
+const { haBoschi, cartaBreve } = require('./lib-boschi.js');
 // Il ritratto del pluviometro, cotto dentro la pagina il giorno che si
 // genera: totale dell'archivio, giorni di pioggia, giorno piu' bagnato,
 // mese piu' piovoso. Il perche' sta in cima a lib-clima.js.
@@ -91,6 +93,9 @@ function kmFra(la, lo, lb, lob) {
 function aPosto(n) {
   if (/^(Passo|Colle|Monte|Bric|Rifugio|Lago|Piano|Ponte|Bosco|Forte|Poggio)\b/.test(n)) return 'al ' + n;
   if (/^(Alpe|Isola|Alta|Valle|Villa|Cima)\b/.test(n)) return "all'" + n;
+  // «ad Anterselva», «ad Aulla»: davanti alla a si scrive ad (13/9/2026, il
+  // titolo nuovo comincia proprio da qui e «a Anterselva» si leggeva male).
+  if (/^A/.test(n)) return 'ad ' + n;
   return 'a ' + n;
 }
 
@@ -169,10 +174,23 @@ function pagina(r, posto, slug, sl) {
   // ⚠️ Limiti che Google taglia: titolo <= 62 caratteri, descrizione <= 158.
   // Il nome di un posto puo' essere lungo, quindi la coda del titolo si toglie
   // invece di lasciarlo mozzare a meta' parola.
-  const pieno = `Piogge per funghi ${DOVE}: dove ha piovuto davvero`;
-  const TITOLO = pieno.length <= 62 ? pieno : `Piogge per funghi ${DOVE}`;
-  const DESCR = `Quanta pioggia è caduta ${DOVE} (${sigla}, ${quota} m), misurata dal ` +
-    `pluviometro di ${CORTA}. La finestra da 13 a 20 giorni fa, quella che conta per i funghi.`;
+  // ⚠️ 13/9/2026: CATEGORIA FUNGHI. La domanda e' «funghi a Torriglia oggi»:
+  // «oggi» nel titolo si', tutto l'anno, e a gennaio ci tutela la riga di
+  // stagione sotto il titolo (lib-stagione.js). Per la pioggia e basta c'e' la
+  // pagina piogge della zona, e il riquadro qui sotto ci manda.
+  const TITOLO = [
+    `Funghi ${DOVE} oggi: piogge per funghi e dove ha piovuto`,
+    `Funghi ${DOVE} oggi: piogge per funghi`,
+    `Funghi ${DOVE} oggi`,
+  ].find(t => t.length <= 62) || `Funghi ${DOVE}`;
+  const DESCR = [
+    `Funghi ${DOVE} oggi: la pioggia caduta da 13 a 20 giorni fa, la finestra che conta, misurata dal pluviometro di ${CORTA} (${sigla}, ${quota} m). Aggiornato ogni giorno.`,
+    `Funghi ${DOVE} oggi: la pioggia caduta da 13 a 20 giorni fa, la finestra che conta, misurata dal pluviometro di ${CORTA}. Aggiornato ogni giorno.`,
+    `Funghi ${DOVE} oggi: la pioggia caduta da 13 a 20 giorni fa, misurata dal pluviometro. Aggiornato ogni giorno.`,
+  ].find(t => t.length <= 158) || `Funghi ${DOVE} oggi: la pioggia da 13 a 20 giorni fa.`;
+  const ZONA = ZONA_DI[ID];
+  const PIOGGE_URL = ZONA ? `${SITO}/zone/${slugDaNome(ZONA.n)}/` : `${SITO}/${REG}/`;
+  const PIOGGE_DOVE = ZONA ? ZONA.dove : `${r.prep} ${r.nomeTitolo || r.nome}`;
 
   // Il foglio di stile viene dalla pagina funghi della regione: una copia sola.
   const modello = path.join(RADICE, 'funghi', REG, 'index.html');
@@ -191,7 +209,7 @@ function pagina(r, posto, slug, sl) {
 <title>${esc(TITOLO)}</title>
 <meta name="description" content="${esc(DESCR)}">
 <link rel="canonical" href="${SITO}/funghi/${REG}/${slug}/">
-<meta property="og:title" content="Piogge per funghi ${esc(DOVE)}">
+<meta property="og:title" content="Funghi ${esc(DOVE)} oggi">
 <meta property="og:description" content="La pioggia vera, misurata dal pluviometro, giorno per giorno.">
 <meta property="og:image" content="${SITO}/preview.jpg">
 <meta property="og:url" content="${SITO}/funghi/${REG}/${slug}/">
@@ -219,6 +237,13 @@ ${STILE}
 .gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
 .gg-x span{flex:1;text-align:center;}
 .gg-leg{font-size:13.5px;color:#555;margin-top:8px;}
+/* 13/9/2026: la riga dell'intensita' del giorno scelto, e la sua barra */
+.gg-int{font-size:14.5px;color:#333;margin:8px 0 0;}
+.gg-int:empty{display:none;}
+.gg-int b{color:var(--blu-scuro);}
+.gg-invito{display:block;font-size:13px;color:#6b7a8d;margin-top:2px;}
+.gg .b{cursor:pointer;}
+.gg .b.scelto i{box-shadow:0 0 0 2px #f0a000;}
 .gg-leg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
 /* le due linee della temperatura: stessa larghezza del grafico della pioggia,
    cosi' i giorni stanno incolonnati e si leggono insieme */
@@ -294,7 +319,8 @@ ${/* ⚠️ LA FINESTRA NELLE PRIME RIGHE (9/9/2026), come sull'indice e sulle
      «dove», il posto e' quello. E la domanda che la gente scrive davvero, col
      nome del paese, e' «quanto ha piovuto a Cascia»: il titolo la ricalca e ci
      aggiunge la finestra. */''}
-<h1>Quanta pioggia è caduta ${esc(DOVE)} da 13 a 20 giorni fa</h1>
+<h1>Funghi ${esc(DOVE)} oggi: la pioggia di 13-20 giorni fa</h1>
+${rigaStagione()}
 <p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
 dodici o tredici giorni. Per questo conta la pioggia di due settimane fa e non quella di ieri.
 I millimetri li misura il pluviometro di ${esc(CORTA)}: ${esc(sigla)} · ${quota} m slm ·
@@ -309,10 +335,10 @@ ${/* ⚠️ LA VIA D'USCITA PER CHI CERCAVA ALTRO (9/9/2026). Chi arriva da Goog
      ⚠️ Sta PRIMA del patto e non dopo: e' la risposta a chi si e' appena
      accorto di essere sulla pagina sbagliata, e va data subito. */''}
 <div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo solo
-gli otto giorni della finestra dei funghi. Per la pioggia di ieri, quella degli ultimi 20 giorni
-o un periodo scelto da te, <a href="${SITO}/?r=${REGS}&amp;g=20&amp;${PIN}"
-style="color:var(--blu);font-weight:700">apri ${esc(bello(nomePosto))} sulla mappa</a> e cambia
-le date da lì.</div>
+gli otto giorni della finestra dei funghi. Per la pioggia di ieri e degli ultimi 30 giorni c’è
+<a href="${PIOGGE_URL}" style="color:var(--blu);font-weight:700">dove ha piovuto ${esc(PIOGGE_DOVE)}</a>;
+per un periodo scelto da te, <a href="${SITO}/?r=${REGS}&amp;g=20&amp;${PIN}"
+style="color:var(--blu)">apri ${esc(bello(nomePosto))} sulla mappa</a>.</div>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -329,7 +355,9 @@ le date da lì.</div>
 <h2>Giorno per giorno, ultimi 25 giorni</h2>
 <div id="grafico"></div>
 <div class="tre" id="tre"></div>
+<p class="nota" id="ieri"></p>
 <p class="nota" id="notaforte"></p>
+<p class="nota" id="notaintensita"></p>
 
 <div id="meteo"></div>
 
@@ -355,7 +383,22 @@ ${VICINI5.map(v => `<tr${v.io ? ' class="qui"' : ''} data-id="${esc(v.id)}"><td>
   <span class="vai-mappa">Apri mappa ${esc(NOME)} · ultimi 20 gg →</span>
 </a>
 
-<h2>Sta piovendo adesso?</h2>
+${haBoschi(REG) ? `<h2>Che boschi ci sono intorno?</h2>
+<p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti
+e abetine non danno gli stessi funghi. La mappa boschi colora i boschi ${esc(DOVE)} e dintorni
+per tipo, con i disegni della carta forestale della Regione.</p>
+<a href="${SITO}/?r=${REG}&amp;${PIN}&amp;boschi=1" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'localita-${REG}-boschi'})}catch(e){}">
+  <img src="${SITO}/tessere-boschi/anteprime/${REG}.jpg"
+       alt="La mappa boschi ${r.prep} ${esc(NOME)}: faggete, castagneti, querceti e abetine colorati per tipo"
+       width="1600" height="1000" loading="lazy"
+       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
+  <span class="vai-mappa">Guarda i boschi intorno ${esc(DOVE)} →</span>
+</a>
+<p class="nota">La fonte è la carta «${esc(cartaBreve(REG))}»: dice che bosco c'è, non se
+quest'anno ci sono nati funghi. Per quello servono la pioggia di questa pagina e un giro a piedi.</p>
+
+` : ''}<h2>Sta piovendo adesso?</h2>
 <p>Questa pagina conta i millimetri dei giorni <b>già chiusi</b>: la giornata di oggi è esclusa,
 perché il pluviometro la sta ancora misurando. Per la pioggia <b>in corso</b> c'è la diretta
 radar, che mostra dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti
@@ -483,6 +526,14 @@ provinciali ISTAT.</p>
   function disegna(j){
     var s = j.serie[ID];
     var mm = somma(s,20,13), mm7 = somma(s,7,1), mm25 = somma(s,GIORNI,1);
+    /* 13/9/2026: IERI, per chi cerca «quanto ha piovuto ieri a» e arriva qui.
+       Si dice il giorno vero: il file puo' essere stato scritto prima di
+       mezzanotte, e allora il suo ieri e' l'altroieri di chi legge.
+       Un giorno senza dato non e' uno zero. */
+    var ieriFile = iso(menoDa(j.oggi,1)), ieriVero = iso(menoDa(iso(new Date()),1));
+    var vIeri = s[0];
+    document.getElementById('ieri').innerHTML = (ieriFile === ieriVero ? 'Ieri, ' : 'Il ')
+      + gg(ieriFile) + ': ' + (vIeri == null ? 'il dato non è ancora arrivato.' : '<b>' + num(vIeri) + ' mm</b>.');
     var daG = iso(menoDa(j.oggi,20)), aG = iso(menoDa(j.oggi,13)), a20 = iso(menoDa(j.oggi,1));
 
     /* ⚠️ L'ULTIMA PIOGGIA FORTE ARRIVA DAL FILE, non si cerca nella serie.
@@ -492,7 +543,11 @@ provinciali ISTAT.</p>
        numeri per pluviometro, e cercatoFino dice fin dove ha guardato.
        (Niente apici inversi qui dentro: questo file e' un modello backtick.) */
     var ff = (j.forte || {})[ID];
-    var forte = ff ? {g:ff[0], mm:ff[1]} : null;
+    /* La voce ha DUE numeri (giorni fa, mm) oppure QUATTRO, quando di
+       quel giorno sappiamo anche le ore bagnate e la punta oraria.
+       Si guarda la lunghezza: i giorni vecchi l'intensita' non ce
+       l'hanno e non ce l'avranno mai, il passato non si recupera. */
+    var forte = ff ? {g:ff[0], mm:ff[1], ore:ff[2], punta:ff[3]} : null;
     var quando = forte ? (forte.g===1 ? 'ieri' : forte.g===2 ? 'l’altro ieri'
                                                              : forte.g+' giorni fa') : null;
 
@@ -549,7 +604,7 @@ provinciali ISTAT.</p>
          adiacenti si sovrappongono e si legge «55,87,2». */
       var etich = v >= max*0.28 && (ultimaEt === null || ultimaEt - i >= 3);
       if (etich) ultimaEt = i;
-      barre += '<div class="b' + cl + '" title="' + gg(iso(d)) + ': ' + num(v) + ' mm">'
+      barre += '<div class="b' + cl + '" data-n="' + i + '" title="' + gg(iso(d)) + ': ' + num(v) + ' mm">'
         + (etich ? '<b>' + num(v) + '</b>' : '')
         + '<i style="height:' + Math.max(2, Math.round(v/max*100)) + '%"></i></div>';
       /* Giorno e mese in forma corta: «13/8» non va a capo, «13 ago» si'. */
@@ -557,8 +612,41 @@ provinciali ISTAT.</p>
     }
     document.getElementById('grafico').innerHTML =
       '<div class="gg">' + barre + '</div><div class="gg-x">' + ascisse + '</div>'
+      + '<p class="gg-int" id="ggint"></p>'
       + '<p class="gg-leg"><i style="background:var(--blu)"></i>la finestra dei funghi, '
       + 'da 13 a 20 giorni fa &nbsp; <i style="background:#b9cbe2"></i>gli altri giorni</p>';
+
+    /* ── l'intensita' del giorno (13/9/2026) ──────────────────────────────
+       Stessa riga del pannello della mappa, solo numeri: l'aggettivo
+       lenta/media/battente resta nella frase della pioggia forte, piu' sotto.
+       All'apertura racconta il giorno piu' piovoso che ha le ore; toccando
+       una barra passa a quel giorno. serieI ha solo i giorni da 5 mm in su:
+       se questo pluviometro non ne ha nessuno, la riga non esiste. */
+    var sI = (j.serieI && j.serieI[ID]) || null;
+    function rigaInt(n) {
+      var el = document.getElementById('ggint');
+      if (!el || !sI) return;
+      var v = s[n-1] || 0, o = sI[n-1];
+      [].forEach.call(document.querySelectorAll('#grafico .b.scelto'), function (b) { b.classList.remove('scelto'); });
+      var b = document.querySelector('#grafico .b[data-n="' + n + '"]');
+      if (b) b.classList.add('scelto');
+      var t = '<b>' + gg(iso(menoDa(j.oggi, n))) + '</b> · ' + num(v) + ' mm';
+      if (o) t += ' in <b>' + o[0] + (o[0] === 1 ? ' ora' : ' ore') + '</b> · punta <b>' + num(o[1]) + ' mm</b> in un’ora';
+      /* ⚠️ L'INVITO A TOCCARE: senza, nessuno scopre che le barre si
+         toccano (segnalato dall'utente il 13/9). Col mouse si dice «clicca». */
+      var dito = !(window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches);
+      el.innerHTML = t + '<span class="gg-invito">' + (dito ? 'Tocca' : 'Clicca')
+        + ' una barra per vedere durata e punta di un altro giorno.</span>';
+    }
+    if (sI) {
+      var nMax = null;
+      for (var k2 in sI) { var n2 = +k2 + 1; if (nMax === null || (s[n2-1] || 0) > (s[nMax-1] || 0)) nMax = n2; }
+      if (nMax) rigaInt(nMax);
+      document.getElementById('grafico').addEventListener('click', function (e) {
+        var b = e.target && e.target.closest && e.target.closest('.b[data-n]');
+        if (b) rigaInt(+b.getAttribute('data-n'));
+      });
+    }
 
     /* ── temperatura e vento, se il pluviometro ce li ha ──────────────────
        ⚠️ Si mostra SOLO quello che c'e' davvero: la temperatura ce l'ha il 78%
@@ -663,6 +751,33 @@ provinciali ISTAT.</p>
         + (j.tetto && j.cercatoFino >= j.tetto
            ? ', che è fin dove siamo andati a guardare.'
            : ', cioè da quando abbiamo archivio su questo pluviometro.');
+
+    /* ── Con che RITMO e' caduta (12/9/2026) ──────────────────────
+       La stessa pioggia in un'ora vale meno che in otto: quella che
+       scende piano entra nel terreno, quella che scroscia corre via.
+       ⚠️ LE PAROLE SONO «lenta / media / battente» e non «forte»:
+       due righe sopra «pioggia forte» vuol dire gia' un'altra cosa,
+       cioe' almeno trenta millimetri in un giorno solo.
+       ⚠️ Le soglie 2 e 6 mm all'ora sono le stesse della convenzione
+       meteorologica italiana, scelte pero' sui nostri dati. */
+    var nInt = document.getElementById('notaintensita');
+    if (forte && forte.ore) {
+      /* ⚠️ SI ARROTONDA PRIMA DI GIUDICARE, se no il numero scritto e la
+         parola si contraddicono: Tolmin, 1,95 mm all'ora, usciva «2 mm
+         all'ora, pioggia lenta» mentre la soglia della lenta e' proprio 2.
+         Capita a cavallo delle due soglie, circa una volta su cento, e chi
+         conosce la scala se ne accorge. */
+      var perOra = uno(forte.mm / forte.ore);
+      var parola = perOra < 2 ? 'lenta' : perOra <= 6 ? 'media' : 'battente';
+      var senso = perOra < 2
+        ? 'acqua che ha avuto tutto il tempo di entrare nel terreno'
+        : perOra <= 6
+          ? 'un ritmo con cui l’acqua fa ancora in tempo a entrare'
+          : 'a quel ritmo una parte corre via lungo il pendio invece di entrare';
+      nInt.innerHTML = 'Sono caduti in <b>' + forte.ore + (forte.ore === 1 ? ' ora' : ' ore')
+        + '</b>, con una punta di <b>' + num(forte.punta) + ' mm in un’ora</b>: '
+        + num(perOra) + ' mm all’ora, <b>pioggia ' + parola + '</b>, ' + senso + '.';
+    } else nInt.style.display = 'none';
 
     /* ── posizione in classifica e posti vicini ──
        L'anagrafe arriva dal file: [id, nome, sigla, quota, lat, lon, bosco%, slug] */

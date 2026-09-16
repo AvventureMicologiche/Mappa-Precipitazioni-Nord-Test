@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Piogge per funghi in Lombardia: dove ha piovuto davvero</title>
-<meta name="description" content="Dove e' caduta l'acqua nelle zone da bosco della Lombardia, misurata dai pluviometri di ARPA Lombardia. La finestra da 13 a 20 giorni fa, quella che conta per i funghi.">
+<title>Dove andare a funghi in Lombardia oggi</title>
+<meta name="description" content="Dove andare a funghi in Lombardia oggi: le zone e i posti da bosco dove è piovuto al momento giusto, da 13 a 20 giorni fa.">
 <link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/lombardia/">
-<meta property="og:title" content="Piogge per funghi in Lombardia">
+<meta property="og:title" content="Dove andare a funghi in Lombardia oggi">
 <meta property="og:description" content="Dove e' caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/lombardia/">
@@ -143,6 +143,11 @@ a:active .vai-mappa{transform:translateY(2px);
   .capo-btn{width:100%;text-align:center;}
 }
 nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
+ol.zone-dove{list-style:none;margin:10px 0 26px;padding:0;counter-reset:z;}
+ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
+ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
+ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
+ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;}
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
@@ -158,18 +163,20 @@ nav.altre a{color:var(--blu);}
 
 <p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi, tutte le regioni</a></p>
 
-<h1>Dove potrebbero esserci le prime nascite di funghi in Lombardia</h1>
-<p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
+<h1>Dove andare a funghi in Lombardia oggi</h1>
+<div id="stagione"></div>
+<script>(function(){var m=new Date().getMonth()+1,t=null;if(m===12||m===1||m===2)t="<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.";else if(m===11||m===3)t="<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in autunno pieno.";if(t){var s=document.getElementById("stagione");s.innerHTML=t;s.style.display="block";}})();</script>
+<p class="sotto">Si va dove ha piovuto al momento giusto. Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
 dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella <b>da 13 a 20
 giorni fa</b>, misurata dai pluviometri di ARPA Lombardia nei posti da bosco della Lombardia. In cima alla
 classifica ci sono quelli dove ne è caduta di più.</p>
 
 
 <div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo solo
-gli otto giorni della finestra dei funghi. Per la pioggia di ieri, quella degli ultimi 20 giorni
-o un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=lombardia&amp;g=20"
-style="color:var(--blu);font-weight:700">apri la mappa in Lombardia</a> e cambia le date
-da lì.</div>
+gli otto giorni della finestra dei funghi. Per la pioggia di ieri e degli ultimi 30 giorni c’è
+<a href="https://avventurepluvio-test.netlify.app/lombardia/" style="color:var(--blu);font-weight:700">dove ha piovuto in Lombardia</a>;
+per un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=lombardia&amp;g=20"
+style="color:var(--blu)">apri la mappa in Lombardia</a>.</div>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -178,12 +185,33 @@ da lì.</div>
   lo conosci tu meglio di qualunque sito.</p>
 </div>
 
-<div id="stagione"></div>
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="guasto"></div>
 <div id="testa"></div>
 
-<h2>La classifica: i posti da bosco più bagnati della Lombardia</h2>
+
+<h2>Le zone dove andare a funghi della Lombardia</h2>
+<p class="nota">Le valli da bosco della Lombardia, <b>dalla più bagnata</b>. Il numero è la pioggia
+caduta da 13 a 20 giorni fa, in media sui pluviometri della zona: lo stesso che trovi
+aprendola.</p>
+<ol class="zone-dove" id="zone-dove">
+<li data-posti="lombardia:8150,lombardia:19356,lombardia:22022,lombardia:10666"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/monte-san-giorgio/">Monte San Giorgio</a><span class="zmm"></span></li>
+<li data-posti="lombardia:14499,lombardia:8098,lombardia:2278"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-brembana/">Val Brembana</a><span class="zmm"></span></li>
+<li data-posti="lombardia:9109,lombardia:14517,lombardia:14443,lombardia:31337,lombardia:14724"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-cavargna/">Val Cavargna</a><span class="zmm"></span></li>
+<li data-posti="lombardia:17446,lombardia:14118,lombardia:17361,lombardia:31289"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-grigna/">Val Grigna</a><span class="zmm"></span></li>
+<li data-posti="lombardia:8226,lombardia:30998,lombardia:31505"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-paisco/">Val Paisco</a><span class="zmm"></span></li>
+<li data-posti="lombardia:9092,lombardia:9104,lombardia:31094"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-sedornia/">Val Sedornia</a><span class="zmm"></span></li>
+<li data-posti="lombardia:9099,lombardia:31060,lombardia:14018"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-serina/">Val Serina</a><span class="zmm"></span></li>
+<li data-posti="lombardia:8172,lombardia:8169,lombardia:14664"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-trompia/">Val Trompia</a><span class="zmm"></span></li>
+<li data-posti="lombardia:14661,piemonte:339,piemonte:361"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-veddasca/">Val Veddasca</a><span class="zmm"></span></li>
+<li data-posti="lombardia:31536,lombardia:19309,lombardia:153,lombardia:30890"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/valle-dei-ratti/">Valle dei Ratti</a><span class="zmm"></span></li>
+<li data-posti="lombardia:14406,lombardia:8139,lombardia:2549"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/valle-sabbia/">Valle Sabbia</a><span class="zmm"></span></li>
+<li data-posti="lombardia:19344,lombardia:1433,lombardia:122"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/valle-san-giacomo/">Valle San Giacomo</a><span class="zmm"></span></li>
+<li data-posti="lombardia:35,lombardia:46,lombardia:34,lombardia:31562,lombardia:38"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/valmalenco/">Valmalenco</a><span class="zmm"></span></li>
+<li data-posti="lombardia:9105,lombardia:19335,lombardia:16431"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/valsassina/">Valsassina</a><span class="zmm"></span></li>
+</ol>
+
+<h2>Piogge per funghi: i posti da bosco più bagnati della Lombardia</h2>
 <div class="spiega" id="finestra"></div>
 <div id="tabella"></div>
 <p class="nota" id="notaforte"></p>
@@ -199,6 +227,21 @@ da lì.</div>
 </a>
 <p class="nota" style="text-align:center;margin-bottom:26px;">Più il colore è acceso, più acqua è
 caduta. Ogni pallino è un pluviometro: cliccalo e vedi il suo storico.</p>
+
+<h2>Che boschi ci sono in Lombardia?</h2>
+<p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti
+e abetine non danno gli stessi funghi. La mappa boschi colora i boschi in Lombardia per tipo,
+con i disegni della carta forestale della Regione. Avvicinati sulla zona che ti interessa.</p>
+<a href="https://avventurepluvio-test.netlify.app/?r=lombardia&amp;boschi=1" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'funghi-lombardia-boschi'})}catch(e){}">
+  <img src="https://avventurepluvio-test.netlify.app/tessere-boschi/anteprime/lombardia.jpg"
+       alt="La mappa boschi in Lombardia: faggete, castagneti, querceti e abetine colorati per tipo"
+       width="1600" height="1000" loading="lazy"
+       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
+  <span class="vai-mappa">Guarda i boschi in Lombardia →</span>
+</a>
+<p class="nota" style="margin-bottom:26px;">La fonte è la carta «Carta forestale 2026»: dice che bosco
+c'è, non se quest'anno ci sono nati funghi.</p>
 
 <h2 style="margin-bottom:12px">Come scegliamo i posti</h2>
 <div class="metodo">
@@ -228,11 +271,6 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dai c
 pluviometri vicini. Sono i pluviometri in mezzo al bosco della Lombardia.</p>
 <nav class="altre"><p><a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/abbadia-lariana-torrioni-di-rialba/">Abbadia Lariana Torrioni di Rialba</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/azzone-dezzo-di-scalve/">Azzone Dezzo di Scalve</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/bagolino-sp669/">Bagolino SP669</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/bema/">Bema</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/bienno-piazze/">Bienno Piazze</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/bione/">Bione</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/bormio-eliporto/">Bormio eliporto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/bovegno-ponte-zigole/">Bovegno ponte Zigole</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/branzi-caserma-carabinieri/">Branzi Caserma Carabinieri</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/branzi-il-pizzo/">Branzi Il Pizzo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/brembilla/">Brembilla</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/caino/">Caino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/caiolo/">Caiolo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/canzo/">Canzo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/capo-di-ponte-v-briscioli/">Capo di Ponte v.Briscioli</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/carenno-centro-sportivo/">Carenno centro sportivo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/caslino-d-erba-v-4-novembre/">Caslino d'Erba v. 4 novembre</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/cassina-valsassina-moggio/">Cassina Valsassina Moggio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/castione-della-presolana/">Castione della Presolana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/cavargna/">Cavargna</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/cene-ponte/">Cene Ponte</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/cevo/">Cevo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/chiesa-in-valmalenco-san-giuseppe/">Chiesa in Valmalenco San Giuseppe</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/clusone-sp-671/">Clusone SP 671</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/collio-memmo/">Collio Memmo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/cortenova/">Cortenova</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/cuveglio/">Cuveglio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/delebio-canargo/">Delebio Canargo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/dorio-bedolesso/">Dorio Bedolesso</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/dossena-st1/">Dossena ST1</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/dubino-la-piazza/">Dubino La Piazza</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/edolo-ist-meneghini/">Edolo Ist.Meneghini</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/fuipiano-valle-imagna-pagafone/">Fuipiano Valle Imagna Pagafone</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/gandellino-grabiasca/">Gandellino Grabiasca</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/gandellino-tezzi/">Gandellino Tezzi</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/gargnano/">Gargnano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/garzeno/">Garzeno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/gavardo-sp-116/">Gavardo SP 116</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/gianico-val-vedetta/">Gianico Val Vedetta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/gordona/">Gordona</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/grone-san-fermo/">Grone San Fermo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/grosio-diga-fusino/">Grosio Diga Fusino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/idro-frana/">Idro Frana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/lanzada-ganda/">Lanzada Ganda</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/lasnigo-s-alessandro/">Lasnigo s.Alessandro</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/lavena-ponte-tresa-via-della-boschiva/">Lavena Ponte Tresa via della Boschiva</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/lozio/">Lozio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/magasa-malga-corva/">Magasa Malga Corva</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/montemezzo-gera-lario/">Montemezzo Gera Lario</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/morbegno-eliporto/">Morbegno eliporto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/oltre-il-colle-zambla/">Oltre il Colle Zambla</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/paisco-loveno/">Paisco Loveno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/paisco-loveno-grumello/">Paisco Loveno Grumello</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/pian-camuno-roncaglia-scm2/">Pian Camuno Roncaglia SCM2</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/piazza-brembana-vivaio/">Piazza Brembana vivaio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/piazzatorre/">Piazzatorre</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/pisogne/">Pisogne</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/porlezza-torrente/">Porlezza torrente</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/porto-ceresio-campo-sportivo/">Porto Ceresio campo sportivo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/porto-valtravaglia-san-michele/">Porto Valtravaglia San Michele</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/prata-camportaccio-pratella/">Prata Camportaccio Pratella</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/premana-v-luciani-papa/">Premana v.Luciani papa</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/ranzanico/">Ranzanico</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/rota-d-imagna/">Rota d'Imagna</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/samolaco-v-vignola/">Samolaco v.Vignola</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/san-giacomo-filippo-val-genasca/">San Giacomo Filippo Val Genasca</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/san-giovanni-bianco-cornalita/">San Giovanni Bianco Cornalita</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/san-nazzaro-val-cavargna-c5/">San Nazzaro Val Cavargna C5</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/san-siro-alpe-rescascia/">San Siro Alpe Rescascìa</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/santa-margherita-di-staffora-casanova/">Santa Margherita di Staffora Casanova</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/santa-margherita-di-staffora-passo-del-giova/">Santa Margherita di Staffora Passo del Giovà</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/sarezzo-v-della-fonte/">Sarezzo v.della Fonte</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/saviore-dell-adamello-valle-ur01/">Saviore dell'Adamello Valle UR01</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/schignano-alpe-comana/">Schignano Alpe Comana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/sellero-zinvill-s1/">Sellero Zinvill S1</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/sondalo-le-prese/">Sondalo Le Prese</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/sormano-rifugio-alpetto/">Sormano rifugio Alpetto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/spriana-ponte-sul-mallero/">Spriana Ponte sul Mallero</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/sueglio-monte-letee/">Sueglio Monte Letee</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/teglio-san-giacomo/">Teglio San Giacomo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/tirano-eliporto/">Tirano eliporto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/torre-di-santa-maria-val-dagua/">Torre di Santa Maria Val Dagua</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/torre-di-santa-maria-val-torreggio-rtu-60/">Torre di Santa Maria Val Torreggio RTU 60</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/val-masino-san-martino/">Val Masino San Martino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/valdisotto-arginone/">Valdisotto Arginone</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/valganna-mondonico/">Valganna Mondonico</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/valtorta/">Valtorta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/varzi-nivione/">Varzi Nivione</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/veddasca-monte-cadrigna/">Veddasca Monte Cadrigna</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/vercana/">Vercana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/verceia-campo-sportivo/">Verceia Campo sportivo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/villa-di-chiavenna/">Villa di Chiavenna</a></p></nav>
 
-
-<h2 style="margin-top:30px">Le valli e le zone della Lombardia</h2>
-<p class="nota">Una zona mette insieme i pluviometri di tutta la valle: comoda quando
-il posto preciso non l'hai ancora scelto.</p>
-<nav class="altre"><p><a href="https://avventurepluvio-test.netlify.app/funghi/zone/monte-san-giorgio/">Monte San Giorgio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-brembana/">Val Brembana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-cavargna/">Val Cavargna</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-grigna/">Val Grigna</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-paisco/">Val Paisco</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-sedornia/">Val Sedornia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-serina/">Val Serina</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-trompia/">Val Trompia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-veddasca/">Val Veddasca</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valle-dei-ratti/">Valle dei Ratti</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valle-sabbia/">Valle Sabbia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valle-san-giacomo/">Valle San Giacomo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valmalenco/">Valmalenco</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valsassina/">Valsassina</a></p></nav>
 
 <h2 style="margin-top:30px">Tutta la pioggia in Lombardia</h2>
 <p>Questa pagina guarda solo i pluviometri in mezzo al bosco. Per la regione intera, pianura compresa, c'è <a href="https://avventurepluvio-test.netlify.app/lombardia/">dove ha piovuto in Lombardia</a>: oltre 250 pluviometri di ARPA Lombardia.</p>
@@ -280,34 +318,8 @@ il posto preciso non l'hai ancora scelto.</p>
   function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function uno(n){ return Math.round(n*10)/10; }
 
-  /* ⚠️ LA RIGA DI STAGIONE. Da dicembre a febbraio questa pagina non serve a
-     molto e dirlo e' piu' onesto che far finta di niente: 3bmeteo negli
-     stessi mesi tiene su la sua e stampa quindici righe di «Assente»
-     (controllato negli archivi del web, copie del 5 e del 31 gennaio 2026).
-     La pagina pero' NON si toglie: un indirizzo tolto e ripubblicato perde
-     l'indicizzazione, e quella si ricostruisce in mesi.
-     Novembre e marzo sono di passaggio e hanno un tono piu' morbido.
-     ⚠️ NIENTE APOSTROFI DRITTI DENTRO QUESTE STRINGHE. Il testo esce da un
-     template literal: un ' scritto qui viene consumato dal generatore e
-     nella pagina arriva un apostrofo NUDO, che spezza la stringa e rompe
-     TUTTO il blocco (pagina bianca, ferma su «Sto leggendo i pluviometri»).
-     Successo il 2/9/2026 con «a quest'epoca». Si usa quello tipografico. */
-  (function(){
-    var m = new Date().getMonth() + 1;
-    var testo = null;
-    if (m === 12 || m === 1 || m === 2)
-      testo = '<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi '
-        + 'ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano '
-        + 'veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.';
-    else if (m === 11 || m === 3)
-      testo = '<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto '
-        + 'dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in '
-        + 'autunno pieno.';
-    if (testo) {
-      var s = document.getElementById('stagione');
-      s.innerHTML = testo; s.style.display = 'block';
-    }
-  }());
+  /* La riga di stagione non sta piu' qui: dal 13/9/2026 la scrive
+     lib-stagione.js subito sotto il titolo, uguale per regioni e zone. */
 
   /* ── STRADA NORMALE: i numeri gia' fatti, UNA richiesta ──────────────────
      Fino al 2/9/2026 questa pagina scaricava i 25 file giornalieri e si faceva
@@ -409,7 +421,53 @@ il posto preciso non l'hai ancora scelto.</p>
       + '<a href="'+MAPPA+'?r='+REG+'">sulla mappa</a>.';
   }
 
+  /* LE ZONE DOVE ANDARE (13/9/2026). Qui si scrivono i millimetri e si
+     RIORDINANO i nodi, non si rifa la lista con innerHTML: i link devono
+     restare quelli cotti, che sono quelli che Google legge anche dopo il
+     rendering. Si chiama PRIMA del taglio ai primi 15 posti.
+     ⚠️ IL NUMERO E LA MEDIA DI TUTTI I PLUVIOMETRI DELLA ZONA, anche di altre
+     regioni: e quello che mostra la pagina della zona, e chi clicca deve
+     ritrovarlo uguale. I file delle regioni vicine sono pochi chilobyte e si
+     chiedono solo se una zona li nomina. */
+  function ordinaZone(tutte){
+    var lista = document.getElementById('zone-dove');
+    if (!lista) return;
+    var mm = {};
+    mm[REG] = {};
+    tutte.forEach(function(r){ mm[REG][r.id] = r.mm; });
+    var voci = [].slice.call(lista.children);
+    var altre = {};
+    voci.forEach(function(li){
+      li.posti = li.getAttribute('data-posti').split(',').filter(Boolean)
+        .map(function(x){ var k = x.split(':'); return { reg: k[0], id: k[1] }; });
+      li.posti.forEach(function(q){ if (q.reg !== REG) altre[q.reg] = 1; });
+    });
+    Promise.all(Object.keys(altre).map(function(reg){
+      return fetch(BASE + 'funghi/' + reg + '.json')
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .catch(function(){ return null; })
+        .then(function(j){
+          mm[reg] = {};
+          if (j && j.posti) Object.keys(j.posti).forEach(function(id){ mm[reg][id] = j.posti[id][0]; });
+        });
+    })).then(function(){
+      voci.forEach(function(li){
+        var v = li.posti.map(function(q){ return (mm[q.reg] || {})[q.id]; })
+          .filter(function(x){ return x != null; });
+        li.valore = v.length ? v.reduce(function(a,b){ return a + b; }, 0) / v.length : null;
+        li.querySelector('.zmm').textContent =
+          li.valore == null ? '' : uno(li.valore).toFixed(1).replace('.', ',') + ' mm';
+      });
+      voci.sort(function(a,b){
+        if (a.valore == null) return 1;
+        if (b.valore == null) return -1;
+        return b.valore - a.valore;
+      }).forEach(function(li){ lista.appendChild(li); });
+    });
+  }
+
   function mostra(righe, oggiISO){
+    ordinaZone(righe);
     righe = righe.sort(function(a,b){ return b.mm - a.mm; }).slice(0, QUANTI);
     var maxMm = Math.max.apply(null, righe.map(function(r){ return Math.max(r.mm, r.mm7, r.mm25); }).concat([1]));
 

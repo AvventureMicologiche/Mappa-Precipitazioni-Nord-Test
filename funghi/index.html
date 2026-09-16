@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Piogge per funghi: dove potrebbero esserci le prime nascite</title>
-<meta name="description" content="Le piogge da 13 a 20 giorni fa, la finestra che conta per i funghi, misurate a terra in 911 posti da bosco di 19 regioni. Non previsioni: millimetri veri.">
+<title>Dove andare a funghi oggi: le piogge per funghi in Italia</title>
+<meta name="description" content="Dove andare a funghi oggi: le piogge per funghi da 13 a 20 giorni fa, misurate a terra in 911 posti da bosco di 19 regioni. Aggiornato ogni giorno.">
 <link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/">
-<meta property="og:title" content="Dove potrebbero esserci le prime nascite di funghi">
+<meta property="og:title" content="Dove andare a funghi oggi">
 <meta property="og:description" content="Dove e' caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/">
@@ -141,6 +141,11 @@ a:active .vai-mappa{transform:translateY(2px);
   .capo-btn{width:100%;text-align:center;}
 }
 nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
+ol.zone-dove{list-style:none;margin:10px 0 26px;padding:0;counter-reset:z;}
+ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
+ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
+ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
+ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;}
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
@@ -171,7 +176,9 @@ nav.altre a{color:var(--blu);}
 <main>
 
 
-<h1>Dove potrebbero esserci le prime nascite di funghi</h1>
+<h1>Dove andare a funghi oggi</h1>
+<div id="stagione"></div>
+<script>(function(){var m=new Date().getMonth()+1,t=null;if(m===12||m===1||m===2)t="<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.";else if(m===11||m===3)t="<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in autunno pieno.";if(t){var s=document.getElementById("stagione");s.innerHTML=t;s.style.display="block";}})();</script>
 <p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
 dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella <b>da 13 a 20
 giorni fa</b>, misurata a terra dai pluviometri di 911 posti da bosco in 19

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Come si usa la mappa dei pluviometri: la guida completa</title>
+<meta name="description" content="Come si usa la mappa dei pluviometri: regione e periodo, pallini e colori, Piogge per funghi, schede delle stazioni e diretta radar. Con consigli e domande.">
+<!-- Google tag (gtag.js) — stesso snippet di index.html e fonti.html, guardia
+     sul dominio compresa: sul sito di test non invia niente. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  if (/(^|\.)avventuremicologiche\.it$/.test(location.hostname)) {
+    gtag('config', 'G-9R7MXXS0V4');
+  }
+</script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="canonical" href="https://precipitazioni.avventuremicologiche.it/guida/">
+<!-- La briciola per i motori di ricerca. ⚠️ Deve dire ESATTAMENTE quello che
+     dice la briciola visibile in pagina, e l'ultima voce va senza indirizzo. -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Mappa pluviometrica","item":"https://precipitazioni.avventuremicologiche.it/"},{"@type":"ListItem","position":2,"name":"Guida alla mappa"}]}</script>
+<style>
+:root{
+  --blu:#1b3f6e; --blu-chiaro:#2c5b96; --link:#1b5db0;
+  --verde:#2d6a30; --rosso:#e12b2b;
+  --fondo:#f4f6fa; --carta:#fff; --bordo:#e2e8f2;
+  --testo:#1f2937; --grigio:#5b6878;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--testo);background:var(--fondo);
+  line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ── testata ────────────────────────────────────────────────────────────── */
+.top{background:linear-gradient(135deg,#16345c 0%,#1b3f6e 55%,#2b5b93 100%);color:#fff;
+  padding:0 0 26px}
+.top .barra{display:flex;align-items:center;gap:14px;padding:12px 20px;font-size:14px}
+.top .barra a{color:#dce8f6;text-decoration:none}
+.top .barra a:hover{color:#fff}
+.top .dentro{max-width:1080px;margin:0 auto;padding:6px 20px 0}
+.top h1{font-size:30px;line-height:1.2;font-weight:700;letter-spacing:-.01em}
+.top .occhiello{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:#9fc2e6;margin-bottom:7px}
+.top .sotto{margin-top:9px;font-size:16px;color:#d7e6f7;max-width:660px}
+
+/* ── impianto a due colonne ─────────────────────────────────────────────── */
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px 70px;display:grid;gap:36px;
+  grid-template-columns:minmax(0,1fr) 236px}
+main{grid-column:1;grid-row:1;min-width:0;margin-top:-14px}
+.idx{grid-column:2;grid-row:1;margin-top:-14px}
+@media(max-width:900px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:0}
+  main{grid-column:1;grid-row:auto;order:2}
+  .idx{grid-column:1;grid-row:auto;order:1;margin:0 0 22px}
+}
+
+/* ── indice ─────────────────────────────────────────────────────────────── */
+.idx .box{position:sticky;top:16px;background:var(--carta);border:1px solid var(--bordo);
+  border-radius:12px;padding:14px 16px 16px}
+.idx b{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--grigio);margin-bottom:9px}
+.idx ol{list-style:none;counter-reset:v;font-size:13.5px}
+.idx li{counter-increment:v;margin:0}
+.idx a{display:block;padding:5px 0 5px 22px;position:relative;color:#33465c;text-decoration:none;
+  border-radius:6px;line-height:1.35}
+.idx a:before{content:counter(v);position:absolute;left:0;top:5px;font-size:11px;color:#9aa8b8;
+  font-variant-numeric:tabular-nums}
+.idx a:hover{color:var(--link)}
+@media(max-width:900px){
+  .idx .box{position:static}
+  .idx ol{columns:2;column-gap:18px}
+  /* ⚠️ senza questo una voce lunga si spezza a meta' fra le due colonne */
+  .idx li{break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid}
+}
+
+/* ── testo ──────────────────────────────────────────────────────────────── */
+.bric{font-size:12.5px;color:var(--grigio);margin:18px 0 4px}
+.bric a{color:var(--link);text-decoration:none}
+h2{font-size:21px;line-height:1.25;color:var(--blu);font-weight:700;letter-spacing:-.01em;
+  margin:42px 0 12px;scroll-margin-top:16px;display:flex;align-items:baseline;gap:10px}
+h2 .n{flex:0 0 auto;font-size:12px;font-weight:700;color:#fff;background:var(--blu-chiaro);
+  border-radius:6px;padding:3px 7px;position:relative;top:-3px;font-variant-numeric:tabular-nums}
+h3{font-size:15.5px;color:var(--blu);margin:22px 0 2px;font-weight:700}
+p{margin:11px 0;font-size:15.5px}
+ul,ol.testo{margin:11px 0 11px 20px;font-size:15.5px}
+li{margin:6px 0}
+a{color:var(--link)}
+main a{text-decoration:none;border-bottom:1px solid rgba(27,93,176,.28)}
+main a:hover{border-bottom-color:var(--link)}
+.ui{display:inline-block;background:#eef3fa;border:1px solid #d5e1f0;border-radius:6px;
+  padding:0 6px;font-size:14px;font-weight:600;color:var(--blu);white-space:nowrap}
+.guida-intro{font-size:16.5px;color:#33465c}
+
+/* ── riquadri ───────────────────────────────────────────────────────────── */
+.card{background:var(--carta);border:1px solid var(--bordo);border-radius:12px;
+  padding:16px 18px;margin:16px 0}
+.card p:first-child{margin-top:0}
+.card p:last-child{margin-bottom:0}
+.passi{counter-reset:p;list-style:none;margin:16px 0}
+.passi li{counter-increment:p;position:relative;padding:0 0 0 46px;margin:14px 0;font-size:15.5px}
+.passi li:before{content:counter(p);position:absolute;left:0;top:1px;width:30px;height:30px;
+  border-radius:50%;background:var(--blu);color:#fff;font-weight:700;font-size:15px;
+  display:flex;align-items:center;justify-content:center}
+.nota{background:#fff8ec;border:1px solid #f0dcb8;border-left:4px solid #d99a2b;
+  border-radius:0 10px 10px 0;padding:12px 16px;margin:16px 0;font-size:15px}
+.bosco{background:#f4fbf3;border:1px solid #cfe8cf;border-left:4px solid var(--verde);
+  border-radius:0 10px 10px 0;padding:12px 16px;margin:16px 0;font-size:15px}
+.bosco b{color:var(--verde)}
+.mini{font-size:13px;color:var(--grigio)}
+
+/* ── figure ─────────────────────────────────────────────────────────────── */
+figure{margin:18px 0 20px}
+figure img{display:block;width:100%;height:auto;border:1px solid var(--bordo);border-radius:11px;
+  background:#fff}
+figure.stretta{max-width:360px}
+figure.tre{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}
+figure.tre span{display:block;font-size:12.5px;color:var(--grigio);margin-top:5px;text-align:center}
+figure.tre figcaption{grid-column:1/-1;margin-top:2px}
+@media(max-width:640px){figure.tre{grid-template-columns:minmax(0,1fr);gap:16px}}
+figure.media{max-width:560px}
+figcaption{font-size:13px;color:var(--grigio);margin-top:7px;line-height:1.45}
+
+/* ── novità ─────────────────────────────────────────────────────────────── */
+.upd{background:var(--carta);border:1px solid var(--bordo);border-radius:12px;
+  padding:15px 18px 16px;margin:14px 0 6px}
+.upd .tit{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:10px}
+.upd .tag{background:var(--rosso);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.06em;
+  border-radius:5px;padding:3px 7px;line-height:1.25}
+.upd .tit b{font-size:16px;color:var(--blu)}
+.upd .quando{font-size:12px;color:#8a97a6;margin-left:auto}
+.upd ul{list-style:none;margin:0;font-size:14.5px}
+.upd li{display:flex;gap:10px;align-items:baseline;padding:7px 0;border-top:1px solid #f0f3f8;margin:0}
+.upd li:first-child{border-top:none}
+.upd .data{flex:0 0 52px;font-size:12px;color:#8a97a6;font-variant-numeric:tabular-nums}
+.upd a{border-bottom:none;font-weight:600}
+.upd a:hover{text-decoration:underline}
+
+/* ── video ──────────────────────────────────────────────────────────────── */
+.video{display:flex;align-items:center;gap:14px;background:var(--carta);border:1px solid var(--bordo);
+  border-radius:12px;padding:13px 16px;margin:14px 0}
+.video .play{flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:var(--rosso);
+  display:flex;align-items:center;justify-content:center;border-bottom:none}
+.video .t{flex:1 1 auto;font-size:14.5px;color:#33465c}
+.video .t b{display:block;color:var(--blu);font-size:15px}
+.video .go{flex:0 0 auto;background:#f4f6fa;border:1px solid var(--bordo);color:var(--blu);
+  font-weight:600;font-size:13.5px;padding:7px 12px;border-radius:8px;white-space:nowrap}
+.video .go:hover{background:#eaf0f8}
+@media(max-width:560px){.video{flex-wrap:wrap}.video .t{flex:1 1 100%;order:3}}
+
+/* ── tabelle ────────────────────────────────────────────────────────────── */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;background:var(--carta);
+  border:1px solid var(--bordo);border-radius:11px;overflow:hidden}
+th{background:#eef3fa;text-align:left;padding:9px 12px;font-weight:700;color:var(--blu);font-size:13px}
+td{padding:9px 12px;border-top:1px solid #eef1f6;vertical-align:top}
+td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
+.scala{height:16px;border-radius:5px;margin:12px 0 4px;
+  background:linear-gradient(to right,#f2f7ff 0%,#bfe3ff 12%,#7ec8ff 28%,#4da3ff 44%,
+  #2f7ae6 58%,#2f5fd0 70%,#5a3fc0 82%,#8e2fa8 92%,#c01f7a 100%)}
+.scala-l{display:flex;justify-content:space-between;font-size:12px;color:var(--grigio)}
+
+/* ── domande ────────────────────────────────────────────────────────────── */
+.faq{margin:14px 0}
+.faq .q{background:var(--carta);border:1px solid var(--bordo);border-radius:11px;
+  padding:13px 17px;margin:9px 0}
+.faq h3{margin:0 0 3px;font-size:15.5px}
+.faq p{margin:0;font-size:15px}
+
+/* ── mappa del sito e coda ──────────────────────────────────────────────── */
+.pagine p{margin:9px 0 0;font-size:14.5px;line-height:1.9}
+.pagine a{border-bottom:none}
+.pagine a:hover{text-decoration:underline}
+.pagine .bosco{margin-top:16px;padding:4px 16px 13px;border-left-width:1px;border-radius:10px}
+.fine{margin-top:34px;padding-top:18px;border-top:1px solid var(--bordo);font-size:14.5px;color:#44536a}
+/* ── telefono: carattere piu' grande (13/9/2026) ────────────────────────
+   Chiesto da lui: «un po' piccolo». Si alza tutto di un punto o un punto e
+   mezzo, SOLO sotto i 640 px: sul computer la colonna e' larga e 15,5 basta.
+   ⚠️ Misurato prima e dopo con `misura-guida-telefono.js` a 360 e 393:
+   nessun elemento deve uscire a destra. I tasti `.ui` sono nowrap, e il piu'
+   largo e' quello da controllare. */
+@media(max-width:640px){
+  .top h1{font-size:25px}
+  .top .sotto{font-size:16px}
+  h2{font-size:20.5px;margin-top:36px}
+  h3{font-size:17px}
+  p,ul,ol.testo{font-size:16.5px}
+  .guida-intro{font-size:17px}
+  .passi li{font-size:16.5px}
+  .nota,.bosco{font-size:16px}
+  .faq h3{font-size:16.5px}
+  .faq p{font-size:16px}
+  .upd ul{font-size:15.5px}
+  .upd .data{font-size:12.5px}
+  .video .t{font-size:15.5px}
+  .video .t b{font-size:16px}
+  figcaption,.mini{font-size:14px}
+  figure.tre span{font-size:13.5px}
+  .ui{font-size:15px}
+  .scala-l{font-size:13px}
+  .pagine p,.fine{font-size:15.5px}
+  /* ⚠️ L'INDICE NO: a due colonne su 360 px ogni colonna ha 113 px di testo, e
+     a 14,5 le voci a capo passavano da cinque a otto. E' navigazione, non
+     lettura: resta alla taglia di prima e l'impaginazione non cambia. */
+  table{font-size:15px;display:block;overflow-x:auto;white-space:nowrap}
+  td:first-child{white-space:normal}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="barra"><a href="/">← Torna alla mappa</a></div>
+  <div class="dentro">
+    <div class="occhiello">Guida</div>
+    <h1>Come si usa la mappa dei pluviometri</h1>
+    <p class="sotto">Tutte le funzioni spiegate una per una, con i consigli per cavarne quello che serve davvero: dove è piovuto, quanto, e quando.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+<aside class="idx">
+  <div class="box">
+    <b>In questa pagina</b>
+    <ol>
+      <li><a href="#video">Il video, in sintesi</a></li>
+      <li><a href="#cose">Che cosa mostra il sito</a></li>
+      <li><a href="#tre-passi">In tre passi</a></li>
+      <li><a href="#dove">Scegliere dove</a></li>
+      <li><a href="#periodo">Scegliere il periodo</a></li>
+      <li><a href="#funghi">Piogge per funghi</a></li>
+      <li><a href="#leggere">Leggere la mappa</a></li>
+      <li><a href="#stazione">La scheda del pluviometro</a></li>
+      <li><a href="#misure">Che cosa misura, e perché conta</a></li>
+      <li><a href="#radar">La diretta radar</a></li>
+      <li><a href="#boschi">La mappa boschi</a></li>
+      <li><a href="#condividere">Condividere</a></li>
+      <li><a href="#pagine">Le pagine del sito</a></li>
+      <li><a href="#consigli">Nove consigli</a></li>
+      <li><a href="#domande">Domande frequenti</a></li>
+      <li><a href="#limiti">Avvisi e limiti</a></li>
+    </ol>
+  </div>
+</aside>
+
+<main>
+
+<div class="bric"><a href="/">Mappa pluviometrica</a> › Guida alla mappa</div>
+
+<!-- ══ ULTIMI AGGIORNAMENTI ══════════════════════════════════════════════
+     Ogni voce e' un'ancora che porta nel punto della guida che la spiega.
+     ⚠️ QUI VANNO SOLO LE COSE NUOVE, mai le correzioni: un difetto risolto,
+     scritto in vetrina, si legge come «il sito aveva un difetto» e semina un
+     dubbio su tutto il resto. Le correzioni stanno nel CLAUDE.md del repo.
+     Si tengono le ultime otto o nove e si aggiorna la data del titolo. -->
+<div class="upd">
+  <div class="tit"><span class="tag">NOVITÀ</span><b>Ultimi aggiornamenti</b>
+    <span class="quando">16 settembre 2026</span></div>
+  <ul>
+    <li><span class="data">16 set</span><span><a href="#boschi">La mappa boschi</a>: faggete, castagneti, querceti e abetine colorati sulla mappa, per ora in nove regioni.</span></li>
+    <li><span class="data">13 set</span><span><a href="#misure">Durata e punta nella scheda del pluviometro</a>: tocca una barra del grafico e vedi in quante ore è caduta la pioggia di quel giorno.</span></li>
+    <li><span class="data">13 set</span><span><a href="#pagine">Dove ha piovuto, zona per zona</a>: la pioggia di ieri, degli ultimi 7 e 30 giorni in Garfagnana, Val Trebbia, Sila e altre centoundici zone.</span></li>
+    <li><span class="data">12 set</span><span><a href="#misure">Quanto forte è piovuto</a>: per ogni giornata di pioggia forte, in quante ore è caduta e la punta in un'ora.</span></li>
+    <li><span class="data">9 set</span><span><a href="#pagine">Il nuovo indice «Piogge per funghi»</a>, con la classifica delle località più bagnate d'Italia.</span></li>
+    <li><span class="data">3 set</span><span><a href="#pagine">Le pagine di zona</a>: Garfagnana, Val Trebbia, Sila e altre centodieci, ognuna coi suoi pluviometri.</span></li>
+    <li><span class="data">2 set</span><span><a href="#pagine">Le pagine di paese</a>: oltre novecento schede con l'archivio del pluviometro più vicino.</span></li>
+    <li><span class="data">31 ago</span><span><a href="#radar">La diretta radar</a>: la pioggia in corso, le ultime due ore e i quaranta minuti seguenti.</span></li>
+    <li><span class="data">27 ago</span><span><a href="#dove">«La mia posizione»</a>: dal telefono la mappa ti porta dove sei.</span></li>
+  </ul>
+</div>
+
+<h2 id="video"><span class="n">1</span>Il video, in sintesi</h2>
+<p>Sul canale c'è una <b>breve guida sintetica</b>: due minuti, il giro veloce dei tasti principali. Serve a partire.</p>
+<div class="video">
+  <a class="play" href="https://youtu.be/fvsBZJ_Ylf4" target="_blank" rel="noopener" aria-label="Guarda il video"
+     onclick="try{gtag('event','click_youtube',{pulsante:'guida-video'})}catch(e){}">
+    <svg width="15" height="17" viewBox="0 0 16 18" aria-hidden="true"><polygon points="0,0 0,18 16,9" fill="#fff"/></svg>
+  </a>
+  <div class="t"><b>I tasti principali in due minuti</b>Video sul canale Avventure Micologiche.</div>
+  <a class="go" href="https://youtu.be/fvsBZJ_Ylf4" target="_blank" rel="noopener"
+     onclick="try{gtag('event','click_youtube',{pulsante:'guida-video'})}catch(e){}">Guarda</a>
+</div>
+<p class="guida-intro">Questa pagina invece è la <b>guida completa</b>, per un uso approfondito: che cosa misura ogni strumento, come si leggono i colori e i numeri, che cosa cercare quando la ricerca dei funghi si fa seria, e dove il sito dichiara i propri limiti. Si legge a pezzi, con l'indice qui accanto.</p>
+
+<h2 id="cose"><span class="n">2</span>Che cosa mostra il sito</h2>
+<p>Questo sito mostra <b>la pioggia già caduta</b>, misurata da oltre 5.700 pluviometri delle reti pubbliche di monitoraggio in Italia, Svizzera, Austria, Francia e Slovenia. Non è un sito di previsioni: non troverai che tempo farà domani, ma quanti millimetri sono caduti in un punto preciso nei giorni scorsi.</p>
+<p>Un pluviometro è uno strumento a terra, di un'agenzia regionale o nazionale, che raccoglie la pioggia e la misura. Ogni pallino sulla mappa è uno di questi strumenti, e il numero che compare toccandolo è <b>la sua misura</b>. Le fonti, agenzia per agenzia, sono elencate in <a href="/fonti.html">Fonti e licenze</a>.</p>
+<p>Il sito è gratuito, senza pubblicità e senza registrazione.</p>
+
+<h2 id="tre-passi"><span class="n">3</span>In tre passi</h2>
+<ol class="passi">
+  <li><b>Dì dove.</b> Scegli una regione, oppure scrivi il nome del tuo paese nella casella <span class="ui">Cerca località</span>. Dal telefono puoi anche toccare <span class="ui">La mia posizione</span>.</li>
+  <li><b>Dì quando.</b> Tocca un periodo: <span class="ui">Ieri</span>, <span class="ui">7 giorni</span>, fino a <span class="ui">30 giorni</span>. Oppure <span class="ui">Date personalizzate</span> per un intervallo tuo.</li>
+  <li><b>Leggi.</b> La mappa si colora e i pallini prendono i loro valori. Tocca un pallino per vedere la misura di quel pluviometro e il suo archivio giorno per giorno.</li>
+</ol>
+<p class="mini">Se tocchi un periodo senza aver scelto dove, il sito te lo dice: «Seleziona prima una regione».</p>
+
+<h2 id="dove"><span class="n">4</span>Scegliere dove guardare</h2>
+<p>Ci sono tre modi, e stanno tutti nello stesso pannello: quello che sul telefono si apre con <span class="ui">Tocca qui per scegliere la regione</span>.</p>
+
+<figure class="stretta">
+  <img src="dove.jpg" alt="Il pannello «Dove vuoi guardare?» con il tasto La mia posizione e la casella Cerca località" width="786" height="396" loading="lazy">
+  <figcaption>Dal telefono: il tasto della posizione, la casella di ricerca e, sotto, l'elenco delle regioni.</figcaption>
+</figure>
+
+<h3>La regione</h3>
+<p>Da computer le regioni sono caselle da spuntare, e puoi tenerne <b>fino a tre insieme</b>: utile quando il bosco che ti interessa sta a cavallo di un confine, per esempio Liguria ed Emilia sull'Appennino. Puoi anche cliccarle direttamente sulla mappa, e <span class="ui">↩ Indietro</span> ripulisce la selezione.</p>
+<p>Dal telefono si sceglie <b>una regione per volta</b>, perché tre regioni su uno schermo stretto non si leggono. La voce <span class="ui">Francia (FR) ▸</span> apre l'elenco delle tredici régions francesi.</p>
+
+<h3>La casella «Cerca località»</h3>
+<p>Scrivi il nome del paese, della frazione o del rifugio e scegli dalla tendina: la mappa ci va e accende da sola la regione giusta. Servono <b>almeno tre lettere</b>, perché con due i nomi possibili sono centinaia. Funziona anche con le località di Svizzera, Austria, Francia e Slovenia.</p>
+
+<h3>«La mia posizione»</h3>
+<p>Solo dal telefono, dove ha senso. Tocchi il tasto, il telefono chiede il permesso e, <b>se il GPS lo consente, la mappa ti porta dove sei</b> con la regione già accesa. Se il permesso è stato negato il tasto te lo dice, e si riattiva dalle impostazioni del telefono per questo sito.</p>
+<p class="mini">La posizione resta sul tuo telefono: non viene salvata e non viaggia nei link che condividi.</p>
+
+<h2 id="periodo"><span class="n">5</span>Scegliere il periodo</h2>
+<p>Il pannello del periodo somma la pioggia dei giorni che scegli. I tasti pronti sono sei, più le date libere.</p>
+
+<figure class="stretta">
+  <img src="periodo.jpg" alt="Il pannello del periodo: Ieri, 7, 10, 15, 20, 30 giorni, Date personalizzate, Radar pioggia, Mappa boschi e Piogge per funghi" width="786" height="654" loading="lazy">
+  <figcaption>Sei periodi pronti, le date libere, il radar, la mappa boschi e il tasto verde della finestra per i funghi.</figcaption>
+</figure>
+
+<table>
+<thead><tr><th>Tasto</th><th>Che cosa somma</th></tr></thead>
+<tbody>
+<tr><td>Ieri</td><td>il solo giorno di ieri</td></tr>
+<tr><td>7 giorni</td><td>gli ultimi sette giorni</td></tr>
+<tr><td>10 e 15 giorni</td><td>dieci o quindici giorni</td></tr>
+<tr><td>20 e 30 giorni</td><td>venti o trenta giorni</td></tr>
+<tr><td>Date personalizzate</td><td>l'intervallo che scrivi tu</td></tr>
+</tbody>
+</table>
+
+<p><b>La giornata di oggi è sempre esclusa</b>, e c'è scritto sul pannello. Non è una dimenticanza: il giorno in corso è per definizione incompleto, le agenzie lo chiudono e lo consolidano dopo, e mostrarlo vorrebbe dire dare un numero che entro sera sarà sbagliato per difetto. Per la pioggia in corso c'è <a href="#radar">la diretta radar</a>.</p>
+<p>Con le date libere si va indietro <b>quanto è lungo l'archivio di quella regione</b>, e l'archivio lo stiamo ancora costruendo. Oggi al nord e all'estero copre circa un anno, al centro e al sud pochi mesi, perché lì la raccolta è cominciata più tardi. Cresce di un giorno al giorno.</p>
+
+<h2 id="funghi"><span class="n">6</span>Il tasto «Piogge per funghi»</h2>
+<p>È il tasto più usato del sito, e non fa niente di magico: somma la pioggia caduta <b>da 13 a 20 giorni fa</b>, cioè otto giorni di accumulo in una finestra che sta nel passato.</p>
+<p>Il motivo è che un fungo non nasce il giorno della pioggia. Fra l'acqua che bagna il terreno e il fungo che si vede passano, per i porcini e in condizioni normali, <b>da 13 a 20 giorni</b>. La domanda utile quindi non è «dove ha piovuto ieri» ma «dove aveva piovuto quando serviva», e quella finestra la trovi con un tocco.</p>
+<div class="bosco"><b>Non è una previsione di funghi.</b> La pioggia è una condizione necessaria e non sufficiente: contano la temperatura, la quota, l'esposizione, il tipo di bosco, quanto era secco il terreno prima, e chi è passato prima di te. Il sito ti dice dove è piovuto nel momento giusto. Il resto è mestiere tuo.</div>
+<p>Se vuoi la stessa cosa già ordinata, senza toccare niente, ci sono le pagine <a href="/funghi/">Piogge per funghi</a>: la classifica delle località più bagnate in quella finestra, per tutta l'Italia e regione per regione.</p>
+
+<h2 id="leggere"><span class="n">7</span>Leggere la mappa</h2>
+
+<figure>
+  <img src="mappa.jpg" alt="La mappa della Liguria a 7 giorni: la sfumatura dei colori, i pallini dei pluviometri e il pannello della legenda" width="1440" height="587" loading="lazy">
+  <figcaption>Liguria a sette giorni. A sinistra i due pannelli, sotto la scala dei colori con i quattro numeri del periodo. Ogni pallino è un pluviometro.</figcaption>
+</figure>
+
+<h3>I pallini sono misure</h3>
+<p>Ogni pallino è un pluviometro vero, alle sue coordinate, e il numero che compare toccandolo è quello che ha misurato nel periodo scelto. Se due pallini vicini dicono numeri molto diversi non è un errore: un temporale estivo può scaricare quaranta millimetri su un versante e due chilometri più in là lasciare il terreno asciutto. È proprio questo che una rete di strumenti fa vedere e una previsione no.</p>
+
+<h3>Il colore fra un pallino e l'altro è un calcolo</h3>
+<p>La sfumatura non è misurata: è ricavata dai pluviometri vicini, dando più peso a quelli più prossimi. Dove la rete è fitta il colore è affidabile, dove è rada, per esempio in alta montagna, è un'indicazione e niente di più. <b>Se un numero ti interessa davvero, guarda il pallino, non il colore.</b></p>
+<div class="scala"></div>
+<div class="scala-l"><span>0</span><span>20</span><span>60</span><span>125</span><span>200</span><span>300+</span></div>
+<p class="mini">Millimetri cumulati sul periodo scelto. La scala non cambia mai, così venti millimetri hanno sempre lo stesso colore e due analisi si confrontano a occhio.</p>
+
+<h3>I quattro numeri</h3>
+<p>Sotto la scala ci sono <span class="ui">Staz.</span>, cioè quanti pluviometri hanno dato un dato in quel periodo, più <span class="ui">Max</span>, <span class="ui">Media</span> e <span class="ui">Min</span>. La media va presa con le pinze: in una regione che va dal mare a tremila metri, la media fra un pluviometro di pianura e uno di cresta non descrive nessuno dei due.</p>
+
+<h3>Se i pallini sembrano meno del dovuto</h3>
+<p>A mappa larga si diradano, perché oltre un certo numero si sovrappongono e diventano una macchia illeggibile. <b>Ingrandendo compaiono tutti</b>, e il numero in legenda è sempre quello vero. Lo zoom si muove a tacche piccole, così si inquadra una valle senza passare dal troppo largo al troppo stretto.</p>
+
+<h2 id="stazione"><span class="n">8</span>La scheda del pluviometro</h2>
+<p>Toccando un pallino si apre la sua scheda: nome, millimetri del periodo, comune, <b>quota</b> e <b>ranking</b>, cioè che posto occupa fra i pluviometri di quell'analisi. <span class="ui">#22 / 195</span> vuol dire ventiduesimo su centonovantacinque.</p>
+
+<figure class="stretta">
+  <img src="stazione.jpg" alt="La scheda di un pluviometro con le quattro linguette Pioggia, Temp, Vento, Umidità e il grafico della pioggia giorno per giorno" width="592" height="648" loading="lazy">
+  <figcaption>Torriglia Garaventa, 106,6 mm in sette giorni. Il grafico dice quanto è caduto ogni singolo giorno, e in fondo il tasto porta alla pagina del paese.</figcaption>
+</figure>
+
+<p>Sotto ci sono quattro schede, tutte su dati reali di quella stazione e giorno per giorno: <b>💧 Pioggia</b>, <b>🌡 Temp</b>, <b>💨 Vento</b> e <b>💦 Umidità</b>. La prossima sezione spiega che cosa dicono e perché contano.</p>
+<p>Non tutte le stazioni hanno tutti gli strumenti: un pluviometro puro misura solo la pioggia, e in quel caso la scheda lo dice invece di disegnare una linea inventata.</p>
+<p>Quando quel pluviometro ha una pagina tutta sua, in fondo alla scheda compare <span class="ui">vai alla scheda →</span>. Che cosa c'è in quella pagina sta <a href="#scheda-paese">poco più avanti</a>.</p>
+
+<h2 id="misure"><span class="n">9</span>Che cosa misura, e perché conta</h2>
+<p>Il sito nasce per la pioggia, ma le stesse stazioni misurano anche altro, e nei file salviamo tutto quello che pubblicano. Non è collezionismo: nel bosco quei numeri cambiano la lettura della stessa pioggia.</p>
+
+<h3>💧 La pioggia, in millimetri</h3>
+<p>Un millimetro è un litro d'acqua per metro quadrato. È la misura base, quella dei pallini e dei colori. Per dare un'idea: <b>sotto i 10 mm</b> in una finestra di otto giorni il terreno del bosco resta asciutto sotto la superficie, <b>fra i 20 e i 40</b> comincia a essere una pioggia che conta, <b>oltre i 50-60</b> è un evento che di solito basta a innescare, se la temperatura accompagna.</p>
+
+<!-- 13/9/2026: la figura e' la scheda di Platischis (Friuli) dopo il
+     temporale del 10 settembre, scattata a doppia densita' come le altre. -->
+<h3>⏱ L'intensità: in quante ore</h3>
+<p>Cinquanta millimetri in un pomeriggio e cinquanta distribuiti su sei giorni sono due storie diverse, e per il terreno la seconda è molto migliore. Dal 10 settembre 2026, per ogni giornata di pioggia, contiamo <b>le ore in cui ha piovuto</b> e <b>la punta caduta in un'ora</b>. Dividendo i millimetri per le ore si ottiene il ritmo, e lo traduciamo in una parola.</p>
+<table>
+<thead><tr><th>Millimetri all'ora</th><th>Come la chiamiamo</th><th>Nel bosco</th></tr></thead>
+<tbody>
+<tr><td>fino a 2</td><td>pioggia lenta</td><td>il terreno assorbe tutto, è l'acqua che serve</td></tr>
+<tr><td>da 2 a 6</td><td>pioggia media</td><td>bagna bene e in profondità</td></tr>
+<tr><td>oltre 6</td><td>pioggia battente</td><td>molta acqua corre via in superficie: nei millimetri si vede, nel terreno meno</td></tr>
+</tbody>
+</table>
+<p>Le due soglie sono quelle della convenzione meteorologica italiana.</p>
+<p><b>Dove la trovi.</b> Nella scheda del pluviometro, sotto il grafico della pioggia, c'è il giorno più piovoso del periodo con le sue ore e la sua punta. Tocca un'altra barra e la riga passa a quel giorno. Col periodo <span class="ui">Ieri</span> durata e punta stanno direttamente fra le righe in alto.</p>
+<figure class="stretta">
+  <img src="intensita.jpg" alt="La scheda del pluviometro di Platischis su sette giorni: sotto il grafico, 10 settembre, 143,7 mm in 19 ore, punta 30,3 mm in un'ora" width="592" height="726" loading="lazy">
+  <figcaption>Platischis, in Friuli: il 10 settembre 143,7 mm in 19 ore, con una punta di 30,3 mm in un'ora. La barra col bordo bianco è il giorno raccontato.</figcaption>
+</figure>
+<p>Le stesse due informazioni ci sono sotto il grafico delle <a href="/funghi/">pagine di paese</a>, e lì la giornata di pioggia più forte ha anche la parola: «Sono caduti in 19 ore, con una punta di 30,3 mm in un'ora: 7,6 mm all'ora, pioggia battente».</p>
+<p class="mini">Le ore le pubblicano Piemonte, Liguria, Lombardia, Friuli, le reti del centro-sud, Svizzera, Austria, Francia e Slovenia. Toscana, Emilia, Veneto, Trentino e Alto Adige danno solo il totale del giorno: lì la riga non compare.</p>
+
+<h3>🌡 La temperatura, minima e massima</h3>
+<p>È il secondo interruttore dopo la pioggia. Dopo una pioggia buona, quello che decide se e quando nasce qualcosa sono le notti: <b>minime che restano sopra i 10 gradi</b> tengono il bosco in moto, minime vicine allo zero lo fermano. In quota la stessa pioggia di agosto e quella di ottobre danno esiti diversi solo per questo. Il grafico della scheda mostra minima e massima giorno per giorno, e serve proprio a guardare l'andamento delle notti nei giorni dopo la pioggia.</p>
+
+<h3>💨 Il vento</h3>
+<p>Il vento asciuga. Una giornata ventosa dopo la pioggia toglie umidità alla lettiera molto più in fretta di una giornata ferma, e su un versante esposto la finestra utile si accorcia. Nel grafico c'è la <b>velocità media</b> del giorno, e nel dettaglio di ogni giornata anche la raffica. È anche il modo per riconoscere i giorni di burrasca in una serie.</p>
+
+<h3>💦 L'umidità dell'aria</h3>
+<p>Dice quanto il bosco sta restituendo l'acqua che ha preso. Dopo una pioggia, <b>giorni con umidità alta</b>, specie di notte, vogliono dire terreno che resta umido; aria secca e vento insieme sono la combinazione che asciuga tutto in due giorni. È l'umidità dell'aria misurata dalla stazione, non quella del terreno: quella nelle reti pubbliche non esiste, esistono solo modelli, e i modelli qui non li usiamo.</p>
+
+<figure class="tre">
+  <div><img src="temperatura.jpg" alt="Il grafico della temperatura minima e massima, giorno per giorno" width="592" height="684" loading="lazy"><span>🌡 Temperatura</span></div>
+  <div><img src="vento.jpg" alt="Il grafico della velocità media del vento, giorno per giorno" width="592" height="684" loading="lazy"><span>💨 Vento</span></div>
+  <div><img src="umidita.jpg" alt="Il grafico dell'umidità relativa minima e massima, giorno per giorno" width="592" height="684" loading="lazy"><span>💦 Umidità</span></div>
+  <figcaption>Le altre tre linguette dello stesso pluviometro, sugli stessi giorni. La temperatura ha due linee, massima e minima. Il vento ha la media giornaliera. L'umidità ha la massima, che è quasi sempre di notte, e la minima del pomeriggio.</figcaption>
+</figure>
+
+<h3>⛰ La quota</h3>
+<p>Compare nella scheda perché cambia tutto il resto: la stessa perturbazione lascia numeri diversi a trecento e a milleduecento metri, e la temperatura scende con l'altezza. Quando il pluviometro più vicino al tuo bosco sta molto più in basso, i suoi millimetri sono di solito una <b>sottostima</b> di quello che ha preso il versante. Dove l'ente non dichiara la quota la deduciamo dalla posizione, e in quel caso il numero ha davanti una tilde, per esempio «~ 1.240 m slm».</p>
+
+<div class="card"><p><b>Come si usano insieme.</b> La pioggia dice se l'acqua c'è stata. L'intensità dice se è entrata nel terreno o è corsa via. Temperatura, vento e umidità dicono se è rimasta lì abbastanza a lungo. Guardati i tre grafici della stessa stazione nei giorni dopo un evento: in mezzo minuto sai se quella pioggia ha ancora valore o se il bosco l'ha già persa.</p></div>
+
+<h3 id="scheda-paese">Che cosa trovi nella scheda del paese</h3>
+<p>È una pagina dedicata a quel pluviometro e al paese intorno, fatta per rispondere senza dover toccare niente. Dentro c'è:</p>
+<ul>
+  <li><b>quanta acqua è caduta nella finestra dei funghi</b>, col numero grande e le due date esatte, più quando è caduta l'ultima pioggia forte;</li>
+  <li><b>il grafico degli ultimi venticinque giorni</b>, con gli otto giorni della finestra in scuro e gli altri in chiaro: si vede a colpo d'occhio se la pioggia è arrivata al momento giusto o troppo tardi;</li>
+  <li><b>quattro numeri a confronto</b>: la finestra dei funghi, gli ultimi 7 giorni, gli ultimi 25 e quand'è stata l'ultima pioggia sopra i 30 millimetri;</li>
+  <li><b>temperatura e vento</b> dello stesso periodo, e un'anteprima della mappa già inquadrata sul posto;</li>
+  <li><b>il ritratto del posto</b> ricavato da tutto l'archivio: quanti millimetri in quante giornate bagnate, il giorno più bagnato, il mese più piovoso e che posto occupa fra i pluviometri da bosco della sua regione;</li>
+  <li><b>perché quel posto è in elenco</b>: c'è un pluviometro vero, sta fra i 200 e i 1.600 metri e ha almeno il 37% di bosco entro tre chilometri, misurato sulle mappe;</li>
+  <li>i link <b>alla zona</b> che lo contiene e a tutte le altre località della regione.</li>
+</ul>
+
+<figure>
+  <img src="scheda-paese.jpg" alt="La parte alta di una pagina di paese: titolo, millimetri della finestra dei funghi e grafico degli ultimi venticinque giorni" width="1100" height="1132" loading="lazy">
+  <figcaption>La parte alta della scheda di Torriglia Garaventa. Sotto continua col ritratto dell'archivio e coi link ai posti vicini.</figcaption>
+</figure>
+
+<h2 id="radar"><span class="n">10</span>La diretta radar</h2>
+<p>Il tasto <span class="ui">Radar pioggia</span> cambia modo: la sfumatura dei cumulati si spegne, i pallini spariscono, restano i confini e compare <b>la pioggia in corso adesso</b>. Tre tasti e una linea del tempo: <span class="ui">Adesso</span>, <span class="ui">▶ -2 ore</span> per rivedere da dove è arrivata, <span class="ui">+40 min</span> per i quaranta minuti seguenti. Si esce col tasto, o semplicemente scegliendo un periodo.</p>
+
+<figure class="media">
+  <img src="radar.jpg" alt="Il pannello della diretta radar con i tasti Adesso, meno due ore e più quaranta minuti e la scala in millimetri all'ora" width="893" height="538" loading="lazy">
+  <figcaption>Il pannello del radar: i tre tasti, la scala in millimetri all'ora e l'ora dell'ultima immagine. In questo scatto, una sera di settembre, non stava piovendo.</figcaption>
+</figure>
+
+<p>Due avvertenze oneste. La previsione a quaranta minuti <b>è una previsione</b>, dichiarata come tale, e non una misura. E il radar vede la pioggia dall'alto con una risoluzione di due chilometri: dice bene <i>dove</i> sta piovendo, mentre <i>quanto</i> è caduto resta il mestiere dei pluviometri, che restano la fonte di tutto il resto del sito.</p>
+<p class="mini">La fonte è il composito radar europeo EUMETNET OPERA, 155 radar in 24 paesi, servito dal progetto aperto LibreWXR.</p>
+
+<h2 id="boschi"><span class="n">11</span>La mappa boschi</h2>
+<p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti e abetine non danno gli stessi funghi. Il tasto <span class="ui">🌲 Mappa boschi</span>, accanto a quello del radar, cambia modo: la pioggia e i pallini spariscono, e <b>i boschi si colorano per tipo</b>, in otto gruppi.</p>
+
+<div class="bosco"><b>Vale solo per alcune regioni.</b> Per ora la mappa boschi c'è in nove: <b>Piemonte, Valle d'Aosta, Lombardia, Trentino, Veneto, Friuli Venezia Giulia, Liguria, Emilia-Romagna e Lazio</b>. Nelle altre regioni, e all'estero, i colori non ci sono e la legenda lo dice: «carta non ancora disponibile». Non riempiamo i vuoti con carte approssimative: una regione entra quando c'è una carta dei tipi di bosco abbastanza precisa.</div>
+
+<figure class="media">
+  <img src="boschi.jpg" alt="La mappa boschi in Val d'Aveto, fra Liguria ed Emilia: faggete in verde, castagneti in arancio, querceti in ocra, col pannello della legenda" width="1000" height="663" loading="lazy">
+  <figcaption>La Val d'Aveto, a cavallo fra Liguria ed Emilia: faggete in verde, castagneti in arancio, querceti in ocra. Sotto la legenda, le due carte usate. Al confine fra le due regioni le carte si uniscono senza stacchi.</figcaption>
+</figure>
+
+<h3>Come si usa</h3>
+<p>Scegli la regione e tocca il tasto: la mappa inquadra la regione. <b>Se prima hai cercato un paese, si apre sul paese</b>, abbastanza vicina da leggere i versanti. Da lontano i boschi sono una macchia unica: ingrandisci sulla valle che ti interessa. Si esce col tasto stesso, che nel frattempo è diventato <span class="ui">✕ Chiudi mappa</span>, con <span class="ui">↩ Indietro</span>, oppure scegliendo un periodo.</p>
+<p>Anche le pagine di paese e di zona delle regioni coperte hanno il tasto <span class="ui">Guarda i boschi</span>, che apre la mappa boschi già centrata su quel posto.</p>
+
+<figure class="stretta">
+  <img src="boschi-telefono.jpg" alt="La mappa boschi dal telefono intorno a Borzonasca, col segnaposto rosso e sotto la legenda degli otto gruppi" width="786" height="1272" loading="lazy">
+  <figcaption>Dal telefono, intorno a Borzonasca: castagneti in arancio sui versanti, faggete in verde più in là. Sotto la legenda e il nome della carta.</figcaption>
+</figure>
+
+<table>
+<thead><tr><th>Colore</th><th>Che cosa mette insieme</th></tr></thead>
+<tbody>
+<tr><td>faggete</td><td>i boschi di faggio</td></tr>
+<tr><td>castagneti</td><td>i boschi di castagno e le selve da frutto; in Veneto e in Friuli anche i rovereti, perché lì la carta li tiene insieme</td></tr>
+<tr><td>querceti</td><td>roverella, rovere, farnia, cerro, leccio e sughera, e i querco-carpineti</td></tr>
+<tr><td>abetine e peccete</td><td>abete bianco e abete rosso</td></tr>
+<tr><td>lariceti</td><td>larice e larice con cembro</td></tr>
+<tr><td>pinete</td><td>pino silvestre, nero, marittimo, domestico e d'Aleppo</td></tr>
+<tr><td>robinieti</td><td>i boschi di robinia</td></tr>
+<tr><td>altri boschi</td><td>tutto il resto: carpino nero e orniello, latifoglie miste, ontani e salici lungo i fiumi, mughete d'alta quota, e arbusteti e macchia dove la carta li conta</td></tr>
+</tbody>
+</table>
+
+<h3>Quanto è precisa</h3>
+<p>I disegni sono quelli delle <b>carte forestali delle Regioni</b>, fatte sulle foto aeree con un dettaglio che arriva al singolo versante. Ogni Regione però usa le sue categorie, che abbiamo raggruppato noi negli otto colori, e le carte non hanno tutte la stessa età: si va da quella del Veneto, aggiornata al 2005, a quella della Liguria, del 2025. Quale carta stai guardando lo dice la riga sotto la legenda, e l'elenco completo, con le licenze, sta in <a href="/fonti.html">Fonti e licenze</a>.</p>
+<p>Due avvertenze oneste. Il bosco della carta è quello di quando la carta è stata fatta: un taglio o un incendio recenti non ci sono. E la carta dice <b>che bosco c'è, non se ci sono i funghi</b>: per quello servono la pioggia al momento giusto, la temperatura e un giro a piedi.</p>
+
+<h2 id="condividere"><span class="n">12</span>Condividere</h2>
+<p>In alto nel pannello della legenda ci sono due tasti. Da computer si chiamano <span class="ui">🔗 Copia link</span> e <span class="ui">📷 Immagine</span>, dal telefono <span class="ui">🔗 Invia link</span> e <span class="ui">📷 Invia foto</span>, perché lì passano dal menu di condivisione.</p>
+<ul>
+  <li><b>Il link</b> porta con sé regioni, date, zoom e centro: chi lo apre vede esattamente la tua vista, anche se tu eri al computer e lui è al telefono.</li>
+  <li><b>L'immagine</b> è uno scatto della mappa come la stai vedendo. In fondo ha una striscia con l'indirizzo del sito e il periodo, perché una foto che gira nei gruppi senza date, dopo una settimana, non vuol dire più niente.</li>
+</ul>
+<p>Se hai ingrandito su una valle, lo scatto tiene <b>la tua</b> inquadratura. Se non hai toccato lo zoom, il sito allarga quanto serve a far entrare tutta la regione.</p>
+
+<h2 id="pagine"><span class="n">13</span>Le pagine del sito</h2>
+<p>Oltre alla mappa ci sono più di mille pagine, per chi vuole la risposta già scritta invece di cercarla.</p>
+<ul>
+  <li><b>Pagina di regione</b>, per esempio <a href="/liguria/">Dove ha piovuto in Liguria</a>: tutta la pioggia della regione, pianura compresa, con ieri, gli ultimi 7, 20 e 30 giorni, i posti più bagnati e l'elenco delle sue zone.</li>
+  <li><b>Pagina «Dove ha piovuto» di zona</b>, per esempio <a href="/zone/garfagnana/">Garfagnana</a>: la pioggia di ieri, degli ultimi 7 e 30 giorni in una valle sola, pluviometro per pluviometro.</li>
+</ul>
+<p>Poi ci sono le pagine per chi va a funghi. Contano la pioggia da 13 a 20 giorni fa, nei soli posti da bosco:</p>
+<ul>
+  <li><b>Pagina «Piogge per funghi» di regione</b>, per esempio <a href="/funghi/liguria/">Liguria</a>: in cima le zone della regione, dalla più bagnata.</li>
+  <li><b>Pagina di zona</b>, per esempio <a href="/funghi/zone/garfagnana/">Funghi in Garfagnana</a>: Garfagnana, Val Trebbia, Sila, Cansiglio e altre centodieci, ognuna coi pluviometri che le stanno dentro.</li>
+  <li><b>Pagina di paese</b>: la scheda del pluviometro più vicino, con l'archivio, quanto è piovuto nella finestra, da quanti giorni non piove e il ritratto del posto. Ci si arriva dalla mappa con <span class="ui">vai alla scheda →</span>, o cercando il nome del paese su Google.</li>
+  <li><b>L'indice <a href="/funghi/">Piogge per funghi</a></b>: la porta su tutte, con la classifica nazionale delle località più bagnate in questo momento.</li>
+</ul>
+<p>Da novembre a marzo, sotto il titolo delle pagine funghi, un avviso ricorda che si è ai margini o fuori stagione.</p>
+<p>Le pagine sono gusci fissi e i numeri li scaricano al momento: quello che leggi è sempre aggiornato a ieri.</p>
+
+<h2 id="consigli"><span class="n">14</span>Nove consigli</h2>
+<ol class="testo">
+  <li><b>Parti dal tuo paese, non dalla regione.</b> Scrivi il nome nella casella di ricerca: arrivi già inquadrato, e di lì allarghi.</li>
+  <li><b>Guarda il pallino, non la macchia di colore.</b> Il colore è calcolato, il pallino è misurato.</li>
+  <li><b>Tocca il pluviometro più vicino al bosco</b>, non quello del paese, e guarda la sua quota. Fra il fondovalle e i mille metri, con lo stesso temporale, i millimetri cambiano molto.</li>
+  <li><b>Apri sempre il grafico della pioggia.</b> Cinquanta millimetri in un pomeriggio e cinquanta in sei giorni sono due storie diverse.</li>
+  <li><b>Dopo la pioggia guarda le minime.</b> Notti sopra i dieci gradi tengono il bosco in moto, notti fredde lo fermano.</li>
+  <li><b>Confronta due periodi.</b> Prima <span class="ui">7 giorni</span> poi <span class="ui">30 giorni</span>: capisci subito se quella pioggia è un episodio o la coda di un mese piovoso.</li>
+  <li><b>Per i funghi usa il tasto dedicato</b>, non «Ieri». La pioggia che conta è quella di due settimane prima.</li>
+  <li><b>Ingrandisci prima di dire che un pluviometro manca.</b> A mappa larga i pallini si diradano per non sovrapporsi.</li>
+  <li><b>Se mandi la mappa a qualcuno, manda il link</b>, non lo screenshot: lui può muoverla, cambiare periodo e guardarsi il suo pluviometro.</li>
+</ol>
+
+<h2 id="domande"><span class="n">15</span>Domande frequenti</h2>
+<div class="faq">
+
+<div class="q"><h3>Sono previsioni?</h3>
+<p>No. Tutto quello che vedi è pioggia già caduta e misurata da strumenti a terra. L'unica eccezione è la previsione a quaranta minuti della diretta radar, che è dichiarata come tale.</p></div>
+
+<div class="q"><h3>Perché non c'è la pioggia di oggi?</h3>
+<p>Perché la giornata non è finita e le agenzie la consolidano dopo. Mostrarla vorrebbe dire dare un numero che entro sera sarà sbagliato per difetto. Per la pioggia in corso c'è la diretta radar.</p></div>
+
+<div class="q"><h3>Quanto indietro posso andare?</h3>
+<p>Quanto è lungo l'archivio di quella regione: circa un anno al nord e all'estero, pochi mesi al centro e al sud, dove la raccolta è cominciata più tardi. Cresce di un giorno al giorno.</p></div>
+
+<div class="q"><h3>Due pluviometri vicini dicono numeri molto diversi. È un errore?</h3>
+<p>Quasi sempre no, è la realtà dei temporali: sono fenomeni piccoli, e un versante può prendere tutto mentre quello accanto resta asciutto.</p></div>
+
+<div class="q"><h3>Il colore dice quaranta e il pallino dodici. Chi ha ragione?</h3>
+<p>Il pallino. Il colore fra i pluviometri è ricavato da quelli intorno, e dove la rete è rada sbaglia. Fidati sempre della misura.</p></div>
+
+<div class="q"><h3>Perché il mio pluviometro non c'è?</h3>
+<p>Tre possibilità: la mappa è troppo larga e i pallini sono diradati, quindi ingrandisci; lo strumento non ha pubblicato abbastanza giorni in quel periodo, e allora resta fuori; oppure quella rete non pubblica dati aperti e non ce l'abbiamo. Nel dubbio <a href="/fonti.html#feedback">scrivici</a> col nome del posto.</p></div>
+
+<div class="q"><h3>Perché nella mia regione la mappa boschi non c'è?</h3>
+<p>Perché quella Regione non pubblica una carta dei tipi di bosco abbastanza precisa, o non l'abbiamo ancora aggiunta. Per ora le regioni sono nove, elencate nella <a href="#boschi">sezione della mappa boschi</a>; le altre entrano una alla volta.</p></div>
+
+<div class="q"><h3>Ogni quanto si aggiorna?</h3>
+<p>I dati vengono raccolti più volte al giorno, con poche richieste e distanziate, per non pesare sui server delle agenzie. Quello che vedi arriva fino a ieri.</p></div>
+
+<div class="q"><h3>Posso usare le immagini e i dati?</h3>
+<p>Le immagini della mappa sì, citando il sito: la striscia in fondo allo scatto lo fa già. I dati appartengono alle agenzie, che ne sono le uniche titolari, e le licenze stanno in <a href="/fonti.html">Fonti e licenze</a>.</p></div>
+
+<div class="q"><h3>Il sito è gratuito? Ci sono pubblicità?</h3>
+<p>È gratuito, senza pubblicità, senza registrazione e senza newsletter. Se ti è utile, il modo di dire grazie è <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" onclick="try{gtag('event','click_youtube',{pulsante:'guida-grazie'})}catch(e){}">iscriverti al canale</a>.</p></div>
+
+<div class="q"><h3>Questo è un sito ufficiale di qualche ente?</h3>
+<p>No. È un progetto indipendente, senza nessun rapporto con le agenzie di cui usa i dati aperti. Le fonti sono sempre citate, e le richieste degli enti titolari hanno la precedenza su tutto.</p></div>
+
+<div class="q"><h3>Mi garantisce che trovo i funghi?</h3>
+<p>No, e nessuno può. Il sito dice dove è piovuto e quando. Temperatura, quota, bosco, terreno e fortuna restano fuori.</p></div>
+
+</div>
+
+<!-- I dati strutturati delle domande. ⚠️ Il testo deve combaciare con quello
+     visibile qui sopra: se divergono, Google lo segnala e lo segnala tardi. Si
+     tengono le sei piu' cercate, non tutte: l'elenco va mantenuto a mano, e
+     mantenerne dodici vuol dire dimenticarsene. -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Sono previsioni?","acceptedAnswer":{"@type":"Answer","text":"No. Tutto quello che vedi è pioggia già caduta e misurata da strumenti a terra. L'unica eccezione è la previsione a quaranta minuti della diretta radar, che è dichiarata come tale."}},
+{"@type":"Question","name":"Perché non c'è la pioggia di oggi?","acceptedAnswer":{"@type":"Answer","text":"Perché la giornata non è finita e le agenzie la consolidano dopo. Mostrarla vorrebbe dire dare un numero che entro sera sarà sbagliato per difetto. Per la pioggia in corso c'è la diretta radar."}},
+{"@type":"Question","name":"Quanto indietro posso andare?","acceptedAnswer":{"@type":"Answer","text":"Quanto è lungo l'archivio di quella regione: circa un anno al nord e all'estero, pochi mesi al centro e al sud, dove la raccolta è cominciata più tardi. Cresce di un giorno al giorno."}},
+{"@type":"Question","name":"Due pluviometri vicini dicono numeri molto diversi. È un errore?","acceptedAnswer":{"@type":"Answer","text":"Quasi sempre no, è la realtà dei temporali: sono fenomeni piccoli, e un versante può prendere tutto mentre quello accanto resta asciutto."}},
+{"@type":"Question","name":"Perché il mio pluviometro non c'è?","acceptedAnswer":{"@type":"Answer","text":"Tre possibilità: la mappa è troppo larga e i pallini sono diradati, quindi ingrandisci; lo strumento non ha pubblicato abbastanza giorni in quel periodo, e allora resta fuori; oppure quella rete non pubblica dati aperti e non ce l'abbiamo."}},
+{"@type":"Question","name":"Il sito è gratuito? Ci sono pubblicità?","acceptedAnswer":{"@type":"Answer","text":"È gratuito, senza pubblicità, senza registrazione e senza newsletter."}}
+]}</script>
+
+<h2 id="limiti"><span class="n">16</span>Avvisi, ritardi e limiti</h2>
+<p>Il sito dichiara i propri limiti nel punto in cui contano, cioè addosso ai numeri. Se vedi una scritta rossa nel pannello, è una di queste.</p>
+
+<h3>Le stime</h3>
+<p>Quasi tutto quello che vedi è misurato. Restano due casi in cui il valore è una stima da modello, e sono sempre marcati come tali: l'<b>archivio più vecchio</b> di quando abbiamo cominciato a raccogliere una certa rete, e i <b>rari giorni</b> in cui l'agenzia non ha pubblicato. Una stima non viene mai spacciata per misura. L'<b>Abruzzo</b> per ora è tutto così, perché una fonte di stazione aperta non l'abbiamo ancora trovata, e c'è scritto.</p>
+
+<h3>I ritardi</h3>
+<p>Le agenzie chiudono e consolidano i dati con tempi diversi: il Friuli può arrivare fino a 48 ore dopo, la Slovenia ha un ritardo dichiarato di 36 ore, qualche rete del centro-sud pubblica a giorni alterni. Quando un periodo cade dentro un ritardo il sito lo scrive invece di mostrare uno zero, perché <b>«non pubblicato» non vuol dire «non è piovuto»</b>.</p>
+
+<h3>I pluviometri fermi e i pallini che mancano</h3>
+<p>Uno strumento può guastarsi, e allora smette di pubblicare o pubblica zero. Un controllo automatico lo cerca ogni settimana. E se un pluviometro ha dato un dato per <b>meno del 60% dei giorni</b> del periodo scelto, il suo pallino non partecipa: sommare quattro giorni su trenta e chiamarli «trenta giorni» sarebbe un numero falso, più basso del vero.</p>
+
+<h3>Quando fa fede l'agenzia</h3>
+<p>I valori possono differire da quelli pubblicati dall'agenzia per orari di consolidamento diversi o per correzioni successive alla fonte. <b>In caso di differenza fa fede il dato dell'agenzia titolare.</b> Se ne trovi uno che non torna, <a href="/fonti.html#feedback">scrivici</a>: le segnalazioni sugli errori sono la cosa più utile che ci puoi dare.</p>
+
+<h2 id="mappa-sito"><span class="n">17</span>Mappa del sito</h2>
+<p>Ogni regione ha due pagine: una con <b>tutta la pioggia</b>, pianura compresa, e una
+con i <b>soli posti da bosco</b>, nella finestra da 13 a 20 giorni fa che serve per i funghi.</p>
+<!-- ⚠️ ELENCO SCRITTO DA .github/scripts/genera-pagine-regione.js fra i due
+     segnaposti qui sotto: NON modificarlo a mano. Batterlo a mano vorrebbe dire
+     un secondo elenco di regioni da tenere allineato al primo, ed e' l'errore
+     che questo progetto ha gia' pagato. Se una regione si aggiunge o si toglie,
+     si rilancia il generatore e questa sezione si riscrive da sola. -->
+<div class="pagine">
+<!-- PAGINE:INIZIO -->
+<p><b>Dove ha piovuto: tutti i pluviometri, pianura compresa</b></p>
+<p><a href="https://precipitazioni.avventuremicologiche.it/lombardia/">Lombardia</a> · <a href="https://precipitazioni.avventuremicologiche.it/piemonte/">Piemonte</a> · <a href="https://precipitazioni.avventuremicologiche.it/valledaosta/">Valle d'Aosta</a> · <a href="https://precipitazioni.avventuremicologiche.it/liguria/">Liguria</a> · <a href="https://precipitazioni.avventuremicologiche.it/emilia/">Emilia-Romagna</a> · <a href="https://precipitazioni.avventuremicologiche.it/veneto/">Veneto</a> · <a href="https://precipitazioni.avventuremicologiche.it/friuli/">Friuli</a> · <a href="https://precipitazioni.avventuremicologiche.it/trentino/">Trentino</a> · <a href="https://precipitazioni.avventuremicologiche.it/altoadige/">Alto Adige</a> · <a href="https://precipitazioni.avventuremicologiche.it/toscana/">Toscana</a> · <a href="https://precipitazioni.avventuremicologiche.it/umbria/">Umbria</a> · <a href="https://precipitazioni.avventuremicologiche.it/marche/">Marche</a> · <a href="https://precipitazioni.avventuremicologiche.it/lazio/">Lazio</a> · <a href="https://precipitazioni.avventuremicologiche.it/molise/">Molise</a> · <a href="https://precipitazioni.avventuremicologiche.it/campania/">Campania</a> · <a href="https://precipitazioni.avventuremicologiche.it/puglia/">Puglia</a> · <a href="https://precipitazioni.avventuremicologiche.it/basilicata/">Basilicata</a> · <a href="https://precipitazioni.avventuremicologiche.it/calabria/">Calabria</a> · <a href="https://precipitazioni.avventuremicologiche.it/sicilia/">Sicilia</a> · <a href="https://precipitazioni.avventuremicologiche.it/sardegna/">Sardegna</a> · <a href="https://precipitazioni.avventuremicologiche.it/svizzera/">Svizzera</a> · <a href="https://precipitazioni.avventuremicologiche.it/austria/">Austria</a> · <a href="https://precipitazioni.avventuremicologiche.it/slovenia/">Slovenia</a></p>
+<div class="bosco">
+<p><b>🍄 Dove potrebbero esserci le prime nascite di funghi</b></p>
+<p><a href="https://precipitazioni.avventuremicologiche.it/funghi/">La nostra selezione, le località più bagnate</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/lombardia/">Lombardia</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/piemonte/">Piemonte</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/liguria/">Liguria</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/emilia/">Emilia-Romagna</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/veneto/">Veneto</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/friuli/">Friuli</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/trentino/">Trentino</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/altoadige/">Alto Adige</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/toscana/">Toscana</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/umbria/">Umbria</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/marche/">Marche</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/lazio/">Lazio</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/campania/">Campania</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/puglia/">Puglia</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/basilicata/">Basilicata</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/calabria/">Calabria</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/sicilia/">Sicilia</a> · <a href="https://precipitazioni.avventuremicologiche.it/funghi/sardegna/">Sardegna</a></p>
+</div>
+<!-- PAGINE:FINE -->
+</div>
+
+<p class="fine">Non hai trovato la risposta? Scrivici a
+<a href="mailto:avventuremicologiche@gmail.com">avventuremicologiche@gmail.com</a>,
+oppure guarda <a href="/fonti.html">Fonti e licenze</a>.
+Torna alla <a href="/">mappa dei pluviometri</a>.</p>
+
+<p class="mini" style="margin-top:18px">Dati © delle rispettive agenzie ed enti. Questo sito li aggrega e li visualizza citando la fonte, senza fini di lucro.</p>
+
+</main>
+</div>
+
+</body>
+</html>

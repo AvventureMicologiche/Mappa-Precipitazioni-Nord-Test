@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Piogge per funghi in Trentino: dove ha piovuto davvero</title>
-<meta name="description" content="Dove e' caduta l'acqua nelle zone da bosco del Trentino, misurata dai pluviometri di Meteotrentino. La finestra da 13 a 20 giorni fa, quella che conta per i funghi.">
+<title>Dove andare a funghi in Trentino oggi: le zone dove ha piovuto</title>
+<meta name="description" content="Dove andare a funghi in Trentino oggi: le zone e i posti da bosco dove è piovuto al momento giusto, da 13 a 20 giorni fa.">
 <link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/trentino/">
-<meta property="og:title" content="Piogge per funghi in Trentino">
+<meta property="og:title" content="Dove andare a funghi in Trentino oggi">
 <meta property="og:description" content="Dove e' caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/trentino/">
@@ -143,6 +143,11 @@ a:active .vai-mappa{transform:translateY(2px);
   .capo-btn{width:100%;text-align:center;}
 }
 nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
+ol.zone-dove{list-style:none;margin:10px 0 26px;padding:0;counter-reset:z;}
+ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
+ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
+ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
+ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;}
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
@@ -158,18 +163,20 @@ nav.altre a{color:var(--blu);}
 
 <p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi, tutte le regioni</a></p>
 
-<h1>Dove potrebbero esserci le prime nascite di funghi in Trentino</h1>
-<p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
+<h1>Dove andare a funghi in Trentino oggi</h1>
+<div id="stagione"></div>
+<script>(function(){var m=new Date().getMonth()+1,t=null;if(m===12||m===1||m===2)t="<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.";else if(m===11||m===3)t="<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in autunno pieno.";if(t){var s=document.getElementById("stagione");s.innerHTML=t;s.style.display="block";}})();</script>
+<p class="sotto">Si va dove ha piovuto al momento giusto. Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
 dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella <b>da 13 a 20
 giorni fa</b>, misurata dai pluviometri di Meteotrentino nei posti da bosco del Trentino. In cima alla
 classifica ci sono quelli dove ne è caduta di più.</p>
 
 
 <div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo solo
-gli otto giorni della finestra dei funghi. Per la pioggia di ieri, quella degli ultimi 20 giorni
-o un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=trentino&amp;g=20"
-style="color:var(--blu);font-weight:700">apri la mappa in Trentino</a> e cambia le date
-da lì.</div>
+gli otto giorni della finestra dei funghi. Per la pioggia di ieri e degli ultimi 30 giorni c’è
+<a href="https://avventurepluvio-test.netlify.app/trentino/" style="color:var(--blu);font-weight:700">dove ha piovuto in Trentino</a>;
+per un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=trentino&amp;g=20"
+style="color:var(--blu)">apri la mappa in Trentino</a>.</div>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -178,12 +185,25 @@ da lì.</div>
   lo conosci tu meglio di qualunque sito.</p>
 </div>
 
-<div id="stagione"></div>
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="guasto"></div>
 <div id="testa"></div>
 
-<h2>La classifica: i posti da bosco più bagnati del Trentino</h2>
+
+<h2>Le zone dove andare a funghi del Trentino</h2>
+<p class="nota">Le valli da bosco del Trentino, <b>dalla più bagnata</b>. Il numero è la pioggia
+caduta da 13 a 20 giorni fa, in media sui pluviometri della zona: lo stesso che trovi
+aprendola.</p>
+<ol class="zone-dove" id="zone-dove">
+<li data-posti="trentino:T0015,trentino:T0469,trentino:T0422"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/altopiano-del-tesino/">Altopiano del Tesino</a><span class="zmm"></span></li>
+<li data-posti="trentino:T0182,trentino:T0179,trentino:T0177,trentino:T0411"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/giudicarie/">Giudicarie</a><span class="zmm"></span></li>
+<li data-posti="trentino:T0399,trentino:T0236,trentino:T0417,trentino:T0088"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-non/">Val di Non</a><span class="zmm"></span></li>
+<li data-posti="trentino:T0009,trentino:T0210,trentino:T0032,trentino:T0369,trentino:T0148"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-terragnolo/">Val Terragnolo</a><span class="zmm"></span></li>
+<li data-posti="trentino:T0368,trentino:T0414,trentino:T0189"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/valle-dei-laghi/">Valle dei Laghi</a><span class="zmm"></span></li>
+<li data-posti="lombardia:14476,lombardia:14586,lombardia:22580,trentino:T0393"><a href="https://avventurepluvio-test.netlify.app/funghi/zone/valle-del-chiese/">Valle del Chiese</a><span class="zmm"></span></li>
+</ol>
+
+<h2>Piogge per funghi: i posti da bosco più bagnati del Trentino</h2>
 <div class="spiega" id="finestra"></div>
 <div id="tabella"></div>
 <p class="nota" id="notaforte"></p>
@@ -199,6 +219,21 @@ da lì.</div>
 </a>
 <p class="nota" style="text-align:center;margin-bottom:26px;">Più il colore è acceso, più acqua è
 caduta. Ogni pallino è un pluviometro: cliccalo e vedi il suo storico.</p>
+
+<h2>Che boschi ci sono in Trentino?</h2>
+<p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti
+e abetine non danno gli stessi funghi. La mappa boschi colora i boschi in Trentino per tipo,
+con i disegni della carta forestale della Regione. Avvicinati sulla zona che ti interessa.</p>
+<a href="https://avventurepluvio-test.netlify.app/?r=trentino&amp;boschi=1" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'funghi-trentino-boschi'})}catch(e){}">
+  <img src="https://avventurepluvio-test.netlify.app/tessere-boschi/anteprime/trentino.jpg"
+       alt="La mappa boschi in Trentino: faggete, castagneti, querceti e abetine colorati per tipo"
+       width="1600" height="1000" loading="lazy"
+       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
+  <span class="vai-mappa">Guarda i boschi in Trentino →</span>
+</a>
+<p class="nota" style="margin-bottom:26px;">La fonte è la carta «Tipi forestali 2021»: dice che bosco
+c'è, non se quest'anno ci sono nati funghi.</p>
 
 <h2 style="margin-bottom:12px">Come scegliamo i posti</h2>
 <div class="metodo">
@@ -228,11 +263,6 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dai c
 pluviometri vicini. Sono i pluviometri in mezzo al bosco del Trentino.</p>
 <nav class="altre"><p><a href="https://avventurepluvio-test.netlify.app/funghi/trentino/ala-ronchi/">Ala (Ronchi)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/bezzecca-spessa/">Bezzecca (Spessa)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/bieno/">Bieno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/canal-san-bovo/">Canal San Bovo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/canazei-gries/">Canazei (Gries)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/caoria/">Caoria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/capriana/">Capriana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/castello-tesino-le-parti/">Castello Tesino (Le Parti)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/cembra/">Cembra</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/centa-san-nicolo/">Centa San Nicolo'</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/dro-marocche/">Dro (Marocche)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/folgaria/">Folgaria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/folgarida-alta/">Folgarida Alta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/fondo/">Fondo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/giustino-frana/">Giustino (frana)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/grigno/">Grigno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/lavarone-chiesa/">Lavarone (Chiesa)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/male/">Male'</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/mezzana/">Mezzana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/mezzano/">Mezzano</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/moena-diga-pezze/">Moena (Diga Pezze')</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/molveno/">Molveno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/montagne-larzana/">Montagne (Larzana)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/monte-bondone-viote/">Monte Bondone (Viote)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/mori-loppio/">Mori (Loppio)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/passo-cereda/">Passo Cereda</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/passo-mendola/">Passo Mendola</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/passo-pian-delle-fugazze/">Passo Pian Delle Fugazze</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/passo-sommo/">Passo Sommo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/peio/">Peio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/pieve-di-bono/">Pieve Di Bono</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/pieve-tesino-malga-sorgazza/">Pieve Tesino (Malga Sorgazza)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/pinzolo/">Pinzolo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/predazzo/">Predazzo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/rabbi-san-bernardo/">Rabbi (San Bernardo)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/romeno/">Romeno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/rumo-lanza/">Rumo (Lanza)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/san-lorenzo-in-banale-pergoletti/">San Lorenzo In Banale (Pergoletti)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/san-martino-di-castrozza/">San Martino di Castrozza</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/sant-orsola-terme/">Sant'Orsola Terme</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/santa-massenza-centrale/">Santa Massenza (Centrale)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/spormaggiore/">Spormaggiore</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/storo/">Storo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/telve-pontarso/">Telve (Pontarso)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/tenno/">Tenno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/terragnolo-piazza/">Terragnolo (Piazza)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/tione/">Tione</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/tonadico-castelpietra/">Tonadico (Castelpietra)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/tremalzo/">Tremalzo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/tres/">Tres</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/val-di-breguzzo-ponte-arno/">Val di Breguzzo (Ponte Arno')</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/val-noana-diga/">Val Noana (Diga)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/val-sella-montagnola/">Val Sella (Montagnola)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/vallarsa-parrocchia/">Vallarsa (Parrocchia)</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/villa-rendena-rifugio-gork/">Villa Rendena (Rifugio Gork)</a></p></nav>
 
-
-<h2 style="margin-top:30px">Le valli e le zone del Trentino</h2>
-<p class="nota">Una zona mette insieme i pluviometri di tutta la valle: comoda quando
-il posto preciso non l'hai ancora scelto.</p>
-<nav class="altre"><p><a href="https://avventurepluvio-test.netlify.app/funghi/zone/altopiano-del-tesino/">Altopiano del Tesino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/giudicarie/">Giudicarie</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-non/">Val di Non</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-terragnolo/">Val Terragnolo</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valle-dei-laghi/">Valle dei Laghi</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valle-del-chiese/">Valle del Chiese</a></p></nav>
 
 <h2 style="margin-top:30px">Tutta la pioggia in Trentino</h2>
 <p>Questa pagina guarda solo i pluviometri in mezzo al bosco. Per la regione intera, pianura compresa, c'è <a href="https://avventurepluvio-test.netlify.app/trentino/">dove ha piovuto in Trentino</a>: oltre 100 pluviometri di Meteotrentino.</p>
@@ -280,34 +310,8 @@ il posto preciso non l'hai ancora scelto.</p>
   function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function uno(n){ return Math.round(n*10)/10; }
 
-  /* ⚠️ LA RIGA DI STAGIONE. Da dicembre a febbraio questa pagina non serve a
-     molto e dirlo e' piu' onesto che far finta di niente: 3bmeteo negli
-     stessi mesi tiene su la sua e stampa quindici righe di «Assente»
-     (controllato negli archivi del web, copie del 5 e del 31 gennaio 2026).
-     La pagina pero' NON si toglie: un indirizzo tolto e ripubblicato perde
-     l'indicizzazione, e quella si ricostruisce in mesi.
-     Novembre e marzo sono di passaggio e hanno un tono piu' morbido.
-     ⚠️ NIENTE APOSTROFI DRITTI DENTRO QUESTE STRINGHE. Il testo esce da un
-     template literal: un ' scritto qui viene consumato dal generatore e
-     nella pagina arriva un apostrofo NUDO, che spezza la stringa e rompe
-     TUTTO il blocco (pagina bianca, ferma su «Sto leggendo i pluviometri»).
-     Successo il 2/9/2026 con «a quest'epoca». Si usa quello tipografico. */
-  (function(){
-    var m = new Date().getMonth() + 1;
-    var testo = null;
-    if (m === 12 || m === 1 || m === 2)
-      testo = '<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi '
-        + 'ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano '
-        + 'veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.';
-    else if (m === 11 || m === 3)
-      testo = '<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto '
-        + 'dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in '
-        + 'autunno pieno.';
-    if (testo) {
-      var s = document.getElementById('stagione');
-      s.innerHTML = testo; s.style.display = 'block';
-    }
-  }());
+  /* La riga di stagione non sta piu' qui: dal 13/9/2026 la scrive
+     lib-stagione.js subito sotto il titolo, uguale per regioni e zone. */
 
   /* ── STRADA NORMALE: i numeri gia' fatti, UNA richiesta ──────────────────
      Fino al 2/9/2026 questa pagina scaricava i 25 file giornalieri e si faceva
@@ -409,7 +413,53 @@ il posto preciso non l'hai ancora scelto.</p>
       + '<a href="'+MAPPA+'?r='+REG+'">sulla mappa</a>.';
   }
 
+  /* LE ZONE DOVE ANDARE (13/9/2026). Qui si scrivono i millimetri e si
+     RIORDINANO i nodi, non si rifa la lista con innerHTML: i link devono
+     restare quelli cotti, che sono quelli che Google legge anche dopo il
+     rendering. Si chiama PRIMA del taglio ai primi 15 posti.
+     ⚠️ IL NUMERO E LA MEDIA DI TUTTI I PLUVIOMETRI DELLA ZONA, anche di altre
+     regioni: e quello che mostra la pagina della zona, e chi clicca deve
+     ritrovarlo uguale. I file delle regioni vicine sono pochi chilobyte e si
+     chiedono solo se una zona li nomina. */
+  function ordinaZone(tutte){
+    var lista = document.getElementById('zone-dove');
+    if (!lista) return;
+    var mm = {};
+    mm[REG] = {};
+    tutte.forEach(function(r){ mm[REG][r.id] = r.mm; });
+    var voci = [].slice.call(lista.children);
+    var altre = {};
+    voci.forEach(function(li){
+      li.posti = li.getAttribute('data-posti').split(',').filter(Boolean)
+        .map(function(x){ var k = x.split(':'); return { reg: k[0], id: k[1] }; });
+      li.posti.forEach(function(q){ if (q.reg !== REG) altre[q.reg] = 1; });
+    });
+    Promise.all(Object.keys(altre).map(function(reg){
+      return fetch(BASE + 'funghi/' + reg + '.json')
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .catch(function(){ return null; })
+        .then(function(j){
+          mm[reg] = {};
+          if (j && j.posti) Object.keys(j.posti).forEach(function(id){ mm[reg][id] = j.posti[id][0]; });
+        });
+    })).then(function(){
+      voci.forEach(function(li){
+        var v = li.posti.map(function(q){ return (mm[q.reg] || {})[q.id]; })
+          .filter(function(x){ return x != null; });
+        li.valore = v.length ? v.reduce(function(a,b){ return a + b; }, 0) / v.length : null;
+        li.querySelector('.zmm').textContent =
+          li.valore == null ? '' : uno(li.valore).toFixed(1).replace('.', ',') + ' mm';
+      });
+      voci.sort(function(a,b){
+        if (a.valore == null) return 1;
+        if (b.valore == null) return -1;
+        return b.valore - a.valore;
+      }).forEach(function(li){ lista.appendChild(li); });
+    });
+  }
+
   function mostra(righe, oggiISO){
+    ordinaZone(righe);
     righe = righe.sort(function(a,b){ return b.mm - a.mm; }).slice(0, QUANTI);
     var maxMm = Math.max.apply(null, righe.map(function(r){ return Math.max(r.mm, r.mm7, r.mm25); }).concat([1]));
 

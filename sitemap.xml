@@ -5,11 +5,11 @@
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>https://avventurepluvio-test.netlify.app/sitemap-mappa.xml</loc>
-    <lastmod>2026-09-09</lastmod>
+    <lastmod>2026-09-13</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://avventurepluvio-test.netlify.app/sitemap-funghi.xml</loc>
-    <lastmod>2026-09-12</lastmod>
+    <lastmod>2026-09-13</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://avventurepluvio-test.netlify.app/sitemap-localita.xml</loc>
@@ -17,6 +17,10 @@
   </sitemap>
   <sitemap>
     <loc>https://avventurepluvio-test.netlify.app/sitemap-zone.xml</loc>
-    <lastmod>2026-09-12</lastmod>
+    <lastmod>2026-09-13</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://avventurepluvio-test.netlify.app/sitemap-zone-piogge.xml</loc>
+    <lastmod>2026-09-13</lastmod>
   </sitemap>
 </sitemapindex>

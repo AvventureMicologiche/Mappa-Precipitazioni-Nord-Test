@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Piogge per funghi a Pieve Santo Stefano</title>
-<meta name="description" content="Quanta pioggia è caduta a Pieve Santo Stefano (AR, 434 m), misurata dal pluviometro di SIR Toscana. La finestra da 13 a 20 giorni fa, quella che conta per i funghi.">
+<title>Funghi a Pieve Santo Stefano oggi: piogge per funghi</title>
+<meta name="description" content="Funghi a Pieve Santo Stefano oggi: la pioggia caduta da 13 a 20 giorni fa, misurata dal pluviometro. Aggiornato ogni giorno.">
 <link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/toscana/pieve-santo-stefano-ar/">
-<meta property="og:title" content="Piogge per funghi a Pieve Santo Stefano">
+<meta property="og:title" content="Funghi a Pieve Santo Stefano oggi">
 <meta property="og:description" content="La pioggia vera, misurata dal pluviometro, giorno per giorno.">
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/toscana/pieve-santo-stefano-ar/">
@@ -138,6 +138,11 @@ a:active .vai-mappa{transform:translateY(2px);
   .capo-btn{width:100%;text-align:center;}
 }
 nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
+ol.zone-dove{list-style:none;margin:10px 0 26px;padding:0;counter-reset:z;}
+ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
+ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
+ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
+ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;}
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
@@ -152,6 +157,13 @@ nav.altre a{color:var(--blu);}
 .gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
 .gg-x span{flex:1;text-align:center;}
 .gg-leg{font-size:13.5px;color:#555;margin-top:8px;}
+/* 13/9/2026: la riga dell'intensita' del giorno scelto, e la sua barra */
+.gg-int{font-size:14.5px;color:#333;margin:8px 0 0;}
+.gg-int:empty{display:none;}
+.gg-int b{color:var(--blu-scuro);}
+.gg-invito{display:block;font-size:13px;color:#6b7a8d;margin-top:2px;}
+.gg .b{cursor:pointer;}
+.gg .b.scelto i{box-shadow:0 0 0 2px #f0a000;}
 .gg-leg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
 /* le due linee della temperatura: stessa larghezza del grafico della pioggia,
    cosi' i giorni stanno incolonnati e si leggono insieme */
@@ -211,7 +223,9 @@ nav.altre .io{font-weight:700;color:var(--blu-scuro);}
 <p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/" style="color:var(--blu)">Toscana</a></p>
 
 
-<h1>Quanta pioggia è caduta a Pieve Santo Stefano da 13 a 20 giorni fa</h1>
+<h1>Funghi a Pieve Santo Stefano oggi: la pioggia di 13-20 giorni fa</h1>
+<div id="stagione"></div>
+<script>(function(){var m=new Date().getMonth()+1,t=null;if(m===12||m===1||m===2)t="<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.";else if(m===11||m===3)t="<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in autunno pieno.";if(t){var s=document.getElementById("stagione");s.innerHTML=t;s.style.display="block";}})();</script>
 <p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
 dodici o tredici giorni. Per questo conta la pioggia di due settimane fa e non quella di ieri.
 I millimetri li misura il pluviometro di SIR Toscana: AR · 434 m slm ·
@@ -219,10 +233,10 @@ I millimetri li misura il pluviometro di SIR Toscana: AR · 434 m slm ·
 
 
 <div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo solo
-gli otto giorni della finestra dei funghi. Per la pioggia di ieri, quella degli ultimi 20 giorni
-o un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=toscana,emilia,umbria&amp;g=20&amp;pl=43.669,12.043&amp;pn=Pieve%20Santo%20Stefano"
-style="color:var(--blu);font-weight:700">apri Pieve Santo Stefano sulla mappa</a> e cambia
-le date da lì.</div>
+gli otto giorni della finestra dei funghi. Per la pioggia di ieri e degli ultimi 30 giorni c’è
+<a href="https://avventurepluvio-test.netlify.app/zone/valtiberina/" style="color:var(--blu);font-weight:700">dove ha piovuto in Valtiberina</a>;
+per un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=toscana,emilia,umbria&amp;g=20&amp;pl=43.669,12.043&amp;pn=Pieve%20Santo%20Stefano"
+style="color:var(--blu)">apri Pieve Santo Stefano sulla mappa</a>.</div>
 
 <div class="patto">
   <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
@@ -239,7 +253,9 @@ le date da lì.</div>
 <h2>Giorno per giorno, ultimi 25 giorni</h2>
 <div id="grafico"></div>
 <div class="tre" id="tre"></div>
+<p class="nota" id="ieri"></p>
 <p class="nota" id="notaforte"></p>
+<p class="nota" id="notaintensita"></p>
 
 <div id="meteo"></div>
 
@@ -303,13 +319,13 @@ da SIR Toscana.</p>
 <h2 style="margin-top:30px">Quanto piove a Pieve Santo Stefano, secondo il nostro archivio</h2>
 <p>In cima alla pagina c'è la finestra corta, quella che serve per i funghi. Ma di questo pluviometro
 teniamo tutti i giorni da quando lo leggiamo, e messi in fila raccontano un'altra cosa:
-<b>da luglio 2026 a settembre 2026</b>, in 62 giorni di misura,
-ha contato <b>143 mm</b> di pioggia in <b>11 giornate</b> bagnate. Nelle altre 51 non è caduto niente, o così poco da non contare.</p>
+<b>da luglio 2026 a settembre 2026</b>, in 66 giorni di misura,
+ha contato <b>146 mm</b> di pioggia in <b>12 giornate</b> bagnate. Nelle altre 54 non è caduto niente, o così poco da non contare.</p>
 <p>Il giorno più bagnato di tutto l'archivio è stato il <b>10 settembre 2026</b>,
 con <b>22,3 mm</b> in ventiquattro ore. Il mese più piovoso,
 fra quelli che abbiamo per intero, è <b>agosto 2026</b> con
 58 mm. Su 168 pluviometri
-da bosco della Toscana con lo stesso periodo alle spalle, questo è il <b>107º</b>
+da bosco della Toscana con lo stesso periodo alle spalle, questo è il <b>106º</b>
 per acqua caduta.</p>
 <p class="nota">Non è una media climatica: è quello che questo strumento ha misurato in quei
 giorni, e basta. L'archivio parte dal 12 luglio 2026 e si allunga di un giorno al
@@ -405,6 +421,14 @@ provinciali ISTAT.</p>
   function disegna(j){
     var s = j.serie[ID];
     var mm = somma(s,20,13), mm7 = somma(s,7,1), mm25 = somma(s,GIORNI,1);
+    /* 13/9/2026: IERI, per chi cerca «quanto ha piovuto ieri a» e arriva qui.
+       Si dice il giorno vero: il file puo' essere stato scritto prima di
+       mezzanotte, e allora il suo ieri e' l'altroieri di chi legge.
+       Un giorno senza dato non e' uno zero. */
+    var ieriFile = iso(menoDa(j.oggi,1)), ieriVero = iso(menoDa(iso(new Date()),1));
+    var vIeri = s[0];
+    document.getElementById('ieri').innerHTML = (ieriFile === ieriVero ? 'Ieri, ' : 'Il ')
+      + gg(ieriFile) + ': ' + (vIeri == null ? 'il dato non è ancora arrivato.' : '<b>' + num(vIeri) + ' mm</b>.');
     var daG = iso(menoDa(j.oggi,20)), aG = iso(menoDa(j.oggi,13)), a20 = iso(menoDa(j.oggi,1));
 
     /* ⚠️ L'ULTIMA PIOGGIA FORTE ARRIVA DAL FILE, non si cerca nella serie.
@@ -414,7 +438,11 @@ provinciali ISTAT.</p>
        numeri per pluviometro, e cercatoFino dice fin dove ha guardato.
        (Niente apici inversi qui dentro: questo file e' un modello backtick.) */
     var ff = (j.forte || {})[ID];
-    var forte = ff ? {g:ff[0], mm:ff[1]} : null;
+    /* La voce ha DUE numeri (giorni fa, mm) oppure QUATTRO, quando di
+       quel giorno sappiamo anche le ore bagnate e la punta oraria.
+       Si guarda la lunghezza: i giorni vecchi l'intensita' non ce
+       l'hanno e non ce l'avranno mai, il passato non si recupera. */
+    var forte = ff ? {g:ff[0], mm:ff[1], ore:ff[2], punta:ff[3]} : null;
     var quando = forte ? (forte.g===1 ? 'ieri' : forte.g===2 ? 'l’altro ieri'
                                                              : forte.g+' giorni fa') : null;
 
@@ -471,7 +499,7 @@ provinciali ISTAT.</p>
          adiacenti si sovrappongono e si legge «55,87,2». */
       var etich = v >= max*0.28 && (ultimaEt === null || ultimaEt - i >= 3);
       if (etich) ultimaEt = i;
-      barre += '<div class="b' + cl + '" title="' + gg(iso(d)) + ': ' + num(v) + ' mm">'
+      barre += '<div class="b' + cl + '" data-n="' + i + '" title="' + gg(iso(d)) + ': ' + num(v) + ' mm">'
         + (etich ? '<b>' + num(v) + '</b>' : '')
         + '<i style="height:' + Math.max(2, Math.round(v/max*100)) + '%"></i></div>';
       /* Giorno e mese in forma corta: «13/8» non va a capo, «13 ago» si'. */
@@ -479,8 +507,41 @@ provinciali ISTAT.</p>
     }
     document.getElementById('grafico').innerHTML =
       '<div class="gg">' + barre + '</div><div class="gg-x">' + ascisse + '</div>'
+      + '<p class="gg-int" id="ggint"></p>'
       + '<p class="gg-leg"><i style="background:var(--blu)"></i>la finestra dei funghi, '
       + 'da 13 a 20 giorni fa &nbsp; <i style="background:#b9cbe2"></i>gli altri giorni</p>';
+
+    /* ── l'intensita' del giorno (13/9/2026) ──────────────────────────────
+       Stessa riga del pannello della mappa, solo numeri: l'aggettivo
+       lenta/media/battente resta nella frase della pioggia forte, piu' sotto.
+       All'apertura racconta il giorno piu' piovoso che ha le ore; toccando
+       una barra passa a quel giorno. serieI ha solo i giorni da 5 mm in su:
+       se questo pluviometro non ne ha nessuno, la riga non esiste. */
+    var sI = (j.serieI && j.serieI[ID]) || null;
+    function rigaInt(n) {
+      var el = document.getElementById('ggint');
+      if (!el || !sI) return;
+      var v = s[n-1] || 0, o = sI[n-1];
+      [].forEach.call(document.querySelectorAll('#grafico .b.scelto'), function (b) { b.classList.remove('scelto'); });
+      var b = document.querySelector('#grafico .b[data-n="' + n + '"]');
+      if (b) b.classList.add('scelto');
+      var t = '<b>' + gg(iso(menoDa(j.oggi, n))) + '</b> · ' + num(v) + ' mm';
+      if (o) t += ' in <b>' + o[0] + (o[0] === 1 ? ' ora' : ' ore') + '</b> · punta <b>' + num(o[1]) + ' mm</b> in un’ora';
+      /* ⚠️ L'INVITO A TOCCARE: senza, nessuno scopre che le barre si
+         toccano (segnalato dall'utente il 13/9). Col mouse si dice «clicca». */
+      var dito = !(window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches);
+      el.innerHTML = t + '<span class="gg-invito">' + (dito ? 'Tocca' : 'Clicca')
+        + ' una barra per vedere durata e punta di un altro giorno.</span>';
+    }
+    if (sI) {
+      var nMax = null;
+      for (var k2 in sI) { var n2 = +k2 + 1; if (nMax === null || (s[n2-1] || 0) > (s[nMax-1] || 0)) nMax = n2; }
+      if (nMax) rigaInt(nMax);
+      document.getElementById('grafico').addEventListener('click', function (e) {
+        var b = e.target && e.target.closest && e.target.closest('.b[data-n]');
+        if (b) rigaInt(+b.getAttribute('data-n'));
+      });
+    }
 
     /* ── temperatura e vento, se il pluviometro ce li ha ──────────────────
        ⚠️ Si mostra SOLO quello che c'e' davvero: la temperatura ce l'ha il 78%
@@ -585,6 +646,33 @@ provinciali ISTAT.</p>
         + (j.tetto && j.cercatoFino >= j.tetto
            ? ', che è fin dove siamo andati a guardare.'
            : ', cioè da quando abbiamo archivio su questo pluviometro.');
+
+    /* ── Con che RITMO e' caduta (12/9/2026) ──────────────────────
+       La stessa pioggia in un'ora vale meno che in otto: quella che
+       scende piano entra nel terreno, quella che scroscia corre via.
+       ⚠️ LE PAROLE SONO «lenta / media / battente» e non «forte»:
+       due righe sopra «pioggia forte» vuol dire gia' un'altra cosa,
+       cioe' almeno trenta millimetri in un giorno solo.
+       ⚠️ Le soglie 2 e 6 mm all'ora sono le stesse della convenzione
+       meteorologica italiana, scelte pero' sui nostri dati. */
+    var nInt = document.getElementById('notaintensita');
+    if (forte && forte.ore) {
+      /* ⚠️ SI ARROTONDA PRIMA DI GIUDICARE, se no il numero scritto e la
+         parola si contraddicono: Tolmin, 1,95 mm all'ora, usciva «2 mm
+         all'ora, pioggia lenta» mentre la soglia della lenta e' proprio 2.
+         Capita a cavallo delle due soglie, circa una volta su cento, e chi
+         conosce la scala se ne accorge. */
+      var perOra = uno(forte.mm / forte.ore);
+      var parola = perOra < 2 ? 'lenta' : perOra <= 6 ? 'media' : 'battente';
+      var senso = perOra < 2
+        ? 'acqua che ha avuto tutto il tempo di entrare nel terreno'
+        : perOra <= 6
+          ? 'un ritmo con cui l’acqua fa ancora in tempo a entrare'
+          : 'a quel ritmo una parte corre via lungo il pendio invece di entrare';
+      nInt.innerHTML = 'Sono caduti in <b>' + forte.ore + (forte.ore === 1 ? ' ora' : ' ore')
+        + '</b>, con una punta di <b>' + num(forte.punta) + ' mm in un’ora</b>: '
+        + num(perOra) + ' mm all’ora, <b>pioggia ' + parola + '</b>, ' + senso + '.';
+    } else nInt.style.display = 'none';
 
     /* ── posizione in classifica e posti vicini ──
        L'anagrafe arriva dal file: [id, nome, sigla, quota, lat, lon, bosco%, slug] */
