@@ -7485,7 +7485,13 @@ function locVai(p, _giro) {
   // ⚠️ Solo su desktop: sul telefono il click del periodo NON muove la mappa
   // (quel fit sta dentro un if(innerWidth>900)), quindi la vista di mezzo
   // resterebbe l'unica e il paese si vedrebbe da troppo lontano per sempre.
-  fitMapToPunto(p.lat, p.lon, window.innerWidth > 900 ? LOC_TACCA_MEZZO : (p.t === 'z' ? LOC_TACCA_ZONA : LOC_TACCA_FINE));
+  // ⚠️ CON LA MAPPA BOSCHI ACCESA si va vicini, come quando la si apre su un
+  // paese (16/9/2026, segnalato dall'utente: Liguria, boschi, poi «Torriglia»
+  // e la mappa si allargava). La vista di mezzo serve alla pioggia, che
+  // stringe al click del periodo; i boschi un periodo non ce l'hanno.
+  var tacca = window._boschiAcceso ? (p.t === 'z' ? LOC_TACCA_BOSCHI_ZONA : LOC_TACCA_BOSCHI)
+            : window.innerWidth > 900 ? LOC_TACCA_MEZZO : (p.t === 'z' ? LOC_TACCA_ZONA : LOC_TACCA_FINE);
+  fitMapToPunto(p.lat, p.lon, tacca);
   locSegnaposto(p.lat, p.lon);
 
   // L'avviso delle stime. L'Abruzzo è l'unica regione senza pluviometri reali,
@@ -11311,7 +11317,14 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
 .bo-griglia{display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;font-size:12.5px;color:#33404f}
 .bo-riga{display:flex;align-items:center;gap:6px;white-space:nowrap}
 .bo-sw{width:13px;height:13px;border-radius:3px;flex:none}
-.bo-nota{font-size:11px;line-height:1.35;color:#5a6470;margin-top:5px}
+/* le carte usate e quelle che mancano si devono leggere (16/9/2026, sua
+   richiesta): da 11 a 12,5 px e piu' scure; la regione senza carta in
+   grassetto rosso scuro, che si nota senza sembrare un allarme */
+.bo-nota{font-size:12.5px;line-height:1.4;color:#2f3d4c;font-weight:600;margin-top:6px}
+.bo-nota .bo-manca{display:block;font-weight:700;color:#b3261e;margin-top:2px}
+.bo-nota .bo-manca-in{font-weight:700;color:#b3261e;white-space:nowrap}
+.bo-nota .bo-corta{display:none}
+@media(max-width:900px){ .bo-nota .bo-lunga{display:none} .bo-nota .bo-corta{display:inline} }
 .bo-lontano{display:none;font-size:11.5px;font-weight:600;color:#9a5a00;margin-top:4px}
 .modo-boschi.bo-lontano-on .bo-lontano{display:block}
 /* ⚠️ MAPPA FORESTALE E PIOGGIA NON STANNO INSIEME (deciso dall'utente il
@@ -11420,9 +11433,19 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     var con=[], senza=[];
     rk.forEach(function(k){ (indice.regioni[k]?con:senza).push(k); });
     var righe=con.map(function(k){ return nome(k)+': '+indice.regioni[k].fonte.replace(/, (Regione|Provincia) .*$/,'').replace(/ regionale/,''); });
-    if(senza.length) righe.push('<b>'+senza.map(nome).join(', ')+': carta non ancora disponibile</b>');
+    if(senza.length) righe.push('<span class="bo-manca">'+senza.map(nome).join(', ')+': carta non ancora disponibile</span>');
     if(!rk.length) righe.push('Carte forestali regionali');
-    n.innerHTML=righe.join('<br>');
+    /* ⚠️ SUL TELEFONO, CON PIU' REGIONI, UNA RIGA SOLA CHE VA A CAPO (16/9/2026,
+       sua richiesta): tre regioni erano tre righe tolte alla mappa. Il nome
+       intero di ogni carta resta nei crediti in fondo e in /fonti/: qui basta
+       regione e anno. La versione lunga resta per il PC e per la regione sola. */
+    var corta='';
+    if(rk.length>1){
+      var pezzi=con.map(function(k){ var a=(indice.regioni[k].fonte.match(/\b(19|20)\d\d\b/)||[''])[0]; return nome(k)+(a?' '+a:''); });
+      senza.forEach(function(k){ pezzi.push('<span class="bo-manca-in">'+nome(k)+' non disponibile</span>'); });
+      corta='<span class="bo-corta">Carte: '+pezzi.join(' · ')+'</span>';
+    }
+    n.innerHTML=(corta?'<span class="bo-lunga">':'')+righe.join('<br>')+(corta?'</span>'+corta:'');
     aggiornaCrediti();
   }
 
