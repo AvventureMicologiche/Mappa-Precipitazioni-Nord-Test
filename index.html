@@ -4209,7 +4209,13 @@ function centraRegioneInStriscia(){
     var f=Math.min(1.05*mBox.width/w0, 0.92*S/h0);
     // La banda morta evita l'oscillazione fra le due chiamate (alla seconda
     // i pallini delle stazioni allargano di poco la misura del disegnato).
-    if(f>1.09||f<0.85){
+    // ⚠️ MA NON DEVE COPRIRE UNA REGIONE CHE ESCE DALLA STRISCIA (16/9/2026):
+    // con f fra 0,85 e 0,92 il confine sta gia' sotto la barra o dentro il
+    // pannello, e la banda lo lasciava li'. Misurato aprendo dal link:
+    // Campania al 104% dell'altezza, 6 px sotto la barra e 5 dentro il
+    // pannello; Calabria 8 e 7. Se esce davvero si allarga sempre.
+    var esce = h0 > S + 2;
+    if(f>1.09||f<0.85||(esce&&f<1)){
       var z1=Math.floor((map.getZoom()+Math.log(f)/Math.LN2)*4)/4; // passo 0.25
       if(z1!==map.getZoom()) map.setView(c0,z1,{animate:false});
     }
@@ -9522,7 +9528,28 @@ if(_btnShot){
            sola). Il radar entra al primo giro del suo controllo, 200 ms. */
       } else if(_pin && typeof fitMapToPunto==='function'){
         try{ fitMapToPunto(_vistaPaese.lat,_vistaPaese.lon,_vistaPaese.z?LOC_TACCA_ZONA:LOC_TACCA_FINE); }catch(e){}
-      } else { try{ fitMapToRegions(_kk); }catch(e){} }
+      } else {
+        try{ fitMapToRegions(_kk); }catch(e){}
+        /* ⚠️ SUL TELEFONO IL FIT DA SOLO NON BASTA (16/9/2026, visto dall'utente
+           su Android col link ?r=liguria): fitMapToRegions inquadra la mappa
+           INTERA, e meta' mappa sta sotto il pannello del periodo. Misurato a
+           412x744: Liguria 169 px sotto il centro della striscia libera e 71 px
+           dentro il pannello. La tendina lo evita chiamando la centratura a
+           pannello aperto; qui mancava. Due tempi: a 420 ms il pannello ha
+           finito di aprirsi, a 1500 i confini veri sono arrivati e la misura
+           si fa sul disegnato invece che sulla bbox (la funzione e' idempotente,
+           la seconda chiamata non muove niente se la prima era giusta). */
+        /* ⚠️ E UN LIVELLO PIU' LARGO, prima: il fit sulla mappa intera parte gia'
+           troppo vicino, e la centratura non allarga se la regione sfora di
+           meno del 9% (banda morta contro l'oscillazione). Misurato: Campania
+           104% dell'altezza, 6 px sotto la barra e 5 dentro il pannello. Dalla
+           tendina non succede perche' la vista di partenza e' piu' larga e la
+           centratura AVVICINA fino al tetto; qui si fa partire uguale. */
+        if(window.innerWidth<=900){
+          try{ map.setZoom(map.getZoom()-1,{animate:false}); }catch(e){}
+          setTimeout(centraRegioneInStriscia,420); setTimeout(centraRegioneInStriscia,1500);
+        }
+      }
       if(!_pin){
         var _sr=document.getElementById('region-select');
         if(_sr && _kk.length===1){ _sr.value=_kk[0]; if(typeof regEtichetta==='function') regEtichetta(); }
@@ -10706,6 +10733,32 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
    Restano i tre tasti che sono RADAR e rispondono alla domanda giusta. */
 /* ⚠️ Il blur va messo sul PANNELLO e non sulle singole tessere: applicato
    tessera per tessera sfuma anche i bordi e si vedono le cuciture. */
+
+/* ── PANNELLO DEL PERIODO COMPATTO SUL TELEFONO (16/9/2026) ────────────────
+   Con la riga «Radar pioggia | Mappa boschi» il pannello aperto arrivava a
+   342 px su 698 di mappa a 412x744 (Android, segnalato dall'utente: «e' un
+   disastro»). Tasti da 47-55 px diventano tutti da 40, e i margini fra le
+   righe da 6 a 5: sotto i 40 px un pollice comincia a sbagliare tasto, sopra
+   si spreca mappa. Sotto i 375 px (iPhone SE e Android piccoli) 36 px, con
+   il testo a 14.
+   ⚠️ La MANIGLIA col titolo non si tocca: da chiuso il pannello mostra solo
+   quella, e la sua altezza la usano la trasformazione e la centratura.
+   ⚠️ L'altezza la fissa la line-height e non il padding da solo: l'emoji del
+   calendario e le icone dei due tasti alzavano la riga di 8 px, ed era per
+   quello che «Date personalizzate» e la coppia erano da 55 e i periodi da 47. */
+@media(max-width:900px){
+  #time-panel .tp-grid3{gap:5px !important;margin-bottom:5px !important;}
+  #time-panel .tp-btn{padding:9px 2px !important;font-size:15px !important;line-height:20px !important;}
+  #time-panel .tp-custom-btn{padding:9px 8px !important;font-size:15px !important;line-height:20px !important;margin-top:0 !important;}
+  #time-panel .rd-coppia{margin-top:5px !important;gap:5px !important;}
+  #time-panel .rd-ic{font-size:1.15em;line-height:1;vertical-align:-1px;}
+  #time-panel #btn-funghi{padding:9px 8px !important;font-size:15px !important;line-height:20px !important;margin-top:5px !important;}
+  #tp-links{margin:6px 0 0 !important;}
+}
+@media(max-width:375px){
+  #time-panel .tp-btn{padding:8px 1px !important;font-size:14px !important;line-height:18px !important;}
+  #time-panel .tp-custom-btn,#time-panel #btn-funghi{padding:8px 6px !important;font-size:14px !important;line-height:18px !important;}
+}
 </style>
 <script>
 /* ═══════════════════════════════════════════════════════════════
