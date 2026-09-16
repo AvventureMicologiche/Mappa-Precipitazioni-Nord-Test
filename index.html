@@ -11300,6 +11300,10 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
    Il titolo del pannello legenda sparisce e il posto lo prende la legenda. */
 .bo-leg{display:none}
 .modo-boschi .bo-leg{display:block;margin-top:2px}
+/* come il radar: via la vetrina di destra e la targhetta delle fonti dei
+   pluviometri, che sulla mappa dei boschi non c'entrano (16/9/2026) */
+.modo-boschi #channel-logo{display:none !important}
+.modo-boschi .fonte-tag{display:none !important}
 .modo-boschi #leg-title{display:none !important}
 .modo-boschi #btn-shot{margin-left:0}
 @media(min-width:901px){.modo-boschi .leg-header{justify-content:flex-start}}
@@ -11503,7 +11507,23 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       var rk=window._regioniAttive?window._regioniAttive():[];
       var sulPaese=false;
       try{ m.stop(); sulPaese=!!(window._fitPaeseBoschi && window._fitPaeseBoschi()); }catch(e){}
-      if(!sulPaese && rk.length && typeof window._fitRegioni==='function'){ try{ window._fitRegioni(rk); }catch(e){} }
+      /* ⚠️ SOPRA UN'ANALISI, SUL TELEFONO, LA VISTA NON SI TOCCA: e' gia'
+         centrata sulla regione, e rifacendola col pannello dei boschi (piu'
+         alto di quello dei cumulati) le regioni alte uscivano un quarto di
+         livello piu' piccole (Toscana, Piemonte). Stessa mappa, stessa vista. */
+      var tieniVista = window.innerWidth<=900 && analisiInCorso();
+      if(!sulPaese && !tieniVista && rk.length && typeof window._fitRegioni==='function'){
+        try{ window._fitRegioni(rk); }catch(e){}
+        /* ⚠️ SUL TELEFONO LA STESSA CENTRATURA DELLA PIOGGIA (16/9/2026): il fit
+           da solo inquadra la mappa intera, meta' della quale sta sotto la
+           legenda, e la Liguria usciva piccola e diversa da quella dei «7
+           giorni» (segnalato dall'utente con le due schermate). Stessa ricetta
+           del link ?r=: un livello piu' largo, poi la centratura nella striscia. */
+        if(window.innerWidth<=900 && typeof window._centraStriscia==='function'){
+          try{ m.setZoom(m.getZoom()-1,{animate:false}); }catch(e){}
+          setTimeout(window._centraStriscia,420); setTimeout(window._centraStriscia,1500);
+        }
+      }
       try{ gtag('event','click_boschi',{stato:'acceso'}); }catch(_){}
     });
   }
