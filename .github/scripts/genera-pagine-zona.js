@@ -293,12 +293,12 @@ rigaStagione() + '\n' +
 (haBoschi(casa.k) ?
 '<h2>Che boschi ci sono nella zona?</h2>\n' +
 '<p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti\n' +
-'e abetine non danno gli stessi funghi. La mappa boschi colora i boschi ' + esc(z.dove) + ' per tipo,\n' +
+'e abetaie non danno gli stessi funghi. La mappa boschi colora i boschi ' + esc(z.dove) + ' per tipo,\n' +
 'con i disegni della carta forestale della Regione.</p>\n' +
 '<a href="' + SITO + '/?r=' + casa.k + '&amp;' + PIN + '&amp;boschi=1" style="display:block;text-decoration:none;"\n' +
 '   onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'zona-' + zslug + '-boschi\'})}catch(e){}">\n' +
 '  <img src="' + SITO + '/tessere-boschi/anteprime/' + casa.k + '.jpg"\n' +
-'       alt="La mappa boschi ' + casa.prep + ' ' + esc(nomeReg) + ': faggete, castagneti, querceti e abetine colorati per tipo"\n' +
+'       alt="La mappa boschi ' + casa.prep + ' ' + esc(nomeReg) + ': faggete, castagneti, querceti e abetaie colorati per tipo"\n' +
 '       width="1600" height="1000" loading="lazy"\n' +
 '       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">\n' +
 '  <span class="vai-mappa">Guarda i boschi ' + esc(z.dove) + ' →</span>\n' +

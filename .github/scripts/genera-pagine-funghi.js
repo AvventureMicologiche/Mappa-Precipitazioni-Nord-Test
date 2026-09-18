@@ -356,12 +356,12 @@ caduta. Ogni pallino è un pluviometro: cliccalo e vedi il suo storico.</p>
 ${haBoschi(r.k) ? `
 <h2>Che boschi ci sono ${r.prep} ${nome}?</h2>
 <p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti
-e abetine non danno gli stessi funghi. La mappa boschi colora i boschi ${r.prep} ${nome} per tipo,
+e abetaie non danno gli stessi funghi. La mappa boschi colora i boschi ${r.prep} ${nome} per tipo,
 con i disegni della carta forestale della Regione. Avvicinati sulla zona che ti interessa.</p>
 <a href="${SITO}/?r=${r.k}&amp;boschi=1" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'funghi-${r.k}-boschi'})}catch(e){}">
   <img src="${SITO}/tessere-boschi/anteprime/${r.k}.jpg"
-       alt="La mappa boschi ${r.prep} ${nome}: faggete, castagneti, querceti e abetine colorati per tipo"
+       alt="La mappa boschi ${r.prep} ${nome}: faggete, castagneti, querceti e abetaie colorati per tipo"
        width="1600" height="1000" loading="lazy"
        style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
   <span class="vai-mappa">Guarda i boschi ${r.prep} ${nome} →</span>

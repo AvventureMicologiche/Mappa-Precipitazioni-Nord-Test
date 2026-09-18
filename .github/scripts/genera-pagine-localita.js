@@ -385,12 +385,12 @@ ${VICINI5.map(v => `<tr${v.io ? ' class="qui"' : ''} data-id="${esc(v.id)}"><td>
 
 ${haBoschi(REG) ? `<h2>Che boschi ci sono intorno?</h2>
 <p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti
-e abetine non danno gli stessi funghi. La mappa boschi colora i boschi ${esc(DOVE)} e dintorni
+e abetaie non danno gli stessi funghi. La mappa boschi colora i boschi ${esc(DOVE)} e dintorni
 per tipo, con i disegni della carta forestale della Regione.</p>
 <a href="${SITO}/?r=${REG}&amp;${PIN}&amp;boschi=1" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'localita-${REG}-boschi'})}catch(e){}">
   <img src="${SITO}/tessere-boschi/anteprime/${REG}.jpg"
-       alt="La mappa boschi ${r.prep} ${esc(NOME)}: faggete, castagneti, querceti e abetine colorati per tipo"
+       alt="La mappa boschi ${r.prep} ${esc(NOME)}: faggete, castagneti, querceti e abetaie colorati per tipo"
        width="1600" height="1000" loading="lazy"
        style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
   <span class="vai-mappa">Guarda i boschi intorno ${esc(DOVE)} →</span>

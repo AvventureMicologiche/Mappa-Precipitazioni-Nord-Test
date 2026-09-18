@@ -10462,13 +10462,39 @@ function loadDefaultMarkers(){
     gancioP: 'Porcini 2026:<br>edulis ovunque negli abeti',
     canale: 'Avventure Micologiche'
   };
+  VETRINE.novita = {
+    // Post del 16/9/2026 sulle due novita' (mappa boschi e intensita' della
+    // pioggia), uscito come post della community YouTube e su Facebook.
+    // ⚠️ Non e' un video: occhiello e bottone lo dicono. Sul computer porta
+    // solo a YouTube; sul telefono la pillola ha i tasti YouTube e Facebook,
+    // perche' e' lo STESSO post su tutti e due.
+    fino: '2027-12-31T23:59:59+01:00',
+    // ⚠️ Tolto il `si=` di chi ha condiviso, come si fa coi link Instagram.
+    link: 'https://www.youtube.com/post/Ugkx4bV7S0XZtEY8f--n0Kktr5dCgXJhf06V',
+    id: 'Ugkx4bV7S0XZtEY8f--n0Kktr5dCgXJhf06V',
+    facebook: 'https://www.facebook.com/avventuremicologiche/posts/pfbid0KUeFe2DqK7GXg5adxKNjbn14TgHNtox1h9DqM36BVDHa8MqqHMcq54dMHMaJiejwl',
+    instagram: '',
+    // Ritaglio 16:9 della sola mappa di guida/boschi.jpg, 480x270 con PIL.
+    copertina: 'vetrina-novita.jpg',
+    occhiello: 'Novità',
+    occhielloP: 'Post',
+    bottone: 'SCOPRI LE NOVITÀ',
+    gancio1: 'Novità sulla mappa:',
+    gancio2: 'boschi e intensità',
+    // Misurato sulla colonna da 199 px: la riga lunga fa 188,9 px a 20, cioe'
+    // restano 10,1 px, lo stesso margine delle altre vetrine.
+    ganciopx: 20,
+    gancioP: 'Novità sulla mappa:<br>boschi e intensità',
+    canale: 'Avventure Micologiche'
+  };
   var V=null, QUALE='';
   if(MOSTRA==='alterna'){
     // Solo le vetrine ancora in corso partecipano: quando il video scade,
     // l'alternanza si riduce da sola alla guida, e quando scade anche quella
     // non resta nessuno e si esce.
     var ora=Date.now(), scelte=[];
-    ['lungo20','lungo25'].forEach(function(k){
+    // 16/9/2026: in gara il solo post delle novita', al posto del lungo dei 25 giorni.
+    ['novita'].forEach(function(k){
       var v=VETRINE[k]; if(!v) return;
       if(v.da && ora < new Date(v.da).getTime()) return;   // non ancora accesa
       if(ora <= new Date(v.fino).getTime()) scelte.push(k);
