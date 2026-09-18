@@ -11533,7 +11533,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       +'<div class="bo-lontano">Avvicinati per vedere i boschi</div>'
       +'<div class="bo-nota" id="bo-fonti"></div>';
     var tb=el('bo-tend-btn');
-    if(tb) tb.addEventListener('click',function(){ tendinaOn?tendinaVia():(analisiInCorso()?tendinaSu():confrontoDaZero()); });
+    if(tb) tb.addEventListener('click',function(){ tendinaOn?tendinaVia(true):(analisiInCorso()?tendinaSu():scegliPeriodo()); });
     notaFonti();
   }
 
@@ -11752,14 +11752,22 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     setTimeout(window._centraStriscia,420); setTimeout(window._centraStriscia,1500);
   }
 
-  /* «Confronta piogge» SENZA un'analisi dietro (18/9/2026, segnalato: «nel
-     desktop il confronto non lo hai messo?»). Il tasto c'era solo con la
-     pioggia gia' calcolata, e scegliere un periodo dai boschi fa uscire dal
-     modo: bisognava indovinare l'ordine. Adesso il tasto c'e' sempre, e senza
-     analisi lancia le PIOGGE PER FUNGHI (la pioggia che conta per i boschi),
-     aspetta che la pioggia sia disegnata e rientra nei boschi con la tendina.
-     Un clic VERO dell'utente su un altro periodo annulla l'attesa. */
-  var confrontoAtteso=0;
+  /* «Confronta piogge» E LA SCELTA DEL PERIODO (18/9/2026).
+     Il tasto c'e' sempre. Con un'analisi dietro apre la tendina su quella.
+     Senza, NON sceglie lui il periodo (prima lanciava d'ufficio le piogge per
+     funghi: bocciato, «io devo poter scegliere»): porta alla scelta del periodo
+     con una riga che lo chiede, e qualunque periodo si tocchi viene calcolato e
+     poi si torna ai boschi con la tendina aperta.
+     Stessa cosa con la tendina gia' aperta: sul PC i tasti del periodo restano
+     visibili, e cambiarlo non deve buttare fuori dal confronto.
+     Radar, «Indietro», «Chiudi mappa» o il cambio regione annullano l'attesa.
+     ⚠️ Questo ascoltatore e' registrato PRIMA di quello di monta() che fa
+     uscire dal modo: cosi' qui `tendinaOn` e' ancora quello del momento del clic. */
+  var confrontoAtteso=0, voglioConfronto=false;
+  function periodoDi(){
+    var u=analisiInCorso()?window.buildShareUrl():null; if(!u) return '';
+    var q=new URLSearchParams(u.split('?')[1]||''); return (q.get('da')||'')+'|'+(q.get('a')||'');
+  }
   function pioggiaPronta(){
     if(!analisiInCorso()) return false;
     var c=heatCanvas(); if(!c||c.style.opacity==='0') return false;
@@ -11771,21 +11779,58 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     }catch(e){}
     return false;
   }
-  function confrontoDaZero(){
-    var f=el('btn-funghi'); if(!f) return;
+  /* Il periodo della pioggia nella tendina (18/9/2026, segnalato: «non c'e'
+     nulla che mi dice che range di tempo sto guardando»): «11-17 set»,
+     «29 ago-5 set», oppure il giorno solo. Letto dal link dell'analisi, che e'
+     sempre quello vero anche dopo un cambio di periodo. */
+  var MESI=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  function testoPeriodo(){
+    var u=analisiInCorso()?window.buildShareUrl():null; if(!u) return '';
+    var q=new URLSearchParams(u.split('?')[1]||''), da=(q.get('da')||'').split('-'), a=(q.get('a')||'').split('-');
+    if(da.length<3||a.length<3) return '';
+    var g1=+da[2], m1=MESI[+da[1]-1], g2=+a[2], m2=MESI[+a[1]-1];
+    if(q.get('da')===q.get('a')) return g1+' '+m1;
+    return m1===m2 ? g1+'-'+g2+' '+m2 : g1+' '+m1+'-'+g2+' '+m2;
+  }
+  function etichettaPioggia(){
+    var e=maniglia&&maniglia.querySelector('.bo-tend-sx'); if(!e) return;
+    var t=testoPeriodo(); e.textContent='💧 Pioggia'+(t?' '+t:'');
+  }
+  function avviso(t){
+    var a=el('tp-status'); if(!a) return;
+    a.className=''; a.textContent=t;
+  }
+  // dopo il clic su un periodo: si aspetta l'analisi NUOVA e si rientra nei boschi
+  function rientraDopo(prima){
     var io=++confrontoAtteso, giri=0;
-    f.click();   // il listener in cattura fa uscire dal modo, poi parte l'analisi
     var att=setInterval(function(){
       if(io!==confrontoAtteso){ clearInterval(att); return; }
-      if(pioggiaPronta()){
-        clearInterval(att); entra();
+      if(periodoDi() && periodoDi()!==prima && pioggiaPronta()){
+        clearInterval(att);
+        if(!acceso) entra();
         setTimeout(function(){ if(acceso && !tendinaOn && io===confrontoAtteso) tendinaSu(); },350);
       }
-      else if(++giri>200) clearInterval(att);   // 40 secondi, poi si lascia perdere
+      else if(++giri>200){ clearInterval(att); voglioConfronto=false; }   // 40 secondi
     },200);
   }
+  function scegliPeriodo(){
+    voglioConfronto=true; confrontoAtteso++;
+    // sul telefono i tasti del periodo stanno nel pannello che il modo nasconde:
+    // si esce dai boschi e il sito rimette il pannello del periodo
+    if(window.innerWidth<=900) esci();
+    avviso('👉 Scegli il periodo di pioggia da confrontare coi boschi');
+  }
   document.addEventListener('click',function(e){
-    if(e.isTrusted && e.target.closest && e.target.closest('.tp-btn,#btn-funghi,#cd-apply,#btn-radar,#btn-boschi,#leg-back-btn,#btn-reset-regions')) confrontoAtteso++;
+    if(!e.isTrusted || !e.target.closest) return;
+    if(e.target.closest('.tp-btn,#btn-funghi,#cd-apply')){
+      if(voglioConfronto || tendinaOn){ voglioConfronto=true; rientraDopo(periodoDi()); }
+      return;
+    }
+    if(e.target.closest('#btn-radar,#btn-boschi,#leg-back-btn,#btn-reset-regions')){ voglioConfronto=false; confrontoAtteso++; }
+  },true);
+  // cambiare regione dal pannello annulla l'attesa
+  document.addEventListener('change',function(e){
+    if(e.isTrusted && e.target.closest && e.target.closest('#region-panel,#reg-sheet')){ voglioConfronto=false; confrontoAtteso++; }
   },true);
 
   function heatCanvas(){ return document.querySelector('#map .leaflet-overlay-pane canvas'); }
@@ -11803,6 +11848,19 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       c.style.clip='rect(-100000px,'+Math.round((rm.left+hx-rc.left)*k)+'px,100000px,-100000px)';
     }
     if(maniglia) maniglia.style.left=Math.round(hx)+'px';
+    // le etichette non escono dallo schermo quando la linea va verso un bordo
+    if(maniglia && maniglia.parentNode){
+      var rm2=m.getContainer().getBoundingClientRect();
+      [['.bo-tend-sx',1],['.bo-tend-dx',-1]].forEach(function(x){
+        var e=maniglia.querySelector(x[0]); if(!e) return;
+        e.style.transform=''; var r=e.getBoundingClientRect(), sp=0;
+        if(r.left<rm2.left+6) sp=rm2.left+6-r.left;
+        else if(r.right>rm2.right-6) sp=rm2.right-6-r.right;
+        // spinta dentro dal bordo finirebbe sopra l'altra: si sposta di una riga,
+        // in giu' sul PC (etichette in cima) e in su sul telefono (sotto c'e' il pomello)
+        if(sp) e.style.transform='translate('+Math.round(sp)+'px,'+(window.innerWidth>900?1:-1)*(r.height+6)+'px)';
+      });
+    }
   }
 
   function tendinaSu(){
@@ -11811,7 +11869,8 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     if(nuvola) m.closePopup(nuvola);
     var W=m.getSize().x;
     // sul PC i pannelli coprono i primi ~420 px: la linea parte in mezzo al libero
-    hx = window.innerWidth>900 ? Math.round((Math.min(440,W*0.4)+W)/2) : Math.round(W/2);
+    // la linea resta dove l'utente l'ha messa anche cambiando periodo; la prima volta, in mezzo
+    if(hx==null) hx = window.innerWidth>900 ? Math.round((Math.min(440,W*0.4)+W)/2) : Math.round(W/2);
     if(!maniglia){
       maniglia=document.createElement('div'); maniglia.className='bo-tend';
       maniglia.innerHTML='<div class="bo-tend-linea"></div><div class="bo-tend-pomo">⇆</div>'
@@ -11831,13 +11890,15 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       document.addEventListener('mouseup',su); document.addEventListener('touchend',su); document.addEventListener('touchcancel',su);
     }
     m.getContainer().appendChild(maniglia);
+    etichettaPioggia();
     var b=el('bo-tend-btn'); if(b) b.textContent='✕ Chiudi';
     taglia();
     centraTel();
     try{ gtag('event','click_boschi',{stato:'tendina'}); }catch(_){}
   }
 
-  function tendinaVia(){
+  function tendinaVia(manuale){
+    if(manuale) voglioConfronto=false;
     tendinaOn=false; document.body.classList.remove('bo-tendina');
     if(maniglia&&maniglia.parentNode) maniglia.parentNode.removeChild(maniglia);
     var b=el('bo-tend-btn'); if(b) b.textContent='⇆ Confronta piogge';
