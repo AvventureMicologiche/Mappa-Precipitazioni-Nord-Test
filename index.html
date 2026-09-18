@@ -3872,6 +3872,8 @@ var TAP_DITO = matchMedia('(pointer:coarse)').matches;
 
 function stazioneVicina(punto){
   if(!TAP_DITO||!punto) return null;
+  // in modo boschi i pallini sono nascosti: il tocco e' per il bosco (18/9/2026)
+  if(window._boschiAcceso) return null;
   var best=null,bestD=TAP_TOLL;
   activeMarkers.forEach(function(m){
     if(!m._st) return;
@@ -11381,6 +11383,42 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
 @media(min-width:901px){.modo-boschi #btn-reset-regions{display:block !important}}
 /* col radar acceso le tessere non c'entrano */
 .modo-radar .leaflet-boschi-pane{display:none !important}
+/* Tocco sul bosco e tendina pioggia | boschi (18/9/2026) */
+/* ⚠️ In modo boschi il tocco e' per il bosco: i contorni delle regioni (che sul
+   PC col tocco si accendono e spengono) si mangiavano il clic e TOGLIEVANO la
+   regione, e con lei l'analisi. Trovato alla prima prova, 3 tocchi su 5. Le
+   regioni si scelgono dal pannello, che resta. */
+.modo-boschi #map .leaflet-overlay-pane path.leaflet-interactive{pointer-events:none !important}
+.bo-tit-riga{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0 6px}
+.bo-tit-riga .bo-tit{margin:0}
+.bo-tocca{font-size:11.5px;font-weight:500;letter-spacing:0;text-transform:none;color:#5a6b7d}
+.bo-tend-btn{flex:none;font-size:12.5px;font-weight:700;color:#1b3f6e;background:#eef3fb;border:1px solid #c9d6ea;border-radius:14px;padding:3px 11px;cursor:pointer;white-space:nowrap;user-select:none}
+.bo-tend-btn:hover{background:#dfe8f6}
+.bo-tendina .bo-tend-btn{background:#1b3f6e;color:#fff;border-color:#1b3f6e}
+.bo-nuv .leaflet-popup-content-wrapper{border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.bo-nuv .leaflet-popup-content{margin:8px 12px;font-size:13.5px;color:#1f2d3d;line-height:1.35}
+.bo-nuv-riga{display:flex;align-items:center;gap:7px}
+.bo-nuv-sub{font-size:12px;color:#5a6b7d}
+.bo-nuv-riga + .bo-nuv-sub{margin-top:2px;padding-left:20px}
+/* con la tendina la pioggia torna, ma solo a sinistra della linea (la taglia il JS) */
+.modo-boschi.bo-tendina #map .leaflet-overlay-pane canvas{display:block !important}
+/* e con lei la sua scala dei millimetri, se no la meta' pioggia non si legge */
+.modo-boschi.bo-tendina .grad{display:block !important}
+.modo-boschi.bo-tendina .grad-l{display:flex !important}
+.bo-tend{position:absolute;top:0;bottom:0;width:30px;margin-left:-15px;z-index:650;cursor:ew-resize;touch-action:none}
+.bo-tend-linea{position:absolute;top:0;bottom:0;left:13.5px;width:3px;background:#fff;box-shadow:0 0 5px rgba(0,0,0,.55)}
+.bo-tend-pomo{position:absolute;top:50%;left:-4px;width:38px;height:38px;margin-top:-19px;border-radius:50%;background:#1b3f6e;color:#fff;font-size:19px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.4);border:2px solid #fff}
+.bo-tend.su .bo-tend-pomo{background:#2a5a96}
+.bo-tend-et{position:absolute;top:12px;white-space:nowrap;font-size:12.5px;font-weight:700;color:#1b3f6e;background:rgba(255,255,255,.92);padding:3px 9px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.2);pointer-events:none}
+.bo-tend-sx{right:24px}
+.bo-tend-dx{left:24px}
+/* sul telefono la meta' bassa della mappa sta sotto la legenda: pomello piu' in alto */
+@media(max-width:900px){
+  .bo-tend-pomo{top:30%}
+  /* in cima la mappa del telefono sta sotto la barra della regione: le
+     etichette vanno accanto al pomello */
+  .bo-tend-et{top:calc(30% - 52px)}
+}
 </style>
 <script>
 /* ═══════════════════════════════════════════════════════════════
@@ -11482,11 +11520,17 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
 
   function legenda(){
     var box=el('bo-leg'); if(!box||!indice) return;
-    box.innerHTML='<div class="bo-tit">Legenda boschi</div><div class="bo-griglia">'+indice.gruppi.map(function(g){
+    /* ⚠️ INVITO E TASTO STANNO NELLA RIGA DEL TITOLO: su una riga a parte il
+       pannello del telefono cresceva di 33 px (287 -> 320), tutti tolti alla mappa. */
+    box.innerHTML='<div class="bo-tit-riga"><div class="bo-tit">Legenda boschi <span class="bo-tocca">· '+(TOCCO?'tocca':'clicca')+' un bosco</span></div>'
+      +'<span class="bo-tend-btn" id="bo-tend-btn" role="button" title="Pioggia a sinistra, boschi a destra">⇆ Confronta</span></div>'
+      +'<div class="bo-griglia">'+indice.gruppi.map(function(g){
         return '<div class="bo-riga"><span class="bo-sw" style="background:'+g[1]+';opacity:'+OPACITA+'"></span>'+g[0]+'</div>';
       }).join('')+'</div>'
       +'<div class="bo-lontano">Avvicinati per vedere i boschi</div>'
       +'<div class="bo-nota" id="bo-fonti"></div>';
+    var tb=el('bo-tend-btn');
+    if(tb) tb.addEventListener('click',function(){ tendinaOn?tendinaVia():tendinaSu(); });
     notaFonti();
   }
 
@@ -11544,6 +11588,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       if(lp && window.innerWidth>900){ displayVecchio=lp.style.display; lp.style.display='block'; }
       aggiornaLontano();
       notaFonti();
+      var tb=el('bo-tend-btn'); if(tb) tb.style.display=analisiInCorso()?'':'none';
       riposiziona();
       /* ⚠️ SI INQUADRA LA REGIONE, come a fine analisi (segnalato il 15/9:
          «la mappa non zooma quando clicchi Mappa boschi»). Sotto lo zoom 7
@@ -11581,6 +11626,8 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   // nuova si sistema pannelli e inquadratura da se'
   function esci(perPeriodo){
     if(!acceso) return;
+    if(tendinaOn) tendinaVia();
+    if(nuvola) map().closePopup(nuvola);
     acceso=false; window._boschiAcceso=false;
     document.body.classList.remove('modo-boschi','bo-lontano-on');
     if(strato) map().removeLayer(strato);
@@ -11593,6 +11640,156 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     var lp=el('legend-panel');
     if(lp && displayVecchio!=null){ if(!analisiInCorso() && !perPeriodo) lp.style.display=displayVecchio; displayVecchio=null; }
     riposiziona();
+  }
+
+  /* ═══ IL TOCCO SUL BOSCO (18/9/2026, idea presa da stratumatlas.world) ═══
+     Un tocco dice il tipo di bosco in quel punto. Non chiede niente a nessuno:
+     legge il COLORE della nostra tessera sotto il dito e lo riporta al gruppo
+     della legenda. Le tessere sono PNG a tavolozza coi colori di indice.gruppi,
+     servite dal nostro dominio, quindi il canvas le puo' leggere.
+     ⚠️ Dove il dito cade in un buco del mosaico (un prato in mezzo al bosco) si
+     guarda intorno per qualche pixel: sul telefono il dito e' grosso e un
+     «qui non c'e' bosco» a due metri da una faggeta sembrerebbe un difetto. */
+  var TOCCO=window.matchMedia && matchMedia('(hover:none) and (pointer:coarse)').matches;
+  var nuvola=null;
+
+  function hexRgb(h){ h=h.replace('#',''); return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
+
+  function pixelTessera(img){
+    if(img._bo_px) return img._bo_px;
+    if(!img.complete||!img.naturalWidth||img.src.indexOf('data:')===0) return null;
+    try{
+      var c=document.createElement('canvas'); c.width=img.naturalWidth; c.height=img.naturalHeight;
+      var x=c.getContext('2d'); x.drawImage(img,0,0);
+      img._bo_px={d:x.getImageData(0,0,c.width,c.height).data,w:c.width,h:c.height};
+      return img._bo_px;
+    }catch(e){ return null; }
+  }
+
+  // il gruppo della legenda piu' vicino al colore; oltre la soglia non e' un bosco
+  function gruppoDi(r,g,b){
+    var best=null,bd=1e9;
+    indice.gruppi.forEach(function(gr){
+      var c=hexRgb(gr[1]), d=(c[0]-r)*(c[0]-r)+(c[1]-g)*(c[1]-g)+(c[2]-b)*(c[2]-b);
+      if(d<bd){ bd=d; best=gr[0]; }
+    });
+    return bd<=40*40 ? best : null;
+  }
+
+  function boscoIn(latlng){
+    var m=map(); if(!strato||!indice) return {esito:'lontano'};
+    var z=strato._tileZoom; if(z==null||z<indice.z_min) return {esito:'lontano'};
+    var p=m.project(latlng,z), T=256;
+    var tx=Math.floor(p.x/T), ty=Math.floor(p.y/T);
+    var t=strato._tiles[tx+':'+ty+':'+z];
+    if(!esistono[z+'/'+tx+'/'+ty]) return {esito:'niente'};
+    if(!t||!t.el) return {esito:'attesa'};
+    var px=pixelTessera(t.el); if(!px) return {esito:'attesa'};
+    var sx=px.w/T, cx=Math.floor((p.x-tx*T)*sx), cy=Math.floor((p.y-ty*T)*sx);
+    function leggi(x,y){
+      if(x<0||y<0||x>=px.w||y>=px.h) return null;
+      var i=(y*px.w+x)*4; if(px.d[i+3]<60) return null;
+      return gruppoDi(px.d[i],px.d[i+1],px.d[i+2]);
+    }
+    var qui=leggi(cx,cy);
+    if(qui) return {esito:'si',gruppo:qui};
+    // un raggio di qualche pixel a schermo, riportato alla scala della tessera
+    var raggio=Math.max(2,Math.round((TOCCO?10:5)*sx*Math.pow(2,z-m.getZoom())));
+    var conta={},tot=0;
+    for(var dy=-raggio;dy<=raggio;dy++) for(var dx=-raggio;dx<=raggio;dx++){
+      if(dx*dx+dy*dy>raggio*raggio) continue;
+      var g=leggi(cx+dx,cy+dy); if(g){ conta[g]=(conta[g]||0)+1; tot++; }
+    }
+    if(!tot) return {esito:'niente'};
+    var top=Object.keys(conta).sort(function(a,b){ return conta[b]-conta[a]; })[0];
+    return {esito:'intorno',gruppo:top};
+  }
+
+  function colore(nome){ var g=indice.gruppi.filter(function(x){ return x[0]===nome; })[0]; return g?g[1]:'#999'; }
+
+  function mostraBosco(e){
+    if(!acceso) return;
+    var t=e.originalEvent&&e.originalEvent.target;
+    if(t&&t.closest&&t.closest('#legend-panel,#time-panel,#region-panel,#reg-sheet,.leaflet-control,.bo-tend')) return;
+    var r=boscoIn(e.latlng), html;
+    if(r.esito==='si'||r.esito==='intorno'){
+      var n=r.gruppo.charAt(0).toUpperCase()+r.gruppo.slice(1);
+      html='<div class="bo-nuv-riga"><span class="bo-sw" style="background:'+colore(r.gruppo)+'"></span><b>'+n+'</b></div>'
+          +(r.esito==='intorno'?'<div class="bo-nuv-sub">qui intorno</div>':'');
+    }
+    else if(r.esito==='lontano') html='<div class="bo-nuv-sub">Avvicinati per leggere i boschi</div>';
+    else if(r.esito==='attesa') html='<div class="bo-nuv-sub">Un attimo, la mappa si sta caricando</div>';
+    else html='<div class="bo-nuv-sub">Qui la carta non segna bosco</div>';
+    if(!nuvola) nuvola=L.popup({className:'bo-nuv',closeButton:false,autoPan:false,offset:[0,-4]});
+    nuvola.setLatLng(e.latlng).setContent(html).openOn(map());
+    try{ gtag('event','click_boschi',{stato:'tocco',esito:r.esito,gruppo:r.gruppo||''}); }catch(_){}
+  }
+
+  /* ═══ LA TENDINA PIOGGIA | BOSCHI (18/9/2026, idea presa da stratumatlas.world) ═══
+     Il 15/9 pioggia e boschi SOVRAPPOSTI erano stati bocciati («bella ma non si
+     puo' fare insieme alla heatmap»): qui non si sovrappongono mai. Una linea
+     da trascinare: a sinistra solo la pioggia, a destra solo i boschi. Serve
+     un'analisi dietro, se no a sinistra non c'e' niente da mostrare.
+     ⚠️ Si ritagliano i DUE strati, non uno: le tessere dei boschi sono al 70%,
+     e la pioggia sotto si vedrebbe attraverso.
+     ⚠️ `clip` e non `clip-path`: il pane dei boschi e' un div di dimensione
+     zero (Leaflet), e le percentuali di clip-path non avrebbero niente su cui
+     calcolarsi. `clip` vuole un elemento posizionato, e lo sono tutti e due. */
+  var tendinaOn=false, hx=null, maniglia=null;
+
+  function heatCanvas(){ return document.querySelector('#map .leaflet-overlay-pane canvas'); }
+
+  function taglia(){
+    var m=map(), pane=m&&m.getPane('boschi'); if(!pane) return;
+    var c=heatCanvas();
+    if(!tendinaOn){ pane.style.clip=''; if(c) c.style.clip=''; return; }
+    var W=m.getSize().x; if(hx==null) hx=W/2; hx=Math.max(8,Math.min(W-8,hx));
+    var lp=m.containerPointToLayerPoint([hx,0]);
+    pane.style.clip='rect(-100000px,100000px,100000px,'+Math.round(lp.x)+'px)';
+    if(c){
+      var rc=c.getBoundingClientRect(), rm=m.getContainer().getBoundingClientRect();
+      var k=rc.width?(c.offsetWidth/rc.width):1;
+      c.style.clip='rect(-100000px,'+Math.round((rm.left+hx-rc.left)*k)+'px,100000px,-100000px)';
+    }
+    if(maniglia) maniglia.style.left=Math.round(hx)+'px';
+  }
+
+  function tendinaSu(){
+    var m=map(); if(!acceso||!analisiInCorso()) return;
+    tendinaOn=true; document.body.classList.add('bo-tendina');
+    if(nuvola) m.closePopup(nuvola);
+    var W=m.getSize().x;
+    // sul PC i pannelli coprono i primi ~420 px: la linea parte in mezzo al libero
+    hx = window.innerWidth>900 ? Math.round((Math.min(440,W*0.4)+W)/2) : Math.round(W/2);
+    if(!maniglia){
+      maniglia=document.createElement('div'); maniglia.className='bo-tend';
+      maniglia.innerHTML='<div class="bo-tend-linea"></div><div class="bo-tend-pomo">⇆</div>'
+        +'<div class="bo-tend-et bo-tend-sx">💧 Pioggia</div><div class="bo-tend-et bo-tend-dx">🌲 Boschi</div>';
+      L.DomEvent.disableClickPropagation(maniglia);
+      L.DomEvent.disableScrollPropagation(maniglia);
+      var trascina=false;
+      var dove=function(ev){
+        var t=ev.touches&&ev.touches[0]||ev, r=map().getContainer().getBoundingClientRect();
+        hx=t.clientX-r.left; taglia();
+      };
+      var giu=function(ev){ trascina=true; maniglia.classList.add('su'); map().dragging.disable(); L.DomEvent.stop(ev); dove(ev); };
+      var muovi=function(ev){ if(!trascina) return; if(ev.cancelable) ev.preventDefault(); dove(ev); };
+      var su=function(){ if(!trascina) return; trascina=false; maniglia.classList.remove('su'); map().dragging.enable(); };
+      maniglia.addEventListener('mousedown',giu); maniglia.addEventListener('touchstart',giu,{passive:false});
+      document.addEventListener('mousemove',muovi); document.addEventListener('touchmove',muovi,{passive:false});
+      document.addEventListener('mouseup',su); document.addEventListener('touchend',su); document.addEventListener('touchcancel',su);
+    }
+    m.getContainer().appendChild(maniglia);
+    var b=el('bo-tend-btn'); if(b) b.textContent='✕ Chiudi';
+    taglia();
+    try{ gtag('event','click_boschi',{stato:'tendina'}); }catch(_){}
+  }
+
+  function tendinaVia(){
+    tendinaOn=false; document.body.classList.remove('bo-tendina');
+    if(maniglia&&maniglia.parentNode) maniglia.parentNode.removeChild(maniglia);
+    var b=el('bo-tend-btn'); if(b) b.textContent='⇆ Confronta';
+    taglia();
   }
 
   function monta(){
@@ -11646,6 +11843,10 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     },true);
 
     map().on('zoomend',aggiornaLontano);
+    map().on('click',mostraBosco);
+    // la pioggia si ridisegna a fine movimento: il taglio si rifa' dopo di lei
+    map().on('move zoomend resize viewreset',taglia);
+    map().on('moveend',function(){ taglia(); setTimeout(taglia,80); setTimeout(taglia,400); });
     // aggiungere o togliere una regione a modo acceso aggiorna la nota delle fonti
     document.addEventListener('change',function(e){
       if(acceso && e.target.closest && e.target.closest('#region-panel')) setTimeout(notaFonti,50);
