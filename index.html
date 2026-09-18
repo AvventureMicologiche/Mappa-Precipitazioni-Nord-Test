@@ -11337,6 +11337,9 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
 /* come il radar: via la vetrina di destra e la targhetta delle fonti dei
    pluviometri, che sulla mappa dei boschi non c'entrano (16/9/2026) */
 .modo-boschi #channel-logo{display:none !important}
+/* sul telefono via anche la pillola del canale: la legenda dei boschi e' gia'
+   alta, cosi' si abbassa e la mappa si vede meglio (chiesto il 18/9/2026) */
+.modo-boschi #channel-pill{display:none !important}
 .modo-boschi .fonte-tag{display:none !important}
 .modo-boschi #leg-title{display:none !important}
 .modo-boschi #btn-shot{margin-left:0}
@@ -11391,7 +11394,6 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
 .modo-boschi #map .leaflet-overlay-pane path.leaflet-interactive{pointer-events:none !important}
 .bo-tit-riga{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0 6px}
 .bo-tit-riga .bo-tit{margin:0}
-.bo-tocca{font-size:11.5px;font-weight:500;letter-spacing:0;text-transform:none;color:#5a6b7d}
 .bo-tend-btn{flex:none;font-size:12.5px;font-weight:700;color:#1b3f6e;background:#eef3fb;border:1px solid #c9d6ea;border-radius:14px;padding:3px 11px;cursor:pointer;white-space:nowrap;user-select:none}
 .bo-tend-btn:hover{background:#dfe8f6}
 .bo-tendina .bo-tend-btn{background:#1b3f6e;color:#fff;border-color:#1b3f6e}
@@ -11520,17 +11522,18 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
 
   function legenda(){
     var box=el('bo-leg'); if(!box||!indice) return;
-    /* ⚠️ INVITO E TASTO STANNO NELLA RIGA DEL TITOLO: su una riga a parte il
-       pannello del telefono cresceva di 33 px (287 -> 320), tutti tolti alla mappa. */
-    box.innerHTML='<div class="bo-tit-riga"><div class="bo-tit">Legenda boschi <span class="bo-tocca">· '+(TOCCO?'tocca':'clicca')+' un bosco</span></div>'
-      +'<span class="bo-tend-btn" id="bo-tend-btn" role="button" title="Pioggia a sinistra, boschi a destra">⇆ Confronta</span></div>'
+    /* ⚠️ IL TASTO STA NELLA RIGA DEL TITOLO: su una riga a parte il pannello del
+       telefono cresceva di 33 px (287 -> 320), tutti tolti alla mappa. Niente
+       scritta «tocca un bosco»: deciso dall'utente, «se ne accorgeranno navigando». */
+    box.innerHTML='<div class="bo-tit-riga"><div class="bo-tit">Legenda boschi</div>'
+      +'<span class="bo-tend-btn" id="bo-tend-btn" role="button" title="Pioggia a sinistra, boschi a destra">⇆ Confronta piogge</span></div>'
       +'<div class="bo-griglia">'+indice.gruppi.map(function(g){
         return '<div class="bo-riga"><span class="bo-sw" style="background:'+g[1]+';opacity:'+OPACITA+'"></span>'+g[0]+'</div>';
       }).join('')+'</div>'
       +'<div class="bo-lontano">Avvicinati per vedere i boschi</div>'
       +'<div class="bo-nota" id="bo-fonti"></div>';
     var tb=el('bo-tend-btn');
-    if(tb) tb.addEventListener('click',function(){ tendinaOn?tendinaVia():tendinaSu(); });
+    if(tb) tb.addEventListener('click',function(){ tendinaOn?tendinaVia():(analisiInCorso()?tendinaSu():confrontoDaZero()); });
     notaFonti();
   }
 
@@ -11588,7 +11591,9 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       if(lp && window.innerWidth>900){ displayVecchio=lp.style.display; lp.style.display='block'; }
       aggiornaLontano();
       notaFonti();
-      var tb=el('bo-tend-btn'); if(tb) tb.style.display=analisiInCorso()?'':'none';
+      /* sul telefono la pillola se ne va (CSS) e la legenda si abbassa: la regione
+         si rimette al centro della striscia libera, anche sopra un'analisi */
+      if(tieniVistaTel()) centraTel();
       riposiziona();
       /* ⚠️ SI INQUADRA LA REGIONE, come a fine analisi (segnalato il 15/9:
          «la mappa non zooma quando clicchi Mappa boschi»). Sotto lo zoom 7
@@ -11640,6 +11645,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     var lp=el('legend-panel');
     if(lp && displayVecchio!=null){ if(!analisiInCorso() && !perPeriodo) lp.style.display=displayVecchio; displayVecchio=null; }
     riposiziona();
+    if(!perPeriodo && window.innerWidth<=900 && analisiInCorso()) centraTel();
   }
 
   /* ═══ IL TOCCO SUL BOSCO (18/9/2026, idea presa da stratumatlas.world) ═══
@@ -11737,6 +11743,51 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
      calcolarsi. `clip` vuole un elemento posizionato, e lo sono tutti e due. */
   var tendinaOn=false, hx=null, maniglia=null;
 
+  /* Sul telefono, dopo che il pannello cambia altezza (pillola via in modo
+     boschi, scala dei millimetri con la tendina), la regione si rimette al
+     centro della striscia libera: stessa funzione e stessi due tempi del sito. */
+  function tieniVistaTel(){ return window.innerWidth<=900 && analisiInCorso(); }
+  function centraTel(){
+    if(window.innerWidth>900 || typeof window._centraStriscia!=='function') return;
+    setTimeout(window._centraStriscia,420); setTimeout(window._centraStriscia,1500);
+  }
+
+  /* «Confronta piogge» SENZA un'analisi dietro (18/9/2026, segnalato: «nel
+     desktop il confronto non lo hai messo?»). Il tasto c'era solo con la
+     pioggia gia' calcolata, e scegliere un periodo dai boschi fa uscire dal
+     modo: bisognava indovinare l'ordine. Adesso il tasto c'e' sempre, e senza
+     analisi lancia le PIOGGE PER FUNGHI (la pioggia che conta per i boschi),
+     aspetta che la pioggia sia disegnata e rientra nei boschi con la tendina.
+     Un clic VERO dell'utente su un altro periodo annulla l'attesa. */
+  var confrontoAtteso=0;
+  function pioggiaPronta(){
+    if(!analisiInCorso()) return false;
+    var c=heatCanvas(); if(!c||c.style.opacity==='0') return false;
+    try{
+      var d=c.getContext('2d').getImageData(0,0,c.width,c.height).data, k=0;
+      // ⚠️ un pixel ogni 101, non ogni 997: sul canvas piccolo del telefono una
+      // regione sola dava 13 campioni colorati e la soglia 20 non arrivava mai
+      for(var i=0;i<d.length;i+=4*101) if(d[i+3]>10 && ++k>20) return true;
+    }catch(e){}
+    return false;
+  }
+  function confrontoDaZero(){
+    var f=el('btn-funghi'); if(!f) return;
+    var io=++confrontoAtteso, giri=0;
+    f.click();   // il listener in cattura fa uscire dal modo, poi parte l'analisi
+    var att=setInterval(function(){
+      if(io!==confrontoAtteso){ clearInterval(att); return; }
+      if(pioggiaPronta()){
+        clearInterval(att); entra();
+        setTimeout(function(){ if(acceso && !tendinaOn && io===confrontoAtteso) tendinaSu(); },350);
+      }
+      else if(++giri>200) clearInterval(att);   // 40 secondi, poi si lascia perdere
+    },200);
+  }
+  document.addEventListener('click',function(e){
+    if(e.isTrusted && e.target.closest && e.target.closest('.tp-btn,#btn-funghi,#cd-apply,#btn-radar,#btn-boschi,#leg-back-btn,#btn-reset-regions')) confrontoAtteso++;
+  },true);
+
   function heatCanvas(){ return document.querySelector('#map .leaflet-overlay-pane canvas'); }
 
   function taglia(){
@@ -11782,14 +11833,16 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     m.getContainer().appendChild(maniglia);
     var b=el('bo-tend-btn'); if(b) b.textContent='✕ Chiudi';
     taglia();
+    centraTel();
     try{ gtag('event','click_boschi',{stato:'tendina'}); }catch(_){}
   }
 
   function tendinaVia(){
     tendinaOn=false; document.body.classList.remove('bo-tendina');
     if(maniglia&&maniglia.parentNode) maniglia.parentNode.removeChild(maniglia);
-    var b=el('bo-tend-btn'); if(b) b.textContent='⇆ Confronta';
+    var b=el('bo-tend-btn'); if(b) b.textContent='⇆ Confronta piogge';
     taglia();
+    if(acceso) centraTel();
   }
 
   function monta(){
