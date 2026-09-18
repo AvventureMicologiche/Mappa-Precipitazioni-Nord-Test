@@ -151,6 +151,8 @@ regioni. Dove ne è caduta di più è dove vale la pena andare a cercare.</p>
   fa nessuno, e noi non ce la inventiamo.</p>
   <p><b>Cosa trovi:</b> la pioggia vera, misurata, posto per posto, con la data. Il bosco poi
   lo conosci tu meglio di qualunque sito.</p>
+  <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
+  valgono regole proprie.</p>
 </div>
 
 <h2>I venti posti più bagnati d'Italia</h2>

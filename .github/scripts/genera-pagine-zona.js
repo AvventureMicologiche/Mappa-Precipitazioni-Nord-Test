@@ -265,6 +265,8 @@ rigaStagione() + '\n' +
 '  fa nessuno, e noi non ce la inventiamo.</p>\n' +
 '  <p><b>Cosa trovi:</b> quanta acqua è caduta ' + esc(z.dove) + ', pluviometro per pluviometro, con la\n' +
 '  data. Il bosco poi lo conosci tu meglio di qualunque sito.</p>\n' +
+'  <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi\n' +
+'  valgono regole proprie.</p>\n' +
 '</div>\n\n' +
 '<div id="attesa">Sto leggendo i pluviometri…</div>\n' +
 '<div id="guasto"></div>\n' +

@@ -11526,7 +11526,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
        telefono cresceva di 33 px (287 -> 320), tutti tolti alla mappa. Niente
        scritta «tocca un bosco»: deciso dall'utente, «se ne accorgeranno navigando». */
     box.innerHTML='<div class="bo-tit-riga"><div class="bo-tit">Legenda boschi</div>'
-      +'<span class="bo-tend-btn" id="bo-tend-btn" role="button" title="Pioggia a sinistra, boschi a destra">⇆ Confronta piogge</span></div>'
+      +'<span class="bo-tend-btn" id="bo-tend-btn" role="button" title="Pioggia a sinistra, boschi a destra">⇆ Confronta con piogge</span></div>'
       +'<div class="bo-griglia">'+indice.gruppi.map(function(g){
         return '<div class="bo-riga"><span class="bo-sw" style="background:'+g[1]+';opacity:'+OPACITA+'"></span>'+g[0]+'</div>';
       }).join('')+'</div>'
@@ -11798,7 +11798,8 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   }
   function avviso(t){
     var a=el('tp-status'); if(!a) return;
-    a.className=''; a.textContent=t;
+    // in rosso come «Prima scegli la regione»: e' un passo che manca (sua richiesta, 18/9)
+    a.className='error'; a.textContent=t;
   }
   // dopo il clic su un periodo: si aspetta l'analisi NUOVA e si rientra nei boschi
   function rientraDopo(prima){
@@ -11901,7 +11902,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     if(manuale) voglioConfronto=false;
     tendinaOn=false; document.body.classList.remove('bo-tendina');
     if(maniglia&&maniglia.parentNode) maniglia.parentNode.removeChild(maniglia);
-    var b=el('bo-tend-btn'); if(b) b.textContent='⇆ Confronta piogge';
+    var b=el('bo-tend-btn'); if(b) b.textContent='⇆ Confronta con piogge';
     taglia();
     if(acceso) centraTel();
   }
