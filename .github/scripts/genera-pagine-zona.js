@@ -52,7 +52,7 @@ const { bello, slug, slugRegione, elenco, diZona } = require('./lib-nomi.js');
 const { rigaStagione } = require('./lib-stagione.js');
 const { perLink } = require('./lib-vicine.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
-const { haBoschi, cartaBreve } = require('./lib-boschi.js');
+const { haBoschi, cartaBreve, cartaDi } = require('./lib-boschi.js');
 // Il ritratto dell'archivio, cotto dentro la pagina: il perche' sta in cima
 // a lib-clima.js. Qui e' di zona, cioe' la media dei suoi pluviometri.
 const { clima, buono, dataBella, meseBello, migliaia, virgola } = require('./lib-clima.js');
@@ -296,7 +296,7 @@ rigaStagione() + '\n' +
 '<h2>Che boschi ci sono nella zona?</h2>\n' +
 '<p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti\n' +
 'e abetaie non danno gli stessi funghi. La mappa boschi colora i boschi ' + esc(z.dove) + ' per tipo,\n' +
-'con i disegni della carta forestale della Regione.</p>\n' +
+'con i disegni ' + cartaDi(casa.k) + '.</p>\n' +
 '<a href="' + SITO + '/?r=' + casa.k + '&amp;' + PIN + '&amp;boschi=1" style="display:block;text-decoration:none;"\n' +
 '   onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'zona-' + zslug + '-boschi\'})}catch(e){}">\n' +
 '  <img src="' + SITO + '/tessere-boschi/anteprime/' + casa.k + '.jpg"\n' +

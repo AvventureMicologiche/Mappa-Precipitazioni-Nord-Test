@@ -30,4 +30,15 @@ function cartaBreve(k) {
   return r ? r.fonte.replace(/, (Regione|Provincia) .*$/, '').replace(/ regionale/, '') : '';
 }
 
-module.exports = { haBoschi, cartaBreve };
+// Di chi e' la carta, per la frase «con i disegni della ...» del blocco (19/9/2026):
+// era scritto «della Regione» per tutti, ma il Trentino e l'Alto Adige hanno la
+// carta della Provincia e sette regioni la Carta della Natura di ISPRA. Si
+// guarda la fonte dell'indice, come cartaBreve, cosi' non c'e' una lista da tenere.
+function cartaDi(k) {
+  const f = (regioni[k] || {}).fonte || '';
+  if (/ISPRA/.test(f)) return 'della Carta della Natura di ISPRA';
+  if (/Provincia/.test(f)) return 'della carta forestale della Provincia';
+  return 'della carta forestale della Regione';
+}
+
+module.exports = { haBoschi, cartaBreve, cartaDi };

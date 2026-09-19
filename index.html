@@ -7717,7 +7717,18 @@ function buildRegionSelector(){
       if(!feat) return;
       feat=scartaIsoleFuoriQuadro(feat,cfg);   // stesso contorno del bordo d'analisi
       var layer=L.geoJSON(feat,{style:selStyle(selIsOn(rk),rk)}).addTo(map);
-      layer.on('click',function(e){ L.DomEvent.stopPropagation(e); toggleRegionFromMap(rk); });
+      // ⚠️ CON UNA SCHEDA APERTA IL CLIC LA CHIUDE E BASTA (19/9/2026, segnalato
+      // dall'utente: «se c'e' la heat deseleziona la regione, non il popup»).
+      // Questo poligono ferma il clic, quindi map.on('click') non lo vedeva mai:
+      // la scheda restava aperta e la regione si accendeva o spegneva (se era
+      // l'unica, resetToStart). Il clic dopo, a scheda chiusa, fa come sempre.
+      layer.on('click',function(e){
+        L.DomEvent.stopPropagation(e);
+        // ⚠️ ==='block' e non !=='none': all'apertura della pagina lo style e'
+        // VUOTO (la nasconde il CSS) e il primo clic sulle regioni si perdeva
+        if(histEl.style.display==='block'&&Date.now()-histOpenedAt>=400){ closeStationHistory(); return; }
+        toggleRegionFromMap(rk);
+      });
       // lo SPEGNEVA invece di accenderlo (trovato dall'utente il 2/8): per lui
       // l'evidenziazione deve salire sopra il velo.
       layer.on('mouseover',function(){
