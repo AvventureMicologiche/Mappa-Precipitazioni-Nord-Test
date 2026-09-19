@@ -52,7 +52,7 @@ const { bello, slug, slugRegione, elenco, diZona } = require('./lib-nomi.js');
 const { rigaStagione } = require('./lib-stagione.js');
 const { perLink } = require('./lib-vicine.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
-const { haBoschi, cartaBreve, cartaDi } = require('./lib-boschi.js');
+const { haBoschi, cartaBreve, cartaDi, fonteNota } = require('./lib-boschi.js');
 // Il ritratto dell'archivio, cotto dentro la pagina: il perche' sta in cima
 // a lib-clima.js. Qui e' di zona, cioe' la media dei suoi pluviometri.
 const { clima, buono, dataBella, meseBello, migliaia, virgola } = require('./lib-clima.js');
@@ -305,7 +305,7 @@ rigaStagione() + '\n' +
 '       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">\n' +
 '  <span class="vai-mappa">Guarda i boschi ' + esc(z.dove) + ' →</span>\n' +
 '</a>\n' +
-"<p class=\"nota\">La fonte è la carta «" + esc(cartaBreve(casa.k)) + "»: dice che bosco c'è, non se\n" +
+"<p class=\"nota\">La fonte è " + esc(fonteNota(casa.k)) + ": dice che bosco c'è, non se\n" +
 "quest'anno ci sono nati funghi. Per quello servono la pioggia di questa pagina e un giro a piedi.</p>\n\n"
 : '') +
 '<h2>Sta piovendo adesso?</h2>\n' +

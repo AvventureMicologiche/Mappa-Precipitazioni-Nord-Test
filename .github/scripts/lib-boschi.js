@@ -41,4 +41,14 @@ function cartaDi(k) {
   return 'della carta forestale della Regione';
 }
 
-module.exports = { haBoschi, cartaBreve, cartaDi };
+// La fonte nella nota sotto l'anteprima: «la carta «Tipi forestali 2025»». Per le
+// regioni ISPRA la forma corta e' «Carta della Natura, ISPRA (habitat 1:50.000)» e
+// la frase diventava «la carta «Carta della Natura, ISPRA (...)»»: li' si scrive
+// «la «Carta della Natura» di ISPRA, scala 1:50.000». Le altre restano identiche.
+function fonteNota(k) {
+  const breve = cartaBreve(k);
+  const m = breve.match(/^Carta della Natura, ISPRA \(habitat ([\d.:]+)\)$/);
+  return m ? `la «Carta della Natura» di ISPRA, scala ${m[1]}` : `la carta «${breve}»`;
+}
+
+module.exports = { haBoschi, cartaBreve, cartaDi, fonteNota };

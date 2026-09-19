@@ -45,7 +45,7 @@ const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
 const { LOCALITA, bello, slug: slugDaNome, slugRegione } = require('./lib-nomi.js');
 const { perLink } = require('./lib-vicine.js');
 const { rigaStagione } = require('./lib-stagione.js');
-const { haBoschi, cartaBreve, cartaDi } = require('./lib-boschi.js');
+const { haBoschi, cartaBreve, cartaDi, fonteNota } = require('./lib-boschi.js');
 // Il ritratto del pluviometro, cotto dentro la pagina il giorno che si
 // genera: totale dell'archivio, giorni di pioggia, giorno piu' bagnato,
 // mese piu' piovoso. Il perche' sta in cima a lib-clima.js.
@@ -397,7 +397,7 @@ per tipo, con i disegni ${cartaDi(REG)}.</p>
        style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
   <span class="vai-mappa">Guarda i boschi intorno ${esc(DOVE)} →</span>
 </a>
-<p class="nota">La fonte è la carta «${esc(cartaBreve(REG))}»: dice che bosco c'è, non se
+<p class="nota">La fonte è ${esc(fonteNota(REG))}: dice che bosco c'è, non se
 quest'anno ci sono nati funghi. Per quello servono la pioggia di questa pagina e un giro a piedi.</p>
 
 ` : ''}<h2>Sta piovendo adesso?</h2>

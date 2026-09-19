@@ -49,7 +49,7 @@ const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
 const RADICE = path.resolve(__dirname, '..', '..');
 const SITO = 'https://avventurepluvio-test.netlify.app';
-const { haBoschi, cartaBreve, cartaDi } = require('./lib-boschi.js');
+const { haBoschi, cartaBreve, cartaDi, fonteNota } = require('./lib-boschi.js');
 
 // Solo la lingua: «della Liguria», «delle Marche». Nell'anagrafe delle pagine
 // regione c'e' la preposizione semplice (prep), che basta per «in Liguria» ma
@@ -368,7 +368,7 @@ con i disegni ${cartaDi(r.k)}. Avvicinati sulla zona che ti interessa.</p>
        style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
   <span class="vai-mappa">Guarda i boschi ${r.prep} ${nome} →</span>
 </a>
-<p class="nota" style="margin-bottom:26px;">La fonte è la carta «${cartaBreve(r.k)}»: dice che bosco
+<p class="nota" style="margin-bottom:26px;">La fonte è ${fonteNota(r.k)}: dice che bosco
 c'è, non se quest'anno ci sono nati funghi.</p>
 ` : ''}
 <h2 style="margin-bottom:12px">Come scegliamo i posti</h2>

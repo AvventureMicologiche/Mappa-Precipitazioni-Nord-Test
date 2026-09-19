@@ -1522,7 +1522,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
            su un Pixel 9 (412), spingendo fuori il tasto "Iscriviti"; e anche il
            solo "+ Svizzera" traboccava già di 9px a 360. Su telefono resta
            "Mappa Pluviometrica Italia", che entra anche a 320. -->
-      <h1>Mappa Pluviometrica<span class="hdr-paesi"> Italia · Svizzera · Austria · Francia · Slovenia</span> <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v9.0)</span></h1>
+      <h1>Mappa Pluviometrica<span class="hdr-paesi"> Italia · Svizzera · Austria · Francia · Slovenia</span> <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v10.0)</span></h1>
       <div class="hdr-sub" id="datehdr"></div>
     </div>
   </div>
@@ -11425,9 +11425,19 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
 .bo-tend-et{position:absolute;top:12px;white-space:nowrap;font-size:12.5px;font-weight:700;color:#1b3f6e;background:rgba(255,255,255,.92);padding:3px 9px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.2);pointer-events:none}
 .bo-tend-sx{right:24px}
 .bo-tend-dx{left:24px}
+/* ⚠️ LA BARRA SI SPOSTA, E VA DETTO (19/9/2026, prova con gli utenti sul test:
+   «pensavano fosse la stessa zona a confronto, non capivano che la barra va
+   spostata»). Alle prime aperture la barra fa da sola avanti e indietro, il
+   pallino pulsa e una nuvoletta dice cosa fare; al primo trascinamento vero
+   la nuvoletta sparisce e il telefono se lo ricorda (localStorage). */
+.bo-tend-guida{position:absolute;top:50%;left:15px;margin-top:26px;white-space:nowrap;font-size:13px;font-weight:700;color:#fff;background:#1b3f6e;padding:6px 11px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.35);pointer-events:none;transform:translateX(-50%)}
+.bo-tend-guida:before{content:'';position:absolute;top:-6px;left:50%;margin-left:-6px;border:6px solid transparent;border-top:0;border-bottom-color:#1b3f6e}
+.bo-tend.guida .bo-tend-pomo{animation:boPomo 1.1s ease-out infinite}
+@keyframes boPomo{0%{box-shadow:0 2px 8px rgba(0,0,0,.4),0 0 0 0 rgba(255,255,255,.85)}100%{box-shadow:0 2px 8px rgba(0,0,0,.4),0 0 0 16px rgba(255,255,255,0)}}
 /* sul telefono la meta' bassa della mappa sta sotto la legenda: pomello piu' in alto */
 @media(max-width:900px){
   .bo-tend-pomo{top:30%}
+  .bo-tend-guida{top:30%}
   /* in cima la mappa del telefono sta sotto la barra della regione: le
      etichette vanno accanto al pomello */
   .bo-tend-et{top:calc(30% - 52px)}
@@ -11542,7 +11552,10 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
         return '<div class="bo-riga"><span class="bo-sw" style="background:'+g[1]+';opacity:'+OPACITA+'"></span>'+g[0]+'</div>';
       }).join('')+'</div>'
       +'<div class="bo-lontano">Avvicinati per vedere i boschi</div>'
-      +'<div class="bo-nota" id="bo-fonti"></div>';
+      +'<div class="bo-nota" id="bo-fonti"></div>'
+      // le carte si correggono anche con le segnalazioni di chi i boschi li conosce
+      // (19/9/2026: Boscolungo all'Abetone l'hanno trovato gli utenti del test)
+      +'<div class="bo-nota bo-segnala">Un bosco segnato male? <a href="/fonti.html#feedback" onclick="try{gtag(\'event\',\'click_feedback\',{pulsante:\'boschi-legenda\'})}catch(e){}">Segnalacelo</a>, lo correggiamo.</div>';
     var tb=el('bo-tend-btn');
     if(tb) tb.addEventListener('click',function(){ tendinaOn?tendinaVia(true):(analisiInCorso()?tendinaSu():scegliPeriodo()); });
     notaFonti();
@@ -11805,7 +11818,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   }
   function etichettaPioggia(){
     var e=maniglia&&maniglia.querySelector('.bo-tend-sx'); if(!e) return;
-    var t=testoPeriodo(); e.textContent='💧 Pioggia'+(t?' '+t:'');
+    var t=testoPeriodo(); e.textContent='◀ 💧 Pioggia'+(t?' '+t:'');
   }
   function avviso(t){
     var a=el('tp-status'); if(!a) return;
@@ -11886,7 +11899,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     if(!maniglia){
       maniglia=document.createElement('div'); maniglia.className='bo-tend';
       maniglia.innerHTML='<div class="bo-tend-linea"></div><div class="bo-tend-pomo">⇆</div>'
-        +'<div class="bo-tend-et bo-tend-sx">💧 Pioggia</div><div class="bo-tend-et bo-tend-dx">🌲 Boschi</div>';
+        +'<div class="bo-tend-et bo-tend-sx">◀ 💧 Pioggia</div><div class="bo-tend-et bo-tend-dx">🌲 Boschi ▶</div>';
       L.DomEvent.disableClickPropagation(maniglia);
       L.DomEvent.disableScrollPropagation(maniglia);
       var trascina=false;
@@ -11894,7 +11907,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
         var t=ev.touches&&ev.touches[0]||ev, r=map().getContainer().getBoundingClientRect();
         hx=t.clientX-r.left; taglia();
       };
-      var giu=function(ev){ trascina=true; maniglia.classList.add('su'); map().dragging.disable(); L.DomEvent.stop(ev); dove(ev); };
+      var giu=function(ev){ trascina=true; fermaGuida(true); maniglia.classList.add('su'); map().dragging.disable(); L.DomEvent.stop(ev); dove(ev); };
       var muovi=function(ev){ if(!trascina) return; if(ev.cancelable) ev.preventDefault(); dove(ev); };
       var su=function(){ if(!trascina) return; trascina=false; maniglia.classList.remove('su'); map().dragging.enable(); };
       maniglia.addEventListener('mousedown',giu); maniglia.addEventListener('touchstart',giu,{passive:false});
@@ -11906,11 +11919,48 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     var b=el('bo-tend-btn'); if(b) b.textContent='✕ Chiudi';
     taglia();
     centraTel();
+    if(!giaMossa()) guida();
     try{ gtag('event','click_boschi',{stato:'tendina'}); }catch(_){}
+  }
+
+  /* La dimostrazione: la barra va a sinistra, a destra e torna (1,6 s), il
+     pallino pulsa e la nuvoletta resta finche' non la si trascina davvero.
+     ⚠️ localStorage dentro try: in navigazione privata o coi dati bloccati
+     puo' lanciare, e la tendina deve funzionare lo stesso. */
+  var CHIAVE_MOSSA='boTendMossa', animGuida=null;
+  function giaMossa(){ try{ return localStorage.getItem(CHIAVE_MOSSA)==='1'; }catch(e){ return false; } }
+  function guida(){
+    if(!maniglia) return;
+    maniglia.classList.add('guida');
+    if(!maniglia.querySelector('.bo-tend-guida')){
+      var g=document.createElement('div'); g.className='bo-tend-guida'; g.textContent='Trascina la barra ⇆';
+      maniglia.appendChild(g);
+    }
+    var W=map().getSize().x, x0=hx, amp=Math.min(90,W*0.2), t0=null, DUR=1600;
+    if(animGuida) cancelAnimationFrame(animGuida);
+    var passo=function(ts){
+      if(!tendinaOn||!maniglia.classList.contains('guida')){ animGuida=null; return; }
+      if(t0==null) t0=ts;
+      var u=Math.min(1,(ts-t0)/DUR);
+      // sinistra, destra, centro: un seno pieno con l'ampiezza che si spegne in fondo
+      hx=x0-amp*Math.sin(u*2*Math.PI)*(1-0.35*u);
+      if(u>=1) hx=x0;
+      taglia();
+      animGuida = u<1 ? requestAnimationFrame(passo) : null;
+    };
+    animGuida=requestAnimationFrame(passo);
+  }
+  function fermaGuida(mossa){
+    if(animGuida){ cancelAnimationFrame(animGuida); animGuida=null; }
+    if(!maniglia) return;
+    maniglia.classList.remove('guida');
+    var g=maniglia.querySelector('.bo-tend-guida'); if(g) g.parentNode.removeChild(g);
+    if(mossa){ try{ localStorage.setItem(CHIAVE_MOSSA,'1'); }catch(e){} }
   }
 
   function tendinaVia(manuale){
     if(manuale) voglioConfronto=false;
+    fermaGuida(false);
     tendinaOn=false; document.body.classList.remove('bo-tendina');
     if(maniglia&&maniglia.parentNode) maniglia.parentNode.removeChild(maniglia);
     var b=el('bo-tend-btn'); if(b) b.textContent='⇆ Confronta con piogge';
