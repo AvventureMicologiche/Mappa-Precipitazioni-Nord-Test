@@ -9937,14 +9937,26 @@ if(_btnShot){
   var hdr=leg.querySelector('.leg-header');
   if(!hdr) return;
   var CHIAVE='legRidotta';
-  /* ⏱ QUANTO RESTA INTERA PRIMA DI RIDURSI DA SOLA. Otto secondi, scelti
-     dall'utente il 20/9/2026 (i primi quattro erano una proposta): il tempo di
-     leggere «442,7 max» e di guardare la vetrina del canale, che e' l'altra
-     cosa che vive in questo pannello. A 0 la riduzione automatica si spegne e
-     resta solo quella a mano. ⚠️ Ogni secondo qui dentro e' esposizione della
-     vetrina: se un giorno i clic sui social calano, il numero da guardare e'
-     questo. */
-  var RIDUCI_DOPO=8000;
+  /* ⏱ LA RIDUZIONE AUTOMATICA E' UNA DIMOSTRAZIONE, NON UN COMPORTAMENTO.
+     Otto secondi, e SOLO LE PRIME TRE VOLTE (deciso dall'utente il 20/9/2026
+     provando sul test: «col tasto riduci ben visibile non so se ha senso»).
+     Faceva due mestieri insieme — guadagnare spazio e far vedere che il
+     pannello si muove — e col tasto «riduci» scritto in chiaro il secondo e'
+     gia' fatto: quello che restava era una cosa che si muove sotto le dita a
+     ogni analisi, per sempre. Tre volte bastano a mostrare che si puo' fare e
+     quanto spazio si guadagna; dopo non si muove piu' niente da solo e chi
+     vuole la mappa grande tocca «riduci», che ormai ha visto.
+     Stesso meccanismo della nuvoletta della tendina (`boTendVolte`, 4 volte).
+     ⚠️ La dimostrazione vale SOLO nel modo pioggia: li' sparisce roba
+     secondaria (statistiche, condivisione, vetrina), mentre nei boschi
+     sparirebbero i nove colori, cioe' la legenda stessa, e nel radar la sola
+     riga della fonte. A 0, o con le tre volte consumate, resta solo il tasto.
+     ⚠️ Ogni secondo qui dentro e' esposizione della vetrina del canale: se un
+     giorno i clic sui social calano, il numero da guardare e' questo. */
+  var RIDUCI_DOPO=8000, DIMO_VOLTE=3, CHIAVE_VOLTE='legMiniVolte';
+  function volteDimo(){ try{ return parseInt(localStorage.getItem(CHIAVE_VOLTE),10)||0; }catch(e){ return DIMO_VOLTE; } }
+  function contaDimo(){ try{ localStorage.setItem(CHIAVE_VOLTE,String(volteDimo()+1)); }catch(e){} }
+  function inModo(){ var c=document.body.classList; return c.contains('modo-boschi')||c.contains('modo-radar'); }
   function ricordata(){ try{ return localStorage.getItem(CHIAVE)==='1'; }catch(e){ return false; } }
   function scelta(){ try{ return localStorage.getItem(CHIAVE); }catch(e){ return null; } }
   function ricorda(v){ try{ localStorage.setItem(CHIAVE,v?'1':'0'); }catch(e){} }
@@ -9981,22 +9993,22 @@ if(_btnShot){
     if(a) a.title=v?'Rivedi tutto il pannello':'Riduci il pannello e allarga la mappa';
     if(muovi) ricentra();
   }
-  // Chiamata da showLegendMobile. Due tempi:
-  //  · si apre com'era l'ultima volta (chi l'ha ridotta la ritrova ridotta);
-  //  · se era intera, resta intera per RIDUCI_DOPO e poi si riduce da sola.
-  //    La riduzione si VEDE (la freccia si gira, il pannello scende): e' anche
-  //    il modo in cui si scopre che quel pannello si apre e si chiude.
+  // Chiamata da showLegendMobile, cioe' a ogni ANALISI NUOVA.
+  //  · si apre com'era l'ultima volta: chi l'ha ridotta la ritrova ridotta
+  //    anche cambiando periodo, ed e' la richiesta dell'utente («se cambiano
+  //    periodo temporale e' giusto che se uno ha ridotto rimane ridotta»);
+  //  · se non si e' mai espresso, le prime tre volte scende da sola dopo 8 s.
   // ⚠️ Chi l'ha RIAPERTA a mano ha detto «la voglio intera»: a quello non si
-  //    riduce piu' niente, mai. La riduzione automatica vale finche' non si
-  //    esprime, e per chi l'ha gia' ridotta e' inutile.
+  //    riduce piu' niente, mai.
   window._legApplicaRicordo=function(){
     fermaTimer();
     if(!isMobile()){ leg.classList.remove('leg-mini'); return; }
+    if(inModo()){ mini(false,false); return; }   // nei modi comanda _legModoCambiato
     var s=scelta();
     if(s==='1'){ mini(true,false); return; }   // ridotta per scelta sua
     mini(false,false);
     if(s==='0') return;                        // intera per scelta sua: non si tocca
-    if(!RIDUCI_DOPO) return;
+    if(!RIDUCI_DOPO || volteDimo()>=DIMO_VOLTE) return;   // dimostrazione gia' fatta
     timer=setTimeout(function(){
       timer=null;
       if(!isMobile()) return;
@@ -10005,6 +10017,8 @@ if(_btnShot){
          radar il pannello lo alza il CSS (`.modo-boschi #legend-panel{transform:
          translateY(0)}`) e la classe non c'e'. Si guarda se sta a schermo. */
       if(!aSchermo()) return;
+      if(inModo()) return;               // nel frattempo e' entrato nei boschi o nel radar
+      contaDimo();
       mini(true,true);
     },RIDUCI_DOPO);
   };
@@ -10039,18 +10053,27 @@ if(_btnShot){
     try{ gtag('event','legenda_mobile',{stato:(v?'ridotta':'intera')+'-'+modo}); }catch(e){}
   }
 
-  /* ⚠️ I MODI NON PASSANO DA showLegendMobile. Entrando nei boschi o nel radar
-     il pannello lo alza il CSS con la classe sul body, e il contenuto cambia da
-     cima a fondo: senza riapplicare qui, chi entra nei boschi con la legenda
-     ridotta trova nove colori nascosti che nessuno gli ha nascosto, e chi entra
-     con la legenda intera non vede mai la riduzione automatica. Si guarda la
-     classe del body e si riparte da capo a ogni cambio di modo. */
+  /* ⚠️ CAMBIANDO MODO IL PANNELLO SI RIAPRE SEMPRE INTERO (deciso dall'utente
+     il 20/9/2026). Il contenuto cambia da cima a fondo — i numeri della pioggia,
+     i nove colori dei boschi, le durate del radar — e un pannello che si apre
+     gia' ridotto nasconderebbe roba che quell'utente non ha mai visto: chi entra
+     nei boschi con la legenda ridotta non saprebbe nemmeno che i colori ci sono.
+     Il ricordo del «ridotto» resta scritto e torna valido alla prossima ANALISI:
+     cambiare periodo non e' cambiare modo.
+     ⚠️ I modi non passano da showLegendMobile: il pannello lo alza il CSS con la
+     classe sul body (`.modo-boschi #legend-panel{transform:translateY(0)}`), e
+     l'unico segnale e' quella classe.
+     ⚠️ `mini(false,false)`, NON `true` sul secondo parametro: l'inquadratura se
+     la fa il modo appena entrato (fitRegioni + centraStriscia dei boschi, o il
+     riquadro del radar). Ricentrare anche da qui vorrebbe dire due movimenti
+     dove ne basta uno, ed e' lo sfarfallio gia' visto col radar il 6/9. */
   var modoPrima=document.body.className;
+  window._legModoCambiato=function(){ fermaTimer(); if(isMobile()) mini(false,false); };
   try{
     new MutationObserver(function(){
       if(document.body.className===modoPrima) return;
       modoPrima=document.body.className;
-      if(typeof window._legApplicaRicordo==='function') window._legApplicaRicordo();
+      window._legModoCambiato();
     }).observe(document.body,{attributes:true,attributeFilter:['class']});
   }catch(e){}
 }());
