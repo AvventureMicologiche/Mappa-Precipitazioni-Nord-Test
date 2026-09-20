@@ -1426,7 +1426,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
         vetrina 88 · testata 65 · statistiche 46 · scala 34 · margini 30.
      Ridotta restano titolo, scala e «Indietro»: quello che serve a LEGGERE la
      mappa. Statistiche, tasti di condivisione e vetrina tornano con un tocco,
-     e la scelta si ricorda (localStorage `legRidotta`).
+     e la scelta resta per la SESSIONE, dentro la funzione in cui l'hai fatta
+     (vedi il blocco javascript: niente localStorage, cambio di funzione = grande).
      ⚠️ Gli avvisi rossi (ieri, stime, archivio, Friuli) NON si toccano: stanno
      dentro questo pannello apposta, perche' il pannello periodo sotto e' spento
      e nessuno li leggerebbe. Ridotta o intera, restano a schermo.
@@ -9936,7 +9937,26 @@ if(_btnShot){
   if(!leg) return;
   var hdr=leg.querySelector('.leg-header');
   if(!hdr) return;
-  var CHIAVE='legRidotta';
+  /* ⚠️ LO STATO «RIDOTTA» E' DI SESSIONE E LEGATO ALLA FUNZIONE (20/9/2026,
+     regola dettata dall'utente dopo la prova dal telefono). NON sta piu' in
+     localStorage: chiudendo e riaprendo il sito si riparte grandi.
+       - si parte sempre grande, qualunque analisi sia;
+       - ridotta a mano, resta ridotta finche' si resta nella stessa funzione:
+         cambiare periodo NON e' cambiare funzione, e nemmeno aprire la tendina
+         «Confronta»;
+       - ogni passaggio fra date, mappa forestale e radar riparte grande, anche
+         se avevi ridotto, perche' il contenuto del pannello cambia da cima a
+         fondo e un pannello gia' ridotto nasconderebbe roba mai vista.
+     Il legame con la funzione e' scritto in `funzRidotta` e non solo
+     nell'azzeramento all'evento: cosi' se un giorno l'ordine degli eventi
+     cambia (la classe sul body e showLegendMobile non arrivano in un ordine
+     garantito) lo stato resta giusto lo stesso, senza lampeggiamenti. */
+  var ridotta=false, funzRidotta=null, riapertaAMano=false;
+  function funzione(){
+    var c=document.body.classList;
+    return c.contains('modo-boschi') ? 'boschi' : c.contains('modo-radar') ? 'radar' : 'date';
+  }
+  function ridottaOra(){ return ridotta && funzRidotta===funzione(); }
   /* ⏱ LA RIDUZIONE AUTOMATICA E' UNA DIMOSTRAZIONE, NON UN COMPORTAMENTO.
      Otto secondi, e SOLO LE PRIME TRE VOLTE (deciso dall'utente il 20/9/2026
      provando sul test: «col tasto riduci ben visibile non so se ha senso»).
@@ -9957,9 +9977,7 @@ if(_btnShot){
   function volteDimo(){ try{ return parseInt(localStorage.getItem(CHIAVE_VOLTE),10)||0; }catch(e){ return DIMO_VOLTE; } }
   function contaDimo(){ try{ localStorage.setItem(CHIAVE_VOLTE,String(volteDimo()+1)); }catch(e){} }
   function inModo(){ var c=document.body.classList; return c.contains('modo-boschi')||c.contains('modo-radar'); }
-  function ricordata(){ try{ return localStorage.getItem(CHIAVE)==='1'; }catch(e){ return false; } }
-  function scelta(){ try{ return localStorage.getItem(CHIAVE); }catch(e){ return null; } }
-  function ricorda(v){ try{ localStorage.setItem(CHIAVE,v?'1':'0'); }catch(e){} }
+  function segna(v){ ridotta=!!v; funzRidotta=v?funzione():null; }
   var timer=null;
   function fermaTimer(){ if(timer){ clearTimeout(timer); timer=null; } }
   // Il pannello sta davvero a schermo? Si misura, non si guarda una classe:
@@ -9994,20 +10012,19 @@ if(_btnShot){
     if(muovi) ricentra();
   }
   // Chiamata da showLegendMobile, cioe' a ogni ANALISI NUOVA.
-  //  · si apre com'era l'ultima volta: chi l'ha ridotta la ritrova ridotta
-  //    anche cambiando periodo, ed e' la richiesta dell'utente («se cambiano
-  //    periodo temporale e' giusto che se uno ha ridotto rimane ridotta»);
-  //  · se non si e' mai espresso, le prime tre volte scende da sola dopo 8 s.
-  // ⚠️ Chi l'ha RIAPERTA a mano ha detto «la voglio intera»: a quello non si
-  //    riduce piu' niente, mai.
+  //  · si riapre com'era DENTRO QUESTA FUNZIONE: chi ha ridotto e cambia solo
+  //    il periodo la ritrova ridotta, ed e' la richiesta dell'utente;
+  //  · se e' grande e non si e' mai espresso, le prime tre volte scende da
+  //    sola dopo 8 s (la dimostrazione).
+  // ⚠️ Chi l'ha RIAPERTA a mano in questa sessione ha detto «la voglio
+  //    intera»: a quello non si dimostra piu' niente fino alla visita dopo.
   window._legApplicaRicordo=function(){
     fermaTimer();
     if(!isMobile()){ leg.classList.remove('leg-mini'); return; }
-    if(inModo()){ mini(false,false); return; }   // nei modi comanda _legModoCambiato
-    var s=scelta();
-    if(s==='1'){ mini(true,false); return; }   // ridotta per scelta sua
-    mini(false,false);
-    if(s==='0') return;                        // intera per scelta sua: non si tocca
+    var giu=ridottaOra();
+    mini(giu,false);
+    if(giu || riapertaAMano) return;
+    if(funzione()!=='date') return;            // la dimostrazione solo sulle date
     if(!RIDUCI_DOPO || volteDimo()>=DIMO_VOLTE) return;   // dimostrazione gia' fatta
     timer=setTimeout(function(){
       timer=null;
@@ -10017,8 +10034,9 @@ if(_btnShot){
          radar il pannello lo alza il CSS (`.modo-boschi #legend-panel{transform:
          translateY(0)}`) e la classe non c'e'. Si guarda se sta a schermo. */
       if(!aSchermo()) return;
-      if(inModo()) return;               // nel frattempo e' entrato nei boschi o nel radar
+      if(funzione()!=='date') return;    // nel frattempo e' entrato nei boschi o nel radar
       contaDimo();
+      segna(true);
       mini(true,true);
     },RIDUCI_DOPO);
   };
@@ -10047,32 +10065,45 @@ if(_btnShot){
 
   function scambia(){
     var v=!leg.classList.contains('leg-mini');
-    mini(v,true); ricorda(v);
-    var modo=document.body.classList.contains('modo-boschi') ? 'boschi'
-           : document.body.classList.contains('modo-radar')  ? 'radar' : 'pioggia';
-    try{ gtag('event','legenda_mobile',{stato:(v?'ridotta':'intera')+'-'+modo}); }catch(e){}
+    segna(v);
+    // Riaperta a mano = «la voglio intera»: niente piu' dimostrazioni in questa
+    // sessione. Non vale al contrario: chi la riduce puo' rivederla dopo un
+    // cambio di funzione, che e' proprio il momento in cui riparte grande.
+    if(!v) riapertaAMano=true;
+    mini(v,true);
+    try{ gtag('event','legenda_mobile',{stato:(v?'ridotta':'intera')+'-'+funzione()}); }catch(e){}
   }
 
-  /* ⚠️ CAMBIANDO MODO IL PANNELLO SI RIAPRE SEMPRE INTERO (deciso dall'utente
-     il 20/9/2026). Il contenuto cambia da cima a fondo — i numeri della pioggia,
-     i nove colori dei boschi, le durate del radar — e un pannello che si apre
-     gia' ridotto nasconderebbe roba che quell'utente non ha mai visto: chi entra
-     nei boschi con la legenda ridotta non saprebbe nemmeno che i colori ci sono.
-     Il ricordo del «ridotto» resta scritto e torna valido alla prossima ANALISI:
-     cambiare periodo non e' cambiare modo.
+  /* ⚠️ CAMBIANDO FUNZIONE IL PANNELLO SI RIAPRE SEMPRE INTERO (deciso
+     dall'utente il 20/9/2026). Il contenuto cambia da cima a fondo — i numeri
+     della pioggia, i nove colori dei boschi, le durate del radar — e un
+     pannello gia' ridotto nasconderebbe roba che quell'utente non ha mai visto:
+     chi entra nei boschi ridotto non saprebbe nemmeno che i colori ci sono.
+     Vale in tutti e due i versi, anche tornando alle date da «Indietro».
+     ⚠️ SI GUARDA LA FUNZIONE, NON LA STRINGA DELLE CLASSI. Qui prima si
+     confrontava `document.body.className` intero, e sul body ne cambiano altre
+     che con la funzione non c'entrano niente: `bo-tendina` (che si accende
+     APRENDO LA TENDINA), `senza-pallini`, `bo-lontano-on`. Risultato: aprendo
+     «Confronta» il pannello si riapriva da solo, che e' proprio il difetto
+     segnalato («se hai minimizzato e fai confronta resta minimizzato»).
      ⚠️ I modi non passano da showLegendMobile: il pannello lo alza il CSS con la
      classe sul body (`.modo-boschi #legend-panel{transform:translateY(0)}`), e
      l'unico segnale e' quella classe.
      ⚠️ `mini(false,false)`, NON `true` sul secondo parametro: l'inquadratura se
-     la fa il modo appena entrato (fitRegioni + centraStriscia dei boschi, o il
-     riquadro del radar). Ricentrare anche da qui vorrebbe dire due movimenti
+     la fa la funzione appena entrata (fitRegioni + centraStriscia dei boschi, o
+     il riquadro del radar). Ricentrare anche da qui vorrebbe dire due movimenti
      dove ne basta uno, ed e' lo sfarfallio gia' visto col radar il 6/9. */
-  var modoPrima=document.body.className;
-  window._legModoCambiato=function(){ fermaTimer(); if(isMobile()) mini(false,false); };
+  var funzPrima=funzione();
+  window._legModoCambiato=function(){
+    fermaTimer();
+    segna(false); riapertaAMano=false;   // funzione nuova: si riparte da zero
+    if(isMobile()) mini(false,false);
+  };
   try{
     new MutationObserver(function(){
-      if(document.body.className===modoPrima) return;
-      modoPrima=document.body.className;
+      var f=funzione();
+      if(f===funzPrima) return;
+      funzPrima=f;
       window._legModoCambiato();
     }).observe(document.body,{attributes:true,attributeFilter:['class']});
   }catch(e){}
@@ -11841,7 +11872,12 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
    indietro, il pallino pulsa e una nuvoletta dice cosa fare; al primo
    trascinamento la nuvoletta sparisce, e le aperture si contano in
    localStorage (boTendVolte). */
-.bo-tend-guida{position:absolute;top:50%;left:15px;margin-top:26px;white-space:nowrap;font-size:13px;font-weight:700;color:#fff;background:#1b3f6e;padding:6px 11px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.35);pointer-events:none;transform:translateX(-50%)}
+/* ⚠️ NIENTE `pointer-events:none` QUI (tolto il 20/9/2026). La nuvoletta dice
+   «Trascina la barra», quindi e' esattamente il punto dove dito e mouse si
+   appoggiano: con gli eventi disattivati il gesto le passava attraverso e
+   arrivava alla MAPPA, che si spostava mentre la tendina restava ferma.
+   Essendo figlia di `.bo-tend`, ora il gesto sale alla maniglia e trascina. */
+.bo-tend-guida{position:absolute;top:50%;left:15px;margin-top:26px;white-space:nowrap;font-size:13px;font-weight:700;color:#fff;background:#1b3f6e;padding:6px 11px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.35);transform:translateX(-50%);cursor:ew-resize;touch-action:none;user-select:none}
 .bo-tend-guida:before{content:'';position:absolute;top:-6px;left:50%;margin-left:-6px;border:6px solid transparent;border-top:0;border-bottom-color:#1b3f6e}
 .bo-tend.guida .bo-tend-pomo{animation:boPomo 1.1s ease-out infinite}
 @keyframes boPomo{0%{box-shadow:0 2px 8px rgba(0,0,0,.4),0 0 0 0 rgba(255,255,255,.85)}100%{box-shadow:0 2px 8px rgba(0,0,0,.4),0 0 0 16px rgba(255,255,255,0)}}
@@ -12325,14 +12361,25 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
         +'<div class="bo-tend-et bo-tend-sx">◀ 💧 Pioggia</div><div class="bo-tend-et bo-tend-dx">🌲 Boschi ▶</div>';
       L.DomEvent.disableClickPropagation(maniglia);
       L.DomEvent.disableScrollPropagation(maniglia);
-      var trascina=false;
+      var trascina=false, scarto=0;
       var dove=function(ev){
         var t=ev.touches&&ev.touches[0]||ev, r=map().getContainer().getBoundingClientRect();
-        hx=t.clientX-r.left; taglia();
+        hx=t.clientX-r.left+scarto; taglia();
       };
-      var giu=function(ev){ trascina=true; fermaGuida(true); maniglia.classList.add('su'); map().dragging.disable(); L.DomEvent.stop(ev); dove(ev); };
+      /* ⚠️ PARTENDO DALLA NUVOLETTA LA BARRA NON DEVE SALTARE. Prendendo il
+         pomello, che e' largo 38 px, la linea si porta sotto il dito e lo
+         spostamento massimo e' 19 px: non si nota, ed e' il comportamento di
+         sempre. La nuvoletta invece e' larga ~150 px e sta sotto il pomello:
+         afferrandola per un angolo la linea sarebbe schizzata di 75 px prima di
+         cominciare a seguire il dito. Da li' il gesto parte RELATIVO. */
+      var giu=function(ev){
+        trascina=true;
+        var t=ev.touches&&ev.touches[0]||ev, r=map().getContainer().getBoundingClientRect();
+        scarto=(ev.target&&ev.target.closest&&ev.target.closest('.bo-tend-guida')) ? hx-(t.clientX-r.left) : 0;
+        fermaGuida(true); maniglia.classList.add('su'); map().dragging.disable(); L.DomEvent.stop(ev); dove(ev);
+      };
       var muovi=function(ev){ if(!trascina) return; if(ev.cancelable) ev.preventDefault(); dove(ev); };
-      var su=function(){ if(!trascina) return; trascina=false; maniglia.classList.remove('su'); map().dragging.enable(); };
+      var su=function(){ if(!trascina) return; trascina=false; scarto=0; maniglia.classList.remove('su'); map().dragging.enable(); };
       maniglia.addEventListener('mousedown',giu); maniglia.addEventListener('touchstart',giu,{passive:false});
       document.addEventListener('mousemove',muovi); document.addEventListener('touchmove',muovi,{passive:false});
       document.addEventListener('mouseup',su); document.addEventListener('touchend',su); document.addEventListener('touchcancel',su);
@@ -12361,10 +12408,12 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   function guida(){
     if(!maniglia) return;
     maniglia.classList.add('guida');
-    if(!maniglia.querySelector('.bo-tend-guida')){
-      var g=document.createElement('div'); g.className='bo-tend-guida'; g.textContent='Trascina la barra ⇆';
+    var g=maniglia.querySelector('.bo-tend-guida');
+    if(!g){
+      g=document.createElement('div'); g.className='bo-tend-guida'; g.textContent='Trascina la barra ⇆';
       maniglia.appendChild(g);
     }
+    g.style.display='';   // la volta prima era stata nascosta, non tolta
     var W=map().getSize().x, x0=hx, amp=Math.min(90,W*0.2), t0=null, DUR=1600;
     if(animGuida) cancelAnimationFrame(animGuida);
     var passo=function(ts){
@@ -12383,7 +12432,14 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     if(animGuida){ cancelAnimationFrame(animGuida); animGuida=null; }
     if(!maniglia) return;
     maniglia.classList.remove('guida');
-    var g=maniglia.querySelector('.bo-tend-guida'); if(g) g.parentNode.removeChild(g);
+    /* ⚠️ SI NASCONDE, NON SI TOGLIE (20/9/2026). Da quando la nuvoletta prende
+       i gesti, `fermaGuida` viene chiamata dal `touchstart` che comincia PROPRIO
+       SOPRA DI LEI: staccandola dal documento in quell'istante, il dito resta
+       legato a un elemento orfano e i `touchmove` successivi non arrivano piu'
+       ai gestori su `document` — la barra non si muoveva di un pixel, mentre col
+       mouse funzionava (li' il puntatore non e' legato a un bersaglio). Misurato:
+       col dito 0 px di spostamento, col mouse 100. */
+    var g=maniglia.querySelector('.bo-tend-guida'); if(g) g.style.display='none';
   }
 
   function tendinaVia(manuale){
