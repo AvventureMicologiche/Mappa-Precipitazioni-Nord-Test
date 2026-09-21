@@ -64,7 +64,7 @@ jobs:
           git config user.email "bot@bot.com"
           mkdir -p data/slovenia
           git add data/slovenia/
-          git diff --staged --quiet || git commit -m "slovenia $(date -u +%Y-%m-%d)"
+          git diff --staged --quiet || git commit -m "slovenia $(date -u +%Y-%m-%d) [skip netlify]"
           ok=0
           for i in 1 2 3 4 5; do
             if git pull --rebase origin main && git push; then ok=1; break; fi
