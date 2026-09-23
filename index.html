@@ -12095,10 +12095,18 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
 .bo-tend-btn{flex:none;font-size:12.5px;font-weight:700;color:#1b3f6e;background:#eef3fb;border:1px solid #c9d6ea;border-radius:14px;padding:3px 11px;cursor:pointer;white-space:nowrap;user-select:none}
 .bo-tend-btn:hover{background:#dfe8f6}
 .bo-tendina .bo-tend-btn{background:#1b3f6e;color:#fff;border-color:#1b3f6e}
-.bo-nuv .leaflet-popup-content-wrapper{border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
-.bo-nuv .leaflet-popup-content{margin:8px 12px;font-size:13.5px;color:#1f2d3d;line-height:1.35}
+/* ⚠️ LA NUVOLETTA E' SCURA, COME NEL MOCKUP APPROVATO (23/9/2026, sua
+   correzione: «se approviamo il mockup mi aspetto che poi usi quei colori»).
+   Il tasto verde del mockup e' stato scelto SU QUESTO fondo: messo su una
+   nuvoletta chiara non e' piu' la stessa scelta. Colori presi uno per uno da
+   mockup-orientamento/insieme.html: fondo #1e1e1e, righe #aaa e #ddd, tasto
+   A verde #2f6f4f (contrasto 5,99). */
+.bo-nuv .leaflet-popup-content-wrapper{background:#1e1e1e;color:#fff;border-radius:8px;
+  box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.bo-nuv .leaflet-popup-tip{background:#1e1e1e}
+.bo-nuv .leaflet-popup-content{margin:8px 12px;font-size:13.5px;color:#fff;line-height:1.35}
 .bo-nuv-riga{display:flex;align-items:center;gap:7px}
-.bo-nuv-sub{font-size:12px;color:#5a6b7d}
+.bo-nuv-sub{font-size:12px;color:#aaa}
 .bo-nuv-riga + .bo-nuv-sub{margin-top:2px;padding-left:20px}
 /* «Portami qui» dentro la nuvoletta del tocco (22/9/2026). Il punto e' QUELLO
    CHE HAI TOCCATO, non un pluviometro: e' li' che uno vuole andare, perche' ha
@@ -12109,39 +12117,28 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
    l'inverso»). Prima era una pasticca verde piena e si mangiava la nuvoletta.
    Adesso e' una riga di testo: il nome dell'albero resta la cosa grossa, il
    «Portami qui» e' un rimando, che e' quello che deve essere. */
-.bo-nuv-vai{display:inline-block;margin-top:7px;color:#2e6b45 !important;
-  text-decoration:none;font-size:12px;font-weight:600;white-space:nowrap;
-  background:#eef6f1;border:1px solid #cfe3d7;border-radius:7px;padding:4px 9px}
-.bo-nuv-vai:hover,.bo-nuv-vai:focus{background:#e0efe6;border-color:#9fc9b1;color:#245437 !important}
-.bo-nuv-vai:active{background:#d3e7db}
-/* ⚠️ I NOMI SOPRA IL RILIEVO (23/9/2026). Le tessere di OSM hanno i nomi
-   STAMPATI DENTRO l'immagine: qualunque cosa ci metti sopra li copre. Per
-   questo in modo boschi il fondo diventa quello di Esri SENZA nomi, e i nomi
-   tornano in cima in due strati: sotto l'alone bianco, sopra il testo.
-   ⚠️ DUE STRATI e non una catena di filtri sulla stessa immagine: coi
-   drop-shadow incatenati ogni passata prende in ingresso il risultato della
-   precedente, alone compreso, e si mangia le lettere sottili (misurato: la i
-   di Fosciana, la a di Vagli Sotto). Il testo disegnato per ultimo non lo
-   copre nessuno.
-   ⚠️ Il colore e' la terza tacca di una scala di CHIAREZZA, non di tinta: su
-   lettere di 13 px antialiasate la tinta non si vede, quattro grigi scuri di
-   tinta diversa sono quattro volte lo stesso colore. */
-.leaflet-bo-alone-pane img{filter:brightness(0) invert(1)
-  drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff)}
-.leaflet-bo-nomi-pane{mix-blend-mode:normal}
+/* 23/9: il tasto torna pieno, ma col testo di 12 px e stretto sul proprio
+   testo come nel mockup, cosi' il nome del bosco resta la cosa grossa. */
+.bo-nuv-vai{display:block;width:fit-content;margin:7px auto 0;color:#fff !important;
+  text-decoration:none;font-size:12px;font-weight:600;white-space:nowrap;text-align:center;
+  background:#2f6f4f;border:1px solid transparent;border-radius:6px;padding:6px 12px}
+.bo-nuv-vai:hover,.bo-nuv-vai:focus{filter:brightness(1.12)}
+.bo-nuv-vai:active{filter:brightness(.92)}
 .bo-nuv-dato{display:flex;justify-content:space-between;gap:14px;font-size:12px;
-  color:#5a6b7d;margin-top:3px}
-.bo-nuv-dato b{color:#1f2d3d;font-weight:600;text-align:right}
-.bo-nuv-coda{font-size:11px;color:#8b98a8;text-align:right;margin-top:-1px}
-.bo-nuv-co{font-size:10.5px;color:#8b98a8;margin-top:3px;
+  color:#aaa;margin-top:3px}
+.bo-nuv-dato b{color:#ddd;font-weight:600;text-align:right}
+.bo-nuv-coda{font-size:11px;color:#8e8e8e;text-align:right;margin-top:-1px}
+.bo-nuv-co{font-size:10.5px;color:#8e8e8e;margin-top:3px;text-align:center;
   font-variant-numeric:tabular-nums}
 /* La crocetta di Leaflet cadeva SOPRA il nome del bosco: il contenuto si
    sposta a sinistra quel tanto che basta, e la crocetta si allarga un po'
    perche' col dito una x di 12 px non si prende. */
 .bo-nuv .leaflet-popup-content{margin-right:22px}
 .bo-nuv .leaflet-popup-close-button{width:24px;height:24px;font-size:18px;
-  padding:3px 4px 0 0;color:#7a889a}
-.bo-nuv .leaflet-popup-close-button:hover{color:#1f2d3d}
+  padding:3px 4px 0 0;color:#aaa !important}
+/* ⚠️ `!important` perche' `.leaflet-container a.leaflet-popup-close-button`
+   di Leaflet e' piu' specifico e la lasciava #757575, grigio su quasi nero. */
+.bo-nuv .leaflet-popup-close-button:hover{color:#fff !important}
 /* con la tendina la pioggia torna, ma solo a sinistra della linea (la taglia il JS) */
 .modo-boschi.bo-tendina #map .leaflet-overlay-pane canvas{display:block !important}
 /* e con lei la sua scala dei millimetri, se no la meta' pioggia non si legge */
@@ -12211,7 +12208,15 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
      E si va pure piu' veloce: 0,35 s a caldo contro gli 0,80 di Netlify.
      ⚠️ `indice.json` si carica da BASE, quindi cambiando questa riga si sposta
      anche l'indice: il test si ritrova i dieci colori senza copiare 190 MB. */
-  var TESSERE='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@main/';
+  /* ⚠️ L'INDIRIZZO PORTA IL COMMIT, MAI `@main` (23/9/2026). Con `@main`
+     jsDelivr tiene la copia al bordo DODICI ORE: dopo una rigenerazione il
+     sito vedeva ancora l'indice vecchio (solo i livelli 11-13) e il rilievo
+     compariva solo zoomando. Un commit invece non cambia mai, e jsDelivr lo
+     serve «immutable» per un anno. A ogni rigenerazione delle tessere:
+     push forzato di la', poi QUI il codice nuovo (`git rev-parse HEAD`
+     nel repo delle tessere). Le vecchie copie spariscono da sole. */
+  var TESSERE_COMMIT='633aec75b9a7b14396ec0285b00b91ef46be272b';
+  var TESSERE='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@'+TESSERE_COMMIT+'/';
   var BASE=TESSERE+'boschi/', OPACITA=0.7;
   var RILIEVO=TESSERE+'rilievo/', TERRENO=TESSERE+'terreno/', Z_TERRENO=12;
   var strato=null, acceso=false, indice=null, esistono={}, titoloVecchio=null, displayVecchio=null;
@@ -12238,7 +12243,12 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     });
     // ⚠️ i crediti NON stanno sullo strato: li gestisce aggiornaCrediti() secondo
     // le regioni scelte (con sei fonti tutte insieme occupavano tre righe sopra la mappa)
-    return new Tessere('',{pane:'boschi',opacity:OPACITA,minZoom:indice.z_min,maxNativeZoom:indice.z_max,maxZoom:19});
+    /* ⚠️ crossOrigin E' OBBLIGATORIO da quando le tessere stanno su jsDelivr
+       (23/9/2026). Senza, il browser le mostra ma ne vieta la lettura:
+       pixelTessera() falliva in silenzio e la nuvoletta diceva SEMPRE «si sta
+       caricando», anche con tutte le tessere a schermo. jsDelivr risponde
+       `access-control-allow-origin: *`, quindi basta chiederle cosi'. */
+    return new Tessere('',{pane:'boschi',opacity:OPACITA,minZoom:indice.z_min,maxNativeZoom:indice.z_max,maxZoom:19,crossOrigin:'anonymous'});
   }
 
   var creditoBoschi=null;
@@ -12330,51 +12340,26 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   function riposiziona(){ setTimeout(function(){ window.dispatchEvent(new Event('resize')); },30); }
 
 
-  /* ═══════════ IL RILIEVO E I NOMI (23/9/2026) ═══════════
-     Il rilievo e' COTTO in tessere a z11-13 (la sua scelta: «il cotto e'
-     nettamente il migliore»). Il terreno a z12 serve al TOCCO, per dire quota
-     e versante in un punto qualsiasi. Sono la stessa serie di dati, tagliata
-     in due modi, e stanno tutt'e due nel repo delle tessere. */
-  var rilievo=null, fondoNeutro=null, aloneNomi=null, nomiSopra=null, fondoVia=false;
-  var ESRI='https://services.arcgisonline.com/ArcGIS/rest/services/';
-  var NOMI_COL='#465B67';   // terza tacca della scala di chiarezza, scelta da lui
+  /* ═══════════ IL RILIEVO (23/9/2026) ═══════════
+     Cotto in tessere z5-13 da TINITALY a 10 m, e messo SOTTO le tessere di
+     OSM, che si fondono in `multiply`.
+     ⚠️ Perche' sotto e non sopra: il nero del testo moltiplicato per qualunque
+     cosa RESTA NERO, quindi i nomi di OSM non si toccano; il rilievo si vede
+     attraverso il bianco e i colori chiari. Cosi' non serve cambiare la mappa
+     di base, e dove il rilievo non c'e' — Svizzera, Francia, Austria,
+     Slovenia, e le pianure dove non c'e' niente da ombreggiare — resta la
+     mappa normale invece di un fondo vuoto.
+     Il primo tentativo metteva un fondo grigio senza nomi per poterli
+     rimettere sopra: risolveva la leggibilita' e rompeva quattro altre cose
+     (laghi grigi, estero vuoto, nomi di un altro carattere, cinque strati da
+     scaricare invece di due). */
+  var rilievo=null, sottoOn=false;
 
-  function panello(nome, z){
-    var m=map();
-    if(!m.getPane(nome)){
-      m.createPane(nome);
-      m.getPane(nome).style.zIndex=z;
-      m.getPane(nome).style.pointerEvents='none';
-    }
-    return m.getPane(nome);
-  }
-
-  /* ⚠️ Il colore delle lettere si DIPINGE su canvas, non si filtra: coi filtri
-     CSS si ottiene solo il nero o un grigio senza tinta. `source-in` riempie
-     l'alfa del colore scelto, e NON legge i pixel, quindi non serve il CORS. */
-  var NomiDipinti=L.GridLayer.extend({
-    createTile:function(c,fatto){
-      var cv=document.createElement('canvas'); cv.width=cv.height=256;
-      var g=cv.getContext('2d'), im=new Image();
-      im.crossOrigin='anonymous';
-      im.onload=function(){
-        g.drawImage(im,0,0);
-        g.globalCompositeOperation='source-in';
-        g.fillStyle=NOMI_COL; g.fillRect(0,0,256,256);
-        fatto(null,cv);
-      };
-      im.onerror=function(){ fatto(null,cv); };
-      im.src=ESRI+'Canvas/World_Light_Gray_Reference/MapServer/tile/'+c.z+'/'+c.y+'/'+c.x;
-      return cv;
-    }
-  });
-
-  /* ⚠️ LE TESSERE DI RILIEVO NON CI SONO DAPPERTUTTO: dove il terreno e' piatto
-     non c'e' niente da ombreggiare e il generatore le salta. Sono il 31% del
-     totale possibile, cioe' un 404 ogni tre richieste. Stessa medicina
-     dell'indice dei boschi, ma in forma piu' corta: per ogni livello, x -> gli
-     INTERVALLI di y che esistono. Le y sono quasi sempre contigue, quindi il
-     file scende da 444 kB (elenco piatto) a 23, sei compressi. */
+  /* ⚠️ LE TESSERE DI RILIEVO NON CI SONO DAPPERTUTTO: dove il terreno e'
+     piatto non c'e' niente da ombreggiare e il generatore le salta, ed e'
+     circa un terzo del totale. Senza indice sarebbero 404 a raffica. Per ogni
+     livello, x -> gli INTERVALLI di y che esistono: le y sono quasi sempre
+     contigue, e il file sta in 23 kB invece di 444. */
   var indRil=null;
   function cercaY(iv,y){
     for(var i=0;i<iv.length;i++){
@@ -12391,39 +12376,34 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   }
 
   function creaRilievo(){
-    panello('bo-rilievo',445); panello('bo-alone',448); panello('bo-nomi',449);
+    var m=map();
+    /* ⚠️ Il pane sta a 190, SOTTO il tilePane che Leaflet mette a 200. */
+    if(!m.getPane('bo-rilievo')){
+      m.createPane('bo-rilievo');
+      m.getPane('bo-rilievo').style.zIndex=190;
+      m.getPane('bo-rilievo').style.pointerEvents='none';
+    }
     fetch(RILIEVO+'indice.json').then(function(r){ return r.json(); })
       .then(function(j){ indRil=j; if(rilievo) rilievo.redraw(); })
       .catch(function(){ indRil=null; });
     var Ril=L.TileLayer.extend({
       getTileUrl:function(c){ return rilievoEsiste(c) ? RILIEVO+c.z+'/'+c.x+'/'+c.y+'.png' : VUOTA; }
     });
-    rilievo=new Ril('',
-      {pane:'bo-rilievo',minZoom:11,maxNativeZoom:13,maxZoom:19,errorTileUrl:VUOTA});
-    /* ⚠️ L'ordine di Leaflet per i servizi ArcGIS e' {z}/{y}/{x}, invertito
-       rispetto a OSM: sbagliandolo si scaricano tessere a caso senza errori. */
-    fondoNeutro=L.tileLayer(ESRI+'Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-      {maxZoom:19, attribution:'fondo e nomi &copy; <a href="https://www.esri.com/" target="_blank" rel="noopener">Esri</a>'});
-    aloneNomi=L.tileLayer(ESRI+'Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
-      {pane:'bo-alone',maxZoom:19});
-    nomiSopra=new NomiDipinti({pane:'bo-nomi',maxZoom:19});
+    // crossOrigin come le tessere dei boschi: vengono da jsDelivr, e senza lo scatto dell'immagine non le potrebbe copiare
+    rilievo=new Ril('',{pane:'bo-rilievo',minZoom:5,maxNativeZoom:13,maxZoom:19,errorTileUrl:VUOTA,crossOrigin:'anonymous'});
   }
 
   function rilievoOn(){
     var m=map();
     if(!rilievo) creaRilievo();
-    rilievo.addTo(m); aloneNomi.addTo(m); nomiSopra.addTo(m);
-    if(window._baseTiles && m.hasLayer(window._baseTiles)){
-      m.removeLayer(window._baseTiles); fondoVia=true;
-    }
-    fondoNeutro.addTo(m);
-    if(fondoNeutro.getContainer && fondoNeutro.getContainer()) fondoNeutro.getContainer().style.zIndex=1;
+    rilievo.addTo(m);
+    m.getPane('tilePane').style.mixBlendMode='multiply';
+    sottoOn=true;
   }
   function rilievoOff(){
     var m=map();
-    [rilievo,aloneNomi,nomiSopra,fondoNeutro].forEach(function(s){ if(s&&m.hasLayer(s)) m.removeLayer(s); });
-    if(fondoVia && window._baseTiles && !m.hasLayer(window._baseTiles)){ window._baseTiles.addTo(m); }
-    fondoVia=false;
+    if(rilievo && m.hasLayer(rilievo)) m.removeLayer(rilievo);
+    if(sottoOn){ m.getPane('tilePane').style.mixBlendMode='normal'; sottoOn=false; }
   }
 
   /* ═══ IL TERRENO SOTTO IL DITO: quota e versante ═══
@@ -12583,7 +12563,9 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
      Un tocco dice il tipo di bosco in quel punto. Non chiede niente a nessuno:
      legge il COLORE della nostra tessera sotto il dito e lo riporta al gruppo
      della legenda. Le tessere sono PNG a tavolozza coi colori di indice.gruppi,
-     servite dal nostro dominio, quindi il canvas le puo' leggere.
+     servite da jsDelivr con `access-control-allow-origin: *`: il canvas le
+     puo' leggere SOLO perche' lo strato le chiede con crossOrigin (vedi
+     creaStrato).
      ⚠️ Dove il dito cade in un buco del mosaico (un prato in mezzo al bosco) si
      guarda intorno per qualche pixel: sul telefono il dito e' grosso e un
      «qui non c'e' bosco» a due metri da una faggeta sembrerebbe un difetto. */
