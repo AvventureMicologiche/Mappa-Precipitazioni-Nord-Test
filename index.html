@@ -17,6 +17,17 @@
     }
   </script>
 
+  <!-- La vetrina si legge da data/vetrina.json su GitHub raw (vedi in fondo):
+       la connessione si apre in anticipo, cosi' DNS e TLS non pesano
+       sull'attesa prima che la scheda compaia.
+       ⚠️ NON E' MISURATO. Provato il 22/9/2026 su 6 aperture per braccio:
+       667 ms mediani con la riga contro 762 senza, ma la dispersione e' molto
+       piu' larga della differenza, e i tempi di dettaglio del Resource Timing
+       tornano a zero perche' raw.githubusercontent.com non manda
+       `Timing-Allow-Origin`. Si tiene perche' non cambia niente in pagina e
+       non costa niente, non perche' si sia visto che aiuta. -->
+  <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <!-- ⚠️ CANONICO (23/8/2026). Ogni link condiviso e' questa stessa pagina con
        i parametri dello stato (?r=…&da=…&a=…): per Google erano PAGINE DIVERSE
@@ -896,6 +907,15 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
   #channel-pill .cp-t{color:#fff;font-size:13.5px;font-weight:700;line-height:1.25;flex:1;}
   #channel-pill .cp-t small{display:block;font-weight:400;font-size:10.5px;opacity:.85;margin-top:1px;}
   #channel-pill .cp-yt{flex:none;display:flex;align-items:center;}
+  /* LA COPERTINA AL POSTO DELL'AVATAR nella pillola della vetrina
+     (20/9/2026). Il telefono e' il 90% del traffico e la copertina la
+     vedeva solo il computer.
+     ⚠️ 56 e non di piu': a 64 px il titolo va su DUE righe e la pillola
+     passa da 61 a 78 px, cioe' si riprende 17 px di mappa appena liberati
+     con la barra in basso. Misurato: il limite e' 60, 56 tiene il margine
+     per i font diversi dei telefoni veri. Altezza pillola invariata a
+     360x640 e 393x760. */
+  #channel-pill img.cp-cop{width:56px;height:32px;border-radius:6px;border:0;}
 
   /* ── SCELTA DEL SOCIAL (25/8/2026) ──
      Regole usate SOLO quando la vetrina ha un video pubblicato anche altrove:
@@ -940,6 +960,20 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
    Torna da sola con «Indietro», come fa il contatore delle letture. Vale per
    la scheda in tutte e due le versioni, video e «Iscriviti». */
 #channel-logo.nascosta{display:none;}
+/* ⚠️ IL LAMPO DELLA SCHEDA «ISCRIVITI» (22/9/2026, segnalazione dell'utente:
+   «per un istante appare la vetrina iscriviti e poi appare quella corretta»).
+   Il markup qui sotto e' il RIPIEGO, ma e' anche la prima cosa che il browser
+   disegna, mentre la vetrina vera arriva da data/vetrina.json su GitHub raw.
+   Misurato in locale su 5 aperture: la scheda «Iscriviti» resta a schermo
+   856 ms (minimo 851, massimo 980) e poi viene riscritta sotto gli occhi.
+   Con `prevetrina` la scheda non si disegna finche' non si sa cosa scriverci:
+   l'angolo resta vuoto per quel tanto e poi compare UNA cosa sola, quella
+   giusta. Vale anche quando la vetrina e' scaduta: li' `costruisci` esce
+   subito e `monta` scopre la scheda «Iscriviti», che e' il contenuto finale.
+   La classe la toglie `monta`, che parte SEMPRE: o col file, o col ripiego
+   dopo 1.200 ms. In piu' c'e' la rete di sicurezza subito sotto il markup,
+   per il caso in cui tutto il blocco della vetrina non parta affatto. */
+#channel-logo.prevetrina,#channel-pill.prevetrina{display:none;}
 #channel-logo .v-alto{display:flex;gap:11px;align-items:stretch;}
 /* ⚠️ LA COPERTINA E LA LARGHEZZA DELLA SCHEDA SI MUOVONO INSIEME (6/9/2026).
    La colonna del testo qui accanto e' `flex:1`, cioe' si prende quello che
@@ -1448,19 +1482,26 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
        quanto costava la sola maniglia senza la parola. */
     margin:-10px 0 0;padding:0;min-height:24px;cursor:pointer;
   }
-  .leg-handle-bar{width:36px;height:4px;background:#ccc;border-radius:2px;}
+  /* ⚠️ LA PASTICCA STA AL CENTRO E PRENDE IL POSTO DELLA BARRETTA
+     (21/9/2026, segnalato da lui con due schermate). Prima stava a destra in
+     `position:absolute`, e da ridotta finiva ESATTAMENTE sopra «Indietro»:
+     misurati ZERO px di aria fra le due, sulla stessa colonna. In piu' da
+     grande «riduci» era testo nudo e da ridotta diventava una pasticca col
+     bordo, cioe' le due facce dello stesso comando non si somigliavano.
+     Adesso: una faccia sola nei due stati, al centro, e «Indietro» resta a
+     destra. Non e' una questione di margini, non si possono PIU' incrociare
+     per nessuna lunghezza del titolo.
+     ⚠️ Il fondo e' PIENO e senza bordo apposta: «Indietro» e' bianco col
+     bordo blu, e due pasticche uguali una sopra l'altra si confonderebbero.
+     ⚠️ Costa ZERO px: la riga era alta 24 e la pasticca e' alta 24. */
+  .leg-handle-bar{display:none;}
   .leg-azione{
-    position:absolute;right:0;top:50%;margin-top:-11px;height:22px;
     display:flex;align-items:center;gap:5px;color:#1b3f6e;
+    background:#e8eef7;border:0;border-radius:999px;padding:0 11px;height:24px;
   }
-  .leg-azione-txt{font-size:12px;font-weight:600;line-height:1;}
+  .leg-azione-txt{font-size:12.5px;font-weight:700;line-height:1;}
   .leg-chevron{font-size:12px;line-height:1;transition:transform .28s cubic-bezier(.4,0,.2,1);}
   #legend-panel.leg-mini .leg-chevron{transform:rotate(180deg);}
-  #legend-panel.leg-mini .leg-azione{
-    background:#f0f4fb;border:1px solid #c2d1e8;border-radius:20px;
-    padding:0 10px;height:24px;margin-top:-12px;
-  }
-  #legend-panel.leg-mini .leg-azione-txt{font-size:12.5px;font-weight:700;}
 
   /* Cosa se ne va quando e' ridotta, modo per modo. La regola e' una sola:
      resta quello che serve a LEGGERE la mappa e a uscire; se ne vanno
@@ -1731,7 +1772,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
          Prima era opacity:.80 sull'intero elemento, che sbiadiva tutto. -->
     <a href="https://www.youtube.com/@avventuremicologiche" target="_blank"
        onclick="try{gtag('event','click_youtube',{pulsante:'box-desktop'})}catch(e){}"
-       id="channel-logo">
+       id="channel-logo" class="prevetrina">
       <div class="v-alto v-iscr">
         <img src="archie-avatar.png" alt="Archie" class="ch-ava">
         <div class="v-dx">
@@ -1743,6 +1784,14 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       <div class="v-grazie"><b>Grazie a tutti</b>, più di <b>1.000 analisi al giorno</b>. Se serve anche a te, <b>iscriviti al canale</b>: le uscite le raccontiamo lì.</div>
       <div class="v-btn v-iscr">ISCRIVITI</div>
     </a>
+    <!-- Rete di sicurezza del `prevetrina`. Sta QUI, fuori dal blocco della
+         vetrina in fondo alla pagina, apposta: se quel blocco non partisse
+         affatto la scheda resterebbe nascosta per sempre, e la scheda e' il
+         ripiego, cioe' proprio la cosa che non deve sparire. Quando tutto
+         funziona questo timeout non fa niente (la classe l'ha gia' tolta
+         `monta` dopo ~850 ms); 2.500 ms e' il doppio abbondante del tetto di
+         1.200 ms del ripiego, quindi non si accavalla mai. -->
+    <script>setTimeout(function(){try{['channel-logo','channel-pill'].forEach(function(k){var e=document.getElementById(k);if(e)e.classList.remove('prevetrina');});}catch(e){}},2500);</script>
 
     <!-- Pannelli: su desktop sovrapposti alla mappa via absolute -->
 
@@ -2015,7 +2064,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
       <div id="osmer-notice" style="display:none;margin-top:6px;font-size:14px;font-weight:600;line-height:1.3;color:#cc0000;">⚠️ <b>Friuli</b>: possibili ritardi fino a 48h</div>
       <a href="https://www.youtube.com/@avventuremicologiche" target="_blank"
          onclick="try{gtag('event','click_youtube',{pulsante:'pillola-mobile'})}catch(e){}"
-         id="channel-pill">
+         id="channel-pill" class="prevetrina">
         <img src="archie-avatar.png" alt="Archie">
         <div class="cp-t">Più di 1.000 analisi al giorno<small>Grazie a tutti · iscriviti al canale</small></div>
         <div class="cp-yt">
@@ -2691,6 +2740,10 @@ var baseTiles=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
   crossOrigin:true, // necessario per esportare la mappa su canvas (immagine di condivisione)
   attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
+/* ⚠️ Esposto perche' il modulo dei boschi e' uno <script> SEPARATO e non vede
+   le funzioni di qui: in modo boschi scambia il fondo con uno SENZA NOMI, per
+   poterli rimettere sopra il rilievo. Stesso motivo di _mapDebug e _vaiQui. */
+window._baseTiles=baseTiles;
 
 /**
  * Esegue `cb` quando la mappa ha davvero DISEGNATO le tile della vista attuale.
@@ -4053,6 +4106,45 @@ function evidenziaMarker(m){
 // un clic sulla mappa, e non deve ne' aprire una stazione ne' chiudere niente.
 var SOPRA_LA_MAPPA='#st-history,#legend-panel,#time-panel,#region-panel,#reg-sheet,#map-hint-panel,.leaflet-control';
 
+/* ═══ «PORTAMI QUI» — 22/9/2026 ═══════════════════════════════════════════
+   Il pezzo di HTML del tasto, con le coordinate del punto TOCCATO.
+   ⚠️ Sta qui e non dentro il blocco dei boschi perche' serve a tutt'e due, e
+   quel blocco e' un <script> separato che NON vede le funzioni di qui (e'
+   scritto nel CLAUDE.md, «le funzioni del sito non sono globali»). Per questo
+   e' esposta su window, come _fitRegioni e _centraStriscia.
+   ⚠️ Sei decimali sono ~11 cm: oltre e' finta precisione. Quattro nella riga
+   che si legge, che ne vale ~11 metri ed e' gia' piu' di quanto serva a uno
+   che deve arrivarci.
+   ⚠️ APRE SUL PUNTO, NON SULLE INDICAZIONI (23/9/2026, sua correzione):
+   `maps/search/?api=1&query=lat,lon` apre la mappa centrata li' con lo spillo,
+   e poi decide lui se salvare il posto, guardare il satellite o farsi portare.
+   Il suo motivo, ed e' giusto: «dare noi le indicazioni vai li', che poi e' un
+   posto impervio o un burrone, non mi pare intelligente». L'evento GA passa da
+   `portami_qui` (un giorno di vita) a `apri_maps`, che dice quello che fa.
+   ⚠️ La posizione di chi guarda non entra comunque nell'indirizzo. */
+/* ⚠️ IL SEGNAPOSTO E' NOSTRO, NON QUELLO DI GOOGLE (22/9/2026). Lui aveva
+   chiesto «il simbolo di Google Maps, cosi' e' piu' chiaro»: la goccia a
+   quattro colori e' un marchio registrato, e riprodurla per conto nostro
+   apre una questione che non vale un'icona. La stessa chiarezza si ottiene
+   SCRIVENDOLO — «apre Google Maps» sotto il tasto — che e' un uso del nome
+   per dire dove si va, e quello si puo' fare. Se un giorno si volesse
+   l'icona vera, si scarica dalle linee guida del marchio di Google e si
+   seguono le loro regole, non si ridisegna a occhio. */
+var PIN='<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"'
+  +' style="vertical-align:-2px;margin-right:5px"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75'
+  +' 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>';
+
+function vaiQui(ll,da){
+  if(!ll||ll.lat==null||ll.lng==null) return '';
+  var p=ll.lat.toFixed(6)+','+ll.lng.toFixed(6);
+  return '<a class="bo-nuv-vai" target="_blank" rel="noopener"'
+       + ' href="https://www.google.com/maps/search/?api=1&amp;query='+encodeURIComponent(p)+'"'
+       + ' onclick="try{gtag(\'event\',\'apri_maps\',{da:\''+(da||'mappa')+'\'})}catch(e){}">'
+       + PIN+'Apri su Google Maps</a>'
+       + '<div class="bo-nuv-co">'+ll.lat.toFixed(4)+', '+ll.lng.toFixed(4)+'</div>';
+}
+window._vaiQui=vaiQui;
+
 map.on('click',function(e){
   if(Date.now()-histOpenedAt<400) return;
   // ⚠️ Rete di sicurezza oltre a disableClickPropagation: quella va messa a
@@ -4193,27 +4285,86 @@ function positionPanels(){
   // time-panel: GAP sotto region-panel
   tp.style.top=(rpBottom+GAP)+'px';
 
-  // legend-panel: posiziona sempre visibile nel viewport
+  /* ⚠️ IL LIMITE E' IL FONDO DELLA MAPPA, NON `window.innerHeight`
+     (21/9/2026, segnalato da lui con una schermata: «perche' con questo pc la
+     legenda finisce fuori?»). Il pannello e' `position:absolute` DENTRO `#map`,
+     che ha `overflow:hidden`: quando la finestra e' bassa la mappa e' piu' corta
+     della finestra (c'e' il pie' di pagina sotto) e taglia il pannello. Col
+     riferimento sbagliato il conto tornava sempre e non si vedeva niente.
+     Misurato sul suo caso, 1536x702 px CSS (monitor 1920x1080 con Windows al
+     125%): mappa alta 618, pannello alto 219 a partire da 451 dentro la mappa,
+     cioe' 52 px fuori. Sparivano DUE voci intere della legenda.
+     Sopra i ~745 px di finestra non succede; sotto i ~720 si mangia l'ultima
+     riga. Non l'ha causato il decimo colore: il pannello e' alto uguale, prima
+     si perdeva una voce sola invece di due. */
   if(leg.style.display!=='none'){
     var tpBottom = tp.offsetTop + tp.offsetHeight;
     var legTop = tpBottom + GAP;
+    /* ⚠️ SI MISURA L'ALTEZZA NATURALE, non quella gia' tagliata da un giro
+       precedente: se no il conto si fa su un numero che dipende da se stesso e
+       al secondo giro il tetto si annulla da solo (visto il 21/9 sui boschi a
+       1024x700, quando l'osservatore ha cominciato a richiamare questa
+       funzione). Azzerare prima di leggere la rende ripetibile. */
+    leg.style.maxHeight = '';
     var legH = leg.offsetHeight;
-    // Margine extra per taskbar Windows e bordi browser
-    var maxBottom = window.innerHeight - 30;
-    // Se non ci sta, ancorala al fondo con margine
+    /* `clientHeight` del contenitore che lo ospita: e' quello che taglia. Il
+       -10 e' il margine sotto, come il 10 a sinistra. */
+    var conten = leg.offsetParent ? leg.offsetParent.clientHeight : window.innerHeight;
+    var maxBottom = conten - 10;
     if(legTop + legH > maxBottom){
-      legTop = maxBottom - legH;
+      /* Prima si prova ad alzarlo, ma MAI sopra il pannello periodo: se no
+         finisce sotto i tasti dei giorni e si perde comunque. */
+      legTop = Math.max(tpBottom + GAP, maxBottom - legH);
     }
     if(legTop < 0) legTop = 10;
+    /* ⚠️ LA ROTELLINA SULLA LEGENDA DEVE SCORRERE LA LEGENDA, NON ZOOMARE
+       LA MAPPA (21/9/2026, segnalato da lui: «se sono col cursore sulla legenda
+       e scorro, lui muove la mappa»). Il pannello vive DENTRO il contenitore
+       Leaflet, che si prende la rotellina prima che arrivi alla barra di
+       scorrimento. Stessa cura gia' usata per la casella di ricerca e per la
+       tendina dei boschi. Si mette una volta sola: `_scrollFermato` evita di
+       riattaccare l'ascoltatore a ogni riposizionamento. */
+    if(!leg._scrollFermato && window.L && L.DomEvent){
+      L.DomEvent.disableScrollPropagation(leg);
+      L.DomEvent.disableClickPropagation(leg);
+      leg._scrollFermato = true;
+    }
     leg.style.top = legTop + 'px';
     leg.style.left = '10px';
+    /* ⚠️ la larghezza la decide il CSS quando la finestra e' bassa (tre
+       colonne): qui si scrive solo se il CSS non l'ha gia' allargato. */
     leg.style.width = '400px';
+    /* Se lo spazio non basta comunque, il pannello si accorcia e scorre: meglio
+       una legenda da scorrere che due voci invisibili. Il 110 e' il minimo per
+       non ridurlo a una fessura. */
+    var spazio = maxBottom - legTop;
+    leg.style.maxHeight = (legH > spazio ? Math.max(110, spazio) + 'px' : '');
   }
 }
 
 function positionLegend(){
   positionPanels();
   setTimeout(positionPanels, 30);
+  /* ⚠️ IL PANNELLO CRESCE DOPO (21/9/2026): il radar riempie la sua legenda
+     quando arrivano le durate, i boschi quando arriva `indice.json`. Misurato a
+     30 ms il pannello e' ancora corto, il tetto d'altezza viene calcolato su un
+     numero vecchio e poi sborda (visto sul radar a 1024x700, +10 px: c'era gia'
+     prima di questa modifica). Invece di indovinare un ritardo piu' lungo si
+     guarda quando cambia davvero, e si riposiziona; il confronto con l'ultima
+     altezza vista evita il ciclo infinito, perche' positionPanels scrive
+     `max-height` e quello fa scattare di nuovo l'osservatore. */
+  try{
+    var leg=document.getElementById('legend-panel');
+    if(leg && window.ResizeObserver && !leg._osserva){
+      var ultima=-1;
+      leg._osserva=new ResizeObserver(function(){
+        var h=leg.offsetHeight;
+        if(Math.abs(h-ultima)<2) return;
+        ultima=h; positionPanels();
+      });
+      leg._osserva.observe(leg);
+    }
+  }catch(e){}
 }
 
 function showLegendMobile(){
@@ -6533,7 +6684,15 @@ var MH_ESCLUSE={
   // Sellia Superiore (CZ): 41,4 mm negli ultimi 45 giorni, il 30% della
   // mediana dei cinque vicini (136,8) e il 30% di Sant'Elia-Jano, che sta a
   // 4,9 km. Ne restano 7 entro 10 km. Ricontrollata il 10/9/2026.
-  calabria:{'38.98528_16.62083':true},
+  // Montebello Ionico (RC), 37.98750/15.72861, esclusa il 21/9/2026: MORTA.
+  // 0,4 mm in 45 giorni consegnati su 45. Nei QUATTRO giorni in cui i vicini
+  // hanno preso pioggia vera ha segnato 0,4 mm contro 40,5 di media loro: il
+  // 20/9 i vicini 16 mm di media e punte di 28,8, lei ZERO. Entro 25 km ci
+  // sono 11 stazioni e NESSUNA sta sotto i 10 mm, quindi non e' siccita'.
+  // Sulla mappa a 30 giorni e' un buco bianco in mezzo al colore. Ne restano
+  // Allai (4,7 km), Rosario (6,1), Arasi' (14,8), Reggio Calabria e
+  // Pietrastorta (15).
+  calabria:{'38.98528_16.62083':true,'37.98750_15.72861':true},
   // Ponte S.Maria (PG): 0,2 mm in 57 giorni consegnati, una sola giornata
   // bagnata (0,2 mm il 18/8). Campogrande a 4,8 km ne fa 77,8 e Ponticelli a
   // 5,7 km 89,6. ⚠️ Entro 10 km ne restano solo DUE, meno dei tre che la
@@ -9951,44 +10110,27 @@ if(_btnShot){
      nell'azzeramento all'evento: cosi' se un giorno l'ordine degli eventi
      cambia (la classe sul body e showLegendMobile non arrivano in un ordine
      garantito) lo stato resta giusto lo stesso, senza lampeggiamenti. */
-  var ridotta=false, funzRidotta=null, riapertaAMano=false;
+  var ridotta=false, funzRidotta=null;
   function funzione(){
     var c=document.body.classList;
     return c.contains('modo-boschi') ? 'boschi' : c.contains('modo-radar') ? 'radar' : 'date';
   }
   function ridottaOra(){ return ridotta && funzRidotta===funzione(); }
-  /* ⏱ LA RIDUZIONE AUTOMATICA E' UNA DIMOSTRAZIONE, NON UN COMPORTAMENTO.
-     Otto secondi, e SOLO LE PRIME TRE VOLTE (deciso dall'utente il 20/9/2026
-     provando sul test: «col tasto riduci ben visibile non so se ha senso»).
-     Faceva due mestieri insieme — guadagnare spazio e far vedere che il
-     pannello si muove — e col tasto «riduci» scritto in chiaro il secondo e'
-     gia' fatto: quello che restava era una cosa che si muove sotto le dita a
-     ogni analisi, per sempre. Tre volte bastano a mostrare che si puo' fare e
-     quanto spazio si guadagna; dopo non si muove piu' niente da solo e chi
-     vuole la mappa grande tocca «riduci», che ormai ha visto.
-     Stesso meccanismo della nuvoletta della tendina (`boTendVolte`, 4 volte).
-     ⚠️ La dimostrazione vale SOLO nel modo pioggia: li' sparisce roba
-     secondaria (statistiche, condivisione, vetrina), mentre nei boschi
-     sparirebbero i nove colori, cioe' la legenda stessa, e nel radar la sola
-     riga della fonte. A 0, o con le tre volte consumate, resta solo il tasto.
-     ⚠️ Ogni secondo qui dentro e' esposizione della vetrina del canale: se un
-     giorno i clic sui social calano, il numero da guardare e' questo. */
-  var RIDUCI_DOPO=8000, DIMO_VOLTE=3, CHIAVE_VOLTE='legMiniVolte';
-  function volteDimo(){ try{ return parseInt(localStorage.getItem(CHIAVE_VOLTE),10)||0; }catch(e){ return DIMO_VOLTE; } }
-  function contaDimo(){ try{ localStorage.setItem(CHIAVE_VOLTE,String(volteDimo()+1)); }catch(e){} }
-  function inModo(){ var c=document.body.classList; return c.contains('modo-boschi')||c.contains('modo-radar'); }
+  /* ⏱ LA RIDUZIONE AUTOMATICA E' STATA TOLTA (21/9/2026). C'era dal 20/9:
+     otto secondi, solo le prime tre volte per telefono, solo sulle date.
+     Faceva due mestieri, guadagnare spazio e far vedere che il pannello si
+     muove, e col tasto «riduci» scritto in chiaro il secondo era gia' fatto:
+     restava una cosa che si muove sotto le dita mentre uno guarda la mappa.
+     I numeri di un giorno solo (GA4 `legenda_mobile`, 20-21/9): 67 persone
+     hanno ridotto il pannello DA SOLE, quindi il tasto si trova senza che
+     nessuno lo dimostri, ed e' la ragione per cui la dimostrazione poteva
+     andarsene. ⚠️ Le riaperture NON erano misurabili come si deve, perche' la
+     riduzione automatica non mandava nessun evento: se un giorno si volesse
+     rimettere una cosa del genere, l'evento va mandato ANCHE sul passaggio
+     automatico, se no i due casi restano mescolati.
+     ⚠️ Resta `legMiniVolte` nel `localStorage` di chi c'e' passato: non si
+     legge piu' e non fa danno, non vale un giro di pulizia. */
   function segna(v){ ridotta=!!v; funzRidotta=v?funzione():null; }
-  var timer=null;
-  function fermaTimer(){ if(timer){ clearTimeout(timer); timer=null; } }
-  // Il pannello sta davvero a schermo? Si misura, non si guarda una classe:
-  // nei modi boschi e radar lo alza il CSS e `leg-visible` non c'e'.
-  function aSchermo(){
-    var st=getComputedStyle(leg);
-    if(st.display==='none'||st.visibility==='hidden') return false;
-    var r=leg.getBoundingClientRect();
-    return r.height>0 && r.top<window.innerHeight-10;
-  }
-
   // Stesso ragionamento del pannello periodo: la mappa sta DIETRO, quindi
   // cambiare l'altezza della barra senza ricentrare regala mare, non terra.
   function ricentra(){
@@ -10011,46 +10153,19 @@ if(_btnShot){
     if(a) a.title=v?'Rivedi tutto il pannello':'Riduci il pannello e allarga la mappa';
     if(muovi) ricentra();
   }
-  // Chiamata da showLegendMobile, cioe' a ogni ANALISI NUOVA.
-  //  · si riapre com'era DENTRO QUESTA FUNZIONE: chi ha ridotto e cambia solo
-  //    il periodo la ritrova ridotta, ed e' la richiesta dell'utente;
-  //  · se e' grande e non si e' mai espresso, le prime tre volte scende da
-  //    sola dopo 8 s (la dimostrazione).
-  // ⚠️ Chi l'ha RIAPERTA a mano in questa sessione ha detto «la voglio
-  //    intera»: a quello non si dimostra piu' niente fino alla visita dopo.
+  // Chiamata da showLegendMobile, cioe' a ogni ANALISI NUOVA: si riapre
+  // com'era. Chi ha ridotto e cambia solo il periodo la ritrova ridotta, ed e'
+  // la richiesta dell'utente. Niente si muove piu' da solo.
   window._legApplicaRicordo=function(){
-    fermaTimer();
     if(!isMobile()){ leg.classList.remove('leg-mini'); return; }
-    var giu=ridottaOra();
-    mini(giu,false);
-    if(giu || riapertaAMano) return;
-    if(funzione()!=='date') return;            // la dimostrazione solo sulle date
-    if(!RIDUCI_DOPO || volteDimo()>=DIMO_VOLTE) return;   // dimostrazione gia' fatta
-    timer=setTimeout(function(){
-      timer=null;
-      if(!isMobile()) return;
-      /* ⚠️ «Aperta» NON vuol dire `leg-visible`. Quella classe la mette
-         showLegendMobile per l'analisi di pioggia; nel modo boschi e nel modo
-         radar il pannello lo alza il CSS (`.modo-boschi #legend-panel{transform:
-         translateY(0)}`) e la classe non c'e'. Si guarda se sta a schermo. */
-      if(!aSchermo()) return;
-      if(funzione()!=='date') return;    // nel frattempo e' entrato nei boschi o nel radar
-      contaDimo();
-      segna(true);
-      mini(true,true);
-    },RIDUCI_DOPO);
+    mini(ridottaOra(),false);
   };
 
   hdr.addEventListener('click',function(e){
     if(!isMobile()) return;
     // I tasti e i comandi della testata («Immagine», «Copia link», «Indietro»,
     // «⇆ Confronta con piogge») fanno il loro mestiere: solo il resto apre e chiude.
-    // ⚠️ E il conto degli 8 secondi si ferma SOLO se il tocco apre o chiude
-    // davvero. Fermandolo prima di questo controllo, chi toccava «Invia link»
-    // spegneva la riduzione automatica per tutta l'analisi senza volerlo
-    // (misurato il 20/9/2026: il pannello restava a 278 px per sempre).
     if(e.target.closest && e.target.closest('button,a,.bo-tend-btn,.rd-btn')) return;
-    fermaTimer();
     scambia();
   });
 
@@ -10060,7 +10175,7 @@ if(_btnShot){
   var man=document.getElementById('leg-handle');
   if(man) man.addEventListener('click',function(){
     if(!isMobile()) return;
-    fermaTimer(); scambia();
+    scambia();
   });
 
   function scambia(){
@@ -10069,7 +10184,6 @@ if(_btnShot){
     // Riaperta a mano = «la voglio intera»: niente piu' dimostrazioni in questa
     // sessione. Non vale al contrario: chi la riduce puo' rivederla dopo un
     // cambio di funzione, che e' proprio il momento in cui riparte grande.
-    if(!v) riapertaAMano=true;
     mini(v,true);
     try{ gtag('event','legenda_mobile',{stato:(v?'ridotta':'intera')+'-'+funzione()}); }catch(e){}
   }
@@ -10095,8 +10209,7 @@ if(_btnShot){
      dove ne basta uno, ed e' lo sfarfallio gia' visto col radar il 6/9. */
   var funzPrima=funzione();
   window._legModoCambiato=function(){
-    fermaTimer();
-    segna(false); riapertaAMano=false;   // funzione nuova: si riparte da zero
+    segna(false);                        // funzione nuova: si riparte da zero
     if(isMobile()) mini(false,false);
   };
   try{
@@ -10653,6 +10766,9 @@ function loadDefaultMarkers(){
   // scade il 7 settembre la terna si riduce da sola a guida + Iscriviti
   // senza che nessuno pubblichi niente.
   var MOSTRA='alterna';
+  // L'elenco di chi partecipa al sorteggio. Era un letterale in mezzo al
+  // codice: ora e' una variabile, cosi' il file di dati puo' sostituirlo.
+  var ELENCO=['update'];
 
   var VETRINE={};
   VETRINE.guida={
@@ -10940,6 +11056,10 @@ function loadDefaultMarkers(){
     gancioP: 'Aggiornamento mappa:<br>tutte le novità',
     canale: 'Avventure Micologiche'
   };
+  /* ⚠️ DA QUI IN GIU' E' UNA FUNZIONE, e prende la configurazione da fuori
+     (20/9/2026). I tre parametri ombreggiano apposta le variabili qui sopra:
+     quelle restano il RIPIEGO, questi sono quello che arriva dal file. */
+  function costruisci(MOSTRA, VETRINE, ELENCO){
   var V=null, QUALE='';
   if(MOSTRA==='alterna'){
     // Solo le vetrine ancora in corso partecipano: quando il video scade,
@@ -10948,7 +11068,7 @@ function loadDefaultMarkers(){
     var ora=Date.now(), scelte=[];
     // 16/9/2026: in gara il solo post delle novita', al posto del lungo dei 25 giorni.
     // 19/9/2026: al suo posto lo Short «update mappa» (v10).
-    ['update'].forEach(function(k){
+    ELENCO.forEach(function(k){
       var v=VETRINE[k]; if(!v) return;
       if(v.da && ora < new Date(v.da).getTime()) return;   // non ancora accesa
       if(ora <= new Date(v.fino).getTime()) scelte.push(k);
@@ -11037,14 +11157,14 @@ function loadDefaultMarkers(){
       box.title='Guarda il video nuovo';
       box.setAttribute('onclick',tracc('vetrina-desktop'));
       box.innerHTML='<div class="v-alto">'
-        +'<div class="v-cop" style="background-image:url('+V.copertina+')"></div>'
+        +'<div class="v-cop" style="background-image:url(&quot;'+urlCopertina(V.copertina)+'&quot;)"></div>'
         +'<div class="v-dx">'
           +'<div class="v-occhio">'+ytPieno+' '+V.occhiello+'</div>'
           +'<div class="v-gancio'+(V.gancio2?'':' v-uno')+'"'+(V.ganciopx?' style="font-size:'+V.ganciopx+'px"':'')+'><b>'+V.gancio1+'</b>'+(V.gancio2?'<b>'+V.gancio2+'</b>':'')+'</div>'
           +'<div class="v-canale"><img src="archie-avatar.png" alt="">'+V.canale+'</div>'
         +'</div></div>'
         +'<div class="v-btn">'+V.bottone+'</div>';
-
+      copertinaRipiego(box.querySelector('.v-cop'), V.copertina);
     }
 
     // Pillola telefono. Senza social alternativi resta quella di sempre: un
@@ -11062,6 +11182,8 @@ function loadDefaultMarkers(){
         // \u26A0\uFE0F `gancioP`: l'a capo DECISO per la pillola (14/9/2026). Senza, la
         // riga va a capo dove capita e lascia una parola sola sotto (\u00ABabeti\u00BB).
         t.innerHTML=(V.gancioP||V.gancio)+'<small>\u25B6 '+V.occhielloP+' \u00B7 '+V.canale+'</small>';
+        var im=pill.querySelector('img');
+        if(im && V.copertina){ im.src=urlCopertina(V.copertina); im.className='cp-cop'; im.alt=''; }
         pill.href=V.link;
         pill.setAttribute('onclick',tracc('vetrina-mobile'));
       }
@@ -11081,13 +11203,107 @@ function loadDefaultMarkers(){
       nuova.className='cp-social';
       nuova.innerHTML=
         '<a class="cp-alto" href="'+V.link+'" target="_blank" rel="noopener" onclick="'+tracc('vetrina-mobile').replace(/"/g,'&quot;')+'">'
-        +'<img src="archie-avatar.png" alt="Archie">'
+        +(V.copertina ? '<img class="cp-cop" src="'+urlCopertina(V.copertina)+'" alt="">' : '<img src="archie-avatar.png" alt="Archie">')
         +'<div class="cp-t">'+(V.gancioP||V.gancio)+'<small>\u25B6 '+V.occhielloP+' \u00B7 '+V.canale+'</small></div>'
         +'</a>'
         +'<div class="cp-riga">'+riga+'</div>';
       pill.replaceWith(nuova);
     }
   }catch(e){}
+  }   /* ── fine di costruisci ─────────────────────────────────────────── */
+
+  /* ════════════ LA VETRINA SI CONFIGURA DA UN FILE DI DATI ════════════
+     20/9/2026, richiesta dell'utente: «fai la vetrina file di dati cosi' non
+     spendiamo piu' deploy al cambio vetrina».
+
+     ⚠️ IL PERCHE' E' UN CONTO: `data/` sta nella regola ignore di Netlify,
+     quindi un commit li' dentro NON fa partire un deploy. Cambiare il video in
+     vetrina passa da ~15 crediti a ZERO, e su un piano da 1.000 al mese, con
+     un'uscita a settimana, sono ~60 crediti l'anno risparmiati e soprattutto
+     nessuna attesa: si modifica il file, si committa, e nel giro di qualche
+     minuto (raw tiene la sua copia 5 minuti) il sito mostra la vetrina nuova.
+
+     ⚠️ LA CONFIGURAZIONE QUI SOPRA RESTA, ED E' IL RIPIEGO. Se il file non si
+     scarica — GitHub giu', rete a pezzi, JSON scritto male — il sito fa
+     esattamente quello che faceva prima. Una vetrina che non parte non deve
+     mai diventare una pagina rotta.
+
+     ⚠️ L'INDIRIZZO E' QUELLO DI PRODUZIONE anche nel repo di test, come per
+     `letture.json`: cosi' i due index.html restano identici e la vetrina e'
+     una sola per tutt'e due i siti. E cadendo sotto `raw.../main/data/`
+     eredita gratis la riserva su Netlify gia' scritta per i file dei giorni
+     (⚠️ quella copia pero' e' ferma all'ultimo DEPLOY: se cambi la vetrina
+     senza pubblicare niente, la riserva serve la vetrina vecchia — ma serve
+     solo quando GitHub e' irraggiungibile).
+
+     ⚠️ IL TETTO E' 1,2 s. Oltre quello si monta il ripiego e basta: la scheda
+     del canale non e' la mappa, e non deve far aspettare nessuno. Se il file
+     arriva dopo, pazienza: si vedra' al caricamento successivo, invece di far
+     saltare la pagina sotto gli occhi di chi sta gia' leggendo. */
+  /* ⚠️ ANCHE LE COPERTINE STANNO IN `data/`, e senza questo pezzo tutto il
+     lavoro sulla vetrina da file non serviva al caso che conta (20/9/2026,
+     domanda sua: «se metto l'immagine devo cmq usare 15 crediti?» — si', e
+     quindi il risparmio valeva solo per i cambi senza immagine nuova).
+     Un video nuovo porta una copertina nuova: finche' quel .jpg stava nella
+     RADICE faceva partire il deploy lo stesso. Spostate in `data/vetrine/`,
+     che e' nella regola ignore, **un video nuovo costa ZERO crediti**.
+     ⚠️ Si leggono da raw e non dal nostro dominio: la copia su Netlify si
+     aggiorna solo ai deploy, e una copertina appena aggiunta li' non ci
+     sarebbe ancora. Se raw non risponde si ripiega sul nostro `/data/vetrine/`,
+     che ha le copertine fino all'ultimo deploy.
+     ⚠️ Un valore che contiene una barra o comincia per http si usa com'e':
+     serve a poter puntare altrove senza toccare il codice. */
+  var COPERTINE_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/vetrine/';
+  var COPERTINE_QUI='/data/vetrine/';
+  function urlCopertina(c){ return (!c || /^https?:|\//.test(c)) ? c : COPERTINE_RAW+c; }
+  /* La prova che l'immagine c'e' davvero: un `background-image` non ha
+     `onerror`, quindi si precarica a parte e si cambia solo se fallisce. */
+  function copertinaRipiego(el, c){
+    if(!el || !c || /^https?:|\//.test(c)) return;
+    try{
+      var im=new Image();
+      im.onerror=function(){ el.style.backgroundImage='url("'+COPERTINE_QUI+c+'")'; };
+      im.src=COPERTINE_RAW+c;
+    }catch(e){}
+  }
+  var URL_VETRINA='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/vetrina.json';
+  var TETTO_VETRINA=1200;
+  var RIPIEGO={mostra:MOSTRA, vetrine:VETRINE, sorteggio:ELENCO};
+  var montata=false;
+  function monta(cfg, da){
+    if(montata) return;
+    montata=true;
+    try{
+      costruisci(cfg.mostra||'alterna', cfg.vetrine||{}, cfg.sorteggio||[]);
+      if(window.console&&console.info) console.info('[vetrina] '+da);
+    }catch(e){ if(window.console&&console.warn) console.warn('[vetrina] montaggio fallito', e); }
+    // ⚠️ SCOPRIRE LA SCHEDA E' L'ULTIMA COSA, E SI FA SEMPRE — anche se
+    // `costruisci` e' andato storto, anche se la vetrina e' scaduta e il
+    // contenuto e' rimasto quello di partenza. Fuori dal try apposta: una
+    // scheda nascosta per sempre sarebbe peggio del lampo che si sta
+    // togliendo. Va cercata di nuovo per id: con piu' social la pillola viene
+    // SOSTITUITA da un elemento nuovo, e il riferimento di prima sarebbe morto.
+    try{
+      ['channel-logo','channel-pill'].forEach(function(k){
+        var e=document.getElementById(k); if(e) e.classList.remove('prevetrina');
+      });
+    }catch(e){}
+  }
+  var attesa=setTimeout(function(){ monta(RIPIEGO,'ripiego: il file non e\' arrivato in tempo'); },TETTO_VETRINA);
+  try{
+    fetch(URL_VETRINA).then(function(r){
+      return r.ok ? r.json() : null;
+    }).then(function(j){
+      clearTimeout(attesa);
+      // ⚠️ Si controlla che ci sia DAVVERO la roba dentro: un file troncato o
+      // un 404 travestito da pagina non deve spegnere la vetrina.
+      if(j && j.vetrine && typeof j.vetrine==='object') monta(j,'da data/vetrina.json');
+      else monta(RIPIEGO,'ripiego: file senza vetrine');
+    }).catch(function(){
+      clearTimeout(attesa);
+      monta(RIPIEGO,'ripiego: file non raggiungibile');
+    });
+  }catch(e){ clearTimeout(attesa); monta(RIPIEGO,'ripiego: fetch non disponibile'); }
 })();
 </script>
 
@@ -11163,12 +11379,23 @@ function loadDefaultMarkers(){
    un paese e poi accendeva il radar perdeva la puntina. E col radar serve piu'
    che mai, perche' li' si guarda una regione intera. */
 .modo-radar #map .loc-pin path{fill-opacity:1 !important}
-/* col radar acceso non pulsa niente: sono richiami per scegliere la regione */
+/* ⚠️ COL RADAR **O COI BOSCHI** ACCESI NON PULSA NIENTE: quelle sono
+   chiamate a scegliere la regione e il periodo, e chi sta guardando la mappa
+   forestale ha gia' scelto cosa vuole vedere. La regola c'era dal 31/8 ma solo
+   per il radar: i boschi sono arrivati dopo e nessuno ce li ha aggiunti
+   (segnalato da lui il 21/9/2026: «se ho selezionato la mappa forestale perche'
+   pulsano le date?»). Si tengono le due liste separate e non un selettore solo,
+   perche' si leggono meglio. */
 .modo-radar path.conf-pulse,
 .modo-radar .panel-pulse,
 .modo-radar .panel-pulse-ring,
 .modo-radar #loc-input.loc-chiama,
-.modo-radar #geo-btn.loc-chiama{animation:none !important}
+.modo-radar #geo-btn.loc-chiama,
+.modo-boschi path.conf-pulse,
+.modo-boschi .panel-pulse,
+.modo-boschi .panel-pulse-ring,
+.modo-boschi #loc-input.loc-chiama,
+.modo-boschi #geo-btn.loc-chiama{animation:none !important}
 /* il pannello legenda esiste solo con un'analisi: in modo radar serve sempre */
 /* ⚠️ Sparisce SOLO il riquadro di destra del desktop (`#channel-logo`, 157 px
    prima delle date e 0 dopo): quello copre la mappa. La PILLOLA del telefono
@@ -11798,6 +12025,25 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
 @media(min-width:901px){.modo-boschi .leg-header{justify-content:flex-start}}
 .bo-tit{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#1b3f6e;margin:2px 0 6px}
 .bo-griglia{display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;font-size:12.5px;color:#33404f}
+/* ⚠️ FINESTRA BASSA: SI STRINGE IN VERTICALE, NON SI ALLARGA (21/9/2026).
+   Righe piu' fitte e un filo piu' piccole solo nella legenda dei boschi e solo
+   sotto i 780 px di finestra: il pannello passa da 219 a 203 px naturali e alla
+   sua misura (1536x702) le voci visibili senza scorrere passano da 6 a 8 su 10.
+   Stringere ancora (via la riga della fonte, meno imbottitura) porta il
+   naturale a 170 ma NON aggiunge nemmeno una voce visibile, perche' lo spazio
+   utile e' 157: quindi non si tocca altro, e la riga della fonte resta, che e'
+   l'attribuzione della licenza. */
+@media (min-width:901px) and (max-height:780px){
+  body.modo-boschi #legend-panel .bo-griglia{gap:0 12px;font-size:12px;}
+}
+/* ⚠️ TRE COLONNE SU FINESTRA BASSA: PROVATA E TOLTA (21/9/2026).
+   Con dieci voci su due colonne il pannello e' alto 219 px e su una finestra
+   da 702 px CSS non ci sta: su tre colonne diventava 197 e si vedeva tutto.
+   Ma per farcele stare il pannello andava allargato a 660 px, e lui l'ha
+   bocciata subito guardandola: «si allarga a destra e copre troppo la
+   mappa». Ed e' giusto: sulla mappa lo spazio ORIZZONTALE vale piu' di
+   quello verticale, perche' e' quello che fa vedere il territorio. Il
+   pannello resta a 400 px e due colonne; se non ci sta, scorre. */
 .bo-riga{display:flex;align-items:center;gap:6px;white-space:nowrap}
 .bo-sw{width:13px;height:13px;border-radius:3px;flex:none}
 /* le carte usate e quelle che mancano si devono leggere (16/9/2026, sua
@@ -11854,6 +12100,48 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
 .bo-nuv-riga{display:flex;align-items:center;gap:7px}
 .bo-nuv-sub{font-size:12px;color:#5a6b7d}
 .bo-nuv-riga + .bo-nuv-sub{margin-top:2px;padding-left:20px}
+/* «Portami qui» dentro la nuvoletta del tocco (22/9/2026). Il punto e' QUELLO
+   CHE HAI TOCCATO, non un pluviometro: e' li' che uno vuole andare, perche' ha
+   scelto guardando la pioggia e il bosco. Il pluviometro puo' stare nella
+   piazza del paese. */
+/* ⚠️ IL TASTO STA SOTTO IL BOSCO, E ZITTO (22/9/2026, sua correzione: «sovrasta
+   troppo il tipo di bosco, che è l'utilità principale, dovrebbe essere
+   l'inverso»). Prima era una pasticca verde piena e si mangiava la nuvoletta.
+   Adesso e' una riga di testo: il nome dell'albero resta la cosa grossa, il
+   «Portami qui» e' un rimando, che e' quello che deve essere. */
+.bo-nuv-vai{display:inline-block;margin-top:7px;color:#2e6b45 !important;
+  text-decoration:none;font-size:12px;font-weight:600;white-space:nowrap;
+  background:#eef6f1;border:1px solid #cfe3d7;border-radius:7px;padding:4px 9px}
+.bo-nuv-vai:hover,.bo-nuv-vai:focus{background:#e0efe6;border-color:#9fc9b1;color:#245437 !important}
+.bo-nuv-vai:active{background:#d3e7db}
+/* ⚠️ I NOMI SOPRA IL RILIEVO (23/9/2026). Le tessere di OSM hanno i nomi
+   STAMPATI DENTRO l'immagine: qualunque cosa ci metti sopra li copre. Per
+   questo in modo boschi il fondo diventa quello di Esri SENZA nomi, e i nomi
+   tornano in cima in due strati: sotto l'alone bianco, sopra il testo.
+   ⚠️ DUE STRATI e non una catena di filtri sulla stessa immagine: coi
+   drop-shadow incatenati ogni passata prende in ingresso il risultato della
+   precedente, alone compreso, e si mangia le lettere sottili (misurato: la i
+   di Fosciana, la a di Vagli Sotto). Il testo disegnato per ultimo non lo
+   copre nessuno.
+   ⚠️ Il colore e' la terza tacca di una scala di CHIAREZZA, non di tinta: su
+   lettere di 13 px antialiasate la tinta non si vede, quattro grigi scuri di
+   tinta diversa sono quattro volte lo stesso colore. */
+.leaflet-bo-alone-pane img{filter:brightness(0) invert(1)
+  drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff)}
+.leaflet-bo-nomi-pane{mix-blend-mode:normal}
+.bo-nuv-dato{display:flex;justify-content:space-between;gap:14px;font-size:12px;
+  color:#5a6b7d;margin-top:3px}
+.bo-nuv-dato b{color:#1f2d3d;font-weight:600;text-align:right}
+.bo-nuv-coda{font-size:11px;color:#8b98a8;text-align:right;margin-top:-1px}
+.bo-nuv-co{font-size:10.5px;color:#8b98a8;margin-top:3px;
+  font-variant-numeric:tabular-nums}
+/* La crocetta di Leaflet cadeva SOPRA il nome del bosco: il contenuto si
+   sposta a sinistra quel tanto che basta, e la crocetta si allarga un po'
+   perche' col dito una x di 12 px non si prende. */
+.bo-nuv .leaflet-popup-content{margin-right:22px}
+.bo-nuv .leaflet-popup-close-button{width:24px;height:24px;font-size:18px;
+  padding:3px 4px 0 0;color:#7a889a}
+.bo-nuv .leaflet-popup-close-button:hover{color:#1f2d3d}
 /* con la tendina la pioggia torna, ma solo a sinistra della linea (la taglia il JS) */
 .modo-boschi.bo-tendina #map .leaflet-overlay-pane canvas{display:block !important}
 /* e con lei la sua scala dei millimetri, se no la meta' pioggia non si legge */
@@ -11915,7 +12203,17 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   // Lombardia): le fa `tessere-boschi.py` fondendo le carte regionali, cosi'
   // ai confini fra due regioni non ci sono tessere doppie. Quali regioni ci
   // sono dentro lo dice indice.json, e la legenda lo dichiara.
-  var BASE='tessere-boschi/italia/', OPACITA=0.7;
+  /* ⚠️ LE TESSERE STANNO IN UN REPO A PARTE, servite da jsDelivr (23/9/2026).
+     Sono dato DERIVATO e si rigenerano INTERE: nel repo del sito ogni giro
+     lasciava dentro .git, per sempre, un'altra copia di tutte e 31.482 — in tre
+     generazioni 233 MB, quasi meta' della storia. Di la' si tiene UN COMMIT
+     SOLO e si sovrascrive, quindi ridipingere tutto torna a costare zero.
+     E si va pure piu' veloce: 0,35 s a caldo contro gli 0,80 di Netlify.
+     ⚠️ `indice.json` si carica da BASE, quindi cambiando questa riga si sposta
+     anche l'indice: il test si ritrova i dieci colori senza copiare 190 MB. */
+  var TESSERE='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@main/';
+  var BASE=TESSERE+'boschi/', OPACITA=0.7;
+  var RILIEVO=TESSERE+'rilievo/', TERRENO=TESSERE+'terreno/', Z_TERRENO=12;
   var strato=null, acceso=false, indice=null, esistono={}, titoloVecchio=null, displayVecchio=null;
   var VUOTA='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
   /* ⚠️ «MAPPA BOSCHI» E NON «MAPPA FORESTALE»: misurato a 360 px, il nome
@@ -12032,6 +12330,163 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   function riposiziona(){ setTimeout(function(){ window.dispatchEvent(new Event('resize')); },30); }
 
 
+  /* ═══════════ IL RILIEVO E I NOMI (23/9/2026) ═══════════
+     Il rilievo e' COTTO in tessere a z11-13 (la sua scelta: «il cotto e'
+     nettamente il migliore»). Il terreno a z12 serve al TOCCO, per dire quota
+     e versante in un punto qualsiasi. Sono la stessa serie di dati, tagliata
+     in due modi, e stanno tutt'e due nel repo delle tessere. */
+  var rilievo=null, fondoNeutro=null, aloneNomi=null, nomiSopra=null, fondoVia=false;
+  var ESRI='https://services.arcgisonline.com/ArcGIS/rest/services/';
+  var NOMI_COL='#465B67';   // terza tacca della scala di chiarezza, scelta da lui
+
+  function panello(nome, z){
+    var m=map();
+    if(!m.getPane(nome)){
+      m.createPane(nome);
+      m.getPane(nome).style.zIndex=z;
+      m.getPane(nome).style.pointerEvents='none';
+    }
+    return m.getPane(nome);
+  }
+
+  /* ⚠️ Il colore delle lettere si DIPINGE su canvas, non si filtra: coi filtri
+     CSS si ottiene solo il nero o un grigio senza tinta. `source-in` riempie
+     l'alfa del colore scelto, e NON legge i pixel, quindi non serve il CORS. */
+  var NomiDipinti=L.GridLayer.extend({
+    createTile:function(c,fatto){
+      var cv=document.createElement('canvas'); cv.width=cv.height=256;
+      var g=cv.getContext('2d'), im=new Image();
+      im.crossOrigin='anonymous';
+      im.onload=function(){
+        g.drawImage(im,0,0);
+        g.globalCompositeOperation='source-in';
+        g.fillStyle=NOMI_COL; g.fillRect(0,0,256,256);
+        fatto(null,cv);
+      };
+      im.onerror=function(){ fatto(null,cv); };
+      im.src=ESRI+'Canvas/World_Light_Gray_Reference/MapServer/tile/'+c.z+'/'+c.y+'/'+c.x;
+      return cv;
+    }
+  });
+
+  /* ⚠️ LE TESSERE DI RILIEVO NON CI SONO DAPPERTUTTO: dove il terreno e' piatto
+     non c'e' niente da ombreggiare e il generatore le salta. Sono il 31% del
+     totale possibile, cioe' un 404 ogni tre richieste. Stessa medicina
+     dell'indice dei boschi, ma in forma piu' corta: per ogni livello, x -> gli
+     INTERVALLI di y che esistono. Le y sono quasi sempre contigue, quindi il
+     file scende da 444 kB (elenco piatto) a 23, sei compressi. */
+  var indRil=null;
+  function cercaY(iv,y){
+    for(var i=0;i<iv.length;i++){
+      var v=iv[i];
+      if(typeof v==='number'){ if(v===y) return true; }
+      else if(y>=v[0] && y<=v[1]) return true;
+    }
+    return false;
+  }
+  function rilievoEsiste(c){
+    if(!indRil) return true;            // finche' non e' arrivato, si prova
+    var pz=indRil[c.z]; if(!pz) return false;
+    var iv=pz[c.x]; return !!iv && cercaY(iv,c.y);
+  }
+
+  function creaRilievo(){
+    panello('bo-rilievo',445); panello('bo-alone',448); panello('bo-nomi',449);
+    fetch(RILIEVO+'indice.json').then(function(r){ return r.json(); })
+      .then(function(j){ indRil=j; if(rilievo) rilievo.redraw(); })
+      .catch(function(){ indRil=null; });
+    var Ril=L.TileLayer.extend({
+      getTileUrl:function(c){ return rilievoEsiste(c) ? RILIEVO+c.z+'/'+c.x+'/'+c.y+'.png' : VUOTA; }
+    });
+    rilievo=new Ril('',
+      {pane:'bo-rilievo',minZoom:11,maxNativeZoom:13,maxZoom:19,errorTileUrl:VUOTA});
+    /* ⚠️ L'ordine di Leaflet per i servizi ArcGIS e' {z}/{y}/{x}, invertito
+       rispetto a OSM: sbagliandolo si scaricano tessere a caso senza errori. */
+    fondoNeutro=L.tileLayer(ESRI+'Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+      {maxZoom:19, attribution:'fondo e nomi &copy; <a href="https://www.esri.com/" target="_blank" rel="noopener">Esri</a>'});
+    aloneNomi=L.tileLayer(ESRI+'Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+      {pane:'bo-alone',maxZoom:19});
+    nomiSopra=new NomiDipinti({pane:'bo-nomi',maxZoom:19});
+  }
+
+  function rilievoOn(){
+    var m=map();
+    if(!rilievo) creaRilievo();
+    rilievo.addTo(m); aloneNomi.addTo(m); nomiSopra.addTo(m);
+    if(window._baseTiles && m.hasLayer(window._baseTiles)){
+      m.removeLayer(window._baseTiles); fondoVia=true;
+    }
+    fondoNeutro.addTo(m);
+    if(fondoNeutro.getContainer && fondoNeutro.getContainer()) fondoNeutro.getContainer().style.zIndex=1;
+  }
+  function rilievoOff(){
+    var m=map();
+    [rilievo,aloneNomi,nomiSopra,fondoNeutro].forEach(function(s){ if(s&&m.hasLayer(s)) m.removeLayer(s); });
+    if(fondoVia && window._baseTiles && !m.hasLayer(window._baseTiles)){ window._baseTiles.addTo(m); }
+    fondoVia=false;
+  }
+
+  /* ═══ IL TERRENO SOTTO IL DITO: quota e versante ═══
+     La quota sta nei canali R e G della tessera (mai nell'ALFA: il canvas
+     premoltiplica e la rileggeresti sbagliata). Il versante si misura su
+     250 m e non sulla gobba davanti al piede: a chi cerca funghi interessa il
+     fianco della valle. Otto direzioni, perche' su un diagonale «nord» e
+     «ovest» sono tutt'e due mezze bugie. */
+  var PASSO_V=250, cacheQ={};
+  function tesseraQ(x,y){
+    var k=x+'/'+y;
+    if(cacheQ[k]) return cacheQ[k];
+    cacheQ[k]=new Promise(function(ok){
+      var im=new Image(); im.crossOrigin='anonymous';
+      im.onload=function(){
+        var c=document.createElement('canvas'); c.width=c.height=256;
+        var g=c.getContext('2d',{willReadFrequently:true});
+        g.drawImage(im,0,0);
+        try{
+          var d=g.getImageData(0,0,256,256).data, q=new Float32Array(65536);
+          for(var i=0,j=0;i<d.length;i+=4,j++){ var v=d[i]*256+d[i+1]-1000; q[j]= v<=-999?NaN:v; }
+          ok(q);
+        }catch(_){ ok(null); }
+      };
+      im.onerror=function(){ ok(null); };
+      im.src=TERRENO+Z_TERRENO+'/'+x+'/'+y+'.webp';
+    });
+    return cacheQ[k];
+  }
+  function dovePx(lat,lon,z){
+    var n=Math.pow(2,z), r=lat*Math.PI/180;
+    var X=(lon+180)/360*n, Y=(1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n;
+    return {x:Math.floor(X),y:Math.floor(Y),
+            px:Math.min(255,Math.floor((X-Math.floor(X))*256)),
+            py:Math.min(255,Math.floor((Y-Math.floor(Y))*256))};
+  }
+  function quotaIn(lat,lon){
+    var d=dovePx(lat,lon,Z_TERRENO);
+    return tesseraQ(d.x,d.y).then(function(q){
+      if(!q) return null;
+      var v=q[d.py*256+d.px];
+      return isNaN(v)?null:v;
+    });
+  }
+  var R8=['nord','nord-est','est','sud-est','sud','sud-ovest','ovest','nord-ovest'];
+  var CODA8={'nord':'in ombra, tiene l\u2019umido','nord-est':'poco sole, tiene l\u2019umido',
+             'est':'sole del mattino','sud-est':'sole del mattino, asciuga',
+             'sud':'al sole, asciuga prima','sud-ovest':'al sole, asciuga prima',
+             'ovest':'sole del pomeriggio','nord-ovest':'poco sole, tiene l\u2019umido'};
+  function versanteIn(lat,lon){
+    var dla=PASSO_V/111320, dlo=PASSO_V/(111320*Math.cos(lat*Math.PI/180));
+    return Promise.all([quotaIn(lat+dla,lon),quotaIn(lat-dla,lon),
+                        quotaIn(lat,lon+dlo),quotaIn(lat,lon-dlo)]).then(function(q){
+      if(q.some(function(v){ return v===null; })) return null;
+      var dzN=(q[0]-q[1])/(2*PASSO_V), dzE=(q[2]-q[3])/(2*PASSO_V);
+      var pend=Math.atan(Math.hypot(dzE,dzN))*180/Math.PI;
+      if(pend<6) return {pend:pend,dir:'pianeggiante',coda:''};
+      var az=(Math.atan2(-dzE,-dzN)*180/Math.PI+360)%360;
+      var d=R8[Math.floor(((az+22.5)%360)/45)];
+      return {pend:pend,dir:d,coda:CODA8[d]};
+    });
+  }
+
   function entra(){
     var m=map(); if(!m||acceso) return;
     /* ⚠️ SENZA REGIONE NON SI ENTRA (16/9/2026, segnalato dall'utente): il modo
@@ -12053,6 +12508,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       document.body.classList.add('modo-boschi');
       if(!strato) strato=creaStrato();
       strato.addTo(m);
+      rilievoOn();   // rilievo, fondo senza nomi, e i nomi rimessi sopra
       el('btn-boschi').innerHTML='✕ Chiudi mappa';
       var t=el('leg-title');
       if(t){ if(titoloVecchio==null) titoloVecchio=t.textContent; t.textContent='Mappa forestale'; }
@@ -12110,6 +12566,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     acceso=false; window._boschiAcceso=false;
     document.body.classList.remove('modo-boschi','bo-lontano-on');
     if(strato) map().removeLayer(strato);
+    rilievoOff();
     aggiornaCrediti();
     el('btn-boschi').innerHTML=ETICHETTA;
     var t=el('leg-title');
@@ -12131,7 +12588,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
      guarda intorno per qualche pixel: sul telefono il dito e' grosso e un
      «qui non c'e' bosco» a due metri da una faggeta sembrerebbe un difetto. */
   var TOCCO=window.matchMedia && matchMedia('(hover:none) and (pointer:coarse)').matches;
-  var nuvola=null;
+  var nuvola=null, nuvTimer=null, nSeq=0;   // nuvTimer: la chiusura da sola delle nuvolette vuote
 
   function hexRgb(h){ h=h.replace('#',''); return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
 
@@ -12200,8 +12657,49 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     else if(r.esito==='lontano') html='<div class="bo-nuv-sub">Avvicinati per leggere i boschi</div>';
     else if(r.esito==='attesa') html='<div class="bo-nuv-sub">Un attimo, la mappa si sta caricando</div>';
     else html='<div class="bo-nuv-sub">Qui la carta non segna bosco</div>';
-    if(!nuvola) nuvola=L.popup({className:'bo-nuv',closeButton:false,autoPan:false,offset:[0,-4]});
+    /* ⚠️ «PORTAMI QUI» PORTA AL PUNTO TOCCATO, NON AL PLUVIOMETRO (22/9/2026,
+       sua correzione: «cosa gliene frega del pluviometro, che magari sta nella
+       piazza del paese?»). E' il senso di tutto il sito messo in un tasto: uno
+       guarda dov'e' piovuto, guarda che bosco c'e', tocca il punto che gli
+       piace e ci va. Il pluviometro serve a SAPERE, non e' la destinazione.
+       Sta qui dentro e non altrove perche' questa nuvoletta esiste gia' e dice
+       gia' che albero c'e' sotto il dito: mancava solo come arrivarci.
+       ⚠️ La posizione di chi guarda non entra nel link: c'e' la sola
+       destinazione, la strada la calcola Google col suo punto di partenza. */
+    /* ⚠️ Quota e versante arrivano DOPO: la tessera del terreno va scaricata.
+       La nuvoletta si apre subito col bosco (che e' gia' in mano) e le due
+       righe si riempiono quando il dato c'e'. Un id per volta, perche' nel
+       frattempo l'utente puo' averne aperta un'altra. */
+    var idQ='bo-q'+(++nSeq), idV='bo-v'+nSeq;
+    html+='<div class="bo-nuv-dato"><span>Quota</span><b id="'+idQ+'">…</b></div>'
+        + '<div class="bo-nuv-dato"><span>Versante</span><b id="'+idV+'">…</b></div>'
+        + '<div class="bo-nuv-coda" id="'+idV+'c"></div>';
+    html+=(window._vaiQui?window._vaiQui(e.latlng,'boschi'):'');
+    (function(la,lo,iq,iv){
+      quotaIn(la,lo).then(function(q){
+        var n=document.getElementById(iq); if(n) n.textContent = q===null?'—':('~ '+Math.round(q)+' m slm');
+      });
+      versanteIn(la,lo).then(function(v){
+        var n=document.getElementById(iv), c=document.getElementById(iv+'c');
+        if(n) n.textContent = !v?'—':(v.dir==='pianeggiante'?'pianeggiante':('a '+v.dir+' \u00b7 '+v.pend.toFixed(0)+'\u00b0'));
+        if(c) c.textContent = v&&v.coda?v.coda:'';
+      });
+    })(e.latlng.lat,e.latlng.lng,idQ,idV);
+    /* ⚠️ LA NUVOLETTA ADESSO SI CHIUDE (22/9/2026, suo fastidio: «resta acceso,
+       tu non puoi toglierlo, e sul mare dice lo stesso che non ci sono boschi»).
+       Due rimedi insieme, e tutt'e due servono:
+       · la crocetta, perche' chiuderla deve essere possibile SEMPRE e subito;
+       · un tempo, ma SOLO quando la nuvoletta non ha niente da dire (mare,
+         «avvicinati», «un attimo»). ⚠️ Le altre NON si chiudono da sole,
+         perche' adesso portano «Portami qui»: un tasto che sparisce mentre
+         qualcuno ci sta allungando il dito e' peggio di una nuvoletta di
+         troppo. Quelle le chiude la crocetta o il tocco dopo. */
+    if(!nuvola) nuvola=L.popup({className:'bo-nuv',closeButton:true,autoPan:false,offset:[0,-4]});
+    if(nuvTimer){ clearTimeout(nuvTimer); nuvTimer=null; }
     nuvola.setLatLng(e.latlng).setContent(html).openOn(map());
+    if(r.esito!=='si'&&r.esito!=='intorno'){
+      nuvTimer=setTimeout(function(){ try{ map().closePopup(nuvola); }catch(_){} nuvTimer=null; },4000);
+    }
     try{ gtag('event','click_boschi',{stato:'tocco',esito:r.esito,gruppo:r.gruppo||''}); }catch(_){}
   }
 
