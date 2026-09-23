@@ -12139,6 +12139,8 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
 /* ⚠️ `!important` perche' `.leaflet-container a.leaflet-popup-close-button`
    di Leaflet e' piu' specifico e la lasciava #757575, grigio su quasi nero. */
 .bo-nuv .leaflet-popup-close-button:hover{color:#fff !important}
+/* nuvoletta aperta SOTTO il punto (mettiInVista): la punta va sopra, girata */
+.bo-nuv-sotto .leaflet-popup-tip-container{top:-20px;transform:rotate(180deg)}
 /* con la tendina la pioggia torna, ma solo a sinistra della linea (la taglia il JS) */
 .modo-boschi.bo-tendina #map .leaflet-overlay-pane canvas{display:block !important}
 /* e con lei la sua scala dei millimetri, se no la meta' pioggia non si legge */
@@ -12215,7 +12217,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
      serve «immutable» per un anno. A ogni rigenerazione delle tessere:
      push forzato di la', poi QUI il codice nuovo (`git rev-parse HEAD`
      nel repo delle tessere). Le vecchie copie spariscono da sole. */
-  var TESSERE_COMMIT='633aec75b9a7b14396ec0285b00b91ef46be272b';
+  var TESSERE_COMMIT='a96ebd6c7fa9d05623ae343e72815153b897f73b';
   var TESSERE='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@'+TESSERE_COMMIT+'/';
   var BASE=TESSERE+'boschi/', OPACITA=0.7;
   var RILIEVO=TESSERE+'rilievo/', TERRENO=TESSERE+'terreno/', Z_TERRENO=12;
@@ -12678,11 +12680,52 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
          troppo. Quelle le chiude la crocetta o il tocco dopo. */
     if(!nuvola) nuvola=L.popup({className:'bo-nuv',closeButton:true,autoPan:false,offset:[0,-4]});
     if(nuvTimer){ clearTimeout(nuvTimer); nuvTimer=null; }
+    nuvola.options.offset=[0,-4];
     nuvola.setLatLng(e.latlng).setContent(html).openOn(map());
+    mettiInVista();
     if(r.esito!=='si'&&r.esito!=='intorno'){
       nuvTimer=setTimeout(function(){ try{ map().closePopup(nuvola); }catch(_){} nuvTimer=null; },4000);
     }
     try{ gtag('event','click_boschi',{stato:'tocco',esito:r.esito,gruppo:r.gruppo||''}); }catch(_){}
+  }
+
+  /* ⚠️ LA NUVOLETTA DEVE CADERE NELLA MAPPA SCOPERTA (23/9/2026, suo rilievo
+     dal telefono: «non si vede»). Si apriva sempre SOPRA il punto, e sul
+     telefono sopra c'e' il pannello delle regioni: la nuvoletta finiva sotto.
+     Non si misura pannello per pannello: si guarda lungo la verticale del dito
+     fin dove la mappa e' davvero scoperta, sopra e sotto, con
+     elementFromPoint. Poi, in quest'ordine:
+       1. ci sta sopra   -> sopra, com'era;
+       2. ci sta sotto   -> sotto, con la punta girata in su;
+       3. non ci sta     -> la mappa scorre quel tanto che basta.
+     La mappa si muove solo come ultima risorsa: il punto l'ha scelto lui. */
+  function mettiInVista(){
+    var m=map(), c=nuvola&&nuvola.getElement&&nuvola.getElement(); if(!c) return;
+    L.DomUtil.removeClass(c,'bo-nuv-sotto');
+    var mc=m.getContainer(), mb=mc.getBoundingClientRect();
+    var p=m.latLngToContainerPoint(nuvola.getLatLng());
+    var X=mb.left+p.x, Y=mb.top+p.y;
+    /* ⚠️ NON basta «sta dentro #map»: sul telefono la LEGENDA e' figlia di #map
+       e la contava come mappa scoperta. Vale solo cio' che sta nei piani
+       disegnati di Leaflet (tessere, pioggia, e la nuvoletta stessa). */
+    var piani=m.getPane('mapPane');
+    function scoperto(y){
+      var el=document.elementFromPoint(X,y);
+      return !!el && (el===mc || piani.contains(el));
+    }
+    var su=Y, giu=Y, PASSO=4;
+    while(su-PASSO>mb.top && scoperto(su-PASSO)) su-=PASSO;
+    while(giu+PASSO<mb.bottom && scoperto(giu+PASSO)) giu+=PASSO;
+    var H=c.offsetHeight, PUNTA=20, MARGINE=16;   // MARGINE: la riga del versante arriva dopo e allunga
+    if(Y-su >= H+PUNTA+MARGINE) return;           // 1. sopra
+    if(giu-Y >= H+PUNTA+MARGINE){                 // 2. sotto
+      nuvola.options.offset=[0,H+2*PUNTA];
+      nuvola.update();
+      L.DomUtil.addClass(nuvola.getElement(),'bo-nuv-sotto');
+      return;
+    }
+    var serve=(su+H+PUNTA+MARGINE)-Y;             // 3. si porta il punto piu' in basso
+    if(serve>0) m.panBy([0,-serve],{animate:true});
   }
 
   /* ═══ LA TENDINA PIOGGIA | BOSCHI (18/9/2026, idea presa da stratumatlas.world) ═══
