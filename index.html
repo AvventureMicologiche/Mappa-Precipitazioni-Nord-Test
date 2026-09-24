@@ -12299,11 +12299,14 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     if(creditoBoschi){ ac.removeAttribution(creditoBoschi); creditoBoschi=null; }
     if(!acceso) return;
     var rk=(window._regioniAttive?window._regioniAttive():[]).filter(function(k){ return indice.regioni[k]; });
-    if(!rk.length) return;
-    creditoBoschi='boschi: '+rk.map(function(k){
+    /* ⚠️ IL RILIEVO VA CITATO (24/9/2026): TINITALY e' CC BY 4.0, e il rilievo
+       sta acceso in tutto il modo boschi, anche dove la carta dei boschi non
+       c'e'. Citazione presa dal DOI, non scritta a memoria. */
+    var ril='rilievo: <a href="https://doi.org/10.13127/tinitaly/1.1" target="_blank" rel="noopener">TINITALY 1.1, INGV</a> (CC BY 4.0)';
+    creditoBoschi=(rk.length ? 'boschi: '+rk.map(function(k){
       var r=indice.regioni[k];
       return '<a href="'+r.link+'" target="_blank" rel="noopener">'+r.fonte+'</a> ('+r.licenza+')';
-    }).join(', ');
+    }).join(', ')+', ' : '')+ril;
     ac.addAttribution(creditoBoschi);
   }
 
@@ -12426,7 +12429,13 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       m.getPane('bo-rilievo').style.pointerEvents='none';
     }
     fetch(RILIEVO+'indice.json').then(function(r){ return r.json(); })
-      .then(function(j){ indRil=j; if(rilievo) rilievo.redraw(); })
+      /* ⚠️ MAI rilievo.redraw() (24/9/2026): il redraw di Leaflet 1.9.4 NON
+         arrotonda lo zoom, e con lo zoom a quarti del sito (7,25, 11,25) lo
+         strato restava agganciato a tessere di zoom 11,25, che non esistono:
+         niente rilievo fino allo zoom successivo. Succedeva soprattutto sul
+         telefono, quando l'indice arrivava a strato gia' in mappa. Togliere e
+         rimettere lo strato passa da onAdd, che arrotonda. */
+      .then(function(j){ indRil=j; var m=map(); if(rilievo && m.hasLayer(rilievo)){ m.removeLayer(rilievo); rilievo.addTo(m); } })
       .catch(function(){ indRil=null; });
     var Ril=L.TileLayer.extend({
       getTileUrl:function(c){ return rilievoEsiste(c) ? RILIEVO+c.z+'/'+c.x+'/'+c.y+'.png' : VUOTA; }

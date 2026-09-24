@@ -257,8 +257,9 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
      Si tengono le ultime otto o nove e si aggiorna la data del titolo. -->
 <div class="upd">
   <div class="tit"><span class="tag">NOVITÀ</span><b>Ultimi aggiornamenti</b>
-    <span class="quando">19 settembre 2026</span></div>
+    <span class="quando">24 settembre 2026</span></div>
   <ul>
+    <li><span class="data">24 set</span><span><a href="#boschi">Il rilievo nella mappa boschi</a>: monti e valli in ombra sotto i colori, e toccando un punto leggi quota, versante e pendenza.</span></li>
     <li><span class="data">19 set</span><span><a href="#boschi">La mappa boschi in tutta Italia</a>: ventuno regioni, e un tocco su un punto ti dice che bosco è.</span></li>
     <li><span class="data">19 set</span><span><a href="#boschi">Confronta pioggia e boschi</a>: trascini la barra, a sinistra dove ha piovuto e a destra che bosco c'è.</span></li>
     <li><span class="data">18 set</span><span><a href="#boschi">La mappa boschi al Sud</a>: da oggi anche in Abruzzo, Puglia, Basilicata e Sicilia, tredici regioni in tutto.</span></li>
@@ -267,7 +268,6 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
     <li><span class="data">13 set</span><span><a href="#pagine">Dove ha piovuto, zona per zona</a>: la pioggia di ieri, degli ultimi 7 e 30 giorni in Garfagnana, Val Trebbia, Sila e altre centoundici zone.</span></li>
     <li><span class="data">12 set</span><span><a href="#misure">Quanto forte è piovuto</a>: per ogni giornata di pioggia forte, in quante ore è caduta e la punta in un'ora.</span></li>
     <li><span class="data">9 set</span><span><a href="#pagine">Il nuovo indice «Piogge per funghi»</a>, con la classifica delle località più bagnate d'Italia.</span></li>
-    <li><span class="data">3 set</span><span><a href="#pagine">Le pagine di zona</a>: Garfagnana, Val Trebbia, Sila e altre centodieci, ognuna coi suoi pluviometri.</span></li>
   </ul>
 </div>
 
@@ -455,13 +455,13 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p class="mini">La fonte è il composito radar europeo EUMETNET OPERA, 155 radar in 24 paesi, servito dal progetto aperto LibreWXR.</p>
 
 <h2 id="boschi"><span class="n">11</span>La mappa boschi</h2>
-<p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti e abetaie non danno gli stessi funghi. Il tasto <span class="ui">🌲 Mappa boschi</span>, accanto a quello del radar, cambia modo: la pioggia e i pallini spariscono, e <b>i boschi si colorano per tipo</b>, in otto gruppi.</p>
+<p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti e abetaie non danno gli stessi funghi. Il tasto <span class="ui">🌲 Mappa boschi</span>, accanto a quello del radar, cambia modo: la pioggia e i pallini spariscono, e <b>i boschi si colorano per tipo</b>, in dieci gruppi, sopra il rilievo di monti e valli.</p>
 
 <div class="bosco"><b>Vale solo per alcune regioni.</b> Per ora la mappa boschi c'è in ventuno: <b>Piemonte, Valle d'Aosta, Lombardia, Trentino, Alto Adige, Veneto, Friuli Venezia Giulia, Liguria, Emilia-Romagna, Lazio, Abruzzo, Puglia, Basilicata, Sicilia, Marche, Umbria, Molise, Campania, Calabria, Toscana e Sardegna</b>. In Basilicata la carta è meno dettagliata: si vedono le macchie di bosco, non il singolo bosco. In Marche, Umbria, Molise, Campania, Calabria, Toscana e Sardegna la fonte non è una carta forestale della Regione ma la <b>Carta della Natura di ISPRA</b>, che descrive gli habitat: i tipi di bosco ci sono tutti, raccolti negli stessi colori. In Toscana e Sardegna quella carta è a scala 1:50.000, quindi meno fine; se la Regione pubblicherà una carta forestale più dettagliata, la useremo. Nelle altre regioni, e all'estero, i colori non ci sono e la legenda lo dice: «carta non ancora disponibile». Non riempiamo i vuoti con carte approssimative: una regione entra quando c'è una carta dei tipi di bosco abbastanza precisa.</div>
 
 <figure class="media">
-  <img src="boschi.jpg" alt="La mappa boschi in Val d'Aveto, fra Liguria ed Emilia: faggete in verde, castagneti in arancio, querceti in ocra, col pannello della legenda" width="1000" height="663" loading="lazy">
-  <figcaption>La Val d'Aveto, a cavallo fra Liguria ed Emilia: faggete in verde, castagneti in arancio, querceti in ocra. Sotto la legenda, le due carte usate. Al confine fra le due regioni le carte si uniscono senza stacchi.</figcaption>
+  <img src="boschi.jpg" alt="La mappa boschi in Val d'Aveto, fra Liguria ed Emilia: faggete in verde, castagneti in arancio, querceti in ocra sopra il rilievo, col pannello della legenda" width="1000" height="702" loading="lazy">
+  <figcaption>La Val d'Aveto, a cavallo fra Liguria ed Emilia: faggete in verde, castagneti in arancio, querceti in ocra, e sotto i colori il rilievo delle valli. Sotto la legenda, le due carte usate. Al confine fra le due regioni le carte si uniscono senza stacchi.</figcaption>
 </figure>
 
 <h3>Come si usa</h3>
@@ -469,9 +469,27 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Anche le pagine di paese e di zona delle regioni coperte hanno il tasto <span class="ui">Guarda i boschi</span>, che apre la mappa boschi già centrata su quel posto.</p>
 
 <figure class="stretta">
-  <img src="boschi-telefono.jpg" alt="La mappa boschi dal telefono intorno a Borzonasca, col segnaposto rosso e sotto la legenda degli otto gruppi" width="786" height="1272" loading="lazy">
-  <figcaption>Dal telefono, intorno a Borzonasca: castagneti in arancio sui versanti, faggete in verde più in là. Sotto la legenda e il nome della carta.</figcaption>
+  <img src="boschi-telefono.jpg" alt="La mappa boschi dal telefono intorno a Borzonasca, col segnaposto rosso, il rilievo sotto i colori e sotto la legenda dei dieci gruppi" width="786" height="1404" loading="lazy">
+  <figcaption>Dal telefono, intorno a Borzonasca: castagneti in arancio sui versanti, faggete in verde più in là, e il rilievo che fa leggere le valli. Sotto la legenda e il nome della carta.</figcaption>
 </figure>
+
+<h3>Toccando un punto</h3>
+<p>Tocca un punto qualsiasi della mappa: si apre una nuvoletta che ti dice <b>che bosco c'è</b> e tre cose sul terreno.</p>
+<ul>
+  <li><b>Quota</b>: i metri sul livello del mare di quel punto.</li>
+  <li><b>Versante</b>: da che parte guarda il pendio, in otto direzioni, per esempio «a sud-est». Sotto, una riga dice cosa vuol dire per l'umidità: un versante a nord tiene l'umido, uno a sud prende il sole e asciuga prima.</li>
+  <li><b>Pendenza</b>: quanto è ripido, in gradi. 0° è il piano; sotto i 6° la nuvoletta scrive «pianeggiante».</li>
+</ul>
+<p>Versante e pendenza non sono quelli del punto esatto sotto il dito, che può cadere su un masso o in una buca: sono quelli del fianco della valle intorno, misurati su 250 metri per parte. Per chi cerca funghi conta quello.</p>
+<p>In fondo c'è il tasto <span class="ui">Apri su Google Maps</span>: apre quel punto su Google Maps, dove puoi salvarlo, guardarlo dal satellite o farti portare. La strada non te la diamo noi: il punto che hai toccato può essere un dirupo, e come arrivarci lo decidi tu.</p>
+
+<figure class="stretta">
+  <img src="boschi-nuvoletta.jpg" alt="La nuvoletta aperta toccando un castagneto vicino a Borzonasca: quota 208 metri, versante a sud-est, pendenza 28 gradi, sole del mattino, e il tasto Apri su Google Maps" width="786" height="744" loading="lazy">
+  <figcaption>Un tocco su un castagneto vicino a Borzonasca: 208 metri, versante a sud-est con 28° di pendenza, cioè sole del mattino e terreno che asciuga. Sotto, il tasto per aprire il punto su Google Maps.</figcaption>
+</figure>
+
+<h3>Confrontare pioggia e boschi</h3>
+<p>Con un periodo di pioggia già scelto, tocca <span class="ui">⇆ Confronta con piogge</span>: compare una barra da trascinare. A sinistra vedi dove ha piovuto, a destra che bosco c'è, e muovendo la barra li confronti sullo stesso posto.</p>
 
 <table>
 <thead><tr><th>Colore</th><th>Che cosa mette insieme</th></tr></thead>
@@ -483,12 +501,18 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <tr><td>lariceti</td><td>larice e larice con cembro</td></tr>
 <tr><td>pinete</td><td>pino silvestre, nero, marittimo, domestico e d'Aleppo</td></tr>
 <tr><td>robinieti</td><td>i boschi di robinia</td></tr>
-<tr><td>altri boschi</td><td>tutto il resto: carpino nero e orniello, latifoglie miste, ontani e salici lungo i fiumi, mughete d'alta quota, e arbusteti e macchia dove la carta li conta</td></tr>
+<tr><td>carpino nero, orniello e aceri</td><td>i boschi di carpino nero e orniello, che le carte chiamano orno-ostrieti</td></tr>
+<tr><td>conifere non precisate</td><td>conifere di cui la carta non dice la specie</td></tr>
+<tr><td>altri boschi</td><td>tutto il resto: latifoglie miste, ontani e salici lungo i fiumi, mughete d'alta quota, e arbusteti e macchia dove la carta li conta</td></tr>
 </tbody>
 </table>
 
+<h3>Il rilievo</h3>
+<p>Sotto i colori c'è il rilievo: le ombre dei monti, come se il sole arrivasse da nord-ovest. Viene da <b>TINITALY</b>, il modello del terreno d'Italia a 10 metri dell'INGV, lo stesso da cui ricaviamo quota, versante e pendenza. Da lontano le montagne sono un po' esagerate, apposta: senza, a quella distanza le ombre sparirebbero. Il rilievo c'è solo in Italia, perché il modello finisce al confine.</p>
+<p>Sulla mappa della pioggia invece non c'è, e non è una svista: le ombre sotto i colori della pioggia li farebbero sembrare più scuri, cioè più millimetri di quelli caduti davvero.</p>
+
 <h3>Quanto è precisa</h3>
-<p>I disegni sono quelli delle <b>carte forestali delle Regioni</b>, fatte sulle foto aeree con un dettaglio che arriva al singolo versante. Ogni Regione però usa le sue categorie, che abbiamo raggruppato noi nei nove colori. Un colore dice un albero: «pinete» sono solo i boschi di pini, «abetaie e peccete» solo quelli di abeti e pecci. Dove la carta dice soltanto «conifere», senza la specie, il bosco va in «conifere non precisate»: sappiamo che sono conifere, non se sono abeti o pini, e non tiriamo a indovinare. Fanno eccezione le <b>riserve naturali biogenetiche dello Stato</b> nate per una specie, come Abetone, Vallombrosa e Camaldoli per l'abete bianco o Trenta Coste in Sila per il pino laricio: lì dentro usiamo la specie della riserva. E se conosci un bosco che sulla mappa ha il colore sbagliato, <a href="/fonti.html#feedback">scrivicelo</a>: le carte le correggiamo man mano, anche grazie alle vostre segnalazioni. Le carte poi non hanno tutte la stessa età: si va da quella del Veneto, aggiornata al 2005, a quella della Liguria, del 2025. Quale carta stai guardando lo dice la riga sotto la legenda, e l'elenco completo, con le licenze, sta in <a href="/fonti.html">Fonti e licenze</a>.</p>
+<p>I disegni sono quelli delle <b>carte forestali delle Regioni</b>, fatte sulle foto aeree con un dettaglio che arriva al singolo versante. Ogni Regione però usa le sue categorie, che abbiamo raggruppato noi nei dieci colori. Un colore dice un albero: «pinete» sono solo i boschi di pini, «abetaie e peccete» solo quelli di abeti e pecci. Dove la carta dice soltanto «conifere», senza la specie, il bosco va in «conifere non precisate»: sappiamo che sono conifere, non se sono abeti o pini, e non tiriamo a indovinare. Fanno eccezione le <b>riserve naturali biogenetiche dello Stato</b> nate per una specie, come Abetone, Vallombrosa e Camaldoli per l'abete bianco o Trenta Coste in Sila per il pino laricio: lì dentro usiamo la specie della riserva. E se conosci un bosco che sulla mappa ha il colore sbagliato, <a href="/fonti.html#feedback">scrivicelo</a>: le carte le correggiamo man mano, anche grazie alle vostre segnalazioni. Le carte poi non hanno tutte la stessa età: si va da quella del Veneto, aggiornata al 2005, a quella della Liguria, del 2025. Quale carta stai guardando lo dice la riga sotto la legenda, e l'elenco completo, con le licenze, sta in <a href="/fonti.html">Fonti e licenze</a>.</p>
 <p>Due avvertenze oneste. Il bosco della carta è quello di quando la carta è stata fatta: un taglio o un incendio recenti non ci sono. E la carta dice <b>che bosco c'è, non se ci sono i funghi</b>: per quello servono la pioggia al momento giusto, la temperatura e un giro a piedi.</p>
 
 <h2 id="condividere"><span class="n">12</span>Condividere</h2>
