@@ -12257,7 +12257,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
      serve «immutable» per un anno. A ogni rigenerazione delle tessere:
      push forzato di la', poi QUI il codice nuovo (`git rev-parse HEAD`
      nel repo delle tessere). Le vecchie copie spariscono da sole. */
-  var TESSERE_COMMIT='a96ebd6c7fa9d05623ae343e72815153b897f73b';
+  var TESSERE_COMMIT='9d951f089759525e5f6f6a5a8e7b19384fac9c17';
   var TESSERE='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@'+TESSERE_COMMIT+'/';
   var BASE=TESSERE+'boschi/', OPACITA=0.7;
   var RILIEVO=TESSERE+'rilievo/', TERRENO=TESSERE+'terreno/', Z_TERRENO=12;
@@ -12754,27 +12754,46 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     var mc=m.getContainer(), mb=mc.getBoundingClientRect();
     var p=m.latLngToContainerPoint(nuvola.getLatLng());
     var X=mb.left+p.x, Y=mb.top+p.y;
+    /* ⚠️ ANCHE AI LATI (24/9/2026, sua foto dal telefono: un bosco sul bordo
+       destro, la nuvoletta usciva dallo schermo). Leaflet la centra sul punto;
+       se un lato esce, la mappa dovra' scorrere di `dx` verso l'interno. Il
+       conto sopra/sotto si fa gia' dove la nuvoletta ARRIVERA', perche' i
+       pannelli e la casella di ricerca stanno fermi mentre la mappa scorre. */
+    var W=c.offsetWidth, BORDO_LAT=8, dx=0;
+    if(X-W/2 < mb.left+BORDO_LAT) dx=(mb.left+BORDO_LAT)-(X-W/2);
+    else if(X+W/2 > mb.right-BORDO_LAT) dx=(mb.right-BORDO_LAT)-(X+W/2);
+    X+=dx;
     /* ⚠️ NON basta «sta dentro #map»: sul telefono la LEGENDA e' figlia di #map
        e la contava come mappa scoperta. Vale solo cio' che sta nei piani
        disegnati di Leaflet (tessere, pioggia, e la nuvoletta stessa). */
     var piani=m.getPane('mapPane');
+    /* ⚠️ TUTTA LA LARGHEZZA, NON SOLO LA VERTICALE DEL DITO (24/9/2026, sua
+       foto dal PC): la nuvoletta e' larga ~250 px, e la casella «Cerca
+       localita'» ne copriva il lato destro mentre sotto il dito era tutto
+       scoperto. Si guarda a sinistra, al centro e a destra. */
+    var mezza=Math.max(0,c.offsetWidth/2-6);
+    var xs=[X-mezza,X,X+mezza].map(function(x){ return Math.min(mb.right-2,Math.max(mb.left+2,x)); });
     function scoperto(y){
-      var el=document.elementFromPoint(X,y);
-      return !!el && (el===mc || piani.contains(el));
+      return xs.every(function(x){
+        var el=document.elementFromPoint(x,y);
+        return !!el && (el===mc || piani.contains(el));
+      });
     }
     var su=Y, giu=Y, PASSO=4;
     while(su-PASSO>mb.top && scoperto(su-PASSO)) su-=PASSO;
     while(giu+PASSO<mb.bottom && scoperto(giu+PASSO)) giu+=PASSO;
     var H=c.offsetHeight, PUNTA=20, MARGINE=24;   // MARGINE: la riga «sole del mattino…» arriva dopo e allunga di ~17 px
-    if(Y-su >= H+PUNTA+MARGINE) return;           // 1. sopra
-    if(giu-Y >= H+PUNTA+MARGINE){                 // 2. sotto
+    var dy=0;
+    if(Y-su >= H+PUNTA+MARGINE){                  // 1. sopra: com'e'
+    } else if(giu-Y >= H+PUNTA+MARGINE){          // 2. sotto
       nuvola.options.offset=[0,H+2*PUNTA];
       nuvola.update();
       L.DomUtil.addClass(nuvola.getElement(),'bo-nuv-sotto');
-      return;
+    } else {                                      // 3. si porta il punto piu' in basso
+      dy=Math.max(0,(su+H+PUNTA+MARGINE)-Y);
     }
-    var serve=(su+H+PUNTA+MARGINE)-Y;             // 3. si porta il punto piu' in basso
-    if(serve>0) m.panBy([0,-serve],{animate:true});
+    // un solo movimento per lato e altezza; panBy sposta la VISTA, il contenuto va al contrario
+    if(dx||dy) m.panBy([-dx,-dy],{animate:true});
   }
 
   /* ═══ LA TENDINA PIOGGIA | BOSCHI (18/9/2026, idea presa da stratumatlas.world) ═══
