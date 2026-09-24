@@ -9456,15 +9456,55 @@ function captureMapBlob(scala){
     // sfondo (il colore del contenitore mappa, visibile dove non c'è tile)
     ctx.fillStyle=getComputedStyle(mapEl).backgroundColor||'#e8ecf1';
     ctx.fillRect(0,0,mr.width,mr.height+hdrH);
+    /* 0) IL RILIEVO PRIMA DI TUTTO (24/9/2026). A schermo sta SOTTO le tessere
+       di OSM, che ci si fondono sopra in `multiply`; la foto lo disegnava
+       invece sopra, come uno strato qualsiasi, e usciva una mappa diversa da
+       quella che uno vede.
+       ⚠️ SU UN FOGLIO A PARTE, TRASPARENTE. A schermo la fusione avviene
+       dentro il piano della mappa, dove sotto le tessere non c'e' niente: il
+       grigio di fondo di Leaflet NON entra nel conto (misurato: dove non c'e'
+       rilievo i pixel sono identici con e senza fusione). Fondendo OSM
+       direttamente sopra il fondo, la foto usciva scura del 13%. */
+    var pRil=mapEl.querySelector('.leaflet-bo-rilievo-pane');
+    var tpEl=mapEl.querySelector('.leaflet-tile-pane');
+    var fondiOsm=!!(pRil && tpEl && getComputedStyle(tpEl).mixBlendMode==='multiply');
+    /* LA TENDINA ANCHE NELLA FOTO (24/9/2026): a schermo la pioggia sta a
+       sinistra della linea, boschi e rilievo a destra. La foto disegnava tutti
+       e tre su tutta la larghezza. `tx` e' la linea in px dal bordo sinistro
+       della mappa, che nello scatto e' anche x=0. */
+    var tx=window._tendinaX?window._tendinaX():null;
+    var soloDx=function(c){ if(tx==null) return; c.beginPath(); c.rect(tx,-1e5,2e5,2e5); c.clip(); };
+    var soloSx=function(c){ if(tx==null) return; c.beginPath(); c.rect(-1e5,-1e5,1e5+tx,2e5); c.clip(); };
+    var fg=null, fctx=ctx;
+    if(fondiOsm){
+      fg=document.createElement('canvas'); fg.width=out.width; fg.height=out.height;
+      fctx=fg.getContext('2d'); fctx.setTransform(ctx.getTransform());
+      fctx.save(); soloDx(fctx);
+      fctx.globalAlpha=+(getComputedStyle(pRil).opacity)||1;
+      [].slice.call(pRil.querySelectorAll('img.leaflet-tile')).forEach(function(t){
+        if(!t.complete||!t.naturalWidth||!visibile(t)) return;
+        var r=rel(t); try{ fctx.drawImage(t,r.x,r.y,r.w,r.h); }catch(e){}
+      });
+      fctx.restore();
+    }
     // 1) tile della mappa base
     var tiles=mapEl.querySelectorAll('.leaflet-tile');
     for(var i=0;i<tiles.length;i++){
       var t=tiles[i];
       if(!t.complete||!t.naturalWidth||!visibile(t)) continue;
       if(t.closest('.leaflet-boschi-pane')) continue;   // il retino dei boschi va sopra la pioggia, piu' giu'
+      if(t.closest('.leaflet-bo-rilievo-pane')) continue;   // gia' sul foglio, sotto
       var r=rel(t);
-      try{ ctx.drawImage(t,r.x,r.y,r.w,r.h); }catch(e){}
+      // solo OSM si fonde col rilievo, sul foglio; il radar e gli altri strati vanno sopra, normali
+      if(fondiOsm && tpEl.contains(t)){
+        fctx.globalCompositeOperation='multiply';
+        try{ fctx.drawImage(t,r.x,r.y,r.w,r.h); }catch(e){}
+      } else {
+        if(fg){ ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.drawImage(fg,0,0); ctx.restore(); fg=null; }
+        try{ ctx.drawImage(t,r.x,r.y,r.w,r.h); }catch(e){}
+      }
     }
+    if(fg){ ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.drawImage(fg,0,0); ctx.restore(); }
     // 2) confini, heatmap e marker NELL'ORDINE DI SOVRAPPOSIZIONE DELLA PAGINA:
     // il canvas della heat ha z-index 200 dentro l'overlay pane, quindi copre i
     // confini (che essendo sotto risultano più chiari); i marker stanno sopra
@@ -9481,11 +9521,11 @@ function captureMapBlob(scala){
     return raster(svgOverlay).then(function(sotto){
       sotto.forEach(function(d){ if(d.im){ try{ ctx.drawImage(d.im,d.r.x,d.r.y,d.r.w,d.r.h); }catch(e){} } });
       var heat=mapEl.querySelector('.leaflet-overlay-pane canvas');
-      if(heat&&visibile(heat)){ var rh=rel(heat); try{ ctx.drawImage(heat,rh.x,rh.y,rh.w,rh.h); }catch(e){} }
+      if(heat&&visibile(heat)){ var rh=rel(heat); ctx.save(); soloSx(ctx); try{ ctx.drawImage(heat,rh.x,rh.y,rh.w,rh.h); }catch(e){} ctx.restore(); }
       // retino «Tipi di bosco» (15/9/2026): sopra la pioggia, sotto i pallini, come a schermo
       var bt=window._boschiTessere?window._boschiTessere():[];
       if(bt.length){
-        ctx.save(); ctx.globalAlpha=window._boschiOpacita||1;
+        ctx.save(); soloDx(ctx); ctx.globalAlpha=window._boschiOpacita||1;
         bt.forEach(function(t){
           if(!t.complete||!t.naturalWidth) return;
           var rb=rel(t); try{ ctx.drawImage(t,rb.x,rb.y,rb.w,rb.h); }catch(e){}
@@ -12402,6 +12442,12 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     m.getPane('tilePane').style.mixBlendMode='multiply';
     sottoOn=true;
   }
+  /* ⚠️ IL RILIEVO SOLO COI BOSCHI, MAI SOTTO LA PIOGGIA (24/9/2026). Provato
+     sempre acceso, a tre forze: la pioggia e' opaca al 70%, e un versante in
+     ombra sotto ne scurisce il colore, cioe' fa sembrare PIU' millimetri. Lui:
+     «se c'e' trasparenza resta sempre piu' scuro». Non c'e' forza giusta: la
+     mappa della pioggia serve a leggere il colore, e il colore deve dire solo
+     la pioggia. Non riproporlo. */
   function rilievoOff(){
     var m=map();
     if(rilievo && m.hasLayer(rilievo)) m.removeLayer(rilievo);
@@ -12490,7 +12536,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       document.body.classList.add('modo-boschi');
       if(!strato) strato=creaStrato();
       strato.addTo(m);
-      rilievoOn();   // rilievo, fondo senza nomi, e i nomi rimessi sopra
+      rilievoOn();   // solo coi boschi: sotto la pioggia ne falserebbe il colore
       el('btn-boschi').innerHTML='✕ Chiudi mappa';
       var t=el('leg-title');
       if(t){ if(titoloVecchio==null) titoloVecchio=t.textContent; t.textContent='Mappa forestale'; }
@@ -12657,16 +12703,19 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     var idQ='bo-q'+(++nSeq), idV='bo-v'+nSeq;
     html+='<div class="bo-nuv-dato"><span>Quota</span><b id="'+idQ+'">…</b></div>'
         + '<div class="bo-nuv-dato"><span>Versante</span><b id="'+idV+'">…</b></div>'
-        + '<div class="bo-nuv-coda" id="'+idV+'c"></div>';
+        + '<div class="bo-nuv-dato"><span>Pendenza</span><b id="'+idV+'p">…</b></div>'
+        + '<div class="bo-nuv-coda" id="'+idV+'c"></div>';   // il commento sotto la pendenza (24/9, sua richiesta)
     html+=(window._vaiQui?window._vaiQui(e.latlng,'boschi'):'');
     (function(la,lo,iq,iv){
       quotaIn(la,lo).then(function(q){
         var n=document.getElementById(iq); if(n) n.textContent = q===null?'—':('~ '+Math.round(q)+' m slm');
       });
       versanteIn(la,lo).then(function(v){
-        var n=document.getElementById(iv), c=document.getElementById(iv+'c');
-        if(n) n.textContent = !v?'—':(v.dir==='pianeggiante'?'pianeggiante':('a '+v.dir+' \u00b7 '+v.pend.toFixed(0)+'\u00b0'));
+        var n=document.getElementById(iv), c=document.getElementById(iv+'c'), pd=document.getElementById(iv+'p');
+        if(n) n.textContent = !v?'—':(v.dir==='pianeggiante'?'pianeggiante':('a '+v.dir));
         if(c) c.textContent = v&&v.coda?v.coda:'';
+        // 24/9/2026, sua richiesta: la pendenza su una riga sua, anche in piano
+        if(pd) pd.textContent = !v?'—':(v.pend.toFixed(0)+'\u00b0');
       });
     })(e.latlng.lat,e.latlng.lng,idQ,idV);
     /* ⚠️ LA NUVOLETTA ADESSO SI CHIUDE (22/9/2026, suo fastidio: «resta acceso,
@@ -12716,7 +12765,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     var su=Y, giu=Y, PASSO=4;
     while(su-PASSO>mb.top && scoperto(su-PASSO)) su-=PASSO;
     while(giu+PASSO<mb.bottom && scoperto(giu+PASSO)) giu+=PASSO;
-    var H=c.offsetHeight, PUNTA=20, MARGINE=16;   // MARGINE: la riga del versante arriva dopo e allunga
+    var H=c.offsetHeight, PUNTA=20, MARGINE=24;   // MARGINE: la riga «sole del mattino…» arriva dopo e allunga di ~17 px
     if(Y-su >= H+PUNTA+MARGINE) return;           // 1. sopra
     if(giu-Y >= H+PUNTA+MARGINE){                 // 2. sotto
       nuvola.options.offset=[0,H+2*PUNTA];
@@ -12844,10 +12893,15 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   function taglia(){
     var m=map(), pane=m&&m.getPane('boschi'); if(!pane) return;
     var c=heatCanvas();
-    if(!tendinaOn){ pane.style.clip=''; if(c) c.style.clip=''; return; }
+    /* ⚠️ il RILIEVO si taglia come i boschi (24/9/2026, sua scelta): nella meta'
+       pioggia della tendina scuriva il colore nelle ombre, cioe' faceva sembrare
+       piu' millimetri. Stesso piano dei boschi, stesso taglio. */
+    var pr=m.getPane('bo-rilievo');
+    if(!tendinaOn){ pane.style.clip=''; if(pr) pr.style.clip=''; if(c) c.style.clip=''; return; }
     var W=m.getSize().x; if(hx==null) hx=W/2; hx=Math.max(8,Math.min(W-8,hx));
     var lp=m.containerPointToLayerPoint([hx,0]);
     pane.style.clip='rect(-100000px,100000px,100000px,'+Math.round(lp.x)+'px)';
+    if(pr) pr.style.clip=pane.style.clip;
     if(c){
       var rc=c.getBoundingClientRect(), rm=m.getContainer().getBoundingClientRect();
       var k=rc.width?(c.offsetWidth/rc.width):1;
@@ -13040,6 +13094,8 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       return [].slice.call(map().getPane('boschi').querySelectorAll('img.leaflet-tile'));
     };
     window._boschiOpacita=OPACITA;
+    // per lo scatto: dove passa la linea della tendina (px dal bordo sinistro della mappa), o null
+    window._tendinaX=function(){ return (acceso&&tendinaOn&&hx!=null)?hx:null; };
     /* Dal link si aspetta che il sito abbia spuntato le regioni di ?r=, come fa
        il radar: con la guardia qui sopra, entrare prima voleva dire l'avviso
        «Prima scegli la regione» su un link giusto. Tetto 15 secondi, poi niente. */
