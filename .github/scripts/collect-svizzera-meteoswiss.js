@@ -45,6 +45,7 @@
 
 const https = require('https');
 const fs    = require('fs');
+const { creaOre, segna, intensita } = require('./lib-intensita.js');
 const path  = require('path');
 
 const DATA_DIR = path.join(__dirname, '../..', 'data', 'svizzera');
@@ -238,9 +239,11 @@ async function collectStation(st, windows, maxEnd) {
     let tmin = Infinity, tmax = -Infinity, nT = 0;
     let ffSum = 0, nFF = 0, fxMax = -Infinity, nFX = 0;
     let umin = Infinity, umax = -Infinity, nU = 0;
+    const secchielli = creaOre();   // intensita' (12/9/2026)
     for (const [t, v, tn, tx, ff, fx, u] of rows) {
       if (!(t > w.start && t <= w.end)) continue;
       sum += v; n++;
+      segna(secchielli, t, v);
       // sanity come per l'Austria: fuori da [-45,50] °C o vento medio ≥60 m/s = glitch
       if (tn != null && tn >= -45 && tn <= 50) { if (tn < tmin) tmin = tn; nT++; }
       if (tx != null && tx >= -45 && tx <= 50) { if (tx > tmax) tmax = tx; }
@@ -258,6 +261,8 @@ async function collectStation(st, windows, maxEnd) {
           rec.w = [Math.round(ffSum / nFF * 3.6 * 10) / 10,
                    nFX > 0 ? Math.round(fxMax * 3.6 * 10) / 10 : null];
         if (nU >= MIN_ORE && umax > -Infinity) rec.u = [Math.round(umin), Math.round(umax)];
+        const inte = intensita(secchielli);
+        if (inte) rec.i = inte;
         res[w.dateStr] = rec;
       }
     }
@@ -340,11 +345,16 @@ async function main() {
       done++;
       if (!res) continue;
       for (const dateStr of Object.keys(res)) {
-        const r = res[dateStr]; // {mm, t?, w?} — vedi collectStation
+        const r = res[dateStr]; // {mm, t?, w?, u?, i?} — vedi collectStation
+        // ⚠️ QUI IL RECORD SI RICOSTRUISCE CAMPO PER CAMPO: un campo nuovo
+        // calcolato in collectStation e non ricopiato qui sparisce in
+        // silenzio, senza nessun errore e coi millimetri giusti. E' successo
+        // il 12/9/2026 con `i`, che risultava calcolata e assente dai file.
         const rec = { id: st.abbr, n: st.name, lat: st.lat, lon: st.lon, q: st.q, p: st.canton, mm: r.mm };
         if (r.t) rec.t = r.t;
         if (r.w) rec.w = r.w;
         if (r.u) rec.u = r.u;
+        if (r.i) rec.i = r.i;
         perDay[dateStr].push(rec);
       }
     }

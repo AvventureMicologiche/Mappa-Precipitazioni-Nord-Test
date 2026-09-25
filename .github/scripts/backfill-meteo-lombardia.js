@@ -3,8 +3,8 @@
  * Aggiunge t/w ai file data/lombardia esistenti con le stesse query Socrata
  * del collector: UNA query per giorno raggruppata per (sensore, ora) →
  * completezza in ORE COPERTE (≥20) a prescindere dalla granularità.
- * t: [min,max] °C · w: [media, null] km/h (vento m/s ×3,6; la raffica non
- * esiste su Socrata). Join pluviometro ↔ termometro/anemometro via idstazione.
+ * t: [min,max] °C · w: [media, raffica] km/h (vento m/s ×3,6; la raffica
+ * ESISTE su Socrata, e' `idoperatore=3` — corretto il 29/8/2026). Join pluviometro ↔ termometro/anemometro via idstazione.
  * Idempotente: tocca solo t/w, pioggia intatta.
  *
  * Uso: node backfill-meteo-lombardia.js          → ultimi 45 giorni
@@ -53,17 +53,25 @@ async function anagrafePerTipologia(tipologia) {
 }
 
 async function meteoDay(dateStr, tempByStaz, windByStaz) {
-  const sel = encodeURIComponent('idsensore,date_extract_hh(data) as h,min(valore) as mn,max(valore) as mx,avg(valore) as med,count(valore) as c');
+  // ⚠️ `idoperatore`: 1 = media, 3 = massimo (la raffica). Vedi la nota lunga
+  //    in collect-lombardia.js — senza separarli il vento usciva gonfiato del
+  //    70-90% e la raffica finiva nel calderone. Questa funzione e' una COPIA
+  //    di quella del collector: le due devono restare uguali.
+  const sel = encodeURIComponent('idsensore,idoperatore,date_extract_hh(data) as h,min(valore) as mn,max(valore) as mx,avg(valore) as med,count(valore) as c');
   const where = encodeURIComponent(`data between '${dateStr}T00:00:00' and '${dateStr}T23:59:59' AND valore > -50`);
-  const rows = await getJSON(`/resource/647i-nhxk.json?$select=${sel}&$where=${where}&$group=${encodeURIComponent('idsensore,h')}&$limit=50000`);
+  const rows = await getJSON(`/resource/647i-nhxk.json?$select=${sel}&$where=${where}&$group=${encodeURIComponent('idsensore,idoperatore,h')}&$limit=80000`);
   const perSens = {};
-  rows.forEach(r => { (perSens[r.idsensore] = perSens[r.idsensore] || []).push(r); });
+  rows.forEach(r => {
+    const s = (perSens[r.idsensore] = perSens[r.idsensore] || {});
+    (s[r.idoperatore] = s[r.idoperatore] || []).push(r);
+  });
   const tempSens = {}, windSens = {};
   Object.keys(tempByStaz).forEach(st => tempSens[tempByStaz[st]] = st);
   Object.keys(windByStaz).forEach(st => windSens[windByStaz[st]] = st);
   const out = {};
   Object.keys(perSens).forEach(id => {
-    const ore = perSens[id];
+    const ore    = perSens[id]['1'] || [];   // la MEDIA
+    const oreMax = perSens[id]['3'] || [];   // il MASSIMO: la raffica
     if (ore.length < MIN_ORE) return;
     if (tempSens[id]) {
       const mins = ore.map(o => parseFloat(o.mn)).filter(v => v >= -45 && v <= 50);
@@ -78,7 +86,10 @@ async function meteoDay(dateStr, tempByStaz, windByStaz) {
       const medie = ore.map(o => parseFloat(o.med)).filter(v => v >= 0 && v < 60);
       if (medie.length >= MIN_ORE) {
         const st = windSens[id];
-        (out[st] = out[st] || {}).w = [Math.round(medie.reduce((a, v) => a + v, 0) / medie.length * 3.6 * 10) / 10, null];
+        const raff = oreMax.map(o => parseFloat(o.mx)).filter(v => v >= 0 && v < 60);
+        (out[st] = out[st] || {}).w = [
+          Math.round(medie.reduce((a, v) => a + v, 0) / medie.length * 3.6 * 10) / 10,
+          raff.length >= MIN_ORE ? Math.round(Math.max(...raff) * 3.6 * 10) / 10 : null];
       }
     }
   });

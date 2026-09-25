@@ -129,7 +129,7 @@ ${STILE}
 <body>
 <header>
   <a href="${SITO}/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
-  <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt">▶ Canale YouTube</a>
+  <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt">▶ <span class="yt-l">Canale </span>YouTube</a>
 </header>
 <main>
 
@@ -147,10 +147,10 @@ giorni fa</b>, misurata a terra dai pluviometri di ${N_POSTI} posti da bosco in 
 regioni. Dove ne è caduta di più è dove vale la pena andare a cercare.</p>
 
 <div class="patto">
-  <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
-  fa nessuno, e noi non ce la inventiamo.</p>
-  <p><b>Cosa trovi:</b> la pioggia vera, misurata, posto per posto, con la data. Il bosco poi
-  lo conosci tu meglio di qualunque sito.</p>
+  <p><b>A cosa serve:</b> a pianificare le tue uscite. La pioggia vera, misurata a terra
+  da pluviometri veri, posto per posto e con la data. Il posto esatto, poi, lo sai tu meglio di qualunque sito.</p>
+  <p>Non è una previsione di quanti funghi ci saranno: attendibile non la fa
+  nessuno, e noi non ce la inventiamo.</p>
   <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
   valgono regole proprie.</p>
 </div>

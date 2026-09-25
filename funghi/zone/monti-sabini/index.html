@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Funghi sui Monti Sabini oggi: dove andare e dove ha piovuto</title>
-<meta name="description" content="Dove andare a funghi sui Monti Sabini oggi: la pioggia caduta da 13 a 20 giorni fa, misurata da 3 pluviometri da bosco.">
+<title>Funghi sui Monti Sabini oggi: stanno nascendo?</title>
+<meta name="description" content="Stanno nascendo funghi sui Monti Sabini? Le piogge degli ultimi 25 giorni, giorno per giorno, da 3 pluviometri da bosco. Aggiornato ogni mattina.">
 <link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/zone/monti-sabini/">
-<meta property="og:title" content="Funghi sui Monti Sabini oggi: dove andare">
-<meta property="og:description" content="La pioggia vera, misurata dai pluviometri nelle zone da bosco.">
+<meta property="og:title" content="Funghi sui Monti Sabini oggi: stanno nascendo?">
+<meta property="og:description" content="Le piogge degli ultimi 25 giorni, misurate dai pluviometri nelle zone da bosco.">
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/zone/monti-sabini/">
 <meta property="og:type" content="website">
@@ -23,10 +23,14 @@ if(/(^|\.)avventuremicologiche\.it$/.test(location.hostname))gtag("config","G-9R
 :root{--blu:#1b3f6e;--blu-scuro:#123252;--grigio:#f0f4fb;--bordo:#d0d8e8;--verde:#2e7d32;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#222;background:#fff;font-size:17px;line-height:1.6;}
-header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:nowrap;}
 header a{color:#fff;text-decoration:none;}
-header .logo{font-weight:600;font-size:15px;}
-header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;}
+header .logo{font-weight:600;font-size:15px;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;flex:none;}
+/* ⚠️ 25/9/2026, sua schermata da Android: sotto i ~430 px logo e tasto rosso
+   non ci stavano sulla stessa riga e il tasto andava a capo, raddoppiando la
+   testata. Sul telefono via «· piogge» e «Canale»: resta «▶ YouTube». */
+@media(max-width:440px){header{padding:10px 12px;gap:8px;} header .logo span,header .yt .yt-l{display:none;}}
 main{max-width:860px;margin:0 auto;padding:22px 16px 40px;}
 h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
 h2{color:var(--blu-scuro);font-size:21px;margin:32px 0 8px;}
@@ -147,12 +151,106 @@ nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2p
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
 
-.tre{display:flex;gap:10px;margin:18px 0 6px;flex-wrap:wrap;}
-.tre > div{flex:1;min-width:150px;background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:12px 14px;}
-.tre > div.secco{flex:1.25;border-left:4px solid var(--verde);}
-@media(max-width:600px){.tre > div.secco{flex-basis:100%;}}
-.tre .et{font-size:13px;color:#5a6b80;}
-.tre .n{font-size:26px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}
+.gg{display:flex;align-items:flex-end;gap:3px;height:150px;margin:14px 0 4px;}
+.gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
+.gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
+.gg .b.dentro i{background:var(--blu);}
+.gg .b b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10.5px;
+  font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
+.gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
+.gg-x span{flex:1;text-align:center;}
+.gg-leg{font-size:13.5px;color:#555;margin-top:8px;}
+.gg-leg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
+.tt-box{position:relative;padding-right:42px;margin:14px 0 2px;}
+.tt{width:100%;height:150px;display:block;overflow:visible;}
+.tt .griglia{stroke:#e6eaf0;stroke-width:1;vector-effect:non-scaling-stroke;}
+.tt polyline{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+.tt .max{stroke:#d1603d;}
+.tt .min{stroke:#3a6ea8;}
+.tt-y{position:absolute;top:0;right:0;width:42px;height:150px;pointer-events:none;}
+.tt-y span{position:absolute;right:0;transform:translateY(-50%);font-size:11px;color:#6b7a8d;line-height:1;padding-left:5px;}
+.tt-x{padding-right:42px;}
+.vic td:last-child,.vic th:last-child{text-align:right;}
+.vic .qui{background:#eef4fd;}
+.verdetto{background:#0f2d4d;color:#fff;border-radius:12px;padding:18px 18px 16px;margin:14px 0 8px;}
+.verdetto .si{font-size:27px;font-weight:800;line-height:1.2;}
+.verdetto .pallino{display:inline-block;width:15px;height:15px;border-radius:50%;margin-right:9px;vertical-align:2px;}
+.verdetto .gr{font-size:44px;font-weight:800;line-height:1.1;margin-top:10px;}
+.verdetto .gr small{font-size:18px;font-weight:600;opacity:.85;margin-left:6px;}
+.verdetto .dett{font-size:16px;opacity:.9;margin-top:6px;}
+.scala{display:flex;gap:4px;margin-top:14px;}
+.scala div{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.18);}
+.scala-t{display:flex;font-size:11.5px;opacity:.75;margin-top:4px;}
+.scala-t span{flex:1;text-align:center;}
+.breve{font-size:16px;color:#333;margin:6px 0 4px;}
+.fin{display:flex;gap:6px;align-items:flex-end;height:170px;margin:16px 0 4px;}
+.fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
+.fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
+.fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+.fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
+.fin-x span{flex:1;text-align:center;line-height:1.25;}
+.img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
+.tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
+  padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+@media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
+.noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
+.noioso p{margin-bottom:8px;}
+.noioso a{color:var(--blu);}
+
+
+
+.gg{display:flex;align-items:flex-end;gap:3px;height:150px;margin:14px 0 4px;}
+.gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
+.gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
+.gg .b.dentro i{background:var(--blu);}
+.gg .b b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10.5px;
+  font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
+.gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
+.gg-x span{flex:1;text-align:center;}
+.gg-leg{font-size:13.5px;color:#555;margin-top:8px;}
+.gg-leg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
+.tt-box{position:relative;padding-right:42px;margin:14px 0 2px;}
+.tt{width:100%;height:150px;display:block;overflow:visible;}
+.tt .griglia{stroke:#e6eaf0;stroke-width:1;vector-effect:non-scaling-stroke;}
+.tt polyline{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+.tt .max{stroke:#d1603d;}
+.tt .min{stroke:#3a6ea8;}
+.tt-y{position:absolute;top:0;right:0;width:42px;height:150px;pointer-events:none;}
+.tt-y span{position:absolute;right:0;transform:translateY(-50%);font-size:11px;color:#6b7a8d;line-height:1;padding-left:5px;}
+.tt-x{padding-right:42px;}
+.vic td:last-child,.vic th:last-child{text-align:right;}
+.vic .qui{background:#eef4fd;}
+.verdetto{background:#0f2d4d;color:#fff;border-radius:12px;padding:18px 18px 16px;margin:14px 0 8px;}
+.verdetto .si{font-size:27px;font-weight:800;line-height:1.2;}
+.verdetto .pallino{display:inline-block;width:15px;height:15px;border-radius:50%;margin-right:9px;vertical-align:2px;}
+.verdetto .gr{font-size:44px;font-weight:800;line-height:1.1;margin-top:10px;}
+.verdetto .gr small{font-size:18px;font-weight:600;opacity:.85;margin-left:6px;}
+.verdetto .dett{font-size:16px;opacity:.9;margin-top:6px;}
+.scala{display:flex;gap:4px;margin-top:14px;}
+.scala div{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.18);}
+.scala-t{display:flex;font-size:11.5px;opacity:.75;margin-top:4px;}
+.scala-t span{flex:1;text-align:center;}
+.breve{font-size:16px;color:#333;margin:6px 0 4px;}
+.fin{display:flex;gap:6px;align-items:flex-end;height:170px;margin:16px 0 4px;}
+.fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
+.fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
+.fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+.fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
+.fin-x span{flex:1;text-align:center;line-height:1.25;}
+.img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
+.tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
+  padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+@media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
+.noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
+.noioso p{margin-bottom:8px;}
+.noioso a{color:var(--blu);}
+
 nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
@@ -164,121 +262,93 @@ nav.altre a{color:var(--blu);}
 <header>
   <a href="https://avventurepluvio-test.netlify.app/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
   <a class="yt" href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener"
-     onclick="try{gtag('event','click_youtube',{pulsante:'zona-lazio'})}catch(e){}">▶ Canale YouTube</a>
+     onclick="try{gtag('event','click_youtube',{pulsante:'zona-lazio'})}catch(e){}">▶ <span class="yt-l">Canale </span>YouTube</a>
 </header>
 
 <main>
 <p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="https://avventurepluvio-test.netlify.app/funghi/lazio/" style="color:var(--blu)">Lazio</a></p>
 
-<h1>Dove andare a funghi sui Monti Sabini oggi</h1>
+<h1>Funghi sui Monti Sabini oggi: stanno nascendo?</h1>
 <div id="stagione"></div>
 <script>(function(){var m=new Date().getMonth()+1,t=null;if(m===12||m===1||m===2)t="<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.";else if(m===11||m===3)t="<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in autunno pieno.";if(t){var s=document.getElementById("stagione");s.innerHTML=t;s.style.display="block";}})();</script>
-<p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono
-almeno dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella
-<b>da 13 a 20 giorni fa</b>, misurata dai <b>3 pluviometri</b> di MeteoHub nelle zone da bosco dei Monti Sabini, in Lazio. In cima alla classifica c’è quello dove ne è caduta di più.</p>
-
-<div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo
-solo gli otto giorni della finestra dei funghi. Per la pioggia di ieri e degli ultimi 30 giorni
-c’è <a href="https://avventurepluvio-test.netlify.app/zone/monti-sabini/" style="color:var(--blu);font-weight:700">dove ha piovuto sui Monti Sabini</a>;
-per un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=lazio&amp;g=20&amp;pl=42.21667,12.81667&amp;pn=Monti%20Sabini&amp;pz=1" style="color:var(--blu)">apri Monti Sabini sulla mappa</a>.</div>
-
-<div class="patto">
-  <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
-  fa nessuno, e noi non ce la inventiamo.</p>
-  <p><b>Cosa trovi:</b> quanta acqua è caduta sui Monti Sabini, pluviometro per pluviometro, con la
-  data. Il bosco poi lo conosci tu meglio di qualunque sito.</p>
-  <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
-  valgono regole proprie.</p>
-</div>
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="guasto"></div>
-<div id="testa"></div>
-<div class="spiega" id="finestra" style="margin-top:14px"></div>
+<div id="verdetto"></div>
 
-<div class="tre" id="tre"></div>
-<p class="nota" id="notamedia"></p>
+<h2>Le piogge degli ultimi 25 giorni</h2>
+<div id="grafico"></div>
+<p class="nota" id="ieri"></p>
 
-<h2>I pluviometri della zona, dal più bagnato</h2>
+<h2 id="h-conta">Però attenzione: la pioggia che conta è quella caduta da 13 a 20 giorni fa</h2>
+<p class="breve" id="p-conta">Il fungo spunta 12-13 giorni dopo una bella pioggia: i funghi di oggi nascono da queste otto giornate.</p>
+<div id="finestra"></div>
+
+<h2>Com'è andata intorno? Apri le mappe</h2>
+<div class="tasti">
+  <a class="forte" id="t-conta" href="https://avventurepluvio-test.netlify.app/?r=lazio&amp;g=20&amp;pl=42.21667,12.81667&amp;pn=Monti%20Sabini&amp;pz=1&amp;z=10&amp;c=42.21667,12.81667">13-20 gg fa</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=lazio&amp;g=1&amp;pl=42.21667,12.81667&amp;pn=Monti%20Sabini&amp;pz=1&amp;z=10&amp;c=42.21667,12.81667">Ieri</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=lazio&amp;g=7&amp;pl=42.21667,12.81667&amp;pn=Monti%20Sabini&amp;pz=1&amp;z=10&amp;c=42.21667,12.81667">Ultimi 7 gg</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=lazio&amp;g=20&amp;pl=42.21667,12.81667&amp;pn=Monti%20Sabini&amp;pz=1&amp;z=10&amp;c=42.21667,12.81667">Ultimi 20 gg</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=lazio&amp;g=30&amp;pl=42.21667,12.81667&amp;pn=Monti%20Sabini&amp;pz=1&amp;z=10&amp;c=42.21667,12.81667">Ultimi 30 gg</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=lazio&amp;pl=42.21667,12.81667&amp;pn=Monti%20Sabini&amp;pz=1&amp;radar=ora"
+     onclick="try{gtag('event','apri_mappa',{da:'zona-monti-sabini-radar'})}catch(e){}">📡 Radar adesso</a>
+</div>
+<p class="breve">La pioggia degli ultimi 20 giorni nel Lazio, stazione per stazione.</p>
+<a href="https://avventurepluvio-test.netlify.app/?r=lazio&amp;g=20&amp;pl=42.21667,12.81667&amp;pn=Monti%20Sabini&amp;pz=1&amp;z=10&amp;c=42.21667,12.81667" id="lnk-pioggia"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-monti-sabini-20gg'})}catch(e){}">
+  <img class="img-mappa" src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/lazio.jpg" alt="La mappa delle piogge nel Lazio"
+       width="1600" height="1000" loading="lazy"></a>
+
+<h2 style="font-size:18px">I pluviometri della zona, dal più bagnato</h2>
 <table class="vic"><thead><tr><th>Località</th><th>13-20 gg fa</th><th>Ultimi 7</th><th class="tagl">Ultimi 25</th></tr></thead>
 <tbody id="tabella">
-<tr data-id="42.20333_12.89806"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/lazio/poggio-moiano/"><b>Poggio Moiano</b></a><span class="com">RI · 609 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
-<tr data-id="42.23722_12.94889"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/lazio/posticciola/"><b>Posticciola</b></a><span class="com">RI · 622 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
-<tr data-id="42.28806_12.91500"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/lazio/turano-a-rocca-sinibalda/"><b>Turano a Rocca Sinibalda</b></a><span class="com">RI · 417 MT</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="42.20333_12.89806"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/lazio/poggio-moiano/"><b>Poggio Moiano</b></a><span class="com">RI · 609 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="42.23722_12.94889"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/lazio/posticciola/"><b>Posticciola</b></a><span class="com">RI · 622 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="42.28806_12.91500"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/lazio/turano-a-rocca-sinibalda/"><b>Turano a Rocca Sinibalda</b></a><span class="com">RI · 417 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 </tbody></table>
-<p class="nota" id="notaforte"></p>
+<p class="nota">Ogni nome porta alla sua pagina, con la pioggia giorno per giorno.</p>
 
-<h2>Ecco cosa vedi sulla mappa</h2>
-<a href="https://avventurepluvio-test.netlify.app/?r=lazio&amp;g=20&amp;pl=42.21667,12.81667&amp;pn=Monti%20Sabini&amp;pz=1&amp;z=10&amp;c=42.21667,12.81667" style="display:block;text-decoration:none;"
-   onclick="try{gtag('event','apri_mappa',{da:'zona-monti-sabini-20gg'})}catch(e){}">
-  <img src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/lazio.jpg"
-       alt="La mappa delle piogge nel Lazio"
-       width="1600" height="1000" loading="lazy"
-       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
-  <span class="vai-mappa">Apri la mappa · ultimi 20 giorni →</span>
-</a>
+<div id="meteo"></div>
 
-<h2>Che boschi ci sono nella zona?</h2>
-<p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti
-e abetaie non danno gli stessi funghi. La mappa boschi colora i boschi sui Monti Sabini per tipo,
-con i disegni della carta forestale della Regione.</p>
+<h2>Che boschi ci sono nella zona</h2>
+<p class="breve">Faggete, castagneti, querceti e abetaie colorati per tipo, con il rilievo sotto.</p>
 <a href="https://avventurepluvio-test.netlify.app/?r=lazio&amp;pl=42.21667,12.81667&amp;pn=Monti%20Sabini&amp;pz=1&amp;boschi=1" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'zona-monti-sabini-boschi'})}catch(e){}">
-  <img src="https://avventurepluvio-test.netlify.app/tessere-boschi/anteprime/lazio.jpg"
+  <img class="img-mappa" src="https://avventurepluvio-test.netlify.app/tessere-boschi/anteprime/lazio.jpg"
        alt="La mappa boschi nel Lazio: faggete, castagneti, querceti e abetaie colorati per tipo"
-       width="1600" height="1000" loading="lazy"
-       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
-  <span class="vai-mappa">Guarda i boschi sui Monti Sabini →</span>
+       width="1600" height="1000" loading="lazy">
+  <span class="vai-mappa">🌲 Guarda i boschi sui Monti Sabini</span>
 </a>
-<p class="nota">La fonte è la carta «Carta forestale su base tipologica»: dice che bosco c'è, non se
-quest'anno ci sono nati funghi. Per quello servono la pioggia di questa pagina e un giro a piedi.</p>
+<p class="nota">La pioggia dice quando andare, il bosco dice dove. I boschi vengono da la carta «Carta forestale su base tipologica».</p>
 
-<h2>Sta piovendo adesso?</h2>
-<p>Questa pagina conta i millimetri dei giorni <b>già chiusi</b>: la giornata di oggi è esclusa,
-perché i pluviometri la stanno ancora misurando. Per la pioggia <b>in corso</b> c'è la diretta
-radar, che mostra dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti
-seguenti.</p>
-<a href="https://avventurepluvio-test.netlify.app/?r=lazio&amp;pl=42.21667,12.81667&amp;pn=Monti%20Sabini&amp;pz=1&amp;radar=ora" style="display:block;text-decoration:none;"
-   onclick="try{gtag('event','apri_mappa',{da:'zona-monti-sabini-radar'})}catch(e){}">
-  <span class="vai-mappa">Guarda il radar della pioggia sui Monti Sabini →</span>
-</a>
-<p class="nota">⚠️ Il radar <b>non è un pluviometro</b>: è una misura presa dal cielo, a 2 km di
-risoluzione, e inquadra tutta la regione. Serve a vedere <i>dove</i> sta piovendo adesso, non a
-contare quanta acqua è caduta. I millimetri di questa pagina restano quelli misurati a terra
-da MeteoHub.</p>
-
-<h2 style="margin-bottom:12px">Come scegliamo i pluviometri di una zona</h2>
-<div class="metodo">
-  <div><span class="n">1</span><b>Ognuno va alla zona più vicina, e a una sola.</b> Non un cerchio
-  di tot chilometri: quello sarebbe un numero deciso a tavolino, e cambiandolo cambierebbe la
-  zona. Così invece nessun pluviometro finisce in due zone insieme.</div>
-  <div><span class="n">2</span><b>Solo posti da bosco.</b> Pluviometro vero, quota fra 200 e 1600
-  metri, almeno il 37% di bosco entro 3 km sulle mappe di OpenStreetMap.</div>
-  <div><span class="n">3</span><b>Almeno tre.</b> Sotto i tre pluviometri una zona non ha una
-  pagina: un numero solo non racconta una valle.</div>
+<div class="noioso">
+<h2>Come funziona questa pagina</h2>
+<p>I millimetri li misurano i <b>3 pluviometri</b> di MeteoHub nelle zone
+da bosco dei Monti Sabini: quota fra 200 e 1600 metri e almeno il 37% di bosco entro 3 km.
+I numeri in cima sono la media dei pluviometri, giorno per giorno. Ogni pluviometro va alla zona più
+vicina, e a una sola. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>
+<p>Perché da 13 a 20 giorni fa: dopo una pioggia il fungo impiega almeno dodici o tredici giorni
+a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due settimane.</p>
+<p>Ti serve un altro periodo? Per ieri e gli ultimi 30 giorni c’è
+<a href="https://avventurepluvio-test.netlify.app/zone/monti-sabini/">dove ha piovuto sui Monti Sabini</a>.</p>
+<h2>L'archivio della zona</h2>
+<p>Da luglio 2026 a settembre 2026, in 76 giorni di misura, i 3 pluviometri
+dei Monti Sabini hanno contato
+<b>65 mm</b> di pioggia a testa, in media. Il più bagnato è <b>Turano a Rocca Sinibalda</b> con
+77 mm, il più asciutto Posticciola con 56.
+La giornata più piovosa è stata il <b>21 agosto 2026</b> a Poggio Moiano,
+con <b>20,7 mm</b>.</p>
+<p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
+valgono regole proprie.</p>
+<p>Dati di MeteoHub via il nostro archivio. Il bosco entro 3 km è calcolato su dati
+OpenStreetMap, licenza ODbL.</p>
 </div>
-
-<h2 style="margin-top:30px">Quanto piove sui Monti Sabini, secondo il nostro archivio</h2>
-<p>In cima alla pagina c'è la finestra corta, quella che serve per i funghi. Ma di questi pluviometri
-teniamo tutti i giorni da quando li leggiamo. Da luglio 2026 a settembre 2026, in 68 giorni di misura, i 3 pluviometri dei Monti Sabini hanno contato <b>55 mm</b> di pioggia a testa,
-in media. Il più bagnato è <b>Turano a Rocca Sinibalda</b> con 67 mm, il più asciutto Posticciola con 41.</p>
-<p>La giornata più violenta di tutto l'archivio è stata il <b>21 agosto 2026</b> a Poggio Moiano, con <b>20,7 mm</b> in
-ventiquattro ore.</p>
-<p class="nota">Non è una media climatica: è quello che questi strumenti hanno misurato in quei
-giorni, e basta. L'archivio parte dal 6 luglio 2026 e si allunga di un giorno al
-giorno.</p>
-
-<div class="avviso">
-  <b>Una cosa da tenere a mente.</b> Tanta pioggia non vuol dire tanti funghi: contano anche la
-  temperatura, il vento e il tipo di bosco. <b>La temperatura e il vento ce li abbiamo:</b>
-  clicca un pluviometro sulla mappa e vedi il suo storico, giorno per giorno, insieme alla pioggia.
-</div>
+<p style="margin:22px 0 4px;"><a href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;text-decoration:none;"
+   onclick="try{gtag('event','click_youtube',{pulsante:'zona-fondo-lazio'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
 
 <h2 style="margin-top:30px">Le altre zone nel Lazio</h2>
 <nav class="altre"><p><a href="https://avventurepluvio-test.netlify.app/funghi/zone/monti-cantari/">Monti Cantari</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/monti-prenestini/">Monti Prenestini</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/monti-reatini/">Monti Reatini</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/piana-del-cavaliere/">Piana del Cavaliere</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/sabina/">Sabina</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/vallonina/">Vallonina</a></p></nav>
-
-<p class="nota" style="margin-top:22px">Dati di MeteoHub via il nostro archivio. Il
-bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
 </main>
 
 <footer>
@@ -293,182 +363,211 @@ bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>
 (function(){
   var SITO = "https://avventurepluvio-test.netlify.app", MAPPA = SITO + "/";
   var ZONA = "Monti Sabini", DOVE = "sui Monti Sabini";
-  var CASA = "lazio", REGIONI = ["lazio"];
-  var REGS = "lazio", ZNOME = "Monti Sabini";
+  var REGIONI = ["lazio"], REGS = "lazio";
   var LAT = 42.21667, LON = 12.81667;
   /* [ id, nome, sigla, quota, lat, lon, slug, regione ] */
   var POSTI = [["42.20333_12.89806","Poggio Moiano","RI",609,42.2033,12.8981,"poggio-moiano","lazio"],["42.23722_12.94889","Posticciola","RI",622,42.2372,12.9489,"posticciola","lazio"],["42.28806_12.91500","Turano a Rocca Sinibalda","RI",417,42.2881,12.915,"turano-a-rocca-sinibalda","lazio"]];
   var LOCALE = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   var BASE = LOCALE ? "/data/"
     : "https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/";
-  var FORTE = 30, GIORNI = 25;
 
-  var MESI=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
-  function iso(d){ var p=function(n){return String(n).padStart(2,"0");};
-    return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()); }
-  function menoDa(s,n){ var p=String(s).split("-");
-    var d=new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return d; }
-  function gg(s){ var p=String(s).split("-"); return (+p[2])+" "+MESI[(+p[1])-1]; }
+  var GIORNI = 25;
+  var MESI = ["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+  var GS = ["dom","lun","mar","mer","gio","ven","sab"];
+  function iso(d){ var p = function(n){ return String(n).padStart(2,"0"); };
+    return d.getFullYear() + "-" + p(d.getMonth()+1) + "-" + p(d.getDate()); }
+  function menoDa(s, n){ var p = String(s).split("-");
+    var d = new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return d; }
+  function gg(s){ var p = String(s).split("-"); return (+p[2]) + " " + MESI[(+p[1])-1]; }
+  /* «dal 4 all'11 settembre»: il mese una volta sola, l'apostrofo davanti a 1, 8, 11 */
+  function dalAl(a, b){ var pa = a.split("-"), pb = b.split("-"), da = +pa[2], db = +pb[2];
+    var al = (db === 1 || db === 8 || db === 11) ? "all’" : "al ";
+    return ((da === 1 || da === 8 || da === 11) ? "dall’" : "dal ") + (pa[1] === pb[1] ? da : gg(a)) + " " + al + gg(b); }
   function esc(t){ return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
   function uno(n){ return Math.round(n*10)/10; }
   function num(n){ return uno(n).toFixed(1).replace(".", ","); }
-  function somma(s,da,a){ var t=0; for(var n=da;n>=a;n--) t += (s[n-1]||0); return uno(t); }
+  /* serie[0] e' IERI; n va dal piu' lontano al piu' vicino */
+  function somma(s, da, a){ var t = 0; for (var n = da; n >= a; n--) t += (s[n-1]||0); return uno(t); }
 
-  /* Stessa regola delle altre pagine: un giro saltato si perdona, due no. */
+  /* ⚠️ LA SCALA DEL VERDETTO E' SUA (24/9/2026): pioggia degli ULTIMI 20
+     GIORNI. Sotto 30 mm troppo poco, da 30 poco, da 60 bene, da 100 benissimo.
+     Dice com'e' andata la pioggia, non se ci sono i funghi. */
+  var LIV = [{fino:30,t:"Troppo poca pioggia",c:"#c0392b"},
+             {fino:60,t:"Poca pioggia",c:"#e6a100"},
+             {fino:100,t:"Ha piovuto bene",c:"#5bb85d"},
+             {fino:1e9,t:"Ha piovuto benissimo",c:"#2e9d44"}];
+
+  function scriviVerdetto(s, oggi, href, sotto){
+    var m20 = somma(s, 20, 1);
+    var liv = LIV.filter(function(l){ return m20 < l.fino; })[0], k = LIV.indexOf(liv);
+    var big = [];
+    for (var n = 20; n >= 1; n--) if ((s[n-1]||0) >= 10) big.push(n);
+    var dett = big.length
+      ? big.slice(-4).map(function(n){ return "<b>" + num(s[n-1]) + " mm</b> il " + gg(iso(menoDa(oggi,n))); }).join(", ") + "."
+      : "Nessuna giornata sopra i 10 mm.";
+    var sc = "";
+    for (var q = 0; q < 4; q++) sc += "<div" + (q <= k ? " style=\"background:" + liv.c + "\"" : "") + "></div>";
+    document.getElementById("verdetto").innerHTML = "<div class=\"verdetto\">"
+      + "<div class=\"si\"><span class=\"pallino\" style=\"background:" + liv.c + "\"></span>" + liv.t + "</div>"
+      + "<div class=\"gr\">" + Math.round(m20) + " mm<small>" + sotto + "</small></div>"
+      + "<div class=\"dett\">" + dett + "</div>"
+      + "<div class=\"scala\">" + sc + "</div>"
+      + "<div class=\"scala-t\"><span>sotto 30</span><span>30-60</span><span>60-100</span><span>oltre 100</span></div>"
+      + "<div class=\"capo-btns\"><a class=\"capo-btn\" href=\"" + href + "\">Vedi sulla mappa</a></div></div>";
+  }
+
+  /* le 25 barre, ieri a destra; restituisce le ascisse per i grafici sotto */
+  function scriviBarre(s, oggi){
+    var max = Math.max.apply(null, s.concat([1])), barre = "", ax = "", ult = null;
+    for (var i = GIORNI; i >= 1; i--) {
+      var v = s[i-1] || 0, d = menoDa(oggi, i), cl = (i >= 13 && i <= 20) ? " dentro" : "";
+      var et = v >= max*0.2 && (ult === null || ult - i >= 2);
+      if (et) ult = i;
+      barre += "<div class=\"b" + cl + "\" title=\"" + gg(iso(d)) + ": " + num(v) + " mm\">" + (et ? "<b>" + num(v) + "</b>" : "")
+        + "<i style=\"height:" + Math.max(2, Math.round(v/max*100)) + "%\"></i></div>";
+      ax += "<span>" + ((i === GIORNI || i === 1 || i % 5 === 0) ? (d.getDate() + "/" + (d.getMonth()+1)) : "") + "</span>";
+    }
+    document.getElementById("grafico").innerHTML = "<div class=\"gg\">" + barre + "</div><div class=\"gg-x\">" + ax + "</div>"
+      + "<p class=\"gg-leg\"><i style=\"background:var(--blu)\"></i>da 13 a 20 giorni fa &nbsp; "
+      + "<i style=\"background:#b9cbe2\"></i>gli altri giorni</p>";
+    return ax;
+  }
+
+  /* la pioggia che conta: titolo con le date e le otto barre larghe */
+  function scriviFinestra(s, oggi, _sI, quale){
+    var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13));
+    document.getElementById("h-conta").textContent = "Però attenzione: la pioggia che conta è quella caduta " + dalAl(daG, aG);
+    document.getElementById("p-conta").innerHTML = "Il fungo spunta 12-13 giorni dopo una bella pioggia: "
+      + "i funghi di oggi nascono da queste otto giornate, che qui hanno fatto " + quale + " <b>" + num(somma(s,20,13)) + " mm</b>.";
+    var fmax = 1;
+    for (var n = 20; n >= 13; n--) fmax = Math.max(fmax, s[n-1]||0);
+    var fb = "", fx = "";
+    for (var n2 = 20; n2 >= 13; n2--) {
+      var v = s[n2-1] || 0, d = menoDa(oggi, n2);
+      fb += "<div class=\"c\">" + (v > 0 ? "<b>" + num(v) + "</b>" : "") + "<i style=\"height:" + Math.max(2, Math.round(v/fmax*88)) + "%\"></i></div>";
+      fx += "<span>" + GS[d.getDay()] + "<br>" + d.getDate() + "/" + (d.getMonth()+1) + "</span>";
+    }
+    document.getElementById("finestra").innerHTML = "<div class=\"fin\">" + fb + "</div><div class=\"fin-x\">" + fx + "</div>";
+  }
+
+  /* minima e massima degli ultimi 25 giorni, a linee */
+  function scriviTemperatura(sT, ax, nota){
+    var vals = [];
+    for (var q = 0; q < GIORNI; q++) if (sT[q]) { vals.push(sT[q][0]); vals.push(sT[q][1]); }
+    if (!vals.length) return;
+    var lo = Math.floor(Math.min.apply(null, vals) - 1), hi = Math.ceil(Math.max.apply(null, vals) + 1);
+    var passi = [1, 2, 2.5, 5, 10], p = 10;
+    for (var k = 0; k < passi.length; k++) if ((hi - lo) / passi[k] <= 5) { p = passi[k]; break; }
+    var y = function(v){ return 100 - (v - lo) / (hi - lo) * 100; };
+    var svg = "", et = "";
+    for (var t = Math.ceil(lo / p) * p; t <= hi; t += p) {
+      svg += "<line class=\"griglia\" x1=\"0\" y1=\"" + y(t).toFixed(1) + "\" x2=\"100\" y2=\"" + y(t).toFixed(1) + "\"/>";
+      et += "<span style=\"top:" + y(t).toFixed(1) + "%\">" + t + "°</span>";
+    }
+    function linea(c){ var pz = [], cur = [];
+      for (var i = GIORNI; i >= 1; i--) { var d = sT[i-1];
+        if (!d) { if (cur.length > 1) pz.push(cur.join(" ")); cur = []; continue; }
+        cur.push(((GIORNI - i) / (GIORNI - 1) * 100).toFixed(1) + "," + y(d[c]).toFixed(1)); }
+      if (cur.length > 1) pz.push(cur.join(" "));
+      return pz; }
+    ["min","max"].forEach(function(cl, c){ linea(c).forEach(function(pts){ svg += "<polyline class=\"" + cl + "\" points=\"" + pts + "\"/>"; }); });
+    var ieri = sT[0];
+    document.getElementById("meteo").innerHTML = "<h2>Temperatura degli ultimi 25 giorni</h2>"
+      + (ieri ? "<p class=\"breve\">Ieri minima <b>" + num(ieri[0]) + "°</b>, massima <b>" + num(ieri[1]) + "°</b>" + (nota ? ", " + nota : "") + ".</p>" : "")
+      + "<div class=\"tt-box\"><svg class=\"tt\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\">" + svg + "</svg>"
+      + "<div class=\"tt-y\">" + et + "</div></div><div class=\"gg-x tt-x\">" + ax + "</div>"
+      + "<p class=\"gg-leg\"><i style=\"background:#d1603d\"></i>massima &nbsp; <i style=\"background:#3a6ea8\"></i>minima</p>";
+  }
+
+
   function fresco(j){
     if(!j || !j.generato || !j.serie || !j.oggi) return false;
     var eta = Date.now() - new Date(j.generato).getTime();
     return eta >= 0 && eta < 36*3600*1000;
   }
-
-  /* ⚠️ UNA ZONA STA ANCHE A CAVALLO DI PIU REGIONI, quindi qui i file sono
-     da uno a quattro. Si aspettano tutti e si uniscono le serie; se ne manca
-     anche uno solo si va sul guasto: una classifica a cui manca meta
-     valle vale meno di nessuna classifica. */
+  /* ⚠️ UNA ZONA STA ANCHE A CAVALLO DI PIU REGIONI: i file sono da uno a
+     quattro, si aspettano tutti e si uniscono. Se ne manca uno si va sul
+     guasto: una media a cui manca meta valle vale meno di nessuna. */
   Promise.all(REGIONI.map(function(k){
     return fetch(BASE + "funghi/" + k + "-giorni.json")
       .then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; });
   })).then(function(js){
     var buoni = js.filter(function(j){ return j && fresco(j); });
-    if(buoni.length !== REGIONI.length) return guasto();
-    var serie = {}, oggi = null, forti = {}, fino = null, tetto = null;
-    buoni.forEach(function(j){ Object.keys(j.serie).forEach(function(id){ serie[id] = j.serie[id]; });
-                               var f = j.forte || {};
-                               Object.keys(f).forEach(function(id){ forti[id] = f[id]; });
-                               /* ⚠️ Fin dove si e' guardato indietro: se la zona sta a cavallo
-                                  di due regioni con archivi lunghi diversi vale il PIU CORTO,
-                                  se no si prometterebbe una ricerca che per meta della valle
-                                  non e stata fatta. */
-                               if(j.cercatoFino && (fino === null || j.cercatoFino < fino)) fino = j.cercatoFino;
-                               if(j.tetto && (tetto === null || j.tetto < tetto)) tetto = j.tetto;
-                               if(!oggi || j.oggi < oggi) oggi = j.oggi; });
+    if (buoni.length !== REGIONI.length) return guasto();
+    var serie = {}, serieT = {}, oggi = null;
+    buoni.forEach(function(j){
+      Object.keys(j.serie).forEach(function(id){ serie[id] = j.serie[id]; });
+      Object.keys(j.serieT || {}).forEach(function(id){ serieT[id] = j.serieT[id]; });
+      if (!oggi || j.oggi < oggi) oggi = j.oggi;
+    });
     var righe = POSTI.filter(function(p){ return serie[p[0]]; });
-    if(righe.length < 2) return guasto();
-    disegna(serie, oggi, righe, forti, fino, tetto);
+    if (righe.length < 2) return guasto();
+    disegna(serie, serieT, oggi, righe);
   }).catch(function(){ guasto(); });
 
   function guasto(){
-    document.getElementById("attesa").style.display="none";
-    var g=document.getElementById("guasto");
-    g.style.display="block";
-    g.innerHTML="⚠️ Non riesco a leggere l’archivio delle piogge in questo momento. Non dipende "
+    document.getElementById("attesa").style.display = "none";
+    var g = document.getElementById("guasto");
+    g.style.display = "block";
+    g.innerHTML = "⚠️ Non riesco a leggere l’archivio delle piogge in questo momento. Non dipende "
       + "da te: riprova fra qualche minuto, oppure vai direttamente "
       + "<a href=\"" + MAPPA + "?r=" + REGS + "\">sulla mappa</a>.";
   }
 
-  function disegna(serie, oggi, righe, forti, fino, tetto){
-    var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13)), a20 = iso(menoDa(oggi,1));
-    var dati = righe.map(function(p){
-      var s = serie[p[0]];
-      /* ⚠️ L ULTIMA PIOGGIA FORTE ARRIVA DAL FILE, non si cerca nella serie.
-         La serie e di 25 giorni: cercandola li dentro, una valle asciutta da
-         un mese risponderebbe «mai» invece di «trentadue giorni fa». Il
-         generatore la cerca fino a 150 giorni indietro e scrive due numeri. */
-      var ff = forti && forti[p[0]];
-      var forte = ff ? {g:ff[0], mm:ff[1]} : null;
-      return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5], slug:p[6], reg:p[7],
-               mm:somma(s,20,13), mm7:somma(s,7,1), mm25:somma(s,GIORNI,1), forte:forte };
-    }).sort(function(a,b){ return b.mm - a.mm; });
+  function link(dal, al){
+    return MAPPA + "?r=" + REGS + "&da=" + dal + "&a=" + al
+      + "&pl=" + LAT.toFixed(4) + "," + LON.toFixed(4) + "&pn=" + encodeURIComponent(ZONA) + "&pz=1"
+      + "&z=10&c=" + LAT.toFixed(4) + "," + LON.toFixed(4);
+  }
 
-    var med = function(c){ var t=0; dati.forEach(function(x){ t+=x[c]; }); return uno(t/dati.length); };
-    var primo = dati[0];
-
-    /* ⚠️ IL VALORE DELLA ZONA E LA MEDIANA DEI GIORNI, non il piu recente.
-       Col piu recente basterebbe un temporale su un pluviometro solo per
-       dichiarare bagnata tutta la valle, e per i funghi conta che l acqua
-       sia arrivata dappertutto. Chi non ne ha mai avuta una entra nel conto
-       come «piu indietro di tutti», cosi non sparisce e non falsa la meta. */
-    var gForti = dati.map(function(x){ return x.forte ? x.forte.g : 1e9; })
-                     .sort(function(a,b){ return a-b; });
-    var mez = gForti.length % 2 ? gForti[(gForti.length-1)/2]
-                                : Math.round((gForti[gForti.length/2-1] + gForti[gForti.length/2]) / 2);
-    var mediaG = mez >= 1e9 ? null : mez;
-    function quandoG(n){ return n===1 ? "ieri" : n===2 ? "l'altro ieri" : n + " giorni fa"; }
-
-    function link(x, dal, al){
-      /* pl/pn = il segnaposto. Senza, questi bottoni aprivano la mappa sul
-         punto giusto ma SENZA la puntina, e chi arriva non sa quale pallino
-         sia il suo (segnalato il 3/9/2026). */
-      var la = x ? x.lat : LAT, lo = x ? x.lon : LON;
-      var nome = x ? x.n : ZNOME;
-      /* La stazione cliccata sta in una regione sola, ma la zona no: si
-         tengono anche le vicine, la sua per prima. Tetto di 3, il massimo
-         che la mappa accetta. */
-      var rr = x ? [x.reg].concat(REGS.split(",").filter(function(k){return k!==x.reg;})).slice(0,3).join(",") : REGS;
-      return MAPPA + "?r=" + rr + "&da=" + dal + "&a=" + al
-        + "&pl=" + la.toFixed(4) + "," + lo.toFixed(4)
-        + "&pn=" + encodeURIComponent(nome) + (x ? "" : "&pz=1")
-        + "&z=10&c=" + la.toFixed(4) + "," + lo.toFixed(4);
+  function disegna(serie, serieT, oggi, righe){
+    document.getElementById("attesa").style.display = "none";
+    /* la serie della ZONA: media dei pluviometri, giorno per giorno. Un
+       giorno senza dato non e uno zero: si media su chi c e. */
+    var s = [];
+    for (var i = 0; i < GIORNI; i++) {
+      var t = 0, n = 0;
+      righe.forEach(function(p){ var v = serie[p[0]][i]; if (v != null) { t += v; n++; } });
+      s.push(n ? uno(t / n) : 0);
     }
+    var sT = [];
+    for (var i2 = 0; i2 < GIORNI; i2++) {
+      var a = 0, b = 0, n2 = 0;
+      righe.forEach(function(p){ var v = (serieT[p[0]] || [])[i2]; if (v) { a += v[0]; b += v[1]; n2++; } });
+      sT.push(n2 ? [uno(a / n2), uno(b / n2)] : null);
+    }
+    var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13)), ieri = iso(menoDa(oggi,1));
+    scriviVerdetto(s, oggi, link(daG, ieri), "in media, negli ultimi 20 giorni");
+    var ax = scriviBarre(s, oggi);
+    document.getElementById("ieri").innerHTML = "Ieri, " + gg(ieri) + ": in media <b>" + num(s[0]) + " mm</b> sui "
+      + righe.length + " pluviometri della zona.";
+    scriviFinestra(s, oggi, null, "in media");
+    document.getElementById("t-conta").href = link(daG, aG);
+    document.getElementById("lnk-pioggia").href = link(daG, ieri);
+    if (sT.some(function(x){ return x; })) scriviTemperatura(sT, ax, "media dei pluviometri della zona");
 
-    document.getElementById("testa").innerHTML =
-      "<div class=\"capo\"><div class=\"et\">Dove ha piovuto di più " + esc(DOVE) + " fra 13 e 20 giorni fa?</div>"
-      + "<div class=\"gr\">" + esc(primo.n) + "</div>"
-      + "<div class=\"pic\">" + num(primo.mm) + " mm, dal " + gg(daG) + " al " + gg(aG) + "</div>"
-      + "<div class=\"capo-btns\">"
-      + "<a class=\"capo-btn\" href=\"" + link(primo, daG, aG) + "\">Apri mappa · 13-20 gg fa</a>"
-      + "<a class=\"capo-btn\" href=\"" + link(null, daG, a20) + "\">Apri mappa · ultimi 20 gg</a>"
-      + "<a class=\"capo-btn\" href=\"" + SITO + "/funghi/zone/\" style=\"display:none\">.</a>"
-      + "</div></div>";
-
-    document.getElementById("finestra").innerHTML =
-      "Qui la pioggia è caduta fra il <b>" + gg(daG) + "</b> e il <b>" + gg(aG) + "</b>, cioè da "
-      + "<b>13 a 20 giorni fa</b>. Sono millimetri misurati a terra dai pluviometri, non una "
-      + "previsione.";
-
-    document.getElementById("tre").innerHTML =
-      "<div><div class=\"et\">Media 13-20 giorni fa</div><div class=\"n\">" + num(med("mm")) + " mm</div></div>"
-      + "<div><div class=\"et\">Media ultimi 7 giorni</div><div class=\"n\">" + num(med("mm7")) + " mm</div></div>"
-      + "<div><div class=\"et\">Media ultimi 25 giorni</div><div class=\"n\">" + num(med("mm25")) + " mm</div></div>"
-      + "<div class=\"secco\"><div class=\"et\">Ultima pioggia sopra i " + FORTE + " mm</div>"
-        + "<div class=\"n\">" + (mediaG === null ? "mai" : quandoG(mediaG)) + "</div></div>";
-
-    document.getElementById("notamedia").innerHTML =
-      "Medie sui <b>" + dati.length + " pluviometri</b> da bosco della zona. Il più bagnato nella "
-      + "finestra dei funghi è <b>" + esc(primo.n) + "</b> con " + num(primo.mm) + " mm, il più asciutto "
-      + "<b>" + esc(dati[dati.length-1].n) + "</b> con " + num(dati[dati.length-1].mm) + ".";
-
-    /* ⚠️ La tabella e' GIA' NELL'HTML, coi nomi e i link verso le pagine
-       di paese: qui si riempiono le caselle e si RIORDINA dal più bagnato,
-       spostando le righe. Rifacendola con innerHTML si cancellerebbero i link
-       dalla pagina che Google ha in mano dopo il rendering. */
+    /* ⚠️ La tabella e GIA NELL HTML coi link: qui si riempiono le caselle e si
+       RIORDINA dal piu bagnato spostando le righe, senza innerHTML. */
+    var dati = {};
+    righe.forEach(function(p){ var ss = serie[p[0]]; dati[p[0]] = { mm: somma(ss,20,13), mm7: somma(ss,7,1), mm25: somma(ss,GIORNI,1) }; });
     var corpo = document.getElementById("tabella");
-    var perId = {};
-    for (var iv = 0; iv < dati.length; iv++) perId[dati[iv].id] = dati[iv];
-    var trs = corpo ? [].slice.call(corpo.querySelectorAll("tr[data-id]")) : [];
-    for (var it = 0; it < trs.length; it++) {
-      var d = perId[trs[it].getAttribute("data-id")];
-      var cel = trs[it].querySelectorAll(".mm .v");
-      if (cel.length < 3) continue;
-      if (!d) { for (var ic = 0; ic < 3; ic++) { cel[ic].textContent = "—"; cel[ic].className = "v zero"; } continue; }
-      cel[0].textContent = d.mm > 0 ? num(d.mm) : "—";  cel[0].className = d.mm > 0 ? "v" : "v zero";
+    var trs = [].slice.call(corpo.querySelectorAll("tr[data-id]"));
+    var mx = 1; Object.keys(dati).forEach(function(id){ mx = Math.max(mx, dati[id].mm); });
+    trs.forEach(function(tr){
+      var d = dati[tr.getAttribute("data-id")], cel = tr.querySelectorAll(".mm .v");
+      if (cel.length < 3) return;
+      if (!d) { for (var c = 0; c < 3; c++) { cel[c].textContent = "—"; cel[c].className = "v zero"; } return; }
+      cel[0].textContent = d.mm > 0 ? num(d.mm) + " mm" : "—"; cel[0].className = d.mm > 0 ? "v" : "v zero";
+      if (d.mm > 0) { var ba = document.createElement("span"); ba.className = "barra";
+        ba.style.width = Math.round(d.mm / mx * 100) + "%"; cel[0].parentNode.insertBefore(ba, cel[0]); }
       cel[1].textContent = d.mm7 > 0 ? num(d.mm7) : "—"; cel[1].className = d.mm7 > 0 ? "v" : "v zero";
       cel[2].textContent = num(d.mm25); cel[2].className = "v";
-    }
-    trs.sort(function(a, b){
-      var x = perId[a.getAttribute("data-id")], y = perId[b.getAttribute("data-id")];
-      return (y ? y.mm : -1) - (x ? x.mm : -1);
     });
-    for (var iq = 0; iq < trs.length; iq++) corpo.appendChild(trs[iq]);
-
-    /* ⚠️ QUI SI DICE «DA QUANTO NON PIOVE SUL SERIO», e la frase e cambiata
-       l 11/9/2026: prima diceva «negli ultimi 25 giorni ne hanno avuta N su
-       M», che con la ricerca estesa a 150 giorni sarebbe diventata FALSA
-       senza dare nessun errore. Adesso dice da quanto, che era la domanda. */
-    document.getElementById("notaforte").innerHTML =
-      "«Pioggia forte» vuol dire almeno " + FORTE + " mm in un giorno solo: è quella che bagna "
-      + "davvero il terreno, mentre sotto quella soglia l’acqua resta nella lettiera e se ne va. "
-      + (mediaG === null
-         ? "In " + ZONA + " più di metà dei <b>" + dati.length + " pluviometri</b> non ne vede una "
-           + "da almeno <b>" + (fino || GIORNI) + " giorni</b>"
-           + (tetto && fino >= tetto ? ", che è fin dove siamo andati a guardare. "
-                                     : ", cioè da quando abbiamo archivio qui. ")
-         : "In " + ZONA + " l’ultima è di <b>" + quandoG(mediaG) + "</b>, il valore di mezzo fra i "
-           + "<b>" + dati.length + " pluviometri</b> della zona: metà l’ha avuta più di recente, "
-           + "metà più indietro. ")
-      + "Ogni nome della tabella porta alla sua pagina, con la pioggia giorno per giorno.";
-
-    document.getElementById("attesa").style.display = "none";
+    trs.sort(function(x, y){
+      var a2 = dati[x.getAttribute("data-id")], b2 = dati[y.getAttribute("data-id")];
+      return (b2 ? b2.mm : -1) - (a2 ? a2.mm : -1);
+    });
+    trs.forEach(function(tr){ corpo.appendChild(tr); });
   }
 }());
 </script>

@@ -16,6 +16,7 @@
 const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
+const { creaOre, segna, intensita } = require('./lib-intensita.js');
 
 const DATA_DIR  = path.join(__dirname, '..', '..', 'data', 'liguria');
 const MAX_DAYS  = 730;
@@ -210,10 +211,15 @@ async function main() {
       return fetchWithRetry(url).then(function(chart) {
         var hourly = (chart.dataSeries && chart.dataSeries[0] && chart.dataSeries[0].data) || [];
         var mm = 0, ore = 0;
+        // L'intensita' (ore bagnate + punta oraria) esce da QUESTO ciclo, che
+        // c'era gia': la serie OMIRL e' oraria, quindi ogni punto e' un'ora e
+        // la sua marca temporale fa da chiave. Zero richieste in piu'.
+        var secchielli = creaOre();
         hourly.forEach(function(p) {
           if (p[0] < dayStartMs || p[0] >= dayEndMs) return;
           if (p[1] === null || p[1] === undefined) return;   // ora non misurata
           ore++;
+          segna(secchielli, p[0], p[1]);
           if (p[1] > 0) mm += p[1];
         });
         // ⚠️ ASSENTE NON E' ZERO (25/8/2026). Prima una serie vuota dava
@@ -231,7 +237,7 @@ async function main() {
         // sotto le 10 e lo script esce senza salvare: il file del giro
         // precedente resta intatto.
         if (ore === 0) return null;
-        return { station: s, mm: Math.round(mm * 10) / 10 };
+        return { station: s, mm: Math.round(mm * 10) / 10, i: intensita(secchielli) };
       }).catch(function() {
         return null;
       });
@@ -248,6 +254,9 @@ async function main() {
           p:   r.station.municipality || '',
           mm:  r.mm
         });
+        // `i` solo quando c'e': niente campi vuoti sulle giornate asciutte,
+        // che sono la maggioranza.
+        if (r.i) output[output.length - 1].i = r.i;
         ok++;
         if (r.mm > 0) withRain++;
       } else {

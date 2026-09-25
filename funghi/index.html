@@ -26,10 +26,14 @@
 :root{--blu:#1b3f6e;--blu-scuro:#123252;--grigio:#f0f4fb;--bordo:#d0d8e8;--verde:#2e7d32;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#222;background:#fff;font-size:17px;line-height:1.6;}
-header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:nowrap;}
 header a{color:#fff;text-decoration:none;}
-header .logo{font-weight:600;font-size:15px;}
-header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;}
+header .logo{font-weight:600;font-size:15px;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;flex:none;}
+/* ⚠️ 25/9/2026, sua schermata da Android: sotto i ~430 px logo e tasto rosso
+   non ci stavano sulla stessa riga e il tasto andava a capo, raddoppiando la
+   testata. Sul telefono via «· piogge» e «Canale»: resta «▶ YouTube». */
+@media(max-width:440px){header{padding:10px 12px;gap:8px;} header .logo span,header .yt .yt-l{display:none;}}
 main{max-width:860px;margin:0 auto;padding:22px 16px 40px;}
 h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
 h2{color:var(--blu-scuro);font-size:21px;margin:32px 0 8px;}
@@ -150,6 +154,56 @@ nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2p
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
 
+.gg{display:flex;align-items:flex-end;gap:3px;height:150px;margin:14px 0 4px;}
+.gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
+.gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
+.gg .b.dentro i{background:var(--blu);}
+.gg .b b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10.5px;
+  font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
+.gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
+.gg-x span{flex:1;text-align:center;}
+.gg-leg{font-size:13.5px;color:#555;margin-top:8px;}
+.gg-leg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
+.tt-box{position:relative;padding-right:42px;margin:14px 0 2px;}
+.tt{width:100%;height:150px;display:block;overflow:visible;}
+.tt .griglia{stroke:#e6eaf0;stroke-width:1;vector-effect:non-scaling-stroke;}
+.tt polyline{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+.tt .max{stroke:#d1603d;}
+.tt .min{stroke:#3a6ea8;}
+.tt-y{position:absolute;top:0;right:0;width:42px;height:150px;pointer-events:none;}
+.tt-y span{position:absolute;right:0;transform:translateY(-50%);font-size:11px;color:#6b7a8d;line-height:1;padding-left:5px;}
+.tt-x{padding-right:42px;}
+.vic td:last-child,.vic th:last-child{text-align:right;}
+.vic .qui{background:#eef4fd;}
+.verdetto{background:#0f2d4d;color:#fff;border-radius:12px;padding:18px 18px 16px;margin:14px 0 8px;}
+.verdetto .si{font-size:27px;font-weight:800;line-height:1.2;}
+.verdetto .pallino{display:inline-block;width:15px;height:15px;border-radius:50%;margin-right:9px;vertical-align:2px;}
+.verdetto .gr{font-size:44px;font-weight:800;line-height:1.1;margin-top:10px;}
+.verdetto .gr small{font-size:18px;font-weight:600;opacity:.85;margin-left:6px;}
+.verdetto .dett{font-size:16px;opacity:.9;margin-top:6px;}
+.scala{display:flex;gap:4px;margin-top:14px;}
+.scala div{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.18);}
+.scala-t{display:flex;font-size:11.5px;opacity:.75;margin-top:4px;}
+.scala-t span{flex:1;text-align:center;}
+.breve{font-size:16px;color:#333;margin:6px 0 4px;}
+.fin{display:flex;gap:6px;align-items:flex-end;height:170px;margin:16px 0 4px;}
+.fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
+.fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
+.fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+.fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
+.fin-x span{flex:1;text-align:center;line-height:1.25;}
+.img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
+.tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
+  padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+@media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
+.noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
+.noioso p{margin-bottom:8px;}
+.noioso a{color:var(--blu);}
+
+
 /* Solo di questa pagina: l'elenco delle regioni a schede, e le zone raccolte
    sotto il nome della loro regione. */
 .regg{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:9px;margin-top:8px;}
@@ -171,7 +225,7 @@ nav.altre a{color:var(--blu);}
 <body>
 <header>
   <a href="https://avventurepluvio-test.netlify.app/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
-  <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt">▶ Canale YouTube</a>
+  <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt">▶ <span class="yt-l">Canale </span>YouTube</a>
 </header>
 <main>
 
@@ -185,10 +239,10 @@ giorni fa</b>, misurata a terra dai pluviometri di 911 posti da bosco in 19
 regioni. Dove ne è caduta di più è dove vale la pena andare a cercare.</p>
 
 <div class="patto">
-  <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
-  fa nessuno, e noi non ce la inventiamo.</p>
-  <p><b>Cosa trovi:</b> la pioggia vera, misurata, posto per posto, con la data. Il bosco poi
-  lo conosci tu meglio di qualunque sito.</p>
+  <p><b>A cosa serve:</b> a pianificare le tue uscite. La pioggia vera, misurata a terra
+  da pluviometri veri, posto per posto e con la data. Il posto esatto, poi, lo sai tu meglio di qualunque sito.</p>
+  <p>Non è una previsione di quanti funghi ci saranno: attendibile non la fa
+  nessuno, e noi non ce la inventiamo.</p>
   <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
   valgono regole proprie.</p>
 </div>

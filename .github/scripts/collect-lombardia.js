@@ -17,6 +17,7 @@
 
 const https = require('https');
 const fs    = require('fs');
+const { creaOre, segna, intensita } = require('./lib-intensita.js');
 const path  = require('path');
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'lombardia');
@@ -87,19 +88,38 @@ async function fetchSensoriMeteo(tipologia) {
  * (temperatura a 10 min, vento a 5). valore > -50 esclude i -999 di ARPA.
  */
 const MIN_ORE_METEO = 20;
+/**
+ * ⚠️ `idoperatore` NON E' UN DETTAGLIO (corretto il 29/8/2026).
+ * Socrata pubblica PIU' RIGHE per la stessa marca temporale sullo stesso
+ * sensore, distinte da questo campo: **1 = media, 3 = massimo (la raffica)**.
+ * Senza separarle, `avg(valore)` mescolava medie e raffiche: la velocita' del
+ * vento usciva gonfiata del **70-90%** e la raffica finiva nel calderone
+ * invece che nel campo `w[1]`.
+ * Trovato col tornado di Cremona del 28/8/2026: «Cremona v.Gerre Borghi»
+ * media vera 4,3 km/h, quella che scrivevamo 7,9, **raffica reale 118,4
+ * km/h** — cioe' il giorno del tornado la mappa diceva «vento 7,9».
+ * ⚠️ Le altre grandezze NON erano toccate, verificato: la Precipitazione ha
+ * solo `idoperatore 4`, Temperatura e Umidita' solo `1`. La pioggia non e'
+ * mai stata doppiata.
+ */
 async function fetchMeteoDay(dateStr, tempByStaz, windByStaz, umidByStaz) {
-  const sel = encodeURIComponent('idsensore,date_extract_hh(data) as h,min(valore) as mn,max(valore) as mx,avg(valore) as med,count(valore) as c');
+  const sel = encodeURIComponent('idsensore,idoperatore,date_extract_hh(data) as h,min(valore) as mn,max(valore) as mx,avg(valore) as med,count(valore) as c');
   const where = encodeURIComponent(`data between '${dateStr}T00:00:00' and '${dateStr}T23:59:59' AND valore > -50`);
-  const rows = await getJSON(`/resource/647i-nhxk.json?$select=${sel}&$where=${where}&$group=${encodeURIComponent('idsensore,h')}&$limit=50000`);
+  const rows = await getJSON(`/resource/647i-nhxk.json?$select=${sel}&$where=${where}&$group=${encodeURIComponent('idsensore,idoperatore,h')}&$limit=80000`);
+  // sensore → operatore → una riga per ora
   const perSens = {};
-  rows.forEach(r => { (perSens[r.idsensore] = perSens[r.idsensore] || []).push(r); });
+  rows.forEach(r => {
+    const s = (perSens[r.idsensore] = perSens[r.idsensore] || {});
+    (s[r.idoperatore] = s[r.idoperatore] || []).push(r);
+  });
   const tempSens = {}, windSens = {}, umidSens = {};
   Object.keys(tempByStaz).forEach(st => tempSens[tempByStaz[st]] = st);
   Object.keys(windByStaz).forEach(st => windSens[windByStaz[st]] = st);
   Object.keys(umidByStaz || {}).forEach(st => umidSens[umidByStaz[st]] = st);
   const out = {};
   Object.keys(perSens).forEach(id => {
-    const ore = perSens[id];
+    const ore    = perSens[id]['1'] || [];   // la MEDIA: e' quella che si legge
+    const oreMax = perSens[id]['3'] || [];   // il MASSIMO: la raffica
     if (ore.length < MIN_ORE_METEO) return;
     if (tempSens[id]) {
       const mins = ore.map(o => parseFloat(o.mn)).filter(v => v >= -45 && v <= 50);
@@ -114,7 +134,13 @@ async function fetchMeteoDay(dateStr, tempByStaz, windByStaz, umidByStaz) {
       const medie = ore.map(o => parseFloat(o.med)).filter(v => v >= 0 && v < 60); // m/s
       if (medie.length >= MIN_ORE_METEO) {
         const st = windSens[id];
-        (out[st] = out[st] || {}).w = [Math.round(medie.reduce((a, v) => a + v, 0) / medie.length * 3.6 * 10) / 10, null];
+        // La raffica e' il massimo della giornata fra le righe `idoperatore 3`.
+        // Se quella serie manca o e' bucata resta null, come prima: meglio
+        // nessuna raffica che una raffica presa da mezza giornata.
+        const raff = oreMax.map(o => parseFloat(o.mx)).filter(v => v >= 0 && v < 60);
+        (out[st] = out[st] || {}).w = [
+          Math.round(medie.reduce((a, v) => a + v, 0) / medie.length * 3.6 * 10) / 10,
+          raff.length >= MIN_ORE_METEO ? Math.round(Math.max(...raff) * 3.6 * 10) / 10 : null];
       }
     }
     // Umidità relativa (18/8/2026): sensori «Umidità Relativa» (220), stessa query oraria.
@@ -133,8 +159,18 @@ async function fetchMeteoDay(dateStr, tempByStaz, windByStaz, umidByStaz) {
 /** Totale giornaliero per sensore per il giorno dateStr (YYYY-MM-DD). */
 async function fetchDay(dateStr, anagrafe, tempByStaz, windByStaz, umidByStaz) {
   const where = encodeURIComponent(`data between '${dateStr}T00:00:00' and '${dateStr}T23:59:59' AND valore >= '0'`);
-  const sel = encodeURIComponent('idsensore,sum(valore) as s');
-  const rows = await getJSON(`/resource/647i-nhxk.json?$select=${sel}&$where=${where}&$group=idsensore&$limit=5000`);
+  const sel = encodeURIComponent('idsensore,date_extract_hh(data) as h,sum(valore) as s');
+  const orarie = await getJSON(`/resource/647i-nhxk.json?$select=${sel}&$where=${where}&$group=${encodeURIComponent('idsensore,h')}&$limit=80000`);
+  // Dalle righe orarie si ricava sia il totale del giorno sia l'intensita'.
+  const perSensore = {};
+  orarie.forEach(r => {
+    const a = perSensore[r.idsensore] = perSensore[r.idsensore] || { s: 0, ore: creaOre() };
+    const v = parseFloat(r.s);
+    if (!isFinite(v)) return;
+    a.s += v;
+    segna(a.ore, r.h, v);
+  });
+  const rows = Object.keys(perSensore).map(id => ({ idsensore: id, s: perSensore[id].s }));
   // t/w in un try: un guasto della query meteo non tocca mai la pioggia
   let meteo = {};
   if (tempByStaz) {
@@ -148,6 +184,8 @@ async function fetchDay(dateStr, anagrafe, tempByStaz, windByStaz, umidByStaz) {
     let mm = Math.round((parseFloat(r.s) || 0) * 10) / 10;
     if (mm < 0 || mm > 500) return;          // sanity per giorno singolo
     const rec = { id: r.idsensore, n: meta.n, lat: meta.lat, lon: meta.lon, q: meta.q, p: meta.p, mm };
+    const inte = intensita(perSensore[r.idsensore].ore);
+    if (inte) rec.i = inte;
     if (meta.st && meteo[meta.st]) Object.assign(rec, meteo[meta.st]);
     stations.push(rec);
   });

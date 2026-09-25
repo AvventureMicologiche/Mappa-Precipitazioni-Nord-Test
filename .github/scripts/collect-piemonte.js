@@ -1,5 +1,5 @@
 /**
- * collect-piemonte.js — v2 (17 agosto 2026, in prova nel repo di TEST)
+ * collect-piemonte.js — v2 (17 agosto 2026, in prova nel test; IN PRODUZIONE dal 18 agosto 2026)
  *
  * Due fonti ARPA Piemonte, stesso ente, due usi diversi:
  *   1. api_realtime  (/pie_anag + /data_pie): record ORARI, tenuti ~4 giorni.
@@ -43,6 +43,7 @@
  */
 const fs   = require('fs');
 const path = require('path');
+const { creaOre, segna, intensita } = require('./lib-intensita.js');
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'piemonte');
 const MAX_DAYS = 730;
@@ -150,6 +151,9 @@ function aggregaMeteoPie(records) {
 /** Dai record orari di un giorno → lista stazioni {id,n,lat,lon,q,p,mm,h,t?,w?}. */
 function buildDay(records, stIndex, quote) {
   const rain = {}, ore = {};
+  // Intensita' (12/9/2026): i record SONO orari e portano la loro marca in
+  // `date`, che fa da chiave dell'ora. Nessuna richiesta in piu'.
+  const secchielli = {};
   records.forEach(m => {
     const id = m.station_code;
     if (!id) return;
@@ -157,6 +161,8 @@ function buildDay(records, stIndex, quote) {
     if (isNaN(v) || v < 0) return;
     rain[id] = (rain[id] || 0) + v;
     ore[id] = (ore[id] || 0) + 1;
+    if (!secchielli[id]) secchielli[id] = creaOre();
+    segna(secchielli[id], m.date || ore[id], v);
   });
   const meteo = aggregaMeteoPie(records);
   const out = [];
@@ -178,6 +184,8 @@ function buildDay(records, stIndex, quote) {
       mm,
       h: Math.min(24, ore[id])
     };
+    const inte = secchielli[id] && intensita(secchielli[id]);
+    if (inte) rec.i = inte;
     if (meteo[id]) Object.assign(rec, meteo[id]);
     out.push(rec);
   });
@@ -281,6 +289,10 @@ function consolida(day, stations, anag, uff) {
       else if ((mine.h || 0) < 24) {
         stat.dettagli.push(`~ ${mine.n} (${id}) h=${mine.h} nostro=${mine.mm} → ufficiale=${ptot}`);
         mine.mm = ptot; mine.src = 'arpa-ufficiale';
+        // ⚠️ L'intensita' veniva dal realtime INCOMPLETO (h<24) che qui stiamo
+        // scartando: descriveva un altro numero. Meglio niente che una durata
+        // calcolata su meno ore di quelle che il totale ufficiale contiene.
+        delete mine.i;
         stat.sostituite++;
       } else {
         // realtime completo e valore diverso: quasi sempre pioggia fra le 00 e le 02
@@ -313,6 +325,7 @@ function mergePerOre(nuove, esistenti) {
     if (!m.t && prev.t) m.t = prev.t;
     if (!m.w && prev.w) m.w = prev.w;
     if (!m.u && prev.u) m.u = prev.u;
+    if (!m.i && prev.i) m.i = prev.i;
     return m;
   });
   // stazioni che erano nel vecchio file e nel nuovo realtime non ci sono (es. aggiunte dall'ufficiale)

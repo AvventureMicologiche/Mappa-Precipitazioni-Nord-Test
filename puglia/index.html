@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dove ha piovuto in Puglia: la mappa dei pluviometri</title>
-<meta name="description" content="Quanta pioggia è caduta in Puglia negli ultimi 7 e 20 giorni, misurata da oltre 120 pluviometri di MeteoHub. Le zone più bagnate, aggiornate ogni giorno.">
+<title>Pluviometria Puglia: dove ha piovuto e dati dei pluviometri</title>
+<meta name="description" content="Dove ha piovuto ieri in Puglia e negli ultimi 7, 20 e 30 giorni: dati pluviometrici di oltre 120 pluviometri di MeteoHub. Zone più bagnate, ogni giorno.">
 <link rel="canonical" href="https://avventurepluvio-test.netlify.app/puglia/">
-<meta property="og:title" content="Dove ha piovuto in Puglia — piogge per funghi">
-<meta property="og:description" content="Riepilogo degli ultimi 7 e 20 giorni con le zone più bagnate, da oltre 120 pluviometri di MeteoHub.">
+<meta property="og:title" content="Dove ha piovuto in Puglia: ieri e negli ultimi giorni">
+<meta property="og:description" content="Riepilogo degli ultimi 7, 20 e 30 giorni con le zone più bagnate, da oltre 120 pluviometri di MeteoHub.">
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/puglia/">
 <meta property="og:type" content="website">
@@ -37,20 +37,32 @@ header .logo{font-weight:600;font-size:15px;display:flex;align-items:center;gap:
 header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;}
 main{max-width:760px;margin:0 auto;padding:22px 16px 4px;}
 h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
-.sotto{color:#555;font-size:17px;margin-bottom:22px;}
+h1,h2{text-wrap:balance;}
+p,li{text-wrap:pretty;}
+.sotto{color:#555;font-size:17px;margin-bottom:12px;}
 h2{color:var(--blu-scuro);font-size:22px;margin:34px 0 10px;}
 p{margin-bottom:12px;}
 .cta{display:block;text-align:center;background:var(--blu);color:#fff;font-size:19px;font-weight:600;padding:15px 18px;border-radius:9px;text-decoration:none;margin:22px 0;}
 .cta:hover{background:#2a5490;}
-.griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:18px 0;}
-.card{background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:16px;display:flex;flex-direction:column;}
-.card h2{margin:0 0 6px;font-size:20px;}
-.numerone{font-size:32px;font-weight:700;color:var(--blu-scuro);}
-.numerone small{font-size:15px;font-weight:400;color:#555;}
+.griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0;}
+.card{background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:14px 15px;display:flex;flex-direction:column;}
+.card h3{margin:0 0 4px;font-size:17px;color:var(--blu-scuro);}
+.numerone{font-size:30px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}
+.numerone small{font-size:14px;font-weight:400;color:#555;}
+.card .vai{margin-top:auto;padding-top:10px;font-size:15px;font-weight:600;color:var(--blu);text-decoration:none;}
 .attesa{color:#777;font-style:italic;}
 .nota{font-size:14px;color:#666;margin-top:8px;}
-.top-staz{margin:6px 0 0;}
-.top-staz li{margin:4px 0 4px 20px;}
+.top-staz{margin:6px 0 0;font-size:15px;}
+.top-staz li{margin:3px 0 3px 20px;}
+.verdetto .top{font-size:16px;opacity:.92;margin-top:8px;}
+.verdetto .top b{font-weight:700;}
+#attesa{color:#6a7789;font-size:16px;padding:18px 0;}
+ol.zone-dove{list-style:none;margin:10px 0 6px;padding:0;counter-reset:z;}
+ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
+ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
+ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
+ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;color:var(--blu-scuro);}
+ol.zone-dove .zmm small{font-weight:400;color:#6a7789;font-size:13px;margin-left:6px;}
 footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;font-size:14px;color:#555;text-align:center;}
 footer a{color:var(--blu);}
 nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
@@ -58,7 +70,66 @@ nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2p
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
 footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
+.capo-btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px;}
+.capo-btn{display:inline-block;text-decoration:none;color:#0f2d4d;font-weight:700;font-size:14.5px;
+  padding:9px 15px 10px;border-radius:9px;border:1px solid #b9c7da;
+  background:linear-gradient(180deg,#ffffff 0%,#f5f8fd 48%,#e8eef8 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 3px 0 #aebfd4, 0 6px 13px rgba(0,0,0,.28);}
 @media(max-width:480px){h1{font-size:25px;}body{font-size:16px;}}
+
+.gg{display:flex;align-items:flex-end;gap:3px;height:150px;margin:14px 0 4px;}
+.gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
+.gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
+.gg .b.dentro i{background:var(--blu);}
+.gg .b b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10.5px;
+  font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
+.gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
+.gg-x span{flex:1;text-align:center;}
+.gg-leg{font-size:13.5px;color:#555;margin-top:8px;}
+.gg-leg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
+.tt-box{position:relative;padding-right:42px;margin:14px 0 2px;}
+.tt{width:100%;height:150px;display:block;overflow:visible;}
+.tt .griglia{stroke:#e6eaf0;stroke-width:1;vector-effect:non-scaling-stroke;}
+.tt polyline{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+.tt .max{stroke:#d1603d;}
+.tt .min{stroke:#3a6ea8;}
+.tt-y{position:absolute;top:0;right:0;width:42px;height:150px;pointer-events:none;}
+.tt-y span{position:absolute;right:0;transform:translateY(-50%);font-size:11px;color:#6b7a8d;line-height:1;padding-left:5px;}
+.tt-x{padding-right:42px;}
+.vic td:last-child,.vic th:last-child{text-align:right;}
+.vic .qui{background:#eef4fd;}
+.verdetto{background:#0f2d4d;color:#fff;border-radius:12px;padding:18px 18px 16px;margin:14px 0 8px;}
+.verdetto .si{font-size:27px;font-weight:800;line-height:1.2;}
+.verdetto .pallino{display:inline-block;width:15px;height:15px;border-radius:50%;margin-right:9px;vertical-align:2px;}
+.verdetto .gr{font-size:44px;font-weight:800;line-height:1.1;margin-top:10px;}
+.verdetto .gr small{font-size:18px;font-weight:600;opacity:.85;margin-left:6px;}
+.verdetto .dett{font-size:16px;opacity:.9;margin-top:6px;}
+.scala{display:flex;gap:4px;margin-top:14px;}
+.scala div{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.18);}
+.scala-t{display:flex;font-size:11.5px;opacity:.75;margin-top:4px;}
+.scala-t span{flex:1;text-align:center;}
+.breve{font-size:16px;color:#333;margin:6px 0 4px;}
+.fin{display:flex;gap:6px;align-items:flex-end;height:170px;margin:16px 0 4px;}
+.fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
+.fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
+.fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+.fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
+.fin-x span{flex:1;text-align:center;line-height:1.25;}
+.img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
+.tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
+  padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+@media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
+.noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
+.noioso p{margin-bottom:8px;}
+.noioso a{color:var(--blu);}
+
+/* Sulle pagine piogge l'etichetta sta SOPRA la sua barra, non in cima al
+   grafico: con 30 barre strette, in cima non si capiva di chi fosse. */
+.gg .b b{position:static;transform:none;align-self:center;margin-bottom:2px;line-height:1.1;}
+.verdetto .dett{font-size:14px;opacity:.75;}
 </style>
 </head>
 <body>
@@ -69,78 +140,104 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 </header>
 <main>
 <h1>Dove ha piovuto in Puglia</h1>
-<p class="sotto">Ieri e negli ultimi 20 giorni, da <b>oltre 120 pluviometri di MeteoHub</b>, dal Gargano al Salento.</p>
+<p class="sotto"><b>Pluviometria della Puglia</b>: i dati di oltre 120 pluviometri di MeteoHub, ieri e nell'ultimo mese, dal Gargano al Salento.</p>
 
+<!-- ⚠️ 25/9/2026: LO SCHEMA «PRIMA I DATI», lo stesso delle pagine funghi del
+     24/9 (deciso da lui guardando Santo Stefano d'Aveto): in cima la risposta
+     alla domanda del titolo, cioe' IERI, poi le barre, poi i periodi, le zone,
+     le mappe. Le spiegazioni stanno in fondo, in piccolo. -->
+<div id="attesa">Sto leggendo i pluviometri…</div>
+<div id="verdetto"></div>
+
+<h2>La pioggia degli ultimi 30 giorni</h2>
+<div id="grafico"></div>
+
+<h2>Dove ha piovuto di più</h2>
 <div class="griglia">
   <div class="card">
-    <h2>Ultimi 7 giorni</h2>
-    <div class="numerone" id="rip7-media"><span class="attesa">calcolo in corso…</span></div>
+    <h3>Ultimi 7 giorni</h3>
+    <div class="numerone" id="rip7-media"><span class="attesa">…</span></div>
     <div id="rip7-top"></div>
     <p class="nota" id="rip7-date"></p>
     <!-- ⚠️ L'indirizzo scritto qui deve GIA' portare alla regione (23/8/2026):
-         lo script in fondo alla pagina lo riscrive con le date esatte, ma solo
-         dopo che i dati sono arrivati, e chi cliccava prima finiva sulla mappa
-         vuota da scegliere. Il parametro g sono i giorni: la mappa li fa date.
-         ⚠️ Se un giorno queste pagine si rigenerano, la correzione deve stare
-         QUI: la stessa, fatta a mano sulle 23 pagine, e' durata mezza giornata
-         ed e' stata cancellata dal primo giro del generatore. -->
-    <a class="cta" id="cta7" style="margin:14px 0 2px;margin-top:auto;" href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;g=7"
-       onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-7gg'})}catch(e){}">Apri la mappa a 7 giorni →</a>
+         lo script in fondo lo riscrive con le date esatte, ma solo dopo che i
+         dati sono arrivati. Il parametro g sono i giorni: la mappa li fa date. -->
+    <a class="vai" id="cta7" href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;g=7"
+       onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-7gg'})}catch(e){}">Apri la mappa →</a>
   </div>
   <div class="card">
-    <h2>Ultimi 20 giorni</h2>
-    <div class="numerone" id="rip15-media"><span class="attesa">calcolo in corso…</span></div>
-    <div id="rip15-top"></div>
-    <p class="nota" id="rip15-date"></p>
-    <a class="cta" id="cta15" style="margin:14px 0 2px;margin-top:auto;" href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;g=20"
-       onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-20gg'})}catch(e){}">Apri la mappa a 20 giorni →</a>
+    <h3>Ultimi 20 giorni</h3>
+    <div class="numerone" id="rip20-media"><span class="attesa">…</span></div>
+    <div id="rip20-top"></div>
+    <p class="nota" id="rip20-date"></p>
+    <a class="vai" id="cta20" href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;g=20"
+       onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-20gg'})}catch(e){}">Apri la mappa →</a>
+  </div>
+  <div class="card" id="card30">
+    <h3>Ultimo mese</h3>
+    <div class="numerone" id="rip30-media"><span class="attesa">…</span></div>
+    <div id="rip30-top"></div>
+    <p class="nota" id="rip30-date"></p>
+    <a class="vai" id="cta30" href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;g=30"
+       onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-30gg'})}catch(e){}">Apri la mappa →</a>
   </div>
 </div>
 
-<h2>Ecco cosa vedi sulla mappa</h2>
-<a href="https://avventurepluvio-test.netlify.app/?r=puglia" style="display:block;text-decoration:none;"
+<h2>Mappa pluviometrica della Puglia: guardala in dettaglio</h2>
+<div class="tasti">
+  <a class="forte" id="t1" href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;g=1"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-1gg'})}catch(e){}">Ieri</a>
+  <a id="t7" href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;g=7"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-7gg'})}catch(e){}">Ultimi 7 gg</a>
+  <a id="t15" href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;g=15"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-15gg'})}catch(e){}">Ultimi 15 gg</a>
+  <a id="t20" href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;g=20"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-20gg'})}catch(e){}">Ultimi 20 gg</a>
+  <a id="t30" href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;g=30"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-30gg'})}catch(e){}">Ultimi 30 gg</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;radar=ora"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-radar'})}catch(e){}">📡 Radar adesso</a>
+</div>
+<p class="breve">La pioggia degli ultimi 20 giorni in Puglia, pluviometro per pluviometro.</p>
+<a href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;g=20" id="lnk-img" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-anteprima'})}catch(e){}">
-  <img src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/puglia.jpg" alt="La mappa delle piogge in Puglia: le zone più bagnate, stazione per stazione"
-       width="1600" height="1000" loading="lazy"
-       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
-  <span style="display:block;text-align:center;background:var(--blu);color:#fff;font-size:19px;font-weight:600;padding:15px 18px;border-radius:9px;margin:12px 0 4px;">Apri la mappa in Puglia →</span>
-</a>
-<p class="nota" style="text-align:center;margin-bottom:26px;">Più il colore è acceso, più acqua è caduta. Ogni pallino è un pluviometro: cliccalo e vedi il suo storico.</p>
-
-<h2>Sta piovendo adesso?</h2>
-<p>Questa pagina conta i millimetri dei giorni <b>già chiusi</b>: la giornata di oggi è
-esclusa, perché i pluviometri la stanno ancora misurando. Per la pioggia <b>in corso</b> c'è
-la diretta radar, che mostra dove sta piovendo in questo momento, le ultime due ore e i
-quaranta minuti seguenti.</p>
-<a class="cta" href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;radar=ora"
-   onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-radar'})}catch(e){}">Guarda il radar della pioggia in Puglia →</a>
-<p class="nota" style="margin-bottom:26px;">⚠️ Il radar <b>non è un pluviometro</b>: è una
-misura presa dal cielo, a 2 km di risoluzione, e serve a vedere <i>dove</i> sta piovendo
-adesso, non a contare quanta acqua è caduta. I millimetri di questa pagina restano quelli
-misurati a terra, pluviometro per pluviometro.</p>
-
-<h2>Come si legge</h2>
-<p>Il colore mostra i millimetri <b>cumulati</b> nel periodo che scegli.</p>
-<p>Cliccando una stazione trovi quota, grafico della pioggia degli ultimi 30 giorni e, dove ci sono i sensori, temperatura minima e massima, vento e umidità.</p>
-
-<h2>Da dove arrivano i dati</h2>
-<p>Sono <b>oltre 120 pluviometri di MeteoHub</b>, strumenti a terra, non stime da modello.</p>
-
-<p style="margin-bottom:6px;"><a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;"
-   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-puglia'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
-<p><a href="https://youtu.be/fvsBZJ_Ylf4" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;"
-   onclick="try{gtag('event','click_youtube',{pulsante:'faq-pagina-puglia'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Video FAQ: come si usa la mappa (2 minuti)</a></p>
+  <img class="img-mappa" src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/puglia.jpg" alt="La mappa delle piogge in Puglia: le zone più bagnate, stazione per stazione"
+       width="1600" height="1000" loading="lazy"></a>
 
 <h2>Piogge per funghi in Puglia</h2>
-<p>Se cerchi funghi ti serve un altro taglio degli stessi dati: <a href="https://avventurepluvio-test.netlify.app/funghi/puglia/">dove ha piovuto nelle zone da bosco in Puglia</a>. Solo i pluviometri in mezzo al bosco, e la finestra da 13 a 20 giorni fa, che è quella che conta: dopo la pioggia il fungo non spunta subito, per svilupparsi gli servono almeno dodici o tredici giorni.</p>
+<p style="margin-bottom:6px">Sei un appassionato di funghi? Guarda le nostre analisi in dettaglio:</p>
+<ul style="margin:0 0 12px 22px;line-height:1.9">
+  <li><a href="https://avventurepluvio-test.netlify.app/funghi/puglia/">Funghi in Puglia oggi, dove stanno nascendo</a></li>
+  <li><a href="https://avventurepluvio-test.netlify.app/funghi/">La nostra selezione delle località più bagnate</a></li>
+</ul>
+
+<div class="noioso">
+<h2>Come funziona questa pagina</h2>
+<p>I millimetri li misurano <b>oltre 120 pluviometri di MeteoHub</b>, strumenti a terra, non stime da modello.
+I numeri in cima sono la media dei pluviometri della regione, giorno per giorno; sotto, i più bagnati di ogni periodo.
+La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>
+<h2>Dove piove oggi in Puglia? La diretta radar</h2>
+<p>Per la pioggia in corso c'è la <a href="https://avventurepluvio-test.netlify.app/?r=puglia&amp;radar=ora"
+   onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-radar-testo'})}catch(e){}">diretta radar</a>:
+dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti seguenti. Il radar misura dal cielo,
+a 2 km di risoluzione, e serve a vedere dove piove adesso; i millimetri di questa pagina sono quelli misurati a terra.</p>
+<h2>Come si legge la mappa</h2>
+<p>Il colore mostra i millimetri cumulati nel periodo che scegli: più è acceso, più acqua è caduta. Ogni pallino è
+un pluviometro: cliccandolo trovi quota, grafico della pioggia degli ultimi 30 giorni e, dove ci sono i sensori,
+temperatura, vento e umidità.</p>
+<p><a href="https://avventurepluvio-test.netlify.app/guida/" onclick="try{gtag('event','click_guida',{pulsante:'pagina-puglia'})}catch(e){}">📖 Guida alla mappa: come si usa, tutte le funzioni</a> ·
+<a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" style="color:#e12b2b"
+   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-puglia-fondo'})}catch(e){}">▶ Vieni a trovarci su YouTube</a></p>
+</div>
 </main>
 
 <footer>
 <nav class="altre">
-  <b>Dove ha piovuto, regione per regione</b>
-  <p><a href="https://avventurepluvio-test.netlify.app/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.netlify.app/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.netlify.app/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.netlify.app/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.netlify.app/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.netlify.app/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.netlify.app/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.netlify.app/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.netlify.app/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.netlify.app/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.netlify.app/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.netlify.app/marche/">Marche</a> · <a href="https://avventurepluvio-test.netlify.app/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.netlify.app/molise/">Molise</a> · <a href="https://avventurepluvio-test.netlify.app/campania/">Campania</a> · <a href="https://avventurepluvio-test.netlify.app/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.netlify.app/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.netlify.app/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.netlify.app/sardegna/">Sardegna</a> · <a href="https://avventurepluvio-test.netlify.app/svizzera/">Svizzera</a> · <a href="https://avventurepluvio-test.netlify.app/austria/">Austria</a> · <a href="https://avventurepluvio-test.netlify.app/slovenia/">Slovenia</a></p>
-  <b>Piogge per funghi, regione per regione</b>
-  <p><a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/sardegna/">Sardegna</a></p>
+  <div style="background:#f4fbf3;border:1px solid #cfe8cf;border-radius:9px;padding:1px 15px 11px;margin-top:16px;">
+    <b style="color:#2d6a30">🍄 Dove ha piovuto di più?</b>
+    <p><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:#2d6a30;font-weight:600">La nostra selezione, le località più bagnate</a>
+    <span style="color:#7a8b9a">·</span> oppure il riepilogo delle regioni: <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/sardegna/">Sardegna</a></p>
+  </div>
 </nav>
   Dati: MeteoHub ·
   <a href="https://avventurepluvio-test.netlify.app/fonti.html">tutte le fonti e licenze</a> ·
@@ -150,39 +247,146 @@ misurati a terra, pluviometro per pluviometro.</p>
 
 <script>
 (function(){
-  var DIRS=["meteohub-puglia"];
-  var BASE='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
+  var DIRS=["meteohub-puglia"], K="puglia", SITO="https://avventurepluvio-test.netlify.app";
+  // In locale si legge la cartella del repo, come fa la mappa per l'indice dei
+  // funghi: cosi' un riepilogo appena rigenerato si prova senza pubblicarlo.
+  var BASE=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'/data/':'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
   var MESI=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  var MESI_L=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  var GIORNI=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+  var NG=30;
   function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-  // breve() legge una data ISO 'AAAA-MM-GG': e' la forma in cui arrivano dal
-  // riepilogo gia' fatto, e ci si porta anche il ripiego per non avere due modi
-  // di dire la stessa cosa.
-  function breve(s){ var p=String(s).split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
   function giornoFa(n){ var d=new Date(); d.setDate(d.getDate()-n); return d; }
+  function daIso(s){ var p=String(s).split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+  function menoDa(s,n){ var d=daIso(s); d.setDate(d.getDate()-n); return d; }
+  function breve(s){ var p=String(s).split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
+  function lungo(s){ var p=String(s).split('-'); return (+p[2])+' '+MESI_L[(+p[1])-1]; }
+  function num(n){ return (Math.round(n*10)/10).toFixed(1).replace('.', ','); }
+  // Sotto i 10 mm il decimale conta (0,4 non e' zero), sopra no.
+  function mm(n){ return n===0 ? '0' : n<10 ? num(n) : String(Math.round(n)); }
+  function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  // «Ieri» solo se e' davvero ieri: il riepilogo puo' essere di altroieri.
+  function nomeGiorno(s){
+    if(s===iso(giornoFa(1))) return 'Ieri';
+    return GIORNI[daIso(s).getDay()]+' '+lungo(s);
+  }
+  function link(da,a){ return SITO+'/?r='+K+'&da='+da+'&a='+a; }
+  // «dal 18 al 24 settembre»: il mese una volta sola, l'apostrofo davanti a 1, 8, 11
+  function dalAl(a,b){ var pa=a.split('-'), pb=b.split('-'), da=+pa[2], db=+pb[2];
+    var ap=function(n){ return n===1||n===8||n===11; };
+    return (ap(da)?'Dall’':'Dal ')+(pa[1]===pb[1]?da:lungo(a))+(ap(db)?' all’':' al ')+lungo(b); }
+
+  // Indirizzi di partenza: portano gia' alla regione col periodo giusto anche
+  // prima che arrivino i numeri. tasti() li riscrive con le date VERE.
+  function tasti(ultimo){
+    [['t1',1],['t7',7],['t15',15],['t20',20],['t30',30],['cta7',7],['cta20',20],['cta30',30],['lnk-img',20]].forEach(function(x){
+      var el=document.getElementById(x[0]); if(el) el.href=link(iso(menoDa(ultimo,x[1]-1)),ultimo);
+    });
+  }
+  tasti(iso(giornoFa(1)));
+
+  // ── IERI, in cima: la risposta alla domanda del titolo ──
+  function scriviIeri(d){
+    var box=document.getElementById('verdetto');
+    if(!d||!d.giorni){ box.innerHTML=''; return; }
+    var t=nomeGiorno(d.ultimo), top=(d.top||[]).filter(function(s){ return s.mm>=1; }).slice(0,3), dett;
+    if(top.length){
+      dett='Dove ha piovuto di più: '+top.map(function(s){ return '<b>'+esc(s.n)+'</b> '+num(s.mm)+' mm'; }).join(', ')+'.';
+    }else if(d.top&&d.top.length&&d.top[0].mm>0){
+      dett='Giornata quasi asciutta: il massimo è stato '+num(d.top[0].mm)+' mm a '+esc(d.top[0].n)+'.';
+    }else{
+      dett='Giornata asciutta: nessun pluviometro ha misurato pioggia.';
+    }
+    box.innerHTML='<div class="verdetto">'
+      +'<div class="si">'+(t==='Ieri'?'Ieri, '+lungo(d.ultimo):t)+'</div>'
+      +'<div class="gr">'+mm(d.media)+' mm<small>di media</small></div>'
+      +'<div class="top">'+dett+'</div>'
+      +'<div class="dett">Media di '+d.stazioni+' pluviometri.</div>'
+      +(t==='Ieri'?'':'<div class="dett">I dati di ieri non sono ancora arrivati da tutte le reti: questa è l’ultima giornata intera.</div>')
+      +'<div class="capo-btns"><a class="capo-btn" href="'+link(d.ultimo,d.ultimo)+'"'
+      +' onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'pagina-'+K+'-ieri-box\'})}catch(e){}">Vedi '+(t==='Ieri'?'ieri':'quel giorno')+' sulla mappa</a></div></div>';
+  }
+
+  // ── Le 30 barre, l'ultimo giorno a destra. Gli ultimi 7 in blu pieno ──
+  function scriviBarre(s, ultimo){
+    var el=document.getElementById('grafico');
+    if(!s||!s.length){ el.innerHTML='<p class="nota">Il grafico giorno per giorno arriva col prossimo aggiornamento.</p>'; return; }
+    var n=Math.min(NG,s.length), max=1, barre='', ax='';
+    for(var q=0;q<n;q++) max=Math.max(max,s[q]||0);
+    // Le etichette si danno dalla barra piu' alta in giu', saltando le vicine
+    // di una gia' etichettata: cosi' la piu' alta il suo numero ce l'ha sempre.
+    var cand=[], lab={};
+    for(var c=1;c<=n;c++) if(s[c-1]!=null && s[c-1]>=1 && s[c-1]>=max*0.2) cand.push(c);
+    cand.sort(function(a,b){ return s[b-1]-s[a-1]; })
+      .forEach(function(c){ if(!lab[c-1]&&!lab[c+1]) lab[c]=1; });
+    for(var i=n;i>=1;i--){
+      var v=s[i-1], d=menoDa(ultimo,i-1), cl=i<=7?' dentro':'';
+      barre+='<div class="b'+cl+'" title="'+lungo(iso(d))+': '+(v==null?'nessun dato':num(v)+' mm')+'">'+(lab[i]?'<b>'+mm(v)+'</b>':'')
+        +'<i style="height:'+(v==null?0:Math.max(2,Math.round(v/max*86)))+'%"></i></div>';
+      ax+='<span>'+((i===n||i===1||i%5===0)?(d.getDate()+'/'+(d.getMonth()+1)):'')+'</span>';
+    }
+    el.innerHTML='<div class="gg">'+barre+'</div><div class="gg-x">'+ax+'</div>'
+      +'<p class="gg-leg"><i style="background:var(--blu)"></i>ultimi 7 giorni &nbsp; '
+      +'<i style="background:#b9cbe2"></i>i giorni prima &nbsp;·&nbsp; media dei pluviometri della regione, in mm</p>';
+  }
+
+  function scriviPeriodo(k, d){
+    var el=document.getElementById('rip'+k+'-media');
+    if(!d||!d.giorni){ el.innerHTML='<span class="attesa">dati non disponibili al momento</span>'; return; }
+    el.innerHTML=Math.round(d.media)+' mm <small>di media</small>';
+    var cont=document.getElementById('rip'+k+'-top');
+    if(!d.top||!d.top.length||d.top[0].mm<1){
+      cont.innerHTML='<p class="nota">Periodo quasi asciutto in tutta la regione.</p>';
+    }else{
+      var ol=document.createElement('ol'); ol.className='top-staz';
+      d.top.forEach(function(s){ var li=document.createElement('li'); li.textContent=s.n+' — '+num(s.mm)+' mm'; ol.appendChild(li); });
+      cont.innerHTML=''; cont.appendChild(ol);
+    }
+    // Le giornate si dicono solo se ne manca qualcuna: se no e' il titolo ripetuto.
+    document.getElementById('rip'+k+'-date').textContent=dalAl(d.primo,d.ultimo)
+      +(d.giorni<+k?', '+d.giorni+' giornate di dati':'')+'.';
+  }
+
+  // Le zone: si riempiono i numeri e si RIORDINANO le righe spostando i nodi,
+  // cosi' i link cotti nell'HTML restano quelli che Google legge.
+  function scriviZone(zone){
+    var ol=document.getElementById('zone'); if(!ol||!zone||!zone.length) return;
+    var per={}; zone.forEach(function(z){ per[z.s]=z; });
+    var li=[].slice.call(ol.querySelectorAll('li[data-z]'));
+    li.forEach(function(x){ var z=per[x.getAttribute('data-z')]; x.valore=z?z.m7:null;
+      if(z) x.querySelector('.zmm').innerHTML=mm(z.m7)+' mm'+(z.m1!=null?'<small>ieri '+mm(z.m1)+'</small>':''); });
+    li.sort(function(a,b){ if(a.valore==null) return 1; if(b.valore==null) return -1; return b.valore-a.valore; })
+      .forEach(function(x){ ol.appendChild(x); });
+  }
+
+  function disegna(j){
+    document.getElementById('attesa').style.display='none';
+    var p=j.periodi, ultimo=(p['1']||p['7']).ultimo;
+    tasti(ultimo);
+    scriviIeri(p['1']);
+    scriviBarre(j.serie, ultimo);
+    scriviPeriodo('7',p['7']); scriviPeriodo('20',p['20']);
+    // ⚠️ Un riepilogo scritto PRIMA del 13/9 il mese non ce l'ha: si nasconde
+    // la scheda invece di dire «dati non disponibili», che sarebbe falso.
+    if(p['30']) scriviPeriodo('30',p['30']); else document.getElementById('card30').style.display='none';
+    scriviZone(j.zone);
+  }
+
+  // ── RIPIEGO: i giorni uno per uno, come faceva la pagina fino al 24/8/2026 ──
   // Una regione puo' leggere piu' cartelle (la Svizzera somma MeteoSvizzera e
-  // OASI Ticino): si scaricano tutte e si uniscono, con la chiave stazione
-  // prefissata dalla cartella per non far collidere id di reti diverse.
+  // OASI Ticino): si scaricano tutte e si uniscono.
   function prendi(d){
     return Promise.all(DIRS.map(function(dir){
       return fetch(BASE+dir+'/'+iso(d)+'.json')
         .then(function(res){ return res.ok?res.json():null; })
         .catch(function(){ return null; })
         .then(function(j){ return j&&j.stations ? {dir:dir,stations:j.stations} : null; });
-    })).then(function(parti){
-      parti=parti.filter(Boolean);
-      return parti.length ? parti : null;
-    });
+    })).then(function(parti){ parti=parti.filter(Boolean); return parti.length ? parti : null; });
   }
-  // GEMELLE. Se le cartelle sono piu' d'una, le reti si sovrappongono: la
-  // stessa stazione fisica compare in tutt'e due con id diversi (il Friuli ha
-  // 37 pluviometri OSMER ripubblicati da MeteoHub come «lat_lon»), e unendo per
-  // cartella+id la sua pioggia verrebbe contata due volte. Si scartano quindi
-  // le stazioni delle cartelle successive che cadono entro ~1 km da una della
-  // PRIMA cartella, che e' la fonte di casa. Tolleranza larga apposta: le due
-  // fonti arrotondano le coordinate in modo diverso e due pluviometri veri non
-  // stanno mai cosi' vicini. Stessa regola della mappa (loadOSMERFriuliRegion).
-  // ⚠️ Questa e' la copia del RIPIEGO: quella che lavora tutti i giorni sta in
-  // genera-riepiloghi.js. Le due devono restare gemelle.
+  // GEMELLE: le stazioni delle cartelle successive entro ~1 km da una della
+  // PRIMA cartella (la fonte di casa) sono la stessa stazione letta da un'altra
+  // porta e si scartano. ⚠️ Questa e' la copia del RIPIEGO: quella che lavora
+  // tutti i giorni sta in genera-riepiloghi.js. Le due devono restare gemelle.
   function scartaGemelle(files){
     var fuori={};
     if(DIRS.length<2) return fuori;
@@ -197,116 +401,57 @@ misurati a terra, pluviometro per pluviometro.</p>
       p.stations.forEach(function(s){
         var id=p.dir+':'+s.id;
         if(id in fuori) return;
-        fuori[id]=casa.some(function(q){
-          return Math.abs(q[0]-s.lat)<0.009 && Math.abs(q[1]-s.lon)<0.013;
-        });
+        fuori[id]=casa.some(function(q){ return Math.abs(q[0]-s.lat)<0.009 && Math.abs(q[1]-s.lon)<0.013; });
       });
     });});
     return fuori;
   }
-
-  // Indirizzi di partenza dei pulsanti: portano gia' alla regione col periodo
-  // giusto anche prima che arrivino i numeri. disegna() li riscrive poi con le
-  // date VERE del riepilogo, che possono essere di un giorno indietro.
-  document.getElementById('cta7').href='https://avventurepluvio-test.netlify.app/?r=puglia&da='+iso(giornoFa(7))+'&a='+iso(giornoFa(1));
-  document.getElementById('cta15').href='https://avventurepluvio-test.netlify.app/?r=puglia&da='+iso(giornoFa(20))+'&a='+iso(giornoFa(1));
-
-  // Il disegno e' uno solo per tutt'e due le strade: prende sempre
-  // {media, top:[{n,mm}], primo, ultimo, giorni} e non sa da dove viene.
-  function disegna(prefisso, d){
-    var el=document.getElementById(prefisso+'-media');
-    if(!d||!d.giorni){ el.innerHTML='<span class="attesa">dati non disponibili al momento</span>'; return; }
-    el.innerHTML=Math.round(d.media)+' mm <small>di media regionale</small>';
-    var cont=document.getElementById(prefisso+'-top');
-    if(!d.top||!d.top.length||d.top[0].mm<1){
-      cont.innerHTML='<p class="nota">Periodo quasi asciutto su tutta la regione.</p>';
-    }else{
-      var ol=document.createElement('ol'); ol.className='top-staz';
-      d.top.forEach(function(s){
-        var li=document.createElement('li');
-        li.textContent=s.n+' — '+s.mm.toFixed(1)+' mm';
-        ol.appendChild(li);
-      });
-      cont.innerHTML='<p style="margin:8px 0 2px"><b>Dove ha piovuto di più:</b></p>';
-      cont.appendChild(ol);
-    }
-    document.getElementById(prefisso+'-date').textContent='Dal '+breve(d.primo)+' al '+breve(d.ultimo)+', su '+d.giorni+' giornate di dati. La giornata odierna è esclusa.';
-    var cta=document.getElementById(prefisso==='rip7'?'cta7':'cta15');
-    if(cta&&d.primo&&d.ultimo) cta.href='https://avventurepluvio-test.netlify.app/?r=puglia&da='+d.primo+'&a='+d.ultimo;
-  }
-
-  // ── RIPIEGO: i giorni uno per uno, come faceva la pagina fino al 24/8/2026 ──
   function calcolaDaiFile(){
-    var giorni=[]; for(var i=1;i<=20;i++) giorni.push(giornoFa(i));
+    var giorni=[]; for(var i=1;i<=NG;i++) giorni.push(giornoFa(i));
     return Promise.all(giorni.map(prendi)).then(function(files){
-      var gemelle=scartaGemelle(files);
-      function riepilogo(quanti, prefisso){
-        var somma={}, nomi={}, prov={}, presenti=0, ultimo=null, primo=null;
+      var gemelle=scartaGemelle(files), periodi={}, serie=[];
+      files.forEach(function(parti){
+        if(!parti){ serie.push(null); return; }
+        var t=0,n=0;
+        parti.forEach(function(p){ p.stations.forEach(function(s){
+          if(s.mm==null||gemelle[p.dir+':'+s.id]) return; t+=s.mm; n++; }); });
+        serie.push(n?Math.round(t/n*10)/10:null);
+      });
+      [1,7,20,30].forEach(function(quanti){
+        var somma={}, nomi={}, presenti=0, ultimo=null, primo=null;
         for(var k=0;k<quanti;k++){
-          var parti=files[k];
-          if(!parti) continue;
-          presenti++;
-          if(!ultimo) ultimo=giorni[k];
-          primo=giorni[k];
-          parti.forEach(function(p){
-            p.stations.forEach(function(s){
-              if(s.mm==null) return;
-              var id=p.dir+':'+s.id;
-              if(gemelle[id]) return;
-              somma[id]=(somma[id]||0)+s.mm;
-              nomi[id]=s.n;
-              if(s.p) prov[id]=s.p;
-            });
-          });
+          var parti=files[k]; if(!parti) continue;
+          presenti++; if(!ultimo) ultimo=giorni[k]; primo=giorni[k];
+          parti.forEach(function(p){ p.stations.forEach(function(s){
+            if(s.mm==null) return; var id=p.dir+':'+s.id; if(gemelle[id]) return;
+            somma[id]=(somma[id]||0)+s.mm; nomi[id]=s.n; }); });
         }
-        // La provincia si scrive solo se DICE qualcosa. Il campo e' disomogeneo
-        // fra reti: le dieci reti MeteoHub ci mettono la sigla della REGIONE
-        // (tutte le siciliane «SIC»), Friuli «FVG», VdA «AO», Trentino «TN» —
-        // ripetere lo stesso valore su ogni riga e' rumore. Il Piemonte scrive
-        // «PROVINCIA DI ALESSANDRIA» in maiuscolo, la Liguria il comune.
-        // Regola: se in tutta la regione c'e' un valore solo si omette; se no
-        // si ripulisce e si mostra.
-        var distinti={}; Object.keys(prov).forEach(function(id){ distinti[prov[id]]=1; });
-        var mostraProv=Object.keys(distinti).length>1;
-        function etichetta(id){
-          if(!mostraProv||!prov[id]) return nomi[id];
-          var p=String(prov[id]).replace(/^PROVINCIA DI\s+/i,'');
-          if(p===p.toUpperCase()&&p.length>4) p=p.charAt(0)+p.slice(1).toLowerCase();
-          return nomi[id]+' ('+p+')';
-        }
-        if(!presenti){ disegna(prefisso,null); return; }
         var chiavi=Object.keys(somma);
-        var media=chiavi.reduce(function(a,id){return a+somma[id];},0)/chiavi.length;
-        var top=chiavi.sort(function(a,b){return somma[b]-somma[a];}).slice(0,5)
-                      .map(function(id){ return {n:etichetta(id), mm:somma[id]}; });
-        disegna(prefisso,{media:media, top:top, primo:iso(primo), ultimo:iso(ultimo), giorni:presenti});
-      }
-      riepilogo(7,'rip7');
-      riepilogo(20,'rip15');
+        if(!presenti||!chiavi.length) return;
+        var media=chiavi.reduce(function(a,id){ return a+somma[id]; },0)/chiavi.length;
+        var top=chiavi.sort(function(a,b){ return somma[b]-somma[a]; }).slice(0,5)
+          .map(function(id){ return {n:nomi[id], mm:somma[id]}; });
+        periodi[String(quanti)]={media:media, top:top, primo:iso(primo), ultimo:iso(ultimo), giorni:presenti, stazioni:chiavi.length};
+      });
+      if(!periodi['7']){ document.getElementById('attesa').textContent='Non riesco a leggere l’archivio delle piogge in questo momento: riprova fra qualche minuto.'; return; }
+      disegna({periodi:periodi, serie:serie});
     });
   }
 
   // ── STRADA NORMALE: il riepilogo gia' fatto, UNA richiesta ──
   // ⚠️ La freschezza si misura su QUANDO E' STATO SCRITTO (36 ore), non
-  // sull'ultimo giorno che contiene: la Slovenia pubblica con 34 ore di
-  // ritardo e la Puglia ha giornate che MeteoHub non consegna, quindi un
-  // riepilogo sanissimo puo' finire due giorni indietro. Guardando l'ultimo
-  // giorno che contiene, quelle due regioni sarebbero cadute sul ripiego
-  // TUTTI i giorni, cioe' le 20 richieste sarebbero tornate proprio dove
-  // piu' danno fastidio.
-  // Sopra le 36 ore vuol dire invece workflow fermo, e allora si ricalcola.
+  // sull'ultimo giorno che contiene: la Slovenia pubblica con 34 ore di ritardo
+  // e la Puglia ha giornate che MeteoHub non consegna, quindi un riepilogo
+  // sanissimo puo' finire due giorni indietro.
   function fresco(j){
     if(!j||!j.generato||!j.periodi||!j.periodi['20']||!j.periodi['7']) return false;
     var eta=Date.now()-new Date(j.generato).getTime();
     return eta>=0 && eta<36*3600*1000;
   }
-  fetch(BASE+'riepiloghi/puglia.json')
+  fetch(BASE+'riepiloghi/'+K+'.json')
     .then(function(res){ return res.ok?res.json():null; })
     .catch(function(){ return null; })
-    .then(function(j){
-      if(j&&fresco(j)){ disegna('rip7',j.periodi['7']); disegna('rip15',j.periodi['20']); return; }
-      return calcolaDaiFile();
-    })
+    .then(function(j){ if(j&&fresco(j)) return disegna(j); return calcolaDaiFile(); })
     .catch(function(){ return calcolaDaiFile(); });
 })();
 </script>

@@ -75,6 +75,7 @@
  */
 
 const fs = require('fs');
+const { creaOre, segna, intensita } = require('./lib-intensita.js');
 const path = require('path');
 
 const BASE = 'https://meteo.arso.gov.si/webmet/archive';
@@ -185,10 +186,13 @@ function giornoItaliano(serie, giorno) {
 
   let mm = 0, nMm = 0, tmin = null, tmax = null, ff = 0, nFf = 0, fx = null;
   let umin = null, umax = null, nU = 0;
+  const secchielli = creaOre();   // intensita' (12/9/2026)
   for (const [k, r] of Object.entries(serie)) {
     const eUTC = E1800 + (+k - 60) * 60000;
     if (eUTC <= inizio || eUTC > fine) continue;
-    if (r.mm != null) { mm += r.mm; nMm++; }
+    // ⚠️ La serie e' a MEZZ'ORE: si versa nell'ora che le contiene,
+    // se no il conto non sarebbe confrontabile con le reti orarie.
+    if (r.mm != null) { mm += r.mm; nMm++; segna(secchielli, Math.floor((eUTC - 1) / 3600000), r.mm); }
     if (r.tmin != null) tmin = tmin == null ? r.tmin : Math.min(tmin, r.tmin);
     if (r.tmax != null) tmax = tmax == null ? r.tmax : Math.max(tmax, r.tmax);
     if (r.ff != null) { ff += r.ff; nFf++; }
@@ -204,6 +208,8 @@ function giornoItaliano(serie, giorno) {
   if (tmin != null && tmax != null) rec.t = [Math.round(tmin * 10) / 10, Math.round(tmax * 10) / 10];
   if (nFf >= MIN_MEZZORE) rec.w = [Math.round(ff / nFf * 3.6 * 10) / 10, fx == null ? null : Math.round(fx * 3.6 * 10) / 10];
   if (nU >= 120 && umin != null) rec.u = [Math.round(umin), Math.round(umax)];   // 120 intervalli da 10' = 20 ore
+  const inte = intensita(secchielli);
+  if (inte) rec.i = inte;
   return rec;
 }
 

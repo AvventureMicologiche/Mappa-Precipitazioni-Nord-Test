@@ -40,6 +40,8 @@ const path = require('path');
 const { REGIONI, navAltre, briciolaJson } = require('./genera-pagine-regione.js');
 const { LOCALITA, bello, slug, slugRegione } = require('./lib-nomi.js');
 const { rigaStagione } = require('./lib-stagione.js');
+// 24/9/2026: verdetto, barre e finestra comuni con le pagine di zona
+const { STILE_NUOVO, JS_COMUNE } = require('./lib-pagina-funghi.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
@@ -94,13 +96,15 @@ function pagina(r, posti) {
   // di stagione SUBITO SOTTO IL TITOLO (lib-stagione.js), che fuori stagione
   // lo dice in chiaro. Scartati il titolo senza «oggi» e quello che cambia
   // con la stagione.
+  // ⚠️ 24/9/2026: stesso schema delle pagine di paese e di zona, deciso da
+  // lui. Davanti «Funghi <regione> oggi», la forma delle ricerche vere.
   const titolo = [
-    `Dove andare a funghi ${r.prep} ${nome} oggi: le zone dove ha piovuto`,
-    `Dove andare a funghi ${r.prep} ${nome} oggi`,
+    `Funghi ${r.prep} ${nome} oggi: dove stanno nascendo?`,
+    `Funghi ${r.prep} ${nome} oggi`,
   ].find(t => t.length <= 62) || `Funghi ${r.prep} ${nome} oggi`;
   const descr = [
-    `Dove andare a funghi ${r.prep} ${nome} oggi: le piogge per funghi zona per zona, cioè dove è piovuto da 13 a 20 giorni fa nei posti da bosco. Aggiornato ogni giorno.`,
-    `Dove andare a funghi ${r.prep} ${nome} oggi: le zone e i posti da bosco dove è piovuto al momento giusto, da 13 a 20 giorni fa.`,
+    `Dove stanno nascendo funghi ${r.prep} ${nome}? Le piogge degli ultimi 25 giorni nei posti da bosco, zona per zona, misurate dai pluviometri. Aggiornato ogni mattina.`,
+    `Dove stanno nascendo funghi ${r.prep} ${nome}? Le piogge degli ultimi 25 giorni nei posti da bosco, zona per zona.`,
   ].find(t => t.length <= 158);
   return `<!DOCTYPE html>
 <html lang="it">
@@ -110,7 +114,7 @@ function pagina(r, posti) {
 <title>${titolo}</title>
 <meta name="description" content="${descr}">
 <link rel="canonical" href="${SITO}/funghi/${r.k}/">
-<meta property="og:title" content="Dove andare a funghi ${r.prep} ${nome} oggi">
+<meta property="og:title" content="Funghi ${r.prep} ${nome} oggi: dove stanno nascendo?">
 <meta property="og:description" content="Dove e' caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
 <meta property="og:image" content="${SITO}/preview.jpg">
 <meta property="og:url" content="${SITO}/funghi/${r.k}/">
@@ -135,10 +139,14 @@ ${briciolaJson([
 :root{--blu:#1b3f6e;--blu-scuro:#123252;--grigio:#f0f4fb;--bordo:#d0d8e8;--verde:#2e7d32;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#222;background:#fff;font-size:17px;line-height:1.6;}
-header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:nowrap;}
 header a{color:#fff;text-decoration:none;}
-header .logo{font-weight:600;font-size:15px;}
-header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;}
+header .logo{font-weight:600;font-size:15px;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;flex:none;}
+/* ⚠️ 25/9/2026, sua schermata da Android: sotto i ~430 px logo e tasto rosso
+   non ci stavano sulla stessa riga e il tasto andava a capo, raddoppiando la
+   testata. Sul telefono via «· piogge» e «Canale»: resta «▶ YouTube». */
+@media(max-width:440px){header{padding:10px 12px;gap:8px;} header .logo span,header .yt .yt-l{display:none;}}
 main{max-width:860px;margin:0 auto;padding:22px 16px 40px;}
 h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
 h2{color:var(--blu-scuro);font-size:21px;margin:32px 0 8px;}
@@ -258,12 +266,13 @@ ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;}
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
+${STILE_NUOVO}
 </style>
 </head>
 <body>
 <header>
   <a href="https://precipitazioni.avventuremicologiche.it/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
-  <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt">▶ Canale YouTube</a>
+  <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt">▶ <span class="yt-l">Canale </span>YouTube</a>
 </header>
 <main>
 
@@ -282,37 +291,32 @@ ${/* ⚠️ LA FINESTRA E LA CLASSIFICA NELLE PRIME TRE RIGHE (9/9/2026), come
      per funghi <regione>» fosse la frase con cui la gente cerca: in 28 giorni
      questa pagina e' comparsa su Google una volta. La gente cerca «dove andare
      a funghi», e titolo e H1 adesso lo dicono. */''}
-<h1>Dove andare a funghi ${r.prep} ${nome} oggi</h1>
+<h1>Funghi ${r.prep} ${nome} oggi: dove stanno nascendo?</h1>
 ${rigaStagione()}
-<p class="sotto">Si va dove ha piovuto al momento giusto. Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
-dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella <b>da 13 a 20
-giorni fa</b>, misurata dai pluviometri di ${corta} nei posti da bosco ${gen}. In cima alla
-classifica ci sono quelli dove ne è caduta di più.</p>
-
-${/* ⚠️ LA VIA D'USCITA PER CHI CERCAVA ALTRO (9/9/2026), la stessa che sta
-     sulle pagine di paese e di zona: chi arriva da Google puo' voler sapere
-     quanto e' piovuto IERI, e qui trova otto giorni di due settimane fa. Il
-     bottone per gli ultimi 20 giorni c'era gia' ma mezza pagina piu' sotto,
-     dentro il riquadro scuro. Sta PRIMA del patto perche' e' la risposta a chi
-     si e' appena accorto di essere sulla pagina sbagliata. */''}
-<div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo solo
-gli otto giorni della finestra dei funghi. Per la pioggia di ieri e degli ultimi 30 giorni c’è
-<a href="${SITO}/${r.k}/" style="color:var(--blu);font-weight:700">dove ha piovuto ${r.prep} ${nome}</a>;
-per un periodo scelto da te, <a href="${SITO}/?r=${r.k}&amp;g=20"
-style="color:var(--blu)">apri la mappa ${r.prep} ${nome}</a>.</div>
-
-<div class="patto">
-  <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
-  fa nessuno, e noi non ce la inventiamo.</p>
-  <p><b>Cosa trovi:</b> la pioggia vera, misurata, posto per posto, con la data. Il bosco poi
-  lo conosci tu meglio di qualunque sito.</p>
-  <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
-  valgono regole proprie.</p>
-</div>
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="guasto"></div>
-<div id="testa"></div>
+<div id="verdetto"></div>
+
+<h2>Le piogge degli ultimi 25 giorni ${r.prep} ${nome}</h2>
+<div id="grafico"></div>
+<p class="nota">Media dei pluviometri da bosco ${gen}, giorno per giorno.</p>
+
+<h2 id="h-conta">Però attenzione: la pioggia che conta è quella caduta da 13 a 20 giorni fa</h2>
+<p class="breve" id="p-conta">Il fungo spunta 12-13 giorni dopo una bella pioggia: i funghi di oggi nascono da queste otto giornate.</p>
+<div id="finestra"></div>
+
+<h2>Dove è andata meglio? Apri le mappe</h2>
+<div class="tasti">
+  <a class="forte" id="t-conta" href="${SITO}/?r=${r.k}&amp;g=20">13-20 gg fa</a>
+  <a href="${SITO}/?r=${r.k}&amp;g=1">Ieri</a>
+  <a href="${SITO}/?r=${r.k}&amp;g=7">Ultimi 7 gg</a>
+  <a href="${SITO}/?r=${r.k}&amp;g=20">Ultimi 20 gg</a>
+  <a href="${SITO}/?r=${r.k}&amp;g=30">Ultimi 30 gg</a>
+  <a href="${SITO}/?r=${r.k}&amp;radar=ora"
+     onclick="try{gtag('event','apri_mappa',{da:'funghi-${r.k}-radar'})}catch(e){}">📡 Radar adesso</a>
+</div>
+<div id="testa" style="display:none"></div>
 
 ${(function(){
   /* ⚠️ LE ZONE DOVE ANDARE, IN CIMA (13/9/2026). I nomi e i link sono cotti
@@ -340,9 +344,10 @@ aprendola.</p>
 }())}
 
 <h2>Piogge per funghi: i posti da bosco più bagnati ${gen}</h2>
-<div class="spiega" id="finestra"></div>
+<div class="spiega" id="finestra2"></div>
 <div id="tabella"></div>
 <p class="nota" id="notaforte"></p>
+<div id="meteo"></div>
 
 <h2>Ecco cosa vedi sulla mappa</h2>
 <a href="https://precipitazioni.avventuremicologiche.it/?r=${r.k}" style="display:block;text-decoration:none;"
@@ -371,26 +376,24 @@ con i disegni ${cartaDi(r.k)}. Avvicinati sulla zona che ti interessa.</p>
 <p class="nota" style="margin-bottom:26px;">La fonte è ${fonteNota(r.k)}: dice che bosco
 c'è, non se quest'anno ci sono nati funghi.</p>
 ` : ''}
-<h2 style="margin-bottom:12px">Come scegliamo i posti</h2>
-<div class="metodo">
-  <div><span class="n">1</span><b>C'è un pluviometro vero.</b> Non una stima su griglia: uno
-  strumento di un ente pubblico, col suo nome e la sua quota.</div>
-  <div><span class="n">2</span><b>Quota fra 200 e 1600 metri.</b> Sotto è pianura, sopra il bosco
-  finisce.</div>
-  <div><span class="n">3</span><b>Almeno il 37% di bosco entro 3 km</b>, misurato sulle mappe di
-  OpenStreetMap.</div>
-</div>
 
-<div class="avviso">
-  <b>Una cosa da tenere a mente.</b> Tanta pioggia non vuol dire tanti funghi: contano anche la
-  temperatura, il vento e il tipo di bosco. <b>La temperatura e il vento ce li abbiamo:</b>
-  clicca un pluviometro sulla mappa e vedi il suo storico, giorno per giorno, insieme alla
-  pioggia. Questa pagina ti dice <i>dove è arrivata l'acqua</i>, che è il pezzo che di solito
-  manca.
-</div>
 
-<p class="nota" style="margin-top:22px">Dati di ${r.agenzia} via il nostro archivio. Il
-bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</p>
+
+
+<div class="noioso">
+<h2>Come funziona questa pagina</h2>
+<p>I millimetri li misurano i pluviometri di ${corta} nei posti da bosco ${gen}: un pluviometro vero,
+quota fra 200 e 1600 metri, almeno il 37% di bosco entro 3 km sulle mappe di OpenStreetMap. I numeri in
+cima sono la media di questi pluviometri, giorno per giorno, aggiornata ogni mattina.</p>
+<p>Perché da 13 a 20 giorni fa: dopo una pioggia il fungo impiega almeno dodici o tredici giorni
+a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due settimane.</p>
+<p>Ti serve un altro periodo? Per ieri e gli ultimi 30 giorni c’è
+<a href="${SITO}/${r.k}/">dove ha piovuto ${r.prep} ${nome}</a>.</p>
+<p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
+valgono regole proprie.</p>
+<p>Dati di ${r.agenzia} via il nostro archivio. Il bosco è calcolato su dati OpenStreetMap, licenza ODbL.
+La provincia viene dai confini provinciali ISTAT.</p>
+</div>
 
 ${LOCALITA.includes(r.k) ? `
 ${/* ⚠️ Il titolo dice «quanto ha piovuto» perche' sono le parole con cui la
@@ -440,17 +443,11 @@ ${navAltre('funghi')}
   var BASE = LOCALE ? '/data/'
     : 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
   var MAPPA = 'https://precipitazioni.avventuremicologiche.it/';
-  var QUANTI = 15, FORTE = 30, GIORNI = 25;
+  var QUANTI = 15, FORTE = 30;
+${JS_COMUNE}
 
-  function iso(d){ var p=function(n){return String(n).padStart(2,'0');};
-    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
   function meno(n){ var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-n); return d; }
-  function menoDa(s, n){ var p=String(s).split('-');
-    var d=new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return iso(d); }
-  var MESI=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
-  function gg(d){ var p=d.split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
-  function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
-  function uno(n){ return Math.round(n*10)/10; }
+  function menoDaI(s, n){ return iso(menoDa(s, n)); }
 
   /* La riga di stagione non sta piu' qui: dal 13/9/2026 la scrive
      lib-stagione.js subito sotto il titolo, uguale per regioni e zone. */
@@ -473,6 +470,32 @@ ${navAltre('funghi')}
     var eta = Date.now() - new Date(j.generato).getTime();
     return eta >= 0 && eta < 36*3600*1000;
   }
+
+  /* ── IN CIMA (24/9/2026): verdetto, barre e finestra sulla MEDIA dei posti
+     da bosco della regione, dal file dei giorni che usano anche le pagine di
+     paese. Se non arriva, sotto la pagina resta com'era: zone e posti. */
+  fetch(BASE + 'funghi/' + REG + '-giorni.json')
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .catch(function(){ return null; })
+    .then(function(j){
+      if (!j || !j.serie || !j.oggi) return;
+      var ids = POSTI.map(function(p){ return p[0]; }).filter(function(id){ return j.serie[id]; });
+      if (!ids.length) return;
+      var s = [], sT = [];
+      for (var i = 0; i < GIORNI; i++) {
+        var t = 0, n = 0, a = 0, b = 0, m = 0;
+        ids.forEach(function(id){ var v = j.serie[id][i]; if (v != null) { t += v; n++; }
+          var tt = ((j.serieT || {})[id] || [])[i]; if (tt) { a += tt[0]; b += tt[1]; m++; } });
+        s.push(n ? uno(t / n) : 0); sT.push(m ? [uno(a / m), uno(b / m)] : null);
+      }
+      var o = j.oggi, daG = iso(menoDa(o,20)), aG = iso(menoDa(o,13)), ieri = iso(menoDa(o,1));
+      var lk = function(dal, al){ return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al; };
+      scriviVerdetto(s, o, lk(daG, ieri), 'in media, negli ultimi 20 giorni');
+      var ax = scriviBarre(s, o);
+      scriviFinestra(s, o, null, 'in media');
+      document.getElementById('t-conta').href = lk(daG, aG);
+      if (sT.some(function(x){ return x; })) scriviTemperatura(sT, ax, 'media dei posti da bosco');
+    });
 
   fetch(BASE + 'funghi/' + REG + '.json')
     .then(function(r){ return r.ok ? r.json() : null; })
@@ -605,7 +628,7 @@ ${navAltre('funghi')}
     righe = righe.sort(function(a,b){ return b.mm - a.mm; }).slice(0, QUANTI);
     var maxMm = Math.max.apply(null, righe.map(function(r){ return Math.max(r.mm, r.mm7, r.mm25); }).concat([1]));
 
-    var daG = menoDa(oggiISO,20), aG = menoDa(oggiISO,13), a20 = menoDa(oggiISO,1);
+    var daG = menoDaI(oggiISO,20), aG = menoDaI(oggiISO,13), a20 = menoDaI(oggiISO,1);
     function link(r, dal, al){
       return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al
         + (r ? '&z=11&c=' + r.lat.toFixed(4) + ',' + r.lon.toFixed(4) : '');
@@ -638,7 +661,7 @@ ${navAltre('funghi')}
        mezza pagina di distanza sembrava che la pagina si fosse dimenticata di
        averla gia' detta. Qui restano le DATE, che in cima non ci possono
        stare: cambiano ogni giorno e il titolo e' cotto nel guscio. */
-    document.getElementById('finestra').innerHTML =
+    document.getElementById('finestra2').innerHTML =
       'Gli otto giorni della finestra sono fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG)
       + '</b>. Sono millimetri misurati a terra dai pluviometri, non una previsione.';
 

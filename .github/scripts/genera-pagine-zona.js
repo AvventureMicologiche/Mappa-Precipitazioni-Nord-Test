@@ -56,6 +56,8 @@ const { haBoschi, cartaBreve, cartaDi, fonteNota } = require('./lib-boschi.js');
 // Il ritratto dell'archivio, cotto dentro la pagina: il perche' sta in cima
 // a lib-clima.js. Qui e' di zona, cioe' la media dei suoi pluviometri.
 const { clima, buono, dataBella, meseBello, migliaia, virgola } = require('./lib-clima.js');
+// 24/9/2026: grafica e codice di pagina comuni con le pagine di regione
+const { STILE_NUOVO, JS_COMUNE } = require('./lib-pagina-funghi.js');
 
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
@@ -104,15 +106,16 @@ function pagina(z) {
   // posto) col titolo «Piogge per funghi in Garfagnana», che la domanda vera
   // non l'aveva. ⚠️ «Oggi» si' e tutto l'anno: fuori stagione ci tutela la riga
   // di stagione sotto il titolo (lib-stagione.js). Tetto 62 caratteri.
+  // ⚠️ 24/9/2026: «stanno nascendo?» in coda, come sulle pagine di paese.
+  // Davanti resta «Funghi <zona> oggi», la forma delle ricerche vere.
   const TITOLO = [
-    'Funghi ' + z.dove + ' oggi: dove andare e dove ha piovuto',
-    'Funghi ' + z.dove + ' oggi: dove andare',
+    'Funghi ' + z.dove + ' oggi: stanno nascendo?',
     'Funghi ' + z.dove + ' oggi',
   ].find(t => t.length <= 62) || ('Funghi ' + z.dove).slice(0, 62);
   const DESCR = [
-    'Dove andare a funghi ' + z.dove + ' oggi: le piogge per funghi, cioè la pioggia caduta da 13 a 20 giorni fa, da ' + z.posti.length + ' pluviometri da bosco. Aggiornato ogni giorno.',
-    'Dove andare a funghi ' + z.dove + ' oggi: la pioggia caduta da 13 a 20 giorni fa, misurata da ' + z.posti.length + ' pluviometri da bosco.',
-  ].find(t => t.length <= 158) || ('Dove andare a funghi ' + z.dove + ' oggi.');
+    'Stanno nascendo funghi ' + z.dove + '? Le piogge degli ultimi 25 giorni, giorno per giorno, da ' + z.posti.length + ' pluviometri da bosco. Aggiornato ogni mattina.',
+    'Stanno nascendo funghi ' + z.dove + '? Le piogge degli ultimi 25 giorni da ' + z.posti.length + ' pluviometri da bosco.',
+  ].find(t => t.length <= 158) || ('Funghi ' + z.dove + ' oggi: le piogge degli ultimi 25 giorni.');
 
   const modello = path.join(RADICE, 'funghi', casa.k, 'index.html');
   if (!fs.existsSync(modello)) {
@@ -176,373 +179,260 @@ function pagina(z) {
   const righeTab = anag.slice().sort((a, b) => a[1].localeCompare(b[1], 'it'))
     .map(a => '<tr data-id="' + esc(a[0]) + '"><td><a class="loc" href="' + SITO + '/funghi/' +
       a[7] + '/' + a[6] + '/"><b>' + esc(a[1]) + '</b></a><span class="com">' + esc(a[2]) +
-      ' · ' + a[3] + ' MT</span></td>' +
+      ' · ' + a[3] + ' m</span></td>' +
       '<td class="mm"><span class="v">…</span></td>' +
       '<td class="mm"><span class="v">…</span></td>' +
       '<td class="mm tagl"><span class="v">…</span></td></tr>').join('\n');
 
-  return '<!DOCTYPE html>\n<html lang="it">\n<head>\n' +
-'<meta charset="utf-8">\n' +
-'<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
-'<title>' + esc(TITOLO) + '</title>\n' +
-'<meta name="description" content="' + esc(DESCR) + '">\n' +
-'<link rel="canonical" href="' + SITO + '/funghi/zone/' + zslug + '/">\n' +
-'<meta property="og:title" content="Funghi ' + esc(z.dove) + ' oggi: dove andare">\n' +
-'<meta property="og:description" content="La pioggia vera, misurata dai pluviometri nelle zone da bosco.">\n' +
-'<meta property="og:image" content="' + SITO + '/preview.jpg">\n' +
-'<meta property="og:url" content="' + SITO + '/funghi/zone/' + zslug + '/">\n' +
-'<meta property="og:type" content="website">\n' +
-briciolaJson([
+  // ⚠️ 24/9/2026: STESSO SCHEMA DELLE PAGINE DI PAESE (deciso da lui): prima
+  // i dati (ha piovuto abbastanza? le barre, la pioggia che conta, le mappe,
+  // i pluviometri), in fondo le spiegazioni. Qui i numeri sono la MEDIA dei
+  // pluviometri della zona, giorno per giorno.
+  const PIN_A = PIN + '&amp;z=10&amp;c=' + z.lat + ',' + z.lon;
+  return `<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(TITOLO)}</title>
+<meta name="description" content="${esc(DESCR)}">
+<link rel="canonical" href="${SITO}/funghi/zone/${zslug}/">
+<meta property="og:title" content="Funghi ${esc(z.dove)} oggi: stanno nascendo?">
+<meta property="og:description" content="Le piogge degli ultimi 25 giorni, misurate dai pluviometri nelle zone da bosco.">
+<meta property="og:image" content="${SITO}/preview.jpg">
+<meta property="og:url" content="${SITO}/funghi/zone/${zslug}/">
+<meta property="og:type" content="website">
+${briciolaJson([
   ['Piogge per funghi', SITO + '/funghi/'],
   [nomeReg, SITO + '/funghi/' + casa.k + '/'],
   [z.n, null],
-]) + '\n' +
-'<script async src="https://www.googletagmanager.com/gtag/js?id=' + GA_ID + '"></script>\n' +
-'<script>\n' +
-'window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}\n' +
-'gtag("js",new Date());\n' +
-'if(/(^|\\.)avventuremicologiche\\.it$/.test(location.hostname))gtag("config","' + GA_ID + '");\n' +
-'</script>\n' +
-'<style>\n' + STILE + '\n' +
-'.tre{display:flex;gap:10px;margin:18px 0 6px;flex-wrap:wrap;}\n' +
-'.tre > div{flex:1;min-width:150px;background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:12px 14px;}\n' +
-/* ⚠️ LA QUARTA CASELLA, quella di «da quanto non piove», e piu LARGA delle
-   altre tre e non e un vezzo: misurato l 11/9/2026, la sua etichetta a 13 px
-   chiede 170,2 px e una casella normale ne offre 169. Sforava di 1,2 px,
-   andava a capo e abbassava il numero rispetto agli altri tre. Si allarga la
-   casella invece di rimpicciolire il testo, cosi la tipografia resta la
-   stessa su tutte e quattro.
-   ⚠️ Sotto i 600 px va a tutta larghezza da sola: li le caselle si dispongono
-   a due a due, e una quarta piu alta gonfierebbe la sua riga. */
-'.tre > div.secco{flex:1.25;border-left:4px solid var(--verde);}\n' +
-'@media(max-width:600px){.tre > div.secco{flex-basis:100%;}}\n' +
-'.tre .et{font-size:13px;color:#5a6b80;}\n' +
-'.tre .n{font-size:26px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}\n' +
-'nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}\n' +
-'nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}\n' +
-'nav.altre p{line-height:1.9;}\n' +
-'nav.altre a{color:var(--blu);}\n' +
-'</style>\n</head>\n<body>\n\n' +
-'<header>\n' +
-'  <a href="' + SITO + '/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>\n' +
-'  <a class="yt" href="' + CANALE + '?sub_confirmation=1" target="_blank" rel="noopener"\n' +
-'     onclick="try{gtag(\'event\',\'click_youtube\',{pulsante:\'zona-' + casa.k + '\'})}catch(e){}">▶ Canale YouTube</a>\n' +
-'</header>\n\n<main>\n' +
-// ⚠️ BRICIOLA A DUE LIVELLI dall'8/9/2026: la prima parte porta all'indice
-// /funghi/, che prima nessuna di queste 114 pagine nominava. Il perche' sta
-// scritto per esteso in genera-pagine-localita.js, dove la stessa riga vale per
-// 948 pagine: sono link dentro il TESTO, visibili anche sul telefono, mentre
-// sulla mappa 26 link interni su 27 sono spenti sotto i 600 px.
-'<p class="nota" style="margin-bottom:6px"><a href="' + SITO + '/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="' + SITO + '/funghi/' + casa.k + '/" style="color:var(--blu)">' + esc(nomeReg) + '</a></p>\n\n' +
-// ⚠️ LA FINESTRA E LA CLASSIFICA NELLE PRIME RIGHE (9/9/2026), come
-// sull'indice e sulle pagine di regione. Prima il titolo diceva «Piogge per
-// funghi in Carnia» e sotto c'erano la regione e il numero di pluviometri:
-// chi arrivava da Google non capiva ne' che sta guardando la pioggia di due
-// settimane fa, ne' che piu' sotto c'e' una classifica.
-// ⚠️ Il titolo e' quello delle REGIONI e non quello dei paesi: una zona e'
-// un territorio con dentro piu' pluviometri, quindi un «dove» ce l'ha; la
-// pagina di un paese ne ha uno solo e li' la domanda giusta e' un'altra.
-'<h1>Dove andare a funghi ' + esc(z.dove) + ' oggi</h1>\n' +
-rigaStagione() + '\n' +
-'<p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono\n' +
-'almeno dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella\n' +
-'<b>da 13 a 20 giorni fa</b>, misurata dai <b>' + z.posti.length + ' pluviometri</b> di ' +
-   esc(elenco(agenzie)) + ' nelle zone da bosco ' + esc(diZona(z.dove)) + ', in ' + esc(nomeReg) +
-   '. In cima alla classifica c’è quello dove ne è caduta di più.</p>\n\n' +
-// ⚠️ LA VIA D'USCITA PER CHI CERCAVA ALTRO (9/9/2026), la stessa delle pagine
-// di paese e di regione: chi arriva da Google puo' voler sapere quanto e'
-// piovuto IERI, e qui trova otto giorni di due settimane fa. I bottoni per gli
-// ultimi 20 giorni c'erano gia' ma mezza pagina piu' sotto, dentro il riquadro
-// scuro. Sta PRIMA del patto perche' e' la risposta a chi si e' appena accorto
-// di essere sulla pagina sbagliata.
-'<div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo\n' +
-'solo gli otto giorni della finestra dei funghi. Per la pioggia di ieri e degli ultimi 30 giorni\n' +
-'c’è <a href="' + SITO + '/zone/' + zslug + '/" style="color:var(--blu);font-weight:700">dove ha piovuto ' + esc(z.dove) + '</a>;\n' +
-'per un periodo scelto da te, <a href="' + SITO + '/?r=' + REGS + '&amp;g=20&amp;' + PIN +
-   '" style="color:var(--blu)">apri ' + esc(z.n) + ' sulla mappa</a>.</div>\n\n' +
-'<div class="patto">\n' +
-'  <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la\n' +
-'  fa nessuno, e noi non ce la inventiamo.</p>\n' +
-'  <p><b>Cosa trovi:</b> quanta acqua è caduta ' + esc(z.dove) + ', pluviometro per pluviometro, con la\n' +
-'  data. Il bosco poi lo conosci tu meglio di qualunque sito.</p>\n' +
-'  <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi\n' +
-'  valgono regole proprie.</p>\n' +
-'</div>\n\n' +
-'<div id="attesa">Sto leggendo i pluviometri…</div>\n' +
-'<div id="guasto"></div>\n' +
-'<div id="testa"></div>\n' +
-'<div class="spiega" id="finestra" style="margin-top:14px"></div>\n\n' +
-'<div class="tre" id="tre"></div>\n' +
-'<p class="nota" id="notamedia"></p>\n\n' +
-'<h2>I pluviometri della zona, dal più bagnato</h2>\n' +
-'<table class="vic"><thead><tr><th>Località</th><th>13-20 gg fa</th>' +
-'<th>Ultimi 7</th><th class="tagl">Ultimi 25</th></tr></thead>\n' +
-'<tbody id="tabella">\n' + righeTab + '\n</tbody></table>\n' +
-'<p class="nota" id="notaforte"></p>\n\n' +
-'<h2>Ecco cosa vedi sulla mappa</h2>\n' +
-'<a href="' + SITO + '/?r=' + REGS + '&amp;g=20&amp;' + PIN + '&amp;z=10&amp;c=' + z.lat + ',' + z.lon + '" style="display:block;text-decoration:none;"\n' +
-'   onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'zona-' + zslug + '-20gg\'})}catch(e){}">\n' +
-'  <img src="' + ANTEPRIME + '/' + casa.k + '.jpg"\n' +
-'       alt="La mappa delle piogge ' + casa.prep + ' ' + esc(nomeReg) + '"\n' +
-'       width="1600" height="1000" loading="lazy"\n' +
-'       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">\n' +
-'  <span class="vai-mappa">Apri la mappa · ultimi 20 giorni →</span>\n' +
-'</a>\n\n' +
+])}
+<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag("js",new Date());
+if(/(^|\\.)avventuremicologiche\\.it$/.test(location.hostname))gtag("config","${GA_ID}");
+</script>
+<style>
+${STILE}
+${STILE_NUOVO}
+nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
+nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
+nav.altre p{line-height:1.9;}
+nav.altre a{color:var(--blu);}
+</style>
+</head>
+<body>
 
-// ⚠️ Il blocco dei boschi guarda la regione di CASA della zona: e' quella che
-// il link accende per prima, e una zona sul crinale mostra comunque anche le
-// tessere delle vicine che le hanno
-(haBoschi(casa.k) ?
-'<h2>Che boschi ci sono nella zona?</h2>\n' +
-'<p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti\n' +
-'e abetaie non danno gli stessi funghi. La mappa boschi colora i boschi ' + esc(z.dove) + ' per tipo,\n' +
-'con i disegni ' + cartaDi(casa.k) + '.</p>\n' +
-'<a href="' + SITO + '/?r=' + casa.k + '&amp;' + PIN + '&amp;boschi=1" style="display:block;text-decoration:none;"\n' +
-'   onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'zona-' + zslug + '-boschi\'})}catch(e){}">\n' +
-'  <img src="' + SITO + '/tessere-boschi/anteprime/' + casa.k + '.jpg"\n' +
-'       alt="La mappa boschi ' + casa.prep + ' ' + esc(nomeReg) + ': faggete, castagneti, querceti e abetaie colorati per tipo"\n' +
-'       width="1600" height="1000" loading="lazy"\n' +
-'       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">\n' +
-'  <span class="vai-mappa">Guarda i boschi ' + esc(z.dove) + ' →</span>\n' +
-'</a>\n' +
-"<p class=\"nota\">La fonte è " + esc(fonteNota(casa.k)) + ": dice che bosco c'è, non se\n" +
-"quest'anno ci sono nati funghi. Per quello servono la pioggia di questa pagina e un giro a piedi.</p>\n\n"
-: '') +
-'<h2>Sta piovendo adesso?</h2>\n' +
-"<p>Questa pagina conta i millimetri dei giorni <b>già chiusi</b>: la giornata di oggi è esclusa,\n" +
-"perché i pluviometri la stanno ancora misurando. Per la pioggia <b>in corso</b> c'è la diretta\n" +
-'radar, che mostra dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti\n' +
-'seguenti.</p>\n' +
-'<a href="' + SITO + '/?r=' + casa.k + '&amp;' + PIN + '&amp;radar=ora" style="display:block;text-decoration:none;"\n' +
-'   onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'zona-' + zslug + '-radar\'})}catch(e){}">\n' +
-'  <span class="vai-mappa">Guarda il radar della pioggia ' + esc(z.dove) + ' →</span>\n' +
-'</a>\n' +
-"<p class=\"nota\">⚠️ Il radar <b>non è un pluviometro</b>: è una misura presa dal cielo, a 2 km di\n" +
-'risoluzione, e inquadra tutta la regione. Serve a vedere <i>dove</i> sta piovendo adesso, non a\n' +
-'contare quanta acqua è caduta. I millimetri di questa pagina restano quelli misurati a terra\n' +
-'da ' + esc(elenco(agenzie)) + '.</p>\n\n' +
-'<h2 style="margin-bottom:12px">Come scegliamo i pluviometri di una zona</h2>\n' +
-'<div class="metodo">\n' +
-'  <div><span class="n">1</span><b>Ognuno va alla zona più vicina, e a una sola.</b> Non un cerchio\n' +
-'  di tot chilometri: quello sarebbe un numero deciso a tavolino, e cambiandolo cambierebbe la\n' +
-'  zona. Così invece nessun pluviometro finisce in due zone insieme.</div>\n' +
-'  <div><span class="n">2</span><b>Solo posti da bosco.</b> Pluviometro vero, quota fra 200 e 1600\n' +
-'  metri, almeno il 37% di bosco entro 3 km sulle mappe di OpenStreetMap.</div>\n' +
-'  <div><span class="n">3</span><b>Almeno tre.</b> Sotto i tre pluviometri una zona non ha una\n' +
-'  pagina: un numero solo non racconta una valle.</div>\n' +
-'</div>\n\n' +
-(RITRATTO ? '<h2 style="margin-top:30px">Quanto piove ' + esc(z.dove) + ', secondo il nostro archivio</h2>\n' +
-  '<p>In cima alla pagina c\'è la finestra corta, quella che serve per i funghi. Ma di questi pluviometri\n' +
-  'teniamo tutti i giorni da quando li leggiamo. Da ' + meseIso(RITRATTO.dal) + ' a ' + meseIso(RITRATTO.al) +
-  ', in ' + RITRATTO.giorni + ' giorni di misura, i ' + RITRATTO.quanti + ' pluviometri ' +
-  esc(diZona(z.dove)) + (RITRATTO.quanti < z.posti.length ? ' che leggiamo dallo stesso giorno' : '') +
-  ' hanno contato <b>' + migliaia(RITRATTO.media) + ' mm</b> di pioggia a testa,\n' +
-  'in media. Il più bagnato è <b>' + esc(RITRATTO.alto.n) + '</b> con ' + migliaia(RITRATTO.alto.c.mm) +
-  ' mm, il più asciutto ' + esc(RITRATTO.basso.n) + ' con ' + migliaia(RITRATTO.basso.c.mm) + '.</p>\n' +
-  '<p>La giornata più violenta di tutto l\'archivio è stata il <b>' + dataBella(RITRATTO.forte.c.maxData) +
-  '</b> a ' + esc(RITRATTO.forte.n) + ', con <b>' + virgola(RITRATTO.forte.c.maxMm) + ' mm</b> in\n' +
-  'ventiquattro ore.</p>\n' +
-  '<p class="nota">Non è una media climatica: è quello che questi strumenti hanno misurato in quei\n' +
-  'giorni, e basta. L\'archivio parte dal ' + dataBella(RITRATTO.dal) + ' e si allunga di un giorno al\n' +
-  'giorno.</p>\n\n' : '') +
-'<div class="avviso">\n' +
-'  <b>Una cosa da tenere a mente.</b> Tanta pioggia non vuol dire tanti funghi: contano anche la\n' +
-'  temperatura, il vento e il tipo di bosco. <b>La temperatura e il vento ce li abbiamo:</b>\n' +
-'  clicca un pluviometro sulla mappa e vedi il suo storico, giorno per giorno, insieme alla pioggia.\n' +
-'</div>\n\n' +
-'<h2 style="margin-top:30px">Le altre zone ' + esc(casa.prep === 'in' ? 'della ' + nomeReg : casa.prep + ' ' + nomeReg) + '</h2>\n' +
-'<nav class="altre"><p>' +
+<header>
+  <a href="${SITO}/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
+  <a class="yt" href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener"
+     onclick="try{gtag('event','click_youtube',{pulsante:'zona-${casa.k}'})}catch(e){}">▶ <span class="yt-l">Canale </span>YouTube</a>
+</header>
+
+<main>
+<p class="nota" style="margin-bottom:6px"><a href="${SITO}/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="${SITO}/funghi/${casa.k}/" style="color:var(--blu)">${esc(nomeReg)}</a></p>
+
+<h1>Funghi ${esc(z.dove)} oggi: stanno nascendo?</h1>
+${rigaStagione()}
+
+<div id="attesa">Sto leggendo i pluviometri…</div>
+<div id="guasto"></div>
+<div id="verdetto"></div>
+
+<h2>Le piogge degli ultimi 25 giorni</h2>
+<div id="grafico"></div>
+<p class="nota" id="ieri"></p>
+
+<h2 id="h-conta">Però attenzione: la pioggia che conta è quella caduta da 13 a 20 giorni fa</h2>
+<p class="breve" id="p-conta">Il fungo spunta 12-13 giorni dopo una bella pioggia: i funghi di oggi nascono da queste otto giornate.</p>
+<div id="finestra"></div>
+
+<h2>Com'è andata intorno? Apri le mappe</h2>
+<div class="tasti">
+  <a class="forte" id="t-conta" href="${SITO}/?r=${REGS}&amp;g=20&amp;${PIN_A}">13-20 gg fa</a>
+  <a href="${SITO}/?r=${REGS}&amp;g=1&amp;${PIN_A}">Ieri</a>
+  <a href="${SITO}/?r=${REGS}&amp;g=7&amp;${PIN_A}">Ultimi 7 gg</a>
+  <a href="${SITO}/?r=${REGS}&amp;g=20&amp;${PIN_A}">Ultimi 20 gg</a>
+  <a href="${SITO}/?r=${REGS}&amp;g=30&amp;${PIN_A}">Ultimi 30 gg</a>
+  <a href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;radar=ora"
+     onclick="try{gtag('event','apri_mappa',{da:'zona-${zslug}-radar'})}catch(e){}">📡 Radar adesso</a>
+</div>
+<p class="breve">La pioggia degli ultimi 20 giorni ${casa.prep} ${esc(nomeReg)}, stazione per stazione.</p>
+<a href="${SITO}/?r=${REGS}&amp;g=20&amp;${PIN_A}" id="lnk-pioggia"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-${zslug}-20gg'})}catch(e){}">
+  <img class="img-mappa" src="${ANTEPRIME}/${casa.k}.jpg" alt="La mappa delle piogge ${casa.prep} ${esc(nomeReg)}"
+       width="1600" height="1000" loading="lazy"></a>
+
+<h2 style="font-size:18px">I pluviometri della zona, dal più bagnato</h2>
+<table class="vic"><thead><tr><th>Località</th><th>13-20 gg fa</th><th>Ultimi 7</th><th class="tagl">Ultimi 25</th></tr></thead>
+<tbody id="tabella">
+${righeTab}
+</tbody></table>
+<p class="nota">Ogni nome porta alla sua pagina, con la pioggia giorno per giorno.</p>
+
+<div id="meteo"></div>
+
+${haBoschi(casa.k) ? `<h2>Che boschi ci sono nella zona</h2>
+<p class="breve">Faggete, castagneti, querceti e abetaie colorati per tipo, con il rilievo sotto.</p>
+<a href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;boschi=1" style="display:block;text-decoration:none;"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-${zslug}-boschi'})}catch(e){}">
+  <img class="img-mappa" src="${SITO}/tessere-boschi/anteprime/${casa.k}.jpg"
+       alt="La mappa boschi ${casa.prep} ${esc(nomeReg)}: faggete, castagneti, querceti e abetaie colorati per tipo"
+       width="1600" height="1000" loading="lazy">
+  <span class="vai-mappa">🌲 Guarda i boschi ${esc(z.dove)}</span>
+</a>
+<p class="nota">La pioggia dice quando andare, il bosco dice dove. I boschi vengono da ${esc(fonteNota(casa.k))}.</p>
+` : ''}
+<div class="noioso">
+<h2>Come funziona questa pagina</h2>
+<p>I millimetri li misurano i <b>${z.posti.length} pluviometri</b> di ${esc(elenco(agenzie))} nelle zone
+da bosco ${esc(diZona(z.dove))}: quota fra 200 e 1600 metri e almeno il 37% di bosco entro 3 km.
+I numeri in cima sono la media dei pluviometri, giorno per giorno. Ogni pluviometro va alla zona più
+vicina, e a una sola. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>
+<p>Perché da 13 a 20 giorni fa: dopo una pioggia il fungo impiega almeno dodici o tredici giorni
+a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due settimane.</p>
+<p>Ti serve un altro periodo? Per ieri e gli ultimi 30 giorni c’è
+<a href="${SITO}/zone/${zslug}/">dove ha piovuto ${esc(z.dove)}</a>.</p>
+${RITRATTO ? `<h2>L'archivio della zona</h2>
+<p>Da ${meseIso(RITRATTO.dal)} a ${meseIso(RITRATTO.al)}, in ${RITRATTO.giorni} giorni di misura, i ${RITRATTO.quanti} pluviometri
+${esc(diZona(z.dove))}${RITRATTO.quanti < z.posti.length ? ' che leggiamo dallo stesso giorno' : ''} hanno contato
+<b>${migliaia(RITRATTO.media)} mm</b> di pioggia a testa, in media. Il più bagnato è <b>${esc(RITRATTO.alto.n)}</b> con
+${migliaia(RITRATTO.alto.c.mm)} mm, il più asciutto ${esc(RITRATTO.basso.n)} con ${migliaia(RITRATTO.basso.c.mm)}.
+La giornata più piovosa è stata il <b>${dataBella(RITRATTO.forte.c.maxData)}</b> a ${esc(RITRATTO.forte.n)},
+con <b>${virgola(RITRATTO.forte.c.maxMm)} mm</b>.</p>` : ''}
+<p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
+valgono regole proprie.</p>
+<p>Dati di ${esc(elenco(agenzie))} via il nostro archivio. Il bosco entro 3 km è calcolato su dati
+OpenStreetMap, licenza ODbL.</p>
+</div>
+<p style="margin:22px 0 4px;"><a href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;text-decoration:none;"
+   onclick="try{gtag('event','click_youtube',{pulsante:'zona-fondo-${casa.k}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
+
+<h2 style="margin-top:30px">Le altre zone ${esc(casa.prep === 'in' ? 'della ' + nomeReg : casa.prep + ' ' + nomeReg)}</h2>
+<nav class="altre"><p>${
   ZONE.filter(x => x.reg === z.reg && x.n !== z.n)
       .sort((a, b) => a.n.localeCompare(b.n, 'it'))
-      .map(x => '<a href="' + SITO + '/funghi/zone/' + slug(x.n) + '/">' + esc(x.n) + '</a>').join(' · ') +
-  (ZONE.filter(x => x.reg === z.reg && x.n !== z.n).length ? '' : "<span class=\"nota\">È l'unica zona di questa regione.</span>") +
-'</p></nav>\n\n' +
-'<p class="nota" style="margin-top:22px">Dati di ' + esc(elenco(agenzie)) + ' via il nostro archivio. Il\n' +
-'bosco è calcolato su dati OpenStreetMap, licenza ODbL.</p>\n' +
-'</main>\n\n' +
-'<footer>\n' +
-'  <a href="' + SITO + '/">Mappa delle piogge</a> ·\n' +
-'  <a href="' + SITO + '/' + casa.k + '/">Dove ha piovuto ' + casa.prep + ' ' + esc(nomeReg) + '</a> ·\n' +
-'  <a href="' + SITO + '/funghi/' + casa.k + '/">Piogge per funghi ' + casa.prep + ' ' + esc(nomeReg) + '</a> ·\n' +
-'  <a href="' + SITO + '/fonti.html">tutte le fonti e licenze</a><br>\n' +
-'  La mappa copre Italia, Svizzera, Austria, Francia e Slovenia — 5000+ stazioni.\n' +
-'</footer>\n\n' +
-'<script>\n(function(){\n' +
-'  var SITO = ' + JSON.stringify(SITO) + ', MAPPA = SITO + "/";\n' +
-'  var ZONA = ' + JSON.stringify(z.n) + ', DOVE = ' + JSON.stringify(z.dove) + ';\n' +
-'  var CASA = ' + JSON.stringify(casa.k) + ', REGIONI = ' + JSON.stringify(regioni) + ';\n' +
-'  var REGS = ' + JSON.stringify(REGS) + ', ZNOME = ' + JSON.stringify(z.n) + ';\n' +
-'  var LAT = ' + z.lat + ', LON = ' + z.lon + ';\n' +
-'  /* [ id, nome, sigla, quota, lat, lon, slug, regione ] */\n' +
-'  var POSTI = ' + JSON.stringify(anag) + ';\n' +
-'  var LOCALE = /^(localhost|127\\.0\\.0\\.1|\\[::1\\])$/.test(location.hostname);\n' +
-'  var BASE = LOCALE ? "/data/"\n' +
-'    : "https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/";\n' +
-'  var FORTE = 30, GIORNI = 25;\n\n' +
-'  var MESI=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];\n' +
-'  function iso(d){ var p=function(n){return String(n).padStart(2,"0");};\n' +
-'    return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()); }\n' +
-'  function menoDa(s,n){ var p=String(s).split("-");\n' +
-'    var d=new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return d; }\n' +
-'  function gg(s){ var p=String(s).split("-"); return (+p[2])+" "+MESI[(+p[1])-1]; }\n' +
-'  function esc(t){ return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }\n' +
-'  function uno(n){ return Math.round(n*10)/10; }\n' +
-'  function num(n){ return uno(n).toFixed(1).replace(".", ","); }\n' +
-'  function somma(s,da,a){ var t=0; for(var n=da;n>=a;n--) t += (s[n-1]||0); return uno(t); }\n\n' +
-'  /* Stessa regola delle altre pagine: un giro saltato si perdona, due no. */\n' +
-'  function fresco(j){\n' +
-'    if(!j || !j.generato || !j.serie || !j.oggi) return false;\n' +
-'    var eta = Date.now() - new Date(j.generato).getTime();\n' +
-'    return eta >= 0 && eta < 36*3600*1000;\n' +
-'  }\n\n' +
-'  /* ⚠️ UNA ZONA STA ANCHE A CAVALLO DI PIU REGIONI, quindi qui i file sono\n' +
-'     da uno a quattro. Si aspettano tutti e si uniscono le serie; se ne manca\n' +
-'     anche uno solo si va sul guasto: una classifica a cui manca meta\n' +
-'     valle vale meno di nessuna classifica. */\n' +
-'  Promise.all(REGIONI.map(function(k){\n' +
-'    return fetch(BASE + "funghi/" + k + "-giorni.json")\n' +
-'      .then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; });\n' +
-'  })).then(function(js){\n' +
-'    var buoni = js.filter(function(j){ return j && fresco(j); });\n' +
-'    if(buoni.length !== REGIONI.length) return guasto();\n' +
-'    var serie = {}, oggi = null, forti = {}, fino = null, tetto = null;\n' +
-'    buoni.forEach(function(j){ Object.keys(j.serie).forEach(function(id){ serie[id] = j.serie[id]; });\n' +
-'                               var f = j.forte || {};\n' +
-'                               Object.keys(f).forEach(function(id){ forti[id] = f[id]; });\n' +
-'                               /* ⚠️ Fin dove si e\' guardato indietro: se la zona sta a cavallo\n' +
-'                                  di due regioni con archivi lunghi diversi vale il PIU CORTO,\n' +
-'                                  se no si prometterebbe una ricerca che per meta della valle\n' +
-'                                  non e stata fatta. */\n' +
-'                               if(j.cercatoFino && (fino === null || j.cercatoFino < fino)) fino = j.cercatoFino;\n' +
-'                               if(j.tetto && (tetto === null || j.tetto < tetto)) tetto = j.tetto;\n' +
-'                               if(!oggi || j.oggi < oggi) oggi = j.oggi; });\n' +
-'    var righe = POSTI.filter(function(p){ return serie[p[0]]; });\n' +
-'    if(righe.length < 2) return guasto();\n' +
-'    disegna(serie, oggi, righe, forti, fino, tetto);\n' +
-'  }).catch(function(){ guasto(); });\n\n' +
-'  function guasto(){\n' +
-'    document.getElementById("attesa").style.display="none";\n' +
-'    var g=document.getElementById("guasto");\n' +
-'    g.style.display="block";\n' +
-'    g.innerHTML="⚠️ Non riesco a leggere l’archivio delle piogge in questo momento. Non dipende "\n' +
-'      + "da te: riprova fra qualche minuto, oppure vai direttamente "\n' +
-'      + "<a href=\\"" + MAPPA + "?r=" + REGS + "\\">sulla mappa</a>.";\n' +
-'  }\n\n' +
-'  function disegna(serie, oggi, righe, forti, fino, tetto){\n' +
-'    var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13)), a20 = iso(menoDa(oggi,1));\n' +
-'    var dati = righe.map(function(p){\n' +
-'      var s = serie[p[0]];\n' +
-'      /* ⚠️ L ULTIMA PIOGGIA FORTE ARRIVA DAL FILE, non si cerca nella serie.\n' +
-'         La serie e di 25 giorni: cercandola li dentro, una valle asciutta da\n' +
-'         un mese risponderebbe «mai» invece di «trentadue giorni fa». Il\n' +
-'         generatore la cerca fino a 150 giorni indietro e scrive due numeri. */\n' +
-'      var ff = forti && forti[p[0]];\n' +
-'      var forte = ff ? {g:ff[0], mm:ff[1]} : null;\n' +
-'      return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5], slug:p[6], reg:p[7],\n' +
-'               mm:somma(s,20,13), mm7:somma(s,7,1), mm25:somma(s,GIORNI,1), forte:forte };\n' +
-'    }).sort(function(a,b){ return b.mm - a.mm; });\n\n' +
-'    var med = function(c){ var t=0; dati.forEach(function(x){ t+=x[c]; }); return uno(t/dati.length); };\n' +
-'    var primo = dati[0];\n\n' +
-'    /* ⚠️ IL VALORE DELLA ZONA E LA MEDIANA DEI GIORNI, non il piu recente.\n' +
-'       Col piu recente basterebbe un temporale su un pluviometro solo per\n' +
-'       dichiarare bagnata tutta la valle, e per i funghi conta che l acqua\n' +
-'       sia arrivata dappertutto. Chi non ne ha mai avuta una entra nel conto\n' +
-'       come «piu indietro di tutti», cosi non sparisce e non falsa la meta. */\n' +
-/* ⚠️ NON chiamarla `gg`: nella pagina esiste gia' una funzione `gg(data)` che
-   scrive «21 agosto», e una var dentro disegna la coprirebbe per tutta la
-   funzione. Costava un «gg is not a function» inghiottito dal .catch, che in
-   pagina si vede solo come «non riesco a leggere l'archivio». */
-'    var gForti = dati.map(function(x){ return x.forte ? x.forte.g : 1e9; })\n' +
-'                     .sort(function(a,b){ return a-b; });\n' +
-'    var mez = gForti.length % 2 ? gForti[(gForti.length-1)/2]\n' +
-'                                : Math.round((gForti[gForti.length/2-1] + gForti[gForti.length/2]) / 2);\n' +
-'    var mediaG = mez >= 1e9 ? null : mez;\n' +
-'    function quandoG(n){ return n===1 ? "ieri" : n===2 ? "l\'altro ieri" : n + " giorni fa"; }\n\n' +
-'    function link(x, dal, al){\n' +
-'      /* pl/pn = il segnaposto. Senza, questi bottoni aprivano la mappa sul\n' +
-'         punto giusto ma SENZA la puntina, e chi arriva non sa quale pallino\n' +
-'         sia il suo (segnalato il 3/9/2026). */\n' +
-'      var la = x ? x.lat : LAT, lo = x ? x.lon : LON;\n' +
-'      var nome = x ? x.n : ZNOME;\n' +
-'      /* La stazione cliccata sta in una regione sola, ma la zona no: si\n' +
-'         tengono anche le vicine, la sua per prima. Tetto di 3, il massimo\n' +
-'         che la mappa accetta. */\n' +
-'      var rr = x ? [x.reg].concat(REGS.split(",").filter(function(k){return k!==x.reg;})).slice(0,3).join(",") : REGS;\n' +
-'      return MAPPA + "?r=" + rr + "&da=" + dal + "&a=" + al\n' +
-'        + "&pl=" + la.toFixed(4) + "," + lo.toFixed(4)\n' +
-'        + "&pn=" + encodeURIComponent(nome) + (x ? "" : "&pz=1")\n' +
-'        + "&z=10&c=" + la.toFixed(4) + "," + lo.toFixed(4);\n' +
-'    }\n\n' +
-'    document.getElementById("testa").innerHTML =\n' +
-'      "<div class=\\"capo\\"><div class=\\"et\\">Dove ha piovuto di più " + esc(DOVE) + " fra 13 e 20 giorni fa?</div>"\n' +
-'      + "<div class=\\"gr\\">" + esc(primo.n) + "</div>"\n' +
-'      + "<div class=\\"pic\\">" + num(primo.mm) + " mm, dal " + gg(daG) + " al " + gg(aG) + "</div>"\n' +
-'      + "<div class=\\"capo-btns\\">"\n' +
-'      + "<a class=\\"capo-btn\\" href=\\"" + link(primo, daG, aG) + "\\">Apri mappa · 13-20 gg fa</a>"\n' +
-'      + "<a class=\\"capo-btn\\" href=\\"" + link(null, daG, a20) + "\\">Apri mappa · ultimi 20 gg</a>"\n' +
-'      + "<a class=\\"capo-btn\\" href=\\"" + SITO + "/funghi/zone/\\" style=\\"display:none\\">.</a>"\n' +
-'      + "</div></div>";\n\n' +
-// ⚠️ QUI NON SI RIPETE LA REGOLA DEI 12-13 GIORNI: dal 9/9/2026 sta nelle tre
-// righe in cima, ed e' la prima cosa che si legge. Restano le DATE, che in cima
-// non possono stare perche' cambiano ogni giorno.
-'    document.getElementById("finestra").innerHTML =\n' +
-'      "Qui la pioggia è caduta fra il <b>" + gg(daG) + "</b> e il <b>" + gg(aG) + "</b>, cioè da "\n' +
-'      + "<b>13 a 20 giorni fa</b>. Sono millimetri misurati a terra dai pluviometri, non una "\n' +
-'      + "previsione.";\n\n' +
-'    document.getElementById("tre").innerHTML =\n' +
-'      "<div><div class=\\"et\\">Media 13-20 giorni fa</div><div class=\\"n\\">" + num(med("mm")) + " mm</div></div>"\n' +
-'      + "<div><div class=\\"et\\">Media ultimi 7 giorni</div><div class=\\"n\\">" + num(med("mm7")) + " mm</div></div>"\n' +
-'      + "<div><div class=\\"et\\">Media ultimi 25 giorni</div><div class=\\"n\\">" + num(med("mm25")) + " mm</div></div>"\n' +
-'      + "<div class=\\"secco\\"><div class=\\"et\\">Ultima pioggia sopra i " + FORTE + " mm</div>"\n' +
-'        + "<div class=\\"n\\">" + (mediaG === null ? "mai" : quandoG(mediaG)) + "</div></div>";\n\n' +
-'    document.getElementById("notamedia").innerHTML =\n' +
-'      "Medie sui <b>" + dati.length + " pluviometri</b> da bosco della zona. Il più bagnato nella "\n' +
-'      + "finestra dei funghi è <b>" + esc(primo.n) + "</b> con " + num(primo.mm) + " mm, il più asciutto "\n' +
-'      + "<b>" + esc(dati[dati.length-1].n) + "</b> con " + num(dati[dati.length-1].mm) + ".";\n\n' +
-'    /* ⚠️ La tabella e\' GIA\' NELL\'HTML, coi nomi e i link verso le pagine\n' +
-'       di paese: qui si riempiono le caselle e si RIORDINA dal più bagnato,\n' +
-'       spostando le righe. Rifacendola con innerHTML si cancellerebbero i link\n' +
-'       dalla pagina che Google ha in mano dopo il rendering. */\n' +
-'    var corpo = document.getElementById("tabella");\n' +
-'    var perId = {};\n' +
-'    for (var iv = 0; iv < dati.length; iv++) perId[dati[iv].id] = dati[iv];\n' +
-'    var trs = corpo ? [].slice.call(corpo.querySelectorAll("tr[data-id]")) : [];\n' +
-'    for (var it = 0; it < trs.length; it++) {\n' +
-'      var d = perId[trs[it].getAttribute("data-id")];\n' +
-'      var cel = trs[it].querySelectorAll(".mm .v");\n' +
-'      if (cel.length < 3) continue;\n' +
-'      if (!d) { for (var ic = 0; ic < 3; ic++) { cel[ic].textContent = "—"; cel[ic].className = "v zero"; } continue; }\n' +
-'      cel[0].textContent = d.mm > 0 ? num(d.mm) : "—";  cel[0].className = d.mm > 0 ? "v" : "v zero";\n' +
-'      cel[1].textContent = d.mm7 > 0 ? num(d.mm7) : "—"; cel[1].className = d.mm7 > 0 ? "v" : "v zero";\n' +
-'      cel[2].textContent = num(d.mm25); cel[2].className = "v";\n' +
-'    }\n' +
-'    trs.sort(function(a, b){\n' +
-'      var x = perId[a.getAttribute("data-id")], y = perId[b.getAttribute("data-id")];\n' +
-'      return (y ? y.mm : -1) - (x ? x.mm : -1);\n' +
-'    });\n' +
-'    for (var iq = 0; iq < trs.length; iq++) corpo.appendChild(trs[iq]);\n\n' +
-'    /* ⚠️ QUI SI DICE «DA QUANTO NON PIOVE SUL SERIO», e la frase e cambiata\n' +
-'       l 11/9/2026: prima diceva «negli ultimi 25 giorni ne hanno avuta N su\n' +
-'       M», che con la ricerca estesa a 150 giorni sarebbe diventata FALSA\n' +
-'       senza dare nessun errore. Adesso dice da quanto, che era la domanda. */\n' +
-'    document.getElementById("notaforte").innerHTML =\n' +
-'      "«Pioggia forte» vuol dire almeno " + FORTE + " mm in un giorno solo: è quella che bagna "\n' +
-'      + "davvero il terreno, mentre sotto quella soglia l’acqua resta nella lettiera e se ne va. "\n' +
-'      + (mediaG === null\n' +
-'         ? "In " + ZONA + " più di metà dei <b>" + dati.length + " pluviometri</b> non ne vede una "\n' +
-'           + "da almeno <b>" + (fino || GIORNI) + " giorni</b>"\n' +
-/* ⚠️ Due frasi diverse, e la differenza e' vera: fermarsi al nostro tetto
-   di 150 giorni non vuol dire che l'archivio finisca li'. Scriverlo come
-   «da quando abbiamo archivio» sarebbe falso su mezzo nord. */
-'           + (tetto && fino >= tetto ? ", che è fin dove siamo andati a guardare. "\n' +
-'                                     : ", cioè da quando abbiamo archivio qui. ")\n' +
-'         : "In " + ZONA + " l’ultima è di <b>" + quandoG(mediaG) + "</b>, il valore di mezzo fra i "\n' +
-'           + "<b>" + dati.length + " pluviometri</b> della zona: metà l’ha avuta più di recente, "\n' +
-'           + "metà più indietro. ")\n' +
-'      + "Ogni nome della tabella porta alla sua pagina, con la pioggia giorno per giorno.";\n\n' +
-'    document.getElementById("attesa").style.display = "none";\n' +
-'  }\n' +
-'}());\n</script>\n</body>\n</html>\n';
+      .map(x => '<a href="' + SITO + '/funghi/zone/' + slug(x.n) + '/">' + esc(x.n) + '</a>').join(' · ')
+  || '<span class="nota">È l’unica zona di questa regione.</span>'
+}</p></nav>
+</main>
+
+<footer>
+  <a href="${SITO}/">Mappa delle piogge</a> ·
+  <a href="${SITO}/${casa.k}/">Dove ha piovuto ${casa.prep} ${esc(nomeReg)}</a> ·
+  <a href="${SITO}/funghi/${casa.k}/">Piogge per funghi ${casa.prep} ${esc(nomeReg)}</a> ·
+  <a href="${SITO}/fonti.html">tutte le fonti e licenze</a><br>
+  La mappa copre Italia, Svizzera, Austria, Francia e Slovenia — 5000+ stazioni.
+</footer>
+
+<script>
+(function(){
+  var SITO = ${JSON.stringify(SITO)}, MAPPA = SITO + "/";
+  var ZONA = ${JSON.stringify(z.n)}, DOVE = ${JSON.stringify(z.dove)};
+  var REGIONI = ${JSON.stringify(regioni)}, REGS = ${JSON.stringify(REGS)};
+  var LAT = ${z.lat}, LON = ${z.lon};
+  /* [ id, nome, sigla, quota, lat, lon, slug, regione ] */
+  var POSTI = ${JSON.stringify(anag)};
+  var LOCALE = /^(localhost|127\\.0\\.0\\.1|\\[::1\\])$/.test(location.hostname);
+  var BASE = LOCALE ? "/data/"
+    : "https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/";
+${JS_COMUNE}
+
+  function fresco(j){
+    if(!j || !j.generato || !j.serie || !j.oggi) return false;
+    var eta = Date.now() - new Date(j.generato).getTime();
+    return eta >= 0 && eta < 36*3600*1000;
+  }
+  /* ⚠️ UNA ZONA STA ANCHE A CAVALLO DI PIU REGIONI: i file sono da uno a
+     quattro, si aspettano tutti e si uniscono. Se ne manca uno si va sul
+     guasto: una media a cui manca meta valle vale meno di nessuna. */
+  Promise.all(REGIONI.map(function(k){
+    return fetch(BASE + "funghi/" + k + "-giorni.json")
+      .then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; });
+  })).then(function(js){
+    var buoni = js.filter(function(j){ return j && fresco(j); });
+    if (buoni.length !== REGIONI.length) return guasto();
+    var serie = {}, serieT = {}, oggi = null;
+    buoni.forEach(function(j){
+      Object.keys(j.serie).forEach(function(id){ serie[id] = j.serie[id]; });
+      Object.keys(j.serieT || {}).forEach(function(id){ serieT[id] = j.serieT[id]; });
+      if (!oggi || j.oggi < oggi) oggi = j.oggi;
+    });
+    var righe = POSTI.filter(function(p){ return serie[p[0]]; });
+    if (righe.length < 2) return guasto();
+    disegna(serie, serieT, oggi, righe);
+  }).catch(function(){ guasto(); });
+
+  function guasto(){
+    document.getElementById("attesa").style.display = "none";
+    var g = document.getElementById("guasto");
+    g.style.display = "block";
+    g.innerHTML = "⚠️ Non riesco a leggere l’archivio delle piogge in questo momento. Non dipende "
+      + "da te: riprova fra qualche minuto, oppure vai direttamente "
+      + "<a href=\\"" + MAPPA + "?r=" + REGS + "\\">sulla mappa</a>.";
+  }
+
+  function link(dal, al){
+    return MAPPA + "?r=" + REGS + "&da=" + dal + "&a=" + al
+      + "&pl=" + LAT.toFixed(4) + "," + LON.toFixed(4) + "&pn=" + encodeURIComponent(ZONA) + "&pz=1"
+      + "&z=10&c=" + LAT.toFixed(4) + "," + LON.toFixed(4);
+  }
+
+  function disegna(serie, serieT, oggi, righe){
+    document.getElementById("attesa").style.display = "none";
+    /* la serie della ZONA: media dei pluviometri, giorno per giorno. Un
+       giorno senza dato non e uno zero: si media su chi c e. */
+    var s = [];
+    for (var i = 0; i < GIORNI; i++) {
+      var t = 0, n = 0;
+      righe.forEach(function(p){ var v = serie[p[0]][i]; if (v != null) { t += v; n++; } });
+      s.push(n ? uno(t / n) : 0);
+    }
+    var sT = [];
+    for (var i2 = 0; i2 < GIORNI; i2++) {
+      var a = 0, b = 0, n2 = 0;
+      righe.forEach(function(p){ var v = (serieT[p[0]] || [])[i2]; if (v) { a += v[0]; b += v[1]; n2++; } });
+      sT.push(n2 ? [uno(a / n2), uno(b / n2)] : null);
+    }
+    var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13)), ieri = iso(menoDa(oggi,1));
+    scriviVerdetto(s, oggi, link(daG, ieri), "in media, negli ultimi 20 giorni");
+    var ax = scriviBarre(s, oggi);
+    document.getElementById("ieri").innerHTML = "Ieri, " + gg(ieri) + ": in media <b>" + num(s[0]) + " mm</b> sui "
+      + righe.length + " pluviometri della zona.";
+    scriviFinestra(s, oggi, null, "in media");
+    document.getElementById("t-conta").href = link(daG, aG);
+    document.getElementById("lnk-pioggia").href = link(daG, ieri);
+    if (sT.some(function(x){ return x; })) scriviTemperatura(sT, ax, "media dei pluviometri della zona");
+
+    /* ⚠️ La tabella e GIA NELL HTML coi link: qui si riempiono le caselle e si
+       RIORDINA dal piu bagnato spostando le righe, senza innerHTML. */
+    var dati = {};
+    righe.forEach(function(p){ var ss = serie[p[0]]; dati[p[0]] = { mm: somma(ss,20,13), mm7: somma(ss,7,1), mm25: somma(ss,GIORNI,1) }; });
+    var corpo = document.getElementById("tabella");
+    var trs = [].slice.call(corpo.querySelectorAll("tr[data-id]"));
+    var mx = 1; Object.keys(dati).forEach(function(id){ mx = Math.max(mx, dati[id].mm); });
+    trs.forEach(function(tr){
+      var d = dati[tr.getAttribute("data-id")], cel = tr.querySelectorAll(".mm .v");
+      if (cel.length < 3) return;
+      if (!d) { for (var c = 0; c < 3; c++) { cel[c].textContent = "—"; cel[c].className = "v zero"; } return; }
+      cel[0].textContent = d.mm > 0 ? num(d.mm) + " mm" : "—"; cel[0].className = d.mm > 0 ? "v" : "v zero";
+      if (d.mm > 0) { var ba = document.createElement("span"); ba.className = "barra";
+        ba.style.width = Math.round(d.mm / mx * 100) + "%"; cel[0].parentNode.insertBefore(ba, cel[0]); }
+      cel[1].textContent = d.mm7 > 0 ? num(d.mm7) : "—"; cel[1].className = d.mm7 > 0 ? "v" : "v zero";
+      cel[2].textContent = num(d.mm25); cel[2].className = "v";
+    });
+    trs.sort(function(x, y){
+      var a2 = dati[x.getAttribute("data-id")], b2 = dati[y.getAttribute("data-id")];
+      return (b2 ? b2.mm : -1) - (a2 ? a2.mm : -1);
+    });
+    trs.forEach(function(tr){ corpo.appendChild(tr); });
+  }
+}());
+</script>
+</body>
+</html>
+`;
 }
 
 if (require.main === module) {

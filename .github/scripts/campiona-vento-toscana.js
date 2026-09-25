@@ -85,6 +85,13 @@ function calcolaW(doc) {
     let raff = Math.max(...camp.map(c => c[2]).filter(x => x != null && x >= 0 && x < 90), -1);
     const rmi = doc.raffMaxIeri && doc.raffMaxIeri[id];
     if (rmi != null && rmi >= 0 && rmi < 90) raff = Math.max(raff, rmi);
+    // ⚠️ UNA RAFFICA NON PUO' STARE SOTTO LA MEDIA DELLA GIORNATA (29/8/2026).
+    //    Se ci sta, non e' una misura: e' un dato mancante scritto come numero.
+    //    La colonna «Raff. Max ieri» del CFR restituisce 0 quando il valore non
+    //    c'e', e quello 0 arrivava in mappa come «raffica 0 km/h» accanto a 7,3
+    //    km/h di media — 22 stazioni-giorno ad agosto, il 2,7%. E' la lezione di
+    //    Alpe Gorreto: assente non e' zero. Meglio ammettere di non sapere.
+    if (raff >= 0 && raff < media) raff = -1;
     w[id] = [Math.round(media * 3.6 * 10) / 10, raff >= 0 ? Math.round(raff * 3.6 * 10) / 10 : null];
   }
   return w;

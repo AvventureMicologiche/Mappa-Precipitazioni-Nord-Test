@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Funghi al Monte Cucco oggi: piogge per funghi</title>
-<meta name="description" content="Funghi al Monte Cucco oggi: la pioggia caduta da 13 a 20 giorni fa, la finestra che conta, misurata dal pluviometro di MeteoHub. Aggiornato ogni giorno.">
+<title>Funghi al Monte Cucco oggi: stanno nascendo?</title>
+<meta name="description" content="Stanno nascendo funghi al Monte Cucco? Le piogge degli ultimi 25 giorni, giorno per giorno, dal pluviometro di MeteoHub a 1117 metri. Aggiornato ogni mattina.">
 <link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/umbria/monte-cucco/">
-<meta property="og:title" content="Funghi al Monte Cucco oggi">
-<meta property="og:description" content="La pioggia vera, misurata dal pluviometro, giorno per giorno.">
+<meta property="og:title" content="Funghi al Monte Cucco oggi: stanno nascendo?">
+<meta property="og:description" content="Le piogge degli ultimi 25 giorni, misurate dal pluviometro, giorno per giorno.">
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/umbria/monte-cucco/">
 <meta property="og:type" content="website">
@@ -23,10 +23,14 @@ if(/(^|\.)avventuremicologiche\.it$/.test(location.hostname))gtag('config','G-9R
 :root{--blu:#1b3f6e;--blu-scuro:#123252;--grigio:#f0f4fb;--bordo:#d0d8e8;--verde:#2e7d32;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#222;background:#fff;font-size:17px;line-height:1.6;}
-header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:nowrap;}
 header a{color:#fff;text-decoration:none;}
-header .logo{font-weight:600;font-size:15px;}
-header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;}
+header .logo{font-weight:600;font-size:15px;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;flex:none;}
+/* ⚠️ 25/9/2026, sua schermata da Android: sotto i ~430 px logo e tasto rosso
+   non ci stavano sulla stessa riga e il tasto andava a capo, raddoppiando la
+   testata. Sul telefono via «· piogge» e «Canale»: resta «▶ YouTube». */
+@media(max-width:440px){header{padding:10px 12px;gap:8px;} header .logo span,header .yt .yt-l{display:none;}}
 main{max-width:860px;margin:0 auto;padding:22px 16px 40px;}
 h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
 h2{color:var(--blu-scuro);font-size:21px;margin:32px 0 8px;}
@@ -147,6 +151,56 @@ nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2p
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
 
+.gg{display:flex;align-items:flex-end;gap:3px;height:150px;margin:14px 0 4px;}
+.gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
+.gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
+.gg .b.dentro i{background:var(--blu);}
+.gg .b b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10.5px;
+  font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
+.gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
+.gg-x span{flex:1;text-align:center;}
+.gg-leg{font-size:13.5px;color:#555;margin-top:8px;}
+.gg-leg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
+.tt-box{position:relative;padding-right:42px;margin:14px 0 2px;}
+.tt{width:100%;height:150px;display:block;overflow:visible;}
+.tt .griglia{stroke:#e6eaf0;stroke-width:1;vector-effect:non-scaling-stroke;}
+.tt polyline{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+.tt .max{stroke:#d1603d;}
+.tt .min{stroke:#3a6ea8;}
+.tt-y{position:absolute;top:0;right:0;width:42px;height:150px;pointer-events:none;}
+.tt-y span{position:absolute;right:0;transform:translateY(-50%);font-size:11px;color:#6b7a8d;line-height:1;padding-left:5px;}
+.tt-x{padding-right:42px;}
+.vic td:last-child,.vic th:last-child{text-align:right;}
+.vic .qui{background:#eef4fd;}
+.verdetto{background:#0f2d4d;color:#fff;border-radius:12px;padding:18px 18px 16px;margin:14px 0 8px;}
+.verdetto .si{font-size:27px;font-weight:800;line-height:1.2;}
+.verdetto .pallino{display:inline-block;width:15px;height:15px;border-radius:50%;margin-right:9px;vertical-align:2px;}
+.verdetto .gr{font-size:44px;font-weight:800;line-height:1.1;margin-top:10px;}
+.verdetto .gr small{font-size:18px;font-weight:600;opacity:.85;margin-left:6px;}
+.verdetto .dett{font-size:16px;opacity:.9;margin-top:6px;}
+.scala{display:flex;gap:4px;margin-top:14px;}
+.scala div{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.18);}
+.scala-t{display:flex;font-size:11.5px;opacity:.75;margin-top:4px;}
+.scala-t span{flex:1;text-align:center;}
+.breve{font-size:16px;color:#333;margin:6px 0 4px;}
+.fin{display:flex;gap:6px;align-items:flex-end;height:170px;margin:16px 0 4px;}
+.fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
+.fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
+.fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+.fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
+.fin-x span{flex:1;text-align:center;line-height:1.25;}
+.img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
+.tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
+  padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+@media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
+.noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
+.noioso p{margin-bottom:8px;}
+.noioso a{color:var(--blu);}
+
+
 /* ── il grafico giorno per giorno ─────────────────────────────────────── */
 .gg{display:flex;align-items:flex-end;gap:3px;height:150px;margin:14px 0 4px;}
 .gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
@@ -157,7 +211,6 @@ nav.altre a{color:var(--blu);}
 .gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
 .gg-x span{flex:1;text-align:center;}
 .gg-leg{font-size:13.5px;color:#555;margin-top:8px;}
-/* 13/9/2026: la riga dell'intensita' del giorno scelto, e la sua barra */
 .gg-int{font-size:14.5px;color:#333;margin:8px 0 0;}
 .gg-int:empty{display:none;}
 .gg-int b{color:var(--blu-scuro);}
@@ -165,12 +218,8 @@ nav.altre a{color:var(--blu);}
 .gg .b{cursor:pointer;}
 .gg .b.scelto i{box-shadow:0 0 0 2px #f0a000;}
 .gg-leg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
-/* le due linee della temperatura: stessa larghezza del grafico della pioggia,
-   cosi' i giorni stanno incolonnati e si leggono insieme */
-/* ⚠️ LA SCALA STA FUORI DALL'SVG. Il disegno e' stirato in larghezza
-   (preserveAspectRatio="none"): un <text> dentro uscirebbe schiacciato,
-   e per lo stesso motivo il tratto delle linee ha vector-effect. Le
-   tacche sono <span> posizionati in percentuale sopra il disegno. */
+/* ⚠️ LA SCALA STA FUORI DALL'SVG: il disegno e' stirato in larghezza
+   (preserveAspectRatio="none") e un testo dentro uscirebbe schiacciato. */
 .tt-box{position:relative;padding-right:42px;margin:14px 0 2px;}
 .tt{width:100%;height:150px;display:block;overflow:visible;}
 .tt .griglia{stroke:#e6eaf0;stroke-width:1;vector-effect:non-scaling-stroke;}
@@ -178,9 +227,6 @@ nav.altre a{color:var(--blu);}
   vector-effect:non-scaling-stroke;}
 .tt .max{stroke:#d1603d;}
 .tt .min{stroke:#3a6ea8;}
-/* Il vento GIALLO come nel pannello della mappa (#ffd54f di histRenderLinee):
-   stessa grandezza, stesso colore, cosi' chi passa dalla mappa alla pagina non
-   deve reimparare la legenda. */
 .tt .vento{stroke:#ffd54f;}
 .tt-y{position:absolute;top:0;right:0;width:42px;height:150px;pointer-events:none;}
 .tt-y span{position:absolute;right:0;transform:translateY(-50%);font-size:11px;
@@ -188,26 +234,44 @@ nav.altre a{color:var(--blu);}
 .tt-y .tt-u{position:absolute;top:auto;bottom:-19px;right:0;transform:none;
   font-size:11px;color:#8a97a6;}
 .tt-x{padding-right:42px;}
-.tre{display:flex;gap:10px;margin:18px 0 6px;flex-wrap:wrap;}
-.tre > div{flex:1;min-width:150px;background:var(--grigio);border:1px solid var(--bordo);
-  border-radius:9px;padding:12px 14px;}
-/* La quarta casella, «ultima pioggia sopra i 30 mm», e' piu' larga apposta:
-   a 13 px la sua etichetta chiede 170,2 px e una casella normale ne offre
-   169, quindi andava a capo e abbassava il numero rispetto agli altri tre.
-   Si allarga la casella invece di rimpicciolire il testo. Sotto i 600 px va
-   a tutta larghezza, dove le caselle stanno a due a due. Stesse regole in
-   genera-pagine-zona.js: se si toccano qui si toccano anche li'. */
-.tre > div.secco{flex:1.25;border-left:4px solid var(--verde);}
-@media(max-width:600px){.tre > div.secco{flex-basis:100%;}}
-.tre .et{font-size:13px;color:#5a6b80;}
-.tre .n{font-size:26px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}
 .vic td:last-child,.vic th:last-child{text-align:right;}
 .vic .qui{background:#eef4fd;}
 .vic .qui b{color:var(--blu-scuro);}
-/* ⚠️ Il posto corrente dentro l'elenco NON puo' essere un <b>: dentro
-   nav.altre il <b> e' l'intestazione di un gruppo (display:block) e il nome
-   sarebbe andato a capo spezzando l'elenco in due. */
 nav.altre .io{font-weight:700;color:var(--blu-scuro);}
+/* ── 24/9/2026: prima i dati, poi le spiegazioni ───────────────────────── */
+.verdetto{background:#0f2d4d;color:#fff;border-radius:12px;padding:18px 18px 16px;margin:14px 0 8px;}
+.verdetto .si{font-size:27px;font-weight:800;line-height:1.2;}
+.verdetto .pallino{display:inline-block;width:15px;height:15px;border-radius:50%;margin-right:9px;vertical-align:2px;}
+.verdetto .gr{font-size:44px;font-weight:800;line-height:1.1;margin-top:10px;}
+.verdetto .gr small{font-size:18px;font-weight:600;opacity:.85;margin-left:6px;}
+.verdetto .dett{font-size:16px;opacity:.9;margin-top:6px;}
+.scala{display:flex;gap:4px;margin-top:14px;}
+.scala div{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.18);}
+.scala-t{display:flex;font-size:11.5px;opacity:.75;margin-top:4px;}
+.scala-t span{flex:1;text-align:center;}
+.breve{font-size:16px;color:#333;margin:6px 0 4px;}
+.fin{display:flex;gap:6px;align-items:flex-end;height:170px;margin:16px 0 4px;}
+.fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
+.fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
+.fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+.fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
+.fin-x span{flex:1;text-align:center;line-height:1.25;}
+.int{margin-top:12px;border:1px solid var(--bordo);border-radius:9px;overflow:hidden;}
+.int div{padding:9px 13px;border-bottom:1px solid var(--bordo);font-size:15.5px;display:flex;gap:10px;align-items:baseline;}
+.int div:last-child{border-bottom:0;}
+.int .d{min-width:62px;color:#5a6b80;font-size:14px;}
+.int .tag{margin-left:auto;font-size:12.5px;font-weight:700;padding:2px 9px;border-radius:10px;white-space:nowrap;}
+.t-lenta{background:#e3f1e4;color:#2e7d32;} .t-media{background:#fff3d6;color:#8a6100;} .t-forte{background:#fde3df;color:#a33222;}
+.img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
+.tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
+  padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+@media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
+.noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
+.noioso p{margin-bottom:8px;}
+.noioso a{color:var(--blu);}
 </style>
 </head>
 <body>
@@ -215,154 +279,114 @@ nav.altre .io{font-weight:700;color:var(--blu-scuro);}
 <header>
   <a href="https://avventurepluvio-test.netlify.app/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
   <a class="yt" href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener"
-     onclick="try{gtag('event','click_youtube',{pulsante:'localita-umbria'})}catch(e){}">▶ Canale YouTube</a>
+     onclick="try{gtag('event','click_youtube',{pulsante:'localita-umbria'})}catch(e){}">▶ <span class="yt-l">Canale </span>YouTube</a>
 </header>
 
 <main>
-
 <p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="https://avventurepluvio-test.netlify.app/funghi/umbria/" style="color:var(--blu)">Umbria</a></p>
 
 
-<h1>Funghi al Monte Cucco oggi: la pioggia di 13-20 giorni fa</h1>
+<h1>Funghi al Monte Cucco oggi: stanno nascendo?</h1>
 <div id="stagione"></div>
 <script>(function(){var m=new Date().getMonth()+1,t=null;if(m===12||m===1||m===2)t="<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.";else if(m===11||m===3)t="<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in autunno pieno.";if(t){var s=document.getElementById("stagione");s.innerHTML=t;s.style.display="block";}})();</script>
-<p class="sotto">Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
-dodici o tredici giorni. Per questo conta la pioggia di due settimane fa e non quella di ieri.
-I millimetri li misura il pluviometro di MeteoHub: PG · 1117 m slm ·
-53% di bosco entro 3 km.</p>
-
-
-<div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo solo
-gli otto giorni della finestra dei funghi. Per la pioggia di ieri e degli ultimi 30 giorni c’è
-<a href="https://avventurepluvio-test.netlify.app/umbria/" style="color:var(--blu);font-weight:700">dove ha piovuto in Umbria</a>;
-per un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=umbria,marche&amp;g=20&amp;pl=43.375,12.7292&amp;pn=Monte%20Cucco"
-style="color:var(--blu)">apri Monte Cucco sulla mappa</a>.</div>
-
-<div class="patto">
-  <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
-  fa nessuno, e noi non ce la inventiamo.</p>
-  <p><b>Cosa trovi:</b> quanta acqua è caduta qui, giorno per giorno, con la data. Il bosco poi
-  lo conosci tu meglio di qualunque sito.</p>
-  <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
-  valgono regole proprie.</p>
-</div>
 
 <div id="attesa">Sto leggendo il pluviometro…</div>
 <div id="guasto"></div>
-<div id="testa"></div>
-<div class="spiega" id="finestra" style="margin-top:14px"></div>
+<div id="verdetto"></div>
 
-<h2>Giorno per giorno, ultimi 25 giorni</h2>
+<h2>Le piogge degli ultimi 25 giorni</h2>
 <div id="grafico"></div>
-<div class="tre" id="tre"></div>
 <p class="nota" id="ieri"></p>
-<p class="nota" id="notaforte"></p>
-<p class="nota" id="notaintensita"></p>
 
-<div id="meteo"></div>
+<h2 id="h-conta">Però attenzione: la pioggia che conta è quella caduta da 13 a 20 giorni fa</h2>
+<p class="breve" id="p-conta">Il fungo spunta 12-13 giorni dopo una bella pioggia: i funghi di oggi nascono da queste otto giornate.</p>
+<div id="finestra"></div>
+<div id="intensita"></div>
 
-<h2>Come sta messo rispetto agli altri posti dell'Umbria</h2>
+<h2>Com'è andata intorno? Apri le mappe</h2>
+<div class="tasti" id="tasti">
+  <a class="forte" id="t-conta" href="https://avventurepluvio-test.netlify.app/?r=umbria,marche&amp;g=20&amp;pl=43.375,12.7292&amp;pn=Monte%20Cucco">13-20 gg fa</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=umbria,marche&amp;g=1&amp;pl=43.375,12.7292&amp;pn=Monte%20Cucco">Ieri</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=umbria,marche&amp;g=7&amp;pl=43.375,12.7292&amp;pn=Monte%20Cucco">Ultimi 7 gg</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=umbria,marche&amp;g=20&amp;pl=43.375,12.7292&amp;pn=Monte%20Cucco">Ultimi 20 gg</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=umbria,marche&amp;g=30&amp;pl=43.375,12.7292&amp;pn=Monte%20Cucco">Ultimi 30 gg</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=umbria&amp;pl=43.375,12.7292&amp;pn=Monte%20Cucco&amp;radar=ora"
+     onclick="try{gtag('event','apri_mappa',{da:'localita-umbria-radar'})}catch(e){}">📡 Radar adesso</a>
+</div>
+<p class="breve">La pioggia degli ultimi 20 giorni in Umbria, stazione per stazione.</p>
+<a href="https://avventurepluvio-test.netlify.app/?r=umbria&amp;g=20" id="lnk-pioggia"
+   onclick="try{gtag('event','apri_mappa',{da:'localita-umbria-20gg'})}catch(e){}">
+  <img class="img-mappa" src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/umbria.jpg"
+       alt="La mappa delle piogge in Umbria: le zone più bagnate, stazione per stazione"
+       width="1600" height="1000" loading="lazy"></a>
+
+<h2 style="font-size:18px">I pluviometri più vicini</h2>
 <table class="vic"><thead><tr><th>Località</th><th>Distanza</th><th>13-20 gg fa</th></tr></thead>
 <tbody id="vicini">
-<tr class="qui" data-id="43.37500_12.72917"><td><b>Monte Cucco</b> <span class="com">(sei qui)</span><span class="com">PG · 1117 MT</span></td>
+<tr class="qui" data-id="43.37500_12.72917"><td><b>Monte Cucco</b> <span class="com">(sei qui)</span><span class="com">PG · 1117 m</span></td>
 <td>—</td>
 <td class="mm"><span class="v">…</span></td></tr>
-<tr data-id="43.40640_12.65890"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/umbria/scheggia/"><b>Scheggia</b></a><span class="com">PG · 643 MT</span></td>
+<tr data-id="43.40640_12.65890"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/umbria/scheggia/"><b>Scheggia</b></a><span class="com">PG · 643 m</span></td>
 <td>6,7 km</td>
 <td class="mm"><span class="v">…</span></td></tr>
-<tr data-id="43.43194_12.46111"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/umbria/san-benedetto-vecchio/"><b>San Benedetto Vecchio</b></a><span class="com">PG · 644 MT</span></td>
+<tr data-id="43.43194_12.46111"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/umbria/san-benedetto-vecchio/"><b>San Benedetto Vecchio</b></a><span class="com">PG · 644 m</span></td>
 <td>22,6 km</td>
 <td class="mm"><span class="v">…</span></td></tr>
-<tr data-id="43.42694_12.36167"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/umbria/pieve-di-saddi/"><b>Pieve di Saddi</b></a><span class="com">PG · 618 MT</span></td>
+<tr data-id="43.42694_12.36167"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/umbria/pieve-di-saddi/"><b>Pieve di Saddi</b></a><span class="com">PG · 618 m</span></td>
 <td>30,2 km</td>
 <td class="mm"><span class="v">…</span></td></tr>
-<tr data-id="43.51592_12.35595"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/umbria/bocca-serriola/"><b>Bocca Serriola</b></a><span class="com">PG · 740 MT</span></td>
+<tr data-id="43.51592_12.35595"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/umbria/bocca-serriola/"><b>Bocca Serriola</b></a><span class="com">PG · 740 m</span></td>
 <td>34,0 km</td>
 <td class="mm"><span class="v">…</span></td></tr>
-<tr data-id="43.06806_12.69861"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/umbria/armenzano/"><b>Armenzano</b></a><span class="com">PG · 713 MT</span></td>
+<tr data-id="43.06806_12.69861"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/umbria/armenzano/"><b>Armenzano</b></a><span class="com">PG · 713 m</span></td>
 <td>34,2 km</td>
 <td class="mm"><span class="v">…</span></td></tr>
 </tbody></table>
+
+<h2 style="font-size:18px">Dove è piovuto di più dell'Umbria</h2>
+<div id="migliori"></div>
 <p class="nota" id="notavicini"></p>
 
-<h2>Ecco cosa vedi sulla mappa</h2>
-<a href="https://avventurepluvio-test.netlify.app/?r=umbria&amp;g=20" style="display:block;text-decoration:none;"
-   onclick="try{gtag('event','apri_mappa',{da:'localita-umbria-20gg'})}catch(e){}">
-  <img src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/umbria.jpg"
-       alt="La mappa delle piogge in Umbria: le zone più bagnate, stazione per stazione"
-       width="1600" height="1000" loading="lazy"
-       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
-  <span class="vai-mappa">Apri mappa Umbria · ultimi 20 gg →</span>
-</a>
+<div id="meteo"></div>
 
-<h2>Che boschi ci sono intorno?</h2>
-<p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti
-e abetaie non danno gli stessi funghi. La mappa boschi colora i boschi al Monte Cucco e dintorni
-per tipo, con i disegni della Carta della Natura di ISPRA.</p>
+<h2>Che boschi ci sono intorno</h2>
+<p class="breve">Faggete, castagneti, querceti e abetaie colorati per tipo, con il rilievo sotto.</p>
 <a href="https://avventurepluvio-test.netlify.app/?r=umbria&amp;pl=43.375,12.7292&amp;pn=Monte%20Cucco&amp;boschi=1" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'localita-umbria-boschi'})}catch(e){}">
-  <img src="https://avventurepluvio-test.netlify.app/tessere-boschi/anteprime/umbria.jpg"
+  <img class="img-mappa" src="https://avventurepluvio-test.netlify.app/tessere-boschi/anteprime/umbria.jpg"
        alt="La mappa boschi in Umbria: faggete, castagneti, querceti e abetaie colorati per tipo"
-       width="1600" height="1000" loading="lazy"
-       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
-  <span class="vai-mappa">Guarda i boschi intorno al Monte Cucco →</span>
+       width="1600" height="1000" loading="lazy">
+  <span class="vai-mappa">🌲 Guarda i boschi intorno al Monte Cucco</span>
 </a>
-<p class="nota">La fonte è la «Carta della Natura» di ISPRA, scala 1:25.000: dice che bosco c'è, non se
-quest'anno ci sono nati funghi. Per quello servono la pioggia di questa pagina e un giro a piedi.</p>
+<p class="nota">La pioggia dice quando andare, il bosco dice dove. I boschi vengono da la «Carta della Natura» di ISPRA, scala 1:25.000.</p>
 
-<h2>Sta piovendo adesso?</h2>
-<p>Questa pagina conta i millimetri dei giorni <b>già chiusi</b>: la giornata di oggi è esclusa,
-perché il pluviometro la sta ancora misurando. Per la pioggia <b>in corso</b> c'è la diretta
-radar, che mostra dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti
-seguenti.</p>
-<a href="https://avventurepluvio-test.netlify.app/?r=umbria&amp;pl=43.375,12.7292&amp;pn=Monte%20Cucco&amp;radar=ora" style="display:block;text-decoration:none;"
-   onclick="try{gtag('event','apri_mappa',{da:'localita-umbria-radar'})}catch(e){}">
-  <span class="vai-mappa">Guarda il radar della pioggia al Monte Cucco →</span>
-</a>
-<p class="nota">⚠️ Il radar <b>non è un pluviometro</b>: è una misura presa dal cielo, a 2 km di
-risoluzione, e inquadra tutta la regione. Serve a vedere <i>dove</i> sta piovendo adesso, non a
-contare quanta acqua è caduta. I millimetri di questa pagina restano quelli misurati a terra
-da MeteoHub.</p>
-
-<h2 style="margin-bottom:12px">Perché proprio questo posto</h2>
-<div class="metodo">
-  <div><span class="n">1</span><b>C'è un pluviometro vero.</b> Non una stima su griglia: uno
-  strumento di MeteoHub, col suo nome e la sua quota.</div>
-  <div><span class="n">2</span><b>Quota fra 200 e 1600 metri.</b> Qui siamo a 1117.</div>
-  <div><span class="n">3</span><b>Almeno il 37% di bosco entro 3 km</b>, misurato sulle mappe di
-  OpenStreetMap. Qui è il 53%.</div>
-</div>
-
-<h2 style="margin-top:30px">Quanto piove al Monte Cucco, secondo il nostro archivio</h2>
-<p>In cima alla pagina c'è la finestra corta, quella che serve per i funghi. Ma di questo pluviometro
-teniamo tutti i giorni da quando lo leggiamo, e messi in fila raccontano un'altra cosa:
-<b>da luglio 2026 a settembre 2026</b>, in 63 giorni di misura,
-ha contato <b>217 mm</b> di pioggia in <b>13 giornate</b> bagnate. Nelle altre 50 non è caduto niente, o così poco da non contare.</p>
-<p>Il giorno più bagnato di tutto l'archivio è stato il <b>25 agosto 2026</b>,
-con <b>50,4 mm</b> in ventiquattro ore. Il mese più piovoso,
+<div class="noioso">
+<h2>Come funziona questa pagina</h2>
+<p>I millimetri li misura il pluviometro di MeteoHub al Monte Cucco: PG, 1117 metri,
+con il 53% di bosco entro 3 km. Sono misure a terra, giorno per giorno, aggiornate ogni mattina.
+La giornata di oggi non è contata perché il pluviometro la sta ancora misurando.</p>
+<p>Perché da 13 a 20 giorni fa: dopo una pioggia il fungo impiega almeno dodici o tredici giorni
+a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due settimane.</p>
+<p>Ti serve un altro periodo? Per ieri e gli ultimi 30 giorni c’è
+<a href="https://avventurepluvio-test.netlify.app/umbria/">dove ha piovuto in Umbria</a>.</p>
+<h2>L'archivio di questo pluviometro</h2>
+<p><b>da luglio 2026 a settembre 2026</b>, in 72 giorni di misura, ha contato <b>258 mm</b> di pioggia in <b>16 giornate</b> bagnate. Nelle altre 56 non è caduto niente, o così poco da non contare.
+Il giorno più bagnato è stato il <b>25 agosto 2026</b>, con
+<b>50,4 mm</b>. Il mese più piovoso,
 fra quelli che abbiamo per intero, è <b>agosto 2026</b> con
 99 mm. Su 17 pluviometri
 da bosco dell'Umbria con lo stesso periodo alle spalle, questo è il <b>1º</b>
 per acqua caduta.</p>
-<p class="nota">Non è una media climatica: è quello che questo strumento ha misurato in quei
-giorni, e basta. L'archivio parte dal 13 luglio 2026 e si allunga di un giorno al
-giorno.</p>
-
-<div class="avviso">
-  <b>Una cosa da tenere a mente.</b> Tanta pioggia non vuol dire tanti funghi: contano anche la
-  temperatura, il vento e il tipo di bosco. <b>La temperatura e il vento ce li abbiamo:</b>
-  clicca il pluviometro sulla mappa e vedi il suo storico, giorno per giorno, insieme alla
-  pioggia.
+<p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
+valgono regole proprie.</p>
+<p>Dati di MeteoHub via il nostro archivio. Il bosco entro 3 km è calcolato su dati
+OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</p>
 </div>
-
-
+<p style="margin:22px 0 4px;"><a href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;text-decoration:none;"
+   onclick="try{gtag('event','click_youtube',{pulsante:'localita-fondo-umbria'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
 
 <h2 style="margin-top:30px">Quanto ha piovuto? Trova un'altra località</h2>
 <nav class="altre" id="altri"><p class="nota">Sto leggendo l'elenco…</p></nav>
-
-<p class="nota" style="margin-top:22px">Dati di MeteoHub via il nostro archivio. Il
-bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dai confini
-provinciali ISTAT.</p>
 </main>
 
 <footer>
@@ -382,35 +406,44 @@ provinciali ISTAT.</p>
   var LOCALE = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   var BASE = LOCALE ? '/data/'
     : 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
-  var FORTE = 30, GIORNI = 25, VICINI = 5;
+  var GIORNI = 25;
 
   var MESI=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  var GS=['dom','lun','mar','mer','gio','ven','sab'];
   function iso(d){ var p=function(n){return String(n).padStart(2,'0');};
     return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
   function menoDa(s, n){ var p=String(s).split('-');
     var d=new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return d; }
   function gg(s){ var p=String(s).split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
+  /* «dal 4 all'11 settembre»: il mese una volta sola se e' lo stesso, e
+     l'apostrofo davanti a 1, 8 e 11 (24/9/2026). */
+  function dalAl(a,b){ var pa=a.split('-'), pb=b.split('-'), da=+pa[2], db=+pb[2];
+    var al=(db===1||db===8||db===11) ? 'all\u2019' : 'al ';
+    return ((da===1||da===8||da===11) ? 'dall\u2019' : 'dal ') + (pa[1]===pb[1] ? da : gg(a)) + ' ' + al + gg(b); }
   function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function uno(n){ return Math.round(n*10)/10; }
-  /* ⚠️ Sempre un decimale: senza il toFixed, 22 usciva «22» in una colonna di
-     «50,6» e «20,6» e la colonna dei millimetri si sfrangiava. */
   function num(n){ return uno(n).toFixed(1).replace('.', ','); }
   function km(a,b,c,d){ var R=6371, x=(c-a)*Math.PI/180, y=(d-b)*Math.PI/180;
     var s=Math.sin(x/2)*Math.sin(x/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(y/2)*Math.sin(y/2);
     return R*2*Math.atan2(Math.sqrt(s), Math.sqrt(1-s)); }
-
-  /* Stessa regola delle pagine regione e funghi: un giro saltato si perdona,
-     due no. Si guarda il campo «generato», non l'ultimo giorno contenuto.
-     ⚠️ Niente apici inversi da qui in giu': tutta la pagina e' un template
-     literal del generatore, e uno solo la spezzerebbe in due. */
+  /* Un giro saltato si perdona, due no: si guarda «generato».
+     ⚠️ Niente apici inversi da qui in giu': la pagina e' un template literal
+     del generatore, e uno solo la spezzerebbe in due. */
   function fresco(j){
     if (!j || !j.generato || !j.serie || !j.anagrafe || !j.oggi) return false;
     var eta = Date.now() - new Date(j.generato).getTime();
     return eta >= 0 && eta < 36*3600*1000;
   }
-  /* La somma di una finestra: n va dal piu' lontano al piu' vicino, come nella
-     pagina regione. serie[0] e' IERI. */
+  /* serie[0] e' IERI; n va dal piu' lontano al piu' vicino. */
   function somma(s, da, a){ var t=0; for (var n=da; n>=a; n--) t += (s[n-1]||0); return uno(t); }
+
+  /* ⚠️ LA SCALA DEL VERDETTO E' SUA (24/9/2026): la pioggia degli ULTIMI 20
+     GIORNI. Sotto 30 mm troppo poco, da 30 poco, da 60 bene, da 100 benissimo.
+     Il riquadro dice com'e' andata la pioggia, non se ci sono i funghi. */
+  var LIV=[{fino:30,t:'Troppo poca pioggia',c:'#c0392b'},
+           {fino:60,t:'Poca pioggia',c:'#e6a100'},
+           {fino:100,t:'Ha piovuto bene',c:'#5bb85d'},
+           {fino:1e9,t:'Ha piovuto benissimo',c:'#2e9d44'}];
 
   fetch(BASE + 'funghi/' + REG + '-giorni.json')
     .then(function(r){ return r.ok ? r.json() : null; })
@@ -432,105 +465,63 @@ provinciali ISTAT.</p>
       '<p class="nota"><a href="'+SITO+'/funghi/'+REG+'/">Vedi tutti i posti da bosco</a></p>';
   }
 
+  function link(dal, al){
+    return MAPPA + '?r=' + REGS + '&da=' + dal + '&a=' + al
+      + '&pl=' + LAT.toFixed(4) + ',' + LON.toFixed(4) + '&pn=' + encodeURIComponent(POSTO)
+      + '&z=11&c=' + LAT.toFixed(4) + ',' + LON.toFixed(4);
+  }
+
   function disegna(j){
+    document.getElementById('attesa').style.display = 'none';
     var s = j.serie[ID];
-    var mm = somma(s,20,13), mm7 = somma(s,7,1), mm25 = somma(s,GIORNI,1);
-    /* 13/9/2026: IERI, per chi cerca «quanto ha piovuto ieri a» e arriva qui.
-       Si dice il giorno vero: il file puo' essere stato scritto prima di
-       mezzanotte, e allora il suo ieri e' l'altroieri di chi legge.
-       Un giorno senza dato non e' uno zero. */
-    var ieriFile = iso(menoDa(j.oggi,1)), ieriVero = iso(menoDa(iso(new Date()),1));
-    var vIeri = s[0];
-    document.getElementById('ieri').innerHTML = (ieriFile === ieriVero ? 'Ieri, ' : 'Il ')
-      + gg(ieriFile) + ': ' + (vIeri == null ? 'il dato non è ancora arrivato.' : '<b>' + num(vIeri) + ' mm</b>.');
-    var daG = iso(menoDa(j.oggi,20)), aG = iso(menoDa(j.oggi,13)), a20 = iso(menoDa(j.oggi,1));
+    var mm = somma(s,20,13), m20 = somma(s,20,1);
+    var daG = iso(menoDa(j.oggi,20)), aG = iso(menoDa(j.oggi,13)), ieri = iso(menoDa(j.oggi,1));
 
-    /* ⚠️ L'ULTIMA PIOGGIA FORTE ARRIVA DAL FILE, non si cerca nella serie.
-       La serie e' di 25 giorni, e cercandola li' dentro un posto asciutto da
-       un mese rispondeva «negli ultimi 25 giorni nessuna» invece di dire da
-       quanto. Il generatore la cerca fino a 150 giorni indietro e scrive due
-       numeri per pluviometro, e cercatoFino dice fin dove ha guardato.
-       (Niente apici inversi qui dentro: questo file e' un modello backtick.) */
-    var ff = (j.forte || {})[ID];
-    /* La voce ha DUE numeri (giorni fa, mm) oppure QUATTRO, quando di
-       quel giorno sappiamo anche le ore bagnate e la punta oraria.
-       Si guarda la lunghezza: i giorni vecchi l'intensita' non ce
-       l'hanno e non ce l'avranno mai, il passato non si recupera. */
-    var forte = ff ? {g:ff[0], mm:ff[1], ore:ff[2], punta:ff[3]} : null;
-    var quando = forte ? (forte.g===1 ? 'ieri' : forte.g===2 ? 'l’altro ieri'
-                                                             : forte.g+' giorni fa') : null;
+    /* IERI, per chi cerca «quanto ha piovuto ieri a». Si dice il giorno vero:
+       il file puo' essere stato scritto prima di mezzanotte. */
+    var ieriVero = iso(menoDa(iso(new Date()),1));
+    document.getElementById('ieri').innerHTML = (ieri === ieriVero ? 'Ieri, ' : 'Il ')
+      + gg(ieri) + ': ' + (s[0] == null ? 'il dato non è ancora arrivato.' : '<b>' + num(s[0]) + ' mm</b>.');
 
-    function link(dal, al, centra){
-      /* ⚠️ pl/pn = il segnaposto. Senza, questi tre bottoni aprivano la
-         mappa sul posto giusto ma SENZA la puntina, e chi arriva non sa quale
-         dei pallini e' il suo (segnalato il 3/9/2026). Il bottone «Tutta la
-         regione» la puntina non la vuole: li' si guarda l'insieme. */
-      /* ⚠️ «Tutta la <regione>» apre UNA regione: le vicine servono a chi
-         guarda il suo paese sul confine, non a chi ha chiesto l'insieme, e
-         il bottone prometterebbe una cosa e ne farebbe un'altra. */
-      return MAPPA + '?r=' + (centra ? REGS : REG) + '&da=' + dal + '&a=' + al
-        + (centra ? '&pl=' + LAT.toFixed(4) + ',' + LON.toFixed(4)
-                  + '&pn=' + encodeURIComponent(POSTO)
-                  + '&z=11&c=' + LAT.toFixed(4) + ',' + LON.toFixed(4) : '');
-    }
+    /* ── il verdetto ── */
+    var liv = LIV.filter(function(l){ return m20 < l.fino; })[0], k = LIV.indexOf(liv);
+    var big = [];
+    for (var n=20; n>=1; n--) if ((s[n-1]||0) >= 10) big.push(n);
+    var dett = big.length
+      ? big.slice(-4).map(function(n){ return '<b>' + num(s[n-1]) + ' mm</b> il ' + gg(iso(menoDa(j.oggi,n))); }).join(', ') + '.'
+      : 'Nessuna giornata sopra i 10 mm.';
+    var scala = '';
+    for (var q=0; q<4; q++) scala += '<div' + (q<=k ? ' style="background:'+liv.c+'"' : '') + '></div>';
+    document.getElementById('verdetto').innerHTML = '<div class="verdetto">'
+      + '<div class="si"><span class="pallino" style="background:'+liv.c+'"></span>'+liv.t+'</div>'
+      + '<div class="gr">'+Math.round(m20)+' mm<small>negli ultimi 20 giorni</small></div>'
+      + '<div class="dett">'+dett+'</div>'
+      + '<div class="scala">'+scala+'</div>'
+      + '<div class="scala-t"><span>sotto 30</span><span>30-60</span><span>60-100</span><span>oltre 100</span></div>'
+      + '<div class="capo-btns"><a class="capo-btn" href="'+link(daG, ieri)+'">Vedi sulla mappa</a></div></div>';
 
-    document.getElementById('testa').innerHTML =
-      '<div class="capo"><div class="et">Quanta acqua è caduta qui fra 13 e 20 giorni fa?</div>'
-      + '<div class="gr">' + num(mm) + ' mm</div>'
-      + '<div class="pic">dal ' + gg(daG) + ' al ' + gg(aG)
-      + (forte ? ' · ultima pioggia forte ' + quando + ' (' + num(forte.mm) + ' mm)' : '') + '</div>'
-      + '<div class="capo-btns">'
-      + '<a class="capo-btn" href="' + link(daG, aG, true) + '">Apri mappa · 13-20 gg fa</a>'
-      + '<a class="capo-btn" href="' + link(daG, a20, true) + '">Apri mappa · ultimi 20 gg</a>'
-      /* ⚠️ QUI C'ERA UN TERZO BOTTONE, «Tutta la <regione>», tolto il 3/9/2026.
-         Dal 3/9 il bottone sotto l'anteprima della mappa fa esattamente la
-         stessa cosa (regione sola, 20 giorni, niente segnaposto) e i due erano
-         gemelli a mezza pagina di distanza. Se un giorno servisse di nuovo, lo
-         costruiva la funzione link qui sopra col terzo argomento a false. */
-      + '</div></div>';
-
-    /* ⚠️ Perche' 13-20 e non un altro numero: il fungo non spunta subito dopo
-       la pioggia, gli servono almeno 12-13 giorni e quanti dipende dalla
-       temperatura. Dirlo e' il punto della pagina: senza, la finestra sembra
-       scelta a caso. */
-        /* ⚠️ QUI NON SI RIPETE LA REGOLA DEI 12-13 GIORNI: dal 9/9/2026 sta
-       nelle tre righe in cima, ed e' la prima cosa che si legge. Restano le
-       DATE, che in cima non possono stare perche' cambiano ogni giorno. */
-    document.getElementById('finestra').innerHTML =
-      'Qui la pioggia è caduta fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG) + '</b>, cioè da '
-      + '<b>13 a 20 giorni fa</b>. Sono millimetri misurati a terra dal pluviometro, non una '
-      + 'previsione.';
-
-    /* ── il grafico: 25 barre, ieri a destra ── */
+    /* ── le 25 barre, ieri a destra ── */
     var max = Math.max.apply(null, s.concat([1]));
     var barre = '', ascisse = '', ultimaEt = null;
     for (var i = GIORNI; i >= 1; i--) {
-      var v = s[i-1] || 0;
+      var v = s[i-1] || 0, d = menoDa(j.oggi, i);
       var cl = (i>=13 && i<=20) ? ' dentro' : '';
-      var d = menoDa(j.oggi, i);
-      /* Il numero sopra la barra si scrive solo se e' alta e se l'ultima
-         scritta non e' troppo vicina: a 375 px due etichette su barre
-         adiacenti si sovrappongono e si legge «55,87,2». */
-      var etich = v >= max*0.28 && (ultimaEt === null || ultimaEt - i >= 3);
+      /* il numero sopra la barra solo se e' alta e lontana dall'ultima scritta:
+         a 375 px due etichette vicine si sovrappongono */
+      var etich = v >= max*0.2 && (ultimaEt === null || ultimaEt - i >= 2);
       if (etich) ultimaEt = i;
       barre += '<div class="b' + cl + '" data-n="' + i + '" title="' + gg(iso(d)) + ': ' + num(v) + ' mm">'
         + (etich ? '<b>' + num(v) + '</b>' : '')
         + '<i style="height:' + Math.max(2, Math.round(v/max*100)) + '%"></i></div>';
-      /* Giorno e mese in forma corta: «13/8» non va a capo, «13 ago» si'. */
       ascisse += '<span>' + ((i===GIORNI || i===1 || i%5===0) ? (d.getDate()+'/'+(d.getMonth()+1)) : '') + '</span>';
     }
     document.getElementById('grafico').innerHTML =
       '<div class="gg">' + barre + '</div><div class="gg-x">' + ascisse + '</div>'
       + '<p class="gg-int" id="ggint"></p>'
-      + '<p class="gg-leg"><i style="background:var(--blu)"></i>la finestra dei funghi, '
-      + 'da 13 a 20 giorni fa &nbsp; <i style="background:#b9cbe2"></i>gli altri giorni</p>';
+      + '<p class="gg-leg"><i style="background:var(--blu)"></i>da 13 a 20 giorni fa &nbsp; '
+      + '<i style="background:#b9cbe2"></i>gli altri giorni</p>';
 
-    /* ── l'intensita' del giorno (13/9/2026) ──────────────────────────────
-       Stessa riga del pannello della mappa, solo numeri: l'aggettivo
-       lenta/media/battente resta nella frase della pioggia forte, piu' sotto.
-       All'apertura racconta il giorno piu' piovoso che ha le ore; toccando
-       una barra passa a quel giorno. serieI ha solo i giorni da 5 mm in su:
-       se questo pluviometro non ne ha nessuno, la riga non esiste. */
+    /* durata e punta del giorno toccato (serieI: solo i giorni da 5 mm in su) */
     var sI = (j.serieI && j.serieI[ID]) || null;
     function rigaInt(n) {
       var el = document.getElementById('ggint');
@@ -541,8 +532,6 @@ provinciali ISTAT.</p>
       if (b) b.classList.add('scelto');
       var t = '<b>' + gg(iso(menoDa(j.oggi, n))) + '</b> · ' + num(v) + ' mm';
       if (o) t += ' in <b>' + o[0] + (o[0] === 1 ? ' ora' : ' ore') + '</b> · punta <b>' + num(o[1]) + ' mm</b> in un’ora';
-      /* ⚠️ L'INVITO A TOCCARE: senza, nessuno scopre che le barre si
-         toccano (segnalato dall'utente il 13/9). Col mouse si dice «clicca». */
       var dito = !(window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches);
       el.innerHTML = t + '<span class="gg-invito">' + (dito ? 'Tocca' : 'Clicca')
         + ' una barra per vedere durata e punta di un altro giorno.</span>';
@@ -557,67 +546,126 @@ provinciali ISTAT.</p>
       });
     }
 
-    /* ── temperatura e vento, se il pluviometro ce li ha ──────────────────
-       ⚠️ Si mostra SOLO quello che c'e' davvero: la temperatura ce l'ha il 78%
-       dei posti, il vento il 20%. Una scheda vuota con scritto «non
-       disponibile» occupa spazio per dire niente. */
-    var sT = (j.serieT && j.serieT[ID]) || null, sW = (j.serieW && j.serieW[ID]) || null;
+    /* ── la pioggia che conta: le 8 giornate, larghe ── */
+    document.getElementById('h-conta').textContent = 'Però attenzione: la pioggia che conta è quella caduta ' + dalAl(daG, aG);
+    document.getElementById('p-conta').innerHTML = 'Il fungo spunta 12-13 giorni dopo una bella pioggia: '
+      + 'i funghi di oggi nascono da queste otto giornate, che qui hanno fatto <b>' + num(mm) + ' mm</b>.';
+    var fmax = 1;
+    for (var n3=20; n3>=13; n3--) fmax = Math.max(fmax, s[n3-1]||0);
+    var fb = '', fx = '', righe = '';
+    for (var n4=20; n4>=13; n4--) {
+      var v4 = s[n4-1] || 0, d4 = menoDa(j.oggi, n4);
+      fb += '<div class="c">' + (v4 > 0 ? '<b>' + num(v4) + '</b>' : '')
+        + '<i style="height:' + Math.max(2, Math.round(v4/fmax*88)) + '%"></i></div>';
+      fx += '<span>' + GS[d4.getDay()] + '<br>' + d4.getDate() + '/' + (d4.getMonth()+1) + '</span>';
+      /* come e' caduta: lenta sotto 2 mm all'ora, battente sopra 6 (scala
+         del 12/9). Si arrotonda PRIMA di giudicare, se no numero e parola
+         si contraddicono sulla soglia. */
+      var o4 = sI && sI[n4-1];
+      if (o4 && v4 >= 5) {
+        var r4 = uno(v4 / o4[0]);
+        var tg = r4 < 2 ? ['lenta','t-lenta'] : r4 <= 6 ? ['media','t-media'] : ['battente','t-forte'];
+        righe += '<div><span class="d">' + gg(iso(d4)) + '</span><span><b>' + num(v4) + ' mm</b> in '
+          + o4[0] + (o4[0] === 1 ? ' ora' : ' ore') + ', punta ' + num(o4[1]) + ' mm in un’ora</span>'
+          + '<span class="tag ' + tg[1] + '">' + tg[0] + '</span></div>';
+      }
+    }
+    document.getElementById('finestra').innerHTML = '<div class="fin">' + fb + '</div><div class="fin-x">' + fx + '</div>';
+    if (righe) document.getElementById('intensita').innerHTML =
+      '<h2 style="font-size:18px">Com’è caduta</h2><p class="breve">La pioggia lenta entra nel terreno, quella battente corre via.</p>'
+      + '<div class="int">' + righe + '</div>';
+    document.getElementById('t-conta').href = link(daG, aG);
+    document.getElementById('lnk-pioggia').href = link(daG, ieri);
 
-    /* Un grafico a linee con la scala a destra, come il pannello della mappa.
-       ⚠️ Le SCRITTE NON STANNO DENTRO L'SVG: il disegno e' stirato in
-       larghezza (preserveAspectRatio="none") e un testo dentro uscirebbe
-       schiacciato. Le tacche sono <span> in percentuale sopra il disegno, e
-       il tratto delle linee non si scala (vector-effect). */
-    function scala(lo, hi) {
-      /* tacche tonde: si sceglie il passo che ne fa 3-5 dentro l'intervallo */
-      var passi = [1, 2, 2.5, 5, 10, 20, 25, 50, 100], d = hi - lo, p = passi[passi.length - 1];
-      for (var q = 0; q < passi.length; q++) if (d / passi[q] <= 5) { p = passi[q]; break; }
-      var out = [], v = Math.ceil(lo / p) * p;
-      for (; v <= hi + 1e-9; v += p) out.push(Math.round(v * 100) / 100);
+    /* ── vicini e posti piu' bagnati ──
+       L'anagrafe arriva dal file: [id, nome, sigla, quota, lat, lon, bosco%, slug] */
+    var tutti = j.anagrafe.map(function(p){
+      var ss = j.serie[p[0]];
+      return ss ? { id:p[0], n:p[1], sig:p[2], q:p[3], slug:p[7], mm:somma(ss,20,13), d:km(LAT, LON, p[4], p[5]) } : null;
+    }).filter(Boolean);
+    function pag(x){ return SITO + '/funghi/' + REG + '/' + x.slug + '/'; }
+    var perId = {};
+    for (var iv = 0; iv < tutti.length; iv++) perId[tutti[iv].id] = tutti[iv];
+
+    /* ⚠️ La tabella dei vicini e' GIA' NELL'HTML coi link: qui si riempiono
+       solo le caselle dei millimetri. Rifarla con innerHTML toglierebbe i link
+       dalla pagina che Google ha in mano dopo il rendering. */
+    var trs = document.querySelectorAll('#vicini tr[data-id]'), mxv = 1;
+    for (var it = 0; it < trs.length; it++) { var dv = perId[trs[it].getAttribute('data-id')]; if (dv) mxv = Math.max(mxv, dv.mm); }
+    for (var it2 = 0; it2 < trs.length; it2++) {
+      var dd = perId[trs[it2].getAttribute('data-id')];
+      var cel = trs[it2].querySelector('.mm .v');
+      if (!cel) continue;
+      if (!dd || !(dd.mm > 0)) { cel.textContent = '—'; cel.className = 'v zero'; continue; }
+      cel.textContent = num(dd.mm) + ' mm'; cel.className = 'v';
+      var ba = document.createElement('span'); ba.className = 'barra';
+      ba.style.width = Math.round(dd.mm / mxv * 100) + '%';
+      cel.parentNode.insertBefore(ba, cel);
+    }
+
+    var ordinati = tutti.slice().sort(function(a,b){ return b.mm - a.mm; });
+    var pos = ordinati.findIndex(function(x){ return x.id === ID; }) + 1;
+    var primi = ordinati.slice(0, 6), mxp = Math.max(1, primi.length ? primi[0].mm : 1);
+    document.getElementById('migliori').innerHTML = '<table class="vic"><thead><tr><th>Località</th><th>Distanza</th><th>13-20 gg fa</th></tr></thead><tbody>'
+      + primi.map(function(x){
+          var qui = x.id === ID;
+          return '<tr' + (qui ? ' class="qui"' : '') + '><td>' + (qui ? '<b>' + esc(x.n) + '</b> <span class="com">(sei qui)</span>'
+              : '<a class="loc" href="' + pag(x) + '"><b>' + esc(x.n) + '</b></a>')
+            + '<span class="com">' + esc(x.sig) + ' · ' + x.q + ' m</span></td>'
+            + '<td>' + (qui ? '—' : num(x.d) + ' km') + '</td>'
+            + '<td class="mm"><span class="barra" style="width:' + Math.round(x.mm / mxp * 100) + '%"></span>'
+            + '<span class="v">' + num(x.mm) + ' mm</span></td></tr>';
+        }).join('') + '</tbody></table>';
+    document.getElementById('notavicini').innerHTML =
+      'Questo pluviometro è <b>' + pos + 'º su ' + tutti.length + '</b> fra i posti da bosco della regione. '
+      + '<a href="' + SITO + '/funghi/' + REG + '/">Vedi i primi 15</a>.';
+
+    /* ── temperatura e vento, se il pluviometro ce li ha ──
+       ⚠️ Si mostra SOLO quello che c'e' davvero. */
+    var sT = (j.serieT && j.serieT[ID]) || null, sW = (j.serieW && j.serieW[ID]) || null;
+    function scalaT(lo, hi) {
+      var passi = [1, 2, 2.5, 5, 10, 20, 25, 50, 100], dd2 = hi - lo, p = passi[passi.length - 1];
+      for (var q2 = 0; q2 < passi.length; q2++) if (dd2 / passi[q2] <= 5) { p = passi[q2]; break; }
+      var out = [], vv = Math.ceil(lo / p) * p;
+      for (; vv <= hi + 1e-9; vv += p) out.push(Math.round(vv * 100) / 100);
       return out;
     }
     function grafico(serie, cls, colori, lo, hi, unita) {
-      var W = 100, HH = 100, passo = W / (GIORNI - 1);
-      var y = function (v) { return HH - (v - lo) / (hi - lo) * HH; };
+      var passo = 100 / (GIORNI - 1);
+      var y = function (v) { return 100 - (v - lo) / (hi - lo) * 100; };
       var linea = function (leggi) {
         var pezzi = [], cur = [];
-        for (var q = GIORNI; q >= 1; q--) {
-          var x = (GIORNI - q) * passo, v = leggi(serie[q - 1]);
+        for (var q3 = GIORNI; q3 >= 1; q3--) {
+          var x = (GIORNI - q3) * passo, v = leggi(serie[q3 - 1]);
           if (v == null) { if (cur.length > 1) pezzi.push(cur.join(' ')); cur = []; }
           else cur.push(x.toFixed(1) + ',' + y(v).toFixed(1));
         }
         if (cur.length > 1) pezzi.push(cur.join(' '));
         return pezzi;
       };
-      var tacche = scala(lo, hi), svg = '', et = '';
+      var tacche = scalaT(lo, hi), svg = '', et = '';
       for (var g2 = 0; g2 < tacche.length; g2++) {
         var yy = y(tacche[g2]);
         svg += '<line class="griglia" x1="0" y1="' + yy.toFixed(1) + '" x2="100" y2="' + yy.toFixed(1) + '"/>';
-        /* niente virgola dove non serve: 35 e non 35,0. La virgola resta
-           solo se il passo delle tacche e' mezzo grado o meno. */
-        var eti = (tacche[g2] % 1 === 0) ? String(tacche[g2]) : num(tacche[g2]);
-        et += '<span style="top:' + yy.toFixed(1) + '%">' + eti + '</span>';
+        et += '<span style="top:' + yy.toFixed(1) + '%">' + ((tacche[g2] % 1 === 0) ? String(tacche[g2]) : num(tacche[g2])) + '</span>';
       }
-      for (var k2 = 0; k2 < colori.length; k2++) {
-        var pezzi = linea(colori[k2].leggi);
-        for (var z = 0; z < pezzi.length; z++)
-          svg += '<polyline class="' + colori[k2].cl + '" points="' + pezzi[z] + '"/>';
+      for (var k3 = 0; k3 < colori.length; k3++) {
+        var pz = linea(colori[k3].leggi);
+        for (var z = 0; z < pz.length; z++) svg += '<polyline class="' + colori[k3].cl + '" points="' + pz[z] + '"/>';
       }
       return '<div class="tt-box"><svg class="tt ' + cls + '" viewBox="0 0 100 100" preserveAspectRatio="none">'
         + svg + '</svg><div class="tt-y">' + et + '<span class="tt-u">' + unita + '</span></div></div>'
         + '<div class="gg-x tt-x">' + ascisse + '</div>';
     }
-
     if (sT || sW) {
-      /* Il titolo dice solo quello che c'e' sotto: sui pluviometri con la sola
-         temperatura citare il vento prometteva un grafico che non arrivava. */
       var che = (sT && sW) ? 'Temperatura e vento' : (sT ? 'Temperatura' : 'Vento');
-      var H = '<h2 style="margin-top:30px">' + che + ', stesso periodo</h2>';
+      var H = '<h2>' + che + ' degli ultimi 25 giorni</h2>';
       if (sT) {
         var vals = [];
-        for (var q3 = 0; q3 < GIORNI; q3++) if (sT[q3]) { vals.push(sT[q3][0]); vals.push(sT[q3][1]); }
+        for (var q4 = 0; q4 < GIORNI; q4++) if (sT[q4]) { vals.push(sT[q4][0]); vals.push(sT[q4][1]); }
         var lo = Math.floor(Math.min.apply(null, vals) - 1), hi = Math.ceil(Math.max.apply(null, vals) + 1);
-        H += grafico(sT, 'tt-temp', [
+        H += (sT[0] ? '<p class="breve">Ieri minima <b>' + num(sT[0][0]) + '°</b>, massima <b>' + num(sT[0][1]) + '°</b>.</p>' : '')
+          + grafico(sT, 'tt-temp', [
               { cl: 'min', leggi: function (d) { return d ? d[0] : null; } },
               { cl: 'max', leggi: function (d) { return d ? d[1] : null; } }], lo, hi, '&deg;C')
           + '<p class="gg-leg"><i style="background:#d1603d"></i>massima &nbsp;'
@@ -630,115 +678,17 @@ provinciali ISTAT.</p>
           + grafico(sW, 'tt-vento', [{ cl: 'vento', leggi: function (d) { return d == null ? null : d; } }], 0, hiW, 'km/h')
           + '<p class="gg-leg">media del giorno, massimo del periodo ' + num(Math.max.apply(null, vw)) + ' km/h</p>';
       }
-      H += '<p class="nota">' + (sT && sW ? 'Temperatura e vento sono misurati'
-        : (sT ? 'La temperatura è misurata' : 'Il vento è misurato'))
-        + ' dallo stesso pluviometro, non da un modello.</p>';
       document.getElementById('meteo').innerHTML = H;
     }
 
-    document.getElementById('tre').innerHTML =
-      '<div><div class="et">13-20 giorni fa</div><div class="n">' + num(mm) + ' mm</div></div>'
-      + '<div><div class="et">Ultimi 7 giorni</div><div class="n">' + num(mm7) + ' mm</div></div>'
-      + '<div><div class="et">Ultimi 25 giorni</div><div class="n">' + num(mm25) + ' mm</div></div>'
-      + '<div class="secco"><div class="et">Ultima pioggia sopra i ' + FORTE + ' mm</div>'
-        + '<div class="n">' + (quando || 'mai') + '</div></div>';
-
-    /* ⚠️ Il ramo «mai» dice FIN DOVE si e' guardato: senza quel numero e'
-       un «mai» campato in aria, e al sud, dove l'archivio reale comincia a
-       luglio, sarebbe pure ingiusto verso il pluviometro. */
-    document.getElementById('notaforte').innerHTML = forte
-      ? 'L’ultima pioggia forte è caduta <b>' + quando + '</b>: ' + num(forte.mm) + ' mm in un giorno solo, '
-        + 'che è quella che bagna davvero il terreno, mentre sotto i ' + FORTE + ' mm l’acqua resta '
-        + 'nella lettiera e se ne va.'
-      : 'Qui non cade una pioggia forte (almeno ' + FORTE + ' mm in un giorno solo) da <b>'
-        + (j.cercatoFino || GIORNI) + ' giorni</b>'
-        /* ⚠️ DUE FRASI DIVERSE, e la differenza e' vera. Se la ricerca si e'
-           fermata al nostro tetto (150 giorni) l'archivio continua: dire «da
-           quando abbiamo archivio» sarebbe falso, ed e' quello che scriveva la
-           prima versione su Alpicella. Se invece si e' fermata prima, li'
-           l'archivio finisce per davvero (la Sicilia: 114 giorni). */
-        + (j.tetto && j.cercatoFino >= j.tetto
-           ? ', che è fin dove siamo andati a guardare.'
-           : ', cioè da quando abbiamo archivio su questo pluviometro.');
-
-    /* ── Con che RITMO e' caduta (12/9/2026) ──────────────────────
-       La stessa pioggia in un'ora vale meno che in otto: quella che
-       scende piano entra nel terreno, quella che scroscia corre via.
-       ⚠️ LE PAROLE SONO «lenta / media / battente» e non «forte»:
-       due righe sopra «pioggia forte» vuol dire gia' un'altra cosa,
-       cioe' almeno trenta millimetri in un giorno solo.
-       ⚠️ Le soglie 2 e 6 mm all'ora sono le stesse della convenzione
-       meteorologica italiana, scelte pero' sui nostri dati. */
-    var nInt = document.getElementById('notaintensita');
-    if (forte && forte.ore) {
-      /* ⚠️ SI ARROTONDA PRIMA DI GIUDICARE, se no il numero scritto e la
-         parola si contraddicono: Tolmin, 1,95 mm all'ora, usciva «2 mm
-         all'ora, pioggia lenta» mentre la soglia della lenta e' proprio 2.
-         Capita a cavallo delle due soglie, circa una volta su cento, e chi
-         conosce la scala se ne accorge. */
-      var perOra = uno(forte.mm / forte.ore);
-      var parola = perOra < 2 ? 'lenta' : perOra <= 6 ? 'media' : 'battente';
-      var senso = perOra < 2
-        ? 'acqua che ha avuto tutto il tempo di entrare nel terreno'
-        : perOra <= 6
-          ? 'un ritmo con cui l’acqua fa ancora in tempo a entrare'
-          : 'a quel ritmo una parte corre via lungo il pendio invece di entrare';
-      nInt.innerHTML = 'Sono caduti in <b>' + forte.ore + (forte.ore === 1 ? ' ora' : ' ore')
-        + '</b>, con una punta di <b>' + num(forte.punta) + ' mm in un’ora</b>: '
-        + num(perOra) + ' mm all’ora, <b>pioggia ' + parola + '</b>, ' + senso + '.';
-    } else nInt.style.display = 'none';
-
-    /* ── posizione in classifica e posti vicini ──
-       L'anagrafe arriva dal file: [id, nome, sigla, quota, lat, lon, bosco%, slug] */
-    var tutti = j.anagrafe.map(function(p){
-      var ss = j.serie[p[0]];
-      return ss ? { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5], slug:p[7],
-                    mm:somma(ss,20,13), d:km(LAT, LON, p[4], p[5]) } : null;
-    }).filter(Boolean);
-    var ordinati = tutti.slice().sort(function(a,b){ return b.mm - a.mm; });
-    var pos = ordinati.findIndex(function(x){ return x.id === ID; }) + 1;
-
-    function pag(x){ return SITO + '/funghi/' + REG + '/' + x.slug + '/'; }
-
-    var vicini = tutti.filter(function(x){ return x.id !== ID; })
-      .sort(function(a,b){ return a.d - b.d; }).slice(0, VICINI);
-    var qui = tutti.find(function(x){ return x.id === ID; });
-    var righe = vicini.concat([qui]).sort(function(a,b){ return a.d - b.d; });
-
-    /* ⚠️ La tabella dei vicini e' GIA' NELL'HTML, coi nomi, le distanze e i
-       link: qui si riempiono solo le caselle dei millimetri, che cambiano ogni
-       giorno. Rifacendola con innerHTML si cancellerebbero i link dalla pagina
-       che Google ha in mano dopo il rendering, che e' proprio quello che si
-       voleva evitare. Se una riga non ha dati nel file, resta il trattino. */
-    var perId = {};
-    for (var iv = 0; iv < righe.length; iv++) perId[righe[iv].id] = righe[iv];
-    var corpo = document.getElementById('vicini');
-    var trs = corpo ? corpo.querySelectorAll('tr[data-id]') : [];
-    for (var it = 0; it < trs.length; it++) {
-      var d = perId[trs[it].getAttribute('data-id')];
-      var cel = trs[it].querySelector('.mm .v');
-      if (!cel) continue;
-      if (!d) { cel.textContent = '—'; cel.className = 'v zero'; continue; }
-      cel.textContent = d.mm > 0 ? num(d.mm) : '—';
-      cel.className = d.mm > 0 ? 'v' : 'v zero';
-    }
-
-    document.getElementById('notavicini').innerHTML =
-      'Nella finestra dei funghi questo pluviometro è <b>' + pos + 'º su ' + tutti.length + '</b> '
-      + 'fra i posti da bosco della regione. '
-      + '<a href="' + SITO + '/funghi/' + REG + '/">Vedi i primi 15</a>.';
-
-    /* ⚠️ L'elenco delle sorelle si disegna DAL FILE, non e' cotto nella pagina:
-       cosi' un posto nuovo compare in tutte e centododici senza rigenerarne
-       nessuna. Ordinato per nome, che e' l'ordine in cui uno cerca. */
+    /* ⚠️ L'elenco delle sorelle si disegna DAL FILE: un posto nuovo compare
+       in tutte senza rigenerarne nessuna. Ordinato per nome. */
     document.getElementById('altri').innerHTML =
       '<p>' + tutti.slice().sort(function(a,b){ return a.n.localeCompare(b.n,'it'); })
         .map(function(x){
           return x.id === ID ? '<span class="io">' + esc(x.n) + '</span>'
             : '<a href="' + pag(x) + '">' + esc(x.n) + '</a>';
         }).join(' · ') + '</p>';
-
-    document.getElementById('attesa').style.display = 'none';
   }
 }());
 </script>

@@ -32,10 +32,27 @@
  */
 
 const fs   = require('fs');
+const { creaOre, segna, intensita } = require('./lib-intensita.js');
 const path = require('path');
 
 const BASE_URL = 'https://meteohub.agenziaitaliameteo.it/api/observations';
 const DATA_ROOT = path.join(__dirname, '../..', 'data');
+
+// ⚠️ MeteoHub consegna certi nomi con l'ESCAPE UNICODE ROTTO, senza la barra:
+//    arriva la stringa «Borgo Libertu00e0» invece di «Borgo Libertà». Non e'
+//    un nostro errore di lettura (JSON.parse un escape vero lo scioglierebbe
+//    da solo): e' scritto cosi' nella loro anagrafe. Colpiva sei stazioni fra
+//    Puglia, Sicilia e Sardegna, e il nome sbagliato finiva in mappa nel
+//    tooltip e nel pannello stazione. Trovato e corretto il 28/8/2026.
+//    Si ricompongono solo le lettere accentate italiane: un decodificatore
+//    generico rischierebbe di rovinare un nome che contiene «u00» per caso.
+const ACCENTATE = { c0:'À', c8:'È', cc:'Ì', d2:'Ò', d9:'Ù',
+                    e0:'à', e8:'è', e9:'é', ec:'ì', f2:'ò', f9:'ù' };
+function ripulisciNome(s) {
+  // il (?<!\\) protegge gli escape SCRITTI BENE, che vanno lasciati stare
+  return String(s).replace(/(?<!\\)u00([0-9a-fA-F]{2})/g,
+    (intero, hex) => ACCENTATE[hex.toLowerCase()] || intero);
+}
 
 const NETWORKS = [
   // Lombardia RIMOSSA il 27/7/2026: in mappa (e in produzione) la Lombardia usa
@@ -211,16 +228,24 @@ async function collectDay(netCfg, dateStr) {
     let mm = vals.reduce((a, v) => a + v.val, 0);
     mm = Math.round(mm * 10) / 10;
     if (mm < 0 || mm > 500) continue;
-    const nome = ((entry.stat.details || []).find(x => x.var === 'B01019') || {}).val || '—';
-    out.push({
-      id:  `${stat.lat.toFixed(5)}_${stat.lon.toFixed(5)}`,
+    const nome = ripulisciNome(((entry.stat.details || []).find(x => x.var === 'B01019') || {}).val || '—');
+    const idStaz = `${stat.lat.toFixed(5)}_${stat.lon.toFixed(5)}`;
+    const qTer = quotaTerreno(idStaz);
+    const rec = {
+      id:  idStaz,
       n:   nome,
       lat: Math.round(stat.lat * 10000) / 10000,
       lon: Math.round(stat.lon * 10000) / 10000,
-      q:   0,
+      q:   qTer,
       p:   netCfg.sigla,
       mm
-    });
+    };
+    if (qTer !== null) rec.qt = 1;   // quota del terreno, non dichiarata dall'ente
+    const secchielli = creaOre();   // intensita' (12/9/2026)
+    for (const v of vals) segna(secchielli, Math.floor((Date.parse(v.ref + 'Z') - 1) / 3600000), v.val);
+    const inte = intensita(secchielli);
+    if (inte) rec.i = inte;
+    out.push(rec);
   }
   // t/w: un guasto qui non deve mai far fallire la pioggia
   try {
@@ -228,6 +253,29 @@ async function collectDay(netCfg, dateStr) {
     out.forEach(rec => { if (meteo[rec.id]) Object.assign(rec, meteo[rec.id]); });
   } catch (e) { console.warn(`  Warn meteo ${netCfg.net}: ${e.message}`); }
   return out;
+}
+
+/* ── QUOTA DAL TERRENO (26/8/2026) ─────────────────────────────────────────
+   Questa fonte l'altitudine non la pubblica: fino al 26/8 scrivevamo `q: 0`,
+   cioe' dichiaravamo il livello del mare su pluviometri di montagna. La quota
+   arriva da `data/quote-terreno.json` (altezza del TERRENO nel punto della
+   stazione, vedi quote-terreno.js) e si porta dietro `qt: 1`, che il sito
+   legge per mostrare il ~ davanti al numero.
+   ⚠️ Se il file manca la quota resta `null`, cioe' «non lo sappiamo»: MAI 0,
+   che vuol dire «sul mare» ed e' un'affermazione falsa.
+   ⚠️ RESTA DA RISOLVERE: la strada giusta e' l'anagrafica vera dell'ente. */
+let _quoteTerreno = null;
+function quotaTerreno(id) {
+  if (_quoteTerreno === null) {
+    _quoteTerreno = {};
+    try {
+      const j = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'data', 'quote-terreno.json'), 'utf8'));
+      for (const rete of Object.values(j.reti || {})) Object.assign(_quoteTerreno, rete);
+      console.log(`  quote dal terreno: ${Object.keys(_quoteTerreno).length} stazioni note`);
+    } catch (e) { console.warn(`  Warn quote-terreno.json: ${e.message}`); }
+  }
+  const q = _quoteTerreno[id];
+  return typeof q === 'number' ? Math.max(0, Math.round(q)) : null;
 }
 
 /** Stazioni REALI (non stimate) presenti in un file già scritto. */

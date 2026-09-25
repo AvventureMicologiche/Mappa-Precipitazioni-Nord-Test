@@ -29,6 +29,7 @@
 
 const https = require('https');
 const fs    = require('fs');
+const { creaOre, segna, intensita } = require('./lib-intensita.js');
 const path  = require('path');
 
 const HOST     = 'www.meteo.fvg.it';
@@ -157,6 +158,29 @@ function parseHourly(bodyStr) {
 /** Totale del GIORNO SOLARE ITALIANO combinando le ore UTC dei due giorni al
  *  confine: dal giorno UTC precedente le ore > (24-offset), dal corrente le ore
  *  ≤ (24-offset). offset = 2 (ora legale) o 1 (ora solare). null se < MIN_ORE. */
+/* ── QUOTA DAL TERRENO (26/8/2026) ─────────────────────────────────────────
+   Questa fonte l'altitudine non la pubblica: fino al 26/8 scrivevamo `q: 0`,
+   cioe' dichiaravamo il livello del mare su pluviometri di montagna. La quota
+   arriva da `data/quote-terreno.json` (altezza del TERRENO nel punto della
+   stazione, vedi quote-terreno.js) e si porta dietro `qt: 1`, che il sito
+   legge per mostrare il ~ davanti al numero.
+   ⚠️ Se il file manca la quota resta `null`, cioe' «non lo sappiamo»: MAI 0,
+   che vuol dire «sul mare» ed e' un'affermazione falsa.
+   ⚠️ RESTA DA RISOLVERE: la strada giusta e' l'anagrafica vera dell'ente. */
+let _quoteTerreno = null;
+function quotaTerreno(id) {
+  if (_quoteTerreno === null) {
+    _quoteTerreno = {};
+    try {
+      const j = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'data', 'quote-terreno.json'), 'utf8'));
+      for (const rete of Object.values(j.reti || {})) Object.assign(_quoteTerreno, rete);
+      console.log(`  quote dal terreno: ${Object.keys(_quoteTerreno).length} stazioni note`);
+    } catch (e) { console.warn(`  Warn quote-terreno.json: ${e.message}`); }
+  }
+  const q = _quoteTerreno[id];
+  return typeof q === 'number' ? Math.max(0, Math.round(q)) : null;
+}
+
 function localDayTotal(prevHours, curHours, offset) {
   const B = 24 - offset;
   let sum = 0, valid = 0;
@@ -165,6 +189,20 @@ function localDayTotal(prevHours, curHours, offset) {
   if (valid < MIN_ORE) return null;
   const mm = Math.round(sum * 10) / 10;
   return (mm < 0 || mm > 500) ? null : mm;
+}
+
+/** [ore bagnate, punta oraria] dalle stesse mappe orarie, oppure null.
+    Le ore sono gia' ore piene: la chiave dice da quale delle due
+    giornate d'archivio viene, se no h=23 di ieri e h=23 di oggi
+    finirebbero nello stesso secchiello. */
+function localDayIntensita(prevHours, curHours, offset) {
+  const B = 24 - offset;
+  const secchielli = creaOre();
+  for (let h = B + 1; h <= 24; h++)
+    if (prevHours && prevHours[h] && prevHours[h].mm != null) segna(secchielli, 'p' + h, prevHours[h].mm);
+  for (let h = 1; h <= B; h++)
+    if (curHours && curHours[h] && curHours[h].mm != null) segna(secchielli, 'c' + h, curHours[h].mm);
+  return intensita(secchielli);
 }
 
 /** t/w/u del giorno solare italiano dalle stesse mappe orarie → {t?, w?, u?}. */
@@ -279,8 +317,15 @@ async function main() {
     for (const st of stazioni) {
       const mm = localDayTotal(cache[`${st.val}|${pd}`], cache[`${st.val}|${dStr}`], offset);
       if (mm === null) continue;
-      const rec = { id: `osmer_${st.val.split('@')[0]}`, n: st.n, lat: Math.round(st.lat * 10000) / 10000, lon: Math.round(st.lon * 10000) / 10000, q: 0, p: 'FVG', mm };
+      const idStaz = `osmer_${st.val.split('@')[0]}`;
+      const qTer = quotaTerreno(idStaz);
+      const rec = { id: idStaz, n: st.n, lat: Math.round(st.lat * 10000) / 10000, lon: Math.round(st.lon * 10000) / 10000, q: qTer, p: 'FVG', mm };
+      if (qTer !== null) rec.qt = 1;   // quota del terreno, non dichiarata dall'ente
       try { Object.assign(rec, localDayMeteo(cache[`${st.val}|${pd}`], cache[`${st.val}|${dStr}`], offset)); } catch(e) {}
+      try {
+        const inte = localDayIntensita(cache[`${st.val}|${pd}`], cache[`${st.val}|${dStr}`], offset);
+        if (inte) rec.i = inte;
+      } catch(e) {}
       stations.push(rec);
     }
     mergeDay(dStr, stations);

@@ -40,6 +40,7 @@
  *      DATE_OVERRIDE=2026-08-07 ... (un giorno solo, tutte le régions)
  */
 const fs   = require('fs');
+const { creaOre, segna, intensita } = require('./lib-intensita.js');
 const path = require('path');
 
 const DATA_ROOT   = path.join(__dirname, '../..', 'data');
@@ -277,9 +278,10 @@ async function main() {
         let tmin = Infinity, tmax = -Infinity, nT = 0;
         let ffSum = 0, nFF = 0, fxMax = -Infinity, nFX = 0;
         let umin = Infinity, umax = -Infinity, nU = 0;
+        const secchielli = creaOre();   // intensita' (12/9/2026)
         for (const [ts, v, tlo, thi, ff, fx, ulo, uhi] of ore[id]) {
           if (!(ts > w.start && ts <= w.end)) continue;
-          if (isFinite(v)) { sum += v; n++; }
+          if (isFinite(v)) { sum += v; n++; segna(secchielli, ts, v); }
           // sanity come Austria/Svizzera: fuori da [-45,50] °C o medio ≥60 m/s = glitch
           if (tlo != null && tlo >= -45 && tlo <= 50) { if (tlo < tmin) tmin = tlo; nT++; }
           if (thi != null && thi >= -45 && thi <= 50) { if (thi > tmax) tmax = thi; }
@@ -298,6 +300,8 @@ async function main() {
           rec.w = [Math.round(ffSum / nFF * 3.6 * 10) / 10,
                    nFX > 0 ? Math.round(fxMax * 3.6 * 10) / 10 : null];
         if (nU >= MIN_ORE && umax > -Infinity) rec.u = [Math.round(umin), Math.round(umax)];
+        const inte = intensita(secchielli);
+        if (inte) rec.i = inte;
         perRegDay[reg.key][w.dateStr].push(rec);
       }
     }

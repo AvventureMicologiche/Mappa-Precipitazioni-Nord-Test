@@ -126,8 +126,20 @@ function estraiMeteoVen(xml, prefix) {
       out.t = [Math.round(Math.min(...vals) * 10) / 10, Math.round(Math.max(...vals) * 10) / 10];
     else if (type === 'UMID')
       out.u = [Math.round(Math.min(...vals)), Math.round(Math.max(...vals))];
-    else
+    else {
       out.w = [Math.round(vals.reduce((a, v) => a + v, 0) / vals.length * 3.6 * 10) / 10, null];
+      // ⚠️ L'ALTEZZA DELL'ANEMOMETRO (30/8/2026). ARPAV la dichiara nel nome
+      //    del sensore («Velocita' vento a 2m / 5m / 10m») e NON e' un
+      //    dettaglio: contate tutte e 190 le stazioni, solo 39 misurano ai
+      //    10 m dello standard, 64 stanno a 5 m e 16 a 2 m. Nei nostri dati
+      //    di agosto quelle a 5 m danno il 18% in meno di quelle a 10, quelle
+      //    a 2 m il 40% in meno: due stazioni vicine possono dare numeri
+      //    diversi con lo stesso vento. Si SCRIVE e il pannello la dichiara;
+      //    non si normalizza a 10 m, sarebbe un modello dentro un dato
+      //    misurato (regola 4). Le altre reti l'altezza non la dichiarano.
+      const h = /a\s*(\d+)\s*m/i.exec(getTag(sens, 'PARAMNM') || '');
+      if (h) out.wh = parseInt(h[1], 10);
+    }
   }
   return out;
 }

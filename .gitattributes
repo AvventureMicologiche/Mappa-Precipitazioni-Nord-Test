@@ -24,6 +24,7 @@
 
 index.html                              -text
 fonti.html                              -text
+guida/index.html                        -text
 CLAUDE.md                               -text
 .github/scripts/check-fonti.js          -text
 .github/scripts/collect-friuli-osmer.js -text

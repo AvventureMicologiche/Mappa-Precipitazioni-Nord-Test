@@ -9,7 +9,7 @@
  * senza rigenerare niente e senza deploy.
  *
  * ⚠️ Sta SUBITO SOTTO IL TITOLO. Prima era sulle sole pagine di regione, dopo
- * il riquadro «Cosa NON trovi qui», cioe' a mezza pagina: chi arrivava da
+ * il riquadro del patto («A cosa serve» dal 22/9/2026), cioe' a mezza pagina: chi arrivava da
  * Google con «dove andare a funghi oggi» a gennaio leggeva prima tre riquadri.
  *
  * ⚠️ UN SOLO TESTO per regioni e zone: due copie della stessa frase divergono.

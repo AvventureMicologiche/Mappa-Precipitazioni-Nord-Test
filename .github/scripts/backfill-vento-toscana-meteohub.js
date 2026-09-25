@@ -6,13 +6,17 @@
  * Serve perché il campionatore orario del CFR (`campiona-vento-toscana.js`)
  * parte dal 19/8/2026 e non può avere i giorni prima.
  *
- * LIMITE: senza login MeteoHub tiene ~9 giorni, il decimo risponde 401. Più
- * indietro di così non si va, e non c'è altra strada: il SIR non pubblica il
- * vento e la pagina anemometri del CFR mostra solo l'istante attuale.
+ * FINESTRA: senza login MeteoHub tiene ~9 giorni, il decimo risponde 401.
+ * Con l'account (MH_USER/MH_PASS nell'ambiente o nei secret, 19/8/2026)
+ * l'archivio sir-toscana si apre fino al 14/6/2026. Serve perché il SIR non
+ * pubblica il vento e la pagina anemometri del CFR mostra solo l'istante.
+ * Il pannello stazione disegna 30 giorni: oltre non ha senso andare.
  *
  * NON tocca mai `mm`, `t` o `u`: aggiunge solo `w` dove manca. Idempotente.
  *
- * Uso:  DATA_DIR=<percorso data/toscana> node backfill-vento-toscana-meteohub.js [--scrivi]
+ * Uso:  node backfill-vento-toscana-meteohub.js [DA A] [--scrivi]
+ *       senza date: gli ultimi 9 giorni (funziona anche anonimo)
+ *       con DA e A (YYYY-MM-DD): quell'intervallo, richiede l'account
  *       senza --scrivi fa la prova a vuoto e stampa soltanto.
  */
 
@@ -22,6 +26,23 @@ const path = require('path');
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '../..', 'data', 'toscana');
 const SCRIVI   = process.argv.includes('--scrivi');
 const MH_URL   = 'https://meteohub.agenziaitaliameteo.it/api/observations';
+
+// Account MeteoHub: se ci sono MH_USER/MH_PASS si fa il login e il token apre
+// l'archivio oltre i 9 giorni pubblici; senza, si lavora anonimi come prima.
+let MH_TOKEN = null;
+async function loginMeteoHub() {
+  const u = (process.env.MH_USER || '').trim(), p = process.env.MH_PASS || '';
+  if (!u || !p) return null;
+  const r = await fetch('https://meteohub.agenziaitaliameteo.it/auth/login', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({ username: u, password: p })
+  });
+  const t = await r.text();
+  if (!r.ok) throw new Error('login MeteoHub HTTP ' + r.status);
+  let tok = t.trim();
+  try { const j = JSON.parse(t); tok = j.token || j.access_token || j.accessToken || tok; } catch (e) {}
+  return tok.replace(/^"|"$/g, '') || null;
+}
 
 function getItalyOffset(date) {
   const year = date.getUTCFullYear();
@@ -41,7 +62,8 @@ async function ventoMeteoHub(dateStr, elenco) {
   const prendi = async prod => {
     const q = `reftime: >=${fq(start)},<=${fq(end)};product:${prod};license:CCBY_COMPLIANT`;
     const res = await fetch(`${MH_URL}?networks=sir-toscana&q=${encodeURIComponent(q)}`,
-                            { headers: { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0' } });
+                            { headers: Object.assign({ 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0' },
+                                        MH_TOKEN ? { 'Authorization': 'Bearer ' + MH_TOKEN } : {}) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const raw = await res.json();
     const out = [];
@@ -83,11 +105,19 @@ async function ventoMeteoHub(dateStr, elenco) {
 (async () => {
   console.log(`=== backfill vento Toscana da MeteoHub ${SCRIVI ? '(SCRIVE)' : '(prova a vuoto)'} ===`);
   console.log(`   cartella: ${DATA_DIR}\n`);
-  const oggi = new Date();
+  try {
+    MH_TOKEN = await loginMeteoHub();
+    console.log(MH_TOKEN ? '   accesso con account (archivio aperto)\n' : '   accesso anonimo (ultimi ~9 giorni)\n');
+  } catch (e) { console.warn('   Warn login: ' + e.message + ' — proseguo anonimo\n'); }
+
+  const date = process.argv.filter(a => /^\d{4}-\d{2}-\d{2}$/.test(a));
   const giorni = [];
-  for (let i = 9; i >= 1; i--) {
-    const d = new Date(oggi.getTime() - i * 86400000);
-    giorni.push(d.toISOString().substring(0, 10));
+  if (date.length === 2) {
+    for (let t = new Date(date[0] + 'T12:00:00Z').getTime(); t <= new Date(date[1] + 'T12:00:00Z').getTime(); t += 86400000)
+      giorni.push(new Date(t).toISOString().substring(0, 10));
+  } else {
+    const oggi = new Date();
+    for (let i = 9; i >= 1; i--) giorni.push(new Date(oggi.getTime() - i * 86400000).toISOString().substring(0, 10));
   }
   let totale = 0;
   for (const g of giorni) {

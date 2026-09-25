@@ -47,6 +47,7 @@
  *      DATE_OVERRIDE=2026-07-15 node collect-austria-geosphere.js
  */
 const fs   = require('fs');
+const { creaOre, segna, intensita } = require('./lib-intensita.js');
 const path = require('path');
 
 const DATA_DIR    = path.join(__dirname, '../..', 'data', 'austria');
@@ -240,10 +241,11 @@ async function main() {
         let tmin = Infinity, tmax = -Infinity, nT = 0;
         let ffSum = 0, nFF = 0, fxMax = -Infinity, nFX = 0;
         let umin = Infinity, umax = -Infinity, nU = 0;
+        const secchielli = creaOre();   // intensita' (12/9/2026)
         for (let k = 0; k < ts.length; k++) {
           if (!(ts[k] > w.start && ts[k] <= w.end)) continue;
           const v = dati[k];
-          if (v != null) { sum += v; n++; }
+          if (v != null) { sum += v; n++; segna(secchielli, ts[k], v); }
           const vt = dTl[k];   // sanity: fuori da [-45,50] °C è un glitch di sensore
           if (vt != null && vt >= -45 && vt <= 50) { if (vt < tmin) tmin = vt; if (vt > tmax) tmax = vt; nT++; }
           const vf = dFf[k];   // 60 m/s = 216 km/h di vento MEDIO orario: irreale
@@ -261,6 +263,8 @@ async function main() {
         if (nFF >= MIN_ORE) rec.w = [Math.round(ffSum / nFF * 3.6 * 10) / 10,
                                      nFX > 0 ? Math.round(fxMax * 3.6 * 10) / 10 : null];
         if (nU >= MIN_ORE && umax > -Infinity) rec.u = [Math.round(umin), Math.round(umax)];
+        const inte = intensita(secchielli);
+        if (inte) rec.i = inte;
         perDay[w.dateStr].push(rec);
       }
     }

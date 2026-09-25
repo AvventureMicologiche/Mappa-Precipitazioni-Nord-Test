@@ -133,6 +133,11 @@ const REGIONI = [
   { dir: 'valledaosta-cf', nome: "Valle d'Aosta", wf: 'valledaosta-cf.yml', sito: 'https://presidi2.regione.vda.it/' },
   { dir: 'veneto',         nome: 'Veneto',        wf: 'veneto.yml',         sito: 'https://www.arpa.veneto.it/' },
   // Centro-sud via MeteoHub (una sola piattaforma, un solo workflow)
+  // Friuli: NON entra nel registro buchi di check-meteohub-gaps.js, e non e' una
+  // dimenticanza. Li' un buco viene coperto con stime Open-Meteo, che qui non
+  // servono: se MeteoHub salta un giorno restano le ~41 stazioni OSMER a coprire
+  // il Friuli, quindi la mappa perde densita' ma non inventa una giornata asciutta.
+  { dir: 'meteohub-friuli',     nome: 'Friuli (rete completa)', wf: 'meteohub.yml', sito: 'https://meteohub.agenziaitaliameteo.it/' },
   { dir: 'meteohub-marche',     nome: 'Marche',     wf: 'meteohub.yml', sito: 'https://meteohub.agenziaitaliameteo.it/' },
   { dir: 'meteohub-umbria',     nome: 'Umbria',     wf: 'meteohub.yml', sito: 'https://meteohub.agenziaitaliameteo.it/' },
   { dir: 'meteohub-lazio',      nome: 'Lazio',      wf: 'meteohub.yml', sito: 'https://meteohub.agenziaitaliameteo.it/' },
@@ -529,4 +534,12 @@ function salvaRegistro(reg) {
   fs.writeFileSync(REGISTRO, JSON.stringify(reg, null, 2));
 }
 
-try { main(); } catch (e) { console.error('❌', e.message); process.exit(1); }
+// ⚠️ Si lascia anche `require`, come genera-pagine-regione.js: la tabella
+// REGIONI (cartella dati -> workflow che la produce) serve al guardiano, e due
+// elenchi che divergono darebbero due verita' diverse sulla stessa cosa senza
+// che nessuno se ne accorga. Lanciato a mano fa il suo lavoro di sempre.
+if (require.main === module) {
+  try { main(); } catch (e) { console.error('❌', e.message); process.exit(1); }
+}
+
+module.exports = { REGIONI, SOGLIA_PER_REGIONE };

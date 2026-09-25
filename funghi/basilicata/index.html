@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dove andare a funghi in Basilicata oggi</title>
-<meta name="description" content="Dove andare a funghi in Basilicata oggi: le zone e i posti da bosco dove è piovuto al momento giusto, da 13 a 20 giorni fa.">
+<title>Funghi in Basilicata oggi: dove stanno nascendo?</title>
+<meta name="description" content="Dove stanno nascendo funghi in Basilicata? Le piogge degli ultimi 25 giorni nei posti da bosco, zona per zona.">
 <link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/basilicata/">
-<meta property="og:title" content="Dove andare a funghi in Basilicata oggi">
+<meta property="og:title" content="Funghi in Basilicata oggi: dove stanno nascendo?">
 <meta property="og:description" content="Dove e' caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
 <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/basilicata/">
@@ -28,10 +28,14 @@
 :root{--blu:#1b3f6e;--blu-scuro:#123252;--grigio:#f0f4fb;--bordo:#d0d8e8;--verde:#2e7d32;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#222;background:#fff;font-size:17px;line-height:1.6;}
-header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:nowrap;}
 header a{color:#fff;text-decoration:none;}
-header .logo{font-weight:600;font-size:15px;}
-header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;}
+header .logo{font-weight:600;font-size:15px;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;flex:none;}
+/* ⚠️ 25/9/2026, sua schermata da Android: sotto i ~430 px logo e tasto rosso
+   non ci stavano sulla stessa riga e il tasto andava a capo, raddoppiando la
+   testata. Sul telefono via «· piogge» e «Canale»: resta «▶ YouTube». */
+@media(max-width:440px){header{padding:10px 12px;gap:8px;} header .logo span,header .yt .yt-l{display:none;}}
 main{max-width:860px;margin:0 auto;padding:22px 16px 40px;}
 h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
 h2{color:var(--blu-scuro);font-size:21px;margin:32px 0 8px;}
@@ -151,52 +155,103 @@ ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;}
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
+
+.gg{display:flex;align-items:flex-end;gap:3px;height:150px;margin:14px 0 4px;}
+.gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
+.gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
+.gg .b.dentro i{background:var(--blu);}
+.gg .b b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10.5px;
+  font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
+.gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
+.gg-x span{flex:1;text-align:center;}
+.gg-leg{font-size:13.5px;color:#555;margin-top:8px;}
+.gg-leg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
+.tt-box{position:relative;padding-right:42px;margin:14px 0 2px;}
+.tt{width:100%;height:150px;display:block;overflow:visible;}
+.tt .griglia{stroke:#e6eaf0;stroke-width:1;vector-effect:non-scaling-stroke;}
+.tt polyline{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+.tt .max{stroke:#d1603d;}
+.tt .min{stroke:#3a6ea8;}
+.tt-y{position:absolute;top:0;right:0;width:42px;height:150px;pointer-events:none;}
+.tt-y span{position:absolute;right:0;transform:translateY(-50%);font-size:11px;color:#6b7a8d;line-height:1;padding-left:5px;}
+.tt-x{padding-right:42px;}
+.vic td:last-child,.vic th:last-child{text-align:right;}
+.vic .qui{background:#eef4fd;}
+.verdetto{background:#0f2d4d;color:#fff;border-radius:12px;padding:18px 18px 16px;margin:14px 0 8px;}
+.verdetto .si{font-size:27px;font-weight:800;line-height:1.2;}
+.verdetto .pallino{display:inline-block;width:15px;height:15px;border-radius:50%;margin-right:9px;vertical-align:2px;}
+.verdetto .gr{font-size:44px;font-weight:800;line-height:1.1;margin-top:10px;}
+.verdetto .gr small{font-size:18px;font-weight:600;opacity:.85;margin-left:6px;}
+.verdetto .dett{font-size:16px;opacity:.9;margin-top:6px;}
+.scala{display:flex;gap:4px;margin-top:14px;}
+.scala div{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.18);}
+.scala-t{display:flex;font-size:11.5px;opacity:.75;margin-top:4px;}
+.scala-t span{flex:1;text-align:center;}
+.breve{font-size:16px;color:#333;margin:6px 0 4px;}
+.fin{display:flex;gap:6px;align-items:flex-end;height:170px;margin:16px 0 4px;}
+.fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
+.fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
+.fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+.fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
+.fin-x span{flex:1;text-align:center;line-height:1.25;}
+.img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
+.tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
+  padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+@media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
+.noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
+.noioso p{margin-bottom:8px;}
+.noioso a{color:var(--blu);}
+
 </style>
 </head>
 <body>
 <header>
   <a href="https://precipitazioni.avventuremicologiche.it/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
-  <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt">▶ Canale YouTube</a>
+  <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt">▶ <span class="yt-l">Canale </span>YouTube</a>
 </header>
 <main>
 
 
 <p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi, tutte le regioni</a></p>
 
-<h1>Dove andare a funghi in Basilicata oggi</h1>
+<h1>Funghi in Basilicata oggi: dove stanno nascendo?</h1>
 <div id="stagione"></div>
 <script>(function(){var m=new Date().getMonth()+1,t=null;if(m===12||m===1||m===2)t="<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.";else if(m===11||m===3)t="<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in autunno pieno.";if(t){var s=document.getElementById("stagione");s.innerHTML=t;s.style.display="block";}})();</script>
-<p class="sotto">Si va dove ha piovuto al momento giusto. Dopo la pioggia il fungo non spunta subito: per svilupparsi gli servono almeno
-dodici o tredici giorni. Per questo qui non guardiamo la pioggia di ieri ma quella <b>da 13 a 20
-giorni fa</b>, misurata dai pluviometri di MeteoHub nei posti da bosco della Basilicata. In cima alla
-classifica ci sono quelli dove ne è caduta di più.</p>
-
-
-<div class="spiega" style="margin-top:14px"><b>Ti serve un altro periodo?</b> Qui contiamo solo
-gli otto giorni della finestra dei funghi. Per la pioggia di ieri e degli ultimi 30 giorni c’è
-<a href="https://avventurepluvio-test.netlify.app/basilicata/" style="color:var(--blu);font-weight:700">dove ha piovuto in Basilicata</a>;
-per un periodo scelto da te, <a href="https://avventurepluvio-test.netlify.app/?r=basilicata&amp;g=20"
-style="color:var(--blu)">apri la mappa in Basilicata</a>.</div>
-
-<div class="patto">
-  <p><b>Cosa NON trovi qui:</b> una previsione di quanti funghi ci saranno. Attendibile non la
-  fa nessuno, e noi non ce la inventiamo.</p>
-  <p><b>Cosa trovi:</b> la pioggia vera, misurata, posto per posto, con la data. Il bosco poi
-  lo conosci tu meglio di qualunque sito.</p>
-  <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
-  valgono regole proprie.</p>
-</div>
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="guasto"></div>
-<div id="testa"></div>
+<div id="verdetto"></div>
+
+<h2>Le piogge degli ultimi 25 giorni in Basilicata</h2>
+<div id="grafico"></div>
+<p class="nota">Media dei pluviometri da bosco della Basilicata, giorno per giorno.</p>
+
+<h2 id="h-conta">Però attenzione: la pioggia che conta è quella caduta da 13 a 20 giorni fa</h2>
+<p class="breve" id="p-conta">Il fungo spunta 12-13 giorni dopo una bella pioggia: i funghi di oggi nascono da queste otto giornate.</p>
+<div id="finestra"></div>
+
+<h2>Dove è andata meglio? Apri le mappe</h2>
+<div class="tasti">
+  <a class="forte" id="t-conta" href="https://avventurepluvio-test.netlify.app/?r=basilicata&amp;g=20">13-20 gg fa</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=basilicata&amp;g=1">Ieri</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=basilicata&amp;g=7">Ultimi 7 gg</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=basilicata&amp;g=20">Ultimi 20 gg</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=basilicata&amp;g=30">Ultimi 30 gg</a>
+  <a href="https://avventurepluvio-test.netlify.app/?r=basilicata&amp;radar=ora"
+     onclick="try{gtag('event','apri_mappa',{da:'funghi-basilicata-radar'})}catch(e){}">📡 Radar adesso</a>
+</div>
+<div id="testa" style="display:none"></div>
 
 
 
 <h2>Piogge per funghi: i posti da bosco più bagnati della Basilicata</h2>
-<div class="spiega" id="finestra"></div>
+<div class="spiega" id="finestra2"></div>
 <div id="tabella"></div>
 <p class="nota" id="notaforte"></p>
+<div id="meteo"></div>
 
 <h2>Ecco cosa vedi sulla mappa</h2>
 <a href="https://precipitazioni.avventuremicologiche.it/?r=basilicata" style="display:block;text-decoration:none;"
@@ -225,26 +280,24 @@ con i disegni della carta forestale della Regione. Avvicinati sulla zona che ti 
 <p class="nota" style="margin-bottom:26px;">La fonte è la carta «Carta forestale di primo livello»: dice che bosco
 c'è, non se quest'anno ci sono nati funghi.</p>
 
-<h2 style="margin-bottom:12px">Come scegliamo i posti</h2>
-<div class="metodo">
-  <div><span class="n">1</span><b>C'è un pluviometro vero.</b> Non una stima su griglia: uno
-  strumento di un ente pubblico, col suo nome e la sua quota.</div>
-  <div><span class="n">2</span><b>Quota fra 200 e 1600 metri.</b> Sotto è pianura, sopra il bosco
-  finisce.</div>
-  <div><span class="n">3</span><b>Almeno il 37% di bosco entro 3 km</b>, misurato sulle mappe di
-  OpenStreetMap.</div>
-</div>
 
-<div class="avviso">
-  <b>Una cosa da tenere a mente.</b> Tanta pioggia non vuol dire tanti funghi: contano anche la
-  temperatura, il vento e il tipo di bosco. <b>La temperatura e il vento ce li abbiamo:</b>
-  clicca un pluviometro sulla mappa e vedi il suo storico, giorno per giorno, insieme alla
-  pioggia. Questa pagina ti dice <i>dove è arrivata l'acqua</i>, che è il pezzo che di solito
-  manca.
-</div>
 
-<p class="nota" style="margin-top:22px">Dati di MeteoHub via il nostro archivio. Il
-bosco è calcolato su dati OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</p>
+
+
+<div class="noioso">
+<h2>Come funziona questa pagina</h2>
+<p>I millimetri li misurano i pluviometri di MeteoHub nei posti da bosco della Basilicata: un pluviometro vero,
+quota fra 200 e 1600 metri, almeno il 37% di bosco entro 3 km sulle mappe di OpenStreetMap. I numeri in
+cima sono la media di questi pluviometri, giorno per giorno, aggiornata ogni mattina.</p>
+<p>Perché da 13 a 20 giorni fa: dopo una pioggia il fungo impiega almeno dodici o tredici giorni
+a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due settimane.</p>
+<p>Ti serve un altro periodo? Per ieri e gli ultimi 30 giorni c’è
+<a href="https://avventurepluvio-test.netlify.app/basilicata/">dove ha piovuto in Basilicata</a>.</p>
+<p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
+valgono regole proprie.</p>
+<p>Dati di MeteoHub via il nostro archivio. Il bosco è calcolato su dati OpenStreetMap, licenza ODbL.
+La provincia viene dai confini provinciali ISTAT.</p>
+</div>
 
 
 
@@ -259,7 +312,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Basilicata.</p>
 
 <nav class="altre">
   <b>Dove ha piovuto: tutti i pluviometri, pianura compresa</b>
-  <p><a href="https://precipitazioni.avventuremicologiche.it/lombardia/">Lombardia</a> · <a href="https://precipitazioni.avventuremicologiche.it/piemonte/">Piemonte</a> · <a href="https://precipitazioni.avventuremicologiche.it/valledaosta/">Valle d'Aosta</a> · <a href="https://precipitazioni.avventuremicologiche.it/liguria/">Liguria</a> · <a href="https://precipitazioni.avventuremicologiche.it/emilia/">Emilia-Romagna</a> · <a href="https://precipitazioni.avventuremicologiche.it/veneto/">Veneto</a> · <a href="https://precipitazioni.avventuremicologiche.it/friuli/">Friuli</a> · <a href="https://precipitazioni.avventuremicologiche.it/trentino/">Trentino</a> · <a href="https://precipitazioni.avventuremicologiche.it/altoadige/">Alto Adige</a> · <a href="https://precipitazioni.avventuremicologiche.it/toscana/">Toscana</a> · <a href="https://precipitazioni.avventuremicologiche.it/umbria/">Umbria</a> · <a href="https://precipitazioni.avventuremicologiche.it/marche/">Marche</a> · <a href="https://precipitazioni.avventuremicologiche.it/lazio/">Lazio</a> · <a href="https://precipitazioni.avventuremicologiche.it/molise/">Molise</a> · <a href="https://precipitazioni.avventuremicologiche.it/campania/">Campania</a> · <a href="https://precipitazioni.avventuremicologiche.it/puglia/">Puglia</a> · <a href="https://precipitazioni.avventuremicologiche.it/basilicata/">Basilicata</a> · <a href="https://precipitazioni.avventuremicologiche.it/calabria/">Calabria</a> · <a href="https://precipitazioni.avventuremicologiche.it/sicilia/">Sicilia</a> · <a href="https://precipitazioni.avventuremicologiche.it/sardegna/">Sardegna</a> · <a href="https://precipitazioni.avventuremicologiche.it/svizzera/">Svizzera</a> · <a href="https://precipitazioni.avventuremicologiche.it/austria/">Austria</a> · <a href="https://precipitazioni.avventuremicologiche.it/slovenia/">Slovenia</a></p>
+  <p><a href="https://avventurepluvio-test.netlify.app/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.netlify.app/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.netlify.app/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.netlify.app/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.netlify.app/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.netlify.app/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.netlify.app/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.netlify.app/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.netlify.app/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.netlify.app/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.netlify.app/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.netlify.app/marche/">Marche</a> · <a href="https://avventurepluvio-test.netlify.app/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.netlify.app/molise/">Molise</a> · <a href="https://avventurepluvio-test.netlify.app/campania/">Campania</a> · <a href="https://avventurepluvio-test.netlify.app/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.netlify.app/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.netlify.app/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.netlify.app/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.netlify.app/sardegna/">Sardegna</a> · <a href="https://avventurepluvio-test.netlify.app/svizzera/">Svizzera</a> · <a href="https://avventurepluvio-test.netlify.app/austria/">Austria</a> · <a href="https://avventurepluvio-test.netlify.app/slovenia/">Slovenia</a></p>
 </nav>
 </main>
 
@@ -288,17 +341,119 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Basilicata.</p>
   var BASE = LOCALE ? '/data/'
     : 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
   var MAPPA = 'https://precipitazioni.avventuremicologiche.it/';
-  var QUANTI = 15, FORTE = 30, GIORNI = 25;
+  var QUANTI = 15, FORTE = 30;
 
-  function iso(d){ var p=function(n){return String(n).padStart(2,'0');};
-    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
-  function meno(n){ var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-n); return d; }
-  function menoDa(s, n){ var p=String(s).split('-');
-    var d=new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return iso(d); }
-  var MESI=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
-  function gg(d){ var p=d.split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
-  function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  var GIORNI = 25;
+  var MESI = ["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+  var GS = ["dom","lun","mar","mer","gio","ven","sab"];
+  function iso(d){ var p = function(n){ return String(n).padStart(2,"0"); };
+    return d.getFullYear() + "-" + p(d.getMonth()+1) + "-" + p(d.getDate()); }
+  function menoDa(s, n){ var p = String(s).split("-");
+    var d = new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return d; }
+  function gg(s){ var p = String(s).split("-"); return (+p[2]) + " " + MESI[(+p[1])-1]; }
+  /* «dal 4 all'11 settembre»: il mese una volta sola, l'apostrofo davanti a 1, 8, 11 */
+  function dalAl(a, b){ var pa = a.split("-"), pb = b.split("-"), da = +pa[2], db = +pb[2];
+    var al = (db === 1 || db === 8 || db === 11) ? "all’" : "al ";
+    return ((da === 1 || da === 8 || da === 11) ? "dall’" : "dal ") + (pa[1] === pb[1] ? da : gg(a)) + " " + al + gg(b); }
+  function esc(t){ return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
   function uno(n){ return Math.round(n*10)/10; }
+  function num(n){ return uno(n).toFixed(1).replace(".", ","); }
+  /* serie[0] e' IERI; n va dal piu' lontano al piu' vicino */
+  function somma(s, da, a){ var t = 0; for (var n = da; n >= a; n--) t += (s[n-1]||0); return uno(t); }
+
+  /* ⚠️ LA SCALA DEL VERDETTO E' SUA (24/9/2026): pioggia degli ULTIMI 20
+     GIORNI. Sotto 30 mm troppo poco, da 30 poco, da 60 bene, da 100 benissimo.
+     Dice com'e' andata la pioggia, non se ci sono i funghi. */
+  var LIV = [{fino:30,t:"Troppo poca pioggia",c:"#c0392b"},
+             {fino:60,t:"Poca pioggia",c:"#e6a100"},
+             {fino:100,t:"Ha piovuto bene",c:"#5bb85d"},
+             {fino:1e9,t:"Ha piovuto benissimo",c:"#2e9d44"}];
+
+  function scriviVerdetto(s, oggi, href, sotto){
+    var m20 = somma(s, 20, 1);
+    var liv = LIV.filter(function(l){ return m20 < l.fino; })[0], k = LIV.indexOf(liv);
+    var big = [];
+    for (var n = 20; n >= 1; n--) if ((s[n-1]||0) >= 10) big.push(n);
+    var dett = big.length
+      ? big.slice(-4).map(function(n){ return "<b>" + num(s[n-1]) + " mm</b> il " + gg(iso(menoDa(oggi,n))); }).join(", ") + "."
+      : "Nessuna giornata sopra i 10 mm.";
+    var sc = "";
+    for (var q = 0; q < 4; q++) sc += "<div" + (q <= k ? " style=\"background:" + liv.c + "\"" : "") + "></div>";
+    document.getElementById("verdetto").innerHTML = "<div class=\"verdetto\">"
+      + "<div class=\"si\"><span class=\"pallino\" style=\"background:" + liv.c + "\"></span>" + liv.t + "</div>"
+      + "<div class=\"gr\">" + Math.round(m20) + " mm<small>" + sotto + "</small></div>"
+      + "<div class=\"dett\">" + dett + "</div>"
+      + "<div class=\"scala\">" + sc + "</div>"
+      + "<div class=\"scala-t\"><span>sotto 30</span><span>30-60</span><span>60-100</span><span>oltre 100</span></div>"
+      + "<div class=\"capo-btns\"><a class=\"capo-btn\" href=\"" + href + "\">Vedi sulla mappa</a></div></div>";
+  }
+
+  /* le 25 barre, ieri a destra; restituisce le ascisse per i grafici sotto */
+  function scriviBarre(s, oggi){
+    var max = Math.max.apply(null, s.concat([1])), barre = "", ax = "", ult = null;
+    for (var i = GIORNI; i >= 1; i--) {
+      var v = s[i-1] || 0, d = menoDa(oggi, i), cl = (i >= 13 && i <= 20) ? " dentro" : "";
+      var et = v >= max*0.2 && (ult === null || ult - i >= 2);
+      if (et) ult = i;
+      barre += "<div class=\"b" + cl + "\" title=\"" + gg(iso(d)) + ": " + num(v) + " mm\">" + (et ? "<b>" + num(v) + "</b>" : "")
+        + "<i style=\"height:" + Math.max(2, Math.round(v/max*100)) + "%\"></i></div>";
+      ax += "<span>" + ((i === GIORNI || i === 1 || i % 5 === 0) ? (d.getDate() + "/" + (d.getMonth()+1)) : "") + "</span>";
+    }
+    document.getElementById("grafico").innerHTML = "<div class=\"gg\">" + barre + "</div><div class=\"gg-x\">" + ax + "</div>"
+      + "<p class=\"gg-leg\"><i style=\"background:var(--blu)\"></i>da 13 a 20 giorni fa &nbsp; "
+      + "<i style=\"background:#b9cbe2\"></i>gli altri giorni</p>";
+    return ax;
+  }
+
+  /* la pioggia che conta: titolo con le date e le otto barre larghe */
+  function scriviFinestra(s, oggi, _sI, quale){
+    var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13));
+    document.getElementById("h-conta").textContent = "Però attenzione: la pioggia che conta è quella caduta " + dalAl(daG, aG);
+    document.getElementById("p-conta").innerHTML = "Il fungo spunta 12-13 giorni dopo una bella pioggia: "
+      + "i funghi di oggi nascono da queste otto giornate, che qui hanno fatto " + quale + " <b>" + num(somma(s,20,13)) + " mm</b>.";
+    var fmax = 1;
+    for (var n = 20; n >= 13; n--) fmax = Math.max(fmax, s[n-1]||0);
+    var fb = "", fx = "";
+    for (var n2 = 20; n2 >= 13; n2--) {
+      var v = s[n2-1] || 0, d = menoDa(oggi, n2);
+      fb += "<div class=\"c\">" + (v > 0 ? "<b>" + num(v) + "</b>" : "") + "<i style=\"height:" + Math.max(2, Math.round(v/fmax*88)) + "%\"></i></div>";
+      fx += "<span>" + GS[d.getDay()] + "<br>" + d.getDate() + "/" + (d.getMonth()+1) + "</span>";
+    }
+    document.getElementById("finestra").innerHTML = "<div class=\"fin\">" + fb + "</div><div class=\"fin-x\">" + fx + "</div>";
+  }
+
+  /* minima e massima degli ultimi 25 giorni, a linee */
+  function scriviTemperatura(sT, ax, nota){
+    var vals = [];
+    for (var q = 0; q < GIORNI; q++) if (sT[q]) { vals.push(sT[q][0]); vals.push(sT[q][1]); }
+    if (!vals.length) return;
+    var lo = Math.floor(Math.min.apply(null, vals) - 1), hi = Math.ceil(Math.max.apply(null, vals) + 1);
+    var passi = [1, 2, 2.5, 5, 10], p = 10;
+    for (var k = 0; k < passi.length; k++) if ((hi - lo) / passi[k] <= 5) { p = passi[k]; break; }
+    var y = function(v){ return 100 - (v - lo) / (hi - lo) * 100; };
+    var svg = "", et = "";
+    for (var t = Math.ceil(lo / p) * p; t <= hi; t += p) {
+      svg += "<line class=\"griglia\" x1=\"0\" y1=\"" + y(t).toFixed(1) + "\" x2=\"100\" y2=\"" + y(t).toFixed(1) + "\"/>";
+      et += "<span style=\"top:" + y(t).toFixed(1) + "%\">" + t + "°</span>";
+    }
+    function linea(c){ var pz = [], cur = [];
+      for (var i = GIORNI; i >= 1; i--) { var d = sT[i-1];
+        if (!d) { if (cur.length > 1) pz.push(cur.join(" ")); cur = []; continue; }
+        cur.push(((GIORNI - i) / (GIORNI - 1) * 100).toFixed(1) + "," + y(d[c]).toFixed(1)); }
+      if (cur.length > 1) pz.push(cur.join(" "));
+      return pz; }
+    ["min","max"].forEach(function(cl, c){ linea(c).forEach(function(pts){ svg += "<polyline class=\"" + cl + "\" points=\"" + pts + "\"/>"; }); });
+    var ieri = sT[0];
+    document.getElementById("meteo").innerHTML = "<h2>Temperatura degli ultimi 25 giorni</h2>"
+      + (ieri ? "<p class=\"breve\">Ieri minima <b>" + num(ieri[0]) + "°</b>, massima <b>" + num(ieri[1]) + "°</b>" + (nota ? ", " + nota : "") + ".</p>" : "")
+      + "<div class=\"tt-box\"><svg class=\"tt\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\">" + svg + "</svg>"
+      + "<div class=\"tt-y\">" + et + "</div></div><div class=\"gg-x tt-x\">" + ax + "</div>"
+      + "<p class=\"gg-leg\"><i style=\"background:#d1603d\"></i>massima &nbsp; <i style=\"background:#3a6ea8\"></i>minima</p>";
+  }
+
+
+  function meno(n){ var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-n); return d; }
+  function menoDaI(s, n){ return iso(menoDa(s, n)); }
 
   /* La riga di stagione non sta piu' qui: dal 13/9/2026 la scrive
      lib-stagione.js subito sotto il titolo, uguale per regioni e zone. */
@@ -321,6 +476,32 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Basilicata.</p>
     var eta = Date.now() - new Date(j.generato).getTime();
     return eta >= 0 && eta < 36*3600*1000;
   }
+
+  /* ── IN CIMA (24/9/2026): verdetto, barre e finestra sulla MEDIA dei posti
+     da bosco della regione, dal file dei giorni che usano anche le pagine di
+     paese. Se non arriva, sotto la pagina resta com'era: zone e posti. */
+  fetch(BASE + 'funghi/' + REG + '-giorni.json')
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .catch(function(){ return null; })
+    .then(function(j){
+      if (!j || !j.serie || !j.oggi) return;
+      var ids = POSTI.map(function(p){ return p[0]; }).filter(function(id){ return j.serie[id]; });
+      if (!ids.length) return;
+      var s = [], sT = [];
+      for (var i = 0; i < GIORNI; i++) {
+        var t = 0, n = 0, a = 0, b = 0, m = 0;
+        ids.forEach(function(id){ var v = j.serie[id][i]; if (v != null) { t += v; n++; }
+          var tt = ((j.serieT || {})[id] || [])[i]; if (tt) { a += tt[0]; b += tt[1]; m++; } });
+        s.push(n ? uno(t / n) : 0); sT.push(m ? [uno(a / m), uno(b / m)] : null);
+      }
+      var o = j.oggi, daG = iso(menoDa(o,20)), aG = iso(menoDa(o,13)), ieri = iso(menoDa(o,1));
+      var lk = function(dal, al){ return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al; };
+      scriviVerdetto(s, o, lk(daG, ieri), 'in media, negli ultimi 20 giorni');
+      var ax = scriviBarre(s, o);
+      scriviFinestra(s, o, null, 'in media');
+      document.getElementById('t-conta').href = lk(daG, aG);
+      if (sT.some(function(x){ return x; })) scriviTemperatura(sT, ax, 'media dei posti da bosco');
+    });
 
   fetch(BASE + 'funghi/' + REG + '.json')
     .then(function(r){ return r.ok ? r.json() : null; })
@@ -453,7 +634,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Basilicata.</p>
     righe = righe.sort(function(a,b){ return b.mm - a.mm; }).slice(0, QUANTI);
     var maxMm = Math.max.apply(null, righe.map(function(r){ return Math.max(r.mm, r.mm7, r.mm25); }).concat([1]));
 
-    var daG = menoDa(oggiISO,20), aG = menoDa(oggiISO,13), a20 = menoDa(oggiISO,1);
+    var daG = menoDaI(oggiISO,20), aG = menoDaI(oggiISO,13), a20 = menoDaI(oggiISO,1);
     function link(r, dal, al){
       return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al
         + (r ? '&z=11&c=' + r.lat.toFixed(4) + ',' + r.lon.toFixed(4) : '');
@@ -486,7 +667,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Basilicata.</p>
        mezza pagina di distanza sembrava che la pagina si fosse dimenticata di
        averla gia' detta. Qui restano le DATE, che in cima non ci possono
        stare: cambiano ogni giorno e il titolo e' cotto nel guscio. */
-    document.getElementById('finestra').innerHTML =
+    document.getElementById('finestra2').innerHTML =
       'Gli otto giorni della finestra sono fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG)
       + '</b>. Sono millimetri misurati a terra dai pluviometri, non una previsione.';
 

@@ -48,6 +48,8 @@ const fs = require('fs');
 const path = require('path');
 const { scriviSitemap } = require('./genera-sitemap.js');
 const { slug } = require('./lib-nomi.js');
+// 25/9/2026: le barre, il riquadro in cima e i tasti delle pagine funghi
+const { STILE_NUOVO } = require('./lib-pagina-funghi.js');
 // Le zone, per l'elenco «dove ha piovuto, zona per zona» (13/9/2026): ogni
 // regione rimanda alle pagine piogge delle sue zone, che senza questi link
 // sarebbero orfane.
@@ -111,6 +113,19 @@ const FUNGHI = Object.keys(JSON.parse(
   fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8')));
 
 const nomeDi = r => r.nomeTitolo || r.nome;
+
+// «Pluviometria DELLA Toscana», «mappa pluviometrica DEL Piemonte»: nell'anagrafe
+// c'e' solo la preposizione semplice. Se una chiave manca, la pagina direbbe
+// «undefined»: il controllo in fondo al file ferma il generatore.
+const GEN = {
+  lombardia: 'della Lombardia', piemonte: 'del Piemonte', valledaosta: "della Valle d'Aosta",
+  liguria: 'della Liguria', emilia: "dell'Emilia-Romagna", veneto: 'del Veneto',
+  friuli: 'del Friuli Venezia Giulia', trentino: 'del Trentino', altoadige: "dell'Alto Adige",
+  toscana: 'della Toscana', umbria: "dell'Umbria", marche: 'delle Marche', lazio: 'del Lazio',
+  molise: 'del Molise', campania: 'della Campania', puglia: 'della Puglia', basilicata: 'della Basilicata',
+  calabria: 'della Calabria', sicilia: 'della Sicilia', sardegna: 'della Sardegna',
+  svizzera: 'della Svizzera', austria: "dell'Austria", slovenia: 'della Slovenia',
+};
 
 // ⚠️ UNA LISTA SOLA, E SEMPRE QUELLA DELL'ALTRA FAMIGLIA (8/9/2026).
 // Fino a oggi ogni pagina ne elencava DUE: «Dove ha piovuto, regione per
@@ -187,6 +202,13 @@ function pagina(r){
   // «misurata» nella descrizione fa un lavoro preciso: dice che non siamo una
   // previsione. Limiti da rispettare: titolo <= 62, descrizione <= 158.
   const nomeCorto = r.nomeTitolo || r.nome;
+  // ⚠️ 25/9/2026, SEARCH CONSOLE 90 GIORNI: «pluviometria toscana» 6.216 viste
+  // e 0,7% di clic in 8ª posizione, «pluviometria toscana ultimo mese» 747,
+  // «pluviometro toscana» 763, «mappa pluviometri liguria» 234. Il titolo della
+  // scheda diceva gia' «Pluviometria», il testo della pagina quasi mai: le
+  // parole ora stanno anche nel testo fisso (sottotitolo, «ultimo mese»,
+  // «mappa pluviometrica»). Ricontrollare con `sc.py` verso meta' ottobre.
+  const gen = GEN[r.k];
   const titolo = `Dove ha piovuto ${r.prep} ${r.nome}`;
   // ⚠️ 13/9/2026: «PLUVIOMETRIA» IN TESTA. Search Console, 28 giorni: la gente
   // cerca «pluviometria toscana» (1.527 viste, nono posto, 0,6% di clic),
@@ -251,23 +273,32 @@ header .logo{font-weight:600;font-size:15px;display:flex;align-items:center;gap:
 header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;}
 main{max-width:760px;margin:0 auto;padding:22px 16px 4px;}
 h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
-.sotto{color:#555;font-size:17px;margin-bottom:22px;}
+h1,h2{text-wrap:balance;}
+p,li{text-wrap:pretty;}
+.sotto{color:#555;font-size:17px;margin-bottom:12px;}
 h2{color:var(--blu-scuro);font-size:22px;margin:34px 0 10px;}
 p{margin-bottom:12px;}
 .cta{display:block;text-align:center;background:var(--blu);color:#fff;font-size:19px;font-weight:600;padding:15px 18px;border-radius:9px;text-decoration:none;margin:22px 0;}
 .cta:hover{background:#2a5490;}
-.griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:18px 0;}
-.card{background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:16px;display:flex;flex-direction:column;}
-.card.largo{grid-column:1/-1;}
-.card h2{margin:0 0 6px;font-size:20px;}
-.numerone{font-size:32px;font-weight:700;color:var(--blu-scuro);}
-.numerone small{font-size:15px;font-weight:400;color:#555;}
+.griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0;}
+.card{background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:14px 15px;display:flex;flex-direction:column;}
+.card h3{margin:0 0 4px;font-size:17px;color:var(--blu-scuro);}
+.numerone{font-size:30px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}
+.numerone small{font-size:14px;font-weight:400;color:#555;}
+.card .vai{margin-top:auto;padding-top:10px;font-size:15px;font-weight:600;color:var(--blu);text-decoration:none;}
 .attesa{color:#777;font-style:italic;}
 .nota{font-size:14px;color:#666;margin-top:8px;}
-.top-staz{margin:6px 0 0;}
-.top-staz li{margin:4px 0 4px 20px;}
-.altre-zone{font-size:16px;line-height:1.9;color:#555;}
-.altre-zone a{color:var(--blu);}
+.top-staz{margin:6px 0 0;font-size:15px;}
+.top-staz li{margin:3px 0 3px 20px;}
+.verdetto .top{font-size:16px;opacity:.92;margin-top:8px;}
+.verdetto .top b{font-weight:700;}
+#attesa{color:#6a7789;font-size:16px;padding:18px 0;}
+ol.zone-dove{list-style:none;margin:10px 0 6px;padding:0;counter-reset:z;}
+ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
+ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
+ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
+ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;color:var(--blu-scuro);}
+ol.zone-dove .zmm small{font-weight:400;color:#6a7789;font-size:13px;margin-left:6px;}
 footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;font-size:14px;color:#555;text-align:center;}
 footer a{color:var(--blu);}
 nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
@@ -275,7 +306,17 @@ nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2p
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
 footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
+.capo-btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px;}
+.capo-btn{display:inline-block;text-decoration:none;color:#0f2d4d;font-weight:700;font-size:14.5px;
+  padding:9px 15px 10px;border-radius:9px;border:1px solid #b9c7da;
+  background:linear-gradient(180deg,#ffffff 0%,#f5f8fd 48%,#e8eef8 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 3px 0 #aebfd4, 0 6px 13px rgba(0,0,0,.28);}
 @media(max-width:480px){h1{font-size:25px;}body{font-size:16px;}}
+${STILE_NUOVO}
+/* Sulle pagine piogge l'etichetta sta SOPRA la sua barra, non in cima al
+   grafico: con 30 barre strette, in cima non si capiva di chi fosse. */
+.gg .b b{position:static;transform:none;align-self:center;margin-bottom:2px;line-height:1.1;}
+.verdetto .dett{font-size:14px;opacity:.75;}
 </style>
 </head>
 <body>
@@ -286,102 +327,107 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 </header>
 <main>
 <h1>${titolo}</h1>
-<p class="sotto">Ieri e negli ultimi 30 giorni, da <b>${r.staz} pluviometri di ${r.agenzia}</b>, ${r.geo}.</p>${r.nota ? `\n<p class="nota" style="margin:-16px 0 20px;">${r.nota}</p>` : ''}
+<p class="sotto"><b>Pluviometria ${gen}</b>: i dati di ${r.staz} pluviometri di ${r.agenzia}, ieri e nell'ultimo mese, ${r.geo}.</p>
 
+<!-- ⚠️ 25/9/2026: LO SCHEMA «PRIMA I DATI», lo stesso delle pagine funghi del
+     24/9 (deciso da lui guardando Santo Stefano d'Aveto): in cima la risposta
+     alla domanda del titolo, cioe' IERI, poi le barre, poi i periodi, le zone,
+     le mappe. Le spiegazioni stanno in fondo, in piccolo. -->
+<div id="attesa">Sto leggendo i pluviometri…</div>
+<div id="verdetto"></div>
+
+<h2>La pioggia degli ultimi 30 giorni</h2>
+<div id="grafico"></div>
+
+<h2>Dove ha piovuto di più</h2>
 <div class="griglia">
-  <!-- 13/9/2026: IERI. Chi cerca «dove ha piovuto ieri in Campania» trovava 7
-       e 20 giorni e un sottotitolo che prometteva «ieri» senza darlo. Il titolo
-       della scheda lo riscrive il javascript con la data vera se il riepilogo
-       e' di altroieri (ieri non ancora arrivato da tutte le reti). -->
-  <div class="card" id="card1">
-    <h2 id="tit1">Ieri</h2>
-    <div class="numerone" id="rip1-media"><span class="attesa">calcolo in corso…</span></div>
-    <div id="rip1-top"></div>
-    <p class="nota" id="rip1-date"></p>
-    <a class="cta" id="cta1" style="margin:14px 0 2px;margin-top:auto;" href="${SITO}/?r=${r.k}&amp;g=1"
-       onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-1gg'})}catch(e){}">Apri la mappa di ieri →</a>
-  </div>
   <div class="card">
-    <h2>Ultimi 7 giorni</h2>
-    <div class="numerone" id="rip7-media"><span class="attesa">calcolo in corso…</span></div>
+    <h3>Ultimi 7 giorni</h3>
+    <div class="numerone" id="rip7-media"><span class="attesa">…</span></div>
     <div id="rip7-top"></div>
     <p class="nota" id="rip7-date"></p>
     <!-- ⚠️ L'indirizzo scritto qui deve GIA' portare alla regione (23/8/2026):
-         lo script in fondo alla pagina lo riscrive con le date esatte, ma solo
-         dopo che i dati sono arrivati, e chi cliccava prima finiva sulla mappa
-         vuota da scegliere. Il parametro g sono i giorni: la mappa li fa date.
-         ⚠️ Se un giorno queste pagine si rigenerano, la correzione deve stare
-         QUI: la stessa, fatta a mano sulle 23 pagine, e' durata mezza giornata
-         ed e' stata cancellata dal primo giro del generatore. -->
-    <a class="cta" id="cta7" style="margin:14px 0 2px;margin-top:auto;" href="${SITO}/?r=${r.k}&amp;g=7"
-       onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-7gg'})}catch(e){}">Apri la mappa a 7 giorni →</a>
+         lo script in fondo lo riscrive con le date esatte, ma solo dopo che i
+         dati sono arrivati. Il parametro g sono i giorni: la mappa li fa date. -->
+    <a class="vai" id="cta7" href="${SITO}/?r=${r.k}&amp;g=7"
+       onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-7gg'})}catch(e){}">Apri la mappa →</a>
   </div>
   <div class="card">
-    <h2>Ultimi 20 giorni</h2>
-    <div class="numerone" id="rip15-media"><span class="attesa">calcolo in corso…</span></div>
-    <div id="rip15-top"></div>
-    <p class="nota" id="rip15-date"></p>
-    <a class="cta" id="cta15" style="margin:14px 0 2px;margin-top:auto;" href="${SITO}/?r=${r.k}&amp;g=20"
-       onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-20gg'})}catch(e){}">Apri la mappa a 20 giorni →</a>
+    <h3>Ultimi 20 giorni</h3>
+    <div class="numerone" id="rip20-media"><span class="attesa">…</span></div>
+    <div id="rip20-top"></div>
+    <p class="nota" id="rip20-date"></p>
+    <a class="vai" id="cta20" href="${SITO}/?r=${r.k}&amp;g=20"
+       onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-20gg'})}catch(e){}">Apri la mappa →</a>
   </div>
-  <!-- 13/9/2026: il mese. Chi cerca «pluviometria toscana ultimo mese» o
-       «ultimi trenta giorni» sulla pagina trovava solo 7 e 20. Sta sotto e
-       largo, perche' la colonna e' da 760 px e tre schede affiancate andrebbero
-       a capo nei nomi delle stazioni. -->
   <div class="card" id="card30">
-    <h2>Ultimi 30 giorni</h2>
-    <div class="numerone" id="rip30-media"><span class="attesa">calcolo in corso…</span></div>
+    <h3>Ultimo mese</h3>
+    <div class="numerone" id="rip30-media"><span class="attesa">…</span></div>
     <div id="rip30-top"></div>
     <p class="nota" id="rip30-date"></p>
-    <a class="cta" id="cta30" style="margin:14px 0 2px;margin-top:auto;" href="${SITO}/?r=${r.k}&amp;g=30"
-       onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-30gg'})}catch(e){}">Apri la mappa a 30 giorni →</a>
+    <a class="vai" id="cta30" href="${SITO}/?r=${r.k}&amp;g=30"
+       onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-30gg'})}catch(e){}">Apri la mappa →</a>
   </div>
 </div>
-
 ${(() => {
+  // I link alle zone sono COTTI nell'HTML (li legge Google); il javascript
+  // riempie i millimetri e riordina le righe spostando i nodi.
   const zz = ZONE.filter(z => z.reg === r.k).sort((a, b) => a.n.localeCompare(b.n, 'it'));
   if (!zz.length) return '';
-  return `<h2>Dove ha piovuto, zona per zona</h2>
-<p class="nota" style="margin-top:0">Ieri, ultimi 7 e 30 giorni, con i pluviometri di ogni valle.</p>
-<p class="altre-zone">${zz.map(z => `<a href="${SITO}/zone/${slug(z.n)}/">${z.n}</a>`).join(' · ')}</p>
+  return `
+<h2>Dove ha piovuto, zona per zona</h2>
+<p class="nota" style="margin-top:0" id="zone-nota">Negli ultimi 7 giorni, media dei pluviometri di ogni zona. Ogni nome porta alla sua pagina.</p>
+<ol class="zone-dove" id="zone">
+${zz.map(z => `<li data-z="${slug(z.n)}"><a href="${SITO}/zone/${slug(z.n)}/">${z.n}</a><span class="zmm"></span></li>`).join('\n')}
+</ol>
 `;
 })()}
-<h2>Ecco cosa vedi sulla mappa</h2>
-<a href="${SITO}/?r=${r.k}" style="display:block;text-decoration:none;"
+<h2>Mappa pluviometrica ${gen}: guardala in dettaglio</h2>
+<div class="tasti">
+  <a class="forte" id="t1" href="${SITO}/?r=${r.k}&amp;g=1"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-1gg'})}catch(e){}">Ieri</a>
+  <a id="t7" href="${SITO}/?r=${r.k}&amp;g=7"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-7gg'})}catch(e){}">Ultimi 7 gg</a>
+  <a id="t15" href="${SITO}/?r=${r.k}&amp;g=15"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-15gg'})}catch(e){}">Ultimi 15 gg</a>
+  <a id="t20" href="${SITO}/?r=${r.k}&amp;g=20"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-20gg'})}catch(e){}">Ultimi 20 gg</a>
+  <a id="t30" href="${SITO}/?r=${r.k}&amp;g=30"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-30gg'})}catch(e){}">Ultimi 30 gg</a>
+  <a href="${SITO}/?r=${r.k}&amp;radar=ora"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-radar'})}catch(e){}">📡 Radar adesso</a>
+</div>
+<p class="breve">La pioggia degli ultimi 20 giorni ${r.prep} ${r.nome}, pluviometro per pluviometro.</p>
+<a href="${SITO}/?r=${r.k}&amp;g=20" id="lnk-img" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-anteprima'})}catch(e){}">
-  <img src="${ANTEPRIME}/${r.k}.jpg" alt="La mappa delle piogge ${r.prep} ${r.nome}: le zone più bagnate, stazione per stazione"
-       width="1600" height="1000" loading="lazy"
-       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
-  <span style="display:block;text-align:center;background:var(--blu);color:#fff;font-size:19px;font-weight:600;padding:15px 18px;border-radius:9px;margin:12px 0 4px;">Apri la mappa ${r.prep} ${r.nome} →</span>
-</a>
-<p class="nota" style="text-align:center;margin-bottom:26px;">Più il colore è acceso, più acqua è caduta. Ogni pallino è un pluviometro: cliccalo e vedi il suo storico.</p>
-
-<h2>Sta piovendo adesso?</h2>
-<p>Questa pagina conta i millimetri dei giorni <b>già chiusi</b>: la giornata di oggi è
-esclusa, perché i pluviometri la stanno ancora misurando. Per la pioggia <b>in corso</b> c'è
-la diretta radar, che mostra dove sta piovendo in questo momento, le ultime due ore e i
-quaranta minuti seguenti.</p>
-<a class="cta" href="${SITO}/?r=${r.k}&amp;radar=ora"
-   onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-radar'})}catch(e){}">Guarda il radar della pioggia ${r.prep} ${r.nome} →</a>
-<p class="nota" style="margin-bottom:26px;">⚠️ Il radar <b>non è un pluviometro</b>: è una
-misura presa dal cielo, a 2 km di risoluzione, e serve a vedere <i>dove</i> sta piovendo
-adesso, non a contare quanta acqua è caduta. I millimetri di questa pagina restano quelli
-misurati a terra, pluviometro per pluviometro.</p>
-
-<h2>Come si legge</h2>
-<p>Il colore mostra i millimetri <b>cumulati</b> nel periodo che scegli.</p>
-<p>Cliccando una stazione trovi quota, grafico della pioggia degli ultimi 30 giorni e, dove ci sono i sensori, temperatura minima e massima, vento e umidità.</p>
-
-<h2>Dati pluviometrici: da dove arrivano</h2>
-<p>Sono <b>${r.staz} pluviometri di ${r.agenzia}</b>, strumenti a terra, non stime da modello.</p>
-
-<p style="margin-bottom:6px;"><a href="${CANALE}" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;"
-   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-${r.k}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
-<p><a href="${SITO}/guida/" style="color:var(--blu);font-weight:600;"
-   onclick="try{gtag('event','click_guida',{pulsante:'pagina-${r.k}'})}catch(e){}">📖 Guida alla mappa: come si usa, tutte le funzioni →</a></p>
+  <img class="img-mappa" src="${ANTEPRIME}/${r.k}.jpg" alt="La mappa delle piogge ${r.prep} ${r.nome}: le zone più bagnate, stazione per stazione"
+       width="1600" height="1000" loading="lazy"></a>
 ${FUNGHI.includes(r.k) ? `
 <h2>Piogge per funghi ${r.prep} ${nomeCorto}</h2>
-<p>Se cerchi funghi ti serve un altro taglio degli stessi dati: <a href="${SITO}/funghi/${r.k}/">dove ha piovuto nelle zone da bosco ${r.prep} ${nomeCorto}</a>. Solo i pluviometri in mezzo al bosco, e la finestra da 13 a 20 giorni fa, che è quella che conta: dopo la pioggia il fungo non spunta subito, per svilupparsi gli servono almeno dodici o tredici giorni.</p>` : ''}
+<p style="margin-bottom:6px">Sei un appassionato di funghi? Guarda le nostre analisi in dettaglio:</p>
+<ul style="margin:0 0 12px 22px;line-height:1.9">
+  <li><a href="${SITO}/funghi/${r.k}/">Funghi ${r.prep} ${nomeCorto} oggi, dove stanno nascendo</a></li>
+  <li><a href="${SITO}/funghi/">La nostra selezione delle località più bagnate</a></li>
+</ul>` : ''}
+
+<div class="noioso">
+<h2>Come funziona questa pagina</h2>
+<p>I millimetri li misurano <b>${r.staz} pluviometri di ${r.agenzia}</b>, strumenti a terra, non stime da modello.
+I numeri in cima sono la media dei pluviometri della regione, giorno per giorno; sotto, i più bagnati di ogni periodo.
+La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>${r.nota ? `\n<p>${r.nota}</p>` : ''}
+<h2>Dove piove oggi ${r.prep} ${r.nome}? La diretta radar</h2>
+<p>Per la pioggia in corso c'è la <a href="${SITO}/?r=${r.k}&amp;radar=ora"
+   onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-radar-testo'})}catch(e){}">diretta radar</a>:
+dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti seguenti. Il radar misura dal cielo,
+a 2 km di risoluzione, e serve a vedere dove piove adesso; i millimetri di questa pagina sono quelli misurati a terra.</p>
+<h2>Come si legge la mappa</h2>
+<p>Il colore mostra i millimetri cumulati nel periodo che scegli: più è acceso, più acqua è caduta. Ogni pallino è
+un pluviometro: cliccandolo trovi quota, grafico della pioggia degli ultimi 30 giorni e, dove ci sono i sensori,
+temperatura, vento e umidità.</p>
+<p><a href="${SITO}/guida/" onclick="try{gtag('event','click_guida',{pulsante:'pagina-${r.k}'})}catch(e){}">📖 Guida alla mappa: come si usa, tutte le funzioni</a> ·
+<a href="${CANALE}" target="_blank" rel="noopener" style="color:#e12b2b"
+   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-${r.k}-fondo'})}catch(e){}">▶ Vieni a trovarci su YouTube</a></p>
+</div>
 </main>
 
 <footer>
@@ -394,43 +440,146 @@ ${navAltre('regione')}
 
 <script>
 (function(){
-  var DIRS=${JSON.stringify(r.dirs)};
+  var DIRS=${JSON.stringify(r.dirs)}, K=${JSON.stringify(r.k)}, SITO=${JSON.stringify(SITO)};
   // In locale si legge la cartella del repo, come fa la mappa per l'indice dei
   // funghi: cosi' un riepilogo appena rigenerato si prova senza pubblicarlo.
-  var BASE=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'/data/':'${RAW}';
+  var BASE=/^(localhost|127\\.0\\.0\\.1)$/.test(location.hostname)?'/data/':'${RAW}';
   var MESI=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  var MESI_L=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  var GIORNI=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+  var NG=30;
   function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-  // breve() legge una data ISO 'AAAA-MM-GG': e' la forma in cui arrivano dal
-  // riepilogo gia' fatto, e ci si porta anche il ripiego per non avere due modi
-  // di dire la stessa cosa.
-  function breve(s){ var p=String(s).split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
   function giornoFa(n){ var d=new Date(); d.setDate(d.getDate()-n); return d; }
-  // «l’8» e «l’11»: davanti a una vocale l'articolo si elide.
-  function ilGiorno(s){ var g=+String(s).split('-')[2]; return (g===8||g===11?'l’':'il ')+breve(s); }
+  function daIso(s){ var p=String(s).split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+  function menoDa(s,n){ var d=daIso(s); d.setDate(d.getDate()-n); return d; }
+  function breve(s){ var p=String(s).split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
+  function lungo(s){ var p=String(s).split('-'); return (+p[2])+' '+MESI_L[(+p[1])-1]; }
+  function num(n){ return (Math.round(n*10)/10).toFixed(1).replace('.', ','); }
+  // Sotto i 10 mm il decimale conta (0,4 non e' zero), sopra no.
+  function mm(n){ return n===0 ? '0' : n<10 ? num(n) : String(Math.round(n)); }
+  function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  // «Ieri» solo se e' davvero ieri: il riepilogo puo' essere di altroieri.
+  function nomeGiorno(s){
+    if(s===iso(giornoFa(1))) return 'Ieri';
+    return GIORNI[daIso(s).getDay()]+' '+lungo(s);
+  }
+  function link(da,a){ return SITO+'/?r='+K+'&da='+da+'&a='+a; }
+  // «dal 18 al 24 settembre»: il mese una volta sola, l'apostrofo davanti a 1, 8, 11
+  function dalAl(a,b){ var pa=a.split('-'), pb=b.split('-'), da=+pa[2], db=+pb[2];
+    var ap=function(n){ return n===1||n===8||n===11; };
+    return (ap(da)?'Dall’':'Dal ')+(pa[1]===pb[1]?da:lungo(a))+(ap(db)?' all’':' al ')+lungo(b); }
+
+  // Indirizzi di partenza: portano gia' alla regione col periodo giusto anche
+  // prima che arrivino i numeri. tasti() li riscrive con le date VERE.
+  function tasti(ultimo){
+    [['t1',1],['t7',7],['t15',15],['t20',20],['t30',30],['cta7',7],['cta20',20],['cta30',30],['lnk-img',20]].forEach(function(x){
+      var el=document.getElementById(x[0]); if(el) el.href=link(iso(menoDa(ultimo,x[1]-1)),ultimo);
+    });
+  }
+  tasti(iso(giornoFa(1)));
+
+  // ── IERI, in cima: la risposta alla domanda del titolo ──
+  function scriviIeri(d){
+    var box=document.getElementById('verdetto');
+    if(!d||!d.giorni){ box.innerHTML=''; return; }
+    var t=nomeGiorno(d.ultimo), top=(d.top||[]).filter(function(s){ return s.mm>=1; }).slice(0,3), dett;
+    if(top.length){
+      dett='Dove ha piovuto di più: '+top.map(function(s){ return '<b>'+esc(s.n)+'</b> '+num(s.mm)+' mm'; }).join(', ')+'.';
+    }else if(d.top&&d.top.length&&d.top[0].mm>0){
+      dett='Giornata quasi asciutta: il massimo è stato '+num(d.top[0].mm)+' mm a '+esc(d.top[0].n)+'.';
+    }else{
+      dett='Giornata asciutta: nessun pluviometro ha misurato pioggia.';
+    }
+    box.innerHTML='<div class="verdetto">'
+      +'<div class="si">'+(t==='Ieri'?'Ieri, '+lungo(d.ultimo):t)+'</div>'
+      +'<div class="gr">'+mm(d.media)+' mm<small>di media</small></div>'
+      +'<div class="top">'+dett+'</div>'
+      +'<div class="dett">Media di '+d.stazioni+' pluviometri.</div>'
+      +(t==='Ieri'?'':'<div class="dett">I dati di ieri non sono ancora arrivati da tutte le reti: questa è l’ultima giornata intera.</div>')
+      +'<div class="capo-btns"><a class="capo-btn" href="'+link(d.ultimo,d.ultimo)+'"'
+      +' onclick="try{gtag(\\'event\\',\\'apri_mappa\\',{da:\\'pagina-'+K+'-ieri-box\\'})}catch(e){}">Vedi '+(t==='Ieri'?'ieri':'quel giorno')+' sulla mappa</a></div></div>';
+  }
+
+  // ── Le 30 barre, l'ultimo giorno a destra. Gli ultimi 7 in blu pieno ──
+  function scriviBarre(s, ultimo){
+    var el=document.getElementById('grafico');
+    if(!s||!s.length){ el.innerHTML='<p class="nota">Il grafico giorno per giorno arriva col prossimo aggiornamento.</p>'; return; }
+    var n=Math.min(NG,s.length), max=1, barre='', ax='';
+    for(var q=0;q<n;q++) max=Math.max(max,s[q]||0);
+    // Le etichette si danno dalla barra piu' alta in giu', saltando le vicine
+    // di una gia' etichettata: cosi' la piu' alta il suo numero ce l'ha sempre.
+    var cand=[], lab={};
+    for(var c=1;c<=n;c++) if(s[c-1]!=null && s[c-1]>=1 && s[c-1]>=max*0.2) cand.push(c);
+    cand.sort(function(a,b){ return s[b-1]-s[a-1]; })
+      .forEach(function(c){ if(!lab[c-1]&&!lab[c+1]) lab[c]=1; });
+    for(var i=n;i>=1;i--){
+      var v=s[i-1], d=menoDa(ultimo,i-1), cl=i<=7?' dentro':'';
+      barre+='<div class="b'+cl+'" title="'+lungo(iso(d))+': '+(v==null?'nessun dato':num(v)+' mm')+'">'+(lab[i]?'<b>'+mm(v)+'</b>':'')
+        +'<i style="height:'+(v==null?0:Math.max(2,Math.round(v/max*86)))+'%"></i></div>';
+      ax+='<span>'+((i===n||i===1||i%5===0)?(d.getDate()+'/'+(d.getMonth()+1)):'')+'</span>';
+    }
+    el.innerHTML='<div class="gg">'+barre+'</div><div class="gg-x">'+ax+'</div>'
+      +'<p class="gg-leg"><i style="background:var(--blu)"></i>ultimi 7 giorni &nbsp; '
+      +'<i style="background:#b9cbe2"></i>i giorni prima &nbsp;·&nbsp; media dei pluviometri della regione, in mm</p>';
+  }
+
+  function scriviPeriodo(k, d){
+    var el=document.getElementById('rip'+k+'-media');
+    if(!d||!d.giorni){ el.innerHTML='<span class="attesa">dati non disponibili al momento</span>'; return; }
+    el.innerHTML=Math.round(d.media)+' mm <small>di media</small>';
+    var cont=document.getElementById('rip'+k+'-top');
+    if(!d.top||!d.top.length||d.top[0].mm<1){
+      cont.innerHTML='<p class="nota">Periodo quasi asciutto in tutta la regione.</p>';
+    }else{
+      var ol=document.createElement('ol'); ol.className='top-staz';
+      d.top.forEach(function(s){ var li=document.createElement('li'); li.textContent=s.n+' — '+num(s.mm)+' mm'; ol.appendChild(li); });
+      cont.innerHTML=''; cont.appendChild(ol);
+    }
+    // Le giornate si dicono solo se ne manca qualcuna: se no e' il titolo ripetuto.
+    document.getElementById('rip'+k+'-date').textContent=dalAl(d.primo,d.ultimo)
+      +(d.giorni<+k?', '+d.giorni+' giornate di dati':'')+'.';
+  }
+
+  // Le zone: si riempiono i numeri e si RIORDINANO le righe spostando i nodi,
+  // cosi' i link cotti nell'HTML restano quelli che Google legge.
+  function scriviZone(zone){
+    var ol=document.getElementById('zone'); if(!ol||!zone||!zone.length) return;
+    var per={}; zone.forEach(function(z){ per[z.s]=z; });
+    var li=[].slice.call(ol.querySelectorAll('li[data-z]'));
+    li.forEach(function(x){ var z=per[x.getAttribute('data-z')]; x.valore=z?z.m7:null;
+      if(z) x.querySelector('.zmm').innerHTML=mm(z.m7)+' mm'+(z.m1!=null?'<small>ieri '+mm(z.m1)+'</small>':''); });
+    li.sort(function(a,b){ if(a.valore==null) return 1; if(b.valore==null) return -1; return b.valore-a.valore; })
+      .forEach(function(x){ ol.appendChild(x); });
+  }
+
+  function disegna(j){
+    document.getElementById('attesa').style.display='none';
+    var p=j.periodi, ultimo=(p['1']||p['7']).ultimo;
+    tasti(ultimo);
+    scriviIeri(p['1']);
+    scriviBarre(j.serie, ultimo);
+    scriviPeriodo('7',p['7']); scriviPeriodo('20',p['20']);
+    // ⚠️ Un riepilogo scritto PRIMA del 13/9 il mese non ce l'ha: si nasconde
+    // la scheda invece di dire «dati non disponibili», che sarebbe falso.
+    if(p['30']) scriviPeriodo('30',p['30']); else document.getElementById('card30').style.display='none';
+    scriviZone(j.zone);
+  }
+
+  // ── RIPIEGO: i giorni uno per uno, come faceva la pagina fino al 24/8/2026 ──
   // Una regione puo' leggere piu' cartelle (la Svizzera somma MeteoSvizzera e
-  // OASI Ticino): si scaricano tutte e si uniscono, con la chiave stazione
-  // prefissata dalla cartella per non far collidere id di reti diverse.
+  // OASI Ticino): si scaricano tutte e si uniscono.
   function prendi(d){
     return Promise.all(DIRS.map(function(dir){
       return fetch(BASE+dir+'/'+iso(d)+'.json')
         .then(function(res){ return res.ok?res.json():null; })
         .catch(function(){ return null; })
         .then(function(j){ return j&&j.stations ? {dir:dir,stations:j.stations} : null; });
-    })).then(function(parti){
-      parti=parti.filter(Boolean);
-      return parti.length ? parti : null;
-    });
+    })).then(function(parti){ parti=parti.filter(Boolean); return parti.length ? parti : null; });
   }
-  // GEMELLE. Se le cartelle sono piu' d'una, le reti si sovrappongono: la
-  // stessa stazione fisica compare in tutt'e due con id diversi (il Friuli ha
-  // 37 pluviometri OSMER ripubblicati da MeteoHub come «lat_lon»), e unendo per
-  // cartella+id la sua pioggia verrebbe contata due volte. Si scartano quindi
-  // le stazioni delle cartelle successive che cadono entro ~1 km da una della
-  // PRIMA cartella, che e' la fonte di casa. Tolleranza larga apposta: le due
-  // fonti arrotondano le coordinate in modo diverso e due pluviometri veri non
-  // stanno mai cosi' vicini. Stessa regola della mappa (loadOSMERFriuliRegion).
-  // ⚠️ Questa e' la copia del RIPIEGO: quella che lavora tutti i giorni sta in
-  // genera-riepiloghi.js. Le due devono restare gemelle.
+  // GEMELLE: le stazioni delle cartelle successive entro ~1 km da una della
+  // PRIMA cartella (la fonte di casa) sono la stessa stazione letta da un'altra
+  // porta e si scartano. ⚠️ Questa e' la copia del RIPIEGO: quella che lavora
+  // tutti i giorni sta in genera-riepiloghi.js. Le due devono restare gemelle.
   function scartaGemelle(files){
     var fuori={};
     if(DIRS.length<2) return fuori;
@@ -445,147 +594,57 @@ ${navAltre('regione')}
       p.stations.forEach(function(s){
         var id=p.dir+':'+s.id;
         if(id in fuori) return;
-        fuori[id]=casa.some(function(q){
-          return Math.abs(q[0]-s.lat)<0.009 && Math.abs(q[1]-s.lon)<0.013;
-        });
+        fuori[id]=casa.some(function(q){ return Math.abs(q[0]-s.lat)<0.009 && Math.abs(q[1]-s.lon)<0.013; });
       });
     });});
     return fuori;
   }
-
-  // Indirizzi di partenza dei pulsanti: portano gia' alla regione col periodo
-  // giusto anche prima che arrivino i numeri. disegna() li riscrive poi con le
-  // date VERE del riepilogo, che possono essere di un giorno indietro.
-  document.getElementById('cta1').href='${SITO}/?r=${r.k}&da='+iso(giornoFa(1))+'&a='+iso(giornoFa(1));
-  document.getElementById('cta7').href='${SITO}/?r=${r.k}&da='+iso(giornoFa(7))+'&a='+iso(giornoFa(1));
-  document.getElementById('cta15').href='${SITO}/?r=${r.k}&da='+iso(giornoFa(20))+'&a='+iso(giornoFa(1));
-  document.getElementById('cta30').href='${SITO}/?r=${r.k}&da='+iso(giornoFa(30))+'&a='+iso(giornoFa(1));
-
-  // Il disegno e' uno solo per tutt'e due le strade: prende sempre
-  // {media, top:[{n,mm}], primo, ultimo, giorni} e non sa da dove viene.
-  var GIORNI=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
-  // «Ieri» solo se e' davvero ieri: il riepilogo puo' essere di altroieri.
-  function nomeGiorno(s){
-    if(s===iso(giornoFa(1))) return 'Ieri';
-    var p=String(s).split('-'), d=new Date(+p[0],+p[1]-1,+p[2]);
-    return GIORNI[d.getDay()]+' '+breve(s);
-  }
-  function disegna(prefisso, d){
-    var el=document.getElementById(prefisso+'-media');
-    if(!d||!d.giorni){ el.innerHTML='<span class="attesa">dati non disponibili al momento</span>'; return; }
-    el.innerHTML=Math.round(d.media)+' mm <small>di media regionale</small>';
-    var cont=document.getElementById(prefisso+'-top');
-    if(!d.top||!d.top.length||d.top[0].mm<1){
-      cont.innerHTML='<p class="nota">'+(prefisso==='rip1'?'Giornata quasi asciutta':'Periodo quasi asciutto')+' su tutta la regione.</p>';
-    }else{
-      var ol=document.createElement('ol'); ol.className='top-staz';
-      d.top.forEach(function(s){
-        var li=document.createElement('li');
-        li.textContent=s.n+' — '+s.mm.toFixed(1)+' mm';
-        ol.appendChild(li);
-      });
-      cont.innerHTML='<p style="margin:8px 0 2px"><b>Dove ha piovuto di più:</b></p>';
-      cont.appendChild(ol);
-    }
-    if(prefisso==='rip1'){
-      var t=nomeGiorno(d.ultimo);
-      document.getElementById('tit1').textContent=t;
-      document.getElementById('rip1-date').textContent= t==='Ieri'
-        ? 'Giornata di ieri, '+breve(d.ultimo)+'.'
-        : 'I dati di ieri non sono ancora arrivati da tutte le reti: questa è l’ultima giornata intera, '+ilGiorno(d.ultimo)+'.';
-    }else{
-      // «dall’8», «all’11»: davanti a otto e undici la preposizione si apostrofa
-      var apo=function(s){ return /^(8|11) /.test(s); };
-      document.getElementById(prefisso+'-date').textContent=(apo(breve(d.primo))?'Dall’':'Dal ')+breve(d.primo)+(apo(breve(d.ultimo))?' all’':' al ')+breve(d.ultimo)+', su '+d.giorni+' giornate di dati. La giornata odierna è esclusa.';
-    }
-    var cta=document.getElementById({rip1:'cta1',rip7:'cta7',rip15:'cta15',rip30:'cta30'}[prefisso]);
-    if(cta&&d.primo&&d.ultimo) cta.href='${SITO}/?r=${r.k}&da='+d.primo+'&a='+d.ultimo;
-  }
-
-  // ── RIPIEGO: i giorni uno per uno, come faceva la pagina fino al 24/8/2026 ──
   function calcolaDaiFile(){
-    var giorni=[]; for(var i=1;i<=30;i++) giorni.push(giornoFa(i));
+    var giorni=[]; for(var i=1;i<=NG;i++) giorni.push(giornoFa(i));
     return Promise.all(giorni.map(prendi)).then(function(files){
-      var gemelle=scartaGemelle(files);
-      function riepilogo(quanti, prefisso){
-        var somma={}, nomi={}, prov={}, presenti=0, ultimo=null, primo=null;
+      var gemelle=scartaGemelle(files), periodi={}, serie=[];
+      files.forEach(function(parti){
+        if(!parti){ serie.push(null); return; }
+        var t=0,n=0;
+        parti.forEach(function(p){ p.stations.forEach(function(s){
+          if(s.mm==null||gemelle[p.dir+':'+s.id]) return; t+=s.mm; n++; }); });
+        serie.push(n?Math.round(t/n*10)/10:null);
+      });
+      [1,7,20,30].forEach(function(quanti){
+        var somma={}, nomi={}, presenti=0, ultimo=null, primo=null;
         for(var k=0;k<quanti;k++){
-          var parti=files[k];
-          if(!parti) continue;
-          presenti++;
-          if(!ultimo) ultimo=giorni[k];
-          primo=giorni[k];
-          parti.forEach(function(p){
-            p.stations.forEach(function(s){
-              if(s.mm==null) return;
-              var id=p.dir+':'+s.id;
-              if(gemelle[id]) return;
-              somma[id]=(somma[id]||0)+s.mm;
-              nomi[id]=s.n;
-              if(s.p) prov[id]=s.p;
-            });
-          });
+          var parti=files[k]; if(!parti) continue;
+          presenti++; if(!ultimo) ultimo=giorni[k]; primo=giorni[k];
+          parti.forEach(function(p){ p.stations.forEach(function(s){
+            if(s.mm==null) return; var id=p.dir+':'+s.id; if(gemelle[id]) return;
+            somma[id]=(somma[id]||0)+s.mm; nomi[id]=s.n; }); });
         }
-        // La provincia si scrive solo se DICE qualcosa. Il campo e' disomogeneo
-        // fra reti: le dieci reti MeteoHub ci mettono la sigla della REGIONE
-        // (tutte le siciliane «SIC»), Friuli «FVG», VdA «AO», Trentino «TN» —
-        // ripetere lo stesso valore su ogni riga e' rumore. Il Piemonte scrive
-        // «PROVINCIA DI ALESSANDRIA» in maiuscolo, la Liguria il comune.
-        // Regola: se in tutta la regione c'e' un valore solo si omette; se no
-        // si ripulisce e si mostra.
-        var distinti={}; Object.keys(prov).forEach(function(id){ distinti[prov[id]]=1; });
-        var mostraProv=Object.keys(distinti).length>1;
-        function etichetta(id){
-          if(!mostraProv||!prov[id]) return nomi[id];
-          var p=String(prov[id]).replace(/^PROVINCIA DI\\s+/i,'');
-          if(p===p.toUpperCase()&&p.length>4) p=p.charAt(0)+p.slice(1).toLowerCase();
-          return nomi[id]+' ('+p+')';
-        }
-        if(!presenti){ disegna(prefisso,null); return; }
         var chiavi=Object.keys(somma);
-        var media=chiavi.reduce(function(a,id){return a+somma[id];},0)/chiavi.length;
-        var top=chiavi.sort(function(a,b){return somma[b]-somma[a];}).slice(0,5)
-                      .map(function(id){ return {n:etichetta(id), mm:somma[id]}; });
-        disegna(prefisso,{media:media, top:top, primo:iso(primo), ultimo:iso(ultimo), giorni:presenti});
-      }
-      riepilogo(1,'rip1');
-      riepilogo(7,'rip7');
-      riepilogo(20,'rip15');
-      riepilogo(30,'rip30');
+        if(!presenti||!chiavi.length) return;
+        var media=chiavi.reduce(function(a,id){ return a+somma[id]; },0)/chiavi.length;
+        var top=chiavi.sort(function(a,b){ return somma[b]-somma[a]; }).slice(0,5)
+          .map(function(id){ return {n:nomi[id], mm:somma[id]}; });
+        periodi[String(quanti)]={media:media, top:top, primo:iso(primo), ultimo:iso(ultimo), giorni:presenti, stazioni:chiavi.length};
+      });
+      if(!periodi['7']){ document.getElementById('attesa').textContent='Non riesco a leggere l’archivio delle piogge in questo momento: riprova fra qualche minuto.'; return; }
+      disegna({periodi:periodi, serie:serie});
     });
   }
 
   // ── STRADA NORMALE: il riepilogo gia' fatto, UNA richiesta ──
   // ⚠️ La freschezza si misura su QUANDO E' STATO SCRITTO (36 ore), non
-  // sull'ultimo giorno che contiene: la Slovenia pubblica con 34 ore di
-  // ritardo e la Puglia ha giornate che MeteoHub non consegna, quindi un
-  // riepilogo sanissimo puo' finire due giorni indietro. Guardando l'ultimo
-  // giorno che contiene, quelle due regioni sarebbero cadute sul ripiego
-  // TUTTI i giorni, cioe' le 20 richieste sarebbero tornate proprio dove
-  // piu' danno fastidio.
-  // Sopra le 36 ore vuol dire invece workflow fermo, e allora si ricalcola.
+  // sull'ultimo giorno che contiene: la Slovenia pubblica con 34 ore di ritardo
+  // e la Puglia ha giornate che MeteoHub non consegna, quindi un riepilogo
+  // sanissimo puo' finire due giorni indietro.
   function fresco(j){
     if(!j||!j.generato||!j.periodi||!j.periodi['20']||!j.periodi['7']) return false;
     var eta=Date.now()-new Date(j.generato).getTime();
     return eta>=0 && eta<36*3600*1000;
   }
-  fetch(BASE+'riepiloghi/${r.k}.json')
+  fetch(BASE+'riepiloghi/'+K+'.json')
     .then(function(res){ return res.ok?res.json():null; })
     .catch(function(){ return null; })
-    .then(function(j){
-      if(j&&fresco(j)){
-        disegna('rip7',j.periodi['7']); disegna('rip15',j.periodi['20']);
-        // ⚠️ Un riepilogo scritto PRIMA del 13/9 il mese non ce l'ha: si
-        // nasconde la scheda invece di dire «dati non disponibili», che
-        // sarebbe falso. Il giro successivo del workflow la riaccende.
-        if(j.periodi['30']) disegna('rip30',j.periodi['30']);
-        else document.getElementById('card30').style.display='none';
-        if(j.periodi['1']) disegna('rip1',j.periodi['1']);
-        else document.getElementById('card1').style.display='none';
-        return;
-      }
-      return calcolaDaiFile();
-    })
+    .then(function(j){ if(j&&fresco(j)) return disegna(j); return calcolaDaiFile(); })
     .catch(function(){ return calcolaDaiFile(); });
 })();
 </script>
@@ -694,6 +753,8 @@ module.exports = { REGIONI, FUNGHI, navAltre, briciolaJson };
 
 if (require.main === module) {
   const radice = path.resolve(__dirname, '..', '..');
+  const senza = REGIONI.filter(r => !GEN[r.k]).map(r => r.k);
+  if (senza.length) { console.error('⚠️ manca il genitivo in GEN per: ' + senza.join(', ')); process.exit(1); }
   REGIONI.forEach(r => {
     scrivi(path.join(radice, r.k, 'index.html'), pagina(r), true);
     console.log(`  /${r.k}/  ${r.nome} — ${r.staz} staz., ${r.dirs.join('+')}`);

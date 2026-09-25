@@ -4311,6 +4311,20 @@ function positionPanels(){
        -10 e' il margine sotto, come il 10 a sinistra. */
     var conten = leg.offsetParent ? leg.offsetParent.clientHeight : window.innerHeight;
     var maxBottom = conten - 10;
+    /* ⚠️ E LA RIGA DELLE FONTI (25/9/2026, sua schermata sui boschi a finestra
+       bassa): l'attribuzione di Leaflet sta in fondo alla mappa SOPRA i
+       pannelli, e coi boschi accesi le carte forestali la allungano a due
+       righe che attraversano tutta la larghezza. Coprivano le ultime voci della
+       legenda («lariceti», «pinete»...), e cosi' uscivano anche nella foto. Se
+       la riga passa sotto la legenda, il fondo utile finisce dove comincia lei. */
+    try{
+      var att = document.querySelector('.leaflet-control-attribution');
+      if(att && leg.offsetParent && att.offsetHeight){
+        var ar = att.getBoundingClientRect(), pr = leg.offsetParent.getBoundingClientRect();
+        if(ar.left < pr.left + leg.offsetLeft + leg.offsetWidth)
+          maxBottom = Math.min(maxBottom, ar.top - pr.top - 6);
+      }
+    }catch(e){}
     if(legTop + legH > maxBottom){
       /* Prima si prova ad alzarlo, ma MAI sopra il pannello periodo: se no
          finisce sotto i tasti dei giorni e si perde comunque. */
@@ -9547,8 +9561,13 @@ function captureMapBlob(scala){
     // I controlli (zoom, attribuzione) nella passata intera si rendono da
     // soli alle loro posizioni — il vecchio problema del contenitore a
     // dimensione zero riguardava solo la cattura elemento-per-elemento.
+    // ⚠️ LA CASELLA «CERCA LOCALITA'» NON VA NELLA FOTO (25/9/2026, sua
+    // schermata): html2canvas disegna male le caselle di testo (lente sparita,
+    // scritta scivolata in basso e tagliata), e in una foto una casella di
+    // ricerca non dice niente. Il paese cercato resta: il suo nome e' scritto
+    // sulla mappa accanto alla puntina rossa.
     var pannelli=[].slice.call(mapEl.children).filter(function(el){
-      return !el.classList.contains('leaflet-pane') && !el.classList.contains('leaflet-control-container') && visibile(el);
+      return el.id!=='novita-box' && !el.classList.contains('leaflet-pane') && !el.classList.contains('leaflet-control-container') && visibile(el);
     }).concat([].slice.call(mapEl.querySelectorAll('.leaflet-control-container .leaflet-control')).filter(visibile))
       // L'header è fuori da #map ma va nello scatto: rel() lo porta a y=0
       .concat(hdrEl&&visibile(hdrEl)?[hdrEl]:[]);
@@ -9572,6 +9591,7 @@ function captureMapBlob(scala){
     return window.html2canvas(document.body,{useCORS:true,backgroundColor:null,logging:false,scale:S,
         onclone:function(doc){
           [].slice.call(doc.querySelectorAll('.leaflet-pane')).forEach(function(el){ el.style.display='none'; });
+          var nb=doc.getElementById('novita-box'); if(nb) nb.style.visibility='hidden';
           doc.body.style.background='none';
           var mw=doc.getElementById('map-wrap'); if(mw) mw.style.background='none';
           var mp=doc.getElementById('map'); if(mp) mp.style.background='none';
