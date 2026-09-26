@@ -1923,8 +1923,8 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/>
     <line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     </svg>
-    <input id="loc-input" type="text" placeholder="Cerca località" autocomplete="off"
-    autocorrect="off" spellcheck="false" aria-label="Cerca una località"
+    <input id="loc-input" type="text" placeholder="Cerca località o coordinate" autocomplete="off"
+    autocorrect="off" spellcheck="false" aria-label="Cerca una località o delle coordinate"
     aria-autocomplete="list" aria-controls="loc-drop" aria-expanded="false">
     <button id="loc-clear" type="button" aria-label="Cancella la ricerca">×</button>
     <div id="loc-drop" role="listbox" aria-label="Località trovate"></div>
@@ -7563,6 +7563,90 @@ function locCerca(testo) {
   return { righe: tutte.slice(0, LOC_MAX_RIGHE), totale: tutte.length };
 }
 
+/* ═══ LE COORDINATE NELLA CASELLA (26/9/2026, sua richiesta) ═══
+   Chi cerca funghi spesso ha il punto e non il nome: dal GPS, da un amico, da
+   Google Maps. Si accettano i formati che girano davvero:
+     45.4642, 9.19   ·   45,4642 9,19 (virgola italiana)   ·   -12.5 ...
+     45°27'51"N 9°11'24"E   ·   N 45 27 51 E 9 11 24   ·   45°27.85'N 9°11.4'E
+     i link di Google Maps (…/@45.46,9.19,15z, ?q=45.46,9.19) e di OpenStreetMap
+   ⚠️ LA VIRGOLA: se nel testo non c'e' nessun punto, la virgola FRA DUE CIFRE e'
+   quella dei decimali («45,46 9,19»); con un punto da qualche parte e' un
+   separatore («45.46,9.19»). Una virgola seguita da spazio separa sempre.
+   ⚠️ LAT E LON INVERTITE: senza lettere N/E non si sa l'ordine, e chi copia da
+   certi programmi scrive prima la longitudine. Nell'area della mappa le due non
+   si sovrappongono mai (latitudini 36-52, longitudini -5-19): se il primo numero
+   e' una longitudine plausibile e il secondo una latitudine, si scambiano.
+   Torna {lat, lon} oppure null: null vuol dire «non sono coordinate» e la
+   ricerca per nome continua come prima. */
+function locCoordValide(lat, lon) {
+  if (!isFinite(lat) || !isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return null;
+  return { lat: lat, lon: lon };
+}
+function locCoordinate(testo) {
+  var s = String(testo || '').trim();
+  if (!s || !/\d/.test(s)) return null;
+  // i link: Google Maps (@lat,lon e ?q=lat,lon) e OpenStreetMap (#map=z/lat/lon, mlat/mlon)
+  var m = s.match(/@(-?\d{1,2}\.\d+),\s*(-?\d{1,3}\.\d+)/) ||
+          s.match(/[?&](?:q|query|ll|center)=(-?\d{1,2}\.\d+)(?:,|%2C)\s*(-?\d{1,3}\.\d+)/i) ||
+          s.match(/#map=[\d.]+\/(-?\d{1,2}\.\d+)\/(-?\d{1,3}\.\d+)/) ||
+          s.match(/[?&]mlat=(-?\d{1,2}\.\d+)&mlon=(-?\d{1,3}\.\d+)/);
+  if (m) return locCoordValide(+m[1], +m[2]);
+  s = s.toUpperCase().replace(/[’′‘´`]/g, "'").replace(/[”″“]|''/g, '"').replace(/[º˚]/g, '°');
+  // solo cifre, segni e le lettere dei punti cardinali (O = ovest)
+  if (!/^[\s\d.,;:°'"\-+NSEWO]+$/.test(s)) return null;
+  if (s.indexOf('.') < 0) s = s.replace(/(\d),(\d)/g, '$1.$2');
+  var tok = s.match(/[-+]?\d+(?:\.\d+)?|[NSEWO°'"]/g) || [];
+  var lettere = tok.filter(function (t) { return /^[NSEWO]$/.test(t); });
+  var gruppi = [];
+  if (lettere.length === 2) {
+    // le lettere dividono i due pezzi: davanti («N 45 E 9») o dietro («45 N 9 E»)
+    var davanti = /^[NSEWO]$/.test(tok[0]), cur = null;
+    tok.forEach(function (t) {
+      if (/^[NSEWO]$/.test(t)) {
+        if (davanti) { cur = { l: t, n: [] }; gruppi.push(cur); }
+        else if (cur) { cur.l = t; cur = null; }
+      } else if (/\d/.test(t)) {
+        if (!cur) { cur = { l: '', n: [] }; gruppi.push(cur); }
+        cur.n.push(+t);
+      }
+    });
+  } else if (lettere.length === 0) {
+    var num = tok.filter(function (t) { return /\d/.test(t); }).map(Number);
+    if (tok.indexOf('°') >= 0) {
+      // col simbolo dei gradi: un pezzo nuovo comincia a ogni numero seguito da °
+      tok.forEach(function (t, i) {
+        if (!/\d/.test(t)) return;
+        if (tok[i + 1] === '°' || !gruppi.length) gruppi.push({ l: '', n: [] });
+        gruppi[gruppi.length - 1].n.push(+t);
+      });
+    } else if (num.length === 2 || num.length === 4 || num.length === 6) {
+      var k = num.length / 2;
+      gruppi = [{ l: '', n: num.slice(0, k) }, { l: '', n: num.slice(k) }];
+    }
+  }
+  if (gruppi.length !== 2) return null;
+  var val = gruppi.map(function (g) {
+    if (!g.n.length || g.n.length > 3) return null;
+    if (g.n.slice(1).some(function (x) { return x < 0 || x >= 60; })) return null;
+    var neg = g.n[0] < 0 || g.l === 'S' || g.l === 'W' || g.l === 'O';
+    var v = Math.abs(g.n[0]) + (g.n[1] || 0) / 60 + (g.n[2] || 0) / 3600;
+    return { v: neg ? -v : v, lon: g.l === 'E' || g.l === 'W' || g.l === 'O', lat: g.l === 'N' || g.l === 'S' };
+  });
+  if (!val[0] || !val[1]) return null;
+  var a = val[0], b = val[1];
+  if (a.lon || b.lat) { var t = a; a = b; b = t; }                     // le lettere dicono chi e' chi
+  else if (!a.lat && !b.lon && a.v >= -6 && a.v <= 20 && b.v >= 35 && b.v <= 53) { var t2 = a; a = b; b = t2; }
+  return locCoordValide(a.v, b.v);
+}
+// Il «posto» di un punto dato in coordinate: la regione e' la prima della
+// griglia (la sua, o la piu' vicina con pluviometri). Fuori dalla griglia la
+// mappa non ha niente da mostrare, e lo si dice.
+function locPostoDaCoordinate(c) {
+  var reg = locRegioniVicine(c.lat, c.lon).filter(function (k) { return document.getElementById('chk-' + k); })[0];
+  var n = c.lat.toFixed(5) + ', ' + c.lon.toFixed(5);
+  return reg ? { n: n, lat: c.lat, lon: c.lon, sg: '', reg: reg, pop: 0, t: '', q: locNormalizza(n), coord: true } : null;
+}
+
 // ⚠️ interactive:false — il segnaposto NON deve rubare il clic alle stazioni
 // che gli finiscono sotto: quelle hanno il tooltip coi millimetri, che è il
 // motivo per cui uno è lì.
@@ -7629,7 +7713,7 @@ function locLeggiRecenti() {
 function locSalvaRecente(p) {
   try {
     var a = locLeggiRecenti().filter(function (x) { return !(x.n === p.n && x.reg === p.reg); });
-    a.unshift({ n: p.n, lat: p.lat, lon: p.lon, sg: p.sg, reg: p.reg, pop: p.pop, frazione: !!p.frazione, t: p.t || '', q: p.q });
+    a.unshift({ n: p.n, lat: p.lat, lon: p.lon, sg: p.sg, reg: p.reg, pop: p.pop, frazione: !!p.frazione, t: p.t || '', q: p.q, coord: !!p.coord });
     localStorage.setItem(LOC_CHIAVE, JSON.stringify(a.slice(0, LOC_RECENTI)));
   } catch (e) {}   // navigazione in incognito o spazio finito: pazienza
 }
@@ -7664,12 +7748,13 @@ function locDisegna(res, testo, intestazione, nota) {
     var reg = (typeof REGIONS !== 'undefined' && REGIONS[p.reg] && REGIONS[p.reg].name) || p.reg;
     return '<div class="loc-riga" role="option" data-i="' + i + '">' +
              '<span class="loc-nome">' + nome + '</span>' +
-             (p.t === 'z' ? '' :   // la parola «valle»/«zona» sta gia' al posto della sigla
+             (p.coord ? '<span class="loc-ex">coordinate</span>' :
+              p.t === 'z' ? '' :   // la parola «valle»/«zona» sta gia' al posto della sigla
                // ⚠️ «ex comune» si deduce dagli abitanti a zero, e vale SOLO in
                // Italia: fuori, il geocoder lascia la popolazione vuota su un
                // sacco di paesi vivissimi, e Zermatt sarebbe uscita «ex comune».
                (p.frazione ? '<span class="loc-ex">frazione</span>' : ((p.pop || p.estero) ? '' : '<span class="loc-ex">ex comune</span>'))) +
-             '<span class="loc-dove">' + p.sg + ' · ' + reg + '</span>' +
+             '<span class="loc-dove">' + (p.sg ? p.sg + ' · ' : '') + reg + '</span>' +
            '</div>';
   }).join('');
   if (res.totale > res.righe.length)
@@ -7864,7 +7949,7 @@ function locVai(p, _giro) {
     if (typeof regChiudi === 'function') regChiudi();      // scelto il paese: via la tendina, si guarda la mappa
   }
 
-  try { gtag('event', 'cerca_localita', { regioni: regioni.join(','), stime: !!stime }); } catch (e) {}
+  try { gtag('event', 'cerca_localita', { regioni: regioni.join(','), stime: !!stime, coordinate: !!p.coord }); } catch (e) {}
 }
 
 // La chiamata della casella: parte all'apertura e si spegne alla PRIMA delle
@@ -7958,6 +8043,26 @@ function locMostraRecenti() {
     box.classList.toggle('pieno', !!inp.value);
     clearTimeout(_locT);
     var testo = inp.value;
+    // Prima le COORDINATE (vedi locCoordinate): se il testo lo e', una riga sola
+    // e niente ricerca per nome, che su dei numeri non troverebbe niente.
+    var coord = locCoordinate(testo);
+    if (coord) {
+      locCaricaVicine().then(function () {
+        if (inp.value !== testo) return;
+        var p = locPostoDaCoordinate(coord);
+        if (p) locDisegna({ righe: [p], totale: 1 }, '');
+        else locDisegna({ righe: [], totale: 0 }, testo, '', 'Coordinate fuori dalla mappa (' +
+                        coord.lat.toFixed(4) + ', ' + coord.lon.toFixed(4) + ')');
+      }).catch(function () {});
+      return;
+    }
+    // Solo numeri ma non ancora due coordinate: sta scrivendo, o ne ha messa una
+    // sola. Niente ricerca per nome (e niente chiamata al geocoder su «45.46»).
+    if (/^[\s\d.,;:°'’′"″\-+]+$/.test(testo)) {
+      if (/\d/.test(testo)) locDisegna({ righe: [], totale: 0 }, testo, '', 'Scrivi latitudine e longitudine, per esempio 45.4642, 9.1900');
+      else locChiudi();
+      return;
+    }
     if (locNormalizza(testo).length < LOC_MIN) { locChiudi(); return; }
     // ⚠️ Se l'elenco sta ancora arrivando lo si dice subito, se no per un paio
     // di secondi la tendina resta muta e sembra che il paese non esista.
@@ -8002,6 +8107,11 @@ function locMostraRecenti() {
     else if (e.key === 'Enter') {
       e.preventDefault();
       if (_locRighe.length) locVai(_locRighe[_locSel >= 0 ? _locSel : 0]);
+      // coordinate incollate e Invio subito: la griglia puo' non essere ancora arrivata
+      else if (locCoordinate(inp.value)) {
+        var c = locCoordinate(inp.value);
+        locCaricaVicine().then(function () { var p = locPostoDaCoordinate(c); if (p) locVai(p); }).catch(function () {});
+      }
     } else if (e.key === 'Escape') { locChiudi(); inp.blur(); }
   });
 
@@ -12084,7 +12194,15 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
 .modo-boschi #btn-shot{margin-left:0}
 @media(min-width:901px){.modo-boschi .leg-header{justify-content:flex-start}}
 .bo-tit{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#1b3f6e;margin:2px 0 6px}
-.bo-griglia{display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;font-size:12.5px;color:#33404f}
+/* ⚠️ TRE COLONNE NELLA STESSA LARGHEZZA (26/9/2026, undicesimo colore). Non e'
+   la prova del 21/9 (pannello allargato a 660 px, bocciata): il pannello resta
+   largo com'era e si stringono i caratteri a 11 px. Colonne FISSE (minmax(0,..),
+   non si allargano da sole), la terza piu' larga per le voci lunghe, e
+   «carpino nero, orniello e aceri» nell'ultima riga su due colonne (.lunga).
+   L'ordine lo fa legenda() con BO_ORDINE. Misurato a 360, 393 e 1920 px: nessuna
+   voce esce dalla colonna, pannello 245->214 px sul telefono, 219->188 sul PC. */
+.bo-griglia{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,.88fr) minmax(0,1.24fr);gap:3px 8px;font-size:11px;color:#33404f}
+.bo-riga.lunga{grid-column:span 2}
 /* ⚠️ FINESTRA BASSA: SI STRINGE IN VERTICALE, NON SI ALLARGA (21/9/2026).
    Righe piu' fitte e un filo piu' piccole solo nella legenda dei boschi e solo
    sotto i 780 px di finestra: il pannello passa da 219 a 203 px naturali e alla
@@ -12094,7 +12212,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
    utile e' 157: quindi non si tocca altro, e la riga della fonte resta, che e'
    l'attribuzione della licenza. */
 @media (min-width:901px) and (max-height:780px){
-  body.modo-boschi #legend-panel .bo-griglia{gap:0 12px;font-size:12px;}
+  body.modo-boschi #legend-panel .bo-griglia{gap:0 8px;}
 }
 /* ⚠️ TRE COLONNE SU FINESTRA BASSA: PROVATA E TOLTA (21/9/2026).
    Con dieci voci su due colonne il pannello e' alto 219 px e su una finestra
@@ -12277,7 +12395,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
      serve «immutable» per un anno. A ogni rigenerazione delle tessere:
      push forzato di la', poi QUI il codice nuovo (`git rev-parse HEAD`
      nel repo delle tessere). Le vecchie copie spariscono da sole. */
-  var TESSERE_COMMIT='4f1c4bea745030425cb6a0f45af1757bff05155b';
+  var TESSERE_COMMIT='5f6562ba894e64c37318a90b90f0c03d5f777138';   // ramo boschi-di-fiume (26/9/2026): la prod resta su 4f1c4bea
   var TESSERE='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@'+TESSERE_COMMIT+'/';
   var BASE=TESSERE+'boschi/', OPACITA=0.7;
   var RILIEVO=TESSERE+'rilievo/', TERRENO=TESSERE+'terreno/', Z_TERRENO=12;
@@ -12361,6 +12479,18 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     document.body.classList.toggle('bo-lontano-on',!!lont);
   }
 
+  /* Ordine della legenda a tre colonne (26/9/2026): le voci lunghe nella terza
+     colonna, che e' la piu' larga; «carpino nero...» nell'ultima riga su due
+     colonne, «altri boschi» in fondo. Un gruppo nuovo che qui non c'e' finisce
+     prima di «altri boschi»: indice.json resta l'unica fonte dei gruppi. */
+  var BO_ORDINE=['faggete','castagneti','conifere non precisate','querceti','lariceti','abetaie e peccete',
+                 'robinieti','pinete','boschi di fiume','carpino nero, orniello e aceri','altri boschi'];
+  var BO_LUNGA='carpino nero, orniello e aceri';
+  function ordinaLegenda(gr){
+    var pos=function(g){ var i=BO_ORDINE.indexOf(g[0]); return i<0 ? BO_ORDINE.length-1.5 : i; };
+    return gr.slice().sort(function(a,b){ return pos(a)-pos(b); });
+  }
+
   function legenda(){
     var box=el('bo-leg'); if(!box||!indice) return;
     /* ⚠️ IL TASTO STA NELLA RIGA DEL TITOLO: su una riga a parte il pannello del
@@ -12368,8 +12498,8 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
        scritta «tocca un bosco»: deciso dall'utente, «se ne accorgeranno navigando». */
     box.innerHTML='<div class="bo-tit-riga"><div class="bo-tit">Legenda boschi</div>'
       +'<span class="bo-tend-btn" id="bo-tend-btn" role="button" title="Pioggia a sinistra, boschi a destra">⇆ Confronta con piogge</span></div>'
-      +'<div class="bo-griglia">'+indice.gruppi.map(function(g){
-        return '<div class="bo-riga"><span class="bo-sw" style="background:'+g[1]+';opacity:'+OPACITA+'"></span>'+g[0]+'</div>';
+      +'<div class="bo-griglia">'+ordinaLegenda(indice.gruppi).map(function(g){
+        return '<div class="bo-riga'+(g[0]===BO_LUNGA?' lunga':'')+'"><span class="bo-sw" style="background:'+g[1]+';opacity:'+OPACITA+'"></span>'+g[0]+'</div>';
       }).join('')+'</div>'
       +'<div class="bo-lontano">Avvicinati per vedere i boschi</div>'
       // ⚠️ niente riga «Segnalacelo» qui (tolta il 19/9/2026, sua decisione: la
