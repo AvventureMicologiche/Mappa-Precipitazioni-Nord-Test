@@ -8954,6 +8954,9 @@ function locCollocaCasella(){
   var box=document.getElementById('novita-box'), slot=document.getElementById('reg-cerca-slot');
   if(!box||!slot) return;
   if(!_locCasa){ _locCasa=box.parentElement; _locDopo=box.nextSibling; }
+  // la scritta lunga solo su desktop, dove la casella e' larga 412 px (sua richiesta, 26/9/2026)
+  var inp=document.getElementById('loc-input');
+  if(inp) inp.placeholder = window.innerWidth<=900 ? 'Cerca località o coordinate' : 'Cerca località o inserisci coordinate';
   if(window.innerWidth<=900){
     if(box.parentElement!==slot) slot.appendChild(box);
   } else if(box.parentElement!==_locCasa){
@@ -12395,7 +12398,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
      serve «immutable» per un anno. A ogni rigenerazione delle tessere:
      push forzato di la', poi QUI il codice nuovo (`git rev-parse HEAD`
      nel repo delle tessere). Le vecchie copie spariscono da sole. */
-  var TESSERE_COMMIT='5f6562ba894e64c37318a90b90f0c03d5f777138';   // ramo boschi-di-fiume (26/9/2026): la prod resta su 4f1c4bea
+  var TESSERE_COMMIT='96ba14c480aae433973a5c7bb5b05ca228565d74';   // ramo boschi-di-fiume (26/9/2026): la prod resta su 4f1c4bea
   var TESSERE='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@'+TESSERE_COMMIT+'/';
   var BASE=TESSERE+'boschi/', OPACITA=0.7;
   var RILIEVO=TESSERE+'rilievo/', TERRENO=TESSERE+'terreno/', Z_TERRENO=12;
@@ -12479,13 +12482,14 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     document.body.classList.toggle('bo-lontano-on',!!lont);
   }
 
-  /* Ordine della legenda a tre colonne (26/9/2026): le voci lunghe nella terza
-     colonna, che e' la piu' larga; «carpino nero...» nell'ultima riga su due
-     colonne, «altri boschi» in fondo. Un gruppo nuovo che qui non c'e' finisce
-     prima di «altri boschi»: indice.json resta l'unica fonte dei gruppi. */
+  /* Ordine della legenda a tre colonne (26/9/2026): le voci medie nella terza
+     colonna, che e' la piu' larga; le due LUNGHE («carpino nero...» e «pioppi,
+     salici...») su due colonne, una riga ciascuna, in fondo. Un gruppo nuovo che
+     qui non c'e' finisce fra le ultime: indice.json resta l'unica fonte dei gruppi. */
   var BO_ORDINE=['faggete','castagneti','conifere non precisate','querceti','lariceti','abetaie e peccete',
-                 'robinieti','pinete','boschi di fiume','carpino nero, orniello e aceri','altri boschi'];
-  var BO_LUNGA='carpino nero, orniello e aceri';
+                 'robinieti','pinete','altri boschi','pioppi, salici, ontani e frassini','carpino nero, orniello e aceri'];
+  // ⚠️ pioppi PRIMA del carpino (sua scelta, 26/9): a 1536x702 la riga che scorre e' quella del carpino
+  var BO_LUNGHE=['carpino nero, orniello e aceri','pioppi, salici, ontani e frassini'];
   function ordinaLegenda(gr){
     var pos=function(g){ var i=BO_ORDINE.indexOf(g[0]); return i<0 ? BO_ORDINE.length-1.5 : i; };
     return gr.slice().sort(function(a,b){ return pos(a)-pos(b); });
@@ -12499,7 +12503,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     box.innerHTML='<div class="bo-tit-riga"><div class="bo-tit">Legenda boschi</div>'
       +'<span class="bo-tend-btn" id="bo-tend-btn" role="button" title="Pioggia a sinistra, boschi a destra">⇆ Confronta con piogge</span></div>'
       +'<div class="bo-griglia">'+ordinaLegenda(indice.gruppi).map(function(g){
-        return '<div class="bo-riga'+(g[0]===BO_LUNGA?' lunga':'')+'"><span class="bo-sw" style="background:'+g[1]+';opacity:'+OPACITA+'"></span>'+g[0]+'</div>';
+        return '<div class="bo-riga'+(BO_LUNGHE.indexOf(g[0])>=0?' lunga':'')+'"><span class="bo-sw" style="background:'+g[1]+';opacity:'+OPACITA+'"></span>'+g[0]+'</div>';
       }).join('')+'</div>'
       +'<div class="bo-lontano">Avvicinati per vedere i boschi</div>'
       // ⚠️ niente riga «Segnalacelo» qui (tolta il 19/9/2026, sua decisione: la
