@@ -1923,7 +1923,7 @@ h1{font-size:14px;font-weight:600;white-space:nowrap}
     <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/>
     <line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     </svg>
-    <input id="loc-input" type="text" placeholder="Cerca località o coordinate" autocomplete="off"
+    <input id="loc-input" type="text" placeholder="Cerca località o inserisci coordinate" autocomplete="off"
     autocorrect="off" spellcheck="false" aria-label="Cerca una località o delle coordinate"
     aria-autocomplete="list" aria-controls="loc-drop" aria-expanded="false">
     <button id="loc-clear" type="button" aria-label="Cancella la ricerca">×</button>
@@ -8954,9 +8954,6 @@ function locCollocaCasella(){
   var box=document.getElementById('novita-box'), slot=document.getElementById('reg-cerca-slot');
   if(!box||!slot) return;
   if(!_locCasa){ _locCasa=box.parentElement; _locDopo=box.nextSibling; }
-  // la scritta lunga solo su desktop, dove la casella e' larga 412 px (sua richiesta, 26/9/2026)
-  var inp=document.getElementById('loc-input');
-  if(inp) inp.placeholder = window.innerWidth<=900 ? 'Cerca località o coordinate' : 'Cerca località o inserisci coordinate';
   if(window.innerWidth<=900){
     if(box.parentElement!==slot) slot.appendChild(box);
   } else if(box.parentElement!==_locCasa){
@@ -12201,10 +12198,10 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
    la prova del 21/9 (pannello allargato a 660 px, bocciata): il pannello resta
    largo com'era e si stringono i caratteri a 11 px. Colonne FISSE (minmax(0,..),
    non si allargano da sole), la terza piu' larga per le voci lunghe, e
-   «carpino nero, orniello e aceri» nell'ultima riga su due colonne (.lunga).
-   L'ordine lo fa legenda() con BO_ORDINE. Misurato a 360, 393 e 1920 px: nessuna
-   voce esce dalla colonna, pannello 245->214 px sul telefono, 219->188 sul PC. */
-.bo-griglia{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,.88fr) minmax(0,1.24fr);gap:3px 8px;font-size:11px;color:#33404f}
+   «pioppi, salici, ontani e frassini» nell'ultima riga su due colonne (.lunga),
+   col carpino accanto. L'ordine lo fa legenda() con BO_ORDINE. Quattro righe per
+   undici voci: nessuna voce esce dalla colonna a 360, 393 e 1920 px. */
+.bo-griglia{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,.82fr) minmax(0,1.36fr);gap:3px 8px;font-size:11px;color:#33404f}
 .bo-riga.lunga{grid-column:span 2}
 /* ⚠️ FINESTRA BASSA: SI STRINGE IN VERTICALE, NON SI ALLARGA (21/9/2026).
    Righe piu' fitte e un filo piu' piccole solo nella legenda dei boschi e solo
@@ -12398,7 +12395,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
      serve «immutable» per un anno. A ogni rigenerazione delle tessere:
      push forzato di la', poi QUI il codice nuovo (`git rev-parse HEAD`
      nel repo delle tessere). Le vecchie copie spariscono da sole. */
-  var TESSERE_COMMIT='96ba14c480aae433973a5c7bb5b05ca228565d74';   // ramo boschi-di-fiume (26/9/2026): la prod resta su 4f1c4bea
+  var TESSERE_COMMIT='2a8b052b7fafe63649c021d9c62e46b7bb55f112';   // ramo boschi-di-fiume (26/9/2026): la prod resta su 4f1c4bea
   var TESSERE='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@'+TESSERE_COMMIT+'/';
   var BASE=TESSERE+'boschi/', OPACITA=0.7;
   var RILIEVO=TESSERE+'rilievo/', TERRENO=TESSERE+'terreno/', Z_TERRENO=12;
@@ -12487,9 +12484,10 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
      salici...») su due colonne, una riga ciascuna, in fondo. Un gruppo nuovo che
      qui non c'e' finisce fra le ultime: indice.json resta l'unica fonte dei gruppi. */
   var BO_ORDINE=['faggete','castagneti','conifere non precisate','querceti','lariceti','abetaie e peccete',
-                 'robinieti','pinete','altri boschi','pioppi, salici, ontani e frassini','carpino nero, orniello e aceri'];
-  // ⚠️ pioppi PRIMA del carpino (sua scelta, 26/9): a 1536x702 la riga che scorre e' quella del carpino
-  var BO_LUNGHE=['carpino nero, orniello e aceri','pioppi, salici, ontani e frassini'];
+                 'robinieti','pinete','altri boschi','pioppi, salici, ontani e frassini','carpino, orniello e aceri'];
+  // ⚠️ Quattro righe: «pioppi...» su due colonne e il carpino accanto, nella terza.
+  // Per questo il carpino ha perso «nero» (sua scelta, 26/9): 132 px, la colonna ne ha ~139 a 360.
+  var BO_LUNGHE=['pioppi, salici, ontani e frassini'];
   function ordinaLegenda(gr){
     var pos=function(g){ var i=BO_ORDINE.indexOf(g[0]); return i<0 ? BO_ORDINE.length-1.5 : i; };
     return gr.slice().sort(function(a,b){ return pos(a)-pos(b); });
