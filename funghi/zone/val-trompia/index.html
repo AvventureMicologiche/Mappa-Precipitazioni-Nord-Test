@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Funghi in Val Trompia oggi: stanno nascendo?</title>
-<meta name="description" content="Stanno nascendo funghi in Val Trompia? Le piogge degli ultimi 25 giorni, giorno per giorno, da 3 pluviometri da bosco. Aggiornato ogni mattina.">
+<meta name="description" content="Meteo funghi Val Trompia: la pioggia degli ultimi 20 giorni da 3 pluviometri da bosco e il verdetto per la crescita dei funghi.">
 <link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/zone/val-trompia/">
 <meta property="og:title" content="Funghi in Val Trompia oggi: stanno nascendo?">
 <meta property="og:description" content="Le piogge degli ultimi 25 giorni, misurate dai pluviometri nelle zone da bosco.">
@@ -269,6 +269,7 @@ nav.altre a{color:var(--blu);}
 <p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/" style="color:var(--blu)">Lombardia</a></p>
 
 <h1>Funghi in Val Trompia oggi: stanno nascendo?</h1>
+<p class="breve" style="margin-top:-2px">Meteo funghi Val Trompia: la pioggia vera di 3 pluviometri da bosco, per capire la crescita dei funghi.</p>
 <div id="stagione"></div>
 <script>(function(){var m=new Date().getMonth()+1,t=null;if(m===12||m===1||m===2)t="<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.";else if(m===11||m===3)t="<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in autunno pieno.";if(t){var s=document.getElementById("stagione");s.innerHTML=t;s.style.display="block";}})();</script>
 
@@ -284,17 +285,18 @@ nav.altre a{color:var(--blu);}
 <p class="breve" id="p-conta">Il fungo spunta 12-13 giorni dopo una bella pioggia: i funghi di oggi nascono da queste otto giornate.</p>
 <div id="finestra"></div>
 
-<h2>Com'è andata intorno? Apri le mappe</h2>
+<h2>Dove ha piovuto di più in Val Trompia? Guardalo sulla mappa</h2>
+<style>@media(max-width:880px){#tasti,.tasti{grid-template-columns:repeat(2,1fr)}#t-conta,.tasti a.t-radar{grid-column:1 / -1}}</style>
 <div class="tasti">
-  <a class="forte" id="t-conta" href="https://avventurepluvio-test.netlify.app/?r=lombardia&amp;g=20&amp;pl=45.69194,10.18639&amp;pn=Val%20Trompia&amp;pz=1&amp;z=10&amp;c=45.69194,10.18639">13-20 gg fa</a>
   <a href="https://avventurepluvio-test.netlify.app/?r=lombardia&amp;g=1&amp;pl=45.69194,10.18639&amp;pn=Val%20Trompia&amp;pz=1&amp;z=10&amp;c=45.69194,10.18639">Ieri</a>
   <a href="https://avventurepluvio-test.netlify.app/?r=lombardia&amp;g=7&amp;pl=45.69194,10.18639&amp;pn=Val%20Trompia&amp;pz=1&amp;z=10&amp;c=45.69194,10.18639">Ultimi 7 gg</a>
   <a href="https://avventurepluvio-test.netlify.app/?r=lombardia&amp;g=20&amp;pl=45.69194,10.18639&amp;pn=Val%20Trompia&amp;pz=1&amp;z=10&amp;c=45.69194,10.18639">Ultimi 20 gg</a>
   <a href="https://avventurepluvio-test.netlify.app/?r=lombardia&amp;g=30&amp;pl=45.69194,10.18639&amp;pn=Val%20Trompia&amp;pz=1&amp;z=10&amp;c=45.69194,10.18639">Ultimi 30 gg</a>
-  <a href="https://avventurepluvio-test.netlify.app/?r=lombardia&amp;pl=45.69194,10.18639&amp;pn=Val%20Trompia&amp;pz=1&amp;radar=ora"
+  <a class="forte" id="t-conta" href="https://avventurepluvio-test.netlify.app/?r=lombardia&amp;g=20&amp;pl=45.69194,10.18639&amp;pn=Val%20Trompia&amp;pz=1&amp;z=10&amp;c=45.69194,10.18639">Range crescita funghi 13-20 gg fa</a>
+  <a class="t-radar" href="https://avventurepluvio-test.netlify.app/?r=lombardia&amp;pl=45.69194,10.18639&amp;pn=Val%20Trompia&amp;pz=1&amp;radar=ora"
      onclick="try{gtag('event','apri_mappa',{da:'zona-val-trompia-radar'})}catch(e){}">📡 Radar adesso</a>
 </div>
-<p class="breve">La pioggia degli ultimi 20 giorni in Lombardia, stazione per stazione.</p>
+<p class="breve">Ogni pallino è un pluviometro: cerca quello più bagnato vicino ai tuoi boschi.</p>
 <a href="https://avventurepluvio-test.netlify.app/?r=lombardia&amp;g=20&amp;pl=45.69194,10.18639&amp;pn=Val%20Trompia&amp;pz=1&amp;z=10&amp;c=45.69194,10.18639" id="lnk-pioggia"
    onclick="try{gtag('event','apri_mappa',{da:'zona-val-trompia-20gg'})}catch(e){}">
   <img class="img-mappa" src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/lombardia.jpg" alt="La mappa delle piogge in Lombardia"
@@ -333,7 +335,7 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 <p>Ti serve un altro periodo? Per ieri e gli ultimi 30 giorni c’è
 <a href="https://avventurepluvio-test.netlify.app/zone/val-trompia/">dove ha piovuto in Val Trompia</a>.</p>
 <h2>L'archivio della zona</h2>
-<p>Da gennaio 2026 a settembre 2026, in 267 giorni di misura, i 3 pluviometri
+<p>Da gennaio 2026 a settembre 2026, in 269 giorni di misura, i 3 pluviometri
 della Val Trompia hanno contato
 <b>700 mm</b> di pioggia a testa, in media. Il più bagnato è <b>Bovegno ponte Zigole</b> con
 748 mm, il più asciutto Sarezzo v.della Fonte con 630.
@@ -480,6 +482,30 @@ OpenStreetMap, licenza ODbL.</p>
   }
 
 
+  function scriviAggiornato(generato) {
+    var d = new Date(generato);
+    if (isNaN(d.getTime())) return;
+    var MM = ["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+    var g = d.getDate();
+    var pre = (g === 8 || g === 11) ? "all’" : "al ";
+    var ora = d.getHours() + ":" + String(d.getMinutes()).padStart(2, "0");
+    var v = document.querySelector("#verdetto .verdetto");
+    if (v) {
+      var p = document.createElement("div");
+      p.style.cssText = "font-size:13px;opacity:.75;margin-top:10px;";
+      p.textContent = "Dati aggiornati " + pre + (g === 1 ? "1°" : g) + " " + MM[d.getMonth()] + " alle " + ora;
+      v.appendChild(p);
+    }
+    var can = document.querySelector("link[rel=canonical]");
+    var ld = { "@context": "https://schema.org", "@type": "WebPage", "name": document.title,
+               "url": can ? can.href : location.href, "inLanguage": "it", "dateModified": d.toISOString() };
+    var s = document.createElement("script");
+    s.type = "application/ld+json";
+    s.textContent = JSON.stringify(ld);
+    document.head.appendChild(s);
+  }
+
+
   function fresco(j){
     if(!j || !j.generato || !j.serie || !j.oggi) return false;
     var eta = Date.now() - new Date(j.generato).getTime();
@@ -494,8 +520,9 @@ OpenStreetMap, licenza ODbL.</p>
   })).then(function(js){
     var buoni = js.filter(function(j){ return j && fresco(j); });
     if (buoni.length !== REGIONI.length) return guasto();
-    var serie = {}, serieT = {}, oggi = null;
+    var serie = {}, serieT = {}, oggi = null, gen = null;
     buoni.forEach(function(j){
+      if (!gen || j.generato < gen) gen = j.generato;   // la data della parte PIU VECCHIA
       Object.keys(j.serie).forEach(function(id){ serie[id] = j.serie[id]; });
       Object.keys(j.serieT || {}).forEach(function(id){ serieT[id] = j.serieT[id]; });
       if (!oggi || j.oggi < oggi) oggi = j.oggi;
@@ -503,6 +530,7 @@ OpenStreetMap, licenza ODbL.</p>
     var righe = POSTI.filter(function(p){ return serie[p[0]]; });
     if (righe.length < 2) return guasto();
     disegna(serie, serieT, oggi, righe);
+    scriviAggiornato(gen);
   }).catch(function(){ guasto(); });
 
   function guasto(){

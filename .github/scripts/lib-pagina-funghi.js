@@ -181,4 +181,42 @@ const JS_COMUNE = comune.toString()
   .replace(/^function comune\(\)\s*\{/, '')
   .replace(/\}\s*$/, '');
 
-module.exports = { STILE_NUOVO, JS_COMUNE };
+/* ⚠️ LA DATA DEI DATI, PER CHI LEGGE E PER GOOGLE (26/9/2026). Le pagine di
+   paese e di zona si rigenerano ogni tre mesi, ma i numeri li scarica il
+   browser ogni volta: la pagina E' fresca, solo che non lo diceva. Qui si
+   scrive sotto il verdetto «Dati aggiornati al 26 settembre alle 7:40» e si
+   aggiunge un blocco WebPage con `dateModified` = quando e' stato scritto il
+   file dei dati (`generato`). Google legge anche i dati strutturati aggiunti
+   dal javascript. E' una data VERA, quella dei numeri mostrati: mai la data
+   di oggi a prescindere. Serve alle ricerche con «oggi», che sono le nostre.
+   Stile in linea: le pagine di paese prendono il foglio dalla pagina della
+   regione, e cosi' non serve rigenerare anche quella. */
+function aggiornato() {
+  function scriviAggiornato(generato) {
+    var d = new Date(generato);
+    if (isNaN(d.getTime())) return;
+    var MM = ["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+    var g = d.getDate();
+    var pre = (g === 8 || g === 11) ? "all’" : "al ";
+    var ora = d.getHours() + ":" + String(d.getMinutes()).padStart(2, "0");
+    var v = document.querySelector("#verdetto .verdetto");
+    if (v) {
+      var p = document.createElement("div");
+      p.style.cssText = "font-size:13px;opacity:.75;margin-top:10px;";
+      p.textContent = "Dati aggiornati " + pre + (g === 1 ? "1°" : g) + " " + MM[d.getMonth()] + " alle " + ora;
+      v.appendChild(p);
+    }
+    var can = document.querySelector("link[rel=canonical]");
+    var ld = { "@context": "https://schema.org", "@type": "WebPage", "name": document.title,
+               "url": can ? can.href : location.href, "inLanguage": "it", "dateModified": d.toISOString() };
+    var s = document.createElement("script");
+    s.type = "application/ld+json";
+    s.textContent = JSON.stringify(ld);
+    document.head.appendChild(s);
+  }
+}
+const JS_AGGIORNATO = aggiornato.toString()
+  .replace(/^function aggiornato\(\)\s*\{/, '')
+  .replace(/\}\s*$/, '');
+
+module.exports = { STILE_NUOVO, JS_COMUNE, JS_AGGIORNATO };

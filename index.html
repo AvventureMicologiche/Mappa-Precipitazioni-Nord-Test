@@ -11437,7 +11437,10 @@ function loadDefaultMarkers(){
     }catch(e){}
   }
   var URL_VETRINA='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/vetrina.json';
-  var TETTO_VETRINA=1200;
+  // 2,5 s e non 1,2 (27/9/2026, sua decisione): piu' tempo a GitHub, meno persone
+  // sulla copia del sito (che e' quella dell'ultimo deploy). Una vetrina che cambia
+  // sotto gli occhi sembra un difetto: niente sostituzione se GitHub arriva tardi.
+  var TETTO_VETRINA=2500;
   var RIPIEGO={mostra:MOSTRA, vetrine:VETRINE, sorteggio:ELENCO};
   var montata=false;
   function monta(cfg, da){
@@ -11459,7 +11462,24 @@ function loadDefaultMarkers(){
       });
     }catch(e){}
   }
-  var attesa=setTimeout(function(){ monta(RIPIEGO,'ripiego: il file non e\' arrivato in tempo'); },TETTO_VETRINA);
+  /* ⚠️ PRIMA DELLA RISERVA SCRITTA QUI, LA COPIA SUL NOSTRO SITO (27/9/2026).
+     Dal telefono GitHub raw spesso non arriva in 1,2 s, e la riserva scritta in
+     questo file era ferma allo short «Aggiornamento mappa» del 19/9: lui vedeva
+     «il video vecchio» mentre il file diceva i 4 episodi e la novita'. La copia
+     /data/vetrina.json sta sul nostro dominio (risponde subito) ed e' quella
+     dell'ultimo deploy: puo' essere indietro di qualche giorno, mai di mesi. */
+  function copiaSito(perche){
+    if(montata) return;
+    var riserva=setTimeout(function(){ monta(RIPIEGO,'ripiego ('+perche+'), e la copia sul sito non risponde'); },800);
+    try{
+      fetch('/data/vetrina.json').then(function(r){ return r.ok ? r.json() : null; }).then(function(j){
+        clearTimeout(riserva);
+        if(j && j.vetrine && typeof j.vetrine==='object') monta(j,'copia sul sito di data/vetrina.json ('+perche+')');
+        else monta(RIPIEGO,'ripiego: copia sul sito senza vetrine');
+      }).catch(function(){ clearTimeout(riserva); monta(RIPIEGO,'ripiego: copia sul sito non raggiungibile'); });
+    }catch(e){ clearTimeout(riserva); monta(RIPIEGO,'ripiego: fetch non disponibile'); }
+  }
+  var attesa=setTimeout(function(){ copiaSito('GitHub lento'); },TETTO_VETRINA);
   try{
     fetch(URL_VETRINA).then(function(r){
       return r.ok ? r.json() : null;
@@ -11468,10 +11488,10 @@ function loadDefaultMarkers(){
       // ⚠️ Si controlla che ci sia DAVVERO la roba dentro: un file troncato o
       // un 404 travestito da pagina non deve spegnere la vetrina.
       if(j && j.vetrine && typeof j.vetrine==='object') monta(j,'da data/vetrina.json');
-      else monta(RIPIEGO,'ripiego: file senza vetrine');
+      else copiaSito('file senza vetrine');
     }).catch(function(){
       clearTimeout(attesa);
-      monta(RIPIEGO,'ripiego: file non raggiungibile');
+      copiaSito('GitHub non raggiungibile');
     });
   }catch(e){ clearTimeout(attesa); monta(RIPIEGO,'ripiego: fetch non disponibile'); }
 })();
