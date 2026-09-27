@@ -9401,11 +9401,12 @@ setTimeout(positionPanels, 100);
 // ?r=reg1,reg2&da=YYYY-MM-DD&a=YYYY-MM-DD&z=8.25&c=45.62,9.81
 function buildShareUrl(){
   var regions=getActiveRegions();
-  if(regions.length===0||!currentPast||!currentNow) return null;
+  // nella mappa forestale le date non servono: senza periodo il link porta regione, vista e boschi
+  var senzaDate=!currentPast||!currentNow;
+  if(regions.length===0||(senzaDate&&!window._boschiAcceso)) return null;
   var p=new URLSearchParams();
   p.set('r',regions.join(','));
-  p.set('da',fmtISOLocal(new Date(currentPast)));
-  p.set('a',fmtISOLocal(new Date(currentNow)));
+  if(!senzaDate){ p.set('da',fmtISOLocal(new Date(currentPast))); p.set('a',fmtISOLocal(new Date(currentNow))); }
   p.set('z',String(Math.round(map.getZoom()*100)/100));
   var c=map.getCenter();
   // ⚠️ E NON BASTA TOGLIERE pl (26/8/2026): dopo «La mia posizione» il CENTRO
@@ -9836,6 +9837,11 @@ function _prewarmH2C(){ ensureHtml2Canvas().catch(function(){}); }
 // col nome della mappa; le date quelle dell'analisi.
 function didascaliaFoto(){
   var nomi=getActiveRegions().map(function(k){return (REGIONS[k]&&REGIONS[k].name)||k;});
+  if(window._boschiAcceso){   // la foto mostra i boschi, non la pioggia
+    var fq=window._quotaFascia&&window._quotaFascia(), fa=fq?fq.split('-'):null;
+    var dove=(_vistaPaese&&_vistaPaese.n&&!_vistaPaese.priv)?'intorno a '+_vistaPaese.n:'di '+nomi.join(', ');
+    return 'Mappa dei boschi '+dove+(fa?', altitudine '+fa[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'\u2013'+fa[1].replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' m':'')+': tipi di bosco dalle carte forestali ufficiali';
+  }
   var f=function(d){return new Date(d).toLocaleDateString('it-IT',{day:'numeric',month:'short'});};
   var quando=(currentPast&&currentNow)?' ('+f(currentPast)+' - '+f(currentNow)+')':'';
   // ⚠️ Se c'e' un paese cercato e' LUI il soggetto (22/8/2026): chi riceve la
@@ -9856,6 +9862,7 @@ function shareFileName(){
     ? _vistaPaese.n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
         .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
     : getActiveRegions().join('-');
+  if(window._boschiAcceso){ var fq=window._quotaFascia&&window._quotaFascia(); return 'boschi_'+chi+(fq?'_'+fq+'m':'')+'.png'; }
   return 'pioggia_'+chi+'_'+fmtISOLocal(new Date(currentPast))+'_'+fmtISOLocal(new Date(currentNow))+'.png';
 }
 // Il menu di condivisione nativo va usato solo sui dispositivi touch: anche
@@ -9920,7 +9927,7 @@ if(_btnShot){
   _btnShot.addEventListener('touchstart',_prewarmH2C,{passive:true});
   var _fotoPronta=null;   // foto gia' fatta, in attesa di un secondo tocco
   _btnShot.addEventListener('click',function(){
-    if(getActiveRegions().length===0||!currentPast) return;
+    if(getActiveRegions().length===0||(!currentPast&&!window._boschiAcceso)) return;
     if(_fotoPronta && Date.now()-_fotoPronta.t<120000){
       var fp=_fotoPronta; _fotoPronta=null; _btnShot.classList.remove('pronta');
       var old0=_btnShot.dataset.label;
@@ -12952,7 +12959,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     }).catch(function(){});
   }
 
-  function analisiInCorso(){ return !!(window.buildShareUrl && window.buildShareUrl()); }
+  function analisiInCorso(){ var u=window.buildShareUrl && window.buildShareUrl(); return !!(u && u.indexOf('da=')>=0); }
   /* ⚠️ I PANNELLI DEL DESKTOP SI METTONO IN COLONNA A MANO (positionPanels,
      dentro lo script grande, non raggiungibile da qui) e solo al resize o a
      fine analisi. La riga di tasti in piu' allunga il pannello del periodo
