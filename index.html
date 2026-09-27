@@ -9435,6 +9435,7 @@ function buildShareUrl(){
   // area. Lo zoom viaggia grezzo.
   if(window._radarModo) p.set('radar', window._radarModo);
   if(window._boschiAcceso) p.set('boschi', '1');   // retino «Tipi di bosco», 15/9/2026
+  if(window._boschiAcceso && window._quotaFascia && window._quotaFascia()) p.set('quota', window._quotaFascia());   // mockup quota
   return location.origin+location.pathname+'?'+p.toString();
 }
 window.buildShareUrl=buildShareUrl;
@@ -9571,7 +9572,7 @@ function captureMapBlob(scala){
     return new Promise(function(res){
       var t0=Date.now();
       (function poll(){
-        var mancanti=[].slice.call(mapEl.querySelectorAll('.leaflet-tile')).some(function(t){ return !t.complete||!t.naturalWidth; });
+        var mancanti=[].slice.call(mapEl.querySelectorAll('img.leaflet-tile')).some(function(t){ return !t.complete||!t.naturalWidth; });
         if(!mancanti||Date.now()-t0>2500) return setTimeout(res,300);
         setTimeout(poll,120);
       })();
@@ -9651,7 +9652,7 @@ function captureMapBlob(scala){
       if(bt.length){
         ctx.save(); soloDx(ctx); ctx.globalAlpha=window._boschiOpacita||1;
         bt.forEach(function(t){
-          if(!t.complete||!t.naturalWidth) return;
+          if(t.tagName!=='CANVAS' && (!t.complete||!t.naturalWidth)) return;
           var rb=rel(t); try{ ctx.drawImage(t,rb.x,rb.y,rb.w,rb.h); }catch(e){}
         });
         ctx.restore();
@@ -12221,6 +12222,124 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
    «pioppi, salici, ontani e frassini» nell'ultima riga su due colonne (.lunga),
    col carpino accanto. L'ordine lo fa legenda() con BO_ORDINE. Quattro righe per
    undici voci: nessuna voce esce dalla colonna a 360, 393 e 1920 px. */
+.bq{margin:3px 0 0;font-size:11px;color:#33404f;-webkit-user-select:none;user-select:none}
+.bq-tit{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;font-weight:600;margin-bottom:3px}
+.bq-tit em{font-style:normal;color:#1b5e20;font-weight:700}.bq-tit em.bq-invito{color:#7a8794;font-weight:500}.bq-tit small{color:#7a8794;font-weight:500;font-size:11px}
+.bq-area{position:relative;padding:0 10px;cursor:pointer;touch-action:none}
+.bq-ist{height:26px;display:flex;align-items:flex-end;gap:1px;border-bottom:2px solid #c9d3de}
+.bq-ist i{flex:1;min-height:1px;background:#c7d3c9;border-radius:1px 1px 0 0}
+.bq-ist i.on{background:#2e7d32}
+body:not(.bq-on) .bq-ist i{background:#a9bcae}
+.bq-man{position:relative;height:30px}
+.bq-h{position:absolute;top:1px;width:12px;height:12px;margin-left:-6px}
+.bq-h .bq-f{position:absolute;left:0;top:0;display:block}
+.bq-h b{position:absolute;top:13px;left:6px;background:#1b5e20;color:#fff;font-size:10px;font-weight:700;line-height:14px;padding:0 4px;border-radius:4px;white-space:nowrap}
+.bq-h.sx b{transform:translateX(-85%)}.bq-h.dx b{transform:translateX(-15%)}
+/* ── PC, MAPPA FORESTALE: si COMPATTA il pannello dei periodi, non si nasconde niente
+   (27/9: il pannello stretto con «cambia» e' stato bocciato, un tasto che non si
+   capisce sposta il problema). I sei periodi su UNA riga come sul telefono
+   («7 gg»), e la riga «✅ 20 giorni» sparisce quando ripete solo il periodo
+   acceso: gli avvisi e gli errori restano. */
+@media (min-width:901px){
+  body.modo-boschi #time-panel .tp-periodi{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+  body.modo-boschi #time-panel .tp-periodi .tp-grid3{display:contents}
+  body.modo-boschi #time-panel .tp-lunga{display:none}
+  body.modo-boschi #time-panel .tp-corta{display:inline}
+  body.modo-boschi #time-panel .tp-periodi .tp-btn{padding-left:0;padding-right:0;white-space:nowrap}
+  body.modo-boschi #tp-status.tp-ok{display:none}
+  /* «↩ Indietro» resta grande (27/9, sua decisione) */
+  /* «Date personalizzate» e «Piogge per funghi» affiancati, come «Radar | Chiudi mappa».
+     Si usa una griglia sul contenuto del pannello: tutto a tutta larghezza, tranne i due. */
+  body.modo-boschi #time-panel .tp-content{display:grid !important;grid-template-columns:1fr 1fr;column-gap:6px}
+  body.modo-boschi #time-panel .tp-content > *{grid-column:1 / -1}
+  body.modo-boschi #time-panel .tp-content > #btn-custom,
+  body.modo-boschi #time-panel .tp-content > #btn-funghi{grid-column:auto;order:1;margin-top:5px !important;white-space:nowrap}
+  body.modo-boschi #time-panel .tp-content > .tp-periodi{order:0}
+  body.modo-boschi #time-panel .tp-content > .rd-coppia{order:2}
+  body.modo-boschi #time-panel .tp-content > :not(.tp-periodi):not(#btn-custom):not(#btn-funghi):not(.rd-coppia){order:3}
+  /* affiancato, «Piogge per funghi» senza il periodo non dice niente (27/9, suo):
+     nel mezzo tasto ci sono 144 px, «Piogge 13-20 gg fa» ne prende 115 */
+  body.modo-boschi #time-panel #btn-funghi{font-size:0 !important}
+  body.modo-boschi #time-panel #btn-funghi > span{display:none}
+  body.modo-boschi #time-panel #btn-funghi:after{content:'Piogge 13-20 gg fa';font-size:13px;font-weight:600;vertical-align:middle}
+}
+/* ── TELEFONO, MAPPA FORESTALE: piu' spazio alla mappa (27/9) ── */
+@media (max-width:900px){
+  body.modo-boschi .bo-tit-riga{display:none !important}
+  /* C (scelta): nella forestale «Invia link» sparisce e «Invia foto» diventa «📤 Condividi»,
+     che fa gia' foto + link (navigator.share con file e indirizzo). «Confronta piogge» al suo posto. */
+  body.conf-c.modo-boschi #btn-share{display:none !important}
+  body.conf-c.modo-boschi #legend-panel .leg-header{flex-wrap:nowrap !important;gap:6px}
+  body.conf-c.modo-boschi #btn-shot{font-size:0 !important;flex:0 0 auto;padding-left:7px !important;padding-right:7px !important}
+  body.conf-c.modo-boschi #btn-shot:after{content:'\1F4E4  Condividi';font-size:13px}
+  body.conf-c #legend-panel .leg-header .bo-tend-btn{flex:1;display:flex;align-items:center;justify-content:center;margin:0;
+    border-radius:10px;font-weight:700;font-size:13px;white-space:nowrap;padding:0 9px;min-width:0;
+    align-self:stretch;box-sizing:border-box;min-height:31px}
+  body.conf-c:not(.modo-boschi) #legend-panel .leg-header .bo-tend-btn{display:none}
+  body.conf-c.modo-boschi #leg-back-btn{flex:0 0 auto;font-size:13px !important;padding-left:9px !important;padding-right:9px !important}
+  /* I TRE TASTI UGUALI (27/9, suo: «3 forme e altezze diverse mi disturbano»): stessa
+     altezza, stessi angoli, stesso bordo e fondo. «Indietro» tiene solo il bordo blu. */
+  body.conf-c.modo-boschi #legend-panel .leg-header{align-items:stretch !important}
+  body.conf-c.modo-boschi #btn-shot,
+  body.conf-c.modo-boschi #legend-panel .leg-header .bo-tend-btn,
+  body.conf-c.modo-boschi #leg-back-btn{height:32px !important;min-height:0 !important;box-sizing:border-box !important;
+    border-radius:10px !important;border:1.5px solid #c9d6ea !important;background:#eef3fb !important;
+    display:flex !important;align-items:center;justify-content:center;margin:0 !important;line-height:1 !important;
+    padding-top:0 !important;padding-bottom:0 !important;box-shadow:none !important;color:#1b3f6e}
+  body.conf-c.modo-boschi #leg-back-btn{border-color:#1b3f6e !important;font-weight:700}
+  /* TELEFONI BASSI (27/9, suo: «ridurre tutto del 10%»): sotto i 700 px di altezza il
+     pannello della forestale si rimpicciolisce tutto insieme, scritte, tasti e frecce. */
+  /* ⚠️ NIENTE `zoom` (27/9): sul suo telefono veniva calcolato ma NON disegnato
+     (spia: pannello 258 -> 227 px, schermo identico). Il 90% si scrive misura per
+     misura, che ogni browser disegna. La classe la mette il JS sotto i 700 px di
+     altezza, o ?piccolo=1, o la pillola di prova. */
+  body.forza-piccolo.modo-boschi #legend-panel{padding:13px 13px 10px !important}
+  body.forza-piccolo.modo-boschi #leg-azione{font-size:11px !important;line-height:16px !important;padding:0 10px !important}
+  body.forza-piccolo.modo-boschi #leg-handle{height:22px !important;margin-bottom:5px !important}
+  body.forza-piccolo.modo-boschi #btn-shot{height:29px !important}   /* il suo font resta 0: la scritta e' il :after */
+  body.forza-piccolo.modo-boschi #legend-panel .leg-header .bo-tend-btn,
+  body.forza-piccolo.modo-boschi #leg-back-btn{height:29px !important;font-size:12px !important}
+  body.forza-piccolo.modo-boschi #btn-shot:after{font-size:12px}
+  body.forza-piccolo.modo-boschi .bo-griglia,
+  body.forza-piccolo.modo-boschi .bo-riga{font-size:10px !important;line-height:15px !important}
+  body.forza-piccolo.modo-boschi .bo-riga .bo-sw{width:12px !important;height:12px !important}
+  body.forza-piccolo.modo-boschi .bq-tit{font-size:11px !important;line-height:16px !important}
+  body.forza-piccolo.modo-boschi .bq-tit small{font-size:10px !important}
+  body.forza-piccolo.modo-boschi .bq-ist{height:18px !important}
+  body.forza-piccolo.modo-boschi .bq-man{height:24px !important}
+  body.forza-piccolo.modo-boschi .bq-h b{font-size:9px !important;line-height:13px !important;top:12px !important}
+  body.forza-piccolo.modo-boschi #bo-fonti{font-size:11.5px !important;line-height:16px !important;margin-top:5px !important}
+  /* 95%, la via di mezzo (27/9, sua richiesta): stesse regole, misure a meta' */
+  body.forza-medio.modo-boschi #legend-panel{padding:14px 14px 10px !important}
+  body.forza-medio.modo-boschi #leg-azione{font-size:11.5px !important;line-height:17px !important;padding:0 10px !important}
+  body.forza-medio.modo-boschi #leg-handle{height:23px !important;margin-bottom:5px !important}
+  body.forza-medio.modo-boschi #btn-shot{height:30px !important}
+  body.forza-medio.modo-boschi #btn-shot:after{font-size:12.5px}
+  body.forza-medio.modo-boschi #legend-panel .leg-header .bo-tend-btn,
+  body.forza-medio.modo-boschi #leg-back-btn{height:30px !important;font-size:12.5px !important}
+  body.forza-medio.modo-boschi .bo-griglia,
+  body.forza-medio.modo-boschi .bo-riga{font-size:10.5px !important;line-height:15.7px !important}
+  body.forza-medio.modo-boschi .bo-riga .bo-sw{width:12.5px !important;height:12.5px !important}
+  body.forza-medio.modo-boschi .bq-tit{font-size:11.5px !important;line-height:17px !important}
+  body.forza-medio.modo-boschi .bq-tit small{font-size:10.5px !important}
+  body.forza-medio.modo-boschi .bq-ist{height:19px !important}
+  body.forza-medio.modo-boschi .bq-man{height:25.5px !important}
+  body.forza-medio.modo-boschi .bq-h b{font-size:9.5px !important;line-height:13.5px !important;top:12.5px !important}
+  body.forza-medio.modo-boschi #bo-fonti{font-size:12px !important;line-height:16.5px !important;margin-top:5.5px !important}
+  /* A: quarto tasto nella riga dei comandi, uguale agli altri */
+  body.conf-a.modo-boschi #legend-panel .leg-header > *{font-size:12.5px !important;padding-left:4px !important;padding-right:4px !important;white-space:nowrap}
+  body.conf-a #legend-panel .leg-header .bo-tend-btn{flex:1;display:flex;align-items:center;justify-content:center;margin:0;border-radius:10px;font-weight:700}
+  body.conf-a:not(.modo-boschi) #legend-panel .leg-header .bo-tend-btn{display:none}
+  /* B: tasto sulla mappa, sopra il pannello a destra, come un comando della mappa */
+  body.conf-b > .bo-tend-btn{position:fixed;right:10px;z-index:2150;margin:0;font-size:13px;padding:7px 12px;
+    background:#fff;border-radius:18px;box-shadow:0 2px 8px rgba(0,0,0,.28);white-space:nowrap}
+  body.conf-b:not(.modo-boschi) > .bo-tend-btn{display:none}
+  body.modo-boschi #legend-panel{padding-top:14px !important;padding-bottom:11px !important}
+  body.modo-boschi #leg-handle{margin-bottom:6px !important}   /* «riduci» staccato dai tasti (27/9, suo) */
+  body.modo-boschi .bq-ist{height:20px}
+  body.modo-boschi .bq-man{height:27px}
+}
+
 .bo-griglia{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,.82fr) minmax(0,1.36fr);gap:3px 8px;font-size:11px;color:#33404f}
 .bo-riga.lunga{grid-column:span 2}
 /* ⚠️ FINESTRA BASSA: SI STRINGE IN VERTICALE, NON SI ALLARGA (21/9/2026).
@@ -12415,10 +12534,214 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
      serve «immutable» per un anno. A ogni rigenerazione delle tessere:
      push forzato di la', poi QUI il codice nuovo (`git rev-parse HEAD`
      nel repo delle tessere). Le vecchie copie spariscono da sole. */
-  var TESSERE_COMMIT='2a8b052b7fafe63649c021d9c62e46b7bb55f112';   // ramo boschi-di-fiume (26/9/2026): la prod resta su 4f1c4bea
+  var TESSERE_COMMIT='90a532e7a3f95e6cde1fc4fd0ee6fc658ffb2f6d';   // ramo boschi-di-fiume (26/9/2026): la prod resta su 4f1c4bea
   var TESSERE='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@'+TESSERE_COMMIT+'/';
   var BASE=TESSERE+'boschi/', OPACITA=0.7;
   var RILIEVO=TESSERE+'rilievo/', TERRENO=TESSERE+'terreno/', Z_TERRENO=12;
+  /* ═══ MOCKUP 27/9: FILTRO DI QUOTA ═══ */
+  var QUOTA_BASSE=TESSERE+'terreno/', Q_TOT=[0,2300], Q_PASSO=50, quotaMin=0, quotaMax=2300;
+  (function(){ var m=(new URLSearchParams(location.search).get('quota')||'').match(/^(\d+)-(\d+)$/);
+    if(m){ quotaMin=+m[1]; quotaMax=+m[2]; } })();
+  function filtroAttivo(){ return quotaMin>Q_TOT[0] || quotaMax<Q_TOT[1]; }
+  var cacheQz={};
+  function quoteTessera(z,x,y){
+    var k=z+'/'+x+'/'+y; if(cacheQz[k]) return cacheQz[k];
+    var zt=Math.min(z,12), f=Math.pow(2,z-zt), sx=Math.floor(x/f), sy=Math.floor(y/f);
+    var url=(zt===12?TERRENO:QUOTA_BASSE)+zt+'/'+sx+'/'+sy+'.webp';
+    cacheQz[k]=new Promise(function(ok){
+      var im=new Image(); im.crossOrigin='anonymous';
+      im.onload=function(){
+        var c=document.createElement('canvas'); c.width=c.height=256;
+        var g=c.getContext('2d',{willReadFrequently:true}); g.drawImage(im,0,0);
+        try{
+          var d=g.getImageData(0,0,256,256).data, q=new Float32Array(65536);
+          for(var i=0,j=0;i<d.length;i+=4,j++){ var v=d[i]*256+d[i+1]-1000; q[j]= v<=-999?NaN:v; }
+          if(f>1){   // zoom 13: si prende il quarto giusto della tessera 12
+            var ox=(x%f)*256/f, oy=(y%f)*256/f, q2=new Float32Array(65536);
+            for(var r=0;r<256;r++) for(var cc=0;cc<256;cc++) q2[r*256+cc]=q[(oy+Math.floor(r/f))*256+ox+Math.floor(cc/f)];
+            q=q2;
+          }
+          ok(q);
+        }catch(_){ ok(null); }
+      };
+      im.onerror=function(){ ok(null); };
+      im.src=url;
+    });
+    return cacheQz[k];
+  }
+  /* Una volta per tessera: l'elenco dei SOLI pixel di bosco con la loro quota.
+     A ogni movimento si copiano solo quelli dentro la fascia, 32 bit alla volta. */
+  function prepara(cv,q){
+    var W=cv.width, s=new Uint32Array(cv._orig.data.buffer.slice(0)), k=256/W, idx=[], qv=[];
+    for(var py=0;py<W;py++){
+      var riga=Math.floor(py*k)*256;
+      for(var px=0;px<W;px++){
+        var i=py*W+px; if(!(s[i]>>>24)) continue;
+        var v=q?q[riga+Math.floor(px*k)]:NaN;
+        idx.push(i); qv.push(isNaN(v)?-32768:Math.round(v));
+      }
+    }
+    cv._o32=s; cv._idx=Int32Array.from(idx); cv._qv=Int16Array.from(qv);
+    cv._out=cv.getContext('2d').createImageData(W,W); cv._d32=new Uint32Array(cv._out.data.buffer);
+  }
+  function applicaQuota(cv){
+    if(!cv._orig) return Promise.resolve();
+    var g=cv.getContext('2d'), lo=quotaMin, hi=quotaMax, att=filtroAttivo(), chiave=att?lo+'-'+hi:'tutte';
+    if(cv._lh===chiave) return Promise.resolve();
+    if(!att){ g.putImageData(cv._orig,0,0); cv._lh=chiave; return Promise.resolve(); }
+    var c=cv._c;
+    return quoteTessera(c.z,c.x,c.y).then(function(q){
+      if(!cv._idx) prepara(cv,q);
+      if(lo!==quotaMin||hi!==quotaMax) return;      // la barra e' gia' andata avanti
+      var d=cv._d32, s=cv._o32, idx=cv._idx, qv=cv._qv;
+      d.fill(0);
+      for(var n=0;n<idx.length;n++){ var v=qv[n]; if(v>=lo && v<=hi){ var i=idx[n]; d[i]=s[i]; } }
+      g.putImageData(cv._out,0,0); cv._lh=chiave;
+    });
+  }
+  var _qAttesa=null;
+  function rifaiQuota(){
+    if(_qAttesa) return;
+    _qAttesa=requestAnimationFrame(function(){
+      _qAttesa=null; if(!strato) return;
+      Object.keys(strato._tiles).forEach(function(k){ var t=strato._tiles[k]; if(t&&t.el&&t.el._orig) applicaQuota(t.el); });
+    });
+  }
+  var CASETTA='<svg class="bq-f" width="12" height="12" viewBox="0 0 12 12"><polygon points="6,0 12,5.4 12,12 0,12 0,5.4" fill="#1b5e20"/></svg>';
+  function fmtQ(v){ return String(v).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+
+  /* ── IL PROFILO: quanto bosco c'e' a ogni quota, nella mappa A SCHERMO ──
+     Si contano i pixel di bosco delle tessere visibili, ritagliati sul
+     riquadro della finestra, in fasce da 50 m (46); le barre ne uniscono due. */
+  var N50=Math.round((Q_TOT[1]-Q_TOT[0])/Q_PASSO), isto50=null, _istoT=null;
+  function pianificaIsto(){ clearTimeout(_istoT); _istoT=setTimeout(calcolaIsto,150); }
+  function calcolaIsto(){
+    if(!strato||!strato._map||!el('bq-ist')) return;
+    var m=strato._map, z=strato._tileZoom; if(z==null) return;
+    var nw=m.project(m.getBounds().getNorthWest(),z), se=m.project(m.getBounds().getSouthEast(),z);
+    var h=new Float64Array(N50);
+    Object.keys(strato._tiles).forEach(function(k){
+      var t=strato._tiles[k], cv=t&&t.el; if(!cv||!cv._idx||t.coords.z!==z) return;
+      var W=cv.width, sc=256/W, ox=t.coords.x*256, oy=t.coords.y*256;
+      var x0=Math.max(0,Math.floor((nw.x-ox)/sc)), x1=Math.min(W,Math.ceil((se.x-ox)/sc));
+      var y0=Math.max(0,Math.floor((nw.y-oy)/sc)), y1=Math.min(W,Math.ceil((se.y-oy)/sc));
+      if(x0>=x1||y0>=y1) return;
+      var idx=cv._idx, qv=cv._qv;
+      for(var n=0;n<idx.length;n++){
+        var v=qv[n]; if(v===-32768) continue;
+        var i=idx[n], py=(i/W)|0, px=i-py*W;
+        if(px<x0||px>=x1||py<y0||py>=y1) continue;
+        var b=Math.floor((v-Q_TOT[0])/Q_PASSO); h[b<0?0:b>=N50?N50-1:b]++;
+      }
+    });
+    isto50=h; disegnaQuota();
+  }
+  function disegnaQuota(){
+    var ist=el('bq-ist'); if(!ist) return;
+    var att=filtroAttivo(), tot=0, dentro=0, barre=[];
+    if(isto50){
+      for(var j=0;j<N50;j++){ tot+=isto50[j]; var a=Q_TOT[0]+j*Q_PASSO; if(a>=quotaMin && a+Q_PASSO<=quotaMax) dentro+=isto50[j]; }
+      for(var b=0;b<N50;b+=2) barre.push(isto50[b]+(isto50[b+1]||0));
+    }
+    var mx=Math.max.apply(null,barre.concat([1]));
+    ist.innerHTML=barre.map(function(v,i){
+      var a=Q_TOT[0]+i*2*Q_PASSO, c=a+Q_PASSO, on=att && c>=quotaMin && c<quotaMax;
+      return '<i class="'+(on?'on':'')+'" style="height:'+(v/mx*100)+'%"></i>';
+    }).join('');
+    // a riposo il titolo dice SEMPRE cosa fare (27/9, sua decisione: la scritta resta)
+    var v=el('bq-val');
+    // il nome (27/9, suo): \u00abFiltra per altitudine\u00bb a riposo, \u00abAltitudine 800 \u2013 1.000 m\u00bb con la fascia
+    el('bq-lab').textContent= att ? 'Altitudine' : 'Filtra per altitudine';
+    v.textContent= att ? fmtQ(quotaMin)+' \u2013 '+fmtQ(quotaMax)+' m' : '\u00b7 trascina le frecce';
+    v.className= att ? '' : 'bq-invito';
+    el('bq-perc').textContent= att && tot ? Math.round(dentro/tot*100)+'% dei boschi' : (tot?'':'');
+    var T=Q_TOT[1]-Q_TOT[0];
+    [['bq-hl',quotaMin,'sx'],['bq-hh',quotaMax,'dx']].forEach(function(h){
+      var d=el(h[0]), f=(h[1]-Q_TOT[0])/T; d.style.left=(f*100)+'%';
+      // vicino ai bordi il numero rientra, se no esce dal pannello
+      d.className='bq-h '+(f<0.06?'dx':f>0.94?'sx':h[2]);
+      d.querySelector('b').textContent=fmtQ(h[1]);
+    });
+  }
+  /* ── FARLO CAPIRE (27/9, sua richiesta) ──
+     1) a riposo il titolo dice SEMPRE «trascina le frecce»;
+     2) alla prima apertura dei boschi di ogni sessione le frecce si stringono da
+        sole e tornano (come la tendina «Confronta»), e la mappa le segue —
+        finche' non le ha usate almeno una volta (localStorage quotaUsata);
+     3) GA4 `filtro_quota` a fine gesto, con la fascia scelta. */
+  var CH_DEMO='quotaDemo', CH_USATA='quotaUsata', demoAnim=null;
+  function leggiLS(k){ try{ return localStorage.getItem(k); }catch(_){ return null; } }
+  function scriviLS(k,v){ try{ localStorage.setItem(k,v); }catch(_){} }
+  function demoQuota(){
+    if(!acceso || filtroAttivo() || demoAnim || !el('bq-area')) return;
+    /* UNA VOLTA PER SESSIONE (27/9, sua decisione): solo alla prima apertura
+       della mappa forestale in quella visita. sessionStorage si svuota
+       chiudendo la scheda; se il browser non lo concede, si mostra (ramo
+       prudente, come la coda del tasto posizione). */
+    // chi le frecce le ha gia' usate almeno una volta non ha bisogno della dimostrazione
+    if(leggiLS(CH_USATA)==='1') return;
+    try{ if(sessionStorage.getItem(CH_DEMO)) return; sessionStorage.setItem(CH_DEMO,'1'); }catch(_){}
+    var t0=null, D1=800, H=600, D2=800, A=[700,1300];
+    function passo(t){
+      if(!demoAnim) return;
+      if(t0==null) t0=t;
+      var e=t-t0, f= e<D1 ? e/D1 : e<D1+H ? 1 : e<D1+H+D2 ? 1-(e-D1-H)/D2 : 0;
+      f= f<.5 ? 2*f*f : 1-Math.pow(-2*f+2,2)/2;
+      quotaMin=Math.round((Q_TOT[0]+(A[0]-Q_TOT[0])*f)/Q_PASSO)*Q_PASSO;
+      quotaMax=Math.round((Q_TOT[1]-(Q_TOT[1]-A[1])*f)/Q_PASSO)*Q_PASSO;
+      document.body.classList.toggle('bq-on',filtroAttivo());
+      disegnaQuota(); rifaiQuota();
+      if(e<D1+H+D2) demoAnim=requestAnimationFrame(passo); else fermaDemo(true);
+    }
+    document.body.classList.add('bq-demo');
+    demoAnim=requestAnimationFrame(passo);
+  }
+  window._demoQuota=demoQuota;   // solo per registrare il video del mockup
+  // riporta: a fine dimostrazione si torna a «tutte»; se la ferma l'utente, comanda lui
+  function fermaDemo(riporta){
+    if(demoAnim) cancelAnimationFrame(demoAnim);
+    demoAnim=null; document.body.classList.remove('bq-demo');
+    if(riporta){ quotaMin=Q_TOT[0]; quotaMax=Q_TOT[1]; document.body.classList.remove('bq-on'); disegnaQuota(); rifaiQuota(); }
+  }
+  function barraQuota(){
+    var area=el('bq-area'); if(!area) return;
+    var chi=null;
+    function valDa(x){
+      var r=el('bq-ist').getBoundingClientRect(), f=(x-r.left)/r.width;
+      return Math.round(Math.max(0,Math.min(1,f))*(Q_TOT[1]-Q_TOT[0])/Q_PASSO)*Q_PASSO+Q_TOT[0];
+    }
+    function imposta(v){
+      if(chi==='lo') quotaMin=Math.min(v,quotaMax-Q_PASSO); else quotaMax=Math.max(v,quotaMin+Q_PASSO);
+      document.body.classList.toggle('bq-on',filtroAttivo());
+      disegnaQuota(); rifaiQuota();
+    }
+    /* ⚠️ Pointer event su tutta l'area (profilo + frecce): col dito dentro #map
+       un input range non si trascina (Leaflet ci mette touch-action:none), e
+       due input sovrapposti col mouse prendono il cursore sbagliato. Si prende
+       sempre la freccia piu' vicina al punto toccato. */
+    var prima=null;
+    area.addEventListener('pointerdown',function(e){
+      if(demoAnim) fermaDemo(false);   // il dito ferma la dimostrazione e prende il comando
+      prima=quotaMin+'-'+quotaMax;
+      var v=valDa(e.clientX), da=Math.abs(v-quotaMin), db=Math.abs(v-quotaMax);
+      chi= da<db ? 'lo' : db<da ? 'hi' : (v<=quotaMin ? 'lo' : 'hi');
+      try{ area.setPointerCapture(e.pointerId); }catch(_){}
+      imposta(v); e.preventDefault(); e.stopPropagation();
+    });
+    area.addEventListener('pointermove',function(e){ if(!chi) return; imposta(valDa(e.clientX)); e.preventDefault(); e.stopPropagation(); });
+    ['pointerup','pointercancel','lostpointercapture'].forEach(function(n){ area.addEventListener(n,function(){
+      if(chi && prima!==quotaMin+'-'+quotaMax){
+        scriviLS(CH_USATA,'1'); disegnaQuota();
+        try{ gtag('event','filtro_quota',{fascia: filtroAttivo() ? quotaMin+'-'+quotaMax : 'tutte'}); }catch(_){}
+      }
+      chi=null; prima=null;
+    }); });
+    ['touchstart','touchmove','mousedown'].forEach(function(n){ area.addEventListener(n,function(e){ e.stopPropagation(); },{passive:true}); });
+    if(!barraQuota._mappa){ barraQuota._mappa=1; map().on('moveend zoomend',pianificaIsto); }
+    document.body.classList.toggle('bq-on',filtroAttivo());
+    disegnaQuota(); pianificaIsto();
+  }
+  /* ═══ fine mockup ═══ */
   var strato=null, acceso=false, indice=null, esistono={}, titoloVecchio=null, displayVecchio=null;
   var VUOTA='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
   /* ⚠️ «MAPPA BOSCHI» E NON «MAPPA FORESTALE»: misurato a 360 px, il nome
@@ -12439,6 +12762,25 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     var Tessere=L.TileLayer.extend({
       getTileUrl:function(c){
         return esistono[c.z+'/'+c.x+'/'+c.y] ? BASE+c.z+'/'+c.x+'/'+c.y+'.png' : VUOTA;
+      },
+      createTile:function(c,done){
+        var cv=document.createElement('canvas'); cv.width=cv.height=256;
+        var url=this.getTileUrl(c);
+        if(url===VUOTA){ setTimeout(function(){ done(null,cv); },0); return cv; }
+        var im=new Image(); im.crossOrigin='anonymous';
+        im.onload=function(){
+          cv.width=cv.height=im.naturalWidth||256;
+          var g=cv.getContext('2d'); g.drawImage(im,0,0);   // senza willReadFrequently: lo terrebbe in CPU e la mappa scorre a scatti
+          try{ cv._orig=g.getImageData(0,0,cv.width,cv.height); }catch(_){}
+          cv._c={z:c.z,x:c.x,y:c.y};
+          // la quota serve SEMPRE, anche senza filtro: e' quella che fa il profilo
+          var pronta=quoteTessera(c.z,c.x,c.y).then(function(q){ if(cv._orig && !cv._idx) prepara(cv,q); pianificaIsto(); });
+          if(filtroAttivo()) pronta.then(function(){ return applicaQuota(cv); }).then(function(){ done(null,cv); });
+          else done(null,cv);
+        };
+        im.onerror=function(){ done(null,cv); };
+        im.src=url;
+        return cv;
       }
     });
     // ⚠️ i crediti NON stanno sullo strato: li gestisce aggiornaCrediti() secondo
@@ -12523,16 +12865,58 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       +'<div class="bo-griglia">'+ordinaLegenda(indice.gruppi).map(function(g){
         return '<div class="bo-riga'+(BO_LUNGHE.indexOf(g[0])>=0?' lunga':'')+'"><span class="bo-sw" style="background:'+g[1]+';opacity:'+OPACITA+'"></span>'+g[0]+'</div>';
       }).join('')+'</div>'
+      +'<div class="bq"><div class="bq-tit"><span>\u26f0 <span id="bq-lab">Filtra per altitudine</span> <em id="bq-val"></em></span><small id="bq-perc"></small></div>'
+      +'<div class="bq-area" id="bq-area"><div class="bq-ist" id="bq-ist"></div>'
+      +'<div class="bq-man"><div class="bq-h sx" id="bq-hl">'+CASETTA+'<b></b></div><div class="bq-h dx" id="bq-hh">'+CASETTA+'<b></b></div></div></div></div>'
       +'<div class="bo-lontano">Avvicinati per vedere i boschi</div>'
       // ⚠️ niente riga «Segnalacelo» qui (tolta il 19/9/2026, sua decisione: la
       // legenda ha gia' troppo poco spazio). L'invito sta in guida, fonti e social.
       +'<div class="bo-nota" id="bo-fonti"></div>';
+    barraQuota();
     var tb=el('bo-tend-btn');
     if(tb) tb.addEventListener('click',function(){
       if(tendinaOn){ tendinaVia(true); return; }
       aperturaNuova=true;   // la dimostrazione si conta sulle aperture chieste col tasto
       analisiInCorso()?tendinaSu():scegliPeriodo();
     });
+    /* mockup, TELEFONO: dove va «Confronta» (la riga di «riduci» e' stata bocciata:
+       «sembra forzato li' dentro»). ?conf=a -> quarto tasto nella riga dei comandi;
+       ?conf=b (di serie) -> tasto sulla mappa, appoggiato sopra il pannello a destra. */
+    if(tb && innerWidth<=900){
+      tb.addEventListener('click',function(e){ e.stopPropagation(); });
+      var CONF=(new URLSearchParams(location.search).get('conf')||'c');
+      document.body.classList.add('conf-'+CONF);
+      // telefoni bassi (<=700 px): pannello al 95%, scelto da lui il 27/9 sul suo telefono (375x686) fra 90/95/100
+      if(new URLSearchParams(location.search).get('piccolo')==='1' || innerHeight<=700) document.body.classList.add('forza-medio');
+      /* solo per il confronto dal vivo: una pillola che accende e spegne il 90% */
+      if(new URLSearchParams(location.search).get('prova')==='1' && !el('prova-zoom')){
+        var pz=document.createElement('div'); pz.id='prova-zoom';
+        pz.style.cssText='position:fixed;top:200px;left:50%;transform:translateX(-50%);z-index:3000;background:#1b3f6e;color:#fff;font:700 15px system-ui;padding:9px 16px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,.4)';
+        var ora=function(){ var c=document.body.classList; return c.contains('forza-piccolo')?90:c.contains('forza-medio')?95:100; };
+        var prossimo={90:95,95:100,100:90};
+        var scrivi=function(){ var on=ora(), lp=el('legend-panel'), cs=getComputedStyle(lp);
+          pz.innerHTML='<u>'+on+'%</u> \u00b7 tocca per '+prossimo[on]+'%'
+            +'<br><span style="font-weight:400;font-size:12px">pannello '+Math.round(lp.getBoundingClientRect().height)+' px \u00b7 zoom '+(cs.zoom||'?')
+            +' \u00b7 schermo '+innerWidth+'x'+innerHeight+' \u00b7 v3</span>'; };
+        pz.addEventListener('click',function(){ var n=prossimo[ora()], c=document.body.classList;
+          c.toggle('forza-piccolo',n===90); c.toggle('forza-medio',n===95); scrivi(); setTimeout(scrivi,400); });
+        pz.style.textAlign='center';
+        scrivi(); document.body.appendChild(pz);
+      }
+      if(CONF==='c'){   // SCELTA SUA 27/9: «Invia foto» + «Invia link» diventano «Condividi» (la foto porta gia' il link)
+        var hdr=document.querySelector('#legend-panel .leg-header'), bk=el('leg-back-btn');
+        tb.innerHTML='\u21c6 Confronta piogge'; if(hdr&&bk) hdr.insertBefore(tb,bk);
+      } else if(CONF==='a'){
+        var hdr=document.querySelector('#legend-panel .leg-header'), bk=el('leg-back-btn');
+        tb.innerHTML='\u21c6 Piogge'; if(hdr&&bk) hdr.insertBefore(tb,bk);
+      } else {
+        tb.innerHTML='\u21c6 Confronta con piogge'; document.body.appendChild(tb);
+        var lpn=el('legend-panel');
+        var sopra=function(){ if(!lpn) return; var r=lpn.getBoundingClientRect(); tb.style.bottom=Math.round(innerHeight-r.top+10)+'px'; };
+        sopra(); if(window.ResizeObserver) new ResizeObserver(sopra).observe(lpn);
+        window.addEventListener('resize',sopra); setInterval(sopra,400);
+      }
+    }
     notaFonti();
   }
 
@@ -12763,6 +13147,8 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
         }
       }
       try{ gtag('event','click_boschi',{stato:'acceso'}); }catch(_){}
+      try{ disegnaQuota(); }catch(_){}
+      setTimeout(demoQuota,2500);   // mockup quota: le prime volte le frecce si muovono da sole
     });
   }
 
@@ -12773,6 +13159,8 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     if(tendinaOn) tendinaVia();
     if(nuvola) map().closePopup(nuvola);
     acceso=false; window._boschiAcceso=false;
+    if(demoAnim){ cancelAnimationFrame(demoAnim); demoAnim=null; document.body.classList.remove('bq-demo'); }
+    quotaMin=Q_TOT[0]; quotaMax=Q_TOT[1]; document.body.classList.remove('bq-on'); try{ disegnaQuota(); }catch(_){}   // mockup quota: uscendo si torna a «tutte»
     document.body.classList.remove('modo-boschi','bo-lontano-on');
     if(strato) map().removeLayer(strato);
     rilievoOff();
@@ -12804,6 +13192,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   function hexRgb(h){ h=h.replace('#',''); return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
 
   function pixelTessera(img){
+    if(img.tagName==='CANVAS'){ try{ return {d:img.getContext('2d').getImageData(0,0,img.width,img.height).data,w:img.width,h:img.height}; }catch(_){ return null; } }
     if(img._bo_px) return img._bo_px;
     if(!img.complete||!img.naturalWidth||img.src.indexOf('data:')===0) return null;
     try{
@@ -13245,6 +13634,9 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     riga.appendChild(b);
     b.addEventListener('click',function(){ acceso?esci():entra(); });
     riposiziona();
+    var ts=el('tp-status');   // mockup quota: marca la riga di successo
+    if(ts){ var segna=function(){ var ok=!ts.className.replace('tp-ok','').trim() && ts.textContent.indexOf('\u2705')===0; if(ts.classList.contains('tp-ok')!==ok) ts.classList.toggle('tp-ok',ok); };
+      new MutationObserver(segna).observe(ts,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:['class']}); segna(); }
 
     var lp=el('legend-panel'), st=lp&&lp.querySelector('.stats-row');
     if(st){ var d=document.createElement('div'); d.className='bo-leg'; d.id='bo-leg'; st.parentNode.insertBefore(d,st); }
@@ -13291,9 +13683,10 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     // per lo scatto dell'«Immagine»: le tessere del modo e la loro opacita'
     window._boschiTessere=function(){
       if(!acceso||!strato) return [];
-      return [].slice.call(map().getPane('boschi').querySelectorAll('img.leaflet-tile'));
+      return [].slice.call(map().getPane('boschi').querySelectorAll('.leaflet-tile'));
     };
     window._boschiOpacita=OPACITA;
+    window._quotaFascia=function(){ return filtroAttivo() ? quotaMin+'-'+quotaMax : null; };
     // per lo scatto: dove passa la linea della tendina (px dal bordo sinistro della mappa), o null
     window._tendinaX=function(){ return (acceso&&tendinaOn&&hx!=null)?hx:null; };
     /* Dal link si aspetta che il sito abbia spuntato le regioni di ?r=, come fa
