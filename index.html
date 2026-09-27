@@ -9918,8 +9918,17 @@ var _btnShot=document.getElementById('btn-shot');
 if(_btnShot){
   _btnShot.addEventListener('mouseenter',_prewarmH2C);
   _btnShot.addEventListener('touchstart',_prewarmH2C,{passive:true});
+  var _fotoPronta=null;   // foto gia' fatta, in attesa di un secondo tocco
   _btnShot.addEventListener('click',function(){
     if(getActiveRegions().length===0||!currentPast) return;
+    if(_fotoPronta && Date.now()-_fotoPronta.t<120000){
+      var fp=_fotoPronta; _fotoPronta=null; _btnShot.classList.remove('pronta');
+      var old0=_btnShot.dataset.label;
+      navigator.share({files:[fp.file],text:didascaliaFoto(),url:fp.url})
+        .then(function(){ _btnShot.textContent='\u2713'; _btnShot.classList.add('ok'); setTimeout(function(){ _btnShot.classList.remove('ok'); _btnShot.textContent=old0; },1800); },
+              function(){ _btnShot.textContent=old0; });
+      return;
+    }
     // Contatore GA come share_map: si conta il click, non l'esito (la
     // condivisione nativa non dice se l'utente ha poi annullato il menu).
     try{gtag('event','share_image',{regioni:getSelectedValues().join(',')})}catch(e){}
@@ -9945,7 +9954,15 @@ if(_btnShot){
         // testo, e con l'URL fuori dal `text` non viene raddoppiato. Prima la
         // didascalia era l'URL nudo.
         navigator.share({files:[file],text:didascaliaFoto(),url:url})
-          .then(function(){fine('✓');},function(){fine(old);});
+          .then(function(){fine('✓');},function(err){
+            // troppo tempo dal tocco: la foto si tiene, serve un secondo tocco
+            if(err && err.name==='NotAllowedError'){
+              _fotoPronta={file:file,url:url,t:Date.now()};
+              _btnShot.disabled=false; _btnShot.classList.add('pronta'); _btnShot.textContent='\uD83D\uDC46 Tocca per inviare';
+              return;
+            }
+            fine(old);
+          });
       } else {
         var a=document.createElement('a');
         a.href=URL.createObjectURL(blob);
@@ -12272,6 +12289,10 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   body.conf-c.modo-boschi #legend-panel .leg-header{flex-wrap:nowrap !important;gap:6px}
   body.conf-c.modo-boschi #btn-shot{font-size:0 !important;flex:0 0 auto;padding-left:7px !important;padding-right:7px !important}
   body.conf-c.modo-boschi #btn-shot:after{content:'\1F4E4  Condividi';font-size:13px}
+  /* lo stato del tasto si deve VEDERE anche qui, dove la scritta e' il :after */
+  body.conf-c.modo-boschi #btn-shot:disabled:after{content:'\23F3  Preparo\2026'}
+  body.conf-c.modo-boschi #btn-shot.pronta:after{content:'\1F446  Tocca per inviare'}
+  body.conf-c.modo-boschi #btn-shot.ok:after{content:'\2713  Inviata'}
   body.conf-c #legend-panel .leg-header .bo-tend-btn{flex:1;display:flex;align-items:center;justify-content:center;margin:0;
     border-radius:10px;font-weight:700;font-size:13px;white-space:nowrap;padding:0 9px;min-width:0;
     align-self:stretch;box-sizing:border-box;min-height:31px}
