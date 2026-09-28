@@ -12563,10 +12563,18 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   (function(){ var m=(new URLSearchParams(location.search).get('quota')||'').match(/^(\d+)-(\d+)$/);
     if(m){ quotaMin=+m[1]; quotaMax=+m[2]; } })();
   function filtroAttivo(){ return quotaMin>Q_TOT[0] || quotaMax<Q_TOT[1]; }
+  /* ⚠️ LE 66 TESSERE DI BOSCO SENZA QUOTA (28/9/2026): sulla costa e sui confini
+     TINITALY non arriva, la tessera di quota non esiste e chiederla dava 404.
+     Elenco fatto confrontando boschi/indice.json con la cartella terreno/ del
+     repo Tessere al commit 90a532e7 (z5-12; lo z13 usa la quota dello z12).
+     Se le tessere si rigenerano, l'elenco si rifa'. */
+  var QUOTA_MANCA={};
+  ['8/139/94','9/272/190','9/275/183','9/278/189','10/540/374','10/540/376','10/545/380','10/549/384','10/550/384','10/551/362','10/551/366','10/552/392','10/552/393','10/556/379','10/558/381','10/561/383','11/1071/783','11/1075/783','11/1080/749','11/1081/753','11/1091/760','11/1095/793','11/1098/768','11/1100/769','11/1102/724','11/1102/732','11/1105/785','11/1105/786','11/1107/785','11/1108/772','11/1108/787','11/1112/759','11/1116/762','11/1122/767','12/2133/1490','12/2134/1487','12/2141/1490','12/2143/1566','12/2150/1566','12/2160/1498','12/2163/1507','12/2166/1500','12/2178/1515','12/2183/1520','12/2191/1586','12/2196/1536','12/2200/1538','12/2200/1590','12/2201/1538','12/2204/1448','12/2204/1464','12/2205/1464','12/2206/1462','12/2211/1571','12/2211/1572','12/2214/1571','12/2217/1545','12/2217/1574','12/2220/1599','12/2224/1518','12/2225/1550','12/2232/1524','12/2242/1543','12/2242/1558','12/2244/1535','12/2246/1546'].forEach(function(k){ QUOTA_MANCA[k]=1; });
   var cacheQz={};
   function quoteTessera(z,x,y){
     var k=z+'/'+x+'/'+y; if(cacheQz[k]) return cacheQz[k];
     var zt=Math.min(z,12), f=Math.pow(2,z-zt), sx=Math.floor(x/f), sy=Math.floor(y/f);
+    if(QUOTA_MANCA[zt+'/'+sx+'/'+sy]) return (cacheQz[k]=Promise.resolve(null));
     var url=(zt===12?TERRENO:QUOTA_BASSE)+zt+'/'+sx+'/'+sy+'.webp';
     cacheQz[k]=new Promise(function(ok){
       var im=new Image(); im.crossOrigin='anonymous';
@@ -12978,7 +12986,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
      rimettere sopra: risolveva la leggibilita' e rompeva quattro altre cose
      (laghi grigi, estero vuoto, nomi di un altro carattere, cinque strati da
      scaricare invece di due). */
-  var rilievo=null, sottoOn=false;
+  var rilievo=null, sottoOn=false, rilVoluto=false, rilPronto=null;
 
   /* ⚠️ LE TESSERE DI RILIEVO NON CI SONO DAPPERTUTTO: dove il terreno e'
      piatto non c'e' niente da ombreggiare e il generatore le salta, ed e'
@@ -12995,7 +13003,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     return false;
   }
   function rilievoEsiste(c){
-    if(!indRil) return true;            // finche' non e' arrivato, si prova
+    if(!indRil) return true;            // solo se l'indice non e' arrivato proprio: si prova
     var pz=indRil[c.z]; if(!pz) return false;
     var iv=pz[c.x]; return !!iv && cercaY(iv,c.y);
   }
@@ -13008,14 +13016,15 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
       m.getPane('bo-rilievo').style.zIndex=190;
       m.getPane('bo-rilievo').style.pointerEvents='none';
     }
-    fetch(RILIEVO+'indice.json').then(function(r){ return r.json(); })
-      /* ⚠️ MAI rilievo.redraw() (24/9/2026): il redraw di Leaflet 1.9.4 NON
-         arrotonda lo zoom, e con lo zoom a quarti del sito (7,25, 11,25) lo
-         strato restava agganciato a tessere di zoom 11,25, che non esistono:
-         niente rilievo fino allo zoom successivo. Succedeva soprattutto sul
-         telefono, quando l'indice arrivava a strato gia' in mappa. Togliere e
-         rimettere lo strato passa da onAdd, che arrotonda. */
-      .then(function(j){ indRil=j; var m=map(); if(rilievo && m.hasLayer(rilievo)){ m.removeLayer(rilievo); rilievo.addTo(m); } })
+    /* ⚠️ LO STRATO ENTRA IN MAPPA SOLO A INDICE ARRIVATO (28/9/2026). Prima
+       entrava subito e, finche' l'indice non c'era, chiedeva TUTTE le tessere:
+       quelle di pianura non esistono e davano 404 a ogni apertura dei boschi.
+       Se l'indice non arriva proprio, si entra lo stesso e si prova (catch).
+       ⚠️ MAI rilievo.redraw() (24/9/2026): il redraw di Leaflet 1.9.4 NON
+       arrotonda lo zoom, e con lo zoom a quarti del sito lo strato restava
+       agganciato a tessere di zoom 11,25, che non esistono. */
+    rilPronto=fetch(RILIEVO+'indice.json').then(function(r){ return r.json(); })
+      .then(function(j){ indRil=j; })
       .catch(function(){ indRil=null; });
     var Ril=L.TileLayer.extend({
       getTileUrl:function(c){ return rilievoEsiste(c) ? RILIEVO+c.z+'/'+c.x+'/'+c.y+'.png' : VUOTA; }
@@ -13027,7 +13036,8 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   function rilievoOn(){
     var m=map();
     if(!rilievo) creaRilievo();
-    rilievo.addTo(m);
+    rilVoluto=true;
+    rilPronto.then(function(){ if(rilVoluto && !m.hasLayer(rilievo)) rilievo.addTo(m); });
     m.getPane('tilePane').style.mixBlendMode='multiply';
     sottoOn=true;
   }
@@ -13039,6 +13049,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
      la pioggia. Non riproporlo. */
   function rilievoOff(){
     var m=map();
+    rilVoluto=false;
     if(rilievo && m.hasLayer(rilievo)) m.removeLayer(rilievo);
     if(sottoOn){ m.getPane('tilePane').style.mixBlendMode='normal'; sottoOn=false; }
   }
@@ -13053,6 +13064,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   function tesseraQ(x,y){
     var k=x+'/'+y;
     if(cacheQ[k]) return cacheQ[k];
+    if(QUOTA_MANCA[Z_TERRENO+'/'+x+'/'+y]) return (cacheQ[k]=Promise.resolve(null));   // costa e confini: la quota non c'e'
     cacheQ[k]=new Promise(function(ok){
       var im=new Image(); im.crossOrigin='anonymous';
       im.onload=function(){
