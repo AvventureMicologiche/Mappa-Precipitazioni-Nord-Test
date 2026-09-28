@@ -12604,7 +12604,36 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     cv._o32=s; cv._idx=Int32Array.from(idx); cv._qv=Int16Array.from(qv);
     cv._out=cv.getContext('2d').createImageData(W,W); cv._d32=new Uint32Array(cv._out.data.buffer);
   }
+  // i pixel della tessera si rileggono solo quando servono (filtro o profilo), non all'arrivo
+  function leggi(cv){ if(!cv._orig) try{ cv._orig=cv.getContext('2d').getImageData(0,0,cv.width,cv.height); }catch(_){} }
+  /* ⚠️ ZOOM FLUIDO (28/9/2026, suo: «vedi le tessere sparpagliate che appaiono
+     quando zoomi»). All'arrivo di OGNI tessera si rileggevano i pixel, si
+     scaricava la sua tessera di quota e si preparava l'elenco del profilo,
+     anche senza filtro: doppie richieste e lavoro in mezzo allo zoom. Ora
+     senza filtro la tessera compare subito, come prima del filtro, e il
+     profilo si prepara QUI, a mappa ferma, una tessera alla volta. */
+  var _profT=null, _profGiro=0, _inMoto=false;
+  function codaProfilo(){
+    clearTimeout(_profT);
+    _profT=setTimeout(function(){
+      if(!strato||!strato._map||_inMoto) return;
+      var giro=++_profGiro, z=strato._tileZoom;
+      var da=Object.keys(strato._tiles).map(function(k){ return strato._tiles[k]; })
+        .filter(function(t){ return t&&t.el&&t.el._c&&!t.el._idx&&t.coords.z===z; }).map(function(t){ return t.el; });
+      if(!da.length) return pianificaIsto();
+      (function uno(i){
+        if(giro!==_profGiro||_inMoto) return;           // la mappa si e' mossa: si ricomincia dopo
+        if(i>=da.length) return pianificaIsto();
+        var cv=da[i];
+        quoteTessera(cv._c.z,cv._c.x,cv._c.y).then(function(q){
+          if(!cv._idx){ leggi(cv); if(cv._orig) prepara(cv,q); }
+          setTimeout(function(){ uno(i+1); },0);          // respiro fra una tessera e l'altra
+        });
+      })(0);
+    },250);
+  }
   function applicaQuota(cv){
+    leggi(cv);
     if(!cv._orig) return Promise.resolve();
     var g=cv.getContext('2d'), lo=quotaMin, hi=quotaMax, att=filtroAttivo(), chiave=att?lo+'-'+hi:'tutte';
     if(cv._lh===chiave) return Promise.resolve();
@@ -12639,9 +12668,10 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     if(!strato||!strato._map||!el('bq-ist')) return;
     var m=strato._map, z=strato._tileZoom; if(z==null) return;
     var nw=m.project(m.getBounds().getNorthWest(),z), se=m.project(m.getBounds().getSouthEast(),z);
-    var h=new Float64Array(N50);
+    var h=new Float64Array(N50), usate=0;
     Object.keys(strato._tiles).forEach(function(k){
       var t=strato._tiles[k], cv=t&&t.el; if(!cv||!cv._idx||t.coords.z!==z) return;
+      usate++;
       var W=cv.width, sc=256/W, ox=t.coords.x*256, oy=t.coords.y*256;
       var x0=Math.max(0,Math.floor((nw.x-ox)/sc)), x1=Math.min(W,Math.ceil((se.x-ox)/sc));
       var y0=Math.max(0,Math.floor((nw.y-oy)/sc)), y1=Math.min(W,Math.ceil((se.y-oy)/sc));
@@ -12654,6 +12684,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
         var b=Math.floor((v-Q_TOT[0])/Q_PASSO); h[b<0?0:b>=N50?N50-1:b]++;
       }
     });
+    if(!usate && isto50) return;   // tessere nuove non ancora pronte: resta il profilo di prima, non si svuota
     isto50=h; disegnaQuota();
   }
   function disegnaQuota(){
@@ -12790,12 +12821,11 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
         im.onload=function(){
           cv.width=cv.height=im.naturalWidth||256;
           var g=cv.getContext('2d'); g.drawImage(im,0,0);   // senza willReadFrequently: lo terrebbe in CPU e la mappa scorre a scatti
-          try{ cv._orig=g.getImageData(0,0,cv.width,cv.height); }catch(_){}
           cv._c={z:c.z,x:c.x,y:c.y};
-          // la quota serve SEMPRE, anche senza filtro: e' quella che fa il profilo
-          var pronta=quoteTessera(c.z,c.x,c.y).then(function(q){ if(cv._orig && !cv._idx) prepara(cv,q); pianificaIsto(); });
-          if(filtroAttivo()) pronta.then(function(){ return applicaQuota(cv); }).then(function(){ done(null,cv); });
-          else done(null,cv);
+          // col filtro la tessera aspetta la sua quota (se no comparirebbe intera e poi tagliata);
+          // senza, compare subito e il profilo si fa dopo, a mappa ferma (codaProfilo)
+          if(filtroAttivo()) quoteTessera(c.z,c.x,c.y).then(function(q){ leggi(cv); if(cv._orig && !cv._idx) prepara(cv,q); pianificaIsto(); return applicaQuota(cv); }).then(function(){ done(null,cv); });
+          else { done(null,cv); codaProfilo(); }
         };
         im.onerror=function(){ done(null,cv); };
         im.src=url;
@@ -13653,6 +13683,8 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
        sembrava rotto) e perdeva la fascia di altitudine. Non rimetterlo. */
 
     map().on('zoomend',aggiornaLontano);
+    map().on('movestart zoomstart',function(){ _inMoto=true; });
+    map().on('moveend zoomend',function(){ _inMoto=false; if(acceso) codaProfilo(); });
     map().on('click',mostraBosco);
     // la pioggia si ridisegna a fine movimento: il taglio si rifa' dopo di lei
     map().on('move zoomend resize viewreset',taglia);
