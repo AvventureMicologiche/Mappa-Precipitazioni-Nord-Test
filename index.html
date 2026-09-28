@@ -9436,7 +9436,7 @@ function buildShareUrl(){
   // area. Lo zoom viaggia grezzo.
   if(window._radarModo) p.set('radar', window._radarModo);
   if(window._boschiAcceso) p.set('boschi', '1');   // retino «Tipi di bosco», 15/9/2026
-  if(window._boschiAcceso && window._quotaFascia && window._quotaFascia()) p.set('quota', window._quotaFascia());   // mockup quota
+  if(window._boschiAcceso && window._quotaFascia && window._quotaFascia()) p.set('quota', window._quotaFascia());   // filtro di altitudine
   return location.origin+location.pathname+'?'+p.toString();
 }
 window.buildShareUrl=buildShareUrl;
@@ -12320,7 +12320,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   /* ⚠️ NIENTE `zoom` (27/9): sul suo telefono veniva calcolato ma NON disegnato
      (spia: pannello 258 -> 227 px, schermo identico). Il 90% si scrive misura per
      misura, che ogni browser disegna. La classe la mette il JS sotto i 700 px di
-     altezza, o ?piccolo=1, o la pillola di prova. */
+     altezza (oggi usa solo forza-medio, il 95%). */
   body.forza-piccolo.modo-boschi #legend-panel{padding:13px 13px 10px !important}
   body.forza-piccolo.modo-boschi #leg-azione{font-size:11px !important;line-height:16px !important;padding:0 10px !important}
   body.forza-piccolo.modo-boschi #leg-handle{height:22px !important;margin-bottom:5px !important}
@@ -12354,14 +12354,6 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   body.forza-medio.modo-boschi .bq-man{height:25.5px !important}
   body.forza-medio.modo-boschi .bq-h b{font-size:9.5px !important;line-height:13.5px !important;top:12.5px !important}
   body.forza-medio.modo-boschi #bo-fonti{font-size:12px !important;line-height:16.5px !important;margin-top:5.5px !important}
-  /* A: quarto tasto nella riga dei comandi, uguale agli altri */
-  body.conf-a.modo-boschi #legend-panel .leg-header > *{font-size:12.5px !important;padding-left:4px !important;padding-right:4px !important;white-space:nowrap}
-  body.conf-a #legend-panel .leg-header .bo-tend-btn{flex:1;display:flex;align-items:center;justify-content:center;margin:0;border-radius:10px;font-weight:700}
-  body.conf-a:not(.modo-boschi) #legend-panel .leg-header .bo-tend-btn{display:none}
-  /* B: tasto sulla mappa, sopra il pannello a destra, come un comando della mappa */
-  body.conf-b > .bo-tend-btn{position:fixed;right:10px;z-index:2150;margin:0;font-size:13px;padding:7px 12px;
-    background:#fff;border-radius:18px;box-shadow:0 2px 8px rgba(0,0,0,.28);white-space:nowrap}
-  body.conf-b:not(.modo-boschi) > .bo-tend-btn{display:none}
   body.modo-boschi #legend-panel{padding-top:14px !important;padding-bottom:11px !important}
   body.modo-boschi #leg-handle{margin-bottom:6px !important}   /* «riduci» staccato dai tasti (27/9, suo) */
   body.modo-boschi .bq-ist{height:20px}
@@ -12562,11 +12554,11 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
      serve «immutable» per un anno. A ogni rigenerazione delle tessere:
      push forzato di la', poi QUI il codice nuovo (`git rev-parse HEAD`
      nel repo delle tessere). Le vecchie copie spariscono da sole. */
-  var TESSERE_COMMIT='90a532e7a3f95e6cde1fc4fd0ee6fc658ffb2f6d';   // ramo boschi-di-fiume (26/9/2026): la prod resta su 4f1c4bea
+  var TESSERE_COMMIT='90a532e7a3f95e6cde1fc4fd0ee6fc658ffb2f6d';   // ramo boschi-di-fiume, con le quote z5-11 del filtro di altitudine (27/9/2026)
   var TESSERE='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@'+TESSERE_COMMIT+'/';
   var BASE=TESSERE+'boschi/', OPACITA=0.7;
   var RILIEVO=TESSERE+'rilievo/', TERRENO=TESSERE+'terreno/', Z_TERRENO=12;
-  /* ═══ MOCKUP 27/9: FILTRO DI QUOTA ═══ */
+  /* ═══ FILTRO DI ALTITUDINE (27/9/2026) ═══ */
   var QUOTA_BASSE=TESSERE+'terreno/', Q_TOT=[0,2300], Q_PASSO=50, quotaMin=0, quotaMax=2300;
   (function(){ var m=(new URLSearchParams(location.search).get('quota')||'').match(/^(\d+)-(\d+)$/);
     if(m){ quotaMin=+m[1]; quotaMax=+m[2]; } })();
@@ -12724,7 +12716,6 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     document.body.classList.add('bq-demo');
     demoAnim=requestAnimationFrame(passo);
   }
-  window._demoQuota=demoQuota;   // solo per registrare il video del mockup
   // riporta: a fine dimostrazione si torna a «tutte»; se la ferma l'utente, comanda lui
   function fermaDemo(riporta){
     if(demoAnim) cancelAnimationFrame(demoAnim);
@@ -12769,7 +12760,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     document.body.classList.toggle('bq-on',filtroAttivo());
     disegnaQuota(); pianificaIsto();
   }
-  /* ═══ fine mockup ═══ */
+  /* ═══ fine filtro di altitudine ═══ */
   var strato=null, acceso=false, indice=null, esistono={}, titoloVecchio=null, displayVecchio=null;
   var VUOTA='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
   /* ⚠️ «MAPPA BOSCHI» E NON «MAPPA FORESTALE»: misurato a 360 px, il nome
@@ -12907,43 +12898,18 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
       aperturaNuova=true;   // la dimostrazione si conta sulle aperture chieste col tasto
       analisiInCorso()?tendinaSu():scegliPeriodo();
     });
-    /* mockup, TELEFONO: dove va «Confronta» (la riga di «riduci» e' stata bocciata:
-       «sembra forzato li' dentro»). ?conf=a -> quarto tasto nella riga dei comandi;
-       ?conf=b (di serie) -> tasto sulla mappa, appoggiato sopra il pannello a destra. */
+    /* TELEFONO: «Confronta piogge» sta nella riga dei comandi, fra «Condividi» e
+       «Indietro» (27/9, suo). Bocciati: nella riga di «riduci» («sembra forzato
+       li' dentro»), sulla mappa sopra il pannello, «⇆ Piogge». La classe conf-c
+       resta perche' il CSS del telefono e' scritto su di lei. */
     if(tb && innerWidth<=900){
       tb.addEventListener('click',function(e){ e.stopPropagation(); });
-      var CONF=(new URLSearchParams(location.search).get('conf')||'c');
-      document.body.classList.add('conf-'+CONF);
+      document.body.classList.add('conf-c');
       // telefoni bassi (<=700 px): pannello al 95%, scelto da lui il 27/9 sul suo telefono (375x686) fra 90/95/100
-      if(new URLSearchParams(location.search).get('piccolo')==='1' || innerHeight<=700) document.body.classList.add('forza-medio');
-      /* solo per il confronto dal vivo: una pillola che accende e spegne il 90% */
-      if(new URLSearchParams(location.search).get('prova')==='1' && !el('prova-zoom')){
-        var pz=document.createElement('div'); pz.id='prova-zoom';
-        pz.style.cssText='position:fixed;top:200px;left:50%;transform:translateX(-50%);z-index:3000;background:#1b3f6e;color:#fff;font:700 15px system-ui;padding:9px 16px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,.4)';
-        var ora=function(){ var c=document.body.classList; return c.contains('forza-piccolo')?90:c.contains('forza-medio')?95:100; };
-        var prossimo={90:95,95:100,100:90};
-        var scrivi=function(){ var on=ora(), lp=el('legend-panel'), cs=getComputedStyle(lp);
-          pz.innerHTML='<u>'+on+'%</u> \u00b7 tocca per '+prossimo[on]+'%'
-            +'<br><span style="font-weight:400;font-size:12px">pannello '+Math.round(lp.getBoundingClientRect().height)+' px \u00b7 zoom '+(cs.zoom||'?')
-            +' \u00b7 schermo '+innerWidth+'x'+innerHeight+' \u00b7 v3</span>'; };
-        pz.addEventListener('click',function(){ var n=prossimo[ora()], c=document.body.classList;
-          c.toggle('forza-piccolo',n===90); c.toggle('forza-medio',n===95); scrivi(); setTimeout(scrivi,400); });
-        pz.style.textAlign='center';
-        scrivi(); document.body.appendChild(pz);
-      }
-      if(CONF==='c'){   // SCELTA SUA 27/9: «Invia foto» + «Invia link» diventano «Condividi» (la foto porta gia' il link)
-        var hdr=document.querySelector('#legend-panel .leg-header'), bk=el('leg-back-btn');
-        tb.innerHTML='\u21c6 Confronta piogge'; if(hdr&&bk) hdr.insertBefore(tb,bk);
-      } else if(CONF==='a'){
-        var hdr=document.querySelector('#legend-panel .leg-header'), bk=el('leg-back-btn');
-        tb.innerHTML='\u21c6 Piogge'; if(hdr&&bk) hdr.insertBefore(tb,bk);
-      } else {
-        tb.innerHTML='\u21c6 Confronta con piogge'; document.body.appendChild(tb);
-        var lpn=el('legend-panel');
-        var sopra=function(){ if(!lpn) return; var r=lpn.getBoundingClientRect(); tb.style.bottom=Math.round(innerHeight-r.top+10)+'px'; };
-        sopra(); if(window.ResizeObserver) new ResizeObserver(sopra).observe(lpn);
-        window.addEventListener('resize',sopra); setInterval(sopra,400);
-      }
+      if(innerHeight<=700) document.body.classList.add('forza-medio');
+      // «Invia foto» + «Invia link» diventano un solo «Condividi» (la foto porta gia' il link)
+      var hdr=document.querySelector('#legend-panel .leg-header'), bk=el('leg-back-btn');
+      tb.innerHTML='\u21c6 Confronta piogge'; if(hdr&&bk) hdr.insertBefore(tb,bk);
     }
     notaFonti();
   }
@@ -13176,7 +13142,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
       }
       try{ gtag('event','click_boschi',{stato:'acceso'}); }catch(_){}
       try{ disegnaQuota(); }catch(_){}
-      setTimeout(demoQuota,2500);   // mockup quota: le prime volte le frecce si muovono da sole
+      setTimeout(demoQuota,2500);   // filtro di altitudine: le prime volte le frecce si muovono da sole
     });
   }
 
@@ -13188,7 +13154,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     if(nuvola) map().closePopup(nuvola);
     acceso=false; window._boschiAcceso=false;
     if(demoAnim){ cancelAnimationFrame(demoAnim); demoAnim=null; document.body.classList.remove('bq-demo'); }
-    quotaMin=Q_TOT[0]; quotaMax=Q_TOT[1]; document.body.classList.remove('bq-on'); try{ disegnaQuota(); }catch(_){}   // mockup quota: uscendo si torna a «tutte»
+    quotaMin=Q_TOT[0]; quotaMax=Q_TOT[1]; document.body.classList.remove('bq-on'); try{ disegnaQuota(); }catch(_){}   // filtro di altitudine: uscendo si torna a «tutte»
     document.body.classList.remove('modo-boschi','bo-lontano-on');
     if(strato) map().removeLayer(strato);
     rilievoOff();
@@ -13662,7 +13628,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     riga.appendChild(b);
     b.addEventListener('click',function(){ acceso?esci():entra(); });
     riposiziona();
-    var ts=el('tp-status');   // mockup quota: marca la riga di successo
+    var ts=el('tp-status');   // filtro di altitudine: marca la riga di successo
     if(ts){ var segna=function(){ var ok=!ts.className.replace('tp-ok','').trim() && ts.textContent.indexOf('\u2705')===0; if(ts.classList.contains('tp-ok')!==ok) ts.classList.toggle('tp-ok',ok); };
       new MutationObserver(segna).observe(ts,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:['class']}); segna(); }
 
