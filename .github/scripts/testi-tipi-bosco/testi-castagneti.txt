@@ -1,0 +1,139 @@
+# ═════════════════════════════════════════════════════════════════════
+#  TESTI DELLA PAGINA «CASTAGNETI» — si modifica tutto col Blocco note
+# ═════════════════════════════════════════════════════════════════════
+#
+#  Le righe che cominciano con # sono istruzioni: la pagina non le mostra.
+#  Ogni pezzo della pagina sta sotto il suo titolo fra == ==, nell'ordine
+#  in cui compare. I titoli fra == == NON si cambiano: si cambia il testo sotto.
+#
+#  Scrittura:
+#    **parola**   = grassetto        *parola* = corsivo
+#    una riga vuota = nuovo paragrafo
+#    «piogge per funghi» diventa da solo un link alle pagine funghi
+#
+#  Numeri calcolati (si scrivono fra graffe, il programma mette il numero):
+#    {ettari}          ettari di castagneti in Italia
+#    {percento}        quanto sono del bosco italiano
+#    {quota_25} {quota_75}   fra queste due quote sta la metà
+#    {quota_mezzo}     la quota che divide in due
+#    {fascia_da} {fascia_a} {fascia_percento}   la fascia colorata nel grafico
+#    {testo_da} {testo_a} {testo_percento}   la fascia scelta da te in «impostazioni» (fascia testo)
+#                                             e quanti castagneti ci stanno, in percento
+#
+#  Negli elenchi i pezzi di ogni riga si separano con la barra verticale |
+#  Per togliere una voce si cancella la riga, per aggiungerla se ne scrive una.
+#  Per togliere una sezione intera si cancella tutto il testo sotto il titolo.
+
+
+== titolo ==
+# (quello che compare su Google e nella scheda del browser, massimo ~60 lettere)
+Mappa dei castagneti d'Italia: dove sono e a che altitudine
+
+== descrizione ==
+# (le due righe sotto il titolo su Google, massimo ~155 lettere)
+Dove sono i castagneti in Italia, regione per regione e a che altitudine, e i loro funghi: porcini, ovoli, finferli. Dalle carte forestali ufficiali.
+
+== titolo grande ==
+Mappa dei castagneti d'Italia
+
+== apertura ==
+Dove sono i castagneti in Italia, **regione per regione e valle per valle**, e a che altitudine stanno. Li vedi in arancio sulla mappa delle carte forestali ufficiali, anche dal telefono: tocchi un punto e sai che bosco è, a che quota e su quale versante.
+
+== tre numeri ==
+# (tre caselle: numero grande | scritta sotto)
+{ettari} | ettari
+{percento}% | del bosco italiano
+{testo_da}-{testo_a} | metri: il {testo_percento}% sta qui
+
+== tasto mappa ==
+🌲 Apri la mappa dei castagneti
+
+== didascalia foto ==
+Intorno a Pracchia, sull'Appennino pistoiese: i castagneti in arancio, le faggete in verde e il carpino con l'orniello in azzurro. Un tocco su un castagneto: 646 metri, versante a sud-est.
+
+== foto, testo nascosto per chi non vede ==
+La mappa forestale intorno a Pracchia, sull'Appennino pistoiese: i castagneti in arancio sui versanti, con la nuvoletta di un castagneto
+
+== regioni: titolo ==
+Dove sono: regione per regione
+
+== regioni: testo ==
+Gli ettari di castagneti di ogni regione, misurati sulla nostra mappa. Accanto, quanto pesano sul bosco della regione.
+
+== altitudine: titolo ==
+A che altitudine
+
+== altitudine: testo ==
+Quanti ettari di castagneti ci sono a ogni altitudine, a fasce di 100 metri, in tutta Italia. Il {testo_percento}% sta fra **{testo_da} e {testo_a} metri**, e la quota di mezzo è {quota_mezzo} m.
+
+== altitudine: sotto il grafico ==
+In colore la fascia fra {fascia_da} e {fascia_a} m: ci sta il {fascia_percento}% dei castagneti.
+
+== altitudine: tasto ==
+⛰ Mappa filtrata: {fascia_da}–{fascia_a} m
+
+== altitudine: sotto il tasto ==
+Sulla mappa le due frecce del filtro di altitudine si spostano come vuoi: la fascia del tasto è solo il punto di partenza.
+
+== funghi: titolo ==
+I funghi dei castagneti
+
+== funghi: testo ==
+I funghi che si cercano sotto i castagni, col nome comune, gli altri nomi con cui li chiamano e il nome scientifico.
+
+== funghi: elenco ==
+# nome comune | altri nomi | nome latino | descrizione
+Porcino nero | bronzino | Boletus aereus | Cappello bruno scuro, quasi nero, e gambo robusto. Ama i castagneti caldi e soleggiati, da giugno a ottobre.
+Porcino estivo | porcino reticolato | Boletus aestivalis | Il primo porcino dell'anno, già da maggio. Cappello nocciola chiaro, spesso screpolato col secco.
+Porcino | porcino d'autunno | Boletus edulis | Il più conosciuto. Nei castagneti più freschi e alti, verso le faggete, soprattutto in autunno.
+Ovolo buono | fungo reale | Amanita caesarea | Cappello arancio vivo che esce da un uovo bianco. Estate e inizio autunno, sui versanti caldi. Da non confondere con l'ovolo malefico (*Amanita muscaria*), rosso a puntini bianchi.
+Finferlo | gallinaccio, galletto | Cantharellus cibarius | Giallo uovo, con pieghe al posto delle lamelle. Esce a gruppi dopo le piogge, dall'estate all'autunno.
+Colombina verde | verdone | Russula virescens | Cappello verde che si screpola a squamette. Estate, nei castagneti radi e luminosi.
+Mazza di tamburo | bubbola maggiore | Macrolepiota procera | Il cappello arriva a 30 cm. Ai margini dei castagneti e nelle radure, da fine estate.
+
+== funghi: avviso ==
+# (il riquadro rosso; se cancelli il testo, il riquadro sparisce)
+Nei castagneti cresce anche l'**amanita falloide** (*Amanita phalloides*), mortale anche in piccola quantità. Raccogli solo quello che conosci con certezza e, se hai un dubbio, porta i funghi al controllo micologico gratuito della tua ASL.
+
+== funghi: dopo ==
+Per sapere **quando** andare conta la pioggia: la trovi, località per località, nelle nostre piogge per funghi.
+
+== valli: titolo ==
+Le valli con più castagneti
+
+== valli: testo ==
+Le zone dove i castagneti pesano di più sul bosco. Ogni zona ha la sua pagina con la mappa e i paesi intorno.
+
+== paesi: titolo ==
+I paesi in mezzo ai castagneti
+
+== paesi: testo ==
+Dove entro 3 km dal paese il bosco è quasi tutto castagneti, dal più basso al più alto. Il nome porta alla pagina con la pioggia per i funghi.
+
+== a chi serve: titolo ==
+A chi serve
+
+== a chi serve: elenco ==
+# icona | titolo | testo
+🌰 | Castagne | Da fine settembre a novembre. Prima di raccogliere assicurati che il bosco sia libero: molti castagneti sono proprietà private.
+🍂 | Foliage | I castagneti fanno il paesaggio della media collina e della bassa montagna, fra i paesi: in autunno diventano gialli e bruni, un poco dopo le faggete.
+🥾 | Escursioni | Prima di partire guardi che bosco attraversa il sentiero, a che quota e su quale versante: tocchi un punto sulla mappa e lo apri su Google Maps.
+
+== altri boschi: titolo ==
+Gli altri boschi
+
+== pioggia: titolo ==
+E la pioggia? Sulla stessa mappa
+
+== pioggia: testo ==
+La mappa forestale sta dentro la nostra **mappa pluviometrica**: scegli un periodo e vedi dove ha piovuto, poi con **⇆ Confronta con piogge** la metti accanto ai castagneti.
+
+== impostazioni ==
+# (tecniche: dove apre la mappa, quale foto, quante voci negli elenchi)
+regione: toscana
+zoom: 11
+centro: 44.03,10.85
+foto: castagneti-scorcio.jpg
+valli: 10
+paesi: 12
+fascia testo: 400-900

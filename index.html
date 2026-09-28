@@ -2899,6 +2899,8 @@ var _vistaUtente   = false;
 // La vista arriva da un link condiviso: su telefono va protetta da
 // centraRegioneInStriscia, che altrimenti la riporterebbe sulla regione.
 var _vistaDaLink   = false;
+// letto dal modo boschi (script a parte): se la vista arriva da un link, entrando non si reinquadra
+window._vistaDaLinkAttiva = function(){ return _vistaDaLink; };
 
 // ═══════════════════════════════════════════════════════════════
 // CANVAS / HEATMAP
@@ -10053,7 +10055,12 @@ if(_btnShot){
          come uno sfarfallio: misurato sulla Puglia il 3/9, 7,25 e subito 7,50
          appena il radar rifa' la sua. Il tasto «Diretta radar» dentro al sito
          non sfarfalla proprio perche' li' di inquadrature ne parte una sola. */
-      if(_pin || _conRadar) _daRicerca=true;
+      var _zL=parseFloat(q.get('z')), _cL=(q.get('c')||'').split(',').map(Number);
+      var _vistaL=isFinite(_zL) && _cL.length===2 && isFinite(_cL[0]) && isFinite(_cL[1]);
+      /* ⚠️ E ANCHE COLLA VISTA DEL LINK (28/9/2026): sul PC la mezza inquadratura
+         del change e' ANIMATA, e a fine animazione (~0,5 s) rimetteva la sua vista
+         sopra quella del link. Misurato: z=12 del link, poi 7 a 794 ms. */
+      if(_pin || _conRadar || _vistaL) _daRicerca=true;
       // change sull'ultima: il gestore di sempre disegna i confini e valida
       document.getElementById('chk-'+_kk[_kk.length-1]).dispatchEvent(new Event('change'));
       _daRicerca=false;
@@ -10067,6 +10074,11 @@ if(_btnShot){
          riallargarsi mezzo secondo dopo (misurato il 3/9 sulla Garfagnana:
          z7,25 → z8,5 → z7,25). La puntina invece resta, ed e' l'unica cosa
          che dice dove sei mentre guardi una regione intera. */
+      /* ⚠️ ZOOM E CENTRO ANCHE SENZA PERIODO (28/9/2026). Qui si faceva sempre il
+         fit sulle regioni e `z`/`c` del link si perdevano: i tasti «Apri la mappa
+         forestale» delle pagine di zona (z=12 sulla valle) aprivano la regione
+         intera a zoom 8. Come per i link col periodo: la vista del link comanda,
+         e `_vistaDaLink` la protegge dalla centratura del telefono. */
       if(_conRadar){
         /* ⚠️ NIENTE INQUADRATURA QUI: la fa il radar, e una nostra prima
            inquadratura si vede come uno scatto appena lui rifa' la sua
@@ -10075,6 +10087,9 @@ if(_btnShot){
            sola). Il radar entra al primo giro del suo controllo, 200 ms. */
       } else if(_pin && typeof fitMapToPunto==='function'){
         try{ fitMapToPunto(_vistaPaese.lat,_vistaPaese.lon,_vistaPaese.z?LOC_TACCA_ZONA:LOC_TACCA_FINE); }catch(e){}
+      } else if(_vistaL){
+        _vistaDaLink=true;
+        try{ map.setView([_cL[0],_cL[1]],_zL,{animate:false}); }catch(e){}
       } else {
         try{ fitMapToRegions(_kk); }catch(e){}
         /* ⚠️ SUL TELEFONO IL FIT DA SOLO NON BASTA (16/9/2026, visto dall'utente
@@ -13169,7 +13184,8 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
          centrata sulla regione, e rifacendola col pannello dei boschi (piu'
          alto di quello dei cumulati) le regioni alte uscivano un quarto di
          livello piu' piccole (Toscana, Piemonte). Stessa mappa, stessa vista. */
-      var tieniVista = window.innerWidth<=900 && analisiInCorso();
+      var tieniVista = (window.innerWidth<=900 && analisiInCorso())
+        || !!(window._vistaDaLinkAttiva && window._vistaDaLinkAttiva());   // la vista arriva da un link: comanda quella (28/9/2026)
       if(!sulPaese && !tieniVista && rk.length && typeof window._fitRegioni==='function'){
         try{ window._fitRegioni(rk); }catch(e){}
         /* ⚠️ SUL TELEFONO LA STESSA CENTRATURA DELLA PIOGGIA (16/9/2026): il fit

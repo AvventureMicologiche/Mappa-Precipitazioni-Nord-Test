@@ -1,0 +1,140 @@
+# ═════════════════════════════════════════════════════════════════════
+#  TESTI DELLA PAGINA «ABETAIE E PECCETE» — si modifica tutto col Blocco note
+# ═════════════════════════════════════════════════════════════════════
+#
+#  Le righe che cominciano con # sono istruzioni: la pagina non le mostra.
+#  Ogni pezzo della pagina sta sotto il suo titolo fra == ==, nell'ordine
+#  in cui compare. I titoli fra == == NON si cambiano: si cambia il testo sotto.
+#
+#  Scrittura:
+#    **parola**   = grassetto        *parola* = corsivo
+#    una riga vuota = nuovo paragrafo
+#    «piogge per funghi» diventa da solo un link alle pagine funghi
+#
+#  Numeri calcolati (si scrivono fra graffe, il programma mette il numero):
+#    {ettari}          ettari di abetaie e peccete in Italia
+#    {percento}        quanto sono del bosco italiano
+#    {quota_25} {quota_75}   fra queste due quote sta la metà
+#    {quota_mezzo}     la quota che divide in due
+#    {fascia_da} {fascia_a} {fascia_percento}   la fascia colorata nel grafico
+#    {testo_da} {testo_a} {testo_percento}   la fascia scelta da te in «impostazioni» (fascia testo)
+#                                             e quanti ne stanno dentro, in percento
+#
+#  Negli elenchi i pezzi di ogni riga si separano con la barra verticale |
+#  Per togliere una voce si cancella la riga, per aggiungerla se ne scrive una.
+#  Per togliere una sezione intera si cancella tutto il testo sotto il titolo.
+
+
+== titolo ==
+# (quello che compare su Google e nella scheda del browser, massimo ~60 lettere)
+Mappa delle abetaie e peccete d'Italia: dove e a che quota
+
+== descrizione ==
+# (le due righe sotto il titolo su Google, massimo ~155 lettere)
+Dove sono i boschi di abete bianco e abete rosso in Italia, regione per regione e a che quota, e i loro funghi: porcino, finferlo. Dalle carte ufficiali.
+
+== titolo grande ==
+Mappa delle abetaie e peccete d'Italia
+
+== apertura ==
+Dove sono i boschi di **abete bianco e abete rosso** in Italia, regione per regione e valle per valle, e a che quota stanno. Li vedi in blu sulla mappa delle carte forestali ufficiali, anche dal telefono: tocchi un punto e sai che bosco è, a che quota e su quale versante.
+
+== tre numeri ==
+# (tre caselle: numero grande | scritta sotto)
+{ettari} | ettari
+{percento}% | del bosco italiano
+{testo_da}-{testo_a} | metri: il {testo_percento}% sta qui
+
+== tasto mappa ==
+🌲 Apri la mappa delle abetaie e peccete
+
+== didascalia foto ==
+Comelico, intorno a Casamazzagno: abetaie e peccete in blu su tutti e due i versanti, i lariceti in giallo più in alto. Un tocco su una pecceta: 1.293 metri, versante a nord-est.
+
+== foto, testo nascosto per chi non vede ==
+La mappa forestale in Comelico: le peccete in blu sui versanti, con la nuvoletta di una pecceta
+
+== regioni: titolo ==
+Dove sono: regione per regione
+
+== regioni: testo ==
+Gli ettari di abetaie e peccete di ogni regione, misurati sulla nostra mappa. Accanto, quanto pesano sul bosco della regione.
+
+== altitudine: titolo ==
+A che quota
+
+== altitudine: testo ==
+Quanti ettari di abetaie e peccete ci sono a ogni altitudine, a fasce di 100 metri, in tutta Italia. Il {testo_percento}% sta fra **{testo_da} e {testo_a} metri**, e la quota di mezzo è {quota_mezzo} m.
+
+== altitudine: sotto il grafico ==
+In colore la fascia fra {fascia_da} e {fascia_a} m: ci sta il {fascia_percento}% di abetaie e peccete.
+
+== altitudine: tasto ==
+⛰ Mappa filtrata: {fascia_da}–{fascia_a} m
+
+== altitudine: sotto il tasto ==
+Sulla mappa le due frecce del filtro di altitudine si spostano come vuoi: la fascia del tasto è solo il punto di partenza.
+
+== funghi: titolo ==
+I funghi delle abetaie e peccete
+
+== funghi: testo ==
+I funghi che si cercano sotto gli abeti, col nome comune, gli altri nomi con cui li chiamano e il nome scientifico.
+
+== funghi: elenco ==
+# nome comune | altri nomi | nome latino | descrizione
+Porcino | porcino d'autunno | Boletus edulis | Il porcino di montagna: nelle peccete e nelle abetaie, soprattutto da agosto a ottobre.
+Finferlo | gallinaccio, galletto | Cantharellus cibarius | Giallo uovo, con pieghe al posto delle lamelle. A gruppi nel muschio, dall'estate all'autunno.
+Finferla | gallinaccio grigio | Craterellus lutescens | Piccola, gambo giallo e cappello bruno. A gruppi fitti nei boschi umidi di abete, in autunno.
+
+== funghi: avviso ==
+# (il riquadro rosso; se cancelli il testo, il riquadro sparisce)
+Sotto gli abeti crescono anche funghi velenosi, come l'**ovolo malefico** (*Amanita muscaria*) e l'**amanita panterina** (*Amanita pantherina*). Raccogli solo quello che conosci con certezza e, se hai un dubbio, porta i funghi al controllo micologico gratuito della tua ASL.
+
+== funghi: dopo ==
+Per sapere **quando** andare conta la pioggia: la trovi, località per località, nelle nostre piogge per funghi.
+
+== valli: titolo ==
+Le valli con più abetaie e peccete
+
+== valli: testo ==
+Le zone dove abetaie e peccete pesano di più sul bosco. Ogni zona ha la sua pagina con la mappa e i paesi intorno.
+
+== paesi: titolo ==
+I paesi in mezzo agli abeti
+
+== paesi: testo ==
+Dove entro 3 km dal paese il bosco è quasi tutto abetaie e peccete, dal più basso al più alto. Il nome porta alla pagina con la pioggia per i funghi.
+
+== che cosa mettiamo: testo ==
+I boschi di abete bianco (abetaie) e di abete rosso, o peccio (peccete). I larici hanno un colore loro, giallo, e i pini un altro, fucsia.
+
+Ogni regione ha la sua carta forestale, con le sue sigle: noi le raggruppiamo negli undici colori della legenda.
+
+== a chi serve: titolo ==
+A chi serve
+
+== a chi serve: elenco ==
+# icona | titolo | testo
+🫐 | Mirtilli | Crescono sotto peccete e lariceti, nelle radure e ai margini, da luglio a settembre.
+🥾 | Escursioni | Prima di partire guardi che bosco attraversa il sentiero, a che quota e su quale versante: tocchi un punto sulla mappa e lo apri su Google Maps.
+🌲 | Montagna d'estate | Le peccete tengono il fresco e l'umido anche in agosto: sui versanti a nord sono le prime a dare funghi dopo un temporale.
+
+== altri boschi: titolo ==
+Gli altri boschi
+
+== pioggia: titolo ==
+E la pioggia? Sulla stessa mappa
+
+== pioggia: testo ==
+La mappa forestale sta dentro la nostra **mappa pluviometrica**: scegli un periodo e vedi dove ha piovuto, poi con **⇆ Confronta con piogge** la metti accanto alle abetaie.
+
+== impostazioni ==
+# (tecniche: dove apre la mappa, quale foto, quante voci negli elenchi)
+regione: veneto
+zoom: 11
+centro: 46.59,12.51
+foto: abetaie-e-peccete-scorcio.jpg
+valli: 10
+paesi: 12
+fascia testo: 1100-1800

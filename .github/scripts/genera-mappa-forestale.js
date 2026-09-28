@@ -133,10 +133,12 @@ function zoneCon(k, t, soglia) {
   return zoneDi(k).filter(z => (z.tipi[t] || 0) >= soglia).sort((a, b) => b.tipi[t] - a.tipi[t]).slice(0, 3).map(zlink).join(', ');
 }
 
+// i tre tipi che hanno una pagina loro (28/9/2026): nelle barre il nome e' un link
+const PAGINA_TIPO = new Set(['castagneti', 'querceti', 'abetaie e peccete']);
 function barre(tipi) {
   const mx = Math.max(...Object.values(tipi));
   return ordina(tipi).filter(([, v]) => v >= 0.5).map(([t, v]) =>
-    `<div class="fr"><div class="fr-t"><span class="fr-sw" style="background:${COL[t]}"></span><b>${esc(t)}</b><span class="fr-v">${pc(v)}</span></div>` +
+    `<div class="fr"><div class="fr-t"><span class="fr-sw" style="background:${COL[t]}"></span>${PAGINA_TIPO.has(t) ? `<a href="${SITO}/mappa-forestale/${t.replace(/ /g, '-')}/"><b>${esc(t)}</b></a>` : `<b>${esc(t)}</b>`}<span class="fr-v">${pc(v)}</span></div>` +
     `<div class="fr-b"><i style="width:${Math.round(v / mx * 100)}%;background:${COL[t]}"></i></div><div class="fr-s">${esc(SPIEGA[t])}</div></div>`).join('\n');
 }
 const tipiInLinea = (tipi, n = 3) => principali(tipi, n).map(([t, v]) =>
@@ -333,6 +335,154 @@ ${tastiPioggia(`${SITO}/?r=${z.reg}&amp;z=11&amp;c=${z.lat},${z.lon}`)}${HA_PIOG
   scriviFile(path.join('mappa-forestale', 'zone', s, 'index.html'), h);
 }
 
+// ═══ LE PAGINE PER TIPO DI BOSCO (28/9/2026) ════════════════════════════════
+// Solo tre, per sua decisione: castagneti, querceti, abetaie e peccete.
+// ⚠️ TUTTO IL TESTO sta in testi-tipi-bosco/testi-<tipo>.txt e lo scrive LUI:
+// qui ci sono solo i numeri e l'impaginazione. Non ricopiare frasi nel codice.
+// I numeri (ettari e altitudini) vengono da mappa-forestale-tipi.json.
+const TIPI_PAGINA = ['castagneti', 'querceti', 'abetaie e peccete'];
+const slugTipo = t => t.replace(/, /g, '-').replace(/ /g, '-');
+const TP = JSON.parse(fs.readFileSync(path.join(__dirname, 'mappa-forestale-tipi.json'), 'utf8'));
+const n1 = v => String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+// il file di testo: blocchi «== nome ==», righe con # = appunti, riga vuota = nuovo paragrafo
+function leggiTesti(file) {
+  const B = {}; let cur = null;
+  for (const riga of fs.readFileSync(file, 'utf8').split(/\r?\n/)) {
+    const h = riga.match(/^==\s*(.+?)\s*==\s*$/);
+    if (h) { cur = h[1].toLowerCase(); B[cur] = []; continue; }
+    if (cur === null || /^\s*#/.test(riga)) continue;
+    B[cur].push(riga);
+  }
+  for (const k in B) B[k] = B[k].join('\n').trim();
+  return B;
+}
+// testo scritto -> html: **grassetto**, *corsivo*, {segnaposto}; «piogge per funghi» diventa un link
+function htmlT(t, V) {
+  let s = esc(t).replace(/\{(\w+)\}/g, (x, k) => (k in V ? V[k] : x))
+    .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\*(.+?)\*/g, '<i>$1</i>');
+  return s.replace(/piogge per funghi/i, x => `<a href="${SITO}/funghi/">${x}</a>`);
+}
+const paragrafiT = (t, V, cls) => t ? t.split(/\n\s*\n/).map(p => `<p${cls ? ` class="${cls}"` : ''}>${htmlT(p.replace(/\n/g, ' '), V)}</p>`).join('\n') : '';
+const righeT = t => (t || '').split('\n').map(r => r.trim()).filter(Boolean);
+
+function paginaTipo(T) {
+  const slugT = slugTipo(T);
+  const B = leggiTesti(path.join(__dirname, 'testi-tipi-bosco', `testi-${slugT}.txt`));
+  const imp = Object.fromEntries(righeT(B['impostazioni']).map(r => { const [k, ...v] = r.split(':'); return [k.trim(), v.join(':').trim()]; }));
+  const RR = TP.tipi[T];
+  const perReg = REG.map(r => ({ r, ha: RR[r.k] ? RR[r.k].ha : 0, pc: D.regioni[r.k].tipi[T] || 0 })).filter(x => x.ha > 0).sort((a, b) => b.ha - a.ha);
+  const tot = perReg.reduce((s, x) => s + x.ha, 0);
+  const boscoTot = REG.reduce((s, r) => s + (TP.tot_bosco[r.k] || 0), 0);
+  const NB = Object.values(RR)[0].q100.length, isto = new Array(NB).fill(0);
+  for (const r of REG) if (RR[r.k]) RR[r.k].q100.forEach((v, i) => isto[i] += v);
+  const totQ = isto.reduce((a, b) => a + b, 0);
+  const quantile = p => { let s = 0; for (let i = 0; i < NB; i++) { s += isto[i]; if (s >= p * totQ) return i * 100 + 100 * (1 - (s - p * totQ) / isto[i]); } return NB * 100; };
+  const r50 = v => Math.round(v / 50) * 50;
+  const quota = (a, z) => Math.round(isto.slice(a / 100, z / 100).reduce((x, y) => x + y, 0) / totQ * 100);
+  // la fascia: quella scelta da lui nelle impostazioni, se c'e'; se no quella dal 20 all'80%
+  const ft = (imp['fascia testo'] || '').match(/(\d+)\s*-\s*(\d+)/);
+  const fascia = ft ? [+ft[1], +ft[2]] : [Math.floor(quantile(0.2) / 100) * 100, Math.ceil(quantile(0.8) / 100) * 100];
+  const V = {
+    ettari: n1(Math.round(tot / 1000) * 1000), percento: String(Math.round(tot / boscoTot * 1000) / 10).replace('.', ','),
+    quota_25: n1(r50(quantile(0.25))), quota_75: n1(r50(quantile(0.75))), quota_mezzo: n1(r50(quantile(0.5))),
+    fascia_da: n1(fascia[0]), fascia_a: n1(fascia[1]), fascia_percento: quota(fascia[0], fascia[1]),
+    testo_da: n1(fascia[0]), testo_a: n1(fascia[1]), testo_percento: quota(fascia[0], fascia[1]),
+  };
+  const ultima = Math.min(NB - 1, isto.reduce((u, v, i) => v / totQ > 0.002 ? i : u, 0) + 1);
+  function profilo() {
+    const W = 640, H = 150, n = ultima + 1, bw = (W - 2) / n, mx = Math.max(...isto.slice(0, n));
+    let s = `<svg viewBox="0 0 ${W} ${H + 30}" width="100%" role="img" aria-label="Quanti ettari di ${esc(T)} a ogni altitudine, a fasce di 100 metri" style="display:block;margin:10px 0 2px">`;
+    for (let i = 0; i < n; i++) {
+      const h = isto[i] / mx * (H - 8), on = i * 100 >= fascia[0] && i * 100 < fascia[1];
+      s += `<rect x="${(1 + i * bw).toFixed(1)}" y="${(H - h).toFixed(1)}" width="${(bw - 2).toFixed(1)}" height="${h.toFixed(1)}" rx="2" fill="${on ? COL[T] : '#c9d2cc'}" opacity="${on ? 0.85 : 1}"/>`;
+    }
+    const passo = n > 20 ? 1000 : 500;
+    for (let q = 0; q <= n * 100; q += passo) s += `<text x="${(1 + q / 100 * bw).toFixed(1)}" y="${H + 22}" font-size="17" fill="#5b6878" text-anchor="${q === 0 ? 'start' : (q + passo / 2 > n * 100 ? 'end' : 'middle')}">${n1(q)} m</text>`;
+    return s + '</svg>';
+  }
+  const zone = D.zone.filter(z => !ESCLUSE.has(z.n) && DI_REG[z.reg] && (z.tipi[T] || 0) >= 20).sort((a, b) => b.tipi[T] - a.tipi[T]).slice(0, +(imp.valli || 10));
+  const paesi = Object.values(D.paesi).filter(p => p.tipi && p.bosco >= 50 && (p.tipi[T] || 0) >= 70 && p.q)
+    .sort((a, b) => (b.tipi[T] * b.bosco) - (a.tipi[T] * a.bosco)).slice(0, +(imp.paesi || 12)).sort((a, b) => a.q - b.q);
+  const url = `${SITO}/mappa-forestale/${slugT}/`;
+  const vista = `r=${imp.regione}&amp;z=${imp.zoom}&amp;c=${imp.centro}`;
+  const MAPPA = `${SITO}/?${vista}&amp;boschi=1`;
+  const tit = k => htmlT(B[k] || '', V);
+  const piano = k => (B[k] || '').replace(/\{(\w+)\}/g, (x, c) => (c in V ? V[c] : x)).replace(/\*/g, '');
+
+  let h = testa({ titolo: piano('titolo'), descr: piano('descrizione'), url, img: `${url}scorcio.jpg`,
+    briciola: [["Mappa forestale d'Italia", `${SITO}/mappa-forestale/`], [prima(T)]] });
+  h += `<p class="nota" style="margin-bottom:6px"><a href="${SITO}/mappa-forestale/" style="color:var(--blu)">‹ Mappa forestale d'Italia</a> <span style="color:#9aa7b8">›</span> ${esc(prima(T))}</p>
+<h1>${tit('titolo grande')}</h1>
+${paragrafiT(B['apertura'], V, 'breve')}
+<style>.numeri b{white-space:nowrap;font-size:clamp(16px,5.2vw,24px)}</style>
+<div class="numeri">${righeT(B['tre numeri']).map(r => { const [a, b] = r.split('|').map(x => x.trim()); return `<div><b>${htmlT(a, V)}</b>${htmlT(b || '', V)}</div>`; }).join('')}</div>
+<a class="cta" href="${MAPPA}">${tit('tasto mappa')}</a>
+<a href="${MAPPA}"><img class="img-f" src="scorcio.jpg" alt="${esc(piano('foto, testo nascosto per chi non vede'))}" width="1200" height="750"></a>
+<p class="nota">${tit('didascalia foto')} <a href="${MAPPA}">Apri la mappa</a> e vai dove vuoi.</p>
+
+<h2>${tit('regioni: titolo')}</h2>
+${paragrafiT(B['regioni: testo'], V, 'breve')}
+${perReg.filter(x => x.ha >= 1000).map(x => `<div class="fr"><div class="fr-t"><span class="fr-sw" style="background:${COL[T]}"></span><a href="${SITO}/mappa-forestale/${x.r.k}/"><b>${esc(x.r.nome)}</b></a><span class="fr-v">${n1(Math.round(x.ha / 100) * 100)} ha</span></div>` +
+  `<div class="fr-b"><i style="width:${Math.round(x.ha / perReg[0].ha * 100)}%;background:${COL[T]}"></i></div><div class="fr-s">il ${pc(x.pc)} del bosco ${esc(x.r.del)}</div></div>`).join('\n')}
+
+<h2>${tit('altitudine: titolo')}</h2>
+${paragrafiT(B['altitudine: testo'], V, 'breve')}
+${profilo()}
+${paragrafiT(B['altitudine: sotto il grafico'], V, 'nota')}
+<a class="cta" style="background:#2d6a30" href="${MAPPA}&amp;quota=${fascia[0]}-${fascia[1]}">${tit('altitudine: tasto')}</a>
+${paragrafiT(B['altitudine: sotto il tasto'], V, 'nota')}
+`;
+  const funghi = righeT(B['funghi: elenco']).filter(r => r.includes('|')).map(r => r.split('|').map(x => x.trim()));
+  if (funghi.length) h += `
+<h2>${tit('funghi: titolo')}</h2>
+${paragrafiT(B['funghi: testo'], V, 'breve')}
+<ul class="usi">
+${funghi.map(([n, alt, lat, d]) => `<li><span class="ic"><span class="fr-sw" style="background:${COL[T]};margin:6px 0 0"></span></span><div><b>${htmlT(n, V)}</b>${alt ? ` <span class="pc">o ${htmlT(alt, V)}</span>` : ''}${lat ? ` · <i>${esc(lat)}</i>` : ''}<br>${htmlT(d || '', V)}</div></li>`).join('\n')}
+</ul>
+${B['funghi: avviso'] ? `<div class="fonte" style="border-color:#e3b3ad;background:#fdf3f2">⚠️ ${htmlT(B['funghi: avviso'], V)}</div>` : ''}
+${paragrafiT(B['funghi: dopo'], V)}
+`;
+  h += `
+<h2>${tit('valli: titolo')}</h2>
+${paragrafiT(B['valli: testo'], V, 'breve')}
+<ul class="dove">
+${zone.map(z => `<li>${zlink(z).replace(/>([^<]+)<\/a>$/, '><b>$1</b></a>')} <span class="pc">· ${esc(DI_REG[z.reg].nome)}</span><br><span class="fr-sw" style="background:${COL[T]}"></span>${esc(T)} <b>${Math.round(z.tipi[T])}%</b> del bosco <span class="pc">· bosco sul ${Math.round(z.bosco)}% del territorio</span></li>`).join('\n')}
+</ul>
+`;
+  if (paesi.length) h += `
+<h2>${tit('paesi: titolo')}</h2>
+${paragrafiT(B['paesi: testo'], V, 'breve')}
+<ul class="paesi">
+${paesi.map(p => `<li><span class="quota">${p.q} m</span><div><a href="${SITO}/funghi/${p.reg}/${p.slug}/"><b>${esc(p.n)}</b></a> <span class="pc">· ${esc(DI_REG[p.reg] ? DI_REG[p.reg].nome : p.reg)}</span><br><span class="pc"><span class="fr-sw" style="background:${COL[T]}"></span>${esc(T)} ${Math.round(p.tipi[T])}% del bosco intorno</span></div></li>`).join('\n')}
+</ul>
+`;
+  h += `
+<h2>${tit('che cosa mettiamo: titolo')}</h2>
+<div class="fonte">${htmlT(B['che cosa mettiamo: testo'] || '', V).replace(/\n\s*\n/g, '<br><br>').replace(/\n/g, ' ')}</div>
+
+<h2>${tit('a chi serve: titolo')}</h2>
+<ul class="usi">
+${righeT(B['a chi serve: elenco']).filter(r => r.includes('|')).map(r => { const [i, t, x] = r.split('|').map(y => y.trim()); return `<li><span class="ic">${esc(i)}</span><div><b>${htmlT(t, V)}</b><br>${htmlT(x || '', V)}</div></li>`; }).join('\n')}
+</ul>
+
+<h2>${tit('altri boschi: titolo')}</h2>
+<nav class="altre"><p>${TIPI_PAGINA.filter(t => t !== T).map(t => `<span class="fr-sw" style="background:${COL[t]}"></span><a href="${SITO}/mappa-forestale/${slugTipo(t)}/">${esc(prima(t))}</a>`).join(' · ')} · <a href="${SITO}/mappa-forestale/">Tutti i boschi, regione per regione</a></p></nav>
+
+${youtube('tipo-' + slugT)}
+<div class="pioggia">
+<h2>${tit('pioggia: titolo')}</h2>
+${paragrafiT(B['pioggia: testo'], V)}
+${tastiPioggia(`${SITO}/?${vista}`)}
+<p><a href="${SITO}/funghi/">Piogge per funghi</a> · <a href="${SITO}/guida/">Guida</a></p>
+</div>
+` + PIEDE;
+  // una sezione cancellata nel file di testo non lascia titoli o riquadri vuoti
+  h = h.replace(/<h2>\s*<\/h2>\n?/g, '').replace(/<div class="fonte">\s*<\/div>\n?/g, '').replace(/<ul class="usi">\s*<\/ul>\n?/g, '');
+  const resti = [...new Set(h.match(/\{\w+\}/g) || [])];
+  if (resti.length) console.warn(`⚠️ ${slugT}: segnaposto sconosciuti nel testo: ${resti.join(' ')}`);
+  scriviFile(path.join('mappa-forestale', slugT, 'index.html'), h);
+}
+
 // ═══ LA PAGINA GENERALE ═════════════════════════════════════════════════════
 function paginaItalia() {
   const I = D.italia, url = `${SITO}/mappa-forestale/`, MAPPA = `${SITO}/?boschi=1`;
@@ -357,6 +507,7 @@ ${REG.map(r => { const f = IND.regioni[r.k]; return `<div class="scheda"><div cl
 <h2>Che boschi ci sono in Italia</h2>
 <p class="breve">Quanto pesa ogni tipo sul bosco italiano, misurato sulla nostra mappa.</p>
 ${barre(I)}
+<p>Tre boschi hanno una pagina loro, con dove sono, a che altitudine e i loro funghi: ${TIPI_PAGINA.map(t => `<a href="${SITO}/mappa-forestale/${slugTipo(t)}/">${esc(t)}</a>`).join(', ')}.</p>
 
 <h2>A chi serve</h2>
 ${usi(I, 'in Italia', { funghi: `<a href="${SITO}/funghi/">piogge per funghi</a>` })}
@@ -380,6 +531,7 @@ ${youtube('italia')}
 if (require.main === module) {
   paginaItalia();
   for (const r of REG) paginaRegione(r);
+  for (const t of TIPI_PAGINA) paginaTipo(t);
   let nz = 0;
   for (const z of D.zone) { if (DI_REG[z.reg] && z.bosco > 0 && !ESCLUSE.has(z.n)) { paginaZona(z); nz++; } }
   for (const n of ESCLUSE) fs.rmSync(path.join(RADICE, 'mappa-forestale', 'zone', slug(n)), { recursive: true, force: true });
@@ -387,5 +539,5 @@ if (require.main === module) {
   const src = path.join(RADICE, 'mappa-forestale', 'toscana', 'scorcio.jpg');
   if (fs.existsSync(src)) fs.copyFileSync(src, path.join(RADICE, 'mappa-forestale', 'scorcio.jpg'));
   const tot = scriviSitemap(SITO, RADICE);
-  console.log(`mappa forestale: 1 generale, ${REG.length} regioni, ${nz} zone; sitemap con ${tot} indirizzi`);
+  console.log(`mappa forestale: 1 generale, ${REG.length} regioni, ${TIPI_PAGINA.length} tipi, ${nz} zone; sitemap con ${tot} indirizzi`);
 }
