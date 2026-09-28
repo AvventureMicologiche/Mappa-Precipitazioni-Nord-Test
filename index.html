@@ -13681,23 +13681,10 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     },true);
     var rr=el('btn-reset-regions');
     if(rr) rr.addEventListener('click',function(){ if(acceso) esci(); },true);
-    /* «Copia link» senza un'analisi: buildShareUrl torna null e il tasto non
-       farebbe niente (stesso difetto gia' visto col radar). Il link lo
-       costruiamo qui: regione, vista e il modo. */
-    var bs=el('btn-share');
-    if(bs) bs.addEventListener('click',function(e){
-      if(!acceso || analisiInCorso()) return;
-      e.stopImmediatePropagation(); e.preventDefault();
-      var mm=map(), c=mm.getCenter(), q=new URLSearchParams();
-      var rk=(window._regioniAttive?window._regioniAttive():[]);
-      if(rk.length) q.set('r', rk.join(','));
-      q.set('z', String(Math.round(mm.getZoom()*100)/100));
-      q.set('c', c.lat.toFixed(4)+','+c.lng.toFixed(4));
-      q.set('boschi','1');
-      var url=location.origin+location.pathname+'?'+q.toString();
-      if(navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) navigator.share({url:url}).catch(function(){});
-      else if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).catch(function(){});
-    },true);
+    /* «Copia link» senza un'analisi: dal 28/9/2026 lo fa il gestore normale,
+       perche' buildShareUrl nei boschi non vuole piu' le date. Qui c'era un
+       gestore suo che copiava in silenzio (niente «✓ Copiato»: sul desktop
+       sembrava rotto) e perdeva la fascia di altitudine. Non rimetterlo. */
 
     map().on('zoomend',aggiornaLontano);
     map().on('click',mostraBosco);
