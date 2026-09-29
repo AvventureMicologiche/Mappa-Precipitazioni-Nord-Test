@@ -14321,7 +14321,9 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
    La scelta si ricorda sul dispositivo (localStorage, dentro try). */
 (function(){
   var SAT_FOTO='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-  var SAT_NOMI='https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}';
+  // «Alternate» e non «World_Boundaries_and_Places»: quello scrive ogni capoluogo DUE volte,
+  // la citta' col pallino e la provincia omonima (Asti, Cuneo, Pavia...: visto da lui il 29/9)
+  var SAT_NOMI='https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places_Alternate/MapServer/tile/{z}/{y}/{x}';
   // foto + nomi in un credito solo: al posto di quello di OSM, che col satellite non c'e'
   var CREDITI='Foto e nomi &copy; <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a>, Vantor, Earthstar Geographics, HERE, Garmin, OpenStreetMap';
   var ANTE_SAT='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/8/93/135';
