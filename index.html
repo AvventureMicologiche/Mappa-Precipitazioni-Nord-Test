@@ -14420,6 +14420,25 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     if(q==='1'||(q!=='0'&&ricordo==='1')) accendi(false);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',avvia); else avvia();
+
+  /* ⚠️ SUL TELEFONO IL DITO SUI PANNELLI SPOSTAVA LA MAPPA SOTTO (29/9/2026, visto da
+     lui: «se scorro sul pannello si muove la mappa»). Misurato: trascinando sui colori
+     della legenda o sulla sua testata la mappa si spostava, col satellite e senza,
+     quindi c'era gia' in produzione. I pannelli stanno DENTRO #map e il primo tocco
+     arrivava a Leaflet, che partiva col trascinamento. Sul PC c'e' gia'
+     disableClickPropagation in positionPanels, che pero' sul telefono esce subito.
+     Si ferma solo l'INIZIO del tocco: il resto (touchmove) serve alla tendina e ai
+     cursori, che lo ascoltano su document. */
+  ['legend-panel','time-panel'].forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    ['touchstart','pointerdown'].forEach(function(ev){
+      el.addEventListener(ev,function(e){
+        if(window.innerWidth>900) return;
+        if(ev==='pointerdown' && e.pointerType==='mouse') return;
+        e.stopPropagation();
+      },{passive:true});
+    });
+  });
 })();
 </script>
 </body>
