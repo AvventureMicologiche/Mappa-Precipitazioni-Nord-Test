@@ -4463,6 +4463,8 @@ function centraRegioneInStriscia(){
      ne basta uno, ed e' proprio lo sfarfallio segnalato. */
   if(document.body.classList.contains('modo-radar')) return;
   if(_vistaDaLink) return;   // la vista arriva da un link condiviso: comanda quella
+  // «Confronta piogge» ha appena rimesso la vista dell'utente (29/9): per un paio di secondi non si ricentra
+  if(window._fermaCentraFino && Date.now()<window._fermaCentraFino) return;
   if(typeof getActiveRegions!=='function') return;
   var rks=getActiveRegions(); if(!rks.length) return;
   var mEl=document.getElementById('map'); if(!mEl) return;
@@ -11728,6 +11730,9 @@ body.modo-boschi #time-panel{display:none !important}
 #bo-sat-btn{position:relative;overflow:visible !important}
 .sat-on #bo-sat-btn::after{display:none}
 #legend-panel .leg-header .bo-az-sat.in-riga{flex:1;font-size:12.5px;padding:0 6px;border-radius:9px;display:flex;align-items:center;justify-content:center;min-height:34px}
+/* ⚠️ fuori dai boschi «Satellite» non c'e' (29/9, sua schermata: passato dai boschi, «Indietro» e un
+   periodo nuovo, il tasto restava nella riga dei comandi della pioggia). Come «Confronta piogge». */
+body.conf-c:not(.modo-boschi) #legend-panel .leg-header .bo-az-sat.in-riga{display:none}
 @media(max-width:900px){.bo-az-piogge{display:none}}   /* sul telefono c'e' gia' «Indietro» */
 /* «Confronta» senza un'analisi dietro: il pannello delle date ricompare sopra la legenda dei boschi */
 body.modo-boschi.bo-scegli-date #time-panel{display:block !important}
@@ -13722,13 +13727,33 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     // in rosso come «Prima scegli la regione»: e' un passo che manca (sua richiesta, 18/9)
     a.className='error'; a.textContent=t;
   }
+  /* ⚠️ LA VISTA DELL'UTENTE SOPRAVVIVE AL CONFRONTO (29/9/2026, suo: «e' giusto che quando faccio
+     confronta piogge cambia zoom?»). Senza un'analisi dietro, «Confronta piogge» fa scegliere il
+     periodo, e l'analisi a fine calcolo reinquadra la regione intera: sul PC da 9,75 a 8,25. Zoom e
+     centro si fotografano al clic e si rimettono prima di rientrare nei boschi; `_boschiTieni` fa si'
+     che entra() non li rifaccia, `_fermaCentraFino` che il telefono non ricentri nella striscia. */
+  var vistaConfronto=null;
+  function rimettiVista(){
+    var v=vistaConfronto, m=map(); vistaConfronto=null; if(!v||!m) return;
+    try{ m.stop(); m.setView(v.c,v.z,{animate:false}); }catch(e){}
+    window._boschiTieni=true;
+    window._fermaCentraFino=Date.now()+2500;
+  }
   // dopo il clic su un periodo: si aspetta l'analisi NUOVA e si rientra nei boschi
   function rientraDopo(prima){
-    var io=++confrontoAtteso, giri=0;
+    var io=++confrontoAtteso, giri=0, conPeriodo=0;
     var att=setInterval(function(){
       if(io!==confrontoAtteso){ clearInterval(att); return; }
-      if(periodoDi() && periodoDi()!==prima && pioggiaPronta()){
+      /* ⚠️ SETTIMANA ASCIUTTA (29/9/2026): con 0,1 mm di media la pioggia e' quasi tutta
+         trasparente, pioggiaPronta() non diceva mai si' e dopo 40 s si rinunciava: niente
+         ritorno nei boschi. Ora basta l'analisi finita (✅) col periodo nuovo: si aspetta la
+         pioggia disegnata, ma al massimo un secondo. */
+      var st=el('tp-status'), finita=!!st && st.textContent.indexOf('✅')===0;
+      var nuovo=!!periodoDi() && periodoDi()!==prima && finita;
+      if(nuovo) conPeriodo++;
+      if(nuovo && (pioggiaPronta() || conPeriodo>=5)){
         clearInterval(att);
+        rimettiVista();
         if(!acceso) entra();
         setTimeout(function(){ if(acceso && !tendinaOn && io===confrontoAtteso) tendinaSu(); },350);
       }
@@ -13737,6 +13762,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   }
   function scegliPeriodo(){
     voglioConfronto=true; confrontoAtteso++;
+    var m0=map(); vistaConfronto=m0?{c:m0.getCenter(),z:m0.getZoom()}:null;
     // sul telefono i tasti del periodo stanno nel pannello che il modo nasconde:
     // si esce dai boschi e il sito rimette il pannello del periodo
     if(window.innerWidth<=900) esci();
