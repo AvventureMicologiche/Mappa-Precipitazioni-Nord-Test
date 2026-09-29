@@ -11653,6 +11653,12 @@ function loadDefaultMarkers(){
 #sat-btn:hover{box-shadow:0 2px 10px rgba(0,0,0,.5)}
 /* I crediti sul PC arrivavano fino a meta' mappa (29/9, suo): stanno in un terzo
    della larghezza, allineati a destra, e vanno a capo */
+/* CONFINI SUL SATELLITE (29/9, suo: «li hai fatti in blu, si perdono nella foto»). Il blu
+   dei confini (#1b3f6e scelti, #4a6c9b gli altri) sta scritto sul tracciato: il CSS lo
+   batte, quindi col satellite diventano BIANCHI senza toccare il disegno. I pallini sono
+   #333 e non si toccano. Il respiro (confPulse) anima stroke-opacity e resta. */
+.sat-on #map .leaflet-overlay-pane path[stroke="#1b3f6e"],.sat-on #map .leaflet-overlay-pane path[stroke="#4a6c9b"]{stroke:#fff;stroke-opacity:.9}
+.sat-on #map .leaflet-overlay-pane path[fill="#1b3f6e"]{fill:#fff}
 @media(min-width:901px){#map .leaflet-control-attribution{max-width:34vw;white-space:normal;text-align:right;line-height:1.35;font-size:10.5px}}
 @media(max-width:900px){#sat-btn{bottom:auto;top:52px;right:8px;width:54px;height:54px}#sat-btn span{font-size:10px;padding-bottom:3px}}
 .bo-sat{display:none;align-items:center;gap:7px;margin:0 0 6px;font-size:11.5px;color:#1b3f6e}
@@ -14318,7 +14324,8 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
      1,1 s col satellite, richieste 71 contro 159): sotto la foto non si
      scaricano piu' ne' la cartina OSM (tolta dalla mappa, ma solo dopo il suo
      primo «load»: quandoMappaDisegnata lo aspetta) ne' il rilievo dei boschi.
-   La scelta si ricorda sul dispositivo (localStorage, dentro try). */
+   La scelta vale per la SESSIONE (sessionStorage, dentro try): chiusa la scheda si
+   riparte dalla cartina, come il «ridotto» della legenda. Un link con sat=1 la accende. */
 (function(){
   var SAT_FOTO='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
   // «Alternate» e non «World_Boundaries_and_Places»: quello scrive ogni capoluogo DUE volte,
@@ -14367,7 +14374,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     if(window._boschiSat) window._boschiSat();
     setTimeout(posiziona,50);
     disegnaTasto(); ridisegnaPioggia();
-    if(salva){ try{ localStorage.setItem('mappaSat','1'); }catch(e){}
+    if(salva){ try{ sessionStorage.setItem('mappaSat','1'); }catch(e){}
                try{ gtag('event','mappa_satellite',{stato:'on'}); }catch(e){} }
   }
   function spegni(salva){
@@ -14379,7 +14386,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     if(window._boschiSat) window._boschiSat();
     setTimeout(posiziona,50);
     disegnaTasto(); ridisegnaPioggia();
-    if(salva){ try{ localStorage.setItem('mappaSat','0'); }catch(e){}
+    if(salva){ try{ sessionStorage.setItem('mappaSat','0'); }catch(e){}
                try{ gtag('event','mappa_satellite',{stato:'off'}); }catch(e){} }
   }
   /* Sul telefono il riquadro sta sotto la barra delle regioni, che cambia
@@ -14417,7 +14424,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
             if(tt.length && tt.every(function(t){ return t.loaded; })) osmPronto=true; else bt.once('load',function(){ osmPronto=true; }); }
     // i crediti cambiano coi modi (boschi, radar, regioni): il riquadro li segue
     try{ var at0=document.querySelector('#map .leaflet-control-attribution'); if(at0) new MutationObserver(posiziona).observe(at0,{childList:true,subtree:true,characterData:true}); }catch(e){}
-    var ricordo=null; try{ ricordo=localStorage.getItem('mappaSat'); }catch(e){}
+    var ricordo=null; try{ ricordo=sessionStorage.getItem('mappaSat'); }catch(e){}   // solo per la sessione: si riparte sempre dalla cartina (sua regola 29/9)
     var q=new URLSearchParams(location.search).get('sat');
     if(q==='1'||(q!=='0'&&ricordo==='1')) accendi(false);
   }
