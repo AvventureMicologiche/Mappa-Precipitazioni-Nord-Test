@@ -9480,6 +9480,7 @@ function buildShareUrl(){
   // area. Lo zoom viaggia grezzo.
   if(window._radarModo) p.set('radar', window._radarModo);
   if(window._boschiAcceso) p.set('boschi', '1');   // retino «Tipi di bosco», 15/9/2026
+  if(window._satOn) p.set('sat', '1');   // Mappa|Satellite (29/9/2026): chi apre il link vede la foto
   if(window._boschiAcceso && window._quotaFascia && window._quotaFascia()) p.set('quota', window._quotaFascia());   // filtro di altitudine
   return location.origin+location.pathname+'?'+p.toString();
 }
@@ -9664,10 +9665,6 @@ function captureMapBlob(scala){
       if(!t.complete||!t.naturalWidth||!visibile(t)) continue;
       if(t.closest('.leaflet-boschi-pane')) continue;   // il retino dei boschi va sopra la pioggia, piu' giu'
       if(t.closest('.leaflet-bo-rilievo-pane')) continue;   // gia' sul foglio, sotto
-      // ⚠️ LA FOTO SATELLITARE NON ENTRA MAI NELLO SCATTO (29/9/2026): le condizioni di Esri vietano
-      // di far girare le sue immagini, e le foto condivise finiscono su WhatsApp. Lo scatto esce con la
-      // cartina anche quando a schermo c'e' il satellite: cosi' Immagine e Condividi restano accesi.
-      if(t.closest('.leaflet-sat-foto-pane')||t.closest('.leaflet-sat-nomi-pane')) continue;
       var r=rel(t);
       // solo OSM si fonde col rilievo, sul foglio; il radar e gli altri strati vanno sopra, normali
       if(fondiOsm && tpEl.contains(t)){
@@ -9752,10 +9749,10 @@ function captureMapBlob(scala){
         onclone:function(doc){
           [].slice.call(doc.querySelectorAll('.leaflet-pane')).forEach(function(el){ el.style.display='none'; });
           var nb=doc.getElementById('novita-box'); if(nb) nb.style.visibility='hidden';
-          // lo scatto esce sempre con la cartina: via il riquadro Mappa|Satellite e i crediti della foto
+          // il riquadro Mappa|Satellite non va nello scatto; i crediti della foto SI' (obbligatori)
           var sb=doc.getElementById('sat-btn'); if(sb) sb.style.visibility='hidden';
-          var at=doc.querySelector('.leaflet-control-attribution');
-          if(at) at.innerHTML=at.innerHTML.replace(/,?\s*Foto &copy;[\s\S]*?Earthstar Geographics/,'').replace(/,?\s*Foto ©[\s\S]*?Earthstar Geographics/,'');
+          // la manopola del retino html2canvas la disegna come una casella di testo: nello scatto non serve
+          [].slice.call(doc.querySelectorAll('.bo-sat')).forEach(function(el){ el.style.visibility='hidden'; });
           doc.body.style.background='none';
           var mw=doc.getElementById('map-wrap'); if(mw) mw.style.background='none';
           var mp=doc.getElementById('map'); if(mp) mp.style.background='none';
@@ -11654,6 +11651,9 @@ function loadDefaultMarkers(){
 #sat-btn span{position:absolute;left:0;right:0;bottom:0;padding:12px 2px 4px;text-align:center;color:#fff;
   font:700 11px/1 inherit;font-family:inherit;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.7))}
 #sat-btn:hover{box-shadow:0 2px 10px rgba(0,0,0,.5)}
+/* I crediti sul PC arrivavano fino a meta' mappa (29/9, suo): stanno in un terzo
+   della larghezza, allineati a destra, e vanno a capo */
+@media(min-width:901px){#map .leaflet-control-attribution{max-width:34vw;white-space:normal;text-align:right;line-height:1.35;font-size:10.5px}}
 @media(max-width:900px){#sat-btn{bottom:auto;top:52px;right:8px;width:54px;height:54px}#sat-btn span{font-size:10px;padding-bottom:3px}}
 .bo-sat{display:none;align-items:center;gap:7px;margin:0 0 6px;font-size:11.5px;color:#1b3f6e}
 .sat-on .bo-sat{display:flex}
@@ -12937,11 +12937,14 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
        sta acceso in tutto il modo boschi, anche dove la carta dei boschi non
        c'e'. Citazione presa dal DOI, non scritta a memoria. */
     var ril='rilievo: <a href="https://doi.org/10.13127/tinitaly/1.1" target="_blank" rel="noopener">TINITALY 1.1, INGV</a> (CC BY 4.0)';
-    creditoBoschi=(rk.length ? 'boschi: '+rk.map(function(k){
+    var parti=[];
+    if(rk.length) parti.push('boschi: '+rk.map(function(k){
       var r=indice.regioni[k];
       return '<a href="'+r.link+'" target="_blank" rel="noopener">'+r.fonte+'</a> ('+r.licenza+')';
-    }).join(', ')+', ' : '')+ril;
-    ac.addAttribution(creditoBoschi);
+    }).join(', '));
+    if(!window._satOn) parti.push(ril);   // col satellite il rilievo e' spento: non si cita
+    creditoBoschi=parti.join(', ');
+    if(creditoBoschi) ac.addAttribution(creditoBoschi); else creditoBoschi=null;
   }
 
   /* La nota in fondo alla legenda segue le regioni SCELTE: per ognuna la sua
@@ -13010,6 +13013,11 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
       +'<div class="bo-nota" id="bo-fonti"></div>';
     barraQuota();
     var so=el('bo-sat-op');
+    /* ⚠️ Sul telefono il dito sulla manopola arrivava a Leaflet e spostava la mappa
+       (29/9/2026, visto da lui). Si ferma qui ogni evento di tocco e di puntatore. */
+    if(so) ['touchstart','touchmove','pointerdown','pointermove','mousedown'].forEach(function(ev){
+      so.parentNode.addEventListener(ev,function(e){ e.stopPropagation(); },{passive:true});
+    });
     if(so) so.addEventListener('input',function(){
       satRetino=(+so.value)/100; var t=el('bo-sat-val'); if(t) t.textContent=so.value+'%';
       if(window._boschiSetOpacita) window._boschiSetOpacita();
@@ -13222,7 +13230,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
       if(!strato) strato=creaStrato();
       if(window._boschiSetOpacita) window._boschiSetOpacita();   // col satellite acceso il retino parte dalla manopola
       strato.addTo(m);
-      rilievoOn();   // solo coi boschi: sotto la pioggia ne falserebbe il colore
+      if(!window._satOn) rilievoOn();   // solo coi boschi, e non sotto la foto satellitare (coperto, e rallenta)
       el('btn-boschi').innerHTML='✕ Chiudi mappa';
       var t=el('leg-title');
       if(t){ if(titoloVecchio==null) titoloVecchio=t.textContent; t.textContent='Mappa forestale'; }
@@ -13798,6 +13806,10 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     };
     window._boschiOpacita=OPACITA;
     // MAPPA | SATELLITE (29/9/2026): sopra la foto il retino ha la sua manopola, sulla cartina resta OPACITA
+    window._boschiSat=function(){
+      window._boschiSetOpacita();
+      if(acceso){ if(window._satOn) rilievoOff(); else rilievoOn(); aggiornaCrediti(); }
+    };
     window._boschiSetOpacita=function(){
       var v=window._satOn?satRetino:OPACITA;
       if(strato) strato.setOpacity(v);
@@ -14299,19 +14311,32 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
    - nei boschi il retino ha la sua manopola (window._boschiSetOpacita);
    - i nomi dei paesi arrivano da uno strato di sole etichette SOPRA la
      pioggia e il retino, SOTTO i pallini;
-   - lo scatto di «Immagine» e «Condividi» esce SEMPRE con la cartina: le
-     condizioni di Esri vietano di far girare le sue foto (captureMapBlob
-     salta i pane sat-foto e sat-nomi), e i tasti restano accesi;
-   - la cartina OSM resta sotto (quandoMappaDisegnata ascolta il suo «load»),
-     la foto la copre col suo pane a 201.
+   - lo scatto di «Immagine» e «Condividi» PORTA la foto, e il link porta
+     sat=1 (sua scelta 29/9, sapendo che per Esri far girare le foto e' zona
+     grigia): nello scatto restano i crediti Esri, sparisce il riquadro;
+   - LENTEZZA (29/9, misurata sul telefono in 4G: salto 0,6 s con la cartina,
+     1,1 s col satellite, richieste 71 contro 159): sotto la foto non si
+     scaricano piu' ne' la cartina OSM (tolta dalla mappa, ma solo dopo il suo
+     primo «load»: quandoMappaDisegnata lo aspetta) ne' il rilievo dei boschi.
    La scelta si ricorda sul dispositivo (localStorage, dentro try). */
 (function(){
   var SAT_FOTO='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
   var SAT_NOMI='https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}';
-  var CREDITI='Foto &copy; <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a>, Vantor, Earthstar Geographics';
+  // foto + nomi in un credito solo: al posto di quello di OSM, che col satellite non c'e'
+  var CREDITI='Foto e nomi &copy; <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a>, Vantor, Earthstar Geographics, HERE, Garmin, OpenStreetMap';
   var ANTE_SAT='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/8/93/135';
   var ANTE_MAPPA='https://a.tile.openstreetmap.org/8/135/93.png';
-  var on=false, strati=null, btn=null;
+  var on=false, strati=null, btn=null, osmPronto=false;
+  /* La cartina OSM sotto la foto non si vede: si toglie, cosi' non si scarica.
+     Ma solo dopo il suo primo «load», che quandoMappaDisegnata aspetta. */
+  function osmVia(){
+    var bt=window._baseTiles, mp=m(); if(!bt||!mp) return;
+    if(osmPronto){ if(mp.hasLayer(bt)) mp.removeLayer(bt); return; }
+    // ⚠️ setTimeout: toglierla DENTRO il «load» fa esplodere Leaflet, che dopo l'evento
+    // finisce di sistemare l'ultima tessera e cerca una mappa che non c'e' piu'
+    bt.once('load',function(){ osmPronto=true; setTimeout(function(){ if(on&&mp.hasLayer(bt)) mp.removeLayer(bt); },0); });
+  }
+  function osmTorna(){ var bt=window._baseTiles, mp=m(); if(bt&&mp&&!mp.hasLayer(bt)) bt.addTo(mp); }
   function m(){ return window._mapDebug; }
   function crea(){
     var mp=m();
@@ -14336,7 +14361,9 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     strati.forEach(function(s){ if(!mp.hasLayer(s)) s.addTo(mp); });
     if(mp.attributionControl) mp.attributionControl.addAttribution(CREDITI);
     on=true; window._satOn=true; document.body.classList.add('sat-on');
-    if(window._boschiSetOpacita) window._boschiSetOpacita();
+    osmVia();
+    if(window._boschiSat) window._boschiSat();
+    setTimeout(posiziona,50);
     disegnaTasto(); ridisegnaPioggia();
     if(salva){ try{ localStorage.setItem('mappaSat','1'); }catch(e){}
                try{ gtag('event','mappa_satellite',{stato:'on'}); }catch(e){} }
@@ -14346,7 +14373,9 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     if(strati) strati.forEach(function(s){ if(mp.hasLayer(s)) mp.removeLayer(s); });
     if(mp.attributionControl) mp.attributionControl.removeAttribution(CREDITI);
     on=false; window._satOn=false; document.body.classList.remove('sat-on');
-    if(window._boschiSetOpacita) window._boschiSetOpacita();
+    osmTorna();
+    if(window._boschiSat) window._boschiSat();
+    setTimeout(posiziona,50);
     disegnaTasto(); ridisegnaPioggia();
     if(salva){ try{ localStorage.setItem('mappaSat','0'); }catch(e){}
                try{ gtag('event','mappa_satellite',{stato:'off'}); }catch(e){} }
@@ -14355,7 +14384,11 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
      altezza (pastiglie delle confinanti): si misura, non si scrive un numero. */
   function posiziona(){
     if(!btn) return;
-    if(window.innerWidth>900){ btn.style.top=''; return; }
+    if(window.innerWidth>900){
+      // sul PC sta sopra i crediti, che vanno a capo e cambiano altezza
+      var at=document.querySelector('#map .leaflet-control-attribution');
+      btn.style.top=''; btn.style.bottom=((at?at.offsetHeight:18)+10)+'px'; return;
+    }
     var mp=document.getElementById('map'), rp=document.getElementById('region-panel');
     var giu=8;
     if(rp && getComputedStyle(rp).display!=='none'){
@@ -14375,6 +14408,13 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     window.addEventListener('resize',posiziona);
     setTimeout(posiziona,600); setTimeout(posiziona,2000);
     try{ new MutationObserver(posiziona).observe(document.body,{attributes:true,attributeFilter:['class']}); }catch(e){}
+    var bt=window._baseTiles;
+    // ⚠️ «pronta» vuol dire TUTTE le tessere arrivate: togliere uno strato mentre carica
+    // fa esplodere Leaflet 1.9.4 al primo arrivo (_tileReady su una mappa null)
+    if(bt){ var tt=bt._tiles?Object.keys(bt._tiles).map(function(k){ return bt._tiles[k]; }):[];
+            if(tt.length && tt.every(function(t){ return t.loaded; })) osmPronto=true; else bt.once('load',function(){ osmPronto=true; }); }
+    // i crediti cambiano coi modi (boschi, radar, regioni): il riquadro li segue
+    try{ var at0=document.querySelector('#map .leaflet-control-attribution'); if(at0) new MutationObserver(posiziona).observe(at0,{childList:true,subtree:true,characterData:true}); }catch(e){}
     var ricordo=null; try{ ricordo=localStorage.getItem('mappaSat'); }catch(e){}
     var q=new URLSearchParams(location.search).get('sat');
     if(q==='1'||(q!=='0'&&ricordo==='1')) accendi(false);
