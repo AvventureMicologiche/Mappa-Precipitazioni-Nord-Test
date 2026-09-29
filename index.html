@@ -2048,6 +2048,7 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
           <div class="cd-lbl">Data fine</div>
           <input type="date" class="cd-inp" id="cd-to">
           <button class="cd-go" id="cd-apply">Applica</button>
+          <div id="cd-msg" role="alert" style="display:none;color:#c0392b;font-size:13px;font-weight:600;margin-top:6px;line-height:1.3"></div>
         </div>
       </div>
     </div>
@@ -4329,7 +4330,10 @@ function positionPanels(){
      Sopra i ~745 px di finestra non succede; sotto i ~720 si mangia l'ultima
      riga. Non l'ha causato il decimo colore: il pannello e' alto uguale, prima
      si perdeva una voce sola invece di due. */
-  if(leg.style.display!=='none'){
+  /* ⚠️ lo stile CALCOLATO, non quello in linea (29/9/2026, collaudo): col radar la legenda e' mostrata
+     dal CSS (!important) mentre in linea resta `none`, e qui si saltava tutto. Sui PC bassi usciva
+     dal fondo della mappa: 53-81 px a 1366x657, via la scala dei colori e l'ora. */
+  if(getComputedStyle(leg).display!=='none'){
     // nei boschi il pannello delle date e' nascosto (29/9): la legenda sale sotto «Indietro»
     var tpBottom = _vis(tp) ? tp.offsetTop + tp.offsetHeight : rpBottom;
     var legTop = tpBottom + GAP;
@@ -9013,7 +9017,12 @@ function locCollocaCasella(){
 window.addEventListener('resize', locCollocaCasella);
 window.locCollocaCasella = locCollocaCasella;
 // entrando e uscendo dai boschi il cartello si nasconde e ricompare: la casella lo segue
-try{ new MutationObserver(function(){ locCollocaCasella(); }).observe(document.body,{attributes:true,attributeFilter:['class']}); }catch(e){}
+try{ new MutationObserver(function(){ locCollocaCasella();
+  /* a ogni cambio di modo (radar, boschi) i pannelli del PC si rimettono in colonna (29/9/2026, collaudo:
+     entrando nel radar la legenda restava in cima, sopra «Indietro», fino al primo ridimensionamento) */
+  // positionLegend e non positionPanels: mette anche l'osservatore che la segue quando cresce (le durate del radar)
+  if(window.innerWidth>900 && typeof positionLegend==='function') setTimeout(positionLegend,30);
+}).observe(document.body,{attributes:true,attributeFilter:['class']}); }catch(e){}
 /* ⚠️ I NOMI DEI PAESI SI SCARICANO A MAPPA GIA' FATTA (27/8/2026): 367 KB
    presi quando non danno fastidio a nessuno, cosi' chi tocca la casella li
    trova gia' li' invece di aspettarli. La griglia da 1,4 MB NON parte qui:
@@ -9382,11 +9391,16 @@ document.getElementById('cd-apply').addEventListener('click',function(){
   }
   var from=document.getElementById('cd-from').value;
   var to=document.getElementById('cd-to').value;
-  if(!from||!to){alert('Seleziona entrambe le date');return;}
-  if(from>to){alert('Data inizio deve essere prima della data fine');return;}
+  /* L'avviso sta SOTTO «Applica», in rosso, e non in una finestra del browser (29/9/2026, collaudo:
+     l'alert era l'unico messaggio del sito fatto cosi', e sul telefono copriva tutto). */
+  var cdMsg=document.getElementById('cd-msg');
+  var avvisa=function(t){ if(cdMsg){ cdMsg.textContent='⚠️ '+t; cdMsg.style.display='block'; } else alert(t); };
+  if(cdMsg){ cdMsg.style.display='none'; cdMsg.textContent=''; }
+  if(!from||!to){avvisa('Scegli tutte e due le date');return;}
+  if(from>to){avvisa('La data di inizio deve venire prima della data di fine');return;}
   // Limite massimo 12 mesi
   var diffMs=new Date(to+'T23:59:59').getTime()-new Date(from+'T00:00:00').getTime();
-  if(diffMs>365*24*3600000){alert('Il periodo massimo selezionabile è 12 mesi');return;}
+  if(diffMs>365*24*3600000){avvisa('Il periodo massimo selezionabile è 12 mesi');return;}
   // Limite storico dinamico per regioni con dati misti
   var MIXED_REGIONS2=['liguria','piemonte','veneto','emilia','toscana'];
   var activeRegs2=getActiveRegions();
@@ -9399,16 +9413,16 @@ document.getElementById('cd-apply').addEventListener('click',function(){
     var minDt2=new Date(Math.max(minMs2, new Date('2026-05-15').getTime()));
     var minDate2=fmtISOLocal(minDt2);
     if(from<minDate2){
-      alert('Per questa regione i dati affidabili partono dal '+ggmmaaaa(minDate2)+'. La finestra si amplia di 1 giorno al giorno.');
+      avvisa('Per questa regione i dati affidabili partono dal '+ggmmaaaa(minDate2)+'. La finestra si amplia di 1 giorno al giorno.');
       return;
     }
   } else {
-    if(from<'2021-01-01'){alert('I dati ARPA sono disponibili dal 1 gennaio 2021');return;}
+    if(from<'2021-01-01'){avvisa('I dati ARPA sono disponibili dal 1 gennaio 2021');return;}
   }
-  document.getElementById('custom-box').style.display='none';
-  // Blocca se la data fine è oggi o futura
+  // Blocca se la data fine è oggi o futura (prima di chiudere il riquadro: l'avviso sta li' dentro)
   var ieriStr=fmtISOLocal(new Date(new Date().setDate(new Date().getDate()-1)));
-  if(to>ieriStr){alert('I dati di oggi non sono ancora disponibili. La data massima è ieri ('+ggmmaaaa(ieriStr)+').');return;}
+  if(to>ieriStr){avvisa('I dati di oggi non sono ancora disponibili. La data massima è ieri ('+ggmmaaaa(ieriStr)+').');return;}
+  document.getElementById('custom-box').style.display='none';
   var pastDate=new Date(from+'T00:00:00');
   var nowDate=new Date(to+'T23:59:59');
   var d=function(dd){return dd.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});};
@@ -9516,6 +9530,8 @@ window._centraStriscia=centraRegioneInStriscia;
    comanda lui: centraRegioneInStriscia non guarda _vistaUtente e lo
    riporterebbe sulla regione intera ogni volta che tocca la striscia. */
 window._vistaUtenteAttiva=function(){ return !!_vistaUtente; };
+// «Confronta piogge» rimette la vista dell'utente dopo l'analisi, che la spia l'aveva spenta (29/9/2026)
+window._segnaVistaUtente=function(){ _vistaUtente=true; };
 /* Per la Mappa boschi (16/9/2026): chi arriva da una pagina di paese col link
    `boschi=1`, o ha cercato un paese e poi preme il tasto, deve vedere i boschi
    INTORNO AL PAESE e non la regione intera. Restituisce false se un paese non
@@ -10183,7 +10199,9 @@ if(_btnShot){
     }
   }
   if(!r||!da||!a) return;
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(da)||!/^\d{4}-\d{2}-\d{2}$/.test(a)||da>a) return;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(da)||!/^\d{4}-\d{2}-\d{2}$/.test(a)) return;
+  // date invertite (link scritto a mano): si scambiano, invece di aprire una pagina vuota senza dire niente (29/9/2026)
+  if(da>a){ var _tmp=da; da=a; a=_tmp; }
   // Alias per i link già in circolazione: prima del 3/8/2026 la Svizzera in
   // mappa era il solo Ticino (regione 'ticino'). Quei link devono continuare
   // ad aprirsi: si mappano sulla regione 'svizzera' che lo contiene.
@@ -10834,6 +10852,18 @@ function drawDefaultMarkers(stazioni,cfg){
       mk.on('mouseout',function(){mk.setStyle({radius:5,weight:1.5,color:'#333'});hideTimer=setTimeout(hideTooltip,150);});
       mk.on('touchstart',function(e){var t=e.originalEvent.touches[0];showDef(t.clientX,t.clientY);e.originalEvent.stopPropagation();});
       mk.on('touchend',function(e){e.originalEvent.stopPropagation();});
+      /* ⚠️ IL CLIC SUL PALLINO VALE COME IL CLIC SULLA REGIONE (29/9/2026, collaudo): prima del
+         periodo i pallini bianchi coprono il 43% della regione e al clic non facevano niente, quindi
+         per togliere una regione bisognava centrare lo spazio fra un pallino e l'altro. Solo sul PC
+         (li' si sceglie cliccando la mappa), e non coi boschi o col radar. */
+      mk.on('click',function(e){
+        if(window.innerWidth<=900 || window._boschiAcceso || document.body.classList.contains('modo-radar')) return;
+        var rk=null; Object.keys(REGIONS).forEach(function(k){ if(REGIONS[k]===cfg && document.getElementById('chk-'+k)) rk=k; });
+        if(!rk) return;
+        L.DomEvent.stopPropagation(e);
+        if(histEl.style.display==='block'&&Date.now()-histOpenedAt>=400){ closeStationHistory(); return; }
+        hideTooltip(); toggleRegionFromMap(rk);
+      });
     }(m,s));
   });
 }
@@ -12584,7 +12614,9 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
 @media(min-width:901px){.modo-boschi #btn-reset-regions{display:block !important}
   /* nei boschi c'e' «Indietro»: il cartello «Clicca fino a 3 regioni» gli stava SOTTO, e si vedeva in
      trasparenza (e nell'immagine condivisa) come una scritta fantasma (29/9) */
-  .modo-boschi #map-hint-panel{display:none !important}}
+  .modo-boschi #map-hint-panel{display:none !important}
+  /* stessa cosa col RADAR aperto senza un periodo (29/9, collaudo): il cartello copriva «↩ Indietro» */
+  .modo-radar #map-hint-panel{display:none !important}}
 /* col radar acceso le tessere non c'entrano */
 .modo-radar .leaflet-boschi-pane{display:none !important}
 /* Tocco sul bosco e tendina pioggia | boschi (18/9/2026) */
@@ -12701,6 +12733,37 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   body.conf-c.modo-boschi.bo-tendina #legend-panel .leg-header .bo-tend-btn.tessera.tessera.tessera{background:#1b3f6e !important;color:#fff !important;border-color:#1b3f6e !important}
   body.conf-c.modo-boschi.sat-on #legend-panel .leg-header .bo-az-sat.tessera.tessera.tessera{background:#2f6b2f !important;color:#fff !important;border-color:#2f6b2f !important}
 }
+/* ═══ TELEFONO PIU' COMPATTO IN ALTO E IN BASSO (29/9/2026, sua richiesta con la schermata della
+   Lombardia nei boschi: «non sono soddisfatto di quanto poco spazio ha la mappa»).
+   IN ALTO, in proporzione e in TUTTE le viste: intestazione 46 -> 38 px, barra della regione
+   42 -> 34, pastiglie delle confinanti 31 -> 27. I tocchi restano comodi: nessun tasto sotto i 27 px
+   di altezza e le larghezze non cambiano. IN BASSO: i tasti del pannello 34/33 -> 30 px.
+   ⚠️ 38 px dell'intestazione stanno scritti anche in #reg-sheet e #region-panel (top): se cambia
+   l'uno cambiano gli altri. */
+@media(max-width:900px){
+  html body header{height:38px !important;padding:0 10px !important;gap:8px}
+  html body header > .hdr-l > a:first-child{width:24px !important;height:24px !important}
+  html body header .hdr-l > span{font-size:15px !important}
+  html body #hdr-yt{padding:4px 8px;font-size:11.5px}
+  html body #reg-sheet{top:38px}
+  html body #region-panel{top:38px !important;padding:4px 8px 5px !important}
+  html body #reg-apri{font-size:15px;padding:6px 10px;letter-spacing:.2px}
+  html body #vic-riga.c{padding:4px 2px 0}
+  html body .vic-chip{font-size:13px;padding:5px 10px;border-radius:14px}
+  html body .vic-chip.pari{font-size:12.5px;padding:6px 5px}
+  html body .vic-nota{font-size:14px}
+  /* in basso: pioggia e radar (tre tasti) */
+  html body #legend-panel .leg-header #btn-shot,html body #legend-panel .leg-header #btn-share{padding-top:4px;padding-bottom:4px;min-height:30px;box-sizing:border-box}
+  html body #legend-panel:not(.leg-mini) .leg-header #leg-back-btn{padding-top:4px;padding-bottom:4px;min-height:30px;box-sizing:border-box}
+  /* in basso: boschi (quattro tasti su due righe) */
+  html body.conf-c.modo-boschi #legend-panel .leg-header #btn-shot,
+  html body.conf-c.modo-boschi #legend-panel .leg-header .tessera.tessera.tessera,
+  html body.conf-c.modo-boschi #legend-panel .leg-header #leg-back-btn{height:30px !important;min-height:0 !important}
+  html body.conf-c.modo-boschi #legend-panel .leg-header{gap:5px !important}
+}
+@media(max-width:375px){
+  html body #reg-apri{font-size:14.5px;letter-spacing:0}
+}
 </style>
 <script>
 /* ═══════════════════════════════════════════════════════════════
@@ -12744,12 +12807,15 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
      nel repo delle tessere). Le vecchie copie spariscono da sole. */
   var TESSERE_COMMIT='90a532e7a3f95e6cde1fc4fd0ee6fc658ffb2f6d';   // ramo boschi-di-fiume, con le quote z5-11 del filtro di altitudine (27/9/2026)
   var TESSERE='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@'+TESSERE_COMMIT+'/';
-  var BASE=TESSERE+'boschi/', OPACITA=0.7, satRetino=0.55;   /* 55%: standard scelto da lui il 29/9 */   // satRetino: la manopola del retino sopra la foto satellitare
+  var BASE=TESSERE+'boschi/', OPACITA=0.7, satRetino=0.35;   /* 35%: standard scelto da lui il 29/9 (prima 55%) */   // satRetino: la manopola del retino sopra la foto satellitare
   var RILIEVO=TESSERE+'rilievo/', TERRENO=TESSERE+'terreno/', Z_TERRENO=12;
   /* ═══ FILTRO DI ALTITUDINE (27/9/2026) ═══ */
   var QUOTA_BASSE=TESSERE+'terreno/', Q_TOT=[0,2300], Q_PASSO=50, quotaMin=0, quotaMax=2300;
   (function(){ var m=(new URLSearchParams(location.search).get('quota')||'').match(/^(\d+)-(\d+)$/);
-    if(m){ quotaMin=+m[1]; quotaMax=+m[2]; } })();
+    // solo una fascia sensata (29/9/2026, collaudo: «quota=5000-100» veniva presa com'era, 0% dei boschi)
+    if(m){ var a=Math.max(Q_TOT[0],Math.min(Q_TOT[1],+m[1])), b=Math.max(Q_TOT[0],Math.min(Q_TOT[1],+m[2]));
+           if(a>b){ var t=a; a=b; b=t; }
+           if(b-a>=Q_PASSO){ quotaMin=Math.round(a/Q_PASSO)*Q_PASSO; quotaMax=Math.round(b/Q_PASSO)*Q_PASSO; } } })();
   function filtroAttivo(){ return quotaMin>Q_TOT[0] || quotaMax<Q_TOT[1]; }
   /* ⚠️ LE 66 TESSERE DI BOSCO SENZA QUOTA (28/9/2026): sulla costa e sui confini
      TINITALY non arriva, la tessera di quota non esiste e chiederla dava 404.
@@ -13147,8 +13213,8 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     function retino(v){ satRetino=v; if(so) so.value=Math.round(v*100); var t=el('bo-sat-val'); if(t) t.textContent=Math.round(v*100)+'%';
       var n=el('bo-nascondi'); if(n) n.textContent=v>0?'Nascondi boschi':'Mostra boschi';
       if(window._boschiSetOpacita) window._boschiSetOpacita(); }
-    var bn=el('bo-nascondi'), prima=0.55;
-    if(bn) bn.addEventListener('click',function(){ if(satRetino>0){ prima=satRetino; retino(0); } else retino(prima||0.55); });
+    var bn=el('bo-nascondi'), prima=0.35;
+    if(bn) bn.addEventListener('click',function(){ if(satRetino>0){ prima=satRetino; retino(0); } else retino(prima||0.35); });
     /* ⚠️ Sul telefono il dito sulla manopola arrivava a Leaflet e spostava la mappa
        (29/9/2026, visto da lui). Si ferma qui ogni evento di tocco e di puntatore. */
     if(so) ['touchstart','touchmove','pointerdown','pointermove','mousedown'].forEach(function(ev){
@@ -13311,6 +13377,8 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     var k=x+'/'+y;
     if(cacheQ[k]) return cacheQ[k];
     if(QUOTA_MANCA[Z_TERRENO+'/'+x+'/'+y]) return (cacheQ[k]=Promise.resolve(null));   // costa e confini: la quota non c'e'
+    // in mare non c'e' ne' bosco ne' quota: senza questo, un tocco sull'acqua dava un 404 in console (29/9/2026)
+    for(var _e in esistono){ if(!esistono[Z_TERRENO+'/'+x+'/'+y]) return (cacheQ[k]=Promise.resolve(null)); break; }
     cacheQ[k]=new Promise(function(ok){
       var im=new Image(); im.crossOrigin='anonymous';
       im.onload=function(){
@@ -13674,6 +13742,10 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   function tieniVistaTel(){ return window.innerWidth<=900 && analisiInCorso(); }
   function centraTel(){
     if(window.innerWidth>900 || typeof window._centraStriscia!=='function') return;
+    /* ⚠️ SE L'UTENTE HA ZOOMATO COL DITO NON SI RICENTRA (29/9/2026, collaudo sul telefono: aprendo
+       «Confronta piogge» la vista passava da 10,75 a 7,25, e chiudendolo tornava la regione intera).
+       Stessa regola di «riduci»: la vista scelta a mano comanda. */
+    if(window._vistaUtenteAttiva && window._vistaUtenteAttiva()) return;
     setTimeout(window._centraStriscia,420); setTimeout(window._centraStriscia,1500);
   }
 
@@ -13736,6 +13808,8 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   function rimettiVista(){
     var v=vistaConfronto, m=map(); vistaConfronto=null; if(!v||!m) return;
     try{ m.stop(); m.setView(v.c,v.z,{animate:false}); }catch(e){}
+    // la nuova analisi spegne la spia della vista dell'utente: se era sua, torna sua (29/9/2026)
+    if(v.vu && window._segnaVistaUtente) window._segnaVistaUtente();
     window._boschiTieni=true;
     window._fermaCentraFino=Date.now()+2500;
   }
@@ -13753,8 +13827,15 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
       if(nuovo) conPeriodo++;
       if(nuovo && (pioggiaPronta() || conPeriodo>=5)){
         clearInterval(att);
+        var v=vistaConfronto;
         rimettiVista();
+        /* ⚠️ SATELLITE E ALTITUDINE TORNANO COM'ERANO (29/9/2026, collaudo): per scegliere il periodo
+           si esce dai boschi, e uscendo il satellite si spegne e il filtro torna a «tutte». Chi aveva
+           la foto e 900-1.650 m rientrava sulla cartina e con tutte le quote. */
+        if(v && v.q){ quotaMin=v.q[0]; quotaMax=v.q[1]; document.body.classList.toggle('bq-on',filtroAttivo()); }
         if(!acceso) entra();
+        if(v && v.q) setTimeout(function(){ try{ disegnaQuota(); rifaiQuota(); }catch(_){} },600);
+        if(v && v.sat) setTimeout(function(){ if(acceso && !window._satOn && window._satToggle) window._satToggle(); },450);
         setTimeout(function(){ if(acceso && !tendinaOn && io===confrontoAtteso) tendinaSu(); },350);
       }
       else if(++giri>200){ clearInterval(att); voglioConfronto=false; }   // 40 secondi
@@ -13762,7 +13843,9 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   }
   function scegliPeriodo(){
     voglioConfronto=true; confrontoAtteso++;
-    var m0=map(); vistaConfronto=m0?{c:m0.getCenter(),z:m0.getZoom()}:null;
+    var m0=map(); vistaConfronto=m0?{c:m0.getCenter(),z:m0.getZoom(),
+      vu:!!(window._vistaUtenteAttiva && window._vistaUtenteAttiva()),
+      sat:!!window._satOn, q:filtroAttivo()?[quotaMin,quotaMax]:null}:null;
     // sul telefono i tasti del periodo stanno nel pannello che il modo nasconde:
     // si esce dai boschi e il sito rimette il pannello del periodo
     if(window.innerWidth<=900) esci();
@@ -14134,7 +14217,8 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
       if(b[0][0]<la1)la1=b[0][0]; if(b[1][0]>la2)la2=b[1][0];
       if(b[0][1]<lo1)lo1=b[0][1]; if(b[1][1]>lo2)lo2=b[1][1]; });
     if(!c) return null;
-    var W=innerWidth-60, H=(innerHeight-46)-140;
+    var _hh=(document.querySelector('header')||{}).offsetHeight||46;   // l'intestazione non e' piu' sempre 46 px (29/9/2026)
+    var W=innerWidth-60, H=(innerHeight-_hh)-140;
     var dx=Math.abs(pxx(lo2)-pxx(lo1)), dy=Math.abs(pyy(la1)-pyy(la2));
     if(!dx||!dy) return null;
     return Math.min(Math.log2(W/dx), Math.log2(H/dy));
@@ -14500,8 +14584,8 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
      1,1 s col satellite, richieste 71 contro 159): sotto la foto non si
      scaricano piu' ne' la cartina OSM (tolta dalla mappa, ma solo dopo il suo
      primo «load»: quandoMappaDisegnata lo aspetta) ne' il rilievo dei boschi.
-   La scelta vale per la SESSIONE (sessionStorage, dentro try): chiusa la scheda si
-   riparte dalla cartina, come il «ridotto» della legenda. Un link con sat=1 la accende. */
+   Niente memoria: ogni visita parte dalla cartina (sua regola 29/9). Un link con sat=1
+   la accende, ma solo se porta anche boschi=1. */
 (function(){
   var SAT_FOTO='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
   // «Alternate» e non «World_Boundaries_and_Places»: quello scrive ogni capoluogo DUE volte,
