@@ -11722,16 +11722,24 @@ body.modo-boschi #time-panel{display:none !important}
 .bo-az-piogge{color:#fff;background:#1b3f6e;border-color:#1b3f6e}
 .bo-az-piogge:hover{background:#234f8a}
 .sat-on .bo-az-sat{color:#fff;background:#2f6b2f;border-color:#2f6b2f}
-/* ═══ PC: i tasti dei boschi in ordine (29/9) ═══ tutti uguali: stessa altezza, stesso stile, divisi a parti uguali */
+/* ═══ PC: i tasti dei boschi in ordine (29/9) ═══ tutti uguali: stessa altezza, stesso stile, divisi a parti uguali.
+   Dal 30/9 (suo: «satellite e confronta salgono, gli altri sotto») «Confronta piogge» e «Satellite» stanno nella
+   riga dei comandi DAVANTI a Immagine e Copia link, che va a capo: 2x2. In .bo-azioni resta «Torna alle piogge». */
 @media(min-width:901px){
-  body.conf-pc:not(.modo-boschi) #legend-panel .leg-header .bo-tend-btn{display:none}
+  body.conf-pc:not(.modo-boschi) #legend-panel .leg-header .bo-tend-btn,
+  body.conf-pc:not(.modo-boschi) #legend-panel .leg-header .bo-az-sat{display:none}
   body.modo-boschi #legend-panel .leg-header{display:flex;gap:8px;margin-bottom:8px}
+  body.conf-pc.modo-boschi #legend-panel .leg-header{flex-wrap:wrap}
+  body.conf-pc.modo-boschi #legend-panel .leg-header #btn-shot,body.conf-pc.modo-boschi #legend-panel .leg-header #btn-share,
+  body.conf-pc.modo-boschi #legend-panel .leg-header .bo-tend-btn,body.conf-pc.modo-boschi #legend-panel .leg-header .bo-az-sat{
+    flex:1 1 calc(50% - 4px);max-width:calc(50% - 4px)}
+  body.modo-boschi.sat-on #legend-panel .leg-header .bo-az-sat{color:#fff;background:#2f6b2f;border-color:#2f6b2f}
   body.modo-boschi #legend-panel .leg-header #btn-shot,body.modo-boschi #legend-panel .leg-header #btn-share,
-  body.modo-boschi #legend-panel .leg-header .bo-tend-btn,body.modo-boschi .bo-azioni .bo-az{
+  body.modo-boschi #legend-panel .leg-header .bo-tend-btn,body.modo-boschi #legend-panel .leg-header .bo-az,body.modo-boschi .bo-azioni .bo-az{
     flex:1 1 0;min-width:0;margin:0;height:34px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;
     font:600 12.5px/1 inherit;font-family:inherit;color:#1b3f6e;background:#eef3fb;border:1px solid #c9d6ea;border-radius:9px;padding:0 5px;white-space:nowrap;cursor:pointer}
   body.modo-boschi #legend-panel .leg-header #btn-shot:hover,body.modo-boschi #legend-panel .leg-header #btn-share:hover,
-  body.modo-boschi #legend-panel .leg-header .bo-tend-btn:hover,body.modo-boschi .bo-azioni .bo-az:hover{background:#dfe8f6}
+  body.modo-boschi #legend-panel .leg-header .bo-tend-btn:hover,body.modo-boschi #legend-panel .leg-header .bo-az:hover,body.modo-boschi .bo-azioni .bo-az:hover{background:#dfe8f6}
   body.modo-boschi.bo-tendina #legend-panel .leg-header .bo-tend-btn{color:#fff;background:#1b3f6e;border-color:#1b3f6e}
   body.modo-boschi.sat-on .bo-azioni .bo-az-sat{color:#fff;background:#2f6b2f;border-color:#2f6b2f}
   body.modo-boschi .bo-azioni{margin-bottom:8px;flex-wrap:wrap}
@@ -12605,6 +12613,9 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
 .modo-boschi .grad,
 .modo-boschi .grad-l,
 .modo-boschi .stats-row{display:none !important}
+/* l'avviso «dati di ieri non pervenuti» nella mappa dei boschi non serve (30/9/2026, suo): parla
+   della pioggia, che qui non si vede. Torna con «Confronta piogge», dove la pioggia c'e'. */
+.modo-boschi:not(.bo-tendina) #ieri-notice{display:none !important}
 /* il pannello legenda esiste solo con un'analisi: col modo acceso serve sempre */
 .modo-boschi #legend-panel{display:block !important}
 @media(max-width:900px){
@@ -12712,7 +12723,8 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   .bo-tend-et{top:calc(30% - 52px)}
 }
 /* ═══ TELEFONO, BOSCHI: quattro tasti uguali su DUE righe (29/9, suo: «se fai quadrati tanto vale due righe») ═══
-   Condividi | Pioggia e boschi   /   Satellite | Indietro. Stessa larghezza, icona e parola in riga. */
+   Satellite | Indietro   /   Condividi | Confronta piogge (ordine del 30/9, suo: «satellite e indietro sopra»).
+   Stessa larghezza, icona e parola in riga. L'ordine e' `order`, il DOM resta Condividi, Confronta, Satellite, Indietro. */
 @media(max-width:900px){
   body.conf-c.modo-boschi #legend-panel .leg-header{flex-wrap:wrap !important;gap:6px !important;align-items:stretch !important}
   body.conf-c.modo-boschi #legend-panel .leg-header #btn-shot,
@@ -12730,6 +12742,10 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   body.conf-c.modo-boschi #btn-shot.ok:after{content:'\2713  Inviata'}
   body.conf-c.modo-boschi #legend-panel .leg-header #leg-back-btn{font-size:0 !important}
   body.conf-c.modo-boschi #legend-panel .leg-header #leg-back-btn:after{content:'\2190  Indietro';font-size:13px}
+  body.conf-c.modo-boschi #legend-panel .leg-header .bo-az-sat.in-riga{order:1}
+  body.conf-c.modo-boschi #legend-panel .leg-header #leg-back-btn{order:2}
+  body.conf-c.modo-boschi #legend-panel .leg-header #btn-shot{order:3}
+  body.conf-c.modo-boschi #legend-panel .leg-header .bo-tend-btn{order:4}
   body.conf-c.modo-boschi.bo-tendina #legend-panel .leg-header .bo-tend-btn.tessera.tessera.tessera{background:#1b3f6e !important;color:#fff !important;border-color:#1b3f6e !important}
   body.conf-c.modo-boschi.sat-on #legend-panel .leg-header .bo-az-sat.tessera.tessera.tessera{background:#2f6b2f !important;color:#fff !important;border-color:#2f6b2f !important}
 }
@@ -13094,8 +13110,19 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
           else { done(null,cv); codaProfilo(); }
         };
         im.onerror=function(){ cv.complete=true; done(null,cv); };
-        im.src=url;
+        im.src=url; cv._im=im;
         return cv;
+      },
+      /* ⚠️ ANNULLARE I DOWNLOAD DEI LIVELLI SALTATI (30/9/2026, suo: «con la rotella veloce le tessere
+         arrivano in ritardo»). Per le <img> Leaflet ferma il download mettendo src vuoto; un canvas non
+         ha src, e l'Image nascosta dentro continuava a scaricare tessere di un livello gia' abbandonato
+         (misurato: 21-28 su 85 a giro di rotella, un quarto del traffico dei boschi buttato, e su 4G
+         rubava banda alle tessere buone). Qui si spegne l'Image prima che Leaflet tolga la tessera. */
+      _abortLoading:function(){
+        var z=this._tileZoom;
+        for(var k in this._tiles){ var t=this._tiles[k], e=t&&t.el;
+          if(e && t.coords.z!==z && !e.complete && e._im){ e._im.onload=e._im.onerror=null; e._im.src=''; e._im=null; } }
+        L.TileLayer.prototype._abortLoading.call(this);
       }
     });
     // ⚠️ i crediti NON stanno sullo strato: li gestisce aggiornaCrediti() secondo
@@ -13195,7 +13222,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
       // Satellite nel pannello (29/9, suo: il riquadro in basso a destra non lo vedeva nessuno)
       +'<div class="bo-azioni"><span class="bo-az bo-az-sat" id="bo-sat-btn" role="button">'+(window._satOn?'🗺 Torna alla mappa':'🛰 Satellite')+'</span>'
       +'<span class="bo-az bo-az-piogge" id="bo-piogge" role="button" title="Torna alla mappa della pioggia, stessa zona">💧 Torna alle piogge</span></div>'
-      +'<div class="bo-sat"><span>Retino sulla foto</span><input type="range" id="bo-sat-op" min="0" max="100" step="5" value="'+Math.round(satRetino*100)+'"><b id="bo-sat-val">'+Math.round(satRetino*100)+'%</b>'
+      +'<div class="bo-sat"><span>Intensità boschi</span><input type="range" id="bo-sat-op" min="0" max="100" step="5" value="'+Math.round(satRetino*100)+'"><b id="bo-sat-val">'+Math.round(satRetino*100)+'%</b>'
       // «solo satellite» in un tocco: il retino va a 0 e torna dov'era (29/9, suo)
       +'<span class="bo-az bo-az-nascondi" id="bo-nascondi" role="button">'+(satRetino>0?'Nascondi boschi':'Mostra boschi')+'</span></div>'
       +'<div class="bo-griglia">'+ordinaLegenda(indice.gruppi).map(function(g){
@@ -13237,13 +13264,15 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
        «Indietro» (27/9, suo). Bocciati: nella riga di «riduci» («sembra forzato
        li' dentro»), sulla mappa sopra il pannello, «⇆ Piogge». La classe conf-c
        resta perche' il CSS del telefono e' scritto su di lei. */
-    /* PC (29/9, suo: «troppi bottoni, ognuno diverso, niente ordine»): due righe di tasti uguali.
-       Riga 1: Immagine | Copia link | Confronta. Riga 2: Torna alle piogge | Satellite. */
+    /* PC (29/9, suo: «troppi bottoni, ognuno diverso, niente ordine»): righe di tasti uguali.
+       Dal 30/9 (suo: «satellite e confronta salgono, gli altri sotto»): «Confronta piogge» e «Satellite»
+       entrano nella riga dei comandi davanti a «Immagine», che va a capo con «Copia link» (griglia 2x2, CSS
+       conf-pc). In .bo-azioni resta solo «Torna alle piogge», a tutta larghezza. Fuori dai boschi i due
+       tasti si nascondono da CSS, come sul telefono. */
     if(tb && innerWidth>900){
-      // «Confronta piogge» su tre per riga era troppo stretto (29/9, suo): griglia 2x2 +
-      // «Torna alle piogge» a tutta larghezza. Immagine | Copia link / Confronta piogge | Satellite
-      var azP=document.querySelector('#bo-leg .bo-azioni');
-      if(azP){ azP.insertBefore(tb,azP.firstChild); document.body.classList.add('conf-pc'); scriviTend(false); }
+      var hdrP=document.querySelector('#legend-panel .leg-header'), shotP=el('btn-shot'), sbP=el('bo-sat-btn');
+      if(hdrP && shotP){ hdrP.insertBefore(tb,shotP); if(sbP) hdrP.insertBefore(sbP,shotP);
+        document.body.classList.add('conf-pc'); scriviTend(false); }
     }
     if(tb && innerWidth<=900){
       tb.addEventListener('click',function(e){ e.stopPropagation(); });
@@ -14846,6 +14875,139 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
       if(document.body.classList.contains('sat-on')) carica().then(pianifica); else pianifica();
     }).observe(document.body,{attributes:true,attributeFilter:['class']});
     if(document.body.classList.contains('sat-on')) carica().then(pianifica);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',avvia); else avvia();
+})();
+</script>
+<!-- ═══ FINESTRA «NOVITÀ» ALLA PRIMA APERTURA (30/9/2026, sua richiesta; rifatta due volte la stessa notte) ═══
+     Quattro pagine, una per novita', ognuna con un filmato RIPRESO DAL SITO VERO (novita/*.mp4, registrati con
+     registra-novita.js nel banco di lavoro, a misura di telefono, zoom a STACCHI nitidi) a tutta larghezza e,
+     SOPRA il filmato (suo: «uno o guarda sopra o sotto», legge e poi guarda), le scritte grandi da slogan: il titolo fisso e
+     una didascalia che cambia a tempo coi «marchi» del filmato (secondi in cui succede qualcosa, montati da
+     build-novita.py leggendo <nome>-tempi.json).
+     Ordine (suo): satellite per primo, la novita' piu' importante; poi tocca un bosco, filtro, e per ultima
+     quota e versante su una montagna vera. Il filmato parte da solo, gira UNA volta e, finito, si passa DA SOLI
+     alla pagina dopo (suo: «non fare che si ferma»); sull'ultima ci si ferma sull'ultimo fotogramma e «Vai alla
+     mappa» pulsa. Un tocco sul filmato lo fa ripartire. «Indietro» per rivedere la pagina prima. Compare UNA volta sola: X, velo, Esc o «Vai alla mappa» segnano `novitaVista`
+     in localStorage. Per rivederla: /?novita=1 (rimando in /guida/). Per non averla mai: /?novita=0.
+     Non compare a chi arriva con un link (regione, date, paese), dentro un iframe, e finche' la mappa non ha
+     finito di caricare. ⚠️ Quando le novita' cambiano si alza VERSIONE. -->
+<style>
+#nv-velo{position:fixed;inset:0;z-index:12000;background:rgba(8,20,36,.7);display:none;align-items:center;justify-content:center;padding:10px;box-sizing:border-box}
+#nv-velo.su{display:flex}
+#nv-box{position:relative;background:#fff;border-radius:18px;width:100%;max-width:430px;max-height:calc(100vh - 20px);max-height:calc(100dvh - 20px);
+  display:flex;flex-direction:column;box-shadow:0 14px 44px rgba(0,0,0,.45);color:#1b3f6e;overflow:hidden}
+/* il riquadro del filmato ha la misura del filmato (640x868) gia' prima che arrivi: niente righe vuote sopra o sotto */
+#nv-film{position:relative;background:#0b1a2b;flex:0 1 auto;min-height:0;aspect-ratio:640/860;max-height:calc(100dvh - 20px - 215px);overflow:hidden;cursor:pointer;line-height:0}
+#nv-film video{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 100%;background:#0b1a2b}   /* taglia gli ultimi 8 px in alto: l'orlo chiaro della barra delle regioni */
+#nv-film video.via{display:none}
+#nv-alto{padding:12px 14px 0;display:flex;align-items:center;gap:10px;flex:none}
+#nv-tag{background:#e12b2b;color:#fff;font-size:16px;font-weight:800;letter-spacing:.09em;border-radius:8px;padding:6px 12px;line-height:1.2;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+#nv-conta{margin-left:auto;font-size:14px;color:#6a7a8c;font-weight:700;white-space:nowrap}
+#nv-x{background:#eef3fb;border:0;width:38px;height:38px;border-radius:50%;font-size:26px;line-height:38px;color:#1b3f6e;cursor:pointer;padding:0;font-family:inherit;text-align:center}
+#nv-x:hover{background:#dfe8f6}
+#nv-testo{padding:8px 16px 10px;flex:none}
+#nv-tit{margin:0 0 4px;font-size:25px;line-height:1.1;font-weight:800;color:#1b3f6e}
+#nv-dida{margin:0;font-size:19px;line-height:1.25;font-weight:600;color:#2a4a72;min-height:2.7em;animation:nvDida .35s ease-out}
+@keyframes nvDida{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
+/* la didascalia su una TARGA BLU (30/9, sua scelta fra tre stili: «un po' anonime», la targa e' la piu' leggibile) */
+#nv-dida span{display:inline-block;background:#1b3f6e;color:#fff;padding:9px 15px;border-radius:12px;font-weight:800;font-size:20px;line-height:1.2;box-shadow:0 3px 10px rgba(27,63,110,.3)}
+#nv-piede{display:flex;align-items:center;gap:10px;padding:8px 14px 12px;flex:none;background:#fff}
+#nv-punti{display:flex;gap:7px;margin-right:auto}
+#nv-punti i{width:9px;height:9px;border-radius:50%;background:#c9d6ea;display:block}
+#nv-punti i.on{background:#1b3f6e}
+#nv-dietro{background:#eef3fb;color:#1b3f6e;border:1px solid #c9d6ea;border-radius:12px;font-weight:700;font-size:15px;line-height:1;font-family:inherit;padding:14px 14px;cursor:pointer}
+#nv-dietro:hover{background:#dfe8f6}
+#nv-dietro[disabled]{visibility:hidden}
+#nv-avanti{background:#1b3f6e;color:#fff;border:0;border-radius:12px;font-weight:800;font-size:16px;line-height:1;font-family:inherit;padding:14px 20px;cursor:pointer;min-width:150px}
+#nv-avanti:hover{background:#234f8a}
+#nv-avanti.pulsa{animation:nvPulsa 1.3s ease-in-out infinite}
+@keyframes nvPulsa{0%,100%{box-shadow:0 0 0 0 rgba(27,63,110,.55)}50%{box-shadow:0 0 0 9px rgba(27,63,110,0)}}
+@media(max-width:900px){ #nv-box{max-width:none} #nv-tit{font-size:24px} #nv-dida{font-size:18.5px} }
+@media(max-height:660px){ #nv-tit{font-size:21px} #nv-dida{min-height:2.4em} #nv-dida span{font-size:17px;padding:7px 12px} #nv-avanti{padding:12px 16px;font-size:15px;min-width:130px} #nv-dietro{padding:12px 12px;font-size:14px} #nv-testo{padding-top:4px;padding-bottom:6px} #nv-film{max-height:calc(100dvh - 20px - 190px)} }
+</style>
+<script>
+(function(){
+  var VERSIONE='2026-09-30', CHIAVE='novitaVista';
+  // d = didascalie: [secondo, testo]; il secondo viene dai marchi della registrazione (build-novita.py)
+  var PAGINE=[
+    {t:'Boschi dal satellite', f:'novita/satellite-a', d:[[0, "Premi Satellite"], [2.5, "Regola i colori dei boschi, o toglili"], [7.25, "Zoom al massimo"], [9.27, "Risoluzione altissima: case, alberi, sentieri"], [11.69, "Come Google Maps, in molte zone più dettagliato"], [14.1, "E il tasto per Google Maps c’è sempre"]]},
+    {t:'Tocca un bosco', f:'novita/boschi', d:[[0, "Zoom sui boschi"], [3.24, "Tocca un punto"], [4.31, "Ti dice che bosco è"]]},
+    {t:'Filtra per altitudine', f:'novita/filtro', d:[[0, "Trascina la freccia in su"], [2.11, "Via i castagneti: restano faggi e abeti"], [4.26, "Più su: via anche i faggi, restano gli abeti"], [7.52, "Riallarga: ricompaiono tutti"]]},
+    {t:'Quota, versante, pendenza', f:'novita/nuvoletta', d:[[0, "Un lariceto a 1.850 metri, Alpe di Siusi"], [1.5, "Tocca"], [2.57, "Quota, versante e pendenza"], [5.17, "Un tasto e sei su Google Maps"]]}
+  ];
+  var AVANZA_DOPO=1200;   // ms fermi sull'ultimo fotogramma prima di passare da soli alla pagina dopo
+  var avanzaT=null;
+  var velo=null, idx=0, vids=[], elTit, elDida, elConta, elPunti, elAvanti, elDietro, elFilm;
+  function forzata(){ return /[?&]novita=1(&|$)/.test(location.search); }
+  function vietata(){ return /[?&]novita=0(&|$)/.test(location.search); }
+  function vista(){ try{ return localStorage.getItem(CHIAVE)===VERSIONE; }catch(e){ return false; } }
+  function segna(){ try{ localStorage.setItem(CHIAVE,VERSIONE); }catch(e){} }
+  function ga(az,pg){ try{ gtag('event','novita_finestra',{azione:az,pagina:pg}); }catch(e){} }
+  function costruisci(){
+    velo=document.createElement('div'); velo.id='nv-velo';
+    velo.innerHTML='<div id="nv-box" role="dialog" aria-modal="true" aria-labelledby="nv-tit">'
+      +'<div id="nv-alto"><span id="nv-tag">NOVITÀ</span><span id="nv-conta"></span><button id="nv-x" type="button" aria-label="Chiudi">×</button></div>'
+      +'<div id="nv-testo"><h2 id="nv-tit"></h2><p id="nv-dida"></p></div>'
+      +'<div id="nv-film"></div>'
+      +'<div id="nv-piede"><span id="nv-punti"></span><button id="nv-dietro" type="button">← Indietro</button><button id="nv-avanti" type="button"></button></div></div>';
+    document.body.appendChild(velo);
+    elTit=document.getElementById('nv-tit'); elDida=document.getElementById('nv-dida'); elConta=document.getElementById('nv-conta');
+    elPunti=document.getElementById('nv-punti'); elAvanti=document.getElementById('nv-avanti'); elDietro=document.getElementById('nv-dietro'); elFilm=document.getElementById('nv-film');
+    PAGINE.forEach(function(pg,i){
+      var v=document.createElement('video');
+      v.muted=true; v.playsInline=true; v.setAttribute('playsinline',''); v.setAttribute('muted','');
+      v.preload='none'; v.poster=pg.f+'.jpg'; v.setAttribute('aria-label',pg.t); v.className='via';
+      v.addEventListener('timeupdate',function(){ if(i===idx) didascalia(v.currentTime); });
+      /* finito il filmato si va avanti DA SOLI (suo, 30/9: «non fare che si ferma se uno non tocca Continua»);
+         sull'ultima pagina ci si ferma sull'ultimo fotogramma e «Vai alla mappa» pulsa */
+      v.addEventListener('ended',function(){ if(i!==idx) return;
+        if(idx<PAGINE.length-1){ clearTimeout(avanzaT); avanzaT=setTimeout(function(){ if(velo.classList.contains('su')&&idx===i) avanti(true); },AVANZA_DOPO); }
+        else elAvanti.classList.add('pulsa'); });
+      elFilm.insertBefore(v,elFilm.firstChild); vids.push(v);
+      var p=document.createElement('i'); elPunti.appendChild(p);
+    });
+    document.getElementById('nv-x').addEventListener('click',function(e){ e.stopPropagation(); chiudi('chiusa'); });
+    elAvanti.addEventListener('click',avanti);
+    elDietro.addEventListener('click',indietro);
+    elFilm.addEventListener('click',function(){ riparti(); });   // un tocco sul filmato: da capo
+    velo.addEventListener('click',function(e){ if(e.target===velo) chiudi('chiusa'); });
+  }
+  function didascalia(t){
+    var d=PAGINE[idx].d, s=d[0][1];
+    for(var k=0;k<d.length;k++) if(t>=d[k][0]) s=d[k][1];
+    if(elDida.textContent!==s){ elDida.textContent=''; var sp=document.createElement('span'); sp.textContent=s; elDida.appendChild(sp); elDida.style.animation='none'; void elDida.offsetWidth; elDida.style.animation=''; }
+  }
+  function riparti(){ var v=vids[idx]; clearTimeout(avanzaT); elAvanti.classList.remove('pulsa'); try{ v.currentTime=0; }catch(e){} var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); didascalia(0); }
+  function mostra(i){
+    idx=i; var pg=PAGINE[i];
+    elTit.textContent=pg.t; elConta.textContent=(i+1)+' di '+PAGINE.length;
+    [].forEach.call(elPunti.children,function(p,k){ p.className=k===i?'on':''; });
+    elAvanti.textContent= i<PAGINE.length-1 ? 'Continua →' : 'Vai alla mappa';
+    elAvanti.classList.remove('pulsa');
+    if(i>0) elDietro.removeAttribute('disabled'); else elDietro.setAttribute('disabled','');
+    vids.forEach(function(v,k){
+      if(k===i){ v.classList.remove('via'); if(!v.getAttribute('src')){ v.src=pg.f+'.mp4'; v.load(); } riparti(); }
+      else { v.classList.add('via'); try{ v.pause(); }catch(e){} }
+    });
+  }
+  function tasto(e){ if(e.key==='Escape') chiudi('chiusa'); else if(e.key==='ArrowRight') avanti(); else if(e.key==='ArrowLeft') indietro(); }
+  function avanti(daSolo){ clearTimeout(avanzaT); if(idx<PAGINE.length-1){ mostra(idx+1); ga(daSolo===true?'auto':'pagina',idx+1); } else chiudi('finita'); }
+  function indietro(){ clearTimeout(avanzaT); if(idx>0){ mostra(idx-1); ga('indietro',idx+1); } }
+  function chiudi(come){
+    clearTimeout(avanzaT); velo.classList.remove('su'); vids.forEach(function(v){ try{ v.pause(); }catch(e){} });
+    segna(); ga(come,idx+1); document.removeEventListener('keydown',tasto);
+  }
+  function apri(){ if(!velo) costruisci(); velo.classList.add('su'); mostra(0); ga('aperta',1); document.addEventListener('keydown',tasto); }
+  window._novitaApri=apri;   // per la guida e per le prove
+  function pronta(){ var sp=document.getElementById('map-spinner'); return !!window._mapDebug && (!sp || getComputedStyle(sp).display==='none'); }
+  function avvia(){
+    if(vietata()) return;
+    try{ if(window.top!==window) return; }catch(e){}
+    var pagina=location.pathname; if(!(pagina==='/'||/\/index\.html$/.test(pagina))) return;
+    if(!forzata()){ if(vista()) return; if(location.search && location.search!=='?') return; }
+    var t0=Date.now();
+    (function aspetta(){ if(pronta()||Date.now()-t0>8000) setTimeout(apri,900); else setTimeout(aspetta,300); })();
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',avvia); else avvia();
 })();
