@@ -157,13 +157,28 @@ async function main() {
   console.log('=== collect-toscana-sir avviato ===');
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
+  // NOW_OVERRIDE serve solo alle prove in sandbox (orologio finto); in produzione non c'e'.
+  const nowRun = process.env.NOW_OVERRIDE ? new Date(process.env.NOW_OVERRIDE) : new Date();
+  const italyNow = new Date(nowRun.getTime() + getItalyOffset(nowRun) * 3600000);
+  const italyHour = italyNow.getUTCHours();
+  const isClosing = process.env.CLOSING === '1' || italyHour >= 22;
+  // ⚠️ GIRO DI CHIUSURA DOPO MEZZANOTTE (30/9/2026, bug #17 di ritorno). Dal 26/8/2026 lo
+  // scheduler di GitHub fa partire i tre cron di chiusura (20:40, 21:00, 21:20 UTC) con due
+  // ore e mezza di ritardo: atterravano alle 00:30-01:50 italiane. «Oggi in Italia» era gia'
+  // il giorno dopo: la chiusura (0 inclusi) finiva nel file NUOVO con la finestra Δ24h piena
+  // della pioggia di ieri, e il giorno vero non veniva mai chiuso: l'ultimo giro prima di
+  // mezzanotte tiene la protezione glitch-0 e congela l'ultimo valore. 1.240 mm doppi in
+  // settembre (Empoli 78,5 mm il 17 E il 18). Regola: un giro di chiusura che gira prima di
+  // mezzogiorno sta chiudendo IERI, e sul giorno nuovo non scrive niente.
+  const closingLate = isClosing && italyHour < 12;
   function getTargetDate() {
     if (process.env.DATE_OVERRIDE && process.env.DATE_OVERRIDE.trim()) return process.env.DATE_OVERRIDE.trim();
-    const now = new Date();
-    const italy = new Date(now.getTime() + getItalyOffset(now) * 3600000);
+    const italy = new Date(italyNow.getTime() - (closingLate ? 86400000 : 0));
     return fmtDate(italy);
   }
   const dateStr = getTargetDate();
+  if (closingLate) console.log(`  ⚠️ Giro di chiusura dopo mezzanotte (${italyNow.toISOString().slice(11, 16)} ora italiana): chiudo IERI, ${dateStr}`);
+  if (process.env.DRY === '1') { console.log(`  DRY: data bersaglio ${dateStr}, chiusura=${isClosing}, dopo mezzanotte=${closingLate}`); return; }
 
   console.log('  Carico metadati stazioni (lat/lon) dal file statico...');
   const meta = JSON.parse(fs.readFileSync(COORDS_FILE, 'utf8'));
@@ -191,9 +206,6 @@ async function main() {
   // Nei run di chiusura serali la protezione glitch NON si applica: lo 0 a fine giornata
   // è un dato reale, e preservare il valore precedente congelerebbe la pioggia di ieri
   // trascinata dai run del mattino (bug #17, vedi commento in testa al file).
-  const nowRun = new Date();
-  const italyHour = new Date(nowRun.getTime() + getItalyOffset(nowRun) * 3600000).getUTCHours();
-  const isClosing = process.env.CLOSING === '1' || italyHour >= 22;
   let finalStations = stations;
   if (fs.existsSync(outFile)) {
     try {
@@ -219,13 +231,14 @@ async function main() {
     }
   }
 
-  fs.writeFileSync(outFile, JSON.stringify({
+  // closing_late: la spia. Se il giro di chiusura e' arrivato dopo mezzanotte lo si scrive nel
+  // file, cosi' si vede senza andare a leggere i log di GitHub.
+  fs.writeFileSync(outFile, JSON.stringify(Object.assign({
     date:      dateStr,
     collected: new Date().toISOString(),
     source:    'sir-toscana',
-    count:     finalStations.length,
-    stations:  finalStations
-  }));
+    count:     finalStations.length
+  }, closingLate ? { closing_late: nowRun.toISOString() } : {}, { stations: finalStations })));
   console.log(`✅ Scritto ${outFile} (${finalStations.length} stazioni)`);
 
   // ── Temperatura (dall'11/8/2026 — grafici stazione) ────────────────
@@ -252,9 +265,14 @@ async function main() {
       if (!perId[p[0]] || args.length > perId[p[0]].length) perId[p[0]] = p;
     }
     const num = v => { const x = parseFloat(stripHtml(v)); return isNaN(x) ? null : x; };
+    // a === b (27/9/2026): minima e massima identiche su un giorno intero sono un
+    // termometro bloccato, non un dato. SIR pubblica cosi' i sensori spenti (0/0:
+    // Firenzuola dal 10/8, 49 giorni su 49; Croce Arcana dal 29/8) e quelli
+    // incantati (Croce Arcana 10,3/10,3 il 12/9). Senza, il grafico disegnava una
+    // linea piatta a zero, e una futura spia delle gelate le avrebbe prese per vere.
     const coppia = (mn, mx) => {
       const a = num(mn), b = num(mx);
-      if (a === null || b === null || a < -45 || b > 50 || a > b) return null;
+      if (a === null || b === null || a < -45 || b > 50 || a >= b) return null;
       return [Math.round(a * 10) / 10, Math.round(b * 10) / 10];
     };
     const tOggi = {}, tIeri = {};

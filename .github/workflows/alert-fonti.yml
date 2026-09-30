@@ -1,0 +1,176 @@
+name: Alert fonti — regioni ferme
+on:
+  workflow_dispatch:
+    inputs:
+      test_mail:
+        description: 'Manda una mail di prova (non tocca il registro)'
+        type: boolean
+        default: false
+      simula:
+        description: "Finge una regione ferma, es. liguria:4 (non tocca il registro)"
+        required: false
+        default: ''
+      ferme_ora:
+        description: 'Controlla subito i pluviometri fermi, senza aspettare lunedì'
+        type: boolean
+        default: false
+  schedule:
+    # 1 run/giorno, dopo i collector del mattino. Nessun vincolo di ordine con
+    # gaps-nord (09:10): questo controllo ignora i file di stima, quindi non
+    # importa chi dei due arriva prima. Vedi .github/scripts/check-fonti.js
+    # 3/8/2026: da '30 9' a '43 9'. La mezz'ora tonda è una delle fasce più
+    # affollate di GitHub Actions: questo run partiva con ~85 minuti di ritardo
+    # (1 e 2 agosto) e il 3 agosto è stato SALTATO del tutto — gli altri
+    # workflow del repo, a minuti sparsi, sono partiti regolarmente. Tredici
+    # minuti più tardi non cambia nulla per i dati (i collector del mattino
+    # chiudono entro le ~08:46 anche coi loro ritardi) ma toglie il run dalla
+    # coda di punta. Se anche così saltasse, si può lanciare a mano da
+    # "Run workflow": l'invio è indipendente dalla schedulazione.
+    - cron: '43 9 * * *'
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Controlla le fonti
+        id: check
+        env:
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          TEST_MAIL: ${{ inputs.test_mail && '1' || '0' }}
+          SIMULA: ${{ inputs.simula }}
+        run: node .github/scripts/check-fonti.js
+
+      # L'invio è fatto con curl, non con un'action di terzi: così la password
+      # per le app di Gmail non esce mai dal runner. Lo script ha già scritto
+      # il messaggio completo (intestazioni comprese) in alert-mail.eml.
+      - name: Manda la mail
+        if: steps.check.outputs.mail == 'true'
+        env:
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_PASS: ${{ secrets.MAIL_PASS }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+        run: |
+          if [ -z "$MAIL_USER" ] || [ -z "$MAIL_PASS" ] || [ -z "$MAIL_TO" ]; then
+            echo "::error::Mancano i secret MAIL_USER / MAIL_PASS / MAIL_TO: la mail non parte."
+            exit 1
+          fi
+          ok=0
+          for i in 1 2 3; do
+            if curl --silent --show-error --ssl-reqd \
+                 --url 'smtps://smtp.gmail.com:465' \
+                 --user "$MAIL_USER:$MAIL_PASS" \
+                 --mail-from "$MAIL_USER" \
+                 --mail-rcpt "$MAIL_TO" \
+                 --upload-file alert-mail.eml; then ok=1; break; fi
+            echo "Invio fallito (tentativo $i/3), riprovo fra 20s..."
+            sleep 20
+          done
+          [ "$ok" = "1" ] || { echo "::error::Mail non inviata dopo 3 tentativi"; exit 1; }
+          echo "Mail inviata."
+
+      # ── Secondo inquilino di questo workflow: i pluviometri FERMI ──────────
+      # Sta qui e non in un cron suo perché ha bisogno delle stesse cose (la
+      # posta, il registro, un commit) e perché il momento giusto è lo stesso:
+      # dopo i collector del mattino. Gira SOLO IL LUNEDÌ: il segnale che cerca
+      # si muove su 45 giorni, guardarlo ogni giorno sarebbe rumore e tempo di
+      # Actions buttato. Il controllo dei giorni feriali sta dentro il run e non
+      # in un `if:` per una ragione pratica: così il passo esiste sempre e i
+      # suoi output esistono sempre, e il commit più sotto non deve indovinare.
+      # Vedi .github/scripts/check-stazioni-ferme.js
+      - name: Controlla i pluviometri fermi (lunedì)
+        id: ferme
+        env:
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+        run: |
+          if [ "${{ inputs.ferme_ora }}" != "true" ] && [ "$(date -u +%u)" != "1" ]; then
+            echo "Non è lunedì: il controllo dei pluviometri fermi si salta."
+            echo "mail=false" >> $GITHUB_OUTPUT
+            echo "registro=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          node .github/scripts/check-stazioni-ferme.js
+        continue-on-error: true
+
+      - name: Manda la mail dei pluviometri fermi
+        if: steps.ferme.outputs.mail == 'true'
+        env:
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_PASS: ${{ secrets.MAIL_PASS }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+        run: |
+          if [ -z "$MAIL_USER" ] || [ -z "$MAIL_PASS" ] || [ -z "$MAIL_TO" ]; then
+            echo "::error::Mancano i secret MAIL_USER / MAIL_PASS / MAIL_TO: la mail non parte."
+            exit 1
+          fi
+          ok=0
+          for i in 1 2 3; do
+            if curl --silent --show-error --ssl-reqd \
+                 --url 'smtps://smtp.gmail.com:465' \
+                 --user "$MAIL_USER:$MAIL_PASS" \
+                 --mail-from "$MAIL_USER" \
+                 --mail-rcpt "$MAIL_TO" \
+                 --upload-file ferme-mail.eml; then ok=1; break; fi
+            echo "Invio fallito (tentativo $i/3), riprovo fra 20s..."
+            sleep 20
+          done
+          [ "$ok" = "1" ] || { echo "::error::Mail non inviata dopo 3 tentativi"; exit 1; }
+          echo "Mail inviata."
+
+      # ── Terzo inquilino: la PIOGGIA DOPPIA (30/9/2026) ────────────────────
+      # Tutti i giorni, tutte le regioni: stazioni con lo stesso valore in due
+      # giorni consecutivi, la firma della pioggia trascinata sul giorno dopo
+      # (bug #17/#18/#19). Non legge fonti esterne e non tocca dati.
+      # Vedi .github/scripts/check-doppioni.js
+      - name: Controlla la pioggia doppia
+        id: doppioni
+        env:
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+        run: node .github/scripts/check-doppioni.js
+        continue-on-error: true
+
+      - name: Manda la mail della pioggia doppia
+        if: steps.doppioni.outputs.mail == 'true'
+        env:
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_PASS: ${{ secrets.MAIL_PASS }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+        run: |
+          if [ -z "$MAIL_USER" ] || [ -z "$MAIL_PASS" ] || [ -z "$MAIL_TO" ]; then
+            echo "::error::Mancano i secret MAIL_USER / MAIL_PASS / MAIL_TO: la mail non parte."
+            exit 1
+          fi
+          ok=0
+          for i in 1 2 3; do
+            if curl --silent --show-error --ssl-reqd                  --url 'smtps://smtp.gmail.com:465'                  --user "$MAIL_USER:$MAIL_PASS"                  --mail-from "$MAIL_USER"                  --mail-rcpt "$MAIL_TO"                  --upload-file doppioni-mail.eml; then ok=1; break; fi
+            echo "Invio fallito (tentativo $i/3), riprovo fra 20s..."
+            sleep 20
+          done
+          [ "$ok" = "1" ] || { echo "::error::Mail non inviata dopo 3 tentativi"; exit 1; }
+          echo "Mail inviata."
+
+      - name: Commit del registro
+        if: steps.check.outputs.registro == 'true' || steps.ferme.outputs.registro == 'true'
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@bot.com"
+          git add data/alert-fonti.json
+          # Il registro dei fermi nasce al primo lunedì: prima di allora non
+          # esiste, e `git add` su un file che non c'è farebbe fallire il passo.
+          if [ -f data/stazioni-ferme.json ]; then git add data/stazioni-ferme.json; fi
+          git diff --staged --quiet || git commit -m "alert-fonti $(date -u +%Y-%m-%d) [skip netlify]"
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push; then ok=1; break; fi
+            echo "Push fallito (tentativo $i/5), retry tra 10s..."
+            sleep 10
+          done
+          [ "$ok" = "1" ] || { echo "Push fallito dopo 5 tentativi"; exit 1; }
