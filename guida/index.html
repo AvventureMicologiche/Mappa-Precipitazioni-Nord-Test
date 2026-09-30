@@ -150,6 +150,21 @@ figcaption{font-size:13px;color:var(--grigio);margin-top:7px;line-height:1.45}
   font-weight:600;font-size:13.5px;padding:7px 12px;border-radius:8px;white-space:nowrap}
 .video .go:hover{background:#eaf0f8}
 @media(max-width:560px){.video{flex-wrap:wrap}.video .t{flex:1 1 100%;order:3}}
+/* la guida in video, in evidenza (30/9/2026): copertina verticale a sinistra, titolo grande e tasto rosso */
+.video-big{display:flex;align-items:center;gap:22px;background:var(--carta);border:1px solid var(--bordo);border-radius:14px;
+  padding:16px 20px;margin:14px 0 18px;text-decoration:none;border-bottom:1px solid var(--bordo);box-shadow:0 4px 18px rgba(27,63,110,.08);transition:box-shadow .15s}
+.video-big:hover{box-shadow:0 8px 26px rgba(27,63,110,.16)}
+.video-big .vb-foto{position:relative;flex:0 0 150px;border-radius:12px;overflow:hidden;background:#0b1a2b}
+.video-big .vb-foto img{display:block;width:150px;height:auto}
+.video-big .vb-play{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:var(--rosso);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.video-big .vb-play svg{margin-left:4px}
+.video-big .vb-testo{flex:1 1 auto;display:flex;flex-direction:column;gap:8px;min-width:0}
+.video-big .vb-tag{align-self:flex-start;background:var(--rosso);color:#fff;font-size:11px;font-weight:800;letter-spacing:.08em;border-radius:5px;padding:4px 8px}
+.video-big b{color:var(--blu);font-size:21px;line-height:1.2}
+.video-big .vb-sub{font-size:14px;color:var(--grigio)}
+.video-big .vb-go{align-self:flex-start;background:var(--rosso);color:#fff;font-weight:700;font-size:15px;padding:10px 18px;border-radius:9px;margin-top:4px}
+@media(max-width:560px){.video-big{gap:14px;padding:14px}.video-big .vb-foto{flex-basis:110px}.video-big .vb-foto img{width:110px}.video-big .vb-play{width:44px;height:44px;margin:-22px 0 0 -22px}.video-big b{font-size:17px}.video-big .vb-go{font-size:14px;padding:9px 14px}}
 
 /* ── tabelle ────────────────────────────────────────────────────────────── */
 table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;background:var(--carta);
@@ -226,7 +241,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
   <div class="box">
     <b>In questa pagina</b>
     <ol>
-      <li><a href="#video">Il video, in sintesi</a></li>
+      <li><a href="#video">La guida in video</a></li>
       <li><a href="#cose">Che cosa mostra il sito</a></li>
       <li><a href="#tre-passi">In tre passi</a></li>
       <li><a href="#dove">Scegliere dove</a></li>
@@ -258,32 +273,33 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
      Si tengono le ultime otto o nove e si aggiorna la data del titolo. -->
 <div class="upd">
   <div class="tit"><span class="tag">NOVITÀ</span><b>Ultimi aggiornamenti</b>
-    <span class="quando">28 settembre 2026</span></div>
+    <span class="quando">30 settembre 2026</span></div>
   <ul>
+    <li><span class="data">30 set</span><span><a href="#video">La guida in video</a>: cinque minuti con tutti gli strumenti della mappa, dal telefono, sul canale YouTube.</span></li>
+    <li><span class="data">30 set</span><span><a href="#satellite">I boschi dal satellite</a>: nella mappa boschi premi Satellite e i colori dei boschi restano sopra la foto vera, fino a distinguere case, alberi e sentieri. Regoli l'intensità dei colori o li togli.</span></li>
+    <li><span class="data">30 set</span><span><a href="/?novita=1">Le novità in quattro filmati</a>: alla prima apertura della mappa una presentazione breve di satellite, tocco sul bosco, filtro per altitudine e quota e versante.</span></li>
     <li><span class="data">28 set</span><span><a href="#altitudine">Filtra i boschi per altitudine</a>: nella mappa boschi trascini due frecce e restano solo i boschi fra le quote che scegli, per esempio fra 800 e 1.000 metri.</span></li>
     <li><span class="data">27 set</span><span><a href="https://precipitazioni.avventuremicologiche.it/mappa-forestale/">La mappa forestale d'Italia</a>: una pagina per ogni regione e ogni valle, con i boschi tipo per tipo e la carta ufficiale da cui vengono.</span></li>
     <li><span class="data">26 set</span><span><a href="#colori">Pioppi, salici, ontani e frassini</a>: nella mappa boschi un colore nuovo per i boschi lungo fiumi e torrenti, in tutta Italia.</span></li>
     <li><span class="data">26 set</span><span><a href="#cerca">Cerca con le coordinate</a>: nella casella di ricerca scrivi il punto del GPS o incolla un link di Google Maps.</span></li>
     <li><span class="data">24 set</span><span><a href="#tocca">Tocca un punto nella mappa boschi</a>: che bosco c'è, quota, versante e pendenza, e lo apri su Google Maps. E sotto i colori, il rilievo di monti e valli.</span></li>
     <li><span class="data">19 set</span><span><a href="#boschi">La mappa boschi in tutta Italia</a>: ventuno regioni, e un tocco su un punto ti dice che bosco è.</span></li>
-    <li><span class="data">19 set</span><span><a href="#confronta">Confronta pioggia e boschi</a>: trascini la barra, a sinistra dove ha piovuto e a destra che bosco c'è.</span></li>
-    <li><span class="data">18 set</span><span><a href="#boschi">La mappa boschi al Sud</a>: da oggi anche in Abruzzo, Puglia, Basilicata e Sicilia, tredici regioni in tutto.</span></li>
-    <li><span class="data">16 set</span><span><a href="#boschi">La mappa boschi</a>: faggete, castagneti, querceti e abetaie colorati sulla mappa, per ora in nove regioni.</span></li>
   </ul>
   <p class="rivedi"><a href="/?novita=1">Rivedi la presentazione delle novità</a>, la finestra coi filmati che compare alla prima apertura della mappa.</p>
 </div>
 
-<h2 id="video"><span class="n">1</span>Il video, in sintesi</h2>
-<p>Sul canale c'è una <b>breve guida sintetica</b>: due minuti, il giro veloce dei tasti principali. Serve a partire.</p>
-<div class="video">
-  <a class="play" href="https://youtu.be/fvsBZJ_Ylf4" target="_blank" rel="noopener" aria-label="Guarda il video"
-     onclick="try{gtag('event','click_youtube',{pulsante:'guida-video'})}catch(e){}">
-    <svg width="15" height="17" viewBox="0 0 16 18" aria-hidden="true"><polygon points="0,0 0,18 16,9" fill="#fff"/></svg>
-  </a>
-  <div class="t"><b>I tasti principali in due minuti</b>Video sul canale Avventure Micologiche.</div>
-  <a class="go" href="https://youtu.be/fvsBZJ_Ylf4" target="_blank" rel="noopener"
-     onclick="try{gtag('event','click_youtube',{pulsante:'guida-video'})}catch(e){}">Guarda</a>
-</div>
+<h2 id="video"><span class="n">1</span>La guida in video</h2>
+<p>Cinque minuti sul canale, con <b>tutti gli strumenti della mappa</b> mostrati dal telefono: la pioggia caduta, le piogge per funghi, i boschi, il tocco sul bosco, il filtro per altitudine e il satellite. Se hai fretta, parti da qui.</p>
+<a class="video-big" href="https://youtu.be/xK2fd58rt60" target="_blank" rel="noopener"
+   onclick="try{gtag('event','click_youtube',{pulsante:'guida-video'})}catch(e){}">
+  <span class="vb-foto"><img src="video-guida.jpg" alt="La copertina del video: la mappa boschi dal telefono su Veneto, Trentino e Alto Adige, col segnaposto su Cortina d'Ampezzo" width="405" height="720" loading="lazy"><span class="vb-play"><svg width="22" height="26" viewBox="0 0 16 18" aria-hidden="true"><polygon points="0,0 0,18 16,9" fill="#fff"/></svg></span></span>
+  <span class="vb-testo">
+    <span class="vb-tag">VIDEO · 5 MINUTI</span>
+    <b>Guida definitiva 2026: la mappa gratuita di piogge e boschi per chi va a funghi</b>
+    <span class="vb-sub">Sul canale YouTube di Avventure Micologiche.</span>
+    <span class="vb-go">▶ Guarda il video</span>
+  </span>
+</a>
 <p class="guida-intro">Questa pagina invece è la <b>guida completa</b>, per un uso approfondito: che cosa misura ogni strumento, come si leggono i colori e i numeri, che cosa cercare quando la ricerca dei funghi si fa seria, e dove il sito dichiara i propri limiti. Si legge a pezzi, con l'indice qui accanto.</p>
 
 <h2 id="cose"><span class="n">2</span>Che cosa mostra il sito</h2>
@@ -503,6 +519,21 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
   <figcaption>Dal telefono, intorno a Borzonasca: castagneti in arancio sui versanti, faggete in verde più in là, e il rilievo che fa leggere le valli. Sotto la legenda e il nome della carta.</figcaption>
 </figure>
 <p>Anche le pagine di paese e di zona delle regioni coperte hanno il tasto <span class="ui">Guarda i boschi</span>, che apre la mappa boschi già centrata su quel posto.</p>
+
+<h3 id="satellite">I boschi dal satellite</h3>
+<p>Nel pannello della mappa boschi c'è il tasto <span class="ui">🛰 Satellite</span>: la cartina lascia il posto alla foto dal satellite e i colori dei boschi restano sopra. Ingrandendo fino in fondo si distinguono le case, i singoli alberi e i sentieri, e capisci se quel bosco è fitto o rado, se c'è una strada per arrivarci, dove lasciare la macchina.</p>
+
+<figure class="media">
+  <img src="satellite.jpg" alt="Santo Stefano d'Aveto dal satellite nella mappa boschi: le case fra i prati, i boschi colorati sopra la foto, la nuvoletta aperta su un robinieto a 981 metri, e nel pannello il tasto Satellite acceso con la manopola dell'intensità" width="1000" height="566" loading="lazy">
+  <figcaption>Santo Stefano d'Aveto dal satellite: le case fra i prati, i boschi in colore sopra la foto, e la nuvoletta di un robinieto a 981 metri con il tasto per Google Maps. Nel pannello il tasto Satellite acceso, in verde, e la manopola dell'intensità.</figcaption>
+</figure>
+<div class="bosco">
+<p><b>Intensità boschi</b>: la manopola regola quanto i colori coprono la foto; di partenza stanno al 35%.</p>
+<p><b>Nascondi boschi</b>: toglie i colori e lascia la foto nuda, <span class="ui">Mostra boschi</span> li rimette com'erano.</p>
+<p><b>Il tocco</b> funziona come sulla cartina: che bosco è, quota, versante, pendenza, e il tasto per aprire il punto su Google Maps.</p>
+<p><b>Il filtro per altitudine</b> vale anche qui: i boschi fuori dalla fascia spariscono dalla foto.</p>
+</div>
+<p>Le foto sono di Esri (World Imagery); i nomi dei paesi sono i nostri. Il satellite si usa solo nella mappa boschi: tornando alla pioggia si spegne, e ogni volta si riparte dalla cartina.</p>
 
 
 
