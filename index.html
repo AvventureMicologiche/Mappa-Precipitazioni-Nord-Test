@@ -639,6 +639,10 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
 .tp-funghi-btn:hover{background:#e0f5e0!important;border-color:#4caf50!important;}
 .tp-funghi-btn.active{background:#2d6a30!important;border-color:#2d6a30!important;color:#fff!important;}
 #custom-box{display:none;margin-top:8px;padding-top:8px;border-top:1px solid #eee}
+/* ⚠️ con le date personalizzate aperte la riga dello stato e' vuota ma restava alta 18 px coi suoi
+   margini: fra «Piogge per funghi» e «Data inizio» c'erano ~60 px d'aria (3/10, visto da lui, c'era
+   anche in produzione). Vuota e con le date aperte, sparisce. */
+#time-panel:has(#custom-box[style*="block"]) #tp-status:empty{display:none}
 @media(max-width:600px){
   #custom-box{
     position:fixed !important;
@@ -758,6 +762,13 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
 .sh-invito{display:block;font-size:9px;color:#8a8a8a;margin-top:2px}
 .sh-bar.scelto{box-shadow:0 0 0 1px #fff}
 .sh-bars .sh-hits div{cursor:pointer}
+/* le frecce del vento sotto l'asse (3/10/2026): una per giorno, stessa griglia dell'asse */
+.sh-wd{display:flex;gap:2px;margin-top:4px;padding-right:28px;height:12px}
+.sh-wd span{flex:1;display:flex;justify-content:center;align-items:center;min-width:0;cursor:pointer;border-radius:2px}
+.sh-wd span i{font-style:normal;font-size:10px;color:#ffd54f;line-height:1}
+.sh-lines .sh-hits div{cursor:pointer}
+.wd-svg{display:block;flex:none}
+.sh-row b .wd-svg{display:inline-block;vertical-align:-1px;margin-left:4px}
 .sh-fonte{font-size:9px;color:#888;margin-top:5px;padding-top:5px;border-top:1px solid #333;
   display:flex;align-items:center;justify-content:space-between;gap:8px}
 /* 3/9/2026: il tasto che porta alla pagina del posto. Sta sulla RIGA
@@ -1777,6 +1788,8 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
            la rete pubblica l'ora. Le accende histRender, a serie arrivata. -->
       <div class="sh-row sh-ore" style="display:none"><span>Durata</span><b id="sh-durata"></b></div>
       <div class="sh-row sh-ore" style="display:none"><span>Punta oraria</span><b id="sh-punta"></b></div>
+      <!-- 3/10/2026 (C): «9 km/h da NE» + freccina, solo col periodo di UN giorno -->
+      <div class="sh-row" id="sh-vento-r" style="display:none"><span>Vento</span><b id="sh-vento"></b></div>
       <div class="sh-row"><span>Ranking</span><b id="sh-rank"></b></div>
       <div class="sh-per" id="sh-per"></div>
       <div class="sh-tabs">
@@ -3482,7 +3495,7 @@ function histFromFiles(region,station,days,cb){
       .then(function(d){
         var m={};
         if(d&&d.stations) d.stations.forEach(function(s){
-          m[s.n]={mm:(typeof s.mm==='number')?s.mm:0,t:s.t||null,w:s.w||null,u:s.u||null,i:s.i||null};
+          m[s.n]={mm:(typeof s.mm==='number')?s.mm:0,t:s.t||null,w:s.w||null,wd:(s.wd!==undefined?s.wd:null),u:s.u||null,i:s.i||null};
         });
         histFileCache[region+'/'+ds]=m;
       })
@@ -3635,6 +3648,31 @@ function histRenderPioggia(days,serie,selFrom,selTo){
 // per spiegarlo. ⚠️ L'intensita' e' di UN giorno: su un periodo di sette non
 // si sommano le ore, si racconta il giorno piu' piovoso del periodo.
 function histNum(v){ return String(v).replace('.',','); }
+/* ── DIREZIONE DEL VENTO (3/10/2026, sua scelta C + A col simbolo della freccia) ──
+   Il campo `wd` dei file: gradi di PROVENIENZA (0 = da nord) oppure "V" variabile
+   (lib-direzione.js nei collector, dal 2/10/2026). La freccia segue la convenzione
+   dei meteorologi e delle app: punta DOVE VA il vento; accanto la sigla dice da dove
+   viene («da NE»), cosi' il verso non si fraintende. SVG e non i caratteri ↙ ↗:
+   alcuni telefoni li disegnano come emoji colorate. */
+var WD_SIGLE=['N','NE','E','SE','S','SW','W','NW'];
+var WD_NOMI={N:'tramontana',NE:'grecale',E:'levante',SE:'scirocco',S:'ostro',SW:'libeccio',W:'ponente',NW:'maestrale'};
+function wdSigla(wd){ if(wd==='V') return 'V'; if(typeof wd!=='number') return null; return WD_SIGLE[Math.round((((wd%360)+360)%360)/45)%8]; }
+function wdFreccia(wd,px,col){
+  if(typeof wd!=='number') return '';
+  // disegnata verso il basso (= vento da nord che va a sud) e girata dei gradi di provenienza
+  return '<svg class="wd-svg" width="'+px+'" height="'+px+'" viewBox="0 0 10 10" style="transform:rotate('+Math.round(wd)+'deg)" aria-hidden="true">'
+    +'<path d="M5 1.2v7M2.2 5.6 5 8.4l2.8-2.8" fill="none" stroke="'+col+'" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
+// «18 km/h da NE (grecale)»: il testo del vento di un giorno, per la riga sotto il grafico
+function wdTesto(o){
+  var w=o&&o.w, wd=o&&o.wd, sig=wdSigla(wd), t='';
+  if(w&&typeof w[0]==='number') t+='<b>'+histNum(Math.round(w[0]))+' km/h</b>';
+  if(sig==='V') t+=(t?' · ':'')+'direzione variabile';
+  else if(sig) t+=(t?' ':'')+'da <b>'+sig+'</b> ('+WD_NOMI[sig]+')';
+  else if(t) t+=' · direzione non misurata';
+  if(w&&typeof w[1]==='number') t+=' · raffica '+histNum(Math.round(w[1]));
+  return t;
+}
 function histGiorno(ds){
   var m=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
   return (+ds.substring(8,10))+' '+m[+ds.substring(5,7)-1];
@@ -3657,6 +3695,21 @@ function histRigaIntensita(ds){
 }
 // Col periodo di un giorno la riga sotto il grafico parte vuota: l'invito
 // serve lo stesso, se la rete ha le ore.
+function histRigaVento(ds){
+  var el=document.getElementById('sh-int'); if(!el||!histCurrent) return;
+  document.querySelectorAll('#sh-body .sh-wd span.scelto').forEach(function(b){ b.classList.remove('scelto'); });
+  var o=ds&&histCurrent.serie[ds];
+  if(!o){ el.innerHTML=''; return; }
+  // nessun segno sul giorno raccontato (3/10, suo): la riga dice gia' la data
+  var dito=!(window.matchMedia&&matchMedia('(hover:hover) and (pointer:fine)').matches);
+  el.innerHTML='<b>'+histGiorno(ds)+'</b> · '+(wdTesto(o)||'dato non disponibile')
+    +'<span class="sh-invito">'+(dito?'Tocca':'Clicca')+' un giorno del grafico per vederne il vento</span>';
+}
+function histVentoDaMostrare(c){
+  var best=null;
+  c.days.forEach(function(ds){ var o=c.serie[ds]; if(o&&o.wd!=null) best=ds; });
+  return best;
+}
 function histSoloInvito(){
   var el=document.getElementById('sh-int'); if(!el||!histCurrent||el.innerHTML) return;
   if(!histReteHaOre(histCurrent.days,histCurrent.serie)) return;
@@ -3750,9 +3803,21 @@ function histRenderLinee(days,serie,tipo){
     if(tipo==='t') lbl=(b[i]===null&&a[i]===null)?'dato non disponibile':('min '+b[i]+'° · max '+a[i]+'°');
     else if(tipo==='u') lbl=(b[i]===null&&a[i]===null)?'dato non disponibile':('min '+b[i]+'% · max '+a[i]+'%');
     else lbl=(b[i]===null&&a[i]===null)?'dato non disponibile':('media '+b[i]+' · raffica '+(a[i]===null?'—':a[i])+' km/h');
-    h+='<div title="'+ds+' · '+lbl+'"></div>';
+    h+='<div data-d="'+ds+'" title="'+ds+' · '+lbl+'"></div>';
   });
-  h+='</div></div></div>'+histAsseX(days);
+  h+='</div></div></div>';
+  // vento: una freccia per giorno fra il grafico e i numeri dei giorni (A, come nel mockup),
+  // e sotto la riga che racconta il giorno toccato
+  var conWd=tipo==='v' && days.some(function(ds){ return serie[ds]&&serie[ds].wd!=null; });
+  if(conWd){
+    h+='<div class="sh-wd">';
+    days.forEach(function(ds){
+      var wd=serie[ds]&&serie[ds].wd;
+      h+='<span data-d="'+ds+'">'+(wd==='V'?'<i>~</i>':wdFreccia(wd,9,'#ffd54f'))+'</span>';
+    });
+    h+='</div>';
+  }
+  h+=histAsseX(days)+(conWd?'<div class="sh-int" id="sh-int"></div>':'');
   if(tipo==='t'||tipo==='u')
     h+='<div class="sh-leg">'+
        '<span><i style="background:'+colA+'"></i>massima</span>'+
@@ -3876,6 +3941,16 @@ function histRender(station,regionKey,days,serie,selFrom,selTo,notaPeriodo,histR
     document.getElementById('sh-durata').textContent=o.i[0]+(o.i[0]===1?' ora':' ore');
     document.getElementById('sh-punta').textContent=histNum(o.i[1])+' mm in un’ora';
   }());
+  // C (3/10/2026): il vento del giorno, quando il periodo e' un giorno solo. Su 30 giorni
+  // una direzione sola non direbbe niente: li' ci sono le frecce sotto il grafico (A).
+  (function(){
+    var r=document.getElementById('sh-vento-r'); if(!r) return;
+    var o=(selFrom===selTo)&&serie[selTo], w=o&&o.w, sig=o&&wdSigla(o.wd);
+    if(!w||typeof w[0]!=='number'){ r.style.display='none'; return; }
+    document.getElementById('sh-vento').innerHTML=histNum(Math.round(w[0]))+' km/h'
+      +(sig==='V'?' · variabile':(sig?' da '+sig+wdFreccia(o.wd,10,'#ddd'):''));
+    r.style.display='';
+  }());
   var body=document.getElementById('sh-body');
   var h;
   if(histTab==='mm') h=histRenderPioggia(days,serie,selFrom,selTo);
@@ -3887,6 +3962,7 @@ function histRender(station,regionKey,days,serie,selFrom,selTo,notaPeriodo,histR
   }
   body.innerHTML=h+histNote(regionKey,days,notaPeriodo,station);
   if(histTab==='mm'){ histRigaIntensita(histGiornoDaMostrare(histCurrent)); histSoloInvito(); }
+  if(histTab==='v') histRigaVento(histVentoDaMostrare(histCurrent));
 }
 
 function histPosition(mx,my){
@@ -4082,6 +4158,9 @@ document.querySelectorAll('#st-history .sh-tab').forEach(function(b){
 document.getElementById('sh-body').addEventListener('click',function(e){
   var c=e.target&&e.target.closest&&e.target.closest('.sh-bars .sh-hits [data-d]');
   if(c&&histTab==='mm') histRigaIntensita(c.getAttribute('data-d'));
+  // vento: si tocca la colonna del grafico o la freccia sotto
+  var v=e.target&&e.target.closest&&e.target.closest('.sh-lines .sh-hits [data-d], .sh-wd [data-d]');
+  if(v&&histTab==='v') histRigaVento(v.getAttribute('data-d'));
 });
 // Col mouse dentro al pannello non si chiude (serve per leggerlo e per il
 // tooltip dei valori sulle singole barre)
@@ -8981,7 +9060,11 @@ function collocaCanale(){
   if(!nb || !cl) return;
   if(window.innerWidth <= 900 || getComputedStyle(nb).display === 'none'){ cl.style.top = ''; return; }
   // La casella e' dentro il cartello blu a sinistra: la vetrina sale al suo posto.
-  if(nb.closest('#map-hint-panel')){ cl.style.top = '52px'; return; }
+  // ⚠️ ALLA STESSA ALTEZZA DEL CARTELLO, letta dal cartello (3/10/2026, sua
+  // richiesta): coi 52 px fissi stava 48 px piu' in alto e i due riquadri non
+  // erano allineati. Se il cartello si sposta, la vetrina lo segue.
+  var hp = nb.closest('#map-hint-panel');
+  if(hp){ cl.style.top = hp.offsetTop + 'px'; return; }
   var m = document.getElementById('map');
   if(!m) return;
   var giu = nb.getBoundingClientRect().bottom - m.getBoundingClientRect().top + 10;
@@ -9763,7 +9846,7 @@ function captureMapBlob(scala){
     // ricerca non dice niente. Il paese cercato resta: il suo nome e' scritto
     // sulla mappa accanto alla puntina rossa.
     var pannelli=[].slice.call(mapEl.children).filter(function(el){
-      return el.id!=='novita-box' && el.id!=='sat-btn' && !el.classList.contains('leaflet-pane') && !el.classList.contains('leaflet-control-container') && visibile(el);
+      return el.id!=='novita-box' && el.id!=='sat-btn' && el.id!=='tq-btn' && !el.classList.contains('leaflet-pane') && !el.classList.contains('leaflet-control-container') && visibile(el);
     }).concat([].slice.call(mapEl.querySelectorAll('.leaflet-control-container .leaflet-control')).filter(visibile))
       // L'header è fuori da #map ma va nello scatto: rel() lo porta a y=0
       .concat(hdrEl&&visibile(hdrEl)?[hdrEl]:[]);
@@ -9790,6 +9873,7 @@ function captureMapBlob(scala){
           var nb=doc.getElementById('novita-box'); if(nb) nb.style.visibility='hidden';
           // il riquadro Mappa|Satellite non va nello scatto; i crediti della foto SI' (obbligatori)
           var sb=doc.getElementById('sat-btn'); if(sb) sb.style.visibility='hidden';
+          var tqb=doc.getElementById('tq-btn'); if(tqb) tqb.style.visibility='hidden';   // il tasto delle temperature nemmeno
           // la manopola del retino html2canvas la disegna come una casella di testo: nello scatto non serve
           // i tasti dei boschi restano nella foto (29/9, suo); solo il cursore della manopola, che
           // html2canvas disegna come una casella di testo, diventa invisibile senza lasciare buchi
@@ -10234,7 +10318,12 @@ if(_btnShot){
   if(typeof refreshSelectorStyles==='function') refreshSelectorStyles();
   // s=i = link arrivato insieme alla foto (tasto Immagine): evento a parte, cosi'
   // si misura per la prima volta quante aperture portano le foto (18/8/2026).
-  try{gtag('event',q.get('s')==='i'?'open_shared_image':'open_shared_map',{regioni:keys.join(',')})}catch(e){}
+  // s=p = link dai tasti delle NOSTRE pagine (regione, funghi, paese, zona) col
+  // periodo gia' scelto (30/9/2026). Prima contavano come «link condivisi»: il
+  // 23-29/9 erano 713 persone su 896, tutte arrivate da Google su una pagina,
+  // e il passaparola vero non si vedeva piu'. Evento a parte, open_from_page.
+  var _sq=q.get('s');
+  try{gtag('event',_sq==='i'?'open_shared_image':(_sq==='p'?'open_from_page':'open_shared_map'),{regioni:keys.join(',')})}catch(e){}
   var pastDate=new Date(da+'T00:00:00');
   var nowDate=new Date(a+'T23:59:59');
   var dfmt=function(dd){return dd.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});};
@@ -11447,6 +11536,11 @@ function loadDefaultMarkers(){
     if(!(_ora <= new Date(V.fino).getTime())) return;
 
     var ytPieno='<svg width="16" height="12" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#FF0000"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>';
+    // ⚠️ Il link principale non porta sempre a YouTube (1/10/2026): la song del
+    // tartufo del 30/9 era un video Facebook e la scheda mostrava lo stesso il
+    // logo YouTube. Il logo segue la destinazione vera di V.link.
+    var suFb=/facebook\.com|fb\.watch/.test(V.link||'');
+    if(suFb) ytPieno='<svg width="13" height="13" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#1877F2" d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0022 12z"/></svg>';
 
     // L'onclick e' un attributo scritto nel markup: va SOSTITUITO, non aggiunto,
     // altrimenti a ogni clic partirebbero due eventi.
@@ -11508,7 +11602,9 @@ function loadDefaultMarkers(){
       // lo stesso id — cosi' tutto il CSS gia' scritto continua a valere — e
       // dentro ci vanno i link veri: il gancio verso YouTube e i tre bottoni.
       var yt='<svg width="14" height="10" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polygon points="10,4 10,26 32,15" fill="#fff"/></svg>';
-      var riga='<a class="s-yt" href="'+V.link+'" target="_blank" rel="noopener" onclick="'+tracc('vetrina-mobile-youtube').replace(/"/g,'&quot;')+'">'+yt+'YouTube</a>';
+      var riga=suFb
+        ? '<a class="s-fb" href="'+V.link+'" target="_blank" rel="noopener" onclick="'+tracc('vetrina-mobile-facebook').replace(/"/g,'&quot;')+'"><svg width="13" height="13" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0022 12z"/></svg>Facebook</a>'
+        : '<a class="s-yt" href="'+V.link+'" target="_blank" rel="noopener" onclick="'+tracc('vetrina-mobile-youtube').replace(/"/g,'&quot;')+'">'+yt+'YouTube</a>';
       altri.forEach(function(s){
         riga+='<a class="'+s.cl+'" href="'+s.url+'" target="_blank" rel="noopener" onclick="'+tracc('vetrina-mobile-'+s.ga).replace(/"/g,'&quot;')+'">'+s.svg+s.nome+'</a>';
       });
@@ -11654,7 +11750,12 @@ function loadDefaultMarkers(){
 /* «new» (29/9, suo): tolto dal radar, messo sul Satellite dei boschi */
 #btn-boschi::after,#bo-sat-btn::after{content:'new';position:absolute;top:-6px;right:-4px;
   background:#e12b2b;color:#fff;font-size:8.5px;font-weight:700;letter-spacing:.3px;
-  padding:1px 4px;border-radius:6px;line-height:1.35;pointer-events:none}
+  padding:1px 4px;border-radius:6px;line-height:1.35;pointer-events:none;
+  animation:newPulsa 1.6s ease-in-out infinite}
+/* il «new» pulsa (2/10/2026, suo): si gonfia appena e manda un alone rosso */
+@keyframes newPulsa{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(225,43,43,.6)}
+  50%{transform:scale(1.18);box-shadow:0 0 0 5px rgba(225,43,43,0)}}
+@media (prefers-reduced-motion:reduce){#btn-boschi::after,#bo-sat-btn::after{animation:none}}
 .modo-radar #btn-radar::after{display:none}
 /* anche la Mappa boschi (16/9/2026, sua richiesta: «lascialo su entrambi»);
    sparisce quando il tasto diventa «Chiudi mappa», come quello del radar */
@@ -14955,7 +15056,14 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   function vietata(){ return /[?&]novita=0(&|$)/.test(location.search); }
   function vista(){ try{ return localStorage.getItem(CHIAVE)===VERSIONE; }catch(e){ return false; } }
   function segna(){ try{ localStorage.setItem(CHIAVE,VERSIONE); }catch(e){} }
-  function ga(az,pg){ try{ gtag('event','novita_finestra',{azione:az,pagina:pg}); }catch(e){} }
+  /* RIMANDATA (2/10/2026, suo: «se non gliel'abbiamo fatta vedere la prima volta la deve vedere la seconda»):
+     chi arriva con qualcosa nell'indirizzo (pagine nostre s=p, link condivisi, date) non la vede subito,
+     ma si segna l'ora; alla visita dopo, da dove che arrivi, si apre. 30' di distanza = una visita nuova,
+     cosi' chi torna avanti e indietro tra una nostra pagina e la mappa non se la trova a meta' giro. */
+  var CHIAVE_RIM='novitaRimandata', RIM_DOPO=30*60*1000, rimandata=false;
+  function rimandoMaturo(){ try{ var v=localStorage.getItem(CHIAVE_RIM); if(!v) return false; var p=v.split('|'); return p[0]===VERSIONE && Date.now()-(+p[1])>=RIM_DOPO; }catch(e){ return false; } }
+  function rimanda(){ try{ var v=localStorage.getItem(CHIAVE_RIM); if(!v || v.split('|')[0]!==VERSIONE) localStorage.setItem(CHIAVE_RIM,VERSIONE+'|'+Date.now()); }catch(e){} }
+  function ga(az,pg){ try{ gtag('event','novita_finestra',{azione:az,pagina:pg,rimandata:rimandata?'si':'no'}); }catch(e){} }
   function costruisci(){
     velo=document.createElement('div'); velo.id='nv-velo';
     velo.innerHTML='<div id="nv-box" role="dialog" aria-modal="true" aria-labelledby="nv-tit">'
@@ -15017,11 +15125,261 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     if(vietata()) return;
     try{ if(window.top!==window) return; }catch(e){}
     var pagina=location.pathname; if(!(pagina==='/'||/\/index\.html$/.test(pagina))) return;
-    if(!forzata()){ if(vista()) return; if(location.search && location.search!=='?') return; }
+    if(!forzata()){
+      if(vista()) return;
+      if(location.search && location.search!=='?'){ if(rimandoMaturo()) rimandata=true; else { rimanda(); return; } }
+      else if(rimandoMaturo()) rimandata=true;
+    }
     var t0=Date.now();
     (function aspetta(){ if(pronta()||Date.now()-t0>8000) setTimeout(apri,900); else setTimeout(aspetta,300); })();
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',avvia); else avvia();
+})();
+</script>
+<!-- ═══ 🌡 TEMPERATURE DI IERI ACCANTO AI PALLINI (3/10/2026, sua idea) ═══════════════
+     Un tasto piccolo sulla mappa («🌡 2 ott»: il giorno lo dice il TASTO, sua regola) che
+     accende minima e massima di ieri accanto ai pallini, SOPRA la heatmap: la pioggia del
+     periodo resta com'e' e non si spegne niente (sua scelta «1»: niente terzo modo).
+     - I numeri vengono da data/temperature-ieri.json (genera-temperature-ieri.js, giro dei
+       riepiloghi): ci sono SOLO le temperature verificate coi vicini di tutte le reti. Un
+       pallino senza dato verificato resta senza etichetta: mai un numero sbagliato.
+     - Il tasto c'e' solo sulla mappa della pioggia con dei pallini disegnati; col radar e coi
+       boschi sparisce e le temperature si spengono. Ogni apertura del sito parte spento.
+     - Da lontano le etichette sono troppe: premendo il tasto sotto lo zoom ZOOM_MIN la mappa
+       si avvicina da sola (sua scelta «a»); se poi ci si allontana, le etichette si nascondono.
+     - Diradamento: un'etichetta che tocca un'altra gia' messa o un altro pallino non si mostra
+       (compare avvicinandosi). -->
+<style>
+#tq-btn{position:absolute;z-index:1000;right:10px;bottom:28px;height:30px;padding:0 10px 0 7px;border-radius:15px;
+  display:none;align-items:center;gap:4px;background:#fff;border:2px solid rgba(0,0,0,.2);background-clip:padding-box;
+  color:#1b3f6e;font:800 12.5px/1 system-ui,-apple-system,'Segoe UI',sans-serif;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+#tq-btn.vis{display:flex}
+#tq-btn.p-riga{position:relative;top:auto;right:auto;bottom:auto;height:auto;padding:0 7px;justify-content:center;box-shadow:none;border-style:solid;font-size:11.5px;white-space:nowrap;flex-direction:column;gap:1px}
+.rd-coppia.con-tq{grid-template-columns:1fr auto 1fr}
+/* «new» sulle temperature E sulla Mappa boschi (3/10, suo) */
+#tq-btn.p-riga::after{content:'new';position:absolute;top:-6px;right:-4px;background:#e12b2b;color:#fff;font-size:8.5px;font-weight:700;
+  letter-spacing:.3px;padding:1px 4px;border-radius:6px;line-height:1.35;pointer-events:none;animation:newPulsa 1.6s ease-in-out infinite}
+#tq-btn.p-riga.on::after{display:none}
+@media (prefers-reduced-motion:reduce){#tq-btn.p-riga::after{animation:none}}
+body.modo-radar .rd-coppia.con-tq,body.modo-boschi .rd-coppia.con-tq{grid-template-columns:1fr 1fr}
+/* sul telefono tre tasti nella riga: «Radar pioggia» e «Mappa boschi» andavano a capo (36→54 px a 360):
+   un filo piu' piccoli e stretti, e il termometro sopra la data per prendere meno larghezza */
+@media(max-width:900px){#time-panel .rd-coppia.con-tq > .tp-custom-btn{font-size:13.5px !important;padding:9px 3px !important;letter-spacing:-.2px}
+  #tq-btn.p-riga{flex-direction:column;gap:1px;padding:0 5px;font-size:11.5px}}
+/* a 360 px «Radar pioggia» andava a capo per due pixel (riga 38 → 56): mezzo punto in meno */
+@media(max-width:380px){#time-panel .rd-coppia.con-tq > .tp-custom-btn{font-size:13px !important;padding:9px 2px !important}}
+#tq-btn svg{flex:none}
+#tq-btn.on{background:#1f6fd1;border-color:#fff;color:#fff}
+#tq-btn.on svg{stroke:#fff}
+body.modo-radar #tq-btn,body.modo-boschi #tq-btn{display:none !important}
+@media(max-width:900px){#tq-btn{right:8px;bottom:auto}}
+.tq-ic{background:none;border:none}
+.tq{display:inline-flex;gap:0;align-items:center;white-space:nowrap;font:800 12px/1.2 system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:-.3px;
+  text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff,0 0 3px #fff,0 0 4px #fff}   /* alone pieno: scelto da lui il 3/10 sopra le piogge forti */
+.tq .mn{color:#1856b8}.tq .mx{color:#c21f1f}.tq .sep{color:#6b7684;font-weight:400;margin:0 .5px}
+/* ⚠️ NIENTE attenuazione della pioggia con le temperature accese: provata e bocciata (3/10, suo) */
+/* con le temperature accese via il velo blu-grigio sulla regione, e non pulsa niente (3/10, suo):
+   come col radar e coi boschi, chi ha acceso le temperature ha gia' scelto cosa guardare */
+body.tq-on #map .leaflet-overlay-pane path[fill="#1b3f6e"]{fill-opacity:0 !important}
+/* e la vetrina se ne va, come coi boschi (3/10, suo: «come sempre deve sparire») */
+body.tq-on #channel-logo,body.tq-on #channel-pill{display:none !important}
+body.tq-on path.conf-pulse,body.tq-on .panel-pulse,body.tq-on .panel-pulse-ring,
+body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !important}
+.tq.via{visibility:hidden}
+</style>
+<script>
+(function(){
+  var URL_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/temperature-ieri.json';
+  var ZOOM_MIN=6;      // sotto non si disegna niente
+  var ZOOM_VICINO=9;   // premendo il tasto da piu' lontano di cosi' ci si avvicina (sua scelta «a»)
+  var datiKo=false;    // il file non c'e': solo allora il tasto sparisce
+  var MESI=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  var dati=null, giorno='', btn=null, on=false, gruppo=null, disegnando=false, tmr=null;
+  function m(){ return window._mapDebug; }
+  function chiave(lat,lon){ return (+lat).toFixed(4)+','+(+lon).toFixed(4); }
+  function carica(){
+    function usa(j){
+      if(!j || !j.giorno || !Array.isArray(j.s)) return;
+      // un file vecchio non si mostra: «ieri» deve essere davvero ieri o l'altro ieri
+      var eta=(Date.now()-Date.parse(j.giorno+'T12:00:00Z'))/864e5;
+      if(!(eta>0 && eta<3)) return;
+      dati={}; j.s.forEach(function(r){ dati[chiave(r[0],r[1])]=[r[2],r[3]]; });
+      var d=j.giorno.split('-'); giorno=(+d[2])+' '+MESI[(+d[1])-1];
+      if(btn) disegnaTasto();
+      aggiorna();
+    }
+    fetch(URL_RAW,{cache:'no-cache'}).then(function(r){ return r.ok?r.json():Promise.reject(); })
+      .then(usa).catch(function(){ fetch('/data/temperature-ieri.json').then(function(r){ return r.ok?r.json():null; }).then(function(j){ if(!j){ datiKo=true; aggiorna(); return; } usa(j); }).catch(function(){ datiKo=true; aggiorna(); }); });
+  }
+  var TERM='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1f6fd1" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M14 14.8V4a2 2 0 0 0-4 0v10.8a4 4 0 1 0 4 0z"/><path d="M12 9v8"/></svg>';
+  function disegnaTasto(){
+    btn.innerHTML=POS==='riga' ? TERM+'<span>Temp. ieri</span>' : TERM+giorno;
+    btn.title=on?'Nascondi le temperature del '+giorno:'Minima e massima del '+giorno+' accanto ai pluviometri';
+    btn.classList.toggle('on',on);
+    document.body.classList.toggle('tq-on',on);
+    if(POS==='riga') copiaAspetto();
+  }
+  function pallini(){
+    var out=[]; var mp=m(); if(!mp) return out;
+    mp.eachLayer(function(l){ if(l._latlng && typeof l.getRadius==='function' && !l._tq) out.push(l); });
+    return out;
+  }
+  function modoAltro(){ var c=document.body.classList; return c.contains('modo-radar')||c.contains('modo-boschi'); }
+  function aggiorna(){
+    if(!btn) return;
+    // ⚠️ il tasto esce INSIEME agli altri della riga (3/10, suo: «appare in ritardo»): non aspetta
+    // ne' il file ne' i pallini, sparisce solo se il file non c'e' o col radar e coi boschi
+    var vis=!datiKo && !modoAltro();
+    btn.classList.toggle('vis',vis);
+    if(btn.parentNode && btn.parentNode.classList) btn.parentNode.classList.toggle('con-tq',vis);
+    if(POS==='riga') copiaAspetto();
+    // si spegne solo entrando nel radar o nei boschi: mentre un'analisi ridisegna i pallini
+    // per un attimo non ce n'e' nessuno, e non deve spegnersi per quello
+    if(modoAltro() && on){ on=false; disegnaTasto(); }
+    disegna();
+  }
+  function cancella(){ if(gruppo){ disegnando=true; gruppo.clearLayers(); disegnando=false; } }
+  function f(v){ return (Math.round(v)+'°').replace('-','−'); }
+  function g(v){ return String(Math.round(v)).replace('-','−'); }   // la minima senza grado: «17|25°», piu' compatto (suo)
+  function disegna(){
+    var mp=m(); if(!mp) return;
+    cancella();
+    if(!on || !dati || mp.getZoom()<ZOOM_MIN) return;
+    if(!mp.getPane('tqPane')){ var pn=mp.createPane('tqPane'); pn.style.zIndex=640; pn.style.pointerEvents='none'; }
+    if(!gruppo) gruppo=L.layerGroup().addTo(mp);
+    var vista=mp.getBounds().pad(0.05);
+    disegnando=true;
+    var ps=pallini();
+    ps.forEach(function(p){
+      if(!vista.contains(p._latlng)) return;
+      var t=dati[chiave(p._latlng.lat,p._latlng.lng)]; if(!t) return;
+      var r=p.getRadius()||6;
+      var mk=L.marker(p._latlng,{pane:'tqPane',interactive:false,keyboard:false,icon:L.divIcon({className:'tq-ic',iconSize:null,iconAnchor:[-(r+3),8],
+        html:'<span class="tq"><span class="mn">'+g(t[0])+'</span><span class="sep">|</span><span class="mx">'+f(t[1])+'</span></span>'})});
+      mk._tq=true; mk._r=r; gruppo.addLayer(mk);
+    });
+    disegnando=false;
+    /* ⚠️ DIRADAMENTO UNIFORME (3/10, suo: «guarda che disastro il diradamento, si diradano a caso»).
+       Prima si scartava ogni etichetta che toccava QUALUNQUE pallino: nel mezzo della regione, dove
+       i pallini sono fitti, cadevano tutte e restavano solo quelle del bordo. Adesso:
+       1) lo schermo si divide in caselle grandi come un'etichetta, e in ogni casella passa per prima
+          la stazione piu' vicina al centro: le etichette si spargono in modo uniforme;
+       2) un'etichetta non deve toccare un'altra etichetta ne' il pallino di una stazione GIA'
+          etichettata (i pallini senza etichetta li puo' coprire: e' il prezzo del dato leggibile);
+       3) se a destra non c'e' posto si prova a sinistra del pallino. */
+    var mr=mp.getContainer().getBoundingClientRect();
+    var voci=[];
+    gruppo.eachLayer(function(mk){
+      var el=mk.getElement()&&mk.getElement().querySelector('.tq'); if(!el) return;
+      el.style.marginLeft=''; el.classList.remove('via');
+      var q=mp.latLngToContainerPoint(mk.getLatLng()), b=el.getBoundingClientRect();
+      voci.push({el:el,x:q.x+mr.left,y:q.y+mr.top,r:mk._r||6,b:b});
+    });
+    var CW=64, CH=26, migliore={};
+    voci.forEach(function(v){
+      var cx=Math.floor(v.x/CW), cy=Math.floor(v.y/CH), k=cx+':'+cy;
+      v.k=k; v.d=Math.hypot(v.x-(cx+.5)*CW, v.y-(cy+.5)*CH);
+      if(!migliore[k]||v.d<migliore[k].d) migliore[k]=v;
+    });
+    // UNA stazione per casella, e le altre no: la grandezza della casella decide quante etichette
+    voci.forEach(function(v){ if(migliore[v.k]!==v) v.el.classList.add('via'); });
+    var ordine=voci.filter(function(v){ return migliore[v.k]===v; });
+    var tenute=[], punti=[];
+    function sopra(a,c){ return c.x+c.r>a.left && c.x-c.r<a.right && c.y+c.r>a.top && c.y-c.r<a.bottom; }
+    function urta(a,v){
+      return tenute.some(function(t){ return !(a.right+2<t.left||t.right+2<a.left||a.bottom<t.top||t.bottom<a.top); })
+        || punti.some(function(c){ return sopra(a,c); })
+        || tenute.some(function(t){ return sopra(t,v); });   // il suo pallino sotto un'etichetta gia' messa
+    }
+    ordine.forEach(function(v){
+      var dx=v.b.width+2*v.r+6;
+      var destra={left:v.b.left,right:v.b.right,top:v.b.top,bottom:v.b.bottom};
+      var sinistra={left:v.b.left-dx,right:v.b.right-dx,top:v.b.top,bottom:v.b.bottom};
+      var scelta=!urta(destra,v)?destra:(!urta(sinistra,v)?sinistra:null);
+      if(!scelta){ v.el.classList.add('via'); return; }
+      if(scelta===sinistra) v.el.style.marginLeft=(-dx)+'px';
+      tenute.push(scelta); punti.push({x:v.x,y:v.y,r:v.r});
+    });
+  }
+  function rinvia(){ if(disegnando) return; clearTimeout(tmr); tmr=setTimeout(aggiorna,250); }
+  /* IL POSTO DEL TASTO (3/10, deciso dopo tre prove dal vivo: in basso sulla mappa «non lo vede
+     nessuno», nel pannello e nella testata «un tasto aggiunto a caso»): terzo tasto IN MEZZO alla riga
+     «Radar pioggia | Mappa boschi». Se la riga non c'e' ancora, aspetta sulla mappa. */
+  var POS='riga';
+  /* (3/10 sera, sua idea): terzo tasto nella riga «Radar pioggia | Mappa boschi», che si
+     stringono. Prende l'aspetto dei due vicini (colori, bordo, altezza) leggendolo da loro. */
+  function copiaAspetto(){
+    var rb=document.getElementById('btn-radar'); if(!rb||!btn) return;
+    var cs=getComputedStyle(rb);
+    if(!on){ btn.style.background=cs.backgroundColor; btn.style.color=cs.color; }
+    else { btn.style.background=''; btn.style.color=''; }
+    btn.style.borderRadius=cs.borderRadius; btn.style.minHeight=cs.height;
+    btn.style.borderColor=on?'':cs.borderTopColor; btn.style.borderWidth=cs.borderTopWidth;
+  }
+  function posiziona(){
+    if(!btn) return;
+    var tel=window.innerWidth<=900;
+    btn.style.top=''; btn.style.bottom=''; btn.style.right='';
+    if(POS==='riga'){
+      var rg=document.querySelector('#time-panel .rd-coppia');
+      if(rg){ var bb=document.getElementById('btn-boschi'); if(btn.parentNode!==rg || btn.nextSibling!==bb){ if(bb&&bb.parentNode===rg) rg.insertBefore(btn,bb); else rg.appendChild(btn); } btn.classList.add('p-riga'); btn.classList.remove('p-mappa');
+        rg.classList.toggle('con-tq',btn.classList.contains('vis')); copiaAspetto(); return; }
+    }
+    var mpEl=document.getElementById('map');
+    if(btn.parentNode!==mpEl) mpEl.appendChild(btn);
+    btn.classList.add('p-mappa'); btn.classList.remove('p-riga');
+    if(!tel){
+      var at=document.querySelector('#map .leaflet-control-attribution');
+      btn.style.bottom=((at?at.offsetHeight:18)+10)+'px'; return;
+    }
+    // sul telefono sotto la barra delle regioni, che cambia altezza: si misura (come il Satellite)
+    var rp=document.getElementById('region-panel'), giu=8;
+    if(rp && getComputedStyle(rp).display!=='none'){ var r=rp.getBoundingClientRect(); if(r.height>0) giu=Math.round(r.bottom-mpEl.getBoundingClientRect().top+8); }
+    btn.style.top=giu+'px';
+  }
+  /* ⚠️ IL TASTO NASCE SUBITO, senza aspettare la mappa (3/10, suo: «appare in ritardo, quella
+     riga non esce insieme alle altre»). Un osservatore sul pannello lo infila nella riga «Radar |
+     Boschi» nello stesso istante in cui quella riga viene costruita; mappa ed etichette si
+     agganciano dopo, in collega(). */
+  function nasci(){
+    var el=document.getElementById('map'); if(!el){ setTimeout(nasci,50); return; }
+    btn=document.createElement('button'); btn.type='button'; btn.id='tq-btn';
+    el.appendChild(btn);
+    // nella riga di «riduci» il tocco non deve arrivare alla maniglia, che ridurrebbe il pannello;
+    // e sulla mappa non deve arrivare a Leaflet
+    ['pointerdown','pointerup','touchstart','touchend','mousedown','mouseup','click','dblclick','wheel'].forEach(function(ev){ btn.addEventListener(ev,function(e){ e.stopPropagation(); }); });
+    btn.addEventListener('click',function(){
+      var mp=m();
+      on=!on; disegnaTasto();
+      try{ gtag('event','temperature_ieri',{stato:on?'on':'off'}); }catch(e){}
+      // da lontano ci si avvicina (sua scelta «a»), al centro dei pallini della regione e non della
+      // mappa (3/10: da lontano si vedevano solo le etichette del bordo, il resto copriva altri pallini)
+      var ps=pallini();   // senza regione scelta non c'e' niente su cui avvicinarsi
+      if(mp && on && ps.length && mp.getZoom()<ZOOM_VICINO-0.5){
+        mp.setView(L.latLngBounds(ps.map(function(p){ return p._latlng; })).getCenter(),ZOOM_VICINO); return;   // il moveend ridisegna
+      }
+      disegna();
+    });
+    disegnaTasto(); posiziona(); aggiorna();
+    var tp=document.getElementById('time-panel');
+    if(tp){ try{ var oss=new MutationObserver(function(){ if(tp.querySelector('.rd-coppia') && btn.parentNode!==tp.querySelector('.rd-coppia')){ posiziona(); aggiorna(); } });
+                 oss.observe(tp,{childList:true,subtree:true}); }catch(e){} }
+    window.addEventListener('resize',posiziona);
+    try{ new MutationObserver(function(){ posiziona(); rinvia(); }).observe(document.body,{attributes:true,attributeFilter:['class']}); }catch(e){}
+    // la riga dello stato del periodo cambia testo e altezza: il tasto la segue
+    try{ var st0=document.getElementById('tp-status'); if(st0) new MutationObserver(posiziona).observe(st0,{childList:true,subtree:true,characterData:true,attributes:true}); }catch(e){}
+    carica();
+    collega();
+  }
+  function collega(){
+    var mp=m();
+    if(!mp||!window.L){ setTimeout(collega,100); return; }
+    mp.on('zoomend moveend',function(){ if(on) rinvia(); });
+    mp.on('layeradd layerremove',rinvia);
+    try{ var at0=document.querySelector('#map .leaflet-control-attribution'); if(at0) new MutationObserver(posiziona).observe(at0,{childList:true,subtree:true,characterData:true}); }catch(e){}
+    posiziona(); aggiorna();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',nasci); else nasci();
 })();
 </script>
 </body>
