@@ -7071,8 +7071,6 @@ var TOSCANA_ESCLUSE={
   'TOS03001965':1, // Gabbro (LI): 0,4 mm in 45 giorni con Valle Benedetta a 42 mm a 2,4 km. Ne restano 4 entro 10 km.
   'TOS01002181':1, // Sassa (PI): 0,2 mm in 45 giorni, i cinque vicini fra 15 e 26 mm. Il controllo automatico non la prende, perche' la mediana dei vicini resta sotto i 50 mm di soglia, ma uno zero secco per 45 giorni nelle Colline Metallifere non e' una misura. Ne restano 6 entro 10 km.
   // ── Sospetti: leggono troppo poco rispetto a chi hanno intorno ────────────
-  'TOS01001041':1, // Consuma (FI): 12,0 mm, il 17% di 70. Ne restano 4 entro 10 km.
-  'TOS11000115':1, // Abbadia S. S. - Vetta Amiata 1 (SI): 12,6 mm, il 21% di 59. Il Laghetto Verde, a 3,1 km sulla stessa montagna, ne ha fatti 41. Ne restano 6 entro 10 km.
   'TOS09001110':1, // Parana (MS): 23,9 mm, il 30% di 80. Calice al Cornoviglio, a 4,2 km, ne ha fatti 75. La stessa stazione la pubblica anche OMIRL con lo stesso numero, ed e' esclusa pure li' (LIGURIA_ESCLUSE): non e' un doppione da scegliere, e' un pluviometro che non misura piu'. Ne restano 7 entro 10 km.
   'TOS11000516':1, // Casa Rota (AR): 21,5 mm, il 38% di 57. Ne restano 5 entro 10 km.
   'TOS01001225':1, // Case Passerini (FI): 25,9 mm, il 39% di 66, in mezzo alla piana di Firenze dove i vicini sono fitti. Ne restano 9 entro 10 km.
@@ -7090,6 +7088,25 @@ var TOSCANA_ESCLUSE={
   //  - STIA (TOS01000581) non era al 39% ma al 49%, sempre per lo stesso
   //    errore: i vicini erano sommati su 45 giorni e lei su 40. Stia Monte, a
   //    3,6 km, fa 47 mm contro i suoi 36,6: sono d'accordo.
+  //
+  // ── Due rientrate il 4/10/2026: riparate dopo l'esclusione ───────────────
+  // Nate da una mail di un lettore di Rufina («sul SIR ci sono piu' stazioni»):
+  // la Consuma, la piu' vicina a Rufina, era online sul SIR e nascosta qui.
+  // Ricontrollate sui 44 giorni reali 21/8-3/10, giorno per giorno contro i
+  // quattro vicini, sui giorni con almeno 5 mm di mediana:
+  //  - CONSUMA (TOS01001041), FI: fino al 21/8 sorda (26/7 0,2 mm coi vicini
+  //    fra 12 e 36; 20/8 0,2 contro 17-30), dal 25/8 in riga (10/9 34,3 contro
+  //    24-35, 17/9 18,3 contro 21-47). 67% dei vicini sul periodo: riparata.
+  //  - VETTA AMIATA 1 (TOS11000115), SI: 116% dei vicini, mai sorda dal 21/8
+  //    (21/8 88,3 contro 80 e 95 del Laghetto Verde e di Abbadia).
+  // RESTANO FUORI anche se la somma le assolverebbe, perche' giorno per giorno
+  // sono ancora sorde nei giorni bagnati: Casa Rota (111% ma 4 giorni su 9
+  // sotto il 30% dei vicini, la somma la salva un 33,5 mm isolato del 18/9),
+  // Case Passerini (86%, 3 su 6), Cimone - Monte Serra (66%, 2 su 4),
+  // Camaiore (55%, 2 su 7, e il 17/9 13,4 contro 27-48). ⚠️ La lezione: il
+  // totale non e' la diagnosi, si guarda giorno per giorno. E le esclusioni a
+  // mano vanno ricontrollate: nessuno le riguardava, e una stazione riparata
+  // restava nascosta per sempre.
   //
   //
   // ⚠️ TENUTE APPOSTA, anche se i numeri le accuserebbero: Paganico (GR),
