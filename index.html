@@ -5929,9 +5929,14 @@ var PIEMONTE_ESCLUSE={
   // 3/5/2026 e permette un solo confronto all'indietro, e quel confronto dice
   // che erano sane fino a poco fa.
   'FINIERE':true,              // 13,0 mm, il 24% di VAL CLAREA che sta a 2,6 km. Nei 45 giorni precedenti era al 91%: e' crollata.
-  'MEUGLIANO':true,            // 35,1 mm, il 37% della mediana (CAVALLARIA 112 a 5,2 km). Nei 45 giorni precedenti era al 111%.
-  'PERRERO GERMANASCA':true,   // 34,0 mm, il 33% di 102. MASSELLO, a 7,8 km nella stessa valle, ne fa 143.
-  "BORGOFRANCO D'IVREA":true,  // 24,2 mm, il 39% di 62. CAVALLARIA, a 3,1 km, ne fa 109.
+  // ── Tre rientrate il 4/10/2026, giorno per giorno dal 20/8 contro i quattro
+  // vicini, sui giorni con almeno 5 mm di mediana (come la Toscana, vedi
+  // TOSCANA_ESCLUSE): MEUGLIANO 10 giorni su 10 in riga dal 20/7, 120% dei
+  // vicini (24/8 65,4 contro 37); PERRERO GERMANASCA 4 su 4, 89%;
+  // BORGOFRANCO D'IVREA 6 su 7, 89% (l'unico storto e' il 10/9, 0,4 contro 7).
+  // FINIERE resta fuori: 2 su 3 e solo 34 giorni consegnati su 45. MONTE
+  // MALANOTTE resta fuori: in riga gli ultimi 3, sorda i 3 prima, e il suo
+  // guasto era la pioggia FANTASMA.
   // ── 7/9/2026: segnalata dal controllo del lunedi', esclusa sul confronto
   // ALL'INDIETRO e non su quello coi vicini. Mese per mese contro la mediana
   // dei cinque piu' prossimi: maggio 100,6%, giugno 80,0%, luglio 63,4%,
@@ -6203,8 +6208,13 @@ var EMILIA_ESCLUSE={
   // Gemelle liguri: le porta OMIRL, vedi sotto
   '5317':1,'5565':1,'5566':1,'5561':1,'5568':1,'3080':1,'3077':1,'12307':1,
   // Pluviometri fermi trovati a mano e col controllo del lunedi'
-  '3014':1,    // Ferriere Pluvio (PC): 9% dei vicini in 46 giorni
-  '12863':1,   // Lugo RA
+  // ── Quattro rientrate il 4/10/2026, giorno per giorno dal 20/8 contro i
+  // quattro vicini, sui giorni con almeno 5 mm di mediana: Ferriere Pluvio
+  // (3014) 3 giorni su 3, 84%; Lugo (12863) 2 su 2, 117%; Campora di Sasso
+  // (5467) 6 su 6, 91%; Montriolo (3056) 6 su 6, 142%. Montriolo l'8/9 ha 33,3
+  // mm coi vicini quasi asciutti, ma Lastra a 5 km ne ha 47,5: temporale vero.
+  // RESTANO FUORI Imola2 e Loiano (in riga, ma 12 giorni consegnati su 45),
+  // Corte Centrale e Gualdo (nessun giorno bagnato da giudicare).
   '14719':1,   // Corte Centrale (FE)
   '14729':1,   // Imola2 (BO): 0,0 mm in 99 giorni di dato, ultima pioggia misurata il 10 maggio, mentre Imola a 6,1 km ne faceva 86 nei soli ultimi 45. Trovata il 22/8/2026 dalla porta «zero assoluto» di check-stazioni-ferme.js, che e' nata proprio per lei: la porta di sopra non la vedeva perche' in pianura la mediana dei vicini non arriva ai 50 mm di MIN_VICINI_MM. Conferma indipendente: ARPAE ha messo a null i suoi valori di agosto.
   // ── 21/8/2026: la regola nata in Toscana passata anche qui ──────────────
@@ -6213,8 +6223,6 @@ var EMILIA_ESCLUSE={
   // solo dove restano almeno tre pluviometri EMILIANI entro 10 km.
   '53207':1,   // GUALDO (FE): 0,2 mm nei suoi 19 giorni, mentre Sellarino Voghiera a 3,3 km ne faceva 101 negli stessi giorni. In pianura non esiste un gradiente cosi'.
   '12875':1,   // Poggio Renatico (FE): 16,2 mm nei suoi 28 giorni, il 23% di 70. Malalbergo, a 4,7 km, ne ha fatti 114.
-  '5467':1,    // Campora di Sasso (PR): 28,8 mm, il 34% di 84. Vetto, a 5,3 km, ne fa 87 e Vetto Pluvio 89.
-  '3056':1,    // Montriolo (FC): 24,0 mm, il 36% di 66. Lastra, a 5,0 km, ne fa 75.
   '8':1,       // Loiano (BO): 24,0 mm contro i 66 di Loiano Renana, che sta a 1,1 km. Due pluviometri cosi' vicini non vedono due piogge diverse.
   // ── 30/8/2026: DUE PLUVIOMETRI ALLO STESSO IDENTICO PUNTO ──────────────
   // «Giralda» #3730 e «GIRALDA meteo» #53432 stanno tutt'e due a 44.8138,
