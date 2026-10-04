@@ -2924,6 +2924,7 @@ var loadSessionId  = 0; // incrementato ad ogni loadData — invalida richieste 
 // _retryCall     = il prossimo loadData È la riprova (non azzerare il budget).
 var _autoRetryUsed = false;
 var _retryCall     = false;
+var _analisiChieste = 0;   // per la vetrina che gira, vedi loadData
 // Apertura da link condiviso con vista propria (1/8/2026): il prossimo
 // loadData NON deve chiamare fitMapToRegions. Prima lo chiamava, e siccome è
 // un setView ANIMATO (600ms), lo zoom del link — applicato subito dopo con
@@ -5118,7 +5119,13 @@ function loadData(pastDate,nowDate,labelPeriodo){
   var mySession=loadSessionId;
   // Caricamento chiesto dall'utente → il budget della riprova automatica si
   // rinnova. Se invece è la riprova stessa, il budget resta consumato.
-  if(_retryCall){ _retryCall=false; } else { _autoRetryUsed=false; }
+  if(_retryCall){ _retryCall=false; } else {
+    _autoRetryUsed=false;
+    // La vetrina passa alla successiva a ogni analisi chiesta, dalla seconda in poi:
+    // la prima resta quella sorteggiata all'apertura (vedi `_vetrinaGira`). La
+    // riprova automatica non conta, non e' una scelta dell'utente.
+    if(_analisiChieste++>0){ try{ if(window._vetrinaGira) window._vetrinaGira(); }catch(e){} }
+  }
   _archivio.reset();   // contatori della riserva archivio: nuovi a ogni caricamento
   _stime={};           // giorni coperti da stime: si ricontano a ogni analisi
   currentPast=pastDate; currentNow=nowDate; currentLabel=labelPeriodo;
@@ -11504,7 +11511,15 @@ function loadDefaultMarkers(){
   /* ⚠️ DA QUI IN GIU' E' UNA FUNZIONE, e prende la configurazione da fuori
      (20/9/2026). I tre parametri ombreggiano apposta le variabili qui sopra:
      quelle restano il RIPIEGO, questi sono quello che arriva dal file. */
-  function costruisci(MOSTRA, VETRINE, ELENCO){
+  /* ⚠️ LA VETRINA GIRA A OGNI ANALISI (4/10/2026, sua segnalazione: «da android
+     seleziono una regione, cambio regione e date, e mi appare sempre la stessa
+     vetrina»). Il dado si tirava solo all'apertura della pagina, e regione e date
+     non ricaricano la pagina. Adesso la PRIMA vetrina resta a caso, e da la' in poi
+     ogni nuova analisi passa alla SUCCESSIVA dell'elenco (sua scelta fra «a caso» e
+     «a giro»: a caso, con tre vetrine, una volta su tre ripesca quella appena vista).
+     `_giro` ricorda l'elenco e quella in onda; `costruisci(..., true)` fa il passo. */
+  var _giro={scelte:null, i:-1};
+  function costruisci(MOSTRA, VETRINE, ELENCO, gira){
   var V=null, QUALE='';
   if(MOSTRA==='alterna'){
     // Solo le vetrine ancora in corso partecipano: quando il video scade,
@@ -11553,7 +11568,16 @@ function loadDefaultMarkers(){
     // e meta' delle volte, quindi i clic si possono confrontare cosi' come
     // sono, senza pesarli. Cambia solo che il paragone non e' piu' fra
     // persone diverse ma fra aperture diverse.
-    QUALE=scelte[Math.floor(Math.random()*scelte.length)];
+    // 4/10/2026: il dado vale per la PRIMA; dopo, a giro (vedi `_giro` sopra).
+    // L'elenco si ricalcola a ogni passo, cosi' una vetrina che scade nel frattempo
+    // esce dal giro da sola: si riparte da quella che segue l'ultima mostrata.
+    if(gira && _giro.scelte){
+      var _j=scelte.indexOf(_giro.scelte[_giro.i]);
+      QUALE=scelte[(_j+1)%scelte.length];
+    } else {
+      QUALE=scelte[Math.floor(Math.random()*scelte.length)];
+    }
+    _giro.scelte=scelte; _giro.i=scelte.indexOf(QUALE);
     // La chiave vecchia non si legge piu': si toglie di mezzo una volta sola,
     // se no resta li' a sporcare il browser di chi c'era prima.
     try{ if(localStorage.getItem('vetrina')) localStorage.removeItem('vetrina'); }catch(e){}
@@ -11724,11 +11748,35 @@ function loadDefaultMarkers(){
   // sotto gli occhi sembra un difetto: niente sostituzione se GitHub arriva tardi.
   var TETTO_VETRINA=2500;
   var RIPIEGO={mostra:MOSTRA, vetrine:VETRINE, sorteggio:ELENCO};
-  var montata=false;
+  var montata=false, _cfgMontata=null, _pillOrig=null;
+  /* Per girare si riparte dalla pillola ORIGINALE: `costruisci` la ritocca (vetrina
+     semplice) o la sostituisce con un <div> (vetrina con piu' social), e ritoccare
+     un <div> come fosse un <a>, o tenersi la coppa del gioco su un video, la
+     romperebbe. La scheda del computer invece `costruisci` la riscrive tutta. */
+  function ripristinaPillola(){
+    var p=document.getElementById('channel-pill');
+    if(!p || !_pillOrig) return;
+    var n=_pillOrig.cloneNode(true);
+    n.classList.remove('prevetrina');
+    p.replaceWith(n);
+  }
+  // Chiamata da loadData a ogni analisi dalla seconda in poi (sta fuori da questo
+  // blocco, quindi passa da window). Con una vetrina sola, o inchiodata, non fa niente.
+  window._vetrinaGira=function(){
+    if(!montata || !_cfgMontata || !_giro.scelte || _giro.scelte.length<2) return;
+    if((_cfgMontata.mostra||'alterna')!=='alterna') return;
+    try{
+      ripristinaPillola();
+      costruisci('alterna', _cfgMontata.vetrine||{}, _cfgMontata.sorteggio||[], true);
+    }catch(e){ if(window.console&&console.warn) console.warn('[vetrina] giro fallito', e); }
+  };
   function monta(cfg, da){
     if(montata) return;
     montata=true;
+    _cfgMontata=cfg;
     try{
+      var _p=document.getElementById('channel-pill');
+      if(_p) _pillOrig=_p.cloneNode(true);
       costruisci(cfg.mostra||'alterna', cfg.vetrine||{}, cfg.sorteggio||[]);
       if(window.console&&console.info) console.info('[vetrina] '+da);
     }catch(e){ if(window.console&&console.warn) console.warn('[vetrina] montaggio fallito', e); }
