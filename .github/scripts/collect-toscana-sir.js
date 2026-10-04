@@ -38,6 +38,8 @@ const COORDS_FILE   = path.join(__dirname, 'toscana-stazioni-coords.json');
 const SIR_URL       = 'https://www.sir.toscana.it/monitoraggio/stazioni.php?type=pluvio';
 const TERMO_URL     = 'https://www.sir.toscana.it/monitoraggio/stazioni.php?type=termo';
 const IGRO_URL      = 'https://www.sir.toscana.it/monitoraggio/stazioni.php?type=igro';   // umidità (18/8/2026), stesso tracciato
+// Mappa «Consistenza rete»: tutte le stazioni con lat/lon, riserva per le coordinate (4/10/2026)
+const SIR_MAPPA_URL = 'https://www.sir.toscana.it/open_layers/ajax_stations.php?bbox=9.5,42.1,12.5,44.6&zoom=8&types=pluvio';
 
 // ── Rete di sicurezza per il vento: gli anemometri SIR su MeteoHub ──────
 // Gli stessi ~140 anemometri che il campionatore legge dalla pagina del CFR
@@ -188,6 +190,41 @@ async function main() {
   const html = await fetchRaw(SIR_URL);
   const sirStations = parseSirValues(html);
   console.log(`  Stazioni SIR con valore Δ24h valido: ${sirStations.length}`);
+
+  // Coordinate che mancano nel file statico (4/10/2026): una stazione nuova del SIR
+  // senza riga in toscana-stazioni-coords.json veniva scartata qui sotto in silenzio
+  // (Castellina Marittima, TOS03002016, lo era da sempre). La mappa «Consistenza rete»
+  // del SIR le ha tutte: misurato il 4/10, 380 pluviometri su 380, e per i 379 gia' nel
+  // file le coordinate coincidono entro 0,0014°. Il file resta la fonte principale, la
+  // mappa fa da riserva e si chiede solo se manca qualcosa. Se non risponde si va
+  // avanti come prima: la stazione resta fuori, il giro non si ferma mai per questo.
+  const mancanti = sirStations.filter(s => !meta[s.id]);
+  if (mancanti.length) {
+    let tetto;
+    try {
+      const testo = await Promise.race([
+        fetchRaw(SIR_MAPPA_URL),
+        new Promise((_, ko) => { tetto = setTimeout(() => ko(new Error('nessuna risposta in 20 s')), 20000); })
+      ]);
+      clearTimeout(tetto);
+      const perId = {};
+      (JSON.parse(testo).features || []).forEach(f => { perId[f.id] = f; });
+      mancanti.forEach(s => {
+        const f = perId[s.id];
+        const lat = f ? parseFloat(f.lat) : NaN, lon = f ? parseFloat(f.lon) : NaN;
+        // Toscana con le isole, larga: serve solo a scartare coordinate impossibili
+        if (lat > 42.1 && lat < 44.6 && lon > 9.5 && lon < 12.5) {
+          meta[s.id] = { lat, lon };
+          console.log(`  Coordinate dalla mappa SIR: ${s.id} ${s.nome} (${lat}, ${lon})`);
+        } else {
+          console.log(`  ⚠️ ${s.id} ${s.nome}: coordinate assenti anche sulla mappa SIR, resta fuori`);
+        }
+      });
+    } catch (e) {
+      clearTimeout(tetto);
+      console.warn(`  Warn: mappa SIR non disponibile (${e.message}), ${mancanti.length} stazioni senza coordinate restano fuori`);
+    }
+  }
 
   const stations = sirStations.map(s => {
     const m = meta[s.id];
