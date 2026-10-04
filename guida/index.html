@@ -273,17 +273,17 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
      Si tengono le ultime otto o nove e si aggiorna la data del titolo. -->
 <div class="upd">
   <div class="tit"><span class="tag">NOVITÀ</span><b>Ultimi aggiornamenti</b>
-    <span class="quando">30 settembre 2026</span></div>
+    <span class="quando">4 ottobre 2026</span></div>
   <ul>
+    <li><span class="data">4 ott</span><span><a href="#temperature-ieri">Le temperature di ieri sulla mappa</a>: premi «Temp. ieri» e accanto a ogni pluviometro compaiono la minima e la massima del giorno prima, anche sopra la pioggia del periodo che hai scelto.</span></li>
+    <li><span class="data">4 ott</span><span><a href="#vento">Da dove soffia il vento</a>: nella scheda del pluviometro, sotto il grafico del vento, una freccia per ogni giorno. Col periodo «Ieri» c'è anche la direzione scritta, per esempio «da NE».</span></li>
     <li><span class="data">30 set</span><span><a href="#video">La guida in video</a>: cinque minuti con tutti gli strumenti della mappa, dal telefono, sul canale YouTube.</span></li>
     <li><span class="data">30 set</span><span><a href="#satellite">I boschi dal satellite</a>: nella mappa boschi premi Satellite e i colori dei boschi restano sopra la foto vera, fino a distinguere case, alberi e sentieri. Regoli l'intensità dei colori o li togli.</span></li>
-    <li><span class="data">30 set</span><span><a href="/?novita=1">Le novità in quattro filmati</a>: alla prima apertura della mappa una presentazione breve di satellite, tocco sul bosco, filtro per altitudine e quota e versante.</span></li>
     <li><span class="data">28 set</span><span><a href="#altitudine">Filtra i boschi per altitudine</a>: nella mappa boschi trascini due frecce e restano solo i boschi fra le quote che scegli, per esempio fra 800 e 1.000 metri.</span></li>
     <li><span class="data">27 set</span><span><a href="https://precipitazioni.avventuremicologiche.it/mappa-forestale/">La mappa forestale d'Italia</a>: una pagina per ogni regione e ogni valle, con i boschi tipo per tipo e la carta ufficiale da cui vengono.</span></li>
     <li><span class="data">26 set</span><span><a href="#colori">Pioppi, salici, ontani e frassini</a>: nella mappa boschi un colore nuovo per i boschi lungo fiumi e torrenti, in tutta Italia.</span></li>
     <li><span class="data">26 set</span><span><a href="#cerca">Cerca con le coordinate</a>: nella casella di ricerca scrivi il punto del GPS o incolla un link di Google Maps.</span></li>
     <li><span class="data">24 set</span><span><a href="#tocca">Tocca un punto nella mappa boschi</a>: che bosco c'è, quota, versante e pendenza, e lo apri su Google Maps. E sotto i colori, il rilievo di monti e valli.</span></li>
-    <li><span class="data">19 set</span><span><a href="#boschi">La mappa boschi in tutta Italia</a>: ventuno regioni, e un tocco su un punto ti dice che bosco è.</span></li>
   </ul>
   <p class="rivedi"><a href="/?novita=1">Rivedi la presentazione delle novità</a>, la finestra coi filmati che compare alla prima apertura della mappa.</p>
 </div>
@@ -391,6 +391,14 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <h3>Se i pallini sembrano meno del dovuto</h3>
 <p>A mappa larga si diradano, perché oltre un certo numero si sovrappongono e diventano una macchia illeggibile. <b>Ingrandendo compaiono tutti</b>, e il numero in legenda è sempre quello vero. Lo zoom si muove a tacche piccole, così si inquadra una valle senza passare dal troppo largo al troppo stretto.</p>
 
+<h3 id="temperature-ieri">🌡 Le temperature di ieri sui pallini</h3>
+<p>Il tasto <span class="ui">Temp. ieri</span>, fra <span class="ui">Radar pioggia</span> e <span class="ui">Mappa boschi</span>, scrive accanto ai pallini la <b>minima</b>, in blu, e la <b>massima</b>, in rosso, del giorno prima. Si accende anche sopra la pioggia del periodo scelto, così vedi insieme quanto è piovuto e com'erano le notti. Da lontano i numeri si diradano per non accavallarsi: avvicinandoti compaiono tutti. Si spegne premendo di nuovo il tasto.</p>
+<figure class="stretta">
+  <img src="temperature-ieri.jpg" alt="La Toscana dal telefono con le temperature di ieri accanto ai pallini: la minima in blu e la massima in rosso" width="592" height="690" loading="lazy">
+  <figcaption>La Toscana dal telefono col tasto acceso. Accanto a ogni pallino, minima e massima di ieri.</figcaption>
+</figure>
+<p class="mini">Se una stazione ha dato un valore che i vicini smentiscono, per esempio per un sensore guasto, quel numero non lo scriviamo e il pallino resta senza. Il link e la foto condivisa portano le temperature accese.</p>
+
 <h2 id="stazione"><span class="n">8</span>La scheda del pluviometro</h2>
 <p>Toccando un pallino si apre la sua scheda: nome, millimetri del periodo, comune, <b>quota</b> e <b>ranking</b>, cioè che posto occupa fra i pluviometri di quell'analisi. <span class="ui">#22 / 195</span> vuol dire ventiduesimo su centonovantacinque.</p>
 
@@ -442,8 +450,9 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
   <figcaption>Le altre tre linguette dello stesso pluviometro, sugli stessi giorni. La temperatura ha due linee, massima e minima. Il vento ha la media giornaliera. L'umidità ha la massima, che è quasi sempre di notte, e la minima del pomeriggio.</figcaption>
 </figure>
 
-<h3>💨 Il vento</h3>
+<h3 id="vento">💨 Il vento</h3>
 <p>Il vento asciuga. Una giornata ventosa dopo la pioggia toglie umidità alla lettiera molto più in fretta di una giornata ferma, e su un versante esposto la finestra utile si accorcia. Nel grafico c'è la <b>velocità media</b> del giorno, e nel dettaglio di ogni giornata anche la raffica. È anche il modo per riconoscere i giorni di burrasca in una serie.</p>
+<p>Sotto il grafico, <b>una freccia per ogni giorno</b> indica dove andava il vento, e la scheda dice da dove arrivava, per esempio «da SW», cioè libeccio. Un vento umido dal mare e uno secco da nord dopo la stessa pioggia non lasciano il bosco nello stesso stato.</p>
 
 <h3>💦 L'umidità dell'aria</h3>
 <p>Dice quanto il bosco sta restituendo l'acqua che ha preso. Dopo una pioggia, <b>giorni con umidità alta</b>, specie di notte, vogliono dire terreno che resta umido; aria secca e vento insieme sono la combinazione che asciuga tutto in due giorni. È l'umidità dell'aria misurata dalla stazione, non quella del terreno: quella nelle reti pubbliche non esiste, esistono solo modelli, e i modelli qui non li usiamo.</p>

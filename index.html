@@ -15035,6 +15035,9 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
 })();
 </script>
 <!-- ═══ FINESTRA «NOVITÀ» ALLA PRIMA APERTURA (30/9/2026, sua richiesta; rifatta due volte la stessa notte) ═══
+     ⚠️ RIFATTA IL 4/10/2026 (VERSIONE 2026-10-04): DUE pagine, temperature di ieri e satellite, filmati
+     corti con una freccia sul tasto e uno zoom che parte dallo schermo intero (registra-temperature.js
+     nel banco di lavoro). Le quattro pagine del 30/9 qui sotto sono la storia.
      Quattro pagine, una per novita', ognuna con un filmato RIPRESO DAL SITO VERO (novita/*.mp4, registrati con
      registra-novita.js nel banco di lavoro, a misura di telefono, zoom a STACCHI nitidi) a tutta larghezza e,
      SOPRA il filmato (suo: «uno o guarda sopra o sotto», legge e poi guarda), le scritte grandi da slogan: il titolo fisso e
@@ -15083,21 +15086,27 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
 </style>
 <script>
 (function(){
-  var VERSIONE='2026-09-30', CHIAVE='novitaVista';
+  var VERSIONE='2026-10-04', CHIAVE='novitaVista';
+  /* UNA PAGINA PER VISITA (4/10/2026, suo: «le spezziamo in due»): alla prima visita solo la prima pagina,
+     alla visita dopo (almeno RIM_DOPO, 30', piu' tardi) solo la seconda, poi basta. In CHIAVE: VERSIONE|1|ora
+     dopo la prima, VERSIONE secco quando le ha viste tutte. ?novita=1 (la guida, chi la chiede) le mostra
+     tutte di seguito. SEQ = le pagine di questa apertura, idx = la pagina che si vede. */
+  var SEQ=[];
   // d = didascalie: [secondo, testo]; il secondo viene dai marchi della registrazione (build-novita.py)
   var PAGINE=[
-    {t:'Boschi dal satellite', f:'novita/satellite-a', d:[[0, "Premi Satellite"], [2.5, "Regola i colori dei boschi, o toglili"], [7.25, "Zoom al massimo"], [9.27, "Risoluzione altissima: case, alberi, sentieri"], [11.69, "Come Google Maps, in molte zone più dettagliato"], [14.1, "E il tasto per Google Maps c’è sempre"]]},
-    {t:'Tocca un bosco', f:'novita/boschi', d:[[0, "Zoom sui boschi"], [3.24, "Tocca un punto"], [4.31, "Ti dice che bosco è"]]},
-    {t:'Filtra per altitudine', f:'novita/filtro', d:[[0, "Trascina la freccia in su"], [2.11, "Via i castagneti: restano faggi e abeti"], [4.26, "Più su: via anche i faggi, restano gli abeti"], [7.52, "Riallarga: ricompaiono tutti"]]},
-    {t:'Quota, versante, pendenza', f:'novita/nuvoletta', d:[[0, "Un lariceto a 1.850 metri, Alpe di Siusi"], [1.5, "Tocca"], [2.57, "Quota, versante e pendenza"], [5.17, "Un tasto e sei su Google Maps"]]}
+    {t:'Temperature di ieri', f:'novita/temperature', d:[[0, "Da ora, cliccando qui"], [3.67, "Le minime e le massime del giorno prima, di ogni pluviometro"]]},
+    {t:'Satellite', f:'novita/satellite-corto', d:[[0, "Dalla Mappa boschi, clicca qui"], [3.65, "Satellite coi boschi evidenziati"], [7.31, "O solo satellite"]]}
   ];
   var AVANZA_DOPO=1200;   // ms fermi sull'ultimo fotogramma prima di passare da soli alla pagina dopo
   var avanzaT=null;
   var velo=null, idx=0, vids=[], elTit, elDida, elConta, elPunti, elAvanti, elDietro, elFilm;
   function forzata(){ return /[?&]novita=1(&|$)/.test(location.search); }
   function vietata(){ return /[?&]novita=0(&|$)/.test(location.search); }
-  function vista(){ try{ return localStorage.getItem(CHIAVE)===VERSIONE; }catch(e){ return false; } }
-  function segna(){ try{ localStorage.setItem(CHIAVE,VERSIONE); }catch(e){} }
+  function letto(){ try{ return localStorage.getItem(CHIAVE)||''; }catch(e){ return ''; } }
+  function vista(){ return letto()===VERSIONE; }
+  // la prima pagina gia' vista: restituisce l'ora, se no null
+  function primaVista(){ var p=letto().split('|'); return (p.length===3&&p[0]===VERSIONE&&p[1]==='1') ? (+p[2]||0) : null; }
+  function segna(){ try{ localStorage.setItem(CHIAVE, SEQ.indexOf(PAGINE.length-1)>=0 ? VERSIONE : VERSIONE+'|1|'+Date.now()); }catch(e){} }
   /* RIMANDATA (2/10/2026, suo: «se non gliel'abbiamo fatta vedere la prima volta la deve vedere la seconda»):
      chi arriva con qualcosa nell'indirizzo (pagine nostre s=p, link condivisi, date) non la vede subito,
      ma si segna l'ora; alla visita dopo, da dove che arrivi, si apre. 30' di distanza = una visita nuova,
@@ -15124,7 +15133,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
       /* finito il filmato si va avanti DA SOLI (suo, 30/9: «non fare che si ferma se uno non tocca Continua»);
          sull'ultima pagina ci si ferma sull'ultimo fotogramma e «Vai alla mappa» pulsa */
       v.addEventListener('ended',function(){ if(i!==idx) return;
-        if(idx<PAGINE.length-1){ clearTimeout(avanzaT); avanzaT=setTimeout(function(){ if(velo.classList.contains('su')&&idx===i) avanti(true); },AVANZA_DOPO); }
+        if(pos()<SEQ.length-1){ clearTimeout(avanzaT); avanzaT=setTimeout(function(){ if(velo.classList.contains('su')&&idx===i) avanti(true); },AVANZA_DOPO); }
         else elAvanti.classList.add('pulsa'); });
       elFilm.insertBefore(v,elFilm.firstChild); vids.push(v);
       var p=document.createElement('i'); elPunti.appendChild(p);
@@ -15141,36 +15150,48 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     if(elDida.textContent!==s){ elDida.textContent=''; var sp=document.createElement('span'); sp.textContent=s; elDida.appendChild(sp); elDida.style.animation='none'; void elDida.offsetWidth; elDida.style.animation=''; }
   }
   function riparti(){ var v=vids[idx]; clearTimeout(avanzaT); elAvanti.classList.remove('pulsa'); try{ v.currentTime=0; }catch(e){} var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); didascalia(0); }
+  function pos(){ return SEQ.indexOf(idx); }
   function mostra(i){
-    idx=i; var pg=PAGINE[i];
-    elTit.textContent=pg.t; elConta.textContent=(i+1)+' di '+PAGINE.length;
+    idx=i; var pg=PAGINE[i], q=pos();
+    elTit.textContent=pg.t; elConta.textContent= SEQ.length>1 ? (q+1)+' di '+SEQ.length : '';
+    elPunti.style.visibility= SEQ.length>1 ? '' : 'hidden';
     [].forEach.call(elPunti.children,function(p,k){ p.className=k===i?'on':''; });
-    elAvanti.textContent= i<PAGINE.length-1 ? 'Continua →' : 'Vai alla mappa';
+    elAvanti.textContent= q<SEQ.length-1 ? 'Continua →' : 'Vai alla mappa';
     elAvanti.classList.remove('pulsa');
-    if(i>0) elDietro.removeAttribute('disabled'); else elDietro.setAttribute('disabled','');
+    if(q>0) elDietro.removeAttribute('disabled'); else elDietro.setAttribute('disabled','');
     vids.forEach(function(v,k){
       if(k===i){ v.classList.remove('via'); if(!v.getAttribute('src')){ v.src=pg.f+'.mp4'; v.load(); } riparti(); }
       else { v.classList.add('via'); try{ v.pause(); }catch(e){} }
     });
   }
   function tasto(e){ if(e.key==='Escape') chiudi('chiusa'); else if(e.key==='ArrowRight') avanti(); else if(e.key==='ArrowLeft') indietro(); }
-  function avanti(daSolo){ clearTimeout(avanzaT); if(idx<PAGINE.length-1){ mostra(idx+1); ga(daSolo===true?'auto':'pagina',idx+1); } else chiudi('finita'); }
-  function indietro(){ clearTimeout(avanzaT); if(idx>0){ mostra(idx-1); ga('indietro',idx+1); } }
+  function avanti(daSolo){ clearTimeout(avanzaT); var q=pos(); if(q<SEQ.length-1){ mostra(SEQ[q+1]); ga(daSolo===true?'auto':'pagina',idx+1); } else chiudi('finita'); }
+  function indietro(){ clearTimeout(avanzaT); var q=pos(); if(q>0){ mostra(SEQ[q-1]); ga('indietro',idx+1); } }
   function chiudi(come){
     clearTimeout(avanzaT); velo.classList.remove('su'); vids.forEach(function(v){ try{ v.pause(); }catch(e){} });
     segna(); ga(come,idx+1); document.removeEventListener('keydown',tasto);
   }
-  function apri(){ if(!velo) costruisci(); velo.classList.add('su'); mostra(0); ga('aperta',1); document.addEventListener('keydown',tasto); }
+  function apri(){ if(!SEQ.length) SEQ=PAGINE.map(function(p,i){ return i; });   // _novitaApri dalla guida o dalle prove: tutte
+    if(!velo) costruisci(); velo.classList.add('su'); mostra(SEQ[0]); ga('aperta',SEQ[0]+1); document.addEventListener('keydown',tasto); }
   window._novitaApri=apri;   // per la guida e per le prove
   function pronta(){ var sp=document.getElementById('map-spinner'); return !!window._mapDebug && (!sp || getComputedStyle(sp).display==='none'); }
   function avvia(){
     if(vietata()) return;
     try{ if(window.top!==window) return; }catch(e){}
     var pagina=location.pathname; if(!(pagina==='/'||/\/index\.html$/.test(pagina))) return;
-    if(!forzata()){
+    if(forzata()) SEQ=PAGINE.map(function(p,i){ return i; });
+    else {
       if(vista()) return;
-      if(location.search && location.search!=='?'){ if(rimandoMaturo()) rimandata=true; else { rimanda(); return; } }
-      else if(rimandoMaturo()) rimandata=true;
+      var t1=primaVista();
+      if(t1!==null){
+        // la seconda pagina: a una visita NUOVA, da qualunque indirizzo (la mappa ormai la conosce)
+        if(Date.now()-t1<RIM_DOPO) return;
+        SEQ=[1];
+      } else {
+        if(location.search && location.search!=='?'){ if(rimandoMaturo()) rimandata=true; else { rimanda(); return; } }
+        else if(rimandoMaturo()) rimandata=true;
+        SEQ=[0];
+      }
     }
     var t0=Date.now();
     (function aspetta(){ if(pronta()||Date.now()-t0>8000) setTimeout(apri,900); else setTimeout(aspetta,300); })();
