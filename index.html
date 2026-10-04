@@ -9568,6 +9568,8 @@ function buildShareUrl(){
   var p=new URLSearchParams();
   p.set('r',regions.join(','));
   if(!senzaDate){ p.set('da',fmtISOLocal(new Date(currentPast))); p.set('a',fmtISOLocal(new Date(currentNow))); }
+  // 🌡 temperature di ieri accese (4/10/2026, suo: «condividi link non le porta»)
+  if(window._tqAcceso && window._tqAcceso()) p.set('tq','1');
   p.set('z',String(Math.round(map.getZoom()*100)/100));
   var c=map.getCenter();
   // ⚠️ E NON BASTA TOGLIERE pl (26/8/2026): dopo «La mia posizione» il CENTRO
@@ -9829,6 +9831,29 @@ function captureMapBlob(scala){
     });
   }).then(function(dis){
     dis.forEach(function(d){ if(d.im){ try{ ctx.drawImage(d.im,d.r.x,d.r.y,d.r.w,d.r.h); }catch(e){} } });
+    // 🌡 LE TEMPERATURE DI IERI (4/10/2026, suo: «scarica immagine non le porta»). Sono testo HTML
+    // dentro un pane Leaflet, e qui i pane si ridisegnano a mano: senza queste righe la foto le
+    // perdeva. Stesse posizioni, stessi colori e lo stesso alone bianco (tratto largo sotto il testo).
+    try{
+      if(window._tqAcceso && window._tqAcceso()){
+        if(window._tqRidisegna) window._tqRidisegna();
+        [].slice.call(mapEl.querySelectorAll('.tq')).forEach(function(el){
+          if(el.classList.contains('via')||!visibile(el)) return;
+          [].slice.call(el.children).forEach(function(sp){
+            var r=rel(sp), cs=getComputedStyle(sp);
+            if(r.x+r.w<0||r.x>mr.width||r.y<hdrH||r.y>mr.height+hdrH) return;
+            ctx.save();
+            ctx.font=cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily;
+            try{ ctx.letterSpacing=cs.letterSpacing; }catch(e){}
+            ctx.textBaseline='middle'; ctx.lineJoin='round';
+            ctx.lineWidth=3.2; ctx.strokeStyle='rgba(255,255,255,.95)';
+            ctx.strokeText(sp.textContent,r.x,r.y+r.h/2);
+            ctx.fillStyle=cs.color; ctx.fillText(sp.textContent,r.x,r.y+r.h/2);
+            ctx.restore();
+          });
+        });
+      }
+    }catch(e){}
     // 4) pannelli HTML sovrapposti (periodo, legenda, box canale…), controlli
     // Leaflet e header in UNA SOLA passata di html2canvas sull'intero documento
     // (refactor 30/7/2026): la versione precedente lo chiamava una volta PER
@@ -9873,7 +9898,7 @@ function captureMapBlob(scala){
           var nb=doc.getElementById('novita-box'); if(nb) nb.style.visibility='hidden';
           // il riquadro Mappa|Satellite non va nello scatto; i crediti della foto SI' (obbligatori)
           var sb=doc.getElementById('sat-btn'); if(sb) sb.style.visibility='hidden';
-          var tqb=doc.getElementById('tq-btn'); if(tqb) tqb.style.visibility='hidden';   // il tasto delle temperature nemmeno
+          // il tasto delle temperature invece SI': sta nella riga Radar|Boschi, nascosto lasciava un buco (4/10)
           // la manopola del retino html2canvas la disegna come una casella di testo: nello scatto non serve
           // i tasti dei boschi restano nella foto (29/9, suo); solo il cursore della manopola, che
           // html2canvas disegna come una casella di testo, diventa invisibile senza lasciare buchi
@@ -15195,6 +15220,9 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
   var datiKo=false;    // il file non c'e': solo allora il tasto sparisce
   var MESI=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
   var dati=null, giorno='', btn=null, on=false, gruppo=null, disegnando=false, tmr=null;
+  // un link condiviso con le temperature accese (tq=1) le riaccende appena ci sono dati e pallini
+  var daLink=new URLSearchParams(location.search).get('tq')==='1';
+  window._tqAcceso=function(){ return on; };
   function m(){ return window._mapDebug; }
   function chiave(lat,lon){ return (+lat).toFixed(4)+','+(+lon).toFixed(4); }
   function carica(){
@@ -15236,6 +15264,7 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
     // si spegne solo entrando nel radar o nei boschi: mentre un'analisi ridisegna i pallini
     // per un attimo non ce n'e' nessuno, e non deve spegnersi per quello
     if(modoAltro() && on){ on=false; disegnaTasto(); }
+    if(daLink && !on && dati && !modoAltro() && pallini().length){ daLink=false; on=true; disegnaTasto(); }
     disegna();
   }
   function cancella(){ if(gruppo){ disegnando=true; gruppo.clearLayers(); disegnando=false; } }
@@ -15302,6 +15331,8 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
     });
   }
   function rinvia(){ if(disegnando) return; clearTimeout(tmr); tmr=setTimeout(aggiorna,250); }
+  // la foto: ridisegno subito, senza aspettare il quarto di secondo dopo lo spostamento
+  window._tqRidisegna=function(){ clearTimeout(tmr); aggiorna(); };
   /* IL POSTO DEL TASTO (3/10, deciso dopo tre prove dal vivo: in basso sulla mappa «non lo vede
      nessuno», nel pannello e nella testata «un tasto aggiunto a caso»): terzo tasto IN MEZZO alla riga
      «Radar pioggia | Mappa boschi». Se la riga non c'e' ancora, aspetta sulla mappa. */
@@ -15350,6 +15381,9 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
     ['pointerdown','pointerup','touchstart','touchend','mousedown','mouseup','click','dblclick','wheel'].forEach(function(ev){ btn.addEventListener(ev,function(e){ e.stopPropagation(); }); });
     btn.addEventListener('click',function(){
       var mp=m();
+      // senza regione si dice come fanno tutti gli altri tasti (3/10, suo: «come sempre»)
+      var att=window._regioniAttive?window._regioniAttive():[];
+      if(!on && !att.length){ var st=document.getElementById('tp-status'); if(st){ st.textContent='⚠️ Seleziona prima una regione!'; st.className='error'; } return; }
       on=!on; disegnaTasto();
       try{ gtag('event','temperature_ieri',{stato:on?'on':'off'}); }catch(e){}
       // da lontano ci si avvicina (sua scelta «a»), al centro dei pallini della regione e non della
