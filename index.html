@@ -11615,6 +11615,14 @@ function loadDefaultMarkers(){
     // logo YouTube. Il logo segue la destinazione vera di V.link.
     var suFb=/facebook\.com|fb\.watch/.test(V.link||'');
     if(suFb) ytPieno='<svg width="13" height="13" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#1877F2" d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0022 12z"/></svg>';
+    // ⚠️ NON SEMPRE UN VIDEO (4/10/2026, il quiz dei tartufi): con "tipo":"gioco" nel file
+    // la vetrina porta a un gioco e il logo YouTube prometterebbe un video che non c'e'.
+    // Al suo posto una coppa: accanto all'occhiello sul computer, nella riga piccola e nel
+    // bottone giallo della pillola sul telefono (mockup B scelto da lui).
+    var gioco=V.tipo==='gioco';
+    function coppa(px,col){ return '<svg width="'+px+'" height="'+px+'" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="'+col+'" d="M7 3h10v2h3v3a4 4 0 0 1-4 4h-.3A5 5 0 0 1 13 14.9V17h3v3H8v-3h3v-2.1A5 5 0 0 1 8.3 12H8a4 4 0 0 1-4-4V5h3zm-1 4v1a2 2 0 0 0 2 2V7zm12 0v3a2 2 0 0 0 2-2V7z"/></svg>'; }
+    if(gioco) ytPieno=coppa(14,'#E8A317');
+    var segno= gioco ? '🏆' : '▶';   // davanti alla riga piccola della pillola
 
     // L'onclick e' un attributo scritto nel markup: va SOSTITUITO, non aggiunto,
     // altrimenti a ogni clic partirebbero due eventi.
@@ -11636,7 +11644,7 @@ function loadDefaultMarkers(){
     if(box){
       box.classList.add('vetrina');
       box.href=V.link;
-      box.title='Guarda il video nuovo';
+      box.title= gioco ? 'Gioca' : 'Guarda il video nuovo';
       box.setAttribute('onclick',tracc('vetrina-desktop'));
       box.innerHTML='<div class="v-alto">'
         +'<div class="v-cop" style="background-image:url(&quot;'+urlCopertina(V.copertina)+'&quot;)"></div>'
@@ -11663,7 +11671,9 @@ function loadDefaultMarkers(){
       if(t){
         // \u26A0\uFE0F `gancioP`: l'a capo DECISO per la pillola (14/9/2026). Senza, la
         // riga va a capo dove capita e lascia una parola sola sotto (\u00ABabeti\u00BB).
-        t.innerHTML=(V.gancioP||V.gancio)+'<small>\u25B6 '+V.occhielloP+' \u00B7 '+V.canale+'</small>';
+        t.innerHTML=(V.gancioP||V.gancio)+'<small>'+segno+' '+V.occhielloP+' \u00B7 '+V.canale+'</small>';
+        var ic=pill.querySelector('.cp-yt');
+        if(ic && gioco) ic.innerHTML='<span style="display:inline-flex;align-items:center;justify-content:center;width:52px;height:36px;border-radius:9px;background:#F6B91A">'+coppa(24,'#7A3A08')+'</span>';
         var im=pill.querySelector('img');
         if(im && V.copertina){ im.src=urlCopertina(V.copertina); im.className='cp-cop'; im.alt=''; }
         pill.href=V.link;
@@ -11688,7 +11698,7 @@ function loadDefaultMarkers(){
       nuova.innerHTML=
         '<a class="cp-alto" href="'+V.link+'" target="_blank" rel="noopener" onclick="'+tracc('vetrina-mobile').replace(/"/g,'&quot;')+'">'
         +(V.copertina ? '<img class="cp-cop" src="'+urlCopertina(V.copertina)+'" alt="">' : '<img src="archie-avatar.png" alt="Archie">')
-        +'<div class="cp-t">'+(V.gancioP||V.gancio)+'<small>\u25B6 '+V.occhielloP+' \u00B7 '+V.canale+'</small></div>'
+        +'<div class="cp-t">'+(V.gancioP||V.gancio)+'<small>'+segno+' '+V.occhielloP+' \u00B7 '+V.canale+'</small></div>'
         +'</a>'
         +'<div class="cp-riga">'+riga+'</div>';
       pill.replaceWith(nuova);
