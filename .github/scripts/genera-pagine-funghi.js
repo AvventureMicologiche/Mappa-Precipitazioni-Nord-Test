@@ -367,7 +367,7 @@ e abetaie non danno gli stessi funghi. La mappa boschi colora i boschi ${r.prep}
 con i disegni ${cartaDi(r.k)}. Avvicinati sulla zona che ti interessa.</p>
 <a href="${SITO}/?r=${r.k}&amp;boschi=1" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'funghi-${r.k}-boschi'})}catch(e){}">
-  <img src="${SITO}/tessere-boschi/anteprime/${r.k}.jpg"
+  <img src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/tessere-boschi/anteprime/${r.k}.jpg"
        alt="La mappa boschi ${r.prep} ${nome}: faggete, castagneti, querceti e abetaie colorati per tipo"
        width="1600" height="1000" loading="lazy"
        style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">

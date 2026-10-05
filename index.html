@@ -3378,15 +3378,23 @@ var TETTO_RAW_MS=6000, SCORTA_MS=1500, SCORTA_FRESCHI_MS=3000, INTERRUTTORE=8, G
     if(_archivio.errori>=INTERRUTTORE && !fresco){ _archivio.falliti++; return contaCopia(copia()); }
     return new Promise(function(resolve){
       var chiuso=false, scortaP=null, tS=null, tT=null;
-      var fine=function(p){ if(chiuso)return; chiuso=true; clearTimeout(tS); clearTimeout(tT); resolve(p); };
+      // 5/10/2026: chi perde la corsa viene ANNULLATO. Prima la copia Netlify partita a 1,5 s
+      // si scaricava fino in fondo anche quando raw arrivava subito dopo: stesso file due volte,
+      // e la banda Netlify costa 20 crediti al GB.
+      var cR=('AbortController' in window)?new AbortController():null, cC=cR?new AbortController():null;
+      var conSegnale=function(c){ if(!c) return o; var o2={}; for(var k in (o||{})) o2[k]=o[k]; o2.signal=c.signal; return o2; };
+      var copia=function(){ return _fetch(dom+'/'+m[2],conSegnale(cC)); };
+      var fine=function(p,vinceCopia){ if(chiuso)return; chiuso=true; clearTimeout(tS); clearTimeout(tT);
+        try{ if(vinceCopia){ if(cR)cR.abort(); } else if(scortaP&&cC) cC.abort(); }catch(e){}
+        resolve(p); };
       // raw ha fallito (errore vero o tetto): si usa la scorta se gia' in volo, altrimenti si parte ora
-      var ripiega=function(errore){ _archivio.falliti++; if(errore)_archivio.errori++; fine(contaCopia(scortaP||copia())); };
+      var ripiega=function(errore){ _archivio.falliti++; if(errore)_archivio.errori++; fine(contaCopia(scortaP||copia()),true); };
       tS=setTimeout(function(){ if(chiuso)return;
         scortaP=copia();
-        scortaP.then(function(r2){ if(!chiuso && r2.ok){ _archivio.scorta++; fine(r2); } }, function(){});
+        scortaP.then(function(r2){ if(!chiuso && r2.ok){ _archivio.scorta++; fine(r2,true); } }, function(){});
       }, fresco?SCORTA_FRESCHI_MS:SCORTA_MS);
       tT=setTimeout(function(){ ripiega(false); }, TETTO_RAW_MS);
-      _fetch(u,o).then(function(r){ if(chiuso)return; if(r.ok||r.status===404) fine(r); else ripiega(true); },
+      _fetch(u,conSegnale(cR)).then(function(r){ if(chiuso)return; if(r.ok||r.status===404) fine(r); else ripiega(true); },
                        function(){ if(chiuso)return; ripiega(true); });
     });
   };
@@ -15135,6 +15143,9 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
 <script>
 (function(){
   var VERSIONE='2026-10-04', CHIAVE='novitaVista';
+  /* 5/10/2026: i filmati (4-5 MB l'uno) li serve GitHub, non Netlify. In cinque giorni di ottobre
+     la finestra ha scaricato 10-15 GB dal sito: a 20 crediti il GB era il grosso dei 600 crediti di banda. */
+  var NV_MEDIA='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/';
   /* UNA PAGINA PER VISITA (4/10/2026, suo: «le spezziamo in due»): alla prima visita solo la prima pagina,
      alla visita dopo (almeno RIM_DOPO, 30', piu' tardi) solo la seconda, poi basta. In CHIAVE: VERSIONE|1|ora
      dopo la prima, VERSIONE secco quando le ha viste tutte. ?novita=1 (la guida, chi la chiede) le mostra
@@ -15208,7 +15219,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     elAvanti.classList.remove('pulsa');
     if(q>0) elDietro.removeAttribute('disabled'); else elDietro.setAttribute('disabled','');
     vids.forEach(function(v,k){
-      if(k===i){ v.classList.remove('via'); if(!v.getAttribute('src')){ v.src=pg.f+'.mp4'; v.load(); } riparti(); }
+      if(k===i){ v.classList.remove('via'); if(!v.getAttribute('src')){ v.src=NV_MEDIA+pg.f+'.mp4'; v.load(); } riparti(); }
       else { v.classList.add('via'); try{ v.pause(); }catch(e){} }
     });
   }

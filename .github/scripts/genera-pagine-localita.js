@@ -377,7 +377,7 @@ ${haBoschi(REG) ? `<h2>Che boschi ci sono intorno</h2>
 <p class="breve">Faggete, castagneti, querceti e abetaie colorati per tipo, con il rilievo sotto.</p>
 <a href="${SITO}/?r=${REG}&amp;${PIN}&amp;boschi=1" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'localita-${REG}-boschi'})}catch(e){}">
-  <img class="img-mappa" src="${SITO}/tessere-boschi/anteprime/${REG}.jpg"
+  <img class="img-mappa" src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/tessere-boschi/anteprime/${REG}.jpg"
        alt="La mappa boschi ${r.prep} ${esc(NOME)}: faggete, castagneti, querceti e abetaie colorati per tipo"
        width="1600" height="1000" loading="lazy">
   <span class="vai-mappa">🌲 Guarda i boschi intorno ${esc(DOVE)}</span>
