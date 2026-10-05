@@ -62,3 +62,116 @@
   for = "/data/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
+
+# 5/10/2026: cache lunga (30 giorni) su quello che non cambia indirizzo quando cambia:
+# confini, copertine della vetrina, anteprime dei boschi, filmati e poster delle Novita'.
+# Prima era tutto max-age=0 e ogni apertura riscaricava anche i confini (1,1 MB).
+# index.html NON e' qui e resta a max-age=0: deve cambiare subito a ogni deploy.
+# ⚠️ Un file di questi va cambiato dandogli un NOME nuovo, non riscrivendolo.
+[[headers]]
+  for = "/austria-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/francia-aura-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/francia-bfc-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/francia-bretagna-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/francia-centro-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/francia-corsica-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/francia-grandest-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/francia-hdf-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/francia-idf-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/francia-loira-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/francia-naq-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/francia-normandia-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/francia-occitania-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/francia-provenza-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/italia-province-tn-bz-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/italia-regioni-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/slovenia-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/svizzera-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/ticino-confine.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/data/vetrine/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+[[headers]]
+  for = "/tessere-boschi/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+[[headers]]
+  for = "/novita/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
