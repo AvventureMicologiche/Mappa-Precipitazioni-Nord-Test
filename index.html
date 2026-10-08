@@ -8422,6 +8422,11 @@ function resetToStart(){
 function svuotaScelta(){
   document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb2){ cb2.checked=false; });
   Object.keys(regionBorders).forEach(function(rk2){ map.removeLayer(regionBorders[rk2]); delete regionBorders[rk2]; });
+  svuotaAnalisi();
+  refreshSelectorStyles();
+}
+/* via l'analisi, le regioni restano: la usa anche il tasto «indietro» del telefono (8/10/2026) */
+function svuotaAnalisi(){
   clearMarkers(); clearHeatmap();
   document.getElementById('legend-panel').style.display='none';
   hideLegendMobile();
@@ -8437,7 +8442,6 @@ function svuotaScelta(){
   document.getElementById('beta-note').style.display='none';
   currentPast=null; currentNow=null; currentLabel='';
   updateOsmerNotice();
-  refreshSelectorStyles();
 }
 var _btnResetRegions=document.getElementById('btn-reset-regions');
 if(_btnResetRegions) _btnResetRegions.addEventListener('click',resetToStart);
@@ -9748,6 +9752,35 @@ window._paeseCercato=function(){ return _vistaPaese; };
 window._regioniVicine=function(lat,lon){ return locRegioniVicine(lat,lon); };
 window._caricaVicine=function(){ return locCaricaVicine(); };
 window._svuotaScelta=function(){ if(isLoading) return false; svuotaScelta(); return true; };   // previsioni: la ricerca riparte da capo (8/10)
+/* per il tasto «indietro» del telefono (8/10/2026, modulo in fondo): cosa c'e' a schermo e come si toglie un passo */
+window._storicoStato=function(){ return {analisi:!!(currentPast&&currentNow), scheda:histEl.style.display==='block'}; };
+window._chiudiScheda=function(){ closeStationHistory(); return true; };
+/* via l'analisi, resta la regione coi pallini di partenza: come appena scelta */
+window._togliAnalisi=function(){
+  if(isLoading) return false;
+  closeStationHistory();
+  svuotaAnalisi();
+  _vistaUtente=false;
+  var rk=getActiveRegions();
+  rk.forEach(function(r){ setRegionBorder(r,function(){ addDefaultMarkersForRegion(r); }); });
+  refreshSelectorStyles();
+  if(window.innerWidth<=900){
+    var tp=document.getElementById('time-panel'); if(tp){ tp.style.display=''; tp.classList.add('open'); }
+    setTimeout(centraRegioneInStriscia,420);
+  } else if(rk.length) fitMapToRegions(rk,0.5);
+  return true;
+};
+/* via anche la regione: la mappa d'apertura */
+window._tornaAllInizio=function(){
+  if(isLoading) return false;
+  closeStationHistory();
+  resetToStart();
+  var sel=document.getElementById('region-select');
+  if(sel){ var op=sel.querySelector('option[value="__paese"]'); if(op) op.remove(); sel.value=''; }
+  regEtichetta();
+  var tp=document.getElementById('time-panel'); if(tp&&window.innerWidth<=900) tp.classList.remove('open');
+  return true;
+};
 /* Serve al blocco della barra del periodo (20/9/2026), che sta fuori da questa
    IIFE: ricentra la regione quando la barra sale o scende, MA SOLO se la vista
    e' ancora quella automatica. Se l'utente ha trascinato o zoomato a mano,
@@ -15835,12 +15868,14 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     storia.det=false; if(!soloDet) storia.prev=false;
     tend(function(){ try{ ignoraPop++; history.go(-k); }catch(e){ ignoraPop--; } });
   }
-  window.addEventListener('popstate',function(){
-    if(ignoraPop>0){ ignoraPop--; return; }
+  /* ⚠️ chi consuma il passo ferma l'evento: dopo c'e' l'ascoltatore dello storico (8/10, in fondo al file) */
+  window.addEventListener('popstate',function(e){
+    if(ignoraPop>0){ ignoraPop--; e.stopImmediatePropagation(); return; }
     if(!acceso) return;
-    if(storia.det){ storia.det=false; chiudiDettaglio(); return; }
-    if(storia.prev){ storia.prev=false; esci(); }
+    if(storia.det){ storia.det=false; e.stopImmediatePropagation(); chiudiDettaglio(); return; }
+    if(storia.prev){ storia.prev=false; e.stopImmediatePropagation(); esci(); }
   });
+  window._prevPopInVolo=function(){ return ignoraPop>0; };
   function regDi(p){ try{ return (window._regioniVicine&&window._regioniVicine(p.lat,p.lon)||[])[0]||null; }catch(e){ return null; } }
   /* computer: quanto lasciare libero a destra. La tabella di un posto, se aperta; se no la scheda del canale in
      alto a destra, che dall'8/10 resta nelle previsioni e copriva i capoluoghi della costa (Ancona) */
@@ -16238,6 +16273,74 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
 
   function nasci(){ if(!window._mapDebug||!window.L||!el('time-panel')){ setTimeout(nasci,150); return; } monta(); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',nasci); else nasci();
+})();
+</script>
+<script>
+/* IL TASTO «INDIETRO» IN TUTTO IL SITO (suo, 8/10/2026: «apro Lombardia, 7 gg, indietro e mi chiude il sito»).
+   Ogni cosa accesa e' un PASSO nella cronologia, nell'ordine in cui l'hai accesa: regione, analisi, radar, boschi,
+   Temp. ieri, satellite, scheda di un pluviometro. «Indietro» spegne l'ULTIMA accesa; finite quelle, esce dal sito
+   (sua scelta «B»: analisi → regione → mappa d'apertura → fuori). Cambiare periodo o regione non e' un passo nuovo.
+   Non si conta chi fa cosa: si GUARDA lo stato a schermo dopo ogni gesto e si allinea la cronologia. Cosi' chi
+   spegne coi tasti del sito (✕ Chiudi radar, ↩ Indietro...) toglie anche il passo, senza saperlo.
+   Le cose accese dall'apertura (link condiviso) sono la base: non hanno passi, come le previsioni da link.
+   La tendina delle regioni e le previsioni hanno i loro passi e passano prima (stopImmediatePropagation): qui si
+   lavora solo a previsioni spente e tendina chiusa. Chi scrive nella cronologia passa da _dopoTendina (8/10). */
+(function(){
+  function clicca(id){ return function(){ var b=document.getElementById(id); if(!b) return false; b.click(); return true; }; }
+  var LIVELLI=[
+    {k:'reg',    on:function(){ return window._regioniAttive&&window._regioniAttive().length>0; }, via:function(){ return window._tornaAllInizio&&window._tornaAllInizio(); }},
+    {k:'an',     on:function(){ return window._storicoStato&&window._storicoStato().analisi; },     via:function(){ return window._togliAnalisi&&window._togliAnalisi(); }},
+    {k:'radar',  on:function(){ return document.body.classList.contains('modo-radar'); },           via:clicca('btn-radar')},
+    {k:'boschi', on:function(){ return !!window._boschiAcceso; },                                    via:clicca('btn-boschi')},
+    {k:'temp',   on:function(){ return !!(window._tqAcceso&&window._tqAcceso()); },                via:clicca('tq-btn')},
+    {k:'sat',    on:function(){ return !!window._satOn; },                                           via:function(){ if(!window._satToggle) return false; window._satToggle(); return true; }},
+    {k:'scheda', on:function(){ return window._storicoStato&&window._storicoStato().scheda; },      via:function(){ return window._chiudiScheda&&window._chiudiScheda(); }}
+  ];
+  var ordine=[], base=[], passi=0, ignora=0, gesto=false;
+  function attivi(){ return LIVELLI.filter(function(l){ try{ return !!l.on(); }catch(e){ return false; } }).map(function(l){ return l.k; }); }
+  function livello(k){ for(var i=0;i<LIVELLI.length;i++) if(LIVELLI[i].k===k) return LIVELLI[i]; return null; }
+  function tend(fn){ if(window._dopoTendina) window._dopoTendina(fn); else fn(); }
+  function fermo(){
+    if(window._prevAttivo||ignora>0) return true;
+    if(window._prevPopInVolo&&window._prevPopInVolo()) return true;
+    var sh=document.getElementById('reg-sheet'); return !!(sh&&sh.classList.contains('aperta'));
+  }
+  function allinea(){
+    var d=ordine.length-passi; if(!d) return;
+    passi=ordine.length;
+    if(d>0) tend(function(){ for(var i=0;i<d;i++){ try{ history.pushState({st:1},''); }catch(e){} } });
+    else { ignora++; tend(function(){ try{ history.go(d); }catch(e){ ignora--; } }); }
+  }
+  function guarda(){
+    if(fermo()) return;
+    var a=attivi();
+    if(!gesto){ base=a; return; }
+    base=base.filter(function(k){ return a.indexOf(k)>=0; });
+    ordine=ordine.filter(function(k){ return a.indexOf(k)>=0; });
+    a.forEach(function(k){ if(ordine.indexOf(k)<0&&base.indexOf(k)<0) ordine.push(k); });
+    allinea();
+  }
+  /* boschi e analisi si accendono in differita (indice, file): si riguarda tre volte */
+  function dopoGesto(){ setTimeout(guarda,80); setTimeout(guarda,800); setTimeout(guarda,2500); }
+  ['pointerdown','touchstart','keydown'].forEach(function(ev){
+    document.addEventListener(ev,function(e){ if(e.isTrusted&&!gesto){ guarda(); gesto=true; } },true);
+  });
+  ['click','change','keyup'].forEach(function(ev){ document.addEventListener(ev,function(e){ if(e.isTrusted) dopoGesto(); },true); });
+  window.addEventListener('popstate',function(){
+    if(ignora>0){ ignora--; setTimeout(guarda,80); return; }
+    if(!passi) return;
+    passi--;
+    if(window._prevAttivo) return;   // previsioni da link, senza passi loro: il passo era nostro, ma lo schermo e' loro
+    // le previsioni possono aver cambiato lo storico senza un gesto qui (la ricerca toglie le regioni): si ripulisce
+    var a=attivi(); ordine=ordine.filter(function(x){ return a.indexOf(x)>=0; });
+    if(!ordine.length){ setTimeout(guarda,80); return; }
+    var k=ordine.pop(), l=livello(k), ok=false;
+    try{ ok=!!(l&&l.via()); }catch(e){}
+    // non si e' potuto togliere (un calcolo in corso): il passo torna dov'era
+    if(!ok){ ordine.push(k); passi++; try{ history.pushState({st:1},''); }catch(e){} }
+    setTimeout(guarda,80); setTimeout(guarda,800);
+  });
+  window._storiaPassi=function(){ return {ordine:ordine.slice(),base:base.slice(),passi:passi,lunghezza:history.length}; };   // per le prove
 })();
 </script>
 </body>
