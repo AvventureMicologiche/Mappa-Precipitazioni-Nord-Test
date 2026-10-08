@@ -59,7 +59,14 @@ const STILE_NUOVO = `
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
   padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
 .tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+.tasti a.t-prev{grid-column:1 / -1;}
 @media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.banda-prev{display:flex;align-items:center;gap:12px;margin:10px 0 4px;padding:13px 16px;border-radius:12px;background:linear-gradient(135deg,#1f6fd1,#3f8fe8);color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(31,111,209,.25);}
+.banda-prev .ic{font-size:30px;line-height:1;flex:none;}
+.banda-prev b{display:block;font-size:17px;line-height:1.2;}
+.banda-prev span{display:block;font-size:13px;opacity:.92;margin-top:2px;}
+.banda-prev .fr{margin-left:auto;font-size:22px;flex:none;}
+.banda-prev:hover{background:linear-gradient(135deg,#1b5fb3,#3580d6);}
 .noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
 .noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
 .noioso p{margin-bottom:8px;}

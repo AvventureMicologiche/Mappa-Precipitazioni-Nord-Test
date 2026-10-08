@@ -194,7 +194,14 @@ nav.altre a{color:var(--blu);}
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
   padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
 .tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+.tasti a.t-prev{grid-column:1 / -1;}
 @media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.banda-prev{display:flex;align-items:center;gap:12px;margin:10px 0 4px;padding:13px 16px;border-radius:12px;background:linear-gradient(135deg,#1f6fd1,#3f8fe8);color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(31,111,209,.25);}
+.banda-prev .ic{font-size:30px;line-height:1;flex:none;}
+.banda-prev b{display:block;font-size:17px;line-height:1.2;}
+.banda-prev span{display:block;font-size:13px;opacity:.92;margin-top:2px;}
+.banda-prev .fr{margin-left:auto;font-size:22px;flex:none;}
+.banda-prev:hover{background:linear-gradient(135deg,#1b5fb3,#3580d6);}
 .noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
 .noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
 .noioso p{margin-bottom:8px;}
@@ -294,6 +301,9 @@ nav.altre .io{font-weight:700;color:var(--blu-scuro);}
 <div id="attesa">Sto leggendo il pluviometro…</div>
 <div id="guasto"></div>
 <div id="verdetto"></div>
+<a class="banda-prev" href="https://avventurepluvio-test.netlify.app/?r=toscana&amp;pl=44.109,10.527&amp;pn=Renaio&amp;m=prev"
+   onclick="try{gtag('event','apri_mappa',{da:'localita-toscana-banda-previsioni'})}catch(e){}">
+  <span class="ic">☀️</span><span><b>Che tempo farà a Renaio</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
 
 <h2>Le piogge degli ultimi 25 giorni</h2>
 <div id="grafico"></div>
@@ -314,6 +324,8 @@ nav.altre .io{font-weight:700;color:var(--blu-scuro);}
   <a class="forte" id="t-conta" href="https://avventurepluvio-test.netlify.app/?r=toscana,emilia&amp;g=20&amp;pl=44.109,10.527&amp;pn=Renaio">Range crescita funghi 13-20 gg fa</a>
   <a class="t-radar" href="https://avventurepluvio-test.netlify.app/?r=toscana&amp;pl=44.109,10.527&amp;pn=Renaio&amp;radar=ora"
      onclick="try{gtag('event','apri_mappa',{da:'localita-toscana-radar'})}catch(e){}">📡 Radar adesso</a>
+  <a class="t-radar t-prev" href="https://avventurepluvio-test.netlify.app/?r=toscana&amp;pl=44.109,10.527&amp;pn=Renaio&amp;m=prev"
+     onclick="try{gtag('event','apri_mappa',{da:'localita-toscana-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">Ogni pallino è un pluviometro: cerca quello più bagnato vicino ai tuoi boschi.</p>
 <a href="https://avventurepluvio-test.netlify.app/?r=toscana&amp;g=20" id="lnk-pioggia"
@@ -374,7 +386,7 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 in Garfagnana: <a href="https://avventurepluvio-test.netlify.app/funghi/zone/garfagnana/">guarda tutta la zona</a>,
 con i suoi 14 pluviometri insieme.</p>
 <h2>L'archivio di questo pluviometro</h2>
-<p><b>da luglio 2026 a settembre 2026</b>, in 78 giorni di misura, ha contato <b>203 mm</b> di pioggia in <b>13 giornate</b> bagnate. Nelle altre 65 non è caduto niente, o così poco da non contare.
+<p><b>da luglio 2026 a ottobre 2026</b>, in 88 giorni di misura, ha contato <b>203 mm</b> di pioggia in <b>13 giornate</b> bagnate. Nelle altre 75 non è caduto niente, o così poco da non contare.
 Il giorno più bagnato è stato il <b>26 luglio 2026</b>, con
 <b>52,8 mm</b>. Il mese più piovoso,
 fra quelli che abbiamo per intero, è <b>agosto 2026</b> con

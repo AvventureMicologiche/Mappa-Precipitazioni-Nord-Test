@@ -251,6 +251,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
       <li><a href="#stazione">La scheda del pluviometro</a></li>
       <li><a href="#misure">Che cosa misura, e perché conta</a></li>
       <li><a href="#radar">La diretta radar</a></li>
+      <li><a href="#previsioni">Le previsioni</a></li>
       <li><a href="#boschi">La mappa boschi</a></li>
       <li><a href="#condividere">Condividere</a></li>
       <li><a href="#pagine">Le pagine del sito</a></li>
@@ -273,8 +274,9 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
      Si tengono le ultime otto o nove e si aggiorna la data del titolo. -->
 <div class="upd">
   <div class="tit"><span class="tag">NOVITÀ</span><b>Ultimi aggiornamenti</b>
-    <span class="quando">4 ottobre 2026</span></div>
+    <span class="quando">7 ottobre 2026</span></div>
   <ul>
+    <li><span class="data">7 ott</span><span><a href="#previsioni">Le previsioni meteo</a>: la linguetta «Previsioni» in cima alla mappa. Il tempo previsto su città e paesi, giorno per giorno, e per qualsiasi località il dettaglio ora per ora con temperatura, millimetri, probabilità di pioggia e vento, per sette giorni. Anche dalla scheda di ogni pluviometro e dalle pagine dei funghi.</span></li>
     <li><span class="data">4 ott</span><span><a href="#temperature-ieri">Le temperature di ieri sulla mappa</a>: premi «Temp. ieri» e accanto a ogni pluviometro compaiono la minima e la massima del giorno prima, anche sopra la pioggia del periodo che hai scelto.</span></li>
     <li><span class="data">4 ott</span><span><a href="#vento">Da dove soffia il vento</a>: nella scheda del pluviometro, sotto il grafico del vento, una freccia per ogni giorno. Col periodo «Ieri» c'è anche la direzione scritta, per esempio «da NE».</span></li>
     <li><span class="data">30 set</span><span><a href="#video">La guida in video</a>: cinque minuti con tutti gli strumenti della mappa, dal telefono, sul canale YouTube.</span></li>
@@ -283,7 +285,6 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
     <li><span class="data">27 set</span><span><a href="https://precipitazioni.avventuremicologiche.it/mappa-forestale/">La mappa forestale d'Italia</a>: una pagina per ogni regione e ogni valle, con i boschi tipo per tipo e la carta ufficiale da cui vengono.</span></li>
     <li><span class="data">26 set</span><span><a href="#colori">Pioppi, salici, ontani e frassini</a>: nella mappa boschi un colore nuovo per i boschi lungo fiumi e torrenti, in tutta Italia.</span></li>
     <li><span class="data">26 set</span><span><a href="#cerca">Cerca con le coordinate</a>: nella casella di ricerca scrivi il punto del GPS o incolla un link di Google Maps.</span></li>
-    <li><span class="data">24 set</span><span><a href="#tocca">Tocca un punto nella mappa boschi</a>: che bosco c'è, quota, versante e pendenza, e lo apri su Google Maps. E sotto i colori, il rilievo di monti e valli.</span></li>
   </ul>
   <p class="rivedi"><a href="/?novita=1">Rivedi la presentazione delle novità</a>, la finestra coi filmati che compare alla prima apertura della mappa.</p>
 </div>
@@ -303,7 +304,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p class="guida-intro">Questa pagina invece è la <b>guida completa</b>, per un uso approfondito: che cosa misura ogni strumento, come si leggono i colori e i numeri, che cosa cercare quando la ricerca dei funghi si fa seria, e dove il sito dichiara i propri limiti. Si legge a pezzi, con l'indice qui accanto.</p>
 
 <h2 id="cose"><span class="n">2</span>Che cosa mostra il sito</h2>
-<p>Questo sito mostra <b>la pioggia già caduta</b>, misurata da oltre 5.700 pluviometri delle reti pubbliche di monitoraggio in Italia, Svizzera, Austria, Francia e Slovenia. Non è un sito di previsioni: non troverai che tempo farà domani, ma quanti millimetri sono caduti in un punto preciso nei giorni scorsi.</p>
+<p>Il sito raccoglie lo storico della <b>pioggia già caduta</b>, misurata da oltre 5.700 pluviometri delle reti pubbliche di monitoraggio in Italia, Svizzera, Austria, Francia e Slovenia, oltre alle <b>previsioni</b> per i giorni successivi. Le due cose stanno in sezioni separate: lo storico dice quanti millimetri sono caduti in un punto preciso nei giorni scorsi, le previsioni che tempo farà nei prossimi sette giorni (<a href="#previsioni">capitolo 11</a>).</p>
 
 <figure class="media">
   <img src="pioggia-colorata.jpg" alt="La mappa della pioggia degli ultimi 30 giorni su Piemonte, Lombardia e Veneto: colori dal blu al rosso e i pallini bianchi dei pluviometri" width="1000" height="560" loading="lazy">
@@ -492,7 +493,19 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Il radar vede la pioggia dall'alto, a due chilometri di risoluzione: ti dice <i>dove</i> sta piovendo adesso e dove andrà nei prossimi quaranta minuti. <i>Quanto</i> è caduto lo misurano i pluviometri, come in tutto il resto del sito.</p>
 <p class="mini">La fonte è il composito radar europeo EUMETNET OPERA, 155 radar in 24 paesi, servito dal progetto aperto LibreWXR.</p>
 
-<h2 id="boschi"><span class="n">11</span>La mappa boschi</h2>
+<h2 id="previsioni"><span class="n">11</span>Le previsioni</h2>
+<p>In cima alla pagina ci sono due linguette: <span class="ui">Storico piogge</span> è tutto quello che hai letto fin qui, la pioggia <i>caduta</i>, misurata dai pluviometri. <span class="ui">Previsioni</span> è la pioggia che <i>deve ancora cadere</i>: oggi, domani e i cinque giorni dopo. Le abbiamo messe apposta in due sezioni separate, perché sono due cose diverse: una è una misura, l'altra è il calcolo di un modello.</p>
+<p>Scegli la regione come sempre e sulla mappa compaiono <b>città e paesi</b>, ognuno con il tempo previsto, la massima e la minima del giorno scelto. I giorni li cambi dalla striscia in basso (sul computer a sinistra). Per un posto preciso, <b>tocca una città o un paese</b> oppure <b>cerca la località</b> nella casella: si apre il dettaglio <b>ora per ora</b>, con il tempo, la temperatura, i millimetri, la probabilità di pioggia e il vento. Dal dettaglio, <span class="ui">Storico piogge qui</span> ti riporta allo storico sullo stesso punto; e dalla scheda di ogni pluviometro, <span class="ui">vai alle previsioni</span> fa il percorso inverso.</p>
+
+<figure class="media">
+  <img src="previsioni.jpg" alt="La sezione Previsioni: la Lombardia con il tempo previsto su città e paesi, a sinistra i sette giorni e la casella di ricerca, a destra il dettaglio ora per ora di Mantova" width="1000" height="579" loading="lazy">
+  <figcaption>La Lombardia per domani: su ogni città il tempo, la massima e la minima. A destra il dettaglio di Mantova, ora per ora.</figcaption>
+</figure>
+
+<p>Le prime due giornate e mezza sono ora per ora, poi a fasce di sei ore: è così che le pubblica il modello. La probabilità di pioggia è la percentuale di scenari del modello in cui in quell'ora piove: 90% vuol dire «quasi sicuro», 20% «difficile ma possibile».</p>
+<p class="mini">Le previsioni vengono dal modello ECMWF servite da MET Norway, l'istituto meteorologico norvegese; la probabilità di pioggia da Open-Meteo. Si aggiornano più volte al giorno. Non entrano mai nei conti dello storico né nelle pagine dei funghi: lì restano solo i millimetri misurati.</p>
+
+<h2 id="boschi"><span class="n">12</span>La mappa boschi</h2>
 <p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti e abetaie non danno gli stessi funghi. Il tasto <span class="ui">🌲 Mappa boschi</span>, accanto a quello del radar, cambia modo: la pioggia e i pallini spariscono, e <b>i boschi si colorano per tipo</b>, in dieci gruppi, sopra il rilievo di monti e valli.</p>
 
 <figure class="media">
@@ -585,7 +598,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <h3>Il rilievo</h3>
 <p>Sotto i colori c'è il rilievo: le ombre dei monti, come se il sole arrivasse da nord-ovest. Viene da <b>TINITALY</b>, il modello del terreno d'Italia a 10 metri dell'INGV, lo stesso da cui ricaviamo quota, versante e pendenza.</p>
 
-<h2 id="condividere"><span class="n">12</span>Condividere</h2>
+<h2 id="condividere"><span class="n">13</span>Condividere</h2>
 <p>In alto nel pannello della legenda ci sono due tasti. Da computer si chiamano <span class="ui">🔗 Copia link</span> e <span class="ui">📷 Immagine</span>, dal telefono <span class="ui">🔗 Invia link</span> e <span class="ui">📷 Invia foto</span>, perché lì passano dal menu di condivisione.</p>
 <ul>
   <li><b>Il link</b> porta con sé regioni, date, zoom e centro: chi lo apre vede esattamente la tua vista, anche se tu eri al computer e lui è al telefono.</li>
@@ -593,7 +606,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 </ul>
 <p>Se hai ingrandito su una valle, lo scatto tiene <b>la tua</b> inquadratura. Se non hai toccato lo zoom, il sito allarga quanto serve a far entrare tutta la regione.</p>
 
-<h2 id="pagine"><span class="n">13</span>Le pagine del sito</h2>
+<h2 id="pagine"><span class="n">14</span>Le pagine del sito</h2>
 <p>Oltre alla mappa ci sono più di mille pagine, per chi vuole la risposta già scritta invece di cercarla.</p>
 <ul>
   <li><b>Pagina di regione</b>, per esempio <a href="/liguria/">Dove ha piovuto in Liguria</a>: tutta la pioggia della regione, pianura compresa, con ieri, gli ultimi 7, 20 e 30 giorni, i posti più bagnati e l'elenco delle sue zone.</li>
@@ -609,7 +622,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Da novembre a marzo, sotto il titolo delle pagine funghi, un avviso ricorda che si è ai margini o fuori stagione.</p>
 <p>Le pagine sono gusci fissi e i numeri li scaricano al momento: quello che leggi è sempre aggiornato a ieri.</p>
 
-<h2 id="consigli"><span class="n">14</span>Nove consigli</h2>
+<h2 id="consigli"><span class="n">15</span>Nove consigli</h2>
 <ol class="testo">
   <li><b>Parti dal tuo paese, non dalla regione.</b> Scrivi il nome nella casella di ricerca: arrivi già inquadrato, e di lì allarghi.</li>
   <li><b>Guarda il pallino, non la macchia di colore.</b> Il colore è calcolato, il pallino è misurato.</li>
@@ -622,11 +635,11 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
   <li><b>Se mandi la mappa a qualcuno, manda il link</b>, non lo screenshot: lui può muoverla, cambiare periodo e guardarsi il suo pluviometro.</li>
 </ol>
 
-<h2 id="domande"><span class="n">15</span>Domande frequenti</h2>
+<h2 id="domande"><span class="n">16</span>Domande frequenti</h2>
 <div class="faq">
 
 <div class="q"><h3>Sono previsioni?</h3>
-<p>No. Tutto quello che vedi è pioggia già caduta e misurata da strumenti a terra. L'unica eccezione è la previsione a quaranta minuti della diretta radar, che è dichiarata come tale.</p></div>
+<p>Lo storico no: tutto quello che vedi lì è pioggia già caduta e misurata da strumenti a terra, con la sola eccezione della previsione a quaranta minuti della diretta radar, dichiarata come tale. Le previsioni per i prossimi sette giorni stanno nella loro sezione, la linguetta «Previsioni», e non entrano mai nei conti dello storico.</p></div>
 
 <div class="q"><h3>Perché non c'è la pioggia di oggi?</h3>
 <p>Perché la giornata non è finita e le agenzie la consolidano dopo. Mostrarla vorrebbe dire dare un numero che entro sera sarà sbagliato per difetto. Per la pioggia in corso c'è la diretta radar.</p></div>
@@ -668,7 +681,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
      tengono le sei piu' cercate, non tutte: l'elenco va mantenuto a mano, e
      mantenerne dodici vuol dire dimenticarsene. -->
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
-{"@type":"Question","name":"Sono previsioni?","acceptedAnswer":{"@type":"Answer","text":"No. Tutto quello che vedi è pioggia già caduta e misurata da strumenti a terra. L'unica eccezione è la previsione a quaranta minuti della diretta radar, che è dichiarata come tale."}},
+{"@type":"Question","name":"Sono previsioni?","acceptedAnswer":{"@type":"Answer","text":"Lo storico no: tutto quello che vedi lì è pioggia già caduta e misurata da strumenti a terra, con la sola eccezione della previsione a quaranta minuti della diretta radar, dichiarata come tale. Le previsioni per i prossimi sette giorni stanno nella loro sezione, la linguetta «Previsioni», e non entrano mai nei conti dello storico."}},
 {"@type":"Question","name":"Perché non c'è la pioggia di oggi?","acceptedAnswer":{"@type":"Answer","text":"Perché la giornata non è finita e le agenzie la consolidano dopo. Mostrarla vorrebbe dire dare un numero che entro sera sarà sbagliato per difetto. Per la pioggia in corso c'è la diretta radar."}},
 {"@type":"Question","name":"Quanto indietro posso andare?","acceptedAnswer":{"@type":"Answer","text":"Quanto è lungo l'archivio di quella regione: circa un anno al nord e all'estero, pochi mesi al centro e al sud, dove la raccolta è cominciata più tardi. Cresce di un giorno al giorno."}},
 {"@type":"Question","name":"Due pluviometri vicini dicono numeri molto diversi. È un errore?","acceptedAnswer":{"@type":"Answer","text":"Quasi sempre no, è la realtà dei temporali: sono fenomeni piccoli, e un versante può prendere tutto mentre quello accanto resta asciutto."}},
@@ -676,7 +689,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 {"@type":"Question","name":"Il sito è gratuito? Ci sono pubblicità?","acceptedAnswer":{"@type":"Answer","text":"È gratuito, senza pubblicità, senza registrazione e senza newsletter."}}
 ]}</script>
 
-<h2 id="limiti"><span class="n">16</span>Avvisi, ritardi e limiti</h2>
+<h2 id="limiti"><span class="n">17</span>Avvisi, ritardi e limiti</h2>
 <p>Il sito dichiara i propri limiti nel punto in cui contano, cioè addosso ai numeri. Se vedi una scritta rossa nel pannello, è una di queste.</p>
 
 <h3>Le stime</h3>
@@ -691,7 +704,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <h3>Quando fa fede l'agenzia</h3>
 <p>I valori possono differire da quelli pubblicati dall'agenzia per orari di consolidamento diversi o per correzioni successive alla fonte. <b>In caso di differenza fa fede il dato dell'agenzia titolare.</b> Se ne trovi uno che non torna, <a href="/fonti.html#feedback">scrivici</a>: le segnalazioni sugli errori sono la cosa più utile che ci puoi dare.</p>
 
-<h2 id="mappa-sito"><span class="n">17</span>Mappa del sito</h2>
+<h2 id="mappa-sito"><span class="n">18</span>Mappa del sito</h2>
 <p>Ogni regione ha due pagine: una con <b>tutta la pioggia</b>, pianura compresa, e una
 con i <b>soli posti da bosco</b>, nella finestra da 13 a 20 giorni fa che serve per i funghi.</p>
 <!-- ⚠️ ELENCO SCRITTO DA .github/scripts/genera-pagine-regione.js fra i due

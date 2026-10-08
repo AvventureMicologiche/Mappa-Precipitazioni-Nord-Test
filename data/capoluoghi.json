@@ -1,0 +1,316 @@
+{
+ "veneto": [
+  { "n": "Belluno", "lat": 46.138, "lon": 12.217, "q": 392, "s": "BL" },
+  { "n": "Padova", "lat": 45.407, "lon": 11.876, "q": 30, "s": "PD" },
+  { "n": "Rovigo", "lat": 45.071, "lon": 11.79, "q": 13, "s": "RO" },
+  { "n": "Treviso", "lat": 45.668, "lon": 12.245, "q": 16, "s": "TV" },
+  { "n": "Venezia", "lat": 45.435, "lon": 12.338, "q": 14, "s": "VE", "c": 1 },
+  { "n": "Verona", "lat": 45.438, "lon": 10.994, "q": 61, "s": "VR" },
+  { "n": "Vicenza", "lat": 45.547, "lon": 11.546, "q": 55, "s": "VI" }
+ ],
+ "lombardia": [
+  { "n": "Bergamo", "lat": 45.694, "lon": 9.668, "q": 257, "s": "BG" },
+  { "n": "Brescia", "lat": 45.54, "lon": 10.219, "q": 161, "s": "BS" },
+  { "n": "Como", "lat": 45.81, "lon": 9.085, "q": 210, "s": "CO" },
+  { "n": "Cremona", "lat": 45.133, "lon": 10.024, "q": 57, "s": "CR" },
+  { "n": "Lecco", "lat": 45.856, "lon": 9.393, "q": 218, "s": "LC" },
+  { "n": "Lodi", "lat": 45.314, "lon": 9.504, "q": 90, "s": "LO" },
+  { "n": "Mantova", "lat": 45.157, "lon": 10.793, "q": 32, "s": "MN" },
+  { "n": "Milano", "lat": 45.467, "lon": 9.19, "q": 139, "s": "MI", "c": 1 },
+  { "n": "Monza", "lat": 45.584, "lon": 9.274, "q": 173, "s": "MB" },
+  { "n": "Pavia", "lat": 45.185, "lon": 9.16, "q": 87, "s": "PV" },
+  { "n": "Sondrio", "lat": 46.171, "lon": 9.871, "q": 316, "s": "SO" },
+  { "n": "Varese", "lat": 45.817, "lon": 8.823, "q": 390, "s": "VA" }
+ ],
+ "toscana": [
+  { "n": "Arezzo", "lat": 43.466, "lon": 11.882, "q": 296, "s": "AR" },
+  { "n": "Firenze", "lat": 43.769, "lon": 11.256, "q": 72, "s": "FI", "c": 1 },
+  { "n": "Grosseto", "lat": 42.76, "lon": 11.114, "q": 17, "s": "GR" },
+  { "n": "Livorno", "lat": 43.552, "lon": 10.309, "q": 13, "s": "LI" },
+  { "n": "Lucca", "lat": 43.844, "lon": 10.502, "q": 26, "s": "LU" },
+  { "n": "Manciano", "lat": 42.587, "lon": 11.515, "q": 433, "s": "GR" },
+  { "n": "Massa", "lat": 44.037, "lon": 10.142, "q": 66, "s": "MS" },
+  { "n": "Massa Marittima", "lat": 43.05, "lon": 10.888, "q": 363, "s": "GR" },
+  { "n": "Montepulciano", "lat": 43.093, "lon": 11.781, "q": 606, "s": "SI" },
+  { "n": "Pisa", "lat": 43.716, "lon": 10.401, "q": 13, "s": "PI" },
+  { "n": "Pistoia", "lat": 43.933, "lon": 10.917, "q": 86, "s": "PT" },
+  { "n": "Prato", "lat": 43.881, "lon": 11.097, "q": 70, "s": "PO" },
+  { "n": "Siena", "lat": 43.318, "lon": 11.332, "q": 330, "s": "SI" },
+  { "n": "Volterra", "lat": 43.402, "lon": 10.859, "q": 537, "s": "PI" }
+ ],
+ "sardegna": [
+  { "n": "Cagliari", "lat": 39.215, "lon": 9.111, "q": 16, "s": "CA", "c": 1 },
+  { "n": "Carbonia", "lat": 39.166, "lon": 8.526, "q": 109, "s": "SU" },
+  { "n": "Nuoro", "lat": 40.323, "lon": 9.33, "q": 549, "s": "NU" },
+  { "n": "Olbia", "lat": 40.923, "lon": 9.505, "q": 5 },
+  { "n": "Oristano", "lat": 39.904, "lon": 8.591, "q": 12, "s": "OR" },
+  { "n": "Sassari", "lat": 40.727, "lon": 8.56, "q": 213, "s": "SS" },
+  { "n": "Tempio Pausania", "lat": 40.903, "lon": 9.103, "q": 563 }
+ ],
+ "abruzzo": [
+  { "n": "Avezzano", "lat": 42.031, "lon": 13.427, "q": 693 },
+  { "n": "Chieti", "lat": 42.351, "lon": 14.168, "q": 339, "s": "CH" },
+  { "n": "L'Aquila", "lat": 42.351, "lon": 13.398, "q": 720, "s": "AQ", "c": 1 },
+  { "n": "Pescara", "lat": 42.465, "lon": 14.214, "q": 13, "s": "PE" },
+  { "n": "Roccaraso", "lat": 41.846, "lon": 14.079, "q": 1249 },
+  { "n": "Sulmona", "lat": 42.048, "lon": 13.924, "q": 415 },
+  { "n": "Teramo", "lat": 42.659, "lon": 13.704, "q": 274, "s": "TE" }
+ ],
+ "basilicata": [
+  { "n": "Lagonegro", "lat": 40.123, "lon": 15.763, "q": 656 },
+  { "n": "Matera", "lat": 40.668, "lon": 16.598, "q": 430, "s": "MT" },
+  { "n": "Melfi", "lat": 40.994, "lon": 15.653, "q": 512 },
+  { "n": "Policoro", "lat": 40.209, "lon": 16.67, "q": 33 },
+  { "n": "Potenza", "lat": 40.639, "lon": 15.805, "q": 823, "s": "PZ", "c": 1 }
+ ],
+ "sicilia": [
+  { "n": "Agrigento", "lat": 37.31, "lon": 13.585, "q": 277, "s": "AG" },
+  { "n": "Caltanissetta", "lat": 37.492, "lon": 14.062, "q": 588, "s": "CL" },
+  { "n": "Catania", "lat": 37.503, "lon": 15.087, "q": 20, "s": "CT" },
+  { "n": "Enna", "lat": 37.567, "lon": 14.279, "q": 939, "s": "EN" },
+  { "n": "Messina", "lat": 38.194, "lon": 15.556, "q": 11, "s": "ME" },
+  { "n": "Palermo", "lat": 38.116, "lon": 13.362, "q": 25, "s": "PA", "c": 1 },
+  { "n": "Ragusa", "lat": 36.925, "lon": 14.731, "q": 495, "s": "RG" },
+  { "n": "Siracusa", "lat": 37.06, "lon": 15.293, "q": 22, "s": "SR" },
+  { "n": "Trapani", "lat": 38.019, "lon": 12.514, "q": 0, "s": "TP" }
+ ],
+ "puglia": [
+  { "n": "Andria", "lat": 41.227, "lon": 16.295, "q": 157, "s": "BT" },
+  { "n": "Bari", "lat": 41.126, "lon": 16.867, "q": 15, "s": "BA", "c": 1 },
+  { "n": "Barletta", "lat": 41.32, "lon": 16.277, "q": 25, "s": "BT" },
+  { "n": "Brindisi", "lat": 40.638, "lon": 17.946, "q": 14, "s": "BR" },
+  { "n": "Foggia", "lat": 41.462, "lon": 15.543, "q": 76, "s": "FG" },
+  { "n": "Lecce", "lat": 40.354, "lon": 18.172, "q": 57, "s": "LE" },
+  { "n": "Taranto", "lat": 40.474, "lon": 17.232, "q": 19, "s": "TA" }
+ ],
+ "piemonte": [
+  { "n": "Alessandria", "lat": 44.913, "lon": 8.615, "q": 102, "s": "AL" },
+  { "n": "Asti", "lat": 44.899, "lon": 8.204, "q": 131, "s": "AT" },
+  { "n": "Ceva", "lat": 44.386, "lon": 8.035, "q": 386, "s": "CN" },
+  { "n": "Cuneo", "lat": 44.393, "lon": 7.551, "q": 544, "s": "CN" },
+  { "n": "Domodossola", "lat": 46.115, "lon": 8.292, "q": 285, "s": "VB" },
+  { "n": "Ivrea", "lat": 45.466, "lon": 7.876, "q": 255, "s": "TO" },
+  { "n": "Novara", "lat": 45.446, "lon": 8.622, "q": 168, "s": "NO" },
+  { "n": "Ovada", "lat": 44.637, "lon": 8.646, "q": 192, "s": "AL" },
+  { "n": "Pinerolo", "lat": 44.887, "lon": 7.332, "q": 379, "s": "TO" },
+  { "n": "Saluzzo", "lat": 44.647, "lon": 7.491, "q": 344, "s": "CN" },
+  { "n": "Susa", "lat": 45.135, "lon": 7.046, "q": 509, "s": "TO" },
+  { "n": "Torino", "lat": 45.073, "lon": 7.681, "q": 259, "s": "TO", "c": 1 },
+  { "n": "Verbania", "lat": 45.921, "lon": 8.551, "q": 207, "s": "VB" }
+ ],
+ "lazio": [
+  { "n": "Acquapendente", "lat": 42.744, "lon": 11.865, "q": 380, "s": "VT" },
+  { "n": "Amatrice", "lat": 42.629, "lon": 13.288, "q": 944, "s": "RI" },
+  { "n": "Civitavecchia", "lat": 42.092, "lon": 11.793, "q": 19, "s": "RM" },
+  { "n": "Formia", "lat": 41.256, "lon": 13.606, "q": 30, "s": "LT" },
+  { "n": "Frosinone", "lat": 41.64, "lon": 13.351, "q": 288, "s": "FR" },
+  { "n": "Latina", "lat": 41.468, "lon": 12.904, "q": 22, "s": "LT" },
+  { "n": "Rieti", "lat": 42.405, "lon": 12.862, "q": 391, "s": "RI" },
+  { "n": "Roma", "lat": 41.893, "lon": 12.484, "q": 44, "s": "RM", "c": 1 },
+  { "n": "Subiaco", "lat": 41.925, "lon": 13.1, "q": 399, "s": "RM" },
+  { "n": "Viterbo", "lat": 42.417, "lon": 12.105, "q": 331, "s": "VT" }
+ ],
+ "campania": [
+  { "n": "Avellino", "lat": 40.914, "lon": 14.795, "q": 350, "s": "AV" },
+  { "n": "Benevento", "lat": 41.13, "lon": 14.782, "q": 163, "s": "BN" },
+  { "n": "Caserta", "lat": 41.075, "lon": 14.332, "q": 74, "s": "CE" },
+  { "n": "Napoli", "lat": 40.84, "lon": 14.251, "q": 42, "s": "NA", "c": 1 },
+  { "n": "Salerno", "lat": 40.678, "lon": 14.759, "q": 13, "s": "SA" }
+ ],
+ "calabria": [
+  { "n": "Catanzaro", "lat": 38.906, "lon": 16.594, "q": 336, "s": "CZ", "c": 1 },
+  { "n": "Cosenza", "lat": 39.293, "lon": 16.256, "q": 240, "s": "CS" },
+  { "n": "Crotone", "lat": 39.08, "lon": 17.125, "q": 14, "s": "KR" },
+  { "n": "Reggio di Calabria", "lat": 38.109, "lon": 15.643, "q": 12, "s": "RC" },
+  { "n": "Vibo Valentia", "lat": 38.676, "lon": 16.102, "q": 470, "s": "VV" }
+ ],
+ "marche": [
+  { "n": "Ancona", "lat": 43.617, "lon": 13.519, "q": 35, "s": "AN", "c": 1 },
+  { "n": "Ascoli Piceno", "lat": 42.853, "lon": 13.577, "q": 164, "s": "AP" },
+  { "n": "Fermo", "lat": 43.161, "lon": 13.718, "q": 303, "s": "FM" },
+  { "n": "Macerata", "lat": 43.3, "lon": 13.453, "q": 325, "s": "MC" },
+  { "n": "Pesaro", "lat": 43.91, "lon": 12.913, "q": 20, "s": "PU" }
+ ],
+ "umbria": [
+  { "n": "Foligno", "lat": 42.956, "lon": 12.704, "q": 246 },
+  { "n": "Gubbio", "lat": 43.354, "lon": 12.579, "q": 541 },
+  { "n": "Norcia", "lat": 42.792, "lon": 13.093, "q": 611 },
+  { "n": "Orvieto", "lat": 42.718, "lon": 12.108, "q": 318 },
+  { "n": "Perugia", "lat": 43.107, "lon": 12.388, "q": 455, "s": "PG", "c": 1 },
+  { "n": "Spoleto", "lat": 42.734, "lon": 12.738, "q": 404 },
+  { "n": "Terni", "lat": 42.561, "lon": 12.647, "q": 138, "s": "TR" }
+ ],
+ "molise": [
+  { "n": "Agnone", "lat": 41.806, "lon": 14.367, "q": 819 },
+  { "n": "Campobasso", "lat": 41.558, "lon": 14.659, "q": 709, "s": "CB", "c": 1 },
+  { "n": "Isernia", "lat": 41.588, "lon": 14.226, "q": 430, "s": "IS" },
+  { "n": "Termoli", "lat": 42.003, "lon": 14.996, "q": 23 }
+ ],
+ "emilia": [
+  { "n": "Bagno di Romagna", "lat": 43.858, "lon": 11.977, "q": 468, "s": "FC" },
+  { "n": "Bobbio", "lat": 44.766, "lon": 9.387, "q": 282, "s": "PC" },
+  { "n": "Bologna", "lat": 44.494, "lon": 11.342, "q": 74, "s": "BO", "c": 1 },
+  { "n": "Borgo Val di Taro", "lat": 44.488, "lon": 9.768, "q": 420, "s": "PR" },
+  { "n": "Ferrara", "lat": 44.836, "lon": 11.619, "q": 16, "s": "FE" },
+  { "n": "Forlì", "lat": 44.223, "lon": 12.041, "q": 42, "s": "FC" },
+  { "n": "Modena", "lat": 44.646, "lon": 10.926, "q": 46, "s": "MO" },
+  { "n": "Parma", "lat": 44.801, "lon": 10.328, "q": 64, "s": "PR" },
+  { "n": "Piacenza", "lat": 45.052, "lon": 9.693, "q": 68, "s": "PC" },
+  { "n": "Porretta Terme", "lat": 44.16, "lon": 10.973, "q": 369, "s": "BO" },
+  { "n": "Ravenna", "lat": 44.417, "lon": 12.199, "q": 11, "s": "RA" },
+  { "n": "Reggio nell'Emilia", "lat": 44.697, "lon": 10.63, "q": 69, "s": "RE" },
+  { "n": "Rimini", "lat": 44.061, "lon": 12.566, "q": 14, "s": "RN" }
+ ],
+ "friuli": [
+  { "n": "Gorizia", "lat": 45.941, "lon": 13.622, "q": 89, "s": "GO" },
+  { "n": "Lignano Sabbiadoro", "lat": 45.688, "lon": 13.13, "q": 1 },
+  { "n": "Pordenone", "lat": 45.954, "lon": 12.66, "q": 25, "s": "PN" },
+  { "n": "Tarvisio", "lat": 46.506, "lon": 13.573, "q": 778 },
+  { "n": "Tolmezzo", "lat": 46.406, "lon": 13.015, "q": 331 },
+  { "n": "Trieste", "lat": 45.649, "lon": 13.768, "q": 15, "s": "TS", "c": 1 },
+  { "n": "Udine", "lat": 46.063, "lon": 13.235, "q": 123, "s": "UD" }
+ ],
+ "liguria": [
+  { "n": "Albenga", "lat": 44.049, "lon": 8.213, "q": 17 },
+  { "n": "Genova", "lat": 44.411, "lon": 8.933, "q": 35, "s": "GE", "c": 1 },
+  { "n": "Imperia", "lat": 43.886, "lon": 8.028, "q": 28, "s": "IM" },
+  { "n": "La Spezia", "lat": 44.107, "lon": 9.828, "q": 7, "s": "SP" },
+  { "n": "Millesimo", "lat": 44.364, "lon": 8.206, "q": 432, "s": "SV" },
+  { "n": "Sanremo", "lat": 43.821, "lon": 7.785, "q": 19 },
+  { "n": "Santo Stefano d'Aveto", "lat": 44.548, "lon": 9.451, "q": 1009 },
+  { "n": "Savona", "lat": 44.308, "lon": 8.481, "q": 14, "s": "SV" },
+  { "n": "Sestri Levante", "lat": 44.27, "lon": 9.393, "q": 2 }
+ ],
+ "trentino": [
+  { "n": "Cavalese", "lat": 46.291, "lon": 11.46, "q": 1001 },
+  { "n": "Cles", "lat": 46.364, "lon": 11.036, "q": 659 },
+  { "n": "Madonna di Campiglio", "lat": 46.229, "lon": 10.827, "q": 1522 },
+  { "n": "Predazzo", "lat": 46.313, "lon": 11.603, "q": 1019 },
+  { "n": "Rovereto", "lat": 45.886, "lon": 11.045, "q": 208 },
+  { "n": "Trento", "lat": 46.069, "lon": 11.121, "q": 201, "s": "TN", "c": 1 }
+ ],
+ "altoadige": [
+  { "n": "Bolzano", "lat": 46.499, "lon": 11.357, "q": 277, "s": "BZ", "c": 1 },
+  { "n": "Bressanone", "lat": 46.716, "lon": 11.657, "q": 572 },
+  { "n": "Brunico", "lat": 46.797, "lon": 11.937, "q": 830 },
+  { "n": "Merano", "lat": 46.672, "lon": 11.162, "q": 321 },
+  { "n": "Ortisei", "lat": 46.576, "lon": 11.672, "q": 1251 },
+  { "n": "Vipiteno", "lat": 46.898, "lon": 11.432, "q": 957 }
+ ],
+ "valledaosta": [
+  { "n": "Aosta", "lat": 45.738, "lon": 7.32, "q": 587, "s": "AO", "c": 1 },
+  { "n": "Cervinia", "lat": 45.934, "lon": 7.63, "q": 2006 },
+  { "n": "Champoluc", "lat": 45.831, "lon": 7.73, "q": 1570 },
+  { "n": "Cogne", "lat": 45.608, "lon": 7.356, "q": 1547 },
+  { "n": "Courmayeur", "lat": 45.793, "lon": 6.972, "q": 1225 },
+  { "n": "Gressoney-Saint-Jean", "lat": 45.777, "lon": 7.828, "q": 1384 }
+ ],
+ "svizzera": [
+  { "n": "Basilea", "lat": 47.559, "lon": 7.588, "q": 265 },
+  { "n": "Bellinzona", "lat": 46.195, "lon": 9.029, "q": 233 },
+  { "n": "Berna", "lat": 46.948, "lon": 7.447, "q": 554, "c": 1 },
+  { "n": "Coira", "lat": 46.85, "lon": 9.532, "q": 603 },
+  { "n": "Ginevra", "lat": 46.204, "lon": 6.143, "q": 376 },
+  { "n": "Locarno", "lat": 46.171, "lon": 8.799, "q": 220 },
+  { "n": "Losanna", "lat": 46.52, "lon": 6.633, "q": 494 },
+  { "n": "Lucerna", "lat": 47.05, "lon": 8.306, "q": 436 },
+  { "n": "Lugano", "lat": 46.005, "lon": 8.952, "q": 281 },
+  { "n": "San Gallo", "lat": 47.424, "lon": 9.377, "q": 681 },
+  { "n": "Sion", "lat": 46.233, "lon": 7.36, "q": 526 },
+  { "n": "Zurigo", "lat": 47.377, "lon": 8.541, "q": 417 }
+ ],
+ "austria": [
+  { "n": "Bregenz", "lat": 47.503, "lon": 9.747, "q": 407 },
+  { "n": "Graz", "lat": 47.071, "lon": 15.439, "q": 364 },
+  { "n": "Innsbruck", "lat": 47.269, "lon": 11.404, "q": 581 },
+  { "n": "Klagenfurt", "lat": 46.624, "lon": 14.305, "q": 452 },
+  { "n": "Lienz", "lat": 46.83, "lon": 12.769, "q": 674 },
+  { "n": "Linz", "lat": 48.306, "lon": 14.286, "q": 266 },
+  { "n": "Salisburgo", "lat": 47.81, "lon": 13.055, "q": 431 },
+  { "n": "Vienna", "lat": 48.208, "lon": 16.373, "q": 192, "c": 1 },
+  { "n": "Villach", "lat": 46.611, "lon": 13.856, "q": 496 }
+ ],
+ "slovenia": [
+  { "n": "Bled", "lat": 46.369, "lon": 14.114, "q": 505 },
+  { "n": "Capodistria", "lat": 45.548, "lon": 13.73, "q": 18 },
+  { "n": "Celje", "lat": 46.236, "lon": 15.268, "q": 240 },
+  { "n": "Kranj", "lat": 46.239, "lon": 14.356, "q": 390 },
+  { "n": "Lubiana", "lat": 46.056, "lon": 14.506, "q": 303, "c": 1 },
+  { "n": "Maribor", "lat": 46.554, "lon": 15.646, "q": 275 },
+  { "n": "Nova Gorica", "lat": 45.956, "lon": 13.648, "q": 100 },
+  { "n": "Postumia", "lat": 45.776, "lon": 14.213, "q": 576 }
+ ],
+ "francia-aura": [
+  { "n": "Annecy", "lat": 45.899, "lon": 6.129, "q": 451 },
+  { "n": "Chambéry", "lat": 45.564, "lon": 5.918, "q": 283 },
+  { "n": "Clermont-Ferrand", "lat": 45.777, "lon": 3.087, "q": 416 },
+  { "n": "Grenoble", "lat": 45.188, "lon": 5.724, "q": 223 },
+  { "n": "Lione", "lat": 45.764, "lon": 4.836, "q": 183, "c": 1 },
+  { "n": "Saint-Étienne", "lat": 45.44, "lon": 4.387, "q": 518 },
+  { "n": "Valence", "lat": 44.933, "lon": 4.892, "q": 134 }
+ ],
+ "francia-provenza": [
+  { "n": "Avignone", "lat": 43.949, "lon": 4.806, "q": 31 },
+  { "n": "Digne-les-Bains", "lat": 44.093, "lon": 6.236, "q": 601 },
+  { "n": "Gap", "lat": 44.559, "lon": 6.079, "q": 739 },
+  { "n": "Marsiglia", "lat": 43.297, "lon": 5.37, "q": 9, "c": 1 },
+  { "n": "Nizza", "lat": 43.71, "lon": 7.262, "q": 29 },
+  { "n": "Tolone", "lat": 43.124, "lon": 5.928, "q": 8 }
+ ],
+ "francia-bfc": [
+  { "n": "Besançon", "lat": 47.238, "lon": 6.024, "q": 255 },
+  { "n": "Digione", "lat": 47.322, "lon": 5.041, "q": 250, "c": 1 },
+  { "n": "Nevers", "lat": 46.99, "lon": 3.159, "q": 200 }
+ ],
+ "francia-grandest": [
+  { "n": "Metz", "lat": 49.12, "lon": 6.177, "q": 186 },
+  { "n": "Nancy", "lat": 48.692, "lon": 6.184, "q": 206 },
+  { "n": "Reims", "lat": 49.258, "lon": 4.032, "q": 94 },
+  { "n": "Strasburgo", "lat": 48.573, "lon": 7.752, "q": 145, "c": 1 }
+ ],
+ "francia-idf": [
+  { "n": "Parigi", "lat": 48.857, "lon": 2.352, "q": 40, "c": 1 },
+  { "n": "Versailles", "lat": 48.805, "lon": 2.135, "q": 138 }
+ ],
+ "francia-centro": [
+  { "n": "Bourges", "lat": 47.081, "lon": 2.399, "q": 157 },
+  { "n": "Orléans", "lat": 47.902, "lon": 1.909, "q": 116, "c": 1 },
+  { "n": "Tours", "lat": 47.394, "lon": 0.689, "q": 55 }
+ ],
+ "francia-normandia": [
+  { "n": "Caen", "lat": 49.183, "lon": -0.371, "q": 25 },
+  { "n": "Le Havre", "lat": 49.494, "lon": 0.108, "q": 9 },
+  { "n": "Rouen", "lat": 49.443, "lon": 1.099, "q": 22, "c": 1 }
+ ],
+ "francia-naq": [
+  { "n": "Bordeaux", "lat": 44.838, "lon": -0.579, "q": 16, "c": 1 },
+  { "n": "Limoges", "lat": 45.834, "lon": 1.262, "q": 268 },
+  { "n": "Pau", "lat": 43.296, "lon": -0.37, "q": 209 },
+  { "n": "Poitiers", "lat": 46.58, "lon": 0.34, "q": 120 }
+ ],
+ "francia-loira": [
+  { "n": "Angers", "lat": 47.478, "lon": -0.563, "q": 44 },
+  { "n": "Le Mans", "lat": 48.006, "lon": 0.2, "q": 73 },
+  { "n": "Nantes", "lat": 47.218, "lon": -1.554, "q": 16, "c": 1 }
+ ],
+ "francia-hdf": [
+  { "n": "Amiens", "lat": 49.895, "lon": 2.302, "q": 31 },
+  { "n": "Lilla", "lat": 50.63, "lon": 3.057, "q": 26, "c": 1 }
+ ],
+ "francia-bretagna": [
+  { "n": "Brest", "lat": 48.39, "lon": -4.486, "q": 55 },
+  { "n": "Quimper", "lat": 47.996, "lon": -4.103, "q": 16 },
+  { "n": "Rennes", "lat": 48.117, "lon": -1.678, "q": 44, "c": 1 }
+ ],
+ "francia-occitania": [
+  { "n": "Montpellier", "lat": 43.611, "lon": 3.877, "q": 58 },
+  { "n": "Nîmes", "lat": 43.837, "lon": 4.36, "q": 57 },
+  { "n": "Perpignano", "lat": 42.699, "lon": 2.895, "q": 42 },
+  { "n": "Tolosa", "lat": 43.604, "lon": 1.444, "q": 145, "c": 1 }
+ ],
+ "francia-corsica": [
+  { "n": "Ajaccio", "lat": 41.927, "lon": 8.737, "q": 25, "c": 1 },
+  { "n": "Bastia", "lat": 42.697, "lon": 9.45, "q": 20 },
+  { "n": "Corte", "lat": 42.306, "lon": 9.15, "q": 438 }
+ ]
+}

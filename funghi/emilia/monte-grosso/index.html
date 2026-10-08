@@ -194,7 +194,14 @@ nav.altre a{color:var(--blu);}
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
   padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
 .tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+.tasti a.t-prev{grid-column:1 / -1;}
 @media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.banda-prev{display:flex;align-items:center;gap:12px;margin:10px 0 4px;padding:13px 16px;border-radius:12px;background:linear-gradient(135deg,#1f6fd1,#3f8fe8);color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(31,111,209,.25);}
+.banda-prev .ic{font-size:30px;line-height:1;flex:none;}
+.banda-prev b{display:block;font-size:17px;line-height:1.2;}
+.banda-prev span{display:block;font-size:13px;opacity:.92;margin-top:2px;}
+.banda-prev .fr{margin-left:auto;font-size:22px;flex:none;}
+.banda-prev:hover{background:linear-gradient(135deg,#1b5fb3,#3580d6);}
 .noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
 .noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
 .noioso p{margin-bottom:8px;}
@@ -294,6 +301,9 @@ nav.altre .io{font-weight:700;color:var(--blu-scuro);}
 <div id="attesa">Sto leggendo il pluviometro…</div>
 <div id="guasto"></div>
 <div id="verdetto"></div>
+<a class="banda-prev" href="https://avventurepluvio-test.netlify.app/?r=emilia&amp;pl=44.0719,11.8724&amp;pn=Monte%20Grosso&amp;m=prev"
+   onclick="try{gtag('event','apri_mappa',{da:'localita-emilia-banda-previsioni'})}catch(e){}">
+  <span class="ic">☀️</span><span><b>Che tempo farà al Monte Grosso</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
 
 <h2>Le piogge degli ultimi 25 giorni</h2>
 <div id="grafico"></div>
@@ -314,6 +324,8 @@ nav.altre .io{font-weight:700;color:var(--blu-scuro);}
   <a class="forte" id="t-conta" href="https://avventurepluvio-test.netlify.app/?r=emilia,toscana&amp;g=20&amp;pl=44.0719,11.8724&amp;pn=Monte%20Grosso">Range crescita funghi 13-20 gg fa</a>
   <a class="t-radar" href="https://avventurepluvio-test.netlify.app/?r=emilia&amp;pl=44.0719,11.8724&amp;pn=Monte%20Grosso&amp;radar=ora"
      onclick="try{gtag('event','apri_mappa',{da:'localita-emilia-radar'})}catch(e){}">📡 Radar adesso</a>
+  <a class="t-radar t-prev" href="https://avventurepluvio-test.netlify.app/?r=emilia&amp;pl=44.0719,11.8724&amp;pn=Monte%20Grosso&amp;m=prev"
+     onclick="try{gtag('event','apri_mappa',{da:'localita-emilia-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">Ogni pallino è un pluviometro: cerca quello più bagnato vicino ai tuoi boschi.</p>
 <a href="https://avventurepluvio-test.netlify.app/?r=emilia&amp;g=20" id="lnk-pioggia"
@@ -374,11 +386,11 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 in Romagna toscana: <a href="https://avventurepluvio-test.netlify.app/funghi/zone/romagna-toscana/">guarda tutta la zona</a>,
 con i suoi 14 pluviometri insieme.</p>
 <h2>L'archivio di questo pluviometro</h2>
-<p><b>da giugno 2026 a settembre 2026</b>, in 114 giorni di misura, ha contato <b>167 mm</b> di pioggia in <b>15 giornate</b> bagnate. Nelle altre 99 non è caduto niente, o così poco da non contare.
+<p><b>da giugno 2026 a ottobre 2026</b>, in 124 giorni di misura, ha contato <b>167 mm</b> di pioggia in <b>15 giornate</b> bagnate. Nelle altre 109 non è caduto niente, o così poco da non contare.
 Il giorno più bagnato è stato il <b>10 settembre 2026</b>, con
 <b>29,8 mm</b>. Il mese più piovoso,
-fra quelli che abbiamo per intero, è <b>luglio 2026</b> con
-51 mm. Su 85 pluviometri
+fra quelli che abbiamo per intero, è <b>settembre 2026</b> con
+73 mm. Su 85 pluviometri
 da bosco dell'Emilia-Romagna con lo stesso periodo alle spalle, questo è il <b>68º</b>
 per acqua caduta.</p>
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi

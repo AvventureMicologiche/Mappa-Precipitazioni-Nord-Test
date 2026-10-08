@@ -114,7 +114,14 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
   padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
 .tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+.tasti a.t-prev{grid-column:1 / -1;}
 @media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.banda-prev{display:flex;align-items:center;gap:12px;margin:10px 0 4px;padding:13px 16px;border-radius:12px;background:linear-gradient(135deg,#1f6fd1,#3f8fe8);color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(31,111,209,.25);}
+.banda-prev .ic{font-size:30px;line-height:1;flex:none;}
+.banda-prev b{display:block;font-size:17px;line-height:1.2;}
+.banda-prev span{display:block;font-size:13px;opacity:.92;margin-top:2px;}
+.banda-prev .fr{margin-left:auto;font-size:22px;flex:none;}
+.banda-prev:hover{background:linear-gradient(135deg,#1b5fb3,#3580d6);}
 .noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
 .noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
 .noioso p{margin-bottom:8px;}
@@ -152,6 +159,9 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="verdetto"></div>
+<a class="banda-prev" href="https://avventurepluvio-test.netlify.app/?r=toscana&amp;pl=43.0225,11.04494&amp;pn=Colline%20Metallifere%20grossetane&amp;pz=1&amp;m=prev"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-colline-metallifere-grossetane-banda-previsioni'})}catch(e){}">
+  <span class="ic">☀️</span><span><b>Che tempo farà sulle Colline Metallifere grossetane</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
 
 <h2>La pioggia degli ultimi 30 giorni</h2>
 <div id="grafico"></div>
@@ -202,6 +212,8 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
      onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-colline-metallifere-grossetane-30gg'})}catch(e){}">Ultimi 30 gg</a>
   <a href="https://avventurepluvio-test.netlify.app/?r=toscana&amp;pl=43.0225,11.04494&amp;pn=Colline%20Metallifere%20grossetane&amp;pz=1&amp;radar=ora"
      onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-colline-metallifere-grossetane-radar'})}catch(e){}">📡 Radar adesso</a>
+  <a class="t-prev" href="https://avventurepluvio-test.netlify.app/?r=toscana&amp;pl=43.0225,11.04494&amp;pn=Colline%20Metallifere%20grossetane&amp;pz=1&amp;m=prev"
+     onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-colline-metallifere-grossetane-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">La pioggia degli ultimi 20 giorni in Toscana; il link apre la mappa già inquadrata sulle Colline Metallifere grossetane.</p>
 <a href="https://avventurepluvio-test.netlify.app/?r=toscana&amp;g=20&amp;pl=43.0225,11.04494&amp;pn=Colline%20Metallifere%20grossetane&amp;pz=1&amp;z=10&amp;c=43.0225,11.04494" id="lnk-img" style="display:block;text-decoration:none;"

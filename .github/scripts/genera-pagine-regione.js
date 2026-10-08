@@ -335,6 +335,9 @@ ${STILE_NUOVO}
      le mappe. Le spiegazioni stanno in fondo, in piccolo. -->
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="verdetto"></div>
+<a class="banda-prev" href="${SITO}/?r=${r.k}&amp;m=prev"
+   onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-banda-previsioni'})}catch(e){}">
+  <span class="ic">☀️</span><span><b>Che tempo farà ${r.prep} ${r.nome}</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
 
 <h2>La pioggia degli ultimi 30 giorni</h2>
 <div id="grafico"></div>
@@ -396,6 +399,8 @@ ${zz.map(z => `<li data-z="${slug(z.n)}"><a href="${SITO}/zone/${slug(z.n)}/">${
      onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-30gg'})}catch(e){}">Ultimi 30 gg</a>
   <a href="${SITO}/?r=${r.k}&amp;radar=ora"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-radar'})}catch(e){}">📡 Radar adesso</a>
+  <a class="t-prev" href="${SITO}/?r=${r.k}&amp;m=prev"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">La pioggia degli ultimi 20 giorni ${r.prep} ${r.nome}, pluviometro per pluviometro.</p>
 <a href="${SITO}/?r=${r.k}&amp;g=20" id="lnk-img" style="display:block;text-decoration:none;"

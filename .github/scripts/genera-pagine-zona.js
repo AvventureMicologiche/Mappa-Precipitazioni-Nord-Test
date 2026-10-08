@@ -247,6 +247,9 @@ ${rigaStagione()}
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="guasto"></div>
 <div id="verdetto"></div>
+<a class="banda-prev" href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;m=prev"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-${zslug}-banda-previsioni'})}catch(e){}">
+  <span class="ic">☀️</span><span><b>Che tempo farà ${esc(z.dove)}</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
 
 <h2>Le piogge degli ultimi 25 giorni</h2>
 <div id="grafico"></div>
@@ -266,6 +269,8 @@ ${rigaStagione()}
   <a class="forte" id="t-conta" href="${SITO}/?r=${REGS}&amp;g=20&amp;${PIN_A}">Range crescita funghi 13-20 gg fa</a>
   <a class="t-radar" href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;radar=ora"
      onclick="try{gtag('event','apri_mappa',{da:'zona-${zslug}-radar'})}catch(e){}">📡 Radar adesso</a>
+  <a class="t-radar t-prev" href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;m=prev"
+     onclick="try{gtag('event','apri_mappa',{da:'zona-${zslug}-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">Ogni pallino è un pluviometro: cerca quello più bagnato vicino ai tuoi boschi.</p>
 <a href="${SITO}/?r=${REGS}&amp;g=20&amp;${PIN_A}" id="lnk-pioggia"

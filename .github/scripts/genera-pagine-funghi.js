@@ -297,6 +297,9 @@ ${rigaStagione()}
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="guasto"></div>
 <div id="verdetto"></div>
+<a class="banda-prev" href="${SITO}/?r=${r.k}&amp;m=prev"
+   onclick="try{gtag('event','apri_mappa',{da:'funghi-${r.k}-banda-previsioni'})}catch(e){}">
+  <span class="ic">☀️</span><span><b>Che tempo farà ${r.prep} ${nome}</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
 
 <h2>Le piogge degli ultimi 25 giorni ${r.prep} ${nome}</h2>
 <div id="grafico"></div>
@@ -315,6 +318,8 @@ ${rigaStagione()}
   <a href="${SITO}/?r=${r.k}&amp;g=30">Ultimi 30 gg</a>
   <a href="${SITO}/?r=${r.k}&amp;radar=ora"
      onclick="try{gtag('event','apri_mappa',{da:'funghi-${r.k}-radar'})}catch(e){}">📡 Radar adesso</a>
+  <a class="t-prev" href="${SITO}/?r=${r.k}&amp;m=prev"
+     onclick="try{gtag('event','apri_mappa',{da:'funghi-${r.k}-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <div id="testa" style="display:none"></div>
 

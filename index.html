@@ -1727,15 +1727,15 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
     <a href="https://avventuremicologiche.it" target="_blank" rel="noopener" title="Vai al sito Avventure Micologiche" onclick="try{gtag('event','click_home',{pulsante:'archie-header'})}catch(e){}" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#f3efe6;text-decoration:none;flex-shrink:0;margin-right:2px;border:1.5px solid rgba(255,255,255,.85);box-sizing:border-box;overflow:hidden;">
       <img src="archie-avatar.png" alt="Avventure Micologiche" style="width:100%;height:100%;object-fit:cover;display:block;">
     </a>
-    <span style="font-size:18px">🌧</span>
-    <div>
+    <span style="font-size:18px" class="hdr-goccia">🌧</span>
+    <div class="hdr-titolo">
       <!-- L'elenco dei paesi sta in un pezzo a sé perché sotto i 600px sparisce
            (6/8/2026). Misurato headless: "Italia + Svizzera + Austria" fa
            traboccare l'header di 62px a 360 di larghezza, 47 a 375 e 10 persino
            su un Pixel 9 (412), spingendo fuori il tasto "Iscriviti"; e anche il
            solo "+ Svizzera" traboccava già di 9px a 360. Su telefono resta
            "Mappa Pluviometrica Italia", che entra anche a 320. -->
-      <h1>Mappa Pluviometrica<span class="hdr-paesi"> Italia · Svizzera · Austria · Francia · Slovenia</span> <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v10.0)</span></h1>
+      <h1>Mappa Pluviometrica<span class="hdr-paesi"> Italia · Svizzera · Austria · Francia · Slovenia</span> <span class="ver-tag" style="font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;">(v11.0)</span></h1>
       <div class="hdr-sub" id="datehdr"></div>
     </div>
   </div>
@@ -1804,6 +1804,8 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
         <!-- 3/9/2026: il ponte fra la mappa e le 948 pagine di paese.
              Compare solo per i pluviometri che una pagina ce l'hanno. -->
         <a class="sh-funghi" id="sh-funghi" href="#" style="display:none"></a>
+        <!-- 7/10/2026: il ponte verso la sezione Previsioni, sullo stesso punto -->
+        <a class="sh-funghi sh-prev" id="sh-prev" href="#" style="display:none">☀️ vai alle previsioni</a>
       </div>
     </div>
     <div class="fonte-tag" id="fonte-tag">Fonte: —</div>
@@ -4082,6 +4084,8 @@ function openStationHistory(s,rank,mx,my){
   document.getElementById('sh-quota').textContent=testoQuota(s);
   document.getElementById('sh-rank').textContent=rank?('#'+rank+' / '+totalStations):'—';
   document.getElementById('sh-fonte').textContent=lastUsedFonte||'—';
+  // 7/10/2026: «Previsioni qui» (sezione Previsioni, blocco in fondo al file): il posto lo legge dal link
+  (function(){ var _pa=document.getElementById('sh-prev'); if(_pa){ _pa.style.display='block'; _pa._st={lat:s.lat,lon:s.lon,n:s.n,q:s.q}; } })();
   /* 3/9/2026 — il ponte verso la pagina del posto.
      L'indice id → indirizzo si chiede UNA volta sola e solo al primo clic su
      un pallino: chi guarda la mappa e non apre nessuna stazione non lo scarica
@@ -4099,7 +4103,7 @@ function openStationHistory(s,rank,mx,my){
       var v=window._indiceFunghi && window._indiceFunghi[s.lat.toFixed(4)+','+s.lon.toFixed(4)];
       if(!v) return;                       // questo pluviometro la pagina non ce l'ha
       a.href='/funghi/'+v+'/';
-      a.textContent='vai alla scheda →';
+      a.textContent='vai alla scheda';   // 7/10/2026: la fonte e' salita accanto ai millimetri, qui ci stanno due tasti larghi
       a.style.display='block';
     }
     if(window._indiceFunghi) return mostra();
@@ -4553,7 +4557,7 @@ function centraRegioneInStriscia(){
      riempire la striscia e mezzo secondo dopo il radar riallargava
      (misurato il 6/9/2026: 7,5 a 935 ms, 6,75 a 1554). Due movimenti dove
      ne basta uno, ed e' proprio lo sfarfallio segnalato. */
-  if(document.body.classList.contains('modo-radar')) return;
+  if(document.body.classList.contains('modo-radar')||document.body.classList.contains('modo-prev')) return;   // 7/10/2026: anche le previsioni
   if(_vistaDaLink) return;   // la vista arriva da un link condiviso: comanda quella
   // «Confronta piogge» ha appena rimesso la vista dell'utente (29/9): per un paio di secondi non si ricentra
   if(window._fermaCentraFino && Date.now()<window._fermaCentraFino) return;
@@ -8050,6 +8054,13 @@ var _locInAttesa = null;
 function locVai(p, _giro) {
   if (typeof locFermaChiamata === 'function') locFermaChiamata();   // ha scelto un paese
   if (!p) return;
+  // 7/10/2026: nella sezione Previsioni (blocco in fondo al file) la ricerca apre il dettaglio del posto
+  if (window._prevAttivo && typeof window._prevVai === 'function') {
+    if (!p.muta) { document.getElementById('loc-input').value = p.n; document.getElementById('loc-box').classList.add('pieno'); locSalvaRecente(p); }
+    locChiudi(); document.getElementById('loc-input').blur();
+    var _rc = document.getElementById('reg-chiudi'); if (_rc) _rc.click();   // sul telefono la casella sta nella tendina delle regioni
+    window._prevVai(p); return;
+  }
   if (isLoading) {
     if ((_giro || 0) > 40) return;                 // ~16 s e poi si lascia perdere
     _locInAttesa = p;
@@ -8402,6 +8413,13 @@ function resetToStart(){
   if(_li){ _li.value=''; document.getElementById('loc-box').classList.remove('pieno'); }
   var _op2=document.querySelector('#region-select option[value="__paese"]'); if(_op2) _op2.remove();
   if(typeof locSegnapostoVia==='function') locSegnapostoVia();
+  svuotaScelta();
+  map.setView(initCenter,initZoom);
+  if(typeof positionPanels==='function') positionPanels();
+}
+/* la scelta delle regioni e l'analisi tolte, SENZA toccare la vista ne' la ricerca: la usa anche la ricerca delle
+   previsioni (suo, 8/10: «se clicco il Lazio e poi cerco Ovada resta il Lazio?» → cercare un paese riparte da capo) */
+function svuotaScelta(){
   document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb2){ cb2.checked=false; });
   Object.keys(regionBorders).forEach(function(rk2){ map.removeLayer(regionBorders[rk2]); delete regionBorders[rk2]; });
   clearMarkers(); clearHeatmap();
@@ -8420,8 +8438,6 @@ function resetToStart(){
   currentPast=null; currentNow=null; currentLabel='';
   updateOsmerNotice();
   refreshSelectorStyles();
-  map.setView(initCenter,initZoom);
-  if(typeof positionPanels==='function') positionPanels();
 }
 var _btnResetRegions=document.getElementById('btn-reset-regions');
 if(_btnResetRegions) _btnResetRegions.addEventListener('click',resetToStart);
@@ -8753,7 +8769,7 @@ document.getElementById('btn-funghi').addEventListener('click',function(){
   if(false) return;
   var active=getActiveRegions();
   if(active.length===0){
-    var el=document.getElementById('tp-status');el.textContent='⚠️ Seleziona prima una regione!';el.className='error';
+    chiediRegione();
     return;
   }
   document.querySelectorAll('.tp-btn,.tp-custom-btn').forEach(function(b){b.classList.remove('active');});
@@ -9219,14 +9235,53 @@ function regApri(){
   // l'attesa spiegata a gradini e serve.
   var gb=document.getElementById('geo-btn');
   if(gb && !gb.disabled && typeof geoNota==='function') geoNota('');
+  // si riapre sempre dall'INIZIO, con la casella di ricerca in cima: ricordava dove l'avevi fatta scorrere per
+  // scegliere il Lazio e si riapriva a meta' elenco (visto da lui sul telefono, 8/10/2026)
+  // ⚠️ dopo averla mostrata: a tendina nascosta lo scrollTop non si azzera
   sh.classList.add('aperta'); sh.setAttribute('aria-hidden','false');
   document.body.classList.add('reg-bloccato');
+  var _inn=document.getElementById('reg-sheet-inner');
+  if(_inn){ _inn.scrollTop=0; requestAnimationFrame(function(){ _inn.scrollTop=0; }); }
+  if(!_tendPasso){ try{ history.pushState({tend:1},''); _tendPasso=true; }catch(e){} }
 }
-function regChiudi(){
+/* IL TASTO «INDIETRO» CON LA TENDINA APERTA (suo, 8/10/2026): la tendina aperta e' un PASSO nella cronologia, e
+   «indietro» la chiude invece di uscire dal sito. Chiusa in altro modo (scelta, ×, tocco fuori) il passo si toglie.
+   ⚠️ history.back() e' asincrono: un pushState fatto subito dopo (la scheda delle previsioni dopo una ricerca)
+   prendeva il posto del passo della tendina e la cronologia restava sfasata di uno (provato in Chrome). Chi deve
+   scrivere nella cronologia passa da dopoTendina(), che aspetta la fine del giro. */
+var _tendPasso=false, _tendIgnora=0, _tendDopo=[];
+function dopoTendina(fn){ if(_tendIgnora>0) _tendDopo.push(fn); else fn(); }
+window.addEventListener('popstate',function(e){
+  if(_tendIgnora>0){ _tendIgnora--; e.stopImmediatePropagation(); if(!_tendIgnora){ var q=_tendDopo; _tendDopo=[]; q.forEach(function(f){ try{ f(); }catch(x){} }); } return; }
+  if(_tendPasso){ _tendPasso=false; e.stopImmediatePropagation(); regChiudi(true); }
+});
+function regChiudi(daIndietro){
   var sh=document.getElementById('reg-sheet'); if(!sh) return;
   sh.classList.remove('aperta'); sh.setAttribute('aria-hidden','true');
   document.body.classList.remove('reg-bloccato');
+  if(daIndietro!==true && _tendPasso){ _tendPasso=false; _tendIgnora++; try{ history.back(); }catch(e){ _tendIgnora--; } }
 }
+/* IL FUMETTO SOTTO LA BARRA (8/10/2026, variante C scelta da lui): sul telefono l'invito a scegliere sta sotto la
+   barra in alto, che e' quella da toccare. Prima diceva «qui sopra» dal fondo dello schermo. Lo usano le previsioni
+   senza scelte e lo storico quando si tocca un periodo senza regione. html=null lo toglie. Si nasconde da solo a
+   tendina aperta (CSS) e appena si sceglie una regione o un paese. */
+function fumettoInvito(html){
+  var f=document.getElementById('pv-fumetto');
+  if(!f){ if(!html) return; f=document.createElement('div'); f.id='pv-fumetto';
+    f.addEventListener('click',function(){ regApri(); }); document.body.appendChild(f); }
+  if(html){ f.innerHTML=html; var ra=document.getElementById('reg-apri'); if(ra){ var r=ra.getBoundingClientRect(); if(r.height>0) f.style.top=(r.bottom+12)+'px'; } }
+  f.style.display=html?'':'none'; f.classList.toggle('su',!!html);
+}
+/* senza regione: sul telefono il fumetto, sul computer la scritta rossa di sempre (accanto c'e' il riquadro delle regioni) */
+function chiediRegione(){
+  var ra=document.getElementById('reg-apri');
+  if(window.innerWidth<=900 && ra && ra.getBoundingClientRect().height>0){
+    var st=document.getElementById('tp-status'); if(st){ st.textContent=''; st.className=''; }
+    fumettoInvito('💧 Prima scegli dove, tocca qui sopra<small>cerca un paese o scegli la regione</small>'); return;
+  }
+  var el=document.getElementById('tp-status'); el.textContent='⚠️ Seleziona prima una regione!'; el.className='error';
+}
+document.addEventListener('change',function(e){ var t=e.target; if(t&&(t.id==='region-select'||(t.closest&&t.closest('.rcheck-wrap')))) fumettoInvito(null); },true);
 (function regAvvia(){
   var sh=document.getElementById('reg-sheet'), apri=document.getElementById('reg-apri');
   if(!sh||!apri) return;
@@ -9452,7 +9507,7 @@ document.querySelectorAll('.tp-btn').forEach(function(btn){
   btn.addEventListener('click',function(){
     if(isLoading) return;
     if(getActiveRegions().length===0){
-      var el=document.getElementById('tp-status');el.textContent='⚠️ Seleziona prima una regione!';el.className='error';
+      chiediRegione();
       return;
     }
     var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
@@ -9490,7 +9545,7 @@ document.querySelectorAll('.tp-btn').forEach(function(btn){
 
 document.getElementById('btn-custom').addEventListener('click',function(){
   if(getActiveRegions().length===0){
-    var el=document.getElementById('tp-status');el.textContent='⚠️ Seleziona prima una regione!';el.className='error';
+    chiediRegione();
     return;
   }
   var _ts=document.getElementById('tp-status');_ts.className='';_ts.textContent='';
@@ -9544,7 +9599,7 @@ document.getElementById('btn-custom').addEventListener('click',function(){
 document.getElementById('cd-apply').addEventListener('click',function(){
   if(isLoading) return;
   if(getActiveRegions().length===0){
-    var el=document.getElementById('tp-status');el.textContent='⚠️ Seleziona prima una regione!';el.className='error';
+    chiediRegione();
     return;
   }
   var from=document.getElementById('cd-from').value;
@@ -9684,6 +9739,15 @@ window._fitRegioni=fitMapToRegions;
 window._regioniAttive=getActiveRegions;
 window._nomeRegione=function(k){ return (REGIONS[k]&&REGIONS[k].name)||k; };   // per la legenda della Mappa boschi, 15/9/2026
 window._centraStriscia=centraRegioneInStriscia;
+window._regApri=regApri; window._regEtichetta=regEtichetta; window._dopoTendina=dopoTendina; window._fumettoInvito=fumettoInvito; window._chiediRegione=chiediRegione;   // 7/10/2026: la sezione Previsioni apre da qui la tendina col cerca localita' del telefono
+window._locVai=locVai;     // 7/10/2026: uscendo dalle previsioni su un posto cercato, lo storico si apre su quel posto
+/* 7/10/2026 sera (giro di controlli): il paese scelto nello storico (ricerca, link condiviso, pagine) e la griglia
+   delle regioni vicine servono alle previsioni, che stanno in un altro <script>: senza, entrando nelle previsioni
+   il paese spariva e il posto cercato prendeva solo la sua regione principale. */
+window._paeseCercato=function(){ return _vistaPaese; };
+window._regioniVicine=function(lat,lon){ return locRegioniVicine(lat,lon); };
+window._caricaVicine=function(){ return locCaricaVicine(); };
+window._svuotaScelta=function(){ if(isLoading) return false; svuotaScelta(); return true; };   // previsioni: la ricerca riparte da capo (8/10)
 /* Serve al blocco della barra del periodo (20/9/2026), che sta fuori da questa
    IIFE: ricentra la regione quando la barra sale o scende, MA SOLO se la vista
    e' ancora quella automatica. Se l'utente ha trascinato o zoomato a mano,
@@ -11886,19 +11950,17 @@ function loadDefaultMarkers(){
 /* ⚠️ Il «new» e' uno pseudo-elemento, non testo dentro il tasto: cosi'
    sopravvive all'innerHTML che cambia entrando in modo radar, e sparisce da
    solo quando il tasto diventa «Chiudi radar». */
-/* «new» (29/9, suo): tolto dal radar, messo sul Satellite dei boschi */
-#btn-boschi::after,#bo-sat-btn::after{content:'new';position:absolute;top:-6px;right:-4px;
+/* «new» (29/9, suo): tolto dal radar, messo sul Satellite dei boschi; il 7/10 (suo) tolto dalla Mappa boschi
+   e passato alla linguetta «Previsioni», il Satellite lo tiene */
+#bo-sat-btn::after{content:'new';position:absolute;top:-6px;right:-4px;
   background:#e12b2b;color:#fff;font-size:8.5px;font-weight:700;letter-spacing:.3px;
   padding:1px 4px;border-radius:6px;line-height:1.35;pointer-events:none;
   animation:newPulsa 1.6s ease-in-out infinite}
 /* il «new» pulsa (2/10/2026, suo): si gonfia appena e manda un alone rosso */
 @keyframes newPulsa{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(225,43,43,.6)}
   50%{transform:scale(1.18);box-shadow:0 0 0 5px rgba(225,43,43,0)}}
-@media (prefers-reduced-motion:reduce){#btn-boschi::after,#bo-sat-btn::after{animation:none}}
+@media (prefers-reduced-motion:reduce){#bo-sat-btn::after{animation:none}}
 .modo-radar #btn-radar::after{display:none}
-/* anche la Mappa boschi (16/9/2026, sua richiesta: «lascialo su entrambi»);
-   sparisce quando il tasto diventa «Chiudi mappa», come quello del radar */
-.modo-boschi #btn-boschi::after{display:none}
 /* tre tasti al posto della riga delle statistiche: il pannello non cresce */
 .rd-durate{display:none;grid-template-columns:repeat(3,1fr);gap:5px;margin:6px 0 4px}
 .modo-radar .rd-durate{display:grid}
@@ -12352,6 +12414,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   function entra(){
     if(!map()) return;
     if(!regioniAttive().length){
+      if(window.innerWidth<=900&&window._chiediRegione){ window._chiediRegione(); return; }   // telefono: il fumetto sotto la barra (8/10)
       var a=el('tp-status');
       if(a){ a.className='error'; a.textContent='\u26A0\uFE0F Prima scegli la regione';
              clearTimeout(a._t); a._t=setTimeout(function(){
@@ -13720,6 +13783,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
        inquadratura. Stesso avviso e stessa durata del radar. */
     var rkPrima=window._regioniAttive?window._regioniAttive():[];
     if(!rkPrima.length){
+      if(window.innerWidth<=900&&window._chiediRegione){ window._chiediRegione(); return; }   // telefono: il fumetto sotto la barra (8/10)
       var a=el('tp-status');
       if(a){ a.className='error'; a.textContent='⚠️ Prima scegli la regione';
              clearTimeout(a._t); a._t=setTimeout(function(){
@@ -15183,10 +15247,10 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
 </style>
 <script>
 (function(){
-  var VERSIONE='2026-10-04', CHIAVE='novitaVista';
+  var VERSIONE='2026-10-07', CHIAVE='novitaVista';
   /* 5/10/2026: i filmati (4-5 MB l'uno) li serve GitHub, non Netlify. In cinque giorni di ottobre
      la finestra ha scaricato 10-15 GB dal sito: a 20 crediti il GB era il grosso dei 600 crediti di banda. */
-  var NV_MEDIA='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/';
+  var NV_MEDIA=/avventuremicologiche\.it$/.test(location.hostname) ? 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/' : '/';   // test e locale: dal sito stesso (su raw arrivano col push)
   /* UNA PAGINA PER VISITA (4/10/2026, suo: «le spezziamo in due»): alla prima visita solo la prima pagina,
      alla visita dopo (almeno RIM_DOPO, 30', piu' tardi) solo la seconda, poi basta. In CHIAVE: VERSIONE|1|ora
      dopo la prima, VERSIONE secco quando le ha viste tutte. ?novita=1 (la guida, chi la chiede) le mostra
@@ -15194,8 +15258,8 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   var SEQ=[];
   // d = didascalie: [secondo, testo]; il secondo viene dai marchi della registrazione (build-novita.py)
   var PAGINE=[
-    {t:'Temperature di ieri', f:'novita/temperature', d:[[0, "Da ora, cliccando qui"], [3.67, "Le minime e le massime del giorno prima, di ogni pluviometro"]]},
-    {t:'Satellite', f:'novita/satellite-corto', d:[[0, "Dalla Mappa boschi, clicca qui"], [3.65, "Satellite coi boschi evidenziati"], [7.31, "O solo satellite"]]}
+    {t:'Previsioni meteo', f:'novita/previsioni', d:[[0, "Da ora, in alto: Previsioni"], [3.85, "Il tempo su città e paesi, 7 giorni"], [6.49, "Scegli il giorno"], [8.68, "Tocca un posto: ore, gradi, pioggia e probabilità"]]},
+    {t:'Satellite', f:'novita/satellite-corto', d:[[0, "Dalla Mappa boschi, clicca qui"], [3.65, "Satellite coi boschi evidenziati"], [7.31, "O solo satellite"]]}   // 7/10 (suo): esce la pagina delle temperature, il satellite resta
   ];
   var AVANZA_DOPO=1200;   // ms fermi sull'ultimo fotogramma prima di passare da soli alla pagina dopo
   var avanzaT=null;
@@ -15319,7 +15383,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
 #tq-btn.vis{display:flex}
 #tq-btn.p-riga{position:relative;top:auto;right:auto;bottom:auto;height:auto;padding:0 7px;justify-content:center;box-shadow:none;border-style:solid;font-size:11.5px;white-space:nowrap;flex-direction:column;gap:1px}
 .rd-coppia.con-tq{grid-template-columns:1fr auto 1fr}
-/* «new» sulle temperature E sulla Mappa boschi (3/10, suo) */
+/* «new» sulle temperature E sulla Mappa boschi (3/10, suo); il 7/10 quello dei boschi e' passato alle Previsioni, questo resta */
 #tq-btn.p-riga::after{content:'new';position:absolute;top:-6px;right:-4px;background:#e12b2b;color:#fff;font-size:8.5px;font-weight:700;
   letter-spacing:.3px;padding:1px 4px;border-radius:6px;line-height:1.35;pointer-events:none;animation:newPulsa 1.6s ease-in-out infinite}
 #tq-btn.p-riga.on::after{display:none}
@@ -15521,7 +15585,7 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
       var mp=m();
       // senza regione si dice come fanno tutti gli altri tasti (3/10, suo: «come sempre»)
       var att=window._regioniAttive?window._regioniAttive():[];
-      if(!on && !att.length){ var st=document.getElementById('tp-status'); if(st){ st.textContent='⚠️ Seleziona prima una regione!'; st.className='error'; } return; }
+      if(!on && !att.length){ if(window._chiediRegione) window._chiediRegione(); return; }
       on=!on; disegnaTasto();
       try{ gtag('event','temperature_ieri',{stato:on?'on':'off'}); }catch(e){}
       // da lontano ci si avvicina (sua scelta «a»), al centro dei pallini della regione e non della
@@ -15551,6 +15615,628 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
     try{ var at0=document.querySelector('#map .leaflet-control-attribution'); if(at0) new MutationObserver(posiziona).observe(at0,{childList:true,subtree:true,characterData:true}); }catch(e){}
     posiziona(); aggiorna();
   }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',nasci); else nasci();
+})();
+</script>
+<!-- ══════════════════════════════════════════════════════════════════════
+     SEZIONE «PREVISIONI» (7/10/2026). Un MODO della mappa come radar e boschi,
+     ma scelto dall'header: due linguette al posto del titolo, «Storico piogge»
+     (tutto quello che c'era) e «Previsioni» (questo blocco). Nella sezione
+     previsioni la mappa mostra i soli CAPOLUOGHI dell'area scelta, con icona,
+     massima e minima del giorno scelto (7 giorni in basso sul telefono, a
+     sinistra sul computer); un tocco su un capoluogo, o una ricerca, apre il
+     dettaglio del posto ora per ora (temperatura, mm, probabilita', vento).
+     I dati arrivano da /api/previsioni (Pages Function su Cloudflare: MET
+     Norway per tutto, Open-Meteo solo per la %), mai dal browser alle fonti.
+     Decisioni sue del 7/10: capoluoghi e non griglia; la striscia dei giorni
+     SENZA icone (una regione non ha «un tempo»); tasto attivo con la sola
+     riga gialla; colori chiari; cerca localita' dentro il riquadro; «Storico
+     piogge qui» in fondo al dettaglio; riga che rimanda al radar.
+     ⚠️ Vive fuori dalla IIFE principale: usa solo i ganci window._* gia'
+     esposti (mappa, regioni, fit, striscia, regApri) e tre ritocchi minimi
+     dentro (locVai, scheda stazione, centraRegioneInStriscia). -->
+<style>
+/* ── header: le due linguette al posto del titolo (il titolo resta nel DOM per i motori, nascosto) ── */
+body.con-sezioni .hdr-goccia,body.con-sezioni .hdr-titolo{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+body.con-sezioni header .hdr-l{align-self:stretch;gap:6px}
+.sez-ver{font-size:10px;font-weight:400;opacity:.6;letter-spacing:.05em;align-self:center;margin:0 4px 0 0}
+.sez-sw{display:flex;align-self:stretch;align-items:stretch;height:46px;width:340px;margin-left:6px}
+.sez-sw span{flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:5px;font:700 14px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#dfe8f5;padding:0 6px;border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer;user-select:none;box-sizing:border-box}
+.sez-sw span.on{color:#fff;border-bottom-color:#ffd54a}
+.sez-sw span:hover{color:#fff}
+/* «new» sulle Previsioni (7/10, suo: preso dalla Mappa boschi). Sta DENTRO la linguetta: l'header e' attaccato
+   al bordo dello schermo e un «new» che sporge sopra, come sugli altri tasti, verrebbe tagliato. Sparisce
+   quando le previsioni sono accese, come quello delle temperature */
+#sez-prev{position:relative}
+#sez-prev::after{content:'new';position:absolute;top:3px;right:2px;background:#e12b2b;color:#fff;font-size:8.5px;font-weight:700;
+  letter-spacing:.3px;padding:1px 4px;border-radius:6px;line-height:1.35;pointer-events:none;animation:newPulsa 1.6s ease-in-out infinite}
+#sez-prev.on::after{display:none}
+@media (prefers-reduced-motion:reduce){#sez-prev::after{animation:none}}
+@media(max-width:600px){
+  /* header piu' alto di 6 px sul telefono (suo, 7/10: «fa niente se li rubiamo alla mappa»): la regola
+     compatta del 20/9 lo tiene a 38 con !important, quindi qui si scrive con la stessa forza, e con lui
+     scalano la barra della regione e la tendina che ci si appoggiano */
+  html body.con-sezioni header{height:44px !important}
+  html body.con-sezioni .sez-sw{height:44px}
+  html body.con-sezioni #region-panel{top:44px !important}
+  html body.con-sezioni #reg-sheet{top:44px}
+  body.con-sezioni header .hdr-l{flex:1;min-width:0;gap:4px}
+  .sez-ver{display:none}
+  .sez-sw{flex:1;width:auto;margin-left:2px}
+  .sez-sw span{font-size:13px;padding:0 4px}
+  /* il «new» sulla linguetta: a 360 toccava la «i» di «Previsioni», la scritta si sposta un po' a sinistra */
+  #sez-prev{padding-right:20px}
+  .sez-sw span{flex-basis:50%}   /* meta' esatta a testa: con base 0 il margine allargava le Previsioni */
+  #sez-prev::after{top:2px}
+  /* a destra resta la sola icona di YouTube: la scritta «Iscriviti» non ci sta piu' */
+  body.con-sezioni #hdr-yt span{display:none}
+  body.con-sezioni #hdr-yt{padding:6px 7px;border-radius:8px}
+  body.con-sezioni #hdr-yt svg{width:20px;height:14px;display:block}
+}
+/* ── cosa si spegne nella sezione previsioni ── */
+.modo-prev #badge,.modo-prev #tq-btn,.modo-prev #beta-note,.modo-prev #map-hint-panel,.modo-prev #legend-panel,.modo-prev #st-tooltip,.modo-prev #vic-riga{display:none !important}
+/* sul computer il cerca localita' e' spostato nel riquadro dei giorni e il suo contenitore si spegne; sul telefono sta nella tendina delle regioni e resta */
+@media(min-width:901px){.modo-prev #novita-box{display:none !important}}
+.modo-prev #time-panel{visibility:hidden !important}
+@media(max-width:900px){.modo-prev #time-panel{display:none !important}}
+@media(min-width:901px){.modo-prev #btn-reset-regions{display:block !important}
+  body.modo-prev.pv-vuoto #btn-reset-regions{display:none !important}}   /* senza scelte non c'e' niente da cui tornare (8/10) */
+.modo-prev #map path:not(.conf-pulse),.modo-prev:not(.pv-vuoto) #map path.conf-pulse{fill-opacity:0 !important}
+/* ⚠️ la vetrina sta DENTRO #map: le regole qui sopra (e quella del radar) spegnevano anche la coppa del gioco, che e' un
+   path, e il tasto giallo restava vuoto (visto da lui sul telefono, 8/10). Due id battono la specificita' di quelle. */
+#map #channel-pill path,#map #channel-logo path{fill-opacity:1 !important}
+/* senza nessuna scelta i confini delle regioni respirano come nello storico, e un clic sceglie la regione (suo, 8/10:
+   «devo poter cliccare una regione e anche devono lampeggiare»); appena c'e' una zona tornano trasparenti e fermi */
+.modo-prev:not(.pv-vuoto) path.conf-pulse,.modo-prev .panel-pulse,.modo-prev .panel-pulse-ring,.modo-prev #loc-input.loc-chiama,.modo-prev #geo-btn.loc-chiama{animation:none !important}
+.modo-prev #map .loc-pin{display:none}
+.modo-prev .leaflet-boschi-pane{display:none !important}
+/* scheda del pluviometro (7/10/2026, suo): la fonte col pallino sale in alto a destra, accanto ai millimetri;
+   la riga in fondo resta ai due tasti, larghi meta' ciascuno */
+.sh-big #sh-fonte{margin-left:auto;font-size:9px;color:#888;font-weight:400;white-space:nowrap;align-self:center;padding-left:8px}
+body.con-sezioni .sh-fonte{justify-content:stretch;gap:6px}
+body.con-sezioni .sh-fonte .sh-funghi{flex:1 1 0;text-align:center;margin:0}
+/* ── il riquadro dei giorni ── */
+#pv-pan{position:absolute;z-index:1200;display:none;background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.2);padding:12px 14px 10px;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;left:10px;top:165px;width:400px}
+.modo-prev #pv-pan{display:block}
+#pv-pan .tt{display:flex;justify-content:space-between;align-items:baseline;font:800 13px/1.2 inherit;color:#1b3f6e;letter-spacing:.4px;margin-bottom:9px;gap:8px}
+#pv-pan .tt b{font-weight:800;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pv-pan .tt small{font:600 11px/1 inherit;color:#6b7684;letter-spacing:0;white-space:nowrap}
+#pv-pan .gg-r,#pv-det .gg-r{display:flex;gap:5px}
+.pv-gg{flex:1 1 0;min-width:0;padding:6px 2px 5px;border-radius:8px;border:1px solid #d0d8e8;background:#f0f4fb;display:flex;flex-direction:column;align-items:center;gap:2px;font:700 12px/1.15 inherit;color:#1b3f6e;cursor:pointer;user-select:none}
+.pv-gg small{font:600 9px/1 inherit;color:#6b7684;text-transform:uppercase}
+.pv-gg .ic{font-size:18px;line-height:1.15}
+.pv-gg .tx{font:700 10px/1 inherit}.pv-gg .tx .mx{color:#c21f1f}.pv-gg .tx .mn{color:#1856b8}
+.pv-gg.on{background:#1f6fd1;border-color:#1f6fd1;color:#fff}.pv-gg.on small{color:#dbeaff}.pv-gg.on .tx .mx,.pv-gg.on .tx .mn{color:#fff}
+#pv-pan .cerca-slot{margin:0 0 10px}
+#pv-pan .cerca-slot #loc-box{margin:0}
+#pv-pan .cerca-slot #loc-input{border:2px solid #1b3f6e !important;border-radius:9px !important;background:#f3f7fc !important;font-size:14px !important;font-weight:600 !important;color:#1b3f6e !important;height:40px !important}
+#pv-pan .cerca-slot #loc-input::placeholder{color:#5b6b80;font-weight:500}
+#pv-pan .fo{margin-top:10px;font:600 11px/1.3 inherit;color:#6b7684;text-align:center}
+#pv-pan .fo a{color:#1f6fd1;text-decoration:underline;cursor:pointer;white-space:nowrap}
+/* le temperature di ieri restavano accese sopra le previsioni (giro del 7/10 sera: 170 etichette in Liguria) */
+.modo-prev .leaflet-tq-pane{display:none}   /* Leaflet toglie «Pane» dal nome: tqPane diventa leaflet-tq-pane */
+/* l'invito a scegliere: rosso vivo e grande come «Seleziona prima una regione!» dello storico (suo, 8/10) */
+/* l'invito del computer, variante «C4» (suo, 8/10): due strade con cerchio rosso e freccia, separate da «oppure» */
+#pv-pan .avviso.pv-inv{flex:1 1 100%;display:flex;flex-direction:column;gap:7px;padding:2px;color:#1b3f6e;font-size:14px;font-weight:600;line-height:1.3}
+#pv-pan .pv-inv .r{display:flex;align-items:center;gap:10px}
+#pv-pan .pv-inv .c{flex:none;width:28px;height:28px;border-radius:50%;background:#cc0000;color:#fff;display:flex;align-items:center;justify-content:center}
+#pv-pan .pv-inv .o{display:flex;align-items:center;gap:8px;color:#8a97a8;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+#pv-pan .pv-inv .o span{flex:1;height:1px;background:#dfe5ee}
+#pv-pan .avviso{font-family:'Helvetica Neue',Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;line-height:1.3;color:#cc0000;padding:4px 0 2px;cursor:pointer}   /* ⚠️ niente «font:... inherit»: dentro la forma corta non vale e il browser scarta la riga intera */
+/* la scheda del canale (computer) resta nelle previsioni, ma non sotto la tabella di un posto */
+.modo-prev.pv-det-aperto #channel-logo{display:none !important}
+@media(min-width:601px){body.tq-on.modo-prev:not(.pv-det-aperto) #channel-logo:not(.prevetrina){display:block !important}}
+body.modo-prev.pv-vuoto #pv-pan #loc-input{animation:loc-bordo-pulsa 1.7s ease-in-out infinite !important}   /* !important: la regola della 75 spegne con !important le pulsazioni dello storico */
+@media(prefers-reduced-motion:reduce){body.modo-prev.pv-vuoto #reg-apri,body.modo-prev.pv-vuoto #pv-pan #loc-input{animation:none !important}}
+/* ── i capoluoghi sulla mappa ── */
+.pv-ic{background:none;border:none}
+.pv-m{display:flex;flex-direction:column;align-items:center;transform:translate(-50%,-50%);width:max-content;cursor:pointer;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+.pv-m .ic{font-size:30px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}
+.pv-m .nm{display:flex;flex-direction:column;align-items:center;font:800 12.5px/1.1 inherit;color:#1b3f6e;background:rgba(255,255,255,.93);padding:3px 9px 4px;border-radius:9px;margin-top:1px;border:1px solid #9db4d6;white-space:nowrap}
+.pv-m .nm .tx{margin-top:1px;font:700 12px/1.1 inherit}.pv-m .nm .tx .mx{color:#c21f1f}.pv-m .nm .tx .mn{color:#1856b8}
+.pv-m.sel .nm{background:#1f6fd1;color:#fff;border-color:#1f6fd1}.pv-m.sel .nm .tx .mx,.pv-m.sel .nm .tx .mn{color:#fff}
+@media(max-width:900px){.pv-m .ic{font-size:21px}.pv-m .nm{font-size:10.5px;padding:2px 7px 3px}.pv-m .nm .tx{font-size:10.5px}}
+/* ── il dettaglio del posto ── */
+#pv-det{position:absolute;z-index:1250;display:none;flex-direction:column;overflow:hidden;background:#fff;border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.3);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;top:14px;right:40px;width:470px;max-height:calc(100% - 70px);box-sizing:border-box}
+.modo-prev #pv-det.vivo{display:flex}
+#pv-det .hd{padding:10px 12px 6px;border-bottom:1px solid #e3e9f2;display:flex;align-items:flex-start;gap:8px;flex-shrink:0}
+#pv-det .hd .nm{font-size:22px;font-weight:800;line-height:1.1;color:#1b3f6e;flex:1;min-width:0}   /* ⚠️ niente «font:… inherit»: il browser scartava la riga (8/10) */
+#pv-det .hd .nm i{font-style:normal;font-weight:500;font-size:13px;color:#6b7684;white-space:nowrap}   /* «1009 m» non si spezza (8/10) */
+#pv-det .hd .nm small{display:block;font-size:12.5px;font-weight:500;line-height:1.3;color:#6b7684;margin-top:4px}
+/* il giorno in blu e sotto i numeri, su due righe (la sua scelta dell'8/10) */
+#pv-det .hd .q1{font-size:14px;font-weight:700;color:#1b3f6e;margin-top:6px;line-height:1.25}
+#pv-det .hd .q2{font-size:13.5px;font-weight:600;color:#3d4f66;margin-top:2px;line-height:1.35}
+#pv-det .hd .x{font:400 22px/1 inherit;color:#6b7684;padding:0 2px;cursor:pointer;background:none;border:0}
+#pv-det .gg-r{padding:7px 10px 6px;border-bottom:1px solid #e3e9f2;flex-shrink:0}
+#pv-det .pv-gg{min-width:0;padding:4px 2px 3px;font-size:10px}#pv-det .pv-gg .ic{font-size:15px}
+#pv-det .cols{display:grid;grid-template-columns:52px 36px 1fr 1fr 1fr 1fr;padding:5px 12px 3px;font:700 9.5px/1 inherit;color:#6b7684;text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid #eef2f7;flex-shrink:0}
+#pv-det .cols span:nth-child(n+3){text-align:center}
+#pv-det .rows{overflow:auto;flex:1;min-height:0}
+#pv-det .r{display:grid;grid-template-columns:52px 36px 1fr 1fr 1fr 1fr;align-items:center;padding:0 12px;height:24px;font:600 12px/1 inherit;color:#222;border-bottom:1px solid #f1f4f8}
+#pv-det .r:nth-child(even){background:#f7f9fc}
+#pv-det .r .h{color:#1b3f6e;font-weight:800;white-space:nowrap}
+#pv-det .r .ic{font-size:15px}
+#pv-det .r span:nth-child(n+3){text-align:center}
+#pv-det .r .mm{color:#0b3d91}#pv-det .r .mm.z{color:#9aa3ad;font-weight:500}
+#pv-det .r .pc{color:#1f6fd1;font-weight:800}#pv-det .r .pc.z{color:#9aa3ad;font-weight:500}#pv-det .r .pc.alta{color:#c21f1f}
+#pv-det .vuoto{padding:14px 12px;font:500 12.5px/1.4 inherit;color:#6b7684}
+/* all'apertura nessuna citta' (7/10, suo): l'invito sta nel segnaposto della casella di ricerca; a destra
+   non c'e' niente finche' non si sceglie, poi si apre la tabella */
+/* da lontano (tre regioni) le targhette mostrano solo icona e nome: 29 coppie di gradi non si leggono comunque */
+body.pv-lontano .pv-m .nm .tx{display:none}
+body.pv-lontano .pv-m .ic{font-size:22px}
+body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
+#pv-det .ft{padding:8px 12px 8px;border-top:1px solid #e3e9f2;display:flex;flex-direction:column;gap:6px;align-items:stretch;background:#fff;flex-shrink:0}
+#pv-det .ft .b{flex:1;text-align:center;border:1.5px solid #1f6fd1;color:#fff;border-radius:9px;padding:8px 6px;font:700 12.5px/1 inherit;white-space:nowrap;cursor:pointer;background:#1f6fd1}
+#pv-det .ft .b:hover{background:#1b5fb3;border-color:#1b5fb3}
+#pv-det .ft .fo{font:500 9.5px/1.3 inherit;color:#6b7684;text-align:center}
+/* ── telefono ── */
+@media(max-width:900px){
+  #pv-pan{left:0 !important;right:0;top:auto !important;bottom:0;width:auto !important;border-radius:14px 14px 0 0;padding:6px 0 10px;box-shadow:0 -2px 8px rgba(0,0,0,.18)}
+  #pv-pan .tt{padding:0 12px 6px;margin:0}
+  #pv-pan .gg-r{padding:0 10px}
+  .pv-gg{padding:7px 2px 6px;font-size:12px}
+  /* sul telefono la ricerca sta nella tendina in alto (8/10); nel riquadro: titolo, giorni, fonte e la pillola */
+  .modo-prev #pv-pan{display:flex;flex-direction:column}
+  #pv-pan .tt{order:1}#pv-pan .gg-r{order:2}#pv-pan .cerca-slot{display:none}#pv-pan .fo{order:4}
+  #pv-pan #channel-pill{order:5;margin:10px 10px 0}
+  /* con le temperature accese la pillola se ne va (3/10), ma nelle previsioni le temperature non si vedono */
+  body.tq-on.modo-prev #pv-pan #channel-pill:not(.prevetrina){display:flex !important}
+  body.tq-on.modo-prev #pv-pan #channel-pill.cp-social:not(.prevetrina){display:block !important}
+  /* la barra in alto respira finche' non si sceglie una regione o un paese, come la casella nello storico */
+  body.modo-prev.pv-vuoto #reg-apri{animation:loc-bordo-pulsa 1.7s ease-in-out infinite}
+  /* l'invito senza scelte e' un FUMETTO sotto la barra, che e' quella da toccare (variante C, suo 8/10): in fondo diceva «qui sopra» da lontano */
+  #pv-fumetto{position:fixed;left:14px;right:14px;z-index:1500;background:#1b3f6e;color:#fff;border-radius:10px;padding:10px 12px;
+    font:600 14px Helvetica,Arial,sans-serif;line-height:1.35;box-shadow:0 4px 12px rgba(0,0,0,.25);cursor:pointer;display:none}
+  #pv-fumetto:before{content:'';position:absolute;top:-8px;left:50%;margin-left:-8px;border:8px solid transparent;border-top:0;border-bottom-color:#1b3f6e}
+  #pv-fumetto small{display:block;font-weight:400;opacity:.85;margin-top:2px;font-size:12.5px}
+  body:not(.reg-bloccato) #pv-fumetto.su{display:block}
+  #pv-pan .fo{padding:0 12px;text-align:center}
+  #pv-det{top:76px;right:0;left:0;bottom:0;width:auto;max-height:none;border-radius:14px 14px 0 0;box-shadow:0 -3px 12px rgba(0,0,0,.3)}
+  .modo-prev.pv-det-aperto .fonte-tag{display:none !important}
+  #pv-det .hd .x{font:700 12.5px/1 inherit;color:#1b3f6e;background:#eef3fa;border:1.5px solid #9db4d6;border-radius:999px;padding:7px 12px;align-self:flex-start;white-space:nowrap}
+  #pv-det .hd .x::after{content:' Chiudi'}
+  #pv-det .hd .nm{font-size:22px}
+  #pv-det .r{height:27px;font-size:12.5px}#pv-det .r .ic{font-size:17px}
+  #pv-det .ft .b{padding:9px 6px}
+}
+</style>
+<script>
+(function(){
+  var API=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)&&location.port!=='8788' ? 'http://127.0.0.1:8788/api/previsioni' : '/api/previsioni';
+  var API_V='&v=10';   // si alza quando cambia la funzione o l'elenco dei capoluoghi: la cache del browser non rilegge la risposta vecchia
+  var GI=['dom','lun','mar','mer','gio','ven','sab'], GIL=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
+  var MESI=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  var MESIL=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  var ICONE=[[/clearsky_day|fair_day/,'☀️'],[/clearsky_night|fair_night/,'🌙'],[/partlycloudy_day/,'⛅'],[/partlycloudy_night|^cloudy|fog/,'☁️'],[/thunder/,'⛈️'],[/heavyrain|heavysleet/,'🌧️'],[/rain|sleet|drizzle/,'🌦️'],[/snow/,'🌨️']];
+  var acceso=false, giorno=1, aree={}, punti={}, punto=null, gruppo=null, guardia=null, quanti=0, fonteVecchia=null, locCasa=null, inCorso=0, cercato=null, posto=null, pillCasa=null;
+  function el(id){ return document.getElementById(id); }
+  function map(){ return window._mapDebug; }
+  function regioni(){ return window._regioniAttive?window._regioniAttive():[]; }
+  function tel(){ return window.innerWidth<=900; }
+  /* l'ora italiana, per il giorno di partenza (suo, 7/10: «oggi», ma dopo le 20 «domani») */
+  function oraRoma(){ try{ return +new Intl.DateTimeFormat('it-IT',{timeZone:'Europe/Rome',hour:'2-digit',hourCycle:'h23'}).format(new Date())%24; }catch(e){ return new Date().getHours(); } }
+  /* IL POSTO CERCATO (suo, 7/10): chiudendo la scheda la mappa restava vuota, centrata sul paese ma senza
+     niente, se non si era scelta una regione. Adesso il posto resta con la sua targhetta e intorno ci sono i
+     capoluoghi della SUA regione (piu' le vicine se sta sul confine: la stessa griglia della ricerca). La
+     scelta delle regioni del sito non si tocca: le zone delle previsioni sono quelle scelte PIU' quelle del posto. */
+  /* ⚠️ nelle righe della RICERCA «q» e' il nome normalizzato («sassello»), non la quota: passato alla funzione dava
+     una quota NaN e la previsione del posto tornava 502 (giro del 7/10 sera). La quota vale solo se e' un numero. */
+  function quota(p){ return typeof p.q==='number'&&isFinite(p.q)?p.q:null; }
+  /* IL TASTO «INDIETRO» (suo, 8/10): entrare nelle previsioni e aprire la scheda di un posto sono due PASSI nella
+     cronologia, senza cambiare indirizzo. «Indietro» chiude prima la scheda, poi torna allo storico. Chi arriva con un
+     link alle previsioni (pagine, ?m=prev) non ha passi: «indietro» lo riporta da dove veniva. Uscendo coi tasti del
+     sito i passi si tolgono (history.go), cosi' la cronologia resta pulita. */
+  var storia={prev:false,det:false}, zittoStoria=false, ignoraPop=0;
+  function passo(tipo){ if(zittoStoria||storia[tipo]) return; storia[tipo]=true; tend(function(){ try{ history.pushState({pv:tipo},''); }catch(e){ storia[tipo]=false; } }); }
+  function tend(fn){ if(window._dopoTendina) window._dopoTendina(fn); else fn(); }   // aspetta che la tendina abbia tolto il suo passo (8/10)
+  function togliPassi(soloDet){
+    var k=(storia.det?1:0)+(!soloDet&&storia.prev?1:0); if(!k) return;
+    storia.det=false; if(!soloDet) storia.prev=false;
+    tend(function(){ try{ ignoraPop++; history.go(-k); }catch(e){ ignoraPop--; } });
+  }
+  window.addEventListener('popstate',function(){
+    if(ignoraPop>0){ ignoraPop--; return; }
+    if(!acceso) return;
+    if(storia.det){ storia.det=false; chiudiDettaglio(); return; }
+    if(storia.prev){ storia.prev=false; esci(); }
+  });
+  function regDi(p){ try{ return (window._regioniVicine&&window._regioniVicine(p.lat,p.lon)||[])[0]||null; }catch(e){ return null; } }
+  /* computer: quanto lasciare libero a destra. La tabella di un posto, se aperta; se no la scheda del canale in
+     alto a destra, che dall'8/10 resta nelle previsioni e copriva i capoluoghi della costa (Ancona) */
+  function destra(minimo){
+    var mb=el('map').getBoundingClientRect(), det=el('pv-det'), lg=el('channel-logo');
+    if(det&&det.classList.contains('vivo')) return mb.right-det.getBoundingClientRect().left+16;
+    if(lg){ var r=lg.getBoundingClientRect(); if(r.width>0&&r.height>0&&getComputedStyle(lg).display!=='none') return Math.max(minimo,mb.right-r.left+16); }
+    return minimo;
+  }
+  function zone(){ var rk=regioni().slice(); if(posto&&posto.regs) posto.regs.forEach(function(k){ if(rk.indexOf(k)<0) rk.push(k); }); return rk; }
+  function fissaPosto(p){
+    var regs=[]; try{ if(window._regioniVicine) regs=window._regioniVicine(p.lat,p.lon)||[]; }catch(e){}
+    if(p.reg&&regs.indexOf(p.reg)<0) regs.unshift(p.reg);
+    regs=regs.slice(0,3);
+    posto={n:p.n,lat:p.lat,lon:p.lon,q:quota(p),regs:regs};
+  }
+  function icona(s){ for(var i=0;i<ICONE.length;i++) if(ICONE[i][0].test(s||'')) return ICONE[i][1]; return '☁️'; }
+  function nome(k){ return window._nomeRegione?window._nomeRegione(k).replace(/\s*\((FR|CH|AT|SI)\)\s*$/,''):k; }
+  function ga(az,extra){ try{ var o=extra||{}; o.azione=az; o.regione=regioni().join(','); gtag('event','previsioni',o); }catch(e){} }
+  function giornoData(g){ var d=new Date(g+'T12:00:00'); return d; }
+  function chip(e,i,on,meteo){
+    var d=giornoData(e.g);
+    return '<div class="pv-gg'+(on?' on':'')+'" data-i="'+i+'"><small>'+(i===0?'oggi':i===1?'domani':GI[d.getDay()])+'</small>'+d.getDate()+' '+MESI[d.getMonth()]
+      +(meteo?'<span class="ic">'+icona(e.s)+'</span><span class="tx"><span class="mx">'+e.mx+'°</span> <span class="mn">'+e.mn+'°</span></span>':'')+'</div>';
+  }
+  function fmtOra(agg){ try{ return new Date(agg).toLocaleTimeString('it-IT',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
+
+  /* ── markup, creato una volta ── */
+  function monta(){
+    if(el('sez-sw')) return;
+    var hl=document.querySelector('header .hdr-l'); if(!hl) return;
+    var av=hl.children[0];
+    var ver=document.createElement('span'); ver.className='sez-ver'; ver.textContent='v11.0';
+    var sw=document.createElement('div'); sw.className='sez-sw'; sw.id='sez-sw';
+    sw.innerHTML='<span id="sez-storico" class="on" role="tab">💧 Storico piogge</span><span id="sez-prev" role="tab">☀️ Previsioni</span>';
+    av.insertAdjacentElement('afterend',sw); av.insertAdjacentElement('afterend',ver);
+    document.body.classList.add('con-sezioni');
+    // la fonte della scheda del pluviometro sale accanto ai millimetri (stesso nodo, il sito continua a scriverci)
+    try{ var sf=el('sh-fonte'), sb=document.querySelector('#st-history .sh-big'); if(sf&&sb) sb.appendChild(sf); }catch(e){}
+    el('sez-storico').addEventListener('click',function(){ if(acceso) esci(); });
+    el('sez-prev').addEventListener('click',function(){ if(!acceso) entra(); });
+    var mp=el('map'); if(!mp) return;
+    var pan=document.createElement('div'); pan.id='pv-pan';
+    pan.innerHTML='<div class="tt"><b id="pv-tt">☀️ Previsioni</b></div>'
+      +'<div class="cerca-slot" id="pv-cerca-slot"></div>'
+      +'<div class="gg-r" id="pv-gg"></div>'
+      +'<div class="fo"><span id="pv-fo"></span><span id="pv-radar-r"> · <a id="pv-radar">📡 Diretta radar</a></span></div>';
+    mp.appendChild(pan);
+    var det=document.createElement('div'); det.id='pv-det'; mp.appendChild(det);
+    if(window.L){ L.DomEvent.disableClickPropagation(pan); L.DomEvent.disableScrollPropagation(pan); L.DomEvent.disableClickPropagation(det); L.DomEvent.disableScrollPropagation(det); }
+    el('pv-gg').addEventListener('click',function(e){ var c=e.target.closest('.pv-gg'); if(c) scegliGiorno(+c.dataset.i);
+      // toccando l'invito: sul telefono si apre la tendina, sul computer il cursore va nella casella
+      if(e.target.closest('.avviso')&&document.body.classList.contains('pv-vuoto')){ try{ if(tel()){ if(window._regApri) window._regApri(); } else { var li=el('loc-input'); if(li) li.focus(); } }catch(x){} } });
+    det.addEventListener('click',function(e){
+      var c=e.target.closest('.pv-gg'); if(c){ scegliGiorno(+c.dataset.i); return; }
+      if(e.target.closest('.x')){ togliPassi(true); chiudiDettaglio(); return; }
+      if(e.target.closest('.b')){ storicoQui(); return; }
+    });
+    /* il radar vuole una regione (giro del 7/10 sera: senza, si usciva dalle previsioni e non partiva niente). Con un
+       posto cercato e nessuna regione si passa dalla ricerca vera, che la sceglie; senza niente il link non c'e'. */
+    el('pv-radar').addEventListener('click',function(){
+      var c=cercato||posto, senza=!regioni().length;
+      esci(false);
+      if(senza&&c&&window._locVai){ try{ window._locVai({n:c.n,lat:c.lat,lon:c.lon,reg:(c.regs&&c.regs[0])||c.reg||regDi(c),t:c.t||'',priv:c.priv,muta:c.muta}); }catch(e){} }
+      var b=el('btn-radar'), giri=0;
+      (function prova(){ if(regioni().length||giri>40){ if(b) b.click(); return; } giri++; setTimeout(prova,150); })();
+    });
+    // uscite: linguetta, periodo scelto, «Indietro», radar e boschi
+    [].forEach.call(document.querySelectorAll('#time-panel .tp-btn, #btn-custom, #btn-funghi, #btn-radar, #btn-boschi'),
+      function(x){ x.addEventListener('click',function(){ if(acceso) esci(false); },true); });
+    var rr=el('btn-reset-regions'); if(rr) rr.addEventListener('click',function(){ if(acceso) esci(false); },true);
+    // dalla scheda del pluviometro
+    var sp=el('sh-prev'); if(sp) sp.addEventListener('click',function(e){
+      e.preventDefault(); var s=sp._st; if(!s) return;
+      try{ el('sh-close').click(); }catch(x){}
+      entra(); tieniPosto({n:s.n,lat:s.lat,lon:s.lon,q:s.q},false); ga('da_scheda');
+    });
+    window.addEventListener('resize',posiziona);
+    // link con ?m=prev: si aspetta la regione scelta dal sito (fino a 15 s)
+    try{
+      var q=new URLSearchParams(location.search);
+      if(q.get('m')==='prev'){
+        var giri=0, att=setInterval(function(){
+          if(regioni().length || giri>75){ clearInterval(att); if(regioni().length){ entra(true); var l=(q.get('l')||q.get('pl')||'').split(',').map(Number);   // pl/pn: i link delle pagine
+            // il paese del link (pl/pn) lo legge gia' entra() dal sito; qui resta solo chi non l'ha messo (l/n)
+            if(!posto&&l.length===2&&isFinite(l[0])&&isFinite(l[1])) tieniPosto({n:q.get('n')||q.get('pn')||'Località cercata',lat:l[0],lon:l[1],q:null},true); zittoStoria=false; } }
+          giri++;
+        },200);
+      }
+    }catch(e){}
+  }
+  function posiziona(){
+    var pan=el('pv-pan'); if(!pan||tel()) return;
+    var tp=el('time-panel'), mp=el('map'); if(!tp||!mp) return;
+    var r=tp.getBoundingClientRect(), m=mp.getBoundingClientRect();
+    // sotto «Indietro» con 10 px d'aria (il pannello del periodo del sito ne lascia di piu')
+    var bk=el('btn-reset-regions'), br=bk&&getComputedStyle(bk).display!=='none'?bk.getBoundingClientRect():null;
+    // senza scelte «Indietro» e' nascosto (8/10): il riquadro prende il SUO posto, cosi' non salta quando compare
+    var suo=null; if(!br&&bk&&document.body.classList.contains('pv-vuoto')){ bk.style.setProperty('display','block','important'); bk.style.visibility='hidden'; suo=bk.getBoundingClientRect(); bk.style.removeProperty('display'); bk.style.visibility=''; }
+    var cima=br&&br.height>10?br.bottom+10:(suo&&suo.height>10?suo.top:r.top);
+    if(r.width>100){ pan.style.left=(r.left-m.left)+'px'; pan.style.top=(cima-m.top)+'px'; pan.style.width=r.width+'px'; }
+  }
+
+  /* ── entra / esci ── */
+  function entra(daLink){
+    if(acceso||!map()) return;
+    acceso=true; window._prevAttivo=true;
+    zittoStoria=!!daLink; passo('prev');
+    giorno=oraRoma()>=20?1:0;
+    if(document.body.classList.contains('modo-radar') && el('btn-radar')) el('btn-radar').click();
+    if(document.body.classList.contains('modo-boschi') && el('btn-boschi')) el('btn-boschi').click();
+    try{ var sh=el('st-history'); if(sh&&sh.style.display==='block') el('sh-close').click(); }catch(e){}
+    document.body.classList.add('modo-prev'); document.body.classList.add('senza-pallini');
+    heat(false);
+    el('sez-prev').classList.add('on'); el('sez-storico').classList.remove('on');
+    var ft=el('fonte-tag'); if(ft){ fonteVecchia=ft.textContent; }
+    try{ map().attributionControl.addAttribution('Previsioni: MET Norway'); }catch(e){}
+    /* sul computer il cerca localita' entra nel riquadro; sul telefono resta nella tendina in alto, come nello
+       storico (suo, 8/10: «non ha piu' senso in alto?»; il 7/10 era sceso nel riquadro, che saliva toccandolo) */
+    if(!tel()){ var lb=el('loc-box'); if(lb&&!locCasa){ locCasa={p:lb.parentNode,n:lb.nextSibling}; el('pv-cerca-slot').appendChild(lb); var li=el('loc-input'); if(li){ locCasa.ph=li.placeholder; li.placeholder='Cerca una località o toccane una sulla mappa'; } } }
+    // la pillola della vetrina scende in fondo al riquadro (sul telefono vive nel pannello dello storico, qui nascosto)
+    if(tel()){ var pl=el('channel-pill'), pn=el('pv-pan'); if(pl&&pn&&!pillCasa){ pillCasa={p:pl.parentNode,n:pl.nextSibling}; pn.appendChild(pl); } }
+    posiziona();
+    if(!gruppo){ gruppo=L.layerGroup().addTo(map()); map().on('zoomend',lontano); }
+    sorveglia(true);
+    /* IL PAESE SCELTO NELLO STORICO (suo, 7/10 sera): cercato un paese, il sito sceglie le regioni e aspetta le
+       date; se a quel punto si passa alle previsioni, il paese c'e' evidenziato con la sua scheda aperta, e
+       tornando allo storico si torna su di lui. Vale anche per i link condivisi e per quelli delle pagine (pl/pn). */
+    var vp=null; try{ vp=window._paeseCercato&&window._paeseCercato(); }catch(e){}
+    if(vp&&isFinite(vp.lat)&&isFinite(vp.lon)){
+      tieniPosto({n:vp.n||'Località cercata',lat:vp.lat,lon:vp.lon,q:null,t:vp.z?'z':'',priv:!!vp.priv,muta:!!vp.priv},true);
+    } else carica(true);
+    ga('apri');
+  }
+  function esci(ripristina){
+    if(!acceso) return;
+    togliPassi(false);
+    acceso=false; window._prevAttivo=false; sorveglia(false); fumetto(false);
+    document.body.classList.remove('modo-prev'); document.body.classList.remove('senza-pallini');
+    heat(true);
+    el('sez-prev').classList.remove('on'); el('sez-storico').classList.add('on');
+    var ft=el('fonte-tag'); if(ft&&fonteVecchia!=null){ ft.textContent=fonteVecchia; fonteVecchia=null; }
+    try{ map().attributionControl.removeAttribution('Previsioni: MET Norway'); }catch(e){}
+    if(locCasa){ var lb=el('loc-box'); if(lb){ if(locCasa.n&&locCasa.n.parentNode===locCasa.p) locCasa.p.insertBefore(lb,locCasa.n); else locCasa.p.appendChild(lb); } var li2=el('loc-input'); if(li2&&locCasa.ph!=null) li2.placeholder=locCasa.ph; locCasa=null; }
+    if(gruppo) gruppo.clearLayers();
+    chiudiDettaglio(true);
+    /* se nelle previsioni si era CERCATO un posto, lo storico si apre su quel posto (sua richiesta 7/10:
+       «se da li' clicco storico resto li'»): si rifa' la ricerca vera del sito, che sceglie le regioni e centra */
+    var c=cercato; cercato=null; posto=null; document.body.classList.remove('pv-vuoto');
+    if(pillCasa){ var pl=el('channel-pill'); if(pl){ if(pillCasa.n&&pillCasa.n.parentNode===pillCasa.p) pillCasa.p.insertBefore(pl,pillCasa.n); else pillCasa.p.appendChild(pl); } pillCasa=null; }
+    if(ripristina!==false && c && window._locVai){ try{ window._locVai(c); }catch(e){} ga('chiudi'); return; }
+    if(ripristina!==false){
+      try{ map().stop(); }catch(e){}
+      try{ var rk=regioni(); if(rk.length&&window._fitRegioni) window._fitRegioni(rk); }catch(e){}
+      if(tel()&&window._centraStriscia){ try{ window._centraStriscia(); }catch(e){} setTimeout(function(){ try{ window._centraStriscia(); }catch(e){} },420); }
+    }
+    ga('chiudi');
+  }
+  function heat(si){ var c=document.querySelector('#map .leaflet-overlay-pane canvas'); if(c) c.style.display=si?'':'none'; }
+  /* le regioni si guardano dal RISULTATO (quanti pallini), come fa il radar: sul telefono la scelta passa da una tendina */
+  function sorveglia(si){
+    if(guardia){ clearInterval(guardia); guardia=null; }
+    if(!si) return;
+    quanti=contaPallini(); var visti=regioni().join('+');
+    /* si reinquadra solo se cambiano le REGIONI: i pallini che il sito finisce di caricare dopo (link delle pagine
+       col paese) facevano reinquadrare tutte le zone e il paese si perdeva (giro del 7/10 sera, Alpe Gorreto) */
+    guardia=setInterval(function(){ if(!acceso) return; var n=contaPallini(); if(n!==quanti){ quanti=n; var r=regioni().join('+'), cambiate=r!==visti; visti=r; carica(cambiate); } },1000);
+  }
+  function contaPallini(){ var n=0, m=map(); if(!m) return 0; m.eachLayer(function(l){ if(l instanceof L.CircleMarker) n++; }); return n; }
+  function inquadra(){
+    var m=map(), rk=zone(); if(!m||!rk.length) return;
+    if(!tel()){
+      /* computer: il fit del sito riserva lo spazio del suo pannello a sinistra, ma qui c'e' anche la tabella
+         a destra (470 px + 40): con tre regioni la mappa finiva sotto la tabella (suo, 7/10). Si inquadrano i
+         confini delle regioni attive (la tabella REGION_BOUNDS del sito) fra i due riquadri. */
+      var rb=window._boundsDebug?window._boundsDebug():null, bb=null;
+      rk.forEach(function(k){ var b=rb&&rb[k], lb=null; if(b&&b.length===2) lb=L.latLngBounds(b); else { var a=aree[k]; if(a&&a.capoluoghi&&a.capoluoghi.length) lb=L.latLngBounds(a.capoluoghi.map(function(c){ return [c.lat,c.lon]; })); } if(lb) bb=bb?bb.extend(lb):lb; });   // le aree senza riga in REGION_BOUNDS (Francia) entrano coi capoluoghi
+      var pan=el('pv-pan'), det=el('pv-det'), mp=el('map'), mb=mp.getBoundingClientRect();
+      var sx=pan?pan.getBoundingClientRect().right-mb.left+16:430, dx=destra(24);
+      if(bb&&bb.isValid()){ try{ m.fitBounds(bb,{paddingTopLeft:[sx,24],paddingBottomRight:[dx,40],animate:false}); return; }catch(e){} }
+      try{ if(window._fitRegioni) window._fitRegioni(rk); }catch(e){} return;
+    }
+    /* telefono: si inquadrano i CAPOLUOGHI nella striscia libera fra la tendina delle regioni (sopra) e il
+       riquadro dei giorni (sotto). Il fit del sito e' tarato sui suoi pannelli, qui ce ne sono altri. Con
+       meno di tre capoluoghi (Aosta, Trento, Bolzano) si ripiega sul fit della regione piu' lo spostamento. */
+    var pan=el('pv-pan'), mp=el('map'), rp=el('region-panel'), mb=mp.getBoundingClientRect();
+    var sotto=0, sopra=0;
+    if(pan){ var r=pan.getBoundingClientRect(); if(r.height>40) sotto=Math.max(0,mb.bottom-Math.max(r.top,mb.top)); }
+    if(rp){ var rr=rp.getBoundingClientRect(); if(getComputedStyle(rp).display!=='none'&&rr.height>10) sopra=Math.max(0,Math.min(rr.bottom,mb.bottom)-mb.top); }
+    var pts=[]; rk.forEach(function(k){ var a=aree[k]; if(a&&a.capoluoghi) a.capoluoghi.forEach(function(c){ pts.push([c.lat,c.lon]); }); });
+    /* ⚠️ su uno schermo BASSO la striscia libera puo' essere di poche decine di px: col bordo pieno
+       fitBounds sceglie uno zoom assurdo e la Liguria finiva in mare davanti a Genova (visto il 7/10
+       registrando a 393x530). Sotto i 140 px di striscia si stringe il bordo; sotto i 90 ci pensa il fit del sito. */
+    var libera=mb.height-(sopra+44)-(sotto+30), bordoAlto=44, bordoBasso=30;
+    if(libera<140){ bordoAlto=10; bordoBasso=8; libera=mb.height-(sopra+10)-(sotto+8); }
+    if(pts.length>=3 && libera>=90){
+      try{ m.fitBounds(L.latLngBounds(pts),{paddingTopLeft:[34,sopra+bordoAlto],paddingBottomRight:[34,sotto+bordoBasso],animate:false}); return; }catch(e){}
+    }
+    try{ if(window._fitRegioni) window._fitRegioni(rk); }catch(e){}
+    var alza=Math.round((sotto-sopra)/2); if(alza>10) m.panBy([0,alza],{animate:false});
+  }
+
+  /* ── dati ── */
+  function chiedi(url){
+    return fetch(url).then(function(r){ return r.json().then(function(j){ if(!r.ok||j.errore) throw new Error(j.errore||r.status); return j; }); });
+  }
+  /* telefono, senza scelte: il fumetto blu sotto la barra in alto; toccandolo si apre la tendina */
+  function fumetto(si){   // il fumetto e' uno solo per tutto il sito (fumettoInvito, accanto a regApri)
+    try{ if(window._fumettoInvito) window._fumettoInvito(si?'☀️ Per vedere le previsioni, tocca qui sopra<small>cerca un paese o scegli la regione</small>':null); }catch(e){}
+  }
+  function carica(riinquadra){
+    var rk=zone();
+    var tt=el('pv-tt');
+    var rr=el('pv-radar-r'); if(rr) rr.style.display=rk.length?'':'none';
+    var eraVuoto=document.body.classList.contains('pv-vuoto');
+    document.body.classList.toggle('pv-vuoto',!rk.length);
+    if(eraVuoto!==!rk.length) posiziona();   // «Indietro» compare o sparisce: il riquadro si riaggancia
+    // sul computer, finche' non ci sono capoluoghi, la casella non li nomina (suo, 8/10)
+    if(locCasa){ var lci=el('loc-input'); if(lci) lci.placeholder=rk.length?'Cerca una località o toccane una sulla mappa':'Cerca un paese o una località'; }
+    if(!rk.length){ var ft0=el('fonte-tag'); if(ft0) ft0.textContent='Previsioni modello ECMWF via MET Norway';
+      tt.textContent='☀️ Previsioni'; fumetto(tel()); el('pv-gg').innerHTML=tel()?''
+        :'<div class="avviso pv-inv"><div class="r"><span class="c"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span><span>Cerca un paese nella casella qui sopra</span></div><div class="o"><span></span>oppure<span></span></div><div class="r"><span class="c"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span><span>Clicca una regione sulla mappa</span></div></div>';   /* computer: la variante «C4» scelta da lui l'8/10; il telefono resta com'era */ el('pv-fo').textContent=''; if(gruppo) gruppo.clearLayers(); return; }
+    fumetto(false); tt.textContent='☀️ Previsioni · '+rk.map(nome).join(' + ');
+    var mancanti=rk.filter(function(k){ return !aree[k]; });
+    if(mancanti.length) el('pv-fo').textContent='carico…';
+    var mio=++inCorso;
+    // un'area che arriva solo dal posto cercato, se non risponde, si salta: le regioni scelte invece devono esserci
+    Promise.all(mancanti.map(function(k){ return chiedi(API+'?capoluoghi='+encodeURIComponent(k)+API_V).then(function(j){ aree[k]=j; })
+        .catch(function(e){ if(regioni().indexOf(k)>=0) throw e; }); }))
+      .then(function(){ if(mio!==inCorso) return; carica._riprovato=false; disegna(); if(riinquadra==='posto') inquadraPosto(); else if(riinquadra) inquadra(); })
+      .catch(function(){ if(mio!==inCorso) return;
+        if(!carica._riprovato){ carica._riprovato=true; setTimeout(function(){ if(acceso) carica(riinquadra); },1800); return; }   // una riprova silenziosa
+        carica._riprovato=false;
+        el('pv-gg').innerHTML='<div class="avviso">Previsioni non disponibili in questo momento, riprova fra poco</div>'; el('pv-fo').textContent=''; });
+  }
+  function giorniBase(){
+    var rk=zone();
+    for(var i=0;i<rk.length;i++){ var a=aree[rk[i]]; if(a&&a.capoluoghi) for(var j=0;j<a.capoluoghi.length;j++) if(a.capoluoghi[j].giorni) return a.capoluoghi[j].giorni; }
+    return null;
+  }
+  function disegna(){
+    var rk=zone(), gb=giorniBase(); if(!gb) return;
+    if(giorno>=gb.length) giorno=gb.length-1;
+    el('pv-gg').innerHTML=gb.map(function(e,i){ return chip(e,i,i===giorno,false); }).join('');
+    var g=gb[giorno].g, d=giornoData(g), agg=null;
+    gruppo.clearLayers();
+    rk.forEach(function(k){
+      var a=aree[k]; if(!a||!a.capoluoghi) return; agg=agg||a.agg;
+      a.capoluoghi.forEach(function(c){
+        var e=(c.giorni||[]).filter(function(x){ return x.g===g; })[0]; if(!e) return;
+        var sel=punto&&punto.n===c.n&&Math.abs(punto.lat-c.lat)<0.01;
+        var mk=L.marker([c.lat,c.lon],{icon:L.divIcon({className:'pv-ic',iconSize:null,iconAnchor:[0,0],
+          html:'<div class="pv-m'+(sel?' sel':'')+'"><span class="ic">'+icona(e.s)+'</span><span class="nm">'+c.n+'<span class="tx"><span class="mx">'+e.mx+'°</span> <span class="mn">'+e.mn+'°</span></span></span></div>'}),
+          keyboard:false});
+        mk.on('click',function(){ cercato=null; apriPunto(c); ga('capoluogo',{posto:c.n}); });
+        gruppo.addLayer(mk);
+      });
+    });
+    // il posto cercato (o il pluviometro da cui si arriva) ha la sua targhetta, se non e' gia' un capoluogo;
+    // il posto cercato la TIENE anche a scheda chiusa (7/10), e toccandola la scheda si riapre
+    [punto,posto].forEach(function(pp,i){ if(!pp||(i===1&&punto&&punto.lat===pp.lat&&punto.lon===pp.lon)) return;
+      var kk=pp.lat.toFixed(3)+','+pp.lon.toFixed(3), jj=punti[kk];
+      var eCap=false; gruppo.eachLayer(function(l){ if(l.getLatLng&&Math.abs(l.getLatLng().lat-pp.lat)<0.01&&Math.abs(l.getLatLng().lng-pp.lon)<0.01) eCap=true; });
+      if(!eCap&&jj&&jj.giorni){ var ep=jj.giorni.filter(function(x){ return x.g===g; })[0];
+        if(ep){ var mp=L.marker([pp.lat,pp.lon],{icon:L.divIcon({className:'pv-ic',iconSize:null,iconAnchor:[0,0],
+          html:'<div class="pv-m sel"><span class="ic">'+icona(ep.s)+'</span><span class="nm">'+pp.n+'<span class="tx"><span class="mx">'+ep.mx+'°</span> <span class="mn">'+ep.mn+'°</span></span></span></div>'}),keyboard:false,zIndexOffset:500});
+          mp.on('click',function(){ apriPunto(pp); ga('posto_riaperto',{posto:pp.n}); });
+          gruppo.addLayer(mp); } } });
+    el('pv-fo').textContent='ECMWF via MET Norway'+(agg?' · agg. '+fmtOra(agg):'');
+    var ft=el('fonte-tag'); if(ft&&acceso) ft.textContent='Previsioni modello ECMWF via MET Norway'+(agg?' · agg. '+fmtOra(agg):'');
+    // sul computer, finche' non si tocca niente, a destra sta un cenno piccolo; la tabella arriva col primo tocco
+    if(!tel()&&!punto) cenno();
+    else if(punto) renderDet();
+    lontano();
+  }
+  function scegliGiorno(i){ giorno=i; disegna(); ga('giorno',{giorno:i}); }
+  function cenno(){
+    var det=el('pv-det'); if(det){ det.className=''; det.innerHTML=''; }
+    var pan=el('pv-pan'); if(pan) pan.classList.add('con-cenno');
+  }
+  function lontano(){ try{ document.body.classList.toggle('pv-lontano', acceso && map().getZoom()<7.6); }catch(e){} }
+  /* quando si apre la tabella, la targhetta toccata non deve finirci sotto: si scorre di quel tanto */
+  function tieniInVista(){
+    if(tel()||!punto) return;
+    var m=map(), det=el('pv-det'); if(!m||!det||!det.classList.contains('vivo')) return;
+    var pt=m.latLngToContainerPoint([punto.lat,punto.lon]), mb=el('map').getBoundingClientRect(), dr=det.getBoundingClientRect();
+    var limite=dr.left-mb.left-60;
+    if(pt.x>limite) m.panBy([pt.x-limite,0],{animate:true});
+  }
+
+  /* ── il dettaglio di un posto ── */
+  function apriPunto(c,silenzio){
+    passo('det');
+    punto={n:c.n,lat:c.lat,lon:c.lon,q:c.q==null?null:c.q};
+    document.body.classList.add('pv-det-aperto');
+    if(tel()){ try{ var rp=el('region-panel'), mb=el('map').getBoundingClientRect(), rr=rp&&getComputedStyle(rp).display!=='none'?rp.getBoundingClientRect():null;
+      el('pv-det').style.top=(rr&&rr.height>10?Math.max(0,rr.bottom-mb.top):0)+'px'; }catch(e){} }
+    var k=c.lat.toFixed(3)+','+c.lon.toFixed(3);
+    var det=el('pv-det'); det.className='vivo';
+    var pan0=el('pv-pan'); if(pan0) pan0.classList.remove('con-cenno');
+    if(!punti[k]){
+      det.innerHTML='<div class="hd"><div class="nm">'+c.n+'<small>carico la previsione…</small></div><button class="x" aria-label="Chiudi">×</button></div>';
+      chiedi(API+'?lat='+c.lat.toFixed(4)+'&lon='+c.lon.toFixed(4)+(c.q!=null?'&q='+Math.round(c.q):'')+API_V)
+        .then(function(j){ punti[k]=j; if(punto&&punto.lat===c.lat&&punto.lon===c.lon){ renderDet(); disegna(); tieniInVista(); } })
+        .catch(function(){ det.innerHTML='<div class="hd"><div class="nm">'+c.n+'<small>previsione non disponibile in questo momento</small></div><button class="x" aria-label="Chiudi">×</button></div>'; });
+    } else { renderDet(); disegna(); tieniInVista(); }
+    if(!silenzio) ga('punto',{posto:c.n});
+  }
+  function chiudiDettaglio(tutto){
+    document.body.classList.remove('pv-det-aperto');
+    var det=el('pv-det'); if(det){ det.classList.remove('vivo'); if(tutto){ det.innerHTML=''; det.className=''; var pn=el('pv-pan'); if(pn) pn.classList.remove('con-cenno'); } }
+    /* ⚠️ qui c'era anche «cercato=null»: esci() chiama questa funzione PRIMA di leggere cercato, quindi
+       «Storico piogge» non tornava mai sul posto cercato. Il posto cercato lo dimentica solo esci(). */
+    punto=null;
+    if(acceso&&!tutto){ disegna(); if(tel()&&posto) inquadraPosto(); }   // sul computer rimette il cenno; sul telefono il posto coi capoluoghi vicini
+  }
+  function renderDet(){
+    if(!punto) return;
+    var k=punto.lat.toFixed(3)+','+punto.lon.toFixed(3), j=punti[k]; if(!j) return;
+    var gb=j.giorni||[]; if(!gb.length) return;
+    var gi=Math.min(giorno,gb.length-1), e=gb[gi], g=e.g, d=giornoData(g);
+    var ore=(j.ore||[]).filter(function(o){ return o.g===g; });
+    var righe=ore.map(function(o){
+      var h=String(o.h).padStart(2,'0')+(o.h6?'–'+String((o.h+6)%24).padStart(2,'0'):'');
+      var mm=Math.round(o.mm*10)/10, pc=o.pc;
+      return '<div class="r"><span class="h">'+h+'</span><span class="ic">'+icona(o.s)+'</span><span>'+Math.round(o.t)+'°</span>'
+        +'<span class="mm'+(mm<0.1?' z':'')+'">'+(mm<0.1?'–':mm.toLocaleString('it-IT')+' mm')+'</span>'
+        +'<span class="pc'+(pc==null?'':pc<10?' z':pc>=60?' alta':'')+'">'+(pc==null?'':pc+'%')+'</span><span>'+Math.round(o.v*3.6)+' km/h</span></div>';
+    }).join('');
+    el('pv-det').innerHTML='<div class="hd"><div class="nm">'+punto.n+(punto.q!=null?' <i>· '+punto.q+' m</i>':'')+'<div class="q1">'+(gi===0&&ore.length?'Oggi dalle '+String(ore[0].h).padStart(2,'0'):'Previsione per '+GIL[d.getDay()]+' '+d.getDate()+' '+MESI[d.getMonth()])+'</div>'+'<div class="q2">🌡 '+e.mx+'° / '+e.mn+'° · 💧 '+(e.mm).toLocaleString('it-IT')+' mm'+(e.pc!=null?' · ☔ '+(e.pc>0?'fino '+(/^(8|1$|1[1]$)/.test(String(e.pc))?'all\'':'al ')+e.pc+'%':'0%'):'')+'</div></div><button class="x" aria-label="Chiudi">×</button></div>'
+      +'<div class="gg-r">'+gb.map(function(x,i){ return chip(x,i,i===gi,true); }).join('')+'</div>'
+      +(righe?'<div class="cols"><span>ora</span><span></span><span>temp.</span><span>pioggia</span><span>prob.</span><span>vento</span></div><div class="rows">'+righe+'</div>'
+             :'<div class="vuoto">Per questo giorno c’è solo il riepilogo: le ore arrivano fino a '+(function(){ var u=(j.ore||[]).slice(-1)[0]; if(!u) return 'oggi'; var ud=giornoData(u.g); return GIL[ud.getDay()]+' '+ud.getDate(); })()+'.</div>')
+      +'<div class="ft"><button class="b">💧 Storico piogge qui →</button><span class="fo">Previsioni modello ECMWF via MET Norway. Probabilità di pioggia: Open-Meteo.</span></div>';
+  }
+  function storicoQui(){
+    var p=punto, c=cercato; esci(false);
+    if(c && window._locVai){ try{ window._locVai(c); }catch(e){} ga('storico_qui'); return; }
+    // da un capoluogo SENZA regioni scelte lo storico restava vuoto (giro del 7/10 sera): la ricerca vera sceglie la sua
+    if(p && !regioni().length && window._locVai){ try{ window._locVai({n:p.n,lat:p.lat,lon:p.lon,reg:regDi(p),t:''}); }catch(e){} ga('storico_qui'); return; }
+    if(p&&map()){ try{ map().setView([p.lat,p.lon], Math.max(map().getZoom(),10.5), {animate:false}); if(window._segnaVistaUtente) window._segnaVistaUtente(); }catch(e){} }
+    ga('storico_qui');
+  }
+  // la ricerca del sito, in modo previsioni, apre il dettaglio del posto (gancio in locVai)
+  window._prevVai=function(p){
+    if(!acceso||!p) return;
+    /* VINCE L'ULTIMO GESTO (suo, 8/10): cercare un paese riparte da capo, le regioni scelte prima si tolgono e restano
+       quelle del paese; una regione cliccata dopo si aggiunge. La sorveglianza riparte, se no il calo dei pallini
+       reinquadrava le zone e il paese si perdeva. */
+    if(regioni().length&&window._svuotaScelta&&window._svuotaScelta()){ var ft=el('fonte-tag'); if(ft) fonteVecchia=ft.textContent; sorveglia(true); }
+    tieniPosto(p,true); ga('cerca',{posto:p.n});
+    /* la barra in alto del telefono dice dove sei, come nello storico («📍 Ovada»): restava scritto «Lazio» (8/10) */
+    try{ var sel=el('region-select'); if(sel&&!p.muta){ var o=sel.querySelector('option[value="__paese"]');
+      if(!o){ o=document.createElement('option'); o.value='__paese'; sel.insertBefore(o,sel.firstChild); }
+      o.textContent='📍 '+p.n; sel.value='__paese'; if(window._regEtichetta) window._regEtichetta(); } }catch(e){}
+  };
+  // la griglia delle regioni vicine si scarica al primo tocco sulla casella: se non c'era ancora, appena arriva
+  // si rifanno le zone del posto (le regioni di confine)
+  function vicineDopo(p){
+    try{ if(window._caricaVicine) window._caricaVicine().then(function(){
+      if(!acceso||!posto||posto.lat!==p.lat||posto.lon!==p.lon) return;
+      var prima=posto.regs.join('+'); fissaPosto(p); if(posto.regs.join('+')!==prima) carica(false);
+    }).catch(function(){}); }catch(e){}
+  }
+  /* un posto «da tenere»: diventa il posto della mappa, si apre la sua scheda e si inquadra con i capoluoghi
+     vicini. Ci passano la ricerca, il paese scelto nello storico, i link delle pagine e la scheda del pluviometro. */
+  function tieniPosto(c,comeCercato){
+    cercato=comeCercato?c:null; fissaPosto(c);
+    apriPunto({n:c.n,lat:c.lat,lon:c.lon,q:quota(c)},true);
+    carica('posto'); vicineDopo(c);
+  }
+  /* inquadratura del posto cercato: lui e i tre capoluoghi piu' vicini, non tutta la regione */
+  function inquadraPosto(){
+    var m=map(); if(!m||!posto) return;
+    var cs=[], cl=Math.cos(posto.lat*Math.PI/180);
+    zone().forEach(function(k){ var a=aree[k]; if(a&&a.capoluoghi) a.capoluoghi.forEach(function(c){
+      var dy=c.lat-posto.lat, dx=(c.lon-posto.lon)*cl, d=dx*dx+dy*dy; if(d>1e-5) cs.push({c:c,d:d}); }); });
+    cs.sort(function(a,b){ return a.d-b.d; });
+    var pts=[[posto.lat,posto.lon]]; cs.slice(0,3).forEach(function(x){ pts.push([x.c.lat,x.c.lon]); });
+    if(pts.length<2){ try{ m.setView([posto.lat,posto.lon],Math.max(m.getZoom(),9),{animate:false}); }catch(e){} return; }
+    var mb=el('map').getBoundingClientRect(), tl, br;
+    if(tel()){
+      var pan=el('pv-pan'), rp=el('region-panel'), sotto=0, sopra=0;
+      if(pan){ var r=pan.getBoundingClientRect(); if(r.height>40) sotto=Math.max(0,mb.bottom-Math.max(r.top,mb.top)); }
+      if(rp){ var rr=rp.getBoundingClientRect(); if(getComputedStyle(rp).display!=='none'&&rr.height>10) sopra=Math.max(0,Math.min(rr.bottom,mb.bottom)-mb.top); }
+      tl=[34,sopra+44]; br=[70,sotto+30];   // a destra piu' largo: la targhetta sta a destra del suo punto
+    } else {
+      var pn=el('pv-pan'), dt=el('pv-det');
+      tl=[pn?pn.getBoundingClientRect().right-mb.left+16:430,24];
+      br=[destra(90),40];
+    }
+    try{ m.fitBounds(L.latLngBounds(pts),{paddingTopLeft:tl,paddingBottomRight:br,maxZoom:11,animate:false}); }catch(e){}
+  }
+  window._prevEntra=entra; window._prevEsci=esci;
+
+  function nasci(){ if(!window._mapDebug||!window.L||!el('time-panel')){ setTimeout(nasci,150); return; } monta(); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',nasci); else nasci();
 })();
 </script>

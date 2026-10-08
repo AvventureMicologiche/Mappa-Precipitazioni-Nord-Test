@@ -183,6 +183,9 @@ ${briciolaJson([['Mappa pluviometrica', `${SITO}/`], [nomeReg, `${SITO}/${casa.k
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="verdetto"></div>
+<a class="banda-prev" href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;m=prev"
+   onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-${zslug}-banda-previsioni'})}catch(e){}">
+  <span class="ic">☀️</span><span><b>Che tempo farà ${esc(z.dove)}</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
 
 <h2>La pioggia degli ultimi 30 giorni</h2>
 <div id="grafico"></div>
@@ -209,6 +212,8 @@ ${righe}
   ${tasto('t30', 30, 'Ultimi 30 gg')}
   <a href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;radar=ora"
      onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-${zslug}-radar'})}catch(e){}">📡 Radar adesso</a>
+  <a class="t-prev" href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;m=prev"
+     onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-${zslug}-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">La pioggia degli ultimi 20 giorni ${casa.prep} ${esc(nomeReg)}; il link apre la mappa già inquadrata ${esc(z.dove)}.</p>
 <a href="${SITO}/?r=${REGS}&amp;g=20&amp;${PIN}&amp;z=10&amp;c=${z.lat},${z.lon}" id="lnk-img" style="display:block;text-decoration:none;"
