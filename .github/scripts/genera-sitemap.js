@@ -71,7 +71,8 @@ function scriviSitemap(SITO, RADICE) {
   const voci = fam.mappa;
 
   voci.push({ loc: SITO + '/', lastmod: '2026-08-14', freq: 'daily', pri: '1.0' });
-  voci.push({ loc: SITO + '/fonti.html', lastmod: '2026-08-07', freq: 'monthly', pri: '0.5' });
+  // '/fonti' e non '/fonti.html': Cloudflare Pages rimanda il .html con un 308 (check dell'8/10/2026)
+  voci.push({ loc: SITO + '/fonti', lastmod: '2026-10-08', freq: 'monthly', pri: '0.5' });
   // La guida (12/9/2026). Priorita' 0.6: sta sopra le fonti, che sono una
   // pagina di servizio, e sotto le pagine regione, che sono la risposta alla
   // domanda per cui la gente arriva. `lastmod` e' il giorno in cui e' nata: si

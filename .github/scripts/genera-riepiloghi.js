@@ -197,8 +197,12 @@ function ultimoCompleto(dirs) {
 //
 // ⚠️ `letto` e' l'istante in cui gira QUESTO script, non l'ora dei collector:
 // e' l'ora in cui abbiamo guardato, ed e' quella che la pagina scrive.
+// ⚠️ LE RETI COL RITARDO DICHIARATO NON CONTANO NEL CONFRONTO (8/10/2026): la Slovenia (ARSO, ~34 ore) ieri non
+// ce l'ha MAI, quindi ieri perdeva sempre di una cartella e il conto mostrava quasi sempre l'ALTROIERI (trovato
+// al check generale della v11.0: «5.501 letti» era il 6/10 l'8/10). Stessa lista del guardiano.
+const RITARDO_DICHIARATO = new Set(['slovenia']);
 function letture(giorno) {
-  let stazioni = 0, cartelle = 0;
+  let stazioni = 0, cartelle = 0, confronto = 0;
   for (const d of fs.readdirSync(DATI)) {
     if (d === 'riepiloghi') continue;
     let st;
@@ -209,8 +213,9 @@ function letture(giorno) {
     if (!st) continue;
     stazioni += st.length;
     cartelle++;
+    if (!RITARDO_DICHIARATO.has(d)) confronto++;
   }
-  return { giorno, stazioni, cartelle, letto: new Date().toISOString() };
+  return { giorno, stazioni, cartelle, confronto, letto: new Date().toISOString() };
 }
 // ⚠️ NON «ieri» e basta: questo script gira DUE volte, alle 7:10 e all'1:20.
 // All'1:20 il giorno di ieri e' appena finito ma i collector lo devono ancora
@@ -228,7 +233,8 @@ function letture(giorno) {
 // Resta comunque UN GIORNO SOLO: la regola di non mescolare giorni non si tocca.
 const cIeri  = letture(giorni[0]);
 const cPrima = letture(giorni[1]);
-const conteggio = (cPrima.cartelle > cIeri.cartelle) ? cPrima : cIeri;
+const conteggio = (cPrima.confronto > cIeri.confronto) ? cPrima : cIeri;
+delete conteggio.confronto;   // serve solo a scegliere: il file resta come prima
 // Questo file si riscrive SEMPRE, anche identico: l'ora e' il suo contenuto.
 fs.writeFileSync(path.join(USCITA, 'letture.json'), JSON.stringify(conteggio, null, 1) + '\n', 'utf8');
 console.log(`  letture: ${conteggio.stazioni} pluviometri in ${conteggio.cartelle} cartelle il ${conteggio.giorno}\n`);
