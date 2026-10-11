@@ -753,7 +753,7 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
 .sh-bars{display:flex;align-items:flex-end;gap:2px;height:60px;position:relative;z-index:1}
 .sh-bar{flex:1;min-height:2px;border-radius:2px 2px 0 0}
 .sh-x{display:flex;gap:2px;margin-top:3px;padding-right:28px}
-.sh-x span{flex:1;text-align:center;font-size:9px;color:#aaa}
+.sh-x span{flex:1;text-align:center;font-size:9px;color:#aaa;cursor:pointer}
 .sh-note{font-size:9px;color:#999;margin-top:5px}
 /* 13/9/2026: la riga dell'intensita' sotto le barre, e la barra del giorno raccontato */
 .sh-int{font-size:10px;color:#bbb;margin-top:5px}
@@ -3584,7 +3584,9 @@ var METEO_HIST_FROM={austria:'2026-07-02',slovenia:'2026-06-27',
 function histAsseX(days){
   var h='<div class="sh-x">';
   days.forEach(function(ds,i){
-    h+='<span>'+((i%3===0)?ds.substring(8,10):'')+'</span>';
+    // data-d (11/10/2026, suo): toccando i numeri dei giorni si sceglie il giorno,
+    // come toccando il grafico. Ogni giorno ha la sua casella, anche senza numero.
+    h+='<span data-d="'+ds+'">'+((i%3===0)?ds.substring(8,10):'')+'</span>';
   });
   return h+'</div>';
 }
@@ -4208,10 +4210,10 @@ document.querySelectorAll('#st-history .sh-tab').forEach(function(b){
 // 13/9/2026: toccando una colonna del grafico Pioggia la riga dell'intensita'
 // racconta quel giorno. Delega sul corpo, che si riscrive a ogni render.
 document.getElementById('sh-body').addEventListener('click',function(e){
-  var c=e.target&&e.target.closest&&e.target.closest('.sh-bars .sh-hits [data-d]');
+  var c=e.target&&e.target.closest&&e.target.closest('.sh-bars .sh-hits [data-d], .sh-x [data-d]');
   if(c&&histTab==='mm') histRigaIntensita(c.getAttribute('data-d'));
-  // vento: si tocca la colonna del grafico o la freccia sotto
-  var v=e.target&&e.target.closest&&e.target.closest('.sh-lines .sh-hits [data-d], .sh-wd [data-d]');
+  // vento: si tocca la colonna del grafico, la freccia sotto o il numero del giorno
+  var v=e.target&&e.target.closest&&e.target.closest('.sh-lines .sh-hits [data-d], .sh-wd [data-d], .sh-x [data-d]');
   if(v&&histTab==='v') histRigaVento(v.getAttribute('data-d'));
   if(v&&(histTab==='t'||histTab==='u')) histRigaMinMax(v.getAttribute('data-d'),histTab);
 });
