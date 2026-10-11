@@ -769,6 +769,7 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
 .sh-lines .sh-hits div{cursor:pointer}
 .wd-svg{display:block;flex:none}
 .sh-row b .wd-svg{display:inline-block;vertical-align:-1px;margin-left:4px}
+.sh-int .wd-svg{display:inline-block;vertical-align:-3px;margin:0 2px 0 5px}
 .sh-fonte{font-size:9px;color:#888;margin-top:5px;padding-top:5px;border-top:1px solid #333;
   display:flex;align-items:center;justify-content:space-between;gap:8px}
 /* 3/9/2026: il tasto che porta alla pagina del posto. Sta sulla RIGA
@@ -3679,7 +3680,11 @@ function wdTesto(o){
   var w=o&&o.w, wd=o&&o.wd, sig=wdSigla(wd), t='';
   if(w&&typeof w[0]==='number') t+='<b>'+histNum(Math.round(w[0]))+' km/h</b>';
   if(sig==='V') t+=(t?' · ':'')+'direzione variabile';
-  else if(sig) t+=(t?' ':'')+'da <b>'+sig+'</b> ('+WD_NOMI[sig]+')';
+  // 11/10/2026, suo: la freccia del giorno grande accanto alla sigla. Nella fila
+  // sotto il grafico non si puo' ingrandire: ogni giorno ha una colonna di 6 px
+  // e a 12-14 px le frecce si impastano (provato). Qui lo spazio c'e' e la riga
+  // non cresce.
+  else if(sig) t+=(t?' ':'')+'da <b>'+sig+'</b>'+wdFreccia(wd,16,'#ffd54f')+' ('+WD_NOMI[sig]+')';
   else if(t) t+=' · direzione non misurata';
   if(w&&typeof w[1]==='number') t+=' · raffica '+histNum(Math.round(w[1]));
   return t;
@@ -3718,7 +3723,30 @@ function histRigaVento(ds){
 }
 function histVentoDaMostrare(c){
   var best=null;
-  c.days.forEach(function(ds){ var o=c.serie[ds]; if(o&&o.wd!=null) best=ds; });
+  c.days.forEach(function(ds){ var o=c.serie[ds]; if(o&&(o.wd!=null||(o.w&&typeof o.w[0]==='number'))) best=ds; });
+  return best;
+}
+// 11/10/2026: la stessa riga per temperatura e umidita'. Col dito il title
+// delle colonne non si vede, e senza questa riga minima e massima di un
+// giorno non si potevano leggere. Colori uguali a quelli delle linee.
+function histRigaMinMax(ds,tipo){
+  var el=document.getElementById('sh-int'); if(!el||!histCurrent) return;
+  var o=ds&&histCurrent.serie[ds], v=o&&o[tipo];
+  if(!v){ el.innerHTML=''; return; }
+  var um=(tipo==='u')?'%':'°';
+  var f=function(x){ return typeof x==='number'?histNum(x)+um:'—'; };
+  // umidita': massima blu e minima arancio, l'opposto della temperatura (histRenderLinee)
+  var cMin=(tipo==='u')?'#ffb74d':'#7ec8f8', cMax=(tipo==='u')?'#4fc3f7':'#ff8a65';
+  var dito=!(window.matchMedia&&matchMedia('(hover:hover) and (pointer:fine)').matches);
+  el.innerHTML='<b>'+histGiorno(ds)+'</b> · minima <b style="color:'+cMin+'">'+f(v[0])+'</b>'
+    +' · massima <b style="color:'+cMax+'">'+f(v[1])+'</b>'
+    +'<span class="sh-invito">'+(dito?'Tocca':'Clicca')+' un giorno del grafico per vederne '
+    +((tipo==='u')?'l’umidità':'le temperature')+'</span>';
+}
+function histMinMaxDaMostrare(c,tipo){
+  var best=null;
+  c.days.forEach(function(ds){ var v=c.serie[ds]&&c.serie[ds][tipo];
+    if(v&&(typeof v[0]==='number'||typeof v[1]==='number')) best=ds; });
   return best;
 }
 function histSoloInvito(){
@@ -3776,10 +3804,18 @@ function histRenderLinee(days,serie,tipo){
   var ticks=[];
   for(var pi=0;pi<passi.length;pi++){
     var passo=passi[pi]; ticks=[];
-    for(var t=Math.ceil(lo/passo)*passo; t<hi; t+=passo){ if(t>lo) ticks.push(t); }
+    for(var t=Math.ceil(lo/passo)*passo; t<hi; t+=passo){ if(t>lo||(t===lo&&tipo!=='v')) ticks.push(t); }
     if(ticks.length) break;
   }
-  while(ticks.length>3) ticks=ticks.filter(function(_,i){return i%2===1;});
+  // ⚠️ 11/10/2026, suo («la minima quanti gradi e'?»): temperatura e umidita'
+  // hanno il numero anche sulla riga di fondo, e con piu' di 4 tacche il passo
+  // raddoppia invece di saltarne una si' e una no. Prima Artimino restava con
+  // 20 e 30 e la minima, sui 12°, stava sotto l'ultimo numero. 4 e non 3:
+  // l'umidita' da 20 a 100 a 3 tacche restava con 40 e 80. Il vento parte
+  // da 0 e resta com'era.
+  if(tipo==='v') while(ticks.length>3) ticks=ticks.filter(function(_,i){return i%2===1;});
+  else while(ticks.length>4){ passo*=2; ticks=[];
+    for(var t2=Math.ceil(lo/passo)*passo; t2<hi; t2+=passo) ticks.push(t2); }
 
   function segmenti(vals){
     var segs=[],cur=[];
@@ -3828,7 +3864,9 @@ function histRenderLinee(days,serie,tipo){
     });
     h+='</div>';
   }
-  h+=histAsseX(days)+(conWd?'<div class="sh-int" id="sh-int"></div>':'');
+  // la riga che racconta il giorno toccato: su tutt'e tre le schede a linee
+  // (11/10/2026; prima solo sul vento e solo se c'era la direzione)
+  h+=histAsseX(days)+'<div class="sh-int" id="sh-int"></div>';
   if(tipo==='t'||tipo==='u')
     h+='<div class="sh-leg">'+
        '<span><i style="background:'+colA+'"></i>massima</span>'+
@@ -3974,6 +4012,7 @@ function histRender(station,regionKey,days,serie,selFrom,selTo,notaPeriodo,histR
   body.innerHTML=h+histNote(regionKey,days,notaPeriodo,station);
   if(histTab==='mm'){ histRigaIntensita(histGiornoDaMostrare(histCurrent)); histSoloInvito(); }
   if(histTab==='v') histRigaVento(histVentoDaMostrare(histCurrent));
+  if(histTab==='t'||histTab==='u') histRigaMinMax(histMinMaxDaMostrare(histCurrent,histTab),histTab);
 }
 
 function histPosition(mx,my){
@@ -4174,6 +4213,7 @@ document.getElementById('sh-body').addEventListener('click',function(e){
   // vento: si tocca la colonna del grafico o la freccia sotto
   var v=e.target&&e.target.closest&&e.target.closest('.sh-lines .sh-hits [data-d], .sh-wd [data-d]');
   if(v&&histTab==='v') histRigaVento(v.getAttribute('data-d'));
+  if(v&&(histTab==='t'||histTab==='u')) histRigaMinMax(v.getAttribute('data-d'),histTab);
 });
 // Col mouse dentro al pannello non si chiude (serve per leggerlo e per il
 // tooltip dei valori sulle singole barre)
