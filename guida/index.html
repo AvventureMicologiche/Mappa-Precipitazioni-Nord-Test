@@ -49,12 +49,23 @@ body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--testo);backgr
 /* ── impianto a due colonne ─────────────────────────────────────────────── */
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px 70px;display:grid;gap:36px;
   grid-template-columns:minmax(0,1fr) 236px}
-main{grid-column:1;grid-row:1;min-width:0;margin-top:-14px}
-.idx{grid-column:2;grid-row:1;margin-top:-14px}
+/* Briciola e novità stanno FUORI da <main> (12/10/2026): sul computer restano in
+   cima alla colonna di sinistra, sul telefono le novità (corte) salgono sopra
+   l'elenco e la briciola scende sotto. ⚠️ row-gap a zero: con tre righe nella
+   colonna di sinistra il gap verticale di 36px allargherebbe tutto. */
+.wrap>.bric{grid-column:1;grid-row:1;margin:4px 0 4px}
+.wrap>.upd{grid-column:1;grid-row:2}
+main{grid-column:1;grid-row:3;min-width:0}
+/* la scatola parte alla riga delle novità, non della briciola: i due riquadri
+   cominciano alla stessa altezza (prima stava 14px dentro la testata) */
+.idx{grid-column:2;grid-row:2 / span 2;margin-top:14px}
+.wrap{row-gap:0}
 @media(max-width:900px){
   .wrap{grid-template-columns:minmax(0,1fr);gap:0}
-  main{grid-column:1;grid-row:auto;order:2}
-  .idx{grid-column:1;grid-row:auto;order:1;margin:0 0 22px}
+  .wrap>.upd{grid-column:1;grid-row:auto;order:1;margin:18px 0 16px}
+  .idx{grid-column:1;grid-row:auto;order:2;margin:0 0 4px}
+  .wrap>.bric{grid-column:1;grid-row:auto;order:3;margin:18px 0 4px}
+  main{grid-column:1;grid-row:auto;order:4}
 }
 
 /* ── indice ─────────────────────────────────────────────────────────────── */
@@ -69,7 +80,14 @@ main{grid-column:1;grid-row:1;min-width:0;margin-top:-14px}
 .idx a:before{content:counter(v);position:absolute;left:0;top:5px;font-size:11px;color:#9aa8b8;
   font-variant-numeric:tabular-nums}
 .idx a:hover{color:var(--link)}
+/* ⚠️ la scatola è sticky: più alta dello schermo, il fondo non si vedrebbe mai
+   (con 20 capitoli fa ~620px, su un portatile al 125% lo schermo ne ha ~700) */
+.idx .box{max-height:calc(100vh - 32px);overflow-y:auto}
+/* Ogni funzione che e' un TASTO della mappa ha un capitolo suo (12/10/2026: satellite e
+   temperature di ieri promossi). Niente riga di scorciatoie: provata e tolta, il criterio
+   «paragrafi dentro un capitolo» non si vede e sembrava una scelta a caso. */
 @media(max-width:900px){
+  .idx .box{max-height:none;overflow:visible}
   .idx .box{position:static}
   .idx ol{columns:2;column-gap:18px}
   /* ⚠️ senza questo una voce lunga si spezza a meta' fra le due colonne */
@@ -83,7 +101,7 @@ h2{font-size:21px;line-height:1.25;color:var(--blu);font-weight:700;letter-spaci
   margin:42px 0 12px;scroll-margin-top:16px;display:flex;align-items:baseline;gap:10px}
 h2 .n{flex:0 0 auto;font-size:12px;font-weight:700;color:#fff;background:var(--blu-chiaro);
   border-radius:6px;padding:3px 7px;position:relative;top:-3px;font-variant-numeric:tabular-nums}
-h3{font-size:15.5px;color:var(--blu);margin:22px 0 2px;font-weight:700}
+h3{font-size:15.5px;color:var(--blu);margin:22px 0 2px;font-weight:700;scroll-margin-top:16px}
 p{margin:11px 0;font-size:15.5px}
 ul,ol.testo{margin:11px 0 11px 20px;font-size:15.5px}
 li{margin:6px 0}
@@ -116,7 +134,9 @@ figure{margin:18px 0 20px}
 figure img{display:block;width:100%;height:auto;border:1px solid var(--bordo);border-radius:11px;
   background:#fff}
 figure.stretta{max-width:360px}
-figure.tre{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}
+figure.tre{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}
+/* il vento e' piu' alto (riga delle frecce): le etichette restano allineate in fondo */
+figure.tre>div{display:flex;flex-direction:column;justify-content:space-between}
 figure.tre span{display:block;font-size:12.5px;color:var(--grigio);margin-top:5px;text-align:center}
 figure.tre figcaption{grid-column:1/-1;margin-top:2px}
 @media(max-width:640px){figure.tre{grid-template-columns:minmax(0,1fr);gap:16px}}
@@ -138,6 +158,20 @@ figcaption{font-size:13px;color:var(--grigio);margin-top:7px;line-height:1.45}
 .upd a{border-bottom:none;font-weight:600}
 .upd a:hover{text-decoration:underline}
 .upd .rivedi{font-size:13px;color:#8a97a6;margin:10px 0 0;padding-top:9px;border-top:1px solid #f0f3f8}
+.upd a{text-decoration:none}
+.upd .tutte{display:none;width:100%;margin-top:6px;padding:8px 0 2px;border:none;border-top:1px solid #f0f3f8;
+  background:none;color:var(--link);font-family:inherit;font-size:13.5px;font-weight:600;line-height:1.3;
+  text-align:left;cursor:pointer}
+/* Sul telefono (12/10/2026): solo data e titolo, le ultime quattro e «Vedi tutte».
+   Ogni voce spiegata occupava 5-10 righe e spingeva l'elenco al terzo schermo;
+   il titolo porta al capitolo che spiega. */
+@media(max-width:900px){
+  .upd .d{display:none}
+  .upd li{padding:6px 0}
+  .upd:not(.aperte) li:nth-child(n+5){display:none}
+  .upd:not(.aperte) .tutte{display:block}
+  .upd:not(.aperte) .rivedi{display:none}
+}
 
 /* ── video ──────────────────────────────────────────────────────────────── */
 .video{display:flex;align-items:center;gap:14px;background:var(--carta);border:1px solid var(--bordo);
@@ -237,6 +271,40 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 
 <div class="wrap">
 
+<div class="bric"><a href="/">Mappa pluviometrica</a> › Guida alla mappa</div>
+
+<!-- ══ ULTIMI AGGIORNAMENTI ══════════════════════════════════════════════
+     Ogni voce e' un'ancora che porta nel punto della guida che la spiega.
+     ⚠️ QUI VANNO SOLO LE COSE NUOVE, mai le correzioni: un difetto risolto,
+     scritto in vetrina, si legge come «il sito aveva un difetto» e semina un
+     dubbio su tutto il resto. Le correzioni stanno nel CLAUDE.md del repo.
+     Si tengono le ultime otto o nove e si aggiorna la data del titolo.
+     ⚠️ Forma di ogni voce: <a>titolo</a><span class="d">: spiegazione</span>.
+     Sul telefono la spiegazione si nasconde e restano le ultime quattro. -->
+<div class="upd">
+  <div class="tit"><span class="tag">NOVITÀ</span><b>Ultimi aggiornamenti</b>
+    <span class="quando">7 ottobre 2026</span></div>
+  <ul>
+    <li><span class="data">7 ott</span><span><a href="#previsioni">Le previsioni meteo</a><span class="d">: la linguetta «Previsioni» in cima alla mappa. Il tempo previsto su città e paesi, giorno per giorno, e per qualsiasi località il dettaglio ora per ora con temperatura, millimetri, probabilità di pioggia e vento, per sette giorni. Anche dalla scheda di ogni pluviometro e dalle pagine dei funghi.</span></span></li>
+    <li><span class="data">4 ott</span><span><a href="#temperature-ieri">Le temperature di ieri sulla mappa</a><span class="d">: premi «Temp. ieri» e accanto a ogni pluviometro compaiono la minima e la massima del giorno prima, anche sopra la pioggia del periodo che hai scelto.</span></span></li>
+    <li><span class="data">4 ott</span><span><a href="#vento">Da dove soffia il vento</a><span class="d">: nella scheda del pluviometro, sotto il grafico del vento, una freccia per ogni giorno. Col periodo «Ieri» c'è anche la direzione scritta, per esempio «da NE».</span></span></li>
+    <li><span class="data">30 set</span><span><a href="#video">La guida in video</a><span class="d">: cinque minuti con tutti gli strumenti della mappa, dal telefono, sul canale YouTube.</span></span></li>
+    <li><span class="data">30 set</span><span><a href="#satellite">I boschi dal satellite</a><span class="d">: nella mappa boschi premi Satellite e i colori dei boschi restano sopra la foto vera, fino a distinguere case, alberi e sentieri. Regoli l'intensità dei colori o li togli.</span></span></li>
+    <li><span class="data">28 set</span><span><a href="#altitudine">Filtra i boschi per altitudine</a><span class="d">: nella mappa boschi trascini due frecce e restano solo i boschi fra le quote che scegli, per esempio fra 800 e 1.000 metri.</span></span></li>
+    <li><span class="data">27 set</span><span><a href="https://precipitazioni.avventuremicologiche.it/mappa-forestale/">La mappa forestale d'Italia</a><span class="d">: una pagina per ogni regione e ogni valle, con i boschi tipo per tipo e la carta ufficiale da cui vengono.</span></span></li>
+    <li><span class="data">26 set</span><span><a href="#colori">Pioppi, salici, ontani e frassini</a><span class="d">: nella mappa boschi un colore nuovo per i boschi lungo fiumi e torrenti, in tutta Italia.</span></span></li>
+    <li><span class="data">26 set</span><span><a href="#cerca">Cerca con le coordinate</a><span class="d">: nella casella di ricerca scrivi il punto del GPS o incolla un link di Google Maps.</span></span></li>
+  </ul>
+  <button class="tutte" type="button">Vedi tutte le novità ▾</button>
+  <p class="rivedi"><a href="/?novita=1">Rivedi la presentazione delle novità</a>, la finestra coi filmati che compare alla prima apertura della mappa.</p>
+</div>
+<script>
+(function(){ var u=document.querySelector('.upd'), b=u&&u.querySelector('.tutte'); if(!b) return;
+  b.textContent='Vedi tutte le '+u.querySelectorAll('li').length+' novità ▾';
+  b.addEventListener('click',function(){ u.classList.add('aperte'); });
+})();
+</script>
+
 <aside class="idx">
   <div class="box">
     <b>In questa pagina</b>
@@ -248,46 +316,24 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
       <li><a href="#periodo">Scegliere il periodo</a></li>
       <li><a href="#funghi">Piogge per funghi</a></li>
       <li><a href="#leggere">Leggere la mappa</a></li>
+      <li><a href="#temperature-ieri">Le temperature di ieri</a></li>
       <li><a href="#stazione">La scheda del pluviometro</a></li>
       <li><a href="#misure">Che cosa misura, e perché conta</a></li>
       <li><a href="#radar">La diretta radar</a></li>
       <li><a href="#previsioni">Le previsioni</a></li>
       <li><a href="#boschi">La mappa boschi</a></li>
+      <li><a href="#satellite">Il satellite</a></li>
       <li><a href="#condividere">Condividere</a></li>
       <li><a href="#pagine">Le pagine del sito</a></li>
       <li><a href="#consigli">Nove consigli</a></li>
       <li><a href="#domande">Domande frequenti</a></li>
       <li><a href="#limiti">Avvisi e limiti</a></li>
+      <li><a href="#mappa-sito">Mappa del sito</a></li>
     </ol>
   </div>
 </aside>
 
 <main>
-
-<div class="bric"><a href="/">Mappa pluviometrica</a> › Guida alla mappa</div>
-
-<!-- ══ ULTIMI AGGIORNAMENTI ══════════════════════════════════════════════
-     Ogni voce e' un'ancora che porta nel punto della guida che la spiega.
-     ⚠️ QUI VANNO SOLO LE COSE NUOVE, mai le correzioni: un difetto risolto,
-     scritto in vetrina, si legge come «il sito aveva un difetto» e semina un
-     dubbio su tutto il resto. Le correzioni stanno nel CLAUDE.md del repo.
-     Si tengono le ultime otto o nove e si aggiorna la data del titolo. -->
-<div class="upd">
-  <div class="tit"><span class="tag">NOVITÀ</span><b>Ultimi aggiornamenti</b>
-    <span class="quando">7 ottobre 2026</span></div>
-  <ul>
-    <li><span class="data">7 ott</span><span><a href="#previsioni">Le previsioni meteo</a>: la linguetta «Previsioni» in cima alla mappa. Il tempo previsto su città e paesi, giorno per giorno, e per qualsiasi località il dettaglio ora per ora con temperatura, millimetri, probabilità di pioggia e vento, per sette giorni. Anche dalla scheda di ogni pluviometro e dalle pagine dei funghi.</span></li>
-    <li><span class="data">4 ott</span><span><a href="#temperature-ieri">Le temperature di ieri sulla mappa</a>: premi «Temp. ieri» e accanto a ogni pluviometro compaiono la minima e la massima del giorno prima, anche sopra la pioggia del periodo che hai scelto.</span></li>
-    <li><span class="data">4 ott</span><span><a href="#vento">Da dove soffia il vento</a>: nella scheda del pluviometro, sotto il grafico del vento, una freccia per ogni giorno. Col periodo «Ieri» c'è anche la direzione scritta, per esempio «da NE».</span></li>
-    <li><span class="data">30 set</span><span><a href="#video">La guida in video</a>: cinque minuti con tutti gli strumenti della mappa, dal telefono, sul canale YouTube.</span></li>
-    <li><span class="data">30 set</span><span><a href="#satellite">I boschi dal satellite</a>: nella mappa boschi premi Satellite e i colori dei boschi restano sopra la foto vera, fino a distinguere case, alberi e sentieri. Regoli l'intensità dei colori o li togli.</span></li>
-    <li><span class="data">28 set</span><span><a href="#altitudine">Filtra i boschi per altitudine</a>: nella mappa boschi trascini due frecce e restano solo i boschi fra le quote che scegli, per esempio fra 800 e 1.000 metri.</span></li>
-    <li><span class="data">27 set</span><span><a href="https://precipitazioni.avventuremicologiche.it/mappa-forestale/">La mappa forestale d'Italia</a>: una pagina per ogni regione e ogni valle, con i boschi tipo per tipo e la carta ufficiale da cui vengono.</span></li>
-    <li><span class="data">26 set</span><span><a href="#colori">Pioppi, salici, ontani e frassini</a>: nella mappa boschi un colore nuovo per i boschi lungo fiumi e torrenti, in tutta Italia.</span></li>
-    <li><span class="data">26 set</span><span><a href="#cerca">Cerca con le coordinate</a>: nella casella di ricerca scrivi il punto del GPS o incolla un link di Google Maps.</span></li>
-  </ul>
-  <p class="rivedi"><a href="/?novita=1">Rivedi la presentazione delle novità</a>, la finestra coi filmati che compare alla prima apertura della mappa.</p>
-</div>
 
 <h2 id="video"><span class="n">1</span>La guida in video</h2>
 <p>Cinque minuti sul canale, con <b>tutti gli strumenti della mappa</b> mostrati dal telefono: la pioggia caduta, le piogge per funghi, i boschi, il tocco sul bosco, il filtro per altitudine e il satellite. Se hai fretta, parti da qui.</p>
@@ -304,7 +350,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p class="guida-intro">Questa pagina invece è la <b>guida completa</b>, per un uso approfondito: che cosa misura ogni strumento, come si leggono i colori e i numeri, che cosa cercare quando la ricerca dei funghi si fa seria, e dove il sito dichiara i propri limiti. Si legge a pezzi, con l'indice qui accanto.</p>
 
 <h2 id="cose"><span class="n">2</span>Che cosa mostra il sito</h2>
-<p>Il sito raccoglie lo storico della <b>pioggia già caduta</b>, misurata da oltre 5.700 pluviometri delle reti pubbliche di monitoraggio in Italia, Svizzera, Austria, Francia e Slovenia, oltre alle <b>previsioni</b> per i giorni successivi. Le due cose stanno in sezioni separate: lo storico dice quanti millimetri sono caduti in un punto preciso nei giorni scorsi, le previsioni che tempo farà nei prossimi sette giorni (<a href="#previsioni">capitolo 11</a>).</p>
+<p>Il sito raccoglie lo storico della <b>pioggia già caduta</b>, misurata da oltre 5.700 pluviometri delle reti pubbliche di monitoraggio in Italia, Svizzera, Austria, Francia e Slovenia, oltre alle <b>previsioni</b> per i giorni successivi. Le due cose stanno in sezioni separate: lo storico dice quanti millimetri sono caduti in un punto preciso nei giorni scorsi, le previsioni che tempo farà nei prossimi sette giorni (<a href="#previsioni">capitolo 12</a>).</p>
 
 <figure class="media">
   <img src="pioggia-colorata.jpg" alt="La mappa della pioggia degli ultimi 30 giorni su Piemonte, Lombardia e Veneto: colori dal blu al rosso e i pallini bianchi dei pluviometri" width="1000" height="560" loading="lazy">
@@ -326,7 +372,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Ci sono tre modi, e stanno tutti nello stesso pannello: quello che sul telefono si apre con <span class="ui">🔍 Cerca il paese o scegli la regione</span>.</p>
 
 <figure class="stretta">
-  <img src="dove.jpg" alt="Il pannello «Dove vuoi guardare?» con il tasto La mia posizione e la casella Cerca località" width="786" height="396" loading="lazy">
+  <img src="dove.jpg" alt="Il pannello «Dove vuoi guardare?» con il tasto La mia posizione e la casella Cerca località" width="786" height="796" loading="lazy">
   <figcaption>Dal telefono: il tasto della posizione, la casella di ricerca e, sotto, l'elenco delle regioni.</figcaption>
 </figure>
 
@@ -338,7 +384,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Scrivi il nome del paese, della frazione o del rifugio e scegli dalla tendina: la mappa ci va e accende da sola la regione giusta. Servono <b>almeno tre lettere</b>, perché con due i nomi possibili sono centinaia. Funziona anche con le località di Svizzera, Austria, Francia e Slovenia.</p>
 <p>Nella stessa casella puoi scrivere delle <b>coordinate</b>, come te le dà il GPS o un amico: <span class="ui">45.4642, 9.1900</span>, anche con la virgola (<span class="ui">45,4642 9,19</span>), in gradi e primi (<span class="ui">45°27'51"N 9°11'24"E</span>), oppure incollando un link di Google Maps. La mappa va in quel punto e ci mette il segnaposto.</p>
 
-<h3>«La mia posizione»</h3>
+<h3 id="posizione">«La mia posizione»</h3>
 <p>Solo dal telefono, dove ha senso. Tocchi il tasto, il telefono chiede il permesso e, <b>se il GPS lo consente, la mappa ti porta dove sei</b> con la regione già accesa. Se il permesso è stato negato il tasto te lo dice, e si riattiva dalle impostazioni del telefono per questo sito.</p>
 <p class="mini">La posizione resta sul tuo telefono: non viene salvata e non viaggia nei link che condividi.</p>
 
@@ -392,7 +438,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <h3>Se i pallini sembrano meno del dovuto</h3>
 <p>A mappa larga si diradano, perché oltre un certo numero si sovrappongono e diventano una macchia illeggibile. <b>Ingrandendo compaiono tutti</b>, e il numero in legenda è sempre quello vero. Lo zoom si muove a tacche piccole, così si inquadra una valle senza passare dal troppo largo al troppo stretto.</p>
 
-<h3 id="temperature-ieri">🌡 Le temperature di ieri sui pallini</h3>
+<h2 id="temperature-ieri"><span class="n">8</span>Le temperature di ieri sui pallini</h2>
 <p>Il tasto <span class="ui">Temp. ieri</span>, fra <span class="ui">Radar pioggia</span> e <span class="ui">Mappa boschi</span>, scrive accanto ai pallini la <b>minima</b>, in blu, e la <b>massima</b>, in rosso, del giorno prima. Si accende anche sopra la pioggia del periodo scelto, così vedi insieme quanto è piovuto e com'erano le notti. Da lontano i numeri si diradano per non accavallarsi: avvicinandoti compaiono tutti. Si spegne premendo di nuovo il tasto.</p>
 <figure class="stretta">
   <img src="temperature-ieri.jpg" alt="La Toscana dal telefono con le temperature di ieri accanto ai pallini: la minima in blu e la massima in rosso" width="592" height="690" loading="lazy">
@@ -400,19 +446,19 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 </figure>
 <p class="mini">Se una stazione ha dato un valore che i vicini smentiscono, per esempio per un sensore guasto, quel numero non lo scriviamo e il pallino resta senza. Il link e la foto condivisa portano le temperature accese.</p>
 
-<h2 id="stazione"><span class="n">8</span>La scheda del pluviometro</h2>
+<h2 id="stazione"><span class="n">9</span>La scheda del pluviometro</h2>
 <p>Toccando un pallino si apre la sua scheda: nome, millimetri del periodo, comune, <b>quota</b> e <b>ranking</b>, cioè che posto occupa fra i pluviometri di quell'analisi. <span class="ui">#22 / 195</span> vuol dire ventiduesimo su centonovantacinque.</p>
 
 <figure class="stretta">
-  <img src="stazione.jpg" alt="La scheda di un pluviometro con le quattro linguette Pioggia, Temp, Vento, Umidità e il grafico della pioggia giorno per giorno" width="592" height="648" loading="lazy">
-  <figcaption>Torriglia Garaventa, 106,6 mm in sette giorni. Il grafico dice quanto è caduto ogni singolo giorno, e in fondo il tasto porta alla pagina del paese.</figcaption>
+  <img src="stazione.jpg" alt="La scheda di un pluviometro con le quattro linguette Pioggia, Temp, Vento, Umidità e il grafico della pioggia giorno per giorno" width="592" height="720" loading="lazy">
+  <figcaption>Torriglia Garaventa, 68,4 mm in sette giorni, dal 5 all'11 ottobre: l'8 ne sono caduti 44. Il grafico dice quanto è caduto ogni singolo giorno, e in fondo il tasto porta alla pagina del paese.</figcaption>
 </figure>
 
 <p>Sotto ci sono quattro schede, tutte su dati reali di quella stazione e giorno per giorno: <b>💧 Pioggia</b>, <b>🌡 Temp</b>, <b>💨 Vento</b> e <b>💦 Umidità</b>. La prossima sezione spiega che cosa dicono e perché contano.</p>
 <p>Non tutte le stazioni hanno tutti gli strumenti: un pluviometro puro misura solo la pioggia, e in quel caso la scheda lo dice invece di disegnare una linea inventata.</p>
 <p>Quando quel pluviometro ha una pagina tutta sua, in fondo alla scheda compare <span class="ui">vai alla scheda →</span>. Che cosa c'è in quella pagina sta <a href="#scheda-paese">poco più avanti</a>.</p>
 
-<h2 id="misure"><span class="n">9</span>Che cosa misura, e perché conta</h2>
+<h2 id="misure"><span class="n">10</span>Che cosa misura, e perché conta</h2>
 <p>Il sito nasce per la pioggia, ma le stesse stazioni misurano anche altro, e nei file salviamo tutto quello che pubblicano. Non è collezionismo: nel bosco quei numeri cambiano la lettura della stessa pioggia.</p>
 
 <h3>💧 La pioggia, in millimetri</h3>
@@ -420,7 +466,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 
 <!-- 13/9/2026: la figura e' la scheda di Platischis (Friuli) dopo il
      temporale del 10 settembre, scattata a doppia densita' come le altre. -->
-<h3>⏱ L'intensità: in quante ore</h3>
+<h3 id="intensita">⏱ L'intensità: in quante ore</h3>
 <p>Cinquanta millimetri in un pomeriggio e cinquanta distribuiti su sei giorni sono due storie diverse, e per il terreno la seconda è molto migliore. Dal 10 settembre 2026, per ogni giornata di pioggia, contiamo <b>le ore in cui ha piovuto</b> e <b>la punta caduta in un'ora</b>. Dividendo i millimetri per le ore si ottiene il ritmo, e lo traduciamo in una parola.</p>
 
 <figure class="stretta">
@@ -445,10 +491,10 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>È il secondo interruttore dopo la pioggia. Dopo una pioggia buona, quello che decide se e quando nasce qualcosa sono le notti: <b>minime che restano sopra i 10 gradi</b> tengono il bosco in moto, minime vicine allo zero lo fermano. In quota la stessa pioggia di agosto e quella di ottobre danno esiti diversi solo per questo. Il grafico della scheda mostra minima e massima giorno per giorno, e serve proprio a guardare l'andamento delle notti nei giorni dopo la pioggia.</p>
 
 <figure class="tre">
-  <div><img src="temperatura.jpg" alt="Il grafico della temperatura minima e massima, giorno per giorno" width="592" height="684" loading="lazy"><span>🌡 Temperatura</span></div>
-  <div><img src="vento.jpg" alt="Il grafico della velocità media del vento, giorno per giorno" width="592" height="684" loading="lazy"><span>💨 Vento</span></div>
-  <div><img src="umidita.jpg" alt="Il grafico dell'umidità relativa minima e massima, giorno per giorno" width="592" height="684" loading="lazy"><span>💦 Umidità</span></div>
-  <figcaption>Le altre tre linguette dello stesso pluviometro, sugli stessi giorni. La temperatura ha due linee, massima e minima. Il vento ha la media giornaliera. L'umidità ha la massima, che è quasi sempre di notte, e la minima del pomeriggio.</figcaption>
+  <div><img src="temperatura.jpg" alt="Il grafico della temperatura minima e massima, giorno per giorno" width="592" height="756" loading="lazy"><span>🌡 Temperatura</span></div>
+  <div><img src="vento.jpg" alt="Il grafico della velocità media del vento, giorno per giorno, con sotto le frecce della direzione" width="592" height="792" loading="lazy"><span>💨 Vento</span></div>
+  <div><img src="umidita.jpg" alt="Il grafico dell'umidità relativa minima e massima, giorno per giorno" width="592" height="756" loading="lazy"><span>💦 Umidità</span></div>
+  <figcaption>Le altre tre linguette dello stesso pluviometro, sugli stessi giorni. La temperatura ha due linee, massima e minima. Il vento ha la media giornaliera e, sotto, una freccia per ogni giorno: l'8 ottobre arrivava da SW, il libeccio, con raffiche a 55 km/h. L'umidità ha la massima, che è quasi sempre di notte, e la minima del pomeriggio.</figcaption>
 </figure>
 
 <h3 id="vento">💨 Il vento</h3>
@@ -482,7 +528,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 </ul>
 
 
-<h2 id="radar"><span class="n">10</span>La diretta radar</h2>
+<h2 id="radar"><span class="n">11</span>La diretta radar</h2>
 <p>Il tasto <span class="ui">Radar pioggia</span> cambia modo: la sfumatura dei cumulati si spegne, i pallini spariscono, restano i confini e compare <b>la pioggia in corso adesso</b>. Tre tasti e una linea del tempo: <span class="ui">Adesso</span>, <span class="ui">▶ -2 ore</span> per rivedere da dove è arrivata, <span class="ui">+40 min</span> per i quaranta minuti seguenti. Si esce col tasto, o semplicemente scegliendo un periodo.</p>
 
 <figure class="media">
@@ -493,7 +539,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Il radar vede la pioggia dall'alto, a due chilometri di risoluzione: ti dice <i>dove</i> sta piovendo adesso e dove andrà nei prossimi quaranta minuti. <i>Quanto</i> è caduto lo misurano i pluviometri, come in tutto il resto del sito.</p>
 <p class="mini">La fonte è il composito radar europeo EUMETNET OPERA, 155 radar in 24 paesi, servito dal progetto aperto LibreWXR.</p>
 
-<h2 id="previsioni"><span class="n">11</span>Le previsioni</h2>
+<h2 id="previsioni"><span class="n">12</span>Le previsioni</h2>
 <p>In cima alla pagina ci sono due linguette: <span class="ui">Storico piogge</span> è tutto quello che hai letto fin qui, la pioggia <i>caduta</i>, misurata dai pluviometri. <span class="ui">Previsioni</span> è la pioggia che <i>deve ancora cadere</i>: oggi, domani e i cinque giorni dopo. Le abbiamo messe apposta in due sezioni separate, perché sono due cose diverse: una è una misura, l'altra è il calcolo di un modello.</p>
 <p>Scegli la regione come sempre e sulla mappa compaiono <b>città e paesi</b>, ognuno con il tempo previsto, la massima e la minima del giorno scelto. I giorni li cambi dalla striscia in basso (sul computer a sinistra). Per un posto preciso, <b>tocca una città o un paese</b> oppure <b>cerca la località</b> nella casella: si apre il dettaglio <b>ora per ora</b>, con il tempo, la temperatura, i millimetri, la probabilità di pioggia e il vento. Dal dettaglio, <span class="ui">Storico piogge qui</span> ti riporta allo storico sullo stesso punto; e dalla scheda di ogni pluviometro, <span class="ui">vai alle previsioni</span> fa il percorso inverso.</p>
 
@@ -505,11 +551,11 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Le prime due giornate e mezza sono ora per ora, poi a fasce di sei ore: è così che le pubblica il modello. La probabilità di pioggia è la percentuale di scenari del modello in cui in quell'ora piove: 90% vuol dire «quasi sicuro», 20% «difficile ma possibile».</p>
 <p class="mini">Le previsioni vengono dal modello ECMWF servite da MET Norway, l'istituto meteorologico norvegese; la probabilità di pioggia da Open-Meteo. Si aggiornano più volte al giorno. Non entrano mai nei conti dello storico né nelle pagine dei funghi: lì restano solo i millimetri misurati.</p>
 
-<h2 id="boschi"><span class="n">12</span>La mappa boschi</h2>
+<h2 id="boschi"><span class="n">13</span>La mappa boschi</h2>
 <p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti e abetaie non danno gli stessi funghi. Il tasto <span class="ui">🌲 Mappa boschi</span>, accanto a quello del radar, cambia modo: la pioggia e i pallini spariscono, e <b>i boschi si colorano per tipo</b>, in dieci gruppi, sopra il rilievo di monti e valli.</p>
 
 <figure class="media">
-  <img src="boschi.jpg" alt="La mappa boschi in Val d'Aveto, fra Liguria ed Emilia: faggete in verde, castagneti in arancio, querceti in ocra sopra il rilievo, col pannello della legenda" width="1000" height="702" loading="lazy">
+  <img src="boschi.jpg" alt="La mappa boschi in Val d'Aveto, fra Liguria ed Emilia: faggete in verde, castagneti in arancio, querceti in ocra sopra il rilievo, col pannello della legenda" width="1000" height="671" loading="lazy">
   <figcaption>La Val d'Aveto, a cavallo fra Liguria ed Emilia: faggete in verde, castagneti in arancio, querceti in ocra, e sotto i colori il rilievo delle valli. Sotto la legenda, le due carte usate.</figcaption>
 </figure>
 <p>Ogni regione e ogni valle ha anche la sua pagina, con quanto pesa ogni tipo di bosco, i paesi intorno e la carta ufficiale da cui viene il colore: parti dalla <a href="https://precipitazioni.avventuremicologiche.it/mappa-forestale/">mappa forestale d'Italia</a>. Castagneti, querceti e abetaie hanno anche una pagina loro, con i loro funghi: <a href="https://precipitazioni.avventuremicologiche.it/mappa-forestale/castagneti/">castagneti</a>, <a href="https://precipitazioni.avventuremicologiche.it/mappa-forestale/querceti/">querceti</a>, <a href="https://precipitazioni.avventuremicologiche.it/mappa-forestale/abetaie-e-peccete/">abetaie e peccete</a>.</p>
@@ -541,23 +587,6 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
   <figcaption>Dal telefono, intorno a Borzonasca: castagneti in arancio sui versanti, faggete in verde più in là, e il rilievo che fa leggere le valli. Sotto la legenda e il nome della carta.</figcaption>
 </figure>
 <p>Anche le pagine di paese e di zona delle regioni coperte hanno il tasto <span class="ui">Guarda i boschi</span>, che apre la mappa boschi già centrata su quel posto.</p>
-
-<h3 id="satellite">I boschi dal satellite</h3>
-<p>Nel pannello della mappa boschi c'è il tasto <span class="ui">🛰 Satellite</span>: la cartina lascia il posto alla foto dal satellite e i colori dei boschi restano sopra. Ingrandendo fino in fondo si distinguono le case, i singoli alberi e i sentieri, e capisci se quel bosco è fitto o rado, se c'è una strada per arrivarci, dove lasciare la macchina.</p>
-
-<figure class="media">
-  <img src="satellite.jpg" alt="Santo Stefano d'Aveto dal satellite nella mappa boschi: le case fra i prati, i boschi colorati sopra la foto, la nuvoletta aperta su un robinieto a 981 metri, e nel pannello il tasto Satellite acceso con la manopola dell'intensità" width="1000" height="566" loading="lazy">
-  <figcaption>Santo Stefano d'Aveto dal satellite: le case fra i prati, i boschi in colore sopra la foto, e la nuvoletta di un robinieto a 981 metri con il tasto per Google Maps. Nel pannello il tasto Satellite acceso, in verde, e la manopola dell'intensità.</figcaption>
-</figure>
-<div class="bosco">
-<p><b>Intensità boschi</b>: la manopola regola quanto i colori coprono la foto; di partenza stanno al 35%.</p>
-<p><b>Nascondi boschi</b>: toglie i colori e lascia la foto nuda, <span class="ui">Mostra boschi</span> li rimette com'erano.</p>
-<p><b>Il tocco</b> funziona come sulla cartina: che bosco è, quota, versante, pendenza, e il tasto per aprire il punto su Google Maps.</p>
-<p><b>Il filtro per altitudine</b> vale anche qui: i boschi fuori dalla fascia spariscono dalla foto.</p>
-</div>
-<p>Le foto sono di Esri (World Imagery); i nomi dei paesi sono i nostri. Il satellite si usa solo nella mappa boschi: tornando alla pioggia si spegne, e ogni volta si riparte dalla cartina.</p>
-
-
 
 <h3 id="confronta">Confrontare pioggia e boschi</h3>
 <p>Con un periodo di pioggia già scelto, tocca <span class="ui">⇆ Confronta con piogge</span>: compare una barra da trascinare. A sinistra vedi dove ha piovuto, a destra che bosco c'è, e muovendo la barra li confronti sullo stesso posto.</p>
@@ -598,7 +627,22 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <h3>Il rilievo</h3>
 <p>Sotto i colori c'è il rilievo: le ombre dei monti, come se il sole arrivasse da nord-ovest. Viene da <b>TINITALY</b>, il modello del terreno d'Italia a 10 metri dell'INGV, lo stesso da cui ricaviamo quota, versante e pendenza.</p>
 
-<h2 id="condividere"><span class="n">13</span>Condividere</h2>
+<h2 id="satellite"><span class="n">14</span>I boschi dal satellite</h2>
+<p>Nel pannello della mappa boschi c'è il tasto <span class="ui">🛰 Satellite</span>: la cartina lascia il posto alla foto dal satellite e i colori dei boschi restano sopra. Ingrandendo fino in fondo si distinguono le case, i singoli alberi e i sentieri, e capisci se quel bosco è fitto o rado, se c'è una strada per arrivarci, dove lasciare la macchina.</p>
+
+<figure class="media">
+  <img src="satellite.jpg" alt="Santo Stefano d'Aveto dal satellite nella mappa boschi: le case fra i prati, i boschi colorati sopra la foto, la nuvoletta aperta su un robinieto a 981 metri, e nel pannello il tasto Satellite acceso con la manopola dell'intensità" width="1000" height="566" loading="lazy">
+  <figcaption>Santo Stefano d'Aveto dal satellite: le case fra i prati, i boschi in colore sopra la foto, e la nuvoletta di un robinieto a 981 metri con il tasto per Google Maps. Nel pannello il tasto Satellite acceso, in verde, e la manopola dell'intensità.</figcaption>
+</figure>
+<div class="bosco">
+<p><b>Intensità boschi</b>: la manopola regola quanto i colori coprono la foto; di partenza stanno al 35%.</p>
+<p><b>Nascondi boschi</b>: toglie i colori e lascia la foto nuda, <span class="ui">Mostra boschi</span> li rimette com'erano.</p>
+<p><b>Il tocco</b> funziona come sulla cartina: che bosco è, quota, versante, pendenza, e il tasto per aprire il punto su Google Maps.</p>
+<p><b>Il filtro per altitudine</b> vale anche qui: i boschi fuori dalla fascia spariscono dalla foto.</p>
+</div>
+<p>Le foto sono di Esri (World Imagery); i nomi dei paesi sono i nostri. Il satellite si usa solo nella mappa boschi: tornando alla pioggia si spegne, e ogni volta si riparte dalla cartina.</p>
+
+<h2 id="condividere"><span class="n">15</span>Condividere</h2>
 <p>In alto nel pannello della legenda ci sono due tasti. Da computer si chiamano <span class="ui">🔗 Copia link</span> e <span class="ui">📷 Immagine</span>, dal telefono <span class="ui">🔗 Invia link</span> e <span class="ui">📷 Invia foto</span>, perché lì passano dal menu di condivisione.</p>
 <ul>
   <li><b>Il link</b> porta con sé regioni, date, zoom e centro: chi lo apre vede esattamente la tua vista, anche se tu eri al computer e lui è al telefono.</li>
@@ -606,7 +650,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 </ul>
 <p>Se hai ingrandito su una valle, lo scatto tiene <b>la tua</b> inquadratura. Se non hai toccato lo zoom, il sito allarga quanto serve a far entrare tutta la regione.</p>
 
-<h2 id="pagine"><span class="n">14</span>Le pagine del sito</h2>
+<h2 id="pagine"><span class="n">16</span>Le pagine del sito</h2>
 <p>Oltre alla mappa ci sono più di mille pagine, per chi vuole la risposta già scritta invece di cercarla.</p>
 <ul>
   <li><b>Pagina di regione</b>, per esempio <a href="/liguria/">Dove ha piovuto in Liguria</a>: tutta la pioggia della regione, pianura compresa, con ieri, gli ultimi 7, 20 e 30 giorni, i posti più bagnati e l'elenco delle sue zone.</li>
@@ -622,7 +666,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Da novembre a marzo, sotto il titolo delle pagine funghi, un avviso ricorda che si è ai margini o fuori stagione.</p>
 <p>Le pagine sono gusci fissi e i numeri li scaricano al momento: quello che leggi è sempre aggiornato a ieri.</p>
 
-<h2 id="consigli"><span class="n">15</span>Nove consigli</h2>
+<h2 id="consigli"><span class="n">17</span>Nove consigli</h2>
 <ol class="testo">
   <li><b>Parti dal tuo paese, non dalla regione.</b> Scrivi il nome nella casella di ricerca: arrivi già inquadrato, e di lì allarghi.</li>
   <li><b>Guarda il pallino, non la macchia di colore.</b> Il colore è calcolato, il pallino è misurato.</li>
@@ -635,7 +679,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
   <li><b>Se mandi la mappa a qualcuno, manda il link</b>, non lo screenshot: lui può muoverla, cambiare periodo e guardarsi il suo pluviometro.</li>
 </ol>
 
-<h2 id="domande"><span class="n">16</span>Domande frequenti</h2>
+<h2 id="domande"><span class="n">18</span>Domande frequenti</h2>
 <div class="faq">
 
 <div class="q"><h3>Sono previsioni?</h3>
@@ -689,7 +733,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 {"@type":"Question","name":"Il sito è gratuito? Ci sono pubblicità?","acceptedAnswer":{"@type":"Answer","text":"È gratuito, senza pubblicità, senza registrazione e senza newsletter."}}
 ]}</script>
 
-<h2 id="limiti"><span class="n">17</span>Avvisi, ritardi e limiti</h2>
+<h2 id="limiti"><span class="n">19</span>Avvisi, ritardi e limiti</h2>
 <p>Il sito dichiara i propri limiti nel punto in cui contano, cioè addosso ai numeri. Se vedi una scritta rossa nel pannello, è una di queste.</p>
 
 <h3>Le stime</h3>
@@ -704,7 +748,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <h3>Quando fa fede l'agenzia</h3>
 <p>I valori possono differire da quelli pubblicati dall'agenzia per orari di consolidamento diversi o per correzioni successive alla fonte. <b>In caso di differenza fa fede il dato dell'agenzia titolare.</b> Se ne trovi uno che non torna, <a href="/fonti.html#feedback">scrivici</a>: le segnalazioni sugli errori sono la cosa più utile che ci puoi dare.</p>
 
-<h2 id="mappa-sito"><span class="n">18</span>Mappa del sito</h2>
+<h2 id="mappa-sito"><span class="n">20</span>Mappa del sito</h2>
 <p>Ogni regione ha due pagine: una con <b>tutta la pioggia</b>, pianura compresa, e una
 con i <b>soli posti da bosco</b>, nella finestra da 13 a 20 giorni fa che serve per i funghi.</p>
 <!-- ⚠️ ELENCO SCRITTO DA .github/scripts/genera-pagine-regione.js fra i due
