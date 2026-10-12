@@ -16154,7 +16154,9 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     // uscite: linguetta, periodo scelto, «Indietro», radar e boschi
     [].forEach.call(document.querySelectorAll('#time-panel .tp-btn, #btn-custom, #btn-funghi, #btn-radar, #btn-boschi'),
       function(x){ x.addEventListener('click',function(){ if(acceso) esci(false); },true); });
-    var rr=el('btn-reset-regions'); if(rr) rr.addEventListener('click',function(){ if(acceso) esci(false); },true);
+    /* il tasto blu «↩ Indietro» fa UN passo come la freccia del browser (12/10/2026, suo: «3 regioni, date,
+       previsioni, indietro e mi porta al punto iniziale»): esce dalle previsioni, rimette le regioni e si ferma */
+    var rr=el('btn-reset-regions'); if(rr) rr.addEventListener('click',function(e){ if(!acceso) return; e.stopImmediatePropagation(); esci(); },true);
     // dalla scheda del pluviometro
     var sp=el('sh-prev'); if(sp) sp.addEventListener('click',function(e){
       e.preventDefault(); var s=sp._st; if(!s) return;
