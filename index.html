@@ -13966,6 +13966,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
      «qui non c'e' bosco» a due metri da una faggeta sembrerebbe un difetto. */
   var TOCCO=window.matchMedia && matchMedia('(hover:none) and (pointer:coarse)').matches;
   var nuvola=null, nuvTimer=null, nSeq=0;   // nuvTimer: la chiusura da sola delle nuvolette vuote
+  var nuvPiena=false;   // la nuvoletta aperta dice un bosco (non mare, non «avvicinati»)
 
   function hexRgb(h){ h=h.replace('#',''); return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
 
@@ -14026,6 +14027,14 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     if(!acceso) return;
     var t=e.originalEvent&&e.originalEvent.target;
     if(t&&t.closest&&t.closest('#legend-panel,#time-panel,#region-panel,#reg-sheet,.leaflet-control,.bo-tend')) return;
+    /* ⚠️ IL PRIMO TOCCO CHIUDE, IL SECONDO APRE (12/10/2026, suo fastidio: «per
+       chiudere mi viene naturale toccare la mappa, e se lo faccio se ne apre
+       un'altra»). E' la regola di Google Maps e quella delle nostre schede dei
+       pluviometri (19/9). Vale solo per la nuvoletta di un bosco: quelle vuote
+       (mare, «avvicinati») si sostituiscono subito, chi ritocca ha sbagliato il
+       punto. Per questo la nuvoletta ha closeOnClick:false: la chiusura la
+       decide questo gestore, non Leaflet al preclick. */
+    if(nuvola&&nuvPiena&&map().hasLayer(nuvola)){ map().closePopup(nuvola); return; }
     var r=boscoIn(e.latlng), html;
     if(r.esito==='si'||r.esito==='intorno'){
       var n=r.gruppo.charAt(0).toUpperCase()+r.gruppo.slice(1);
@@ -14075,9 +14084,10 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
          perche' adesso portano «Portami qui»: un tasto che sparisce mentre
          qualcuno ci sta allungando il dito e' peggio di una nuvoletta di
          troppo. Quelle le chiude la crocetta o il tocco dopo. */
-    if(!nuvola) nuvola=L.popup({className:'bo-nuv',closeButton:true,autoPan:false,offset:[0,-4]});
+    if(!nuvola) nuvola=L.popup({className:'bo-nuv',closeButton:true,autoPan:false,closeOnClick:false,offset:[0,-4]});
     if(nuvTimer){ clearTimeout(nuvTimer); nuvTimer=null; }
     nuvola.options.offset=[0,-4];
+    nuvPiena=(r.esito==='si'||r.esito==='intorno');
     nuvola.setLatLng(e.latlng).setContent(html).openOn(map());
     mettiInVista();
     if(r.esito!=='si'&&r.esito!=='intorno'){
