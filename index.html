@@ -4662,6 +4662,13 @@ function centraRegioneInStriscia(){
     if(st.display==='none'||st.visibility==='hidden'||+st.opacity===0) return;
     var r=el.getBoundingClientRect();
     if(r.height<40) return;                        // chiuso, o ridotto a maniglia
+    // ⚠️ SOLO UN PANNELLO APPOGGIATO AL FONDO MANGIA LA MAPPA DAL BASSO (13/10/2026).
+    // Sul tablet (601-900 px) #time-panel sta DI LATO, in alto a sinistra (top 60px,
+    // largo 320): contato come se coprisse dal basso dava 832 px su una mappa di 892,
+    // con la barra in alto la striscia S veniva -16, log di un numero negativo, zoom
+    // NaN e Leaflet «Attempted to load an infinite number of tiles». Mappa rotta su
+    // ogni tablet in verticale, sia dal link ?r= sia dalla tendina, dal 25/8/2026.
+    if(r.bottom<mBox.bottom-2) return;
     var ov=mBox.bottom-Math.max(r.top,mBox.top);   // quanto mangia dal basso
     if(ov>coperto) coperto=ov;
   });
@@ -4685,6 +4692,7 @@ function centraRegioneInStriscia(){
   });
   if(sopra<0) sopra=0;
   if(coperto<=20) return;                          // niente da compensare
+  if(mBox.height-coperto-sopra<60) return;         // striscia libera nulla: non c'e' niente da centrarci dentro
   // ⚠️ SE L'UTENTE HA DETTO DOVE, IL BERSAGLIO E' IL SUO PUNTO (26/8/2026).
   // Fin qui si centrava sempre il baricentro delle REGIONI attive: chi cercava
   // un paese (o usava «La mia posizione») veniva portato sul suo punto, poi
@@ -4765,7 +4773,7 @@ function centraRegioneInStriscia(){
     var esce = h0 > S + 2;
     if(f>1.09||f<0.85||(esce&&f<1)){
       var z1=Math.floor((map.getZoom()+Math.log(f)/Math.LN2)*4)/4; // passo 0.25
-      if(z1!==map.getZoom()) map.setView(c0,z1,{animate:false});
+      if(isFinite(z1)&&z1!==map.getZoom()) map.setView(c0,z1,{animate:false});
     }
   }
   // Ricentra nella striscia, rimisurando dopo lo zoom
