@@ -13385,7 +13385,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
      nel repo delle tessere). Le vecchie copie spariscono da sole. */
   var TESSERE_COMMIT='90a532e7a3f95e6cde1fc4fd0ee6fc658ffb2f6d';   // ramo boschi-di-fiume, con le quote z5-11 del filtro di altitudine (27/9/2026)
   var TESSERE='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@'+TESSERE_COMMIT+'/';
-  var BASE=TESSERE+'boschi/', OPACITA=0.7, satRetino=0.35;   /* 35%: standard scelto da lui il 29/9 (prima 55%) */   // satRetino: la manopola del retino sopra la foto satellitare
+  var BASE=TESSERE+'boschi/', OPACITA=0.7, satRetino=0.30;   /* 30%: standard scelto da lui il 13/10/2026 (prima 35% dal 29/9, e 55%) */   // satRetino: la manopola del retino sopra la foto satellitare
   var RILIEVO=TESSERE+'rilievo/', TERRENO=TESSERE+'terreno/', Z_TERRENO=12;
   /* ═══ FILTRO DI ALTITUDINE (27/9/2026) ═══ */
   var QUOTA_BASSE=TESSERE+'terreno/', Q_TOT=[0,2300], Q_PASSO=50, quotaMin=0, quotaMax=2300;
@@ -13802,8 +13802,8 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     function retino(v){ satRetino=v; if(so) so.value=Math.round(v*100); var t=el('bo-sat-val'); if(t) t.textContent=Math.round(v*100)+'%';
       var n=el('bo-nascondi'); if(n) n.textContent=v>0?'Nascondi boschi':'Mostra boschi';
       if(window._boschiSetOpacita) window._boschiSetOpacita(); }
-    var bn=el('bo-nascondi'), prima=0.35;
-    if(bn) bn.addEventListener('click',function(){ if(satRetino>0){ prima=satRetino; retino(0); } else retino(prima||0.35); });
+    var bn=el('bo-nascondi'), prima=0.30;
+    if(bn) bn.addEventListener('click',function(){ if(satRetino>0){ prima=satRetino; retino(0); } else retino(prima||0.30); });
     /* ⚠️ Sul telefono il dito sulla manopola arrivava a Leaflet e spostava la mappa
        (29/9/2026, visto da lui). Si ferma qui ogni evento di tocco e di puntatore. */
     if(so) ['touchstart','touchmove','pointerdown','pointermove','mousedown'].forEach(function(ev){
@@ -13813,7 +13813,10 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
       retino((+so.value)/100);
     });
     var bs=el('bo-sat-btn');
-    if(bs) bs.addEventListener('click',function(){ if(window._satToggle) window._satToggle(); });
+    /* «🗺 Torna alla mappa» fa come «↩ Indietro»: rimette l'inquadratura delle regioni (13/10/2026, suo: «se ho
+       zoomato rimane con lo zoom su mappa»). Accendendo il satellite invece la vista non si tocca. */
+    if(bs) bs.addEventListener('click',function(){ var era=!!window._satOn; if(window._satToggle) window._satToggle();
+      if(era && window._inquadraRegioni) window._inquadraRegioni(); });
     var bp=el('bo-piogge');
     if(bp) bp.addEventListener('click',function(){ esci(); });   // esci() non tocca la vista: stesso zoom
     var tb=el('bo-tend-btn');
@@ -14662,10 +14665,15 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     document.addEventListener('click',function(e){
       if(acceso && e.target.closest && e.target.closest('.tp-btn,#btn-funghi,#cd-apply,#btn-radar')) esci(true);
     },true);
-    // «Indietro» della legenda (telefono) e del desktop: prima si esce dal modo
+    // «Indietro» della legenda (telefono): un passo come quello del computer qui sotto (13/10/2026, suo: dal
+    // satellite zoomato «lo stesso lo fa il tasto indietro sullo smartphone»). Col satellite acceso si spegne
+    // quello, se no si esce dai boschi; e in tutti e due i casi si rimette l'inquadratura delle regioni.
     var ind=el('leg-back-btn');
     if(ind) ind.addEventListener('click',function(e){
-      if(acceso){ e.stopImmediatePropagation(); e.preventDefault(); esci(); }
+      if(!acceso) return;
+      e.stopImmediatePropagation(); e.preventDefault();
+      if(window._satOn&&window._satToggle) window._satToggle(); else esci();
+      if(window._inquadraRegioni) window._inquadraRegioni();
     },true);
     /* ↩ Indietro del desktop: un passo (12/10/2026). Col satellite acceso si torna alla
        cartina dei boschi, poi dai boschi alla heatmap; il sito non azzera piu' tutto dietro. */
