@@ -15732,6 +15732,7 @@ body.modo-radar #time-panel .rd-coppia.con-sat > #btn-sat-riga,body.modo-boschi 
   var URL_RAW='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/temperature-ieri.json';
   var ZOOM_MIN=6;      // sotto non si disegna niente
   var ZOOM_VICINO=9;   // premendo il tasto da piu' lontano di cosi' ci si avvicina (sua scelta «a»)
+  var vistaPrima=null; // telefono: la vista prima del +0,5, che lo spegnimento restituisce (13/10/2026)
   var datiKo=false;    // il file non c'e': solo allora il tasto sparisce
   var MESI=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
   var dati=null, giorno='', btn=null, on=false, gruppo=null, disegnando=false, tmr=null;
@@ -15941,8 +15942,25 @@ body.modo-radar #time-panel .rd-coppia.con-sat > #btn-sat-riga,body.modo-boschi 
            (Lombardia 36 → 64) e la regione si vede ancora quasi tutta;
          - computer senza date: l'inquadratura che darebbe l'analisi (_fitRegioni), quella che si ha scegliendo le date;
          - computer con le date: niente, la mappa e' gia' a quella distanza. */
-      if(mp && on && ps.length){
-        if(window.innerWidth<=900){ if(mp.getZoom()<ZOOM_VICINO-0.5){ mp.setZoom(mp.getZoom()+0.5); return; } }   // il moveend ridisegna
+      /* ⚠️ SPEGNENDO SI TORNA DOVE SI ERA (13/10/2026, suo: «se lo schiaccio e tolgo due volte fa 2 zoom di fila»):
+         il +0,5 del telefono si sommava a ogni accensione (7,25 → 7,75 → 8,25 → 8,75). Ora spegnere restituisce lo
+         zoom e il centro di prima, ma solo se la mappa e' ancora quella lasciata dallo zoom: se nel frattempo
+         l'hai spostata o zoomata tu, resta la tua vista. */
+      if(!on && mp && vistaPrima){
+        var vp=vistaPrima; vistaPrima=null;
+        // spento mentre lo zoom corre ancora: il setView si perderebbe, si aspetta che finisca
+        if(!vp.cDopo) mp.once('zoomend',function(){ if(!on) mp.setView(vp.c,vp.z); });
+        else if(Math.abs(mp.getZoom()-vp.zDopo)<0.01 && mp.latLngToContainerPoint(vp.cDopo).distanceTo(mp.getSize().divideBy(2))<3) mp.setView(vp.c,vp.z);
+      }
+      if(on) vistaPrima=null;
+      // se la mappa l'hai gia' messa tu (pinch, trascinamento, rotellina, +/-) non ci si avvicina: comanda lui
+      // (13/10/2026, suo: «mi zooma anche se ho gia' zoomato a mano io»). E' la spia dello scatto, _vistaUtente.
+      var aMano=!!(window._vistaUtenteAttiva && window._vistaUtenteAttiva());
+      if(mp && on && ps.length && !aMano){
+        if(window.innerWidth<=900){ if(mp.getZoom()<ZOOM_VICINO-0.5){
+          var vq=vistaPrima={z:mp.getZoom(),c:mp.getCenter()};
+          mp.once('zoomend',function(){ if(vistaPrima===vq){ vq.zDopo=mp.getZoom(); vq.cDopo=mp.getCenter(); } });
+          mp.setZoom(mp.getZoom()+0.5); return; } }   // il moveend ridisegna
         else if(!(window._storicoStato&&window._storicoStato().analisi) && window._fitRegioni && window._regioniAttive){
           var z0=mp.getZoom(); try{ window._fitRegioni(window._regioniAttive()); }catch(e){} if(mp.getZoom()!==z0) return;
         }
