@@ -4477,6 +4477,7 @@ function posizionaChipFonte(){
   var cb=document.getElementById('pv-cerca-tel');
   if(cb&&vis(cb)){ cb.style.top=Math.round(y)+'px'; y+=cb.getBoundingClientRect().height+8; }
   c.style.top=Math.round(y)+'px';
+  if(window._tqPosiziona) window._tqPosiziona();   // l'icona delle temperature la segue (13/10/2026)
 }
 window.posizionaChipFonte=posizionaChipFonte;
 /* ⚠️ LA CHIP SEGUE IL PANNELLO IN ALTO A OGNI CAMBIO D'ALTEZZA (13/10/2026, suo: al telefono
@@ -15695,6 +15696,36 @@ body.tq-on #channel-logo,body.tq-on #channel-pill{display:none !important}
 body.tq-on path.conf-pulse,body.tq-on .panel-pulse,body.tq-on .panel-pulse-ring,
 body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !important}
 .tq.via{visibility:hidden}
+/* ⚠️ DAL 13/10/2026 LE TEMPERATURE SONO UN'ICONA SULLA MAPPA, non piu' un tasto nella riga (sua scelta «D» dopo
+   otto proposte): al telefono in alto a destra sotto la barra delle regioni, al computer nel posto della vetrina
+   (sotto la ricerca, o sotto la vetrina se c'e' ancora). Solo nello storico e solo con una regione scelta. Il posto
+   nella riga l'ha preso «Satellite». */
+#tq-btn.p-mappa{width:42px;height:42px;padding:0;border-radius:9px;flex-direction:column;justify-content:center;gap:1px;
+  border:2px solid rgba(0,0,0,.22);box-shadow:0 1px 5px rgba(0,0,0,.25);font:700 9.5px/1 system-ui,-apple-system,'Segoe UI',sans-serif;color:#1b3f6e}
+#tq-btn.p-mappa svg{width:19px;height:19px}
+#tq-btn.p-mappa.on{background:#1f6fd1;border-color:#1f6fd1;color:#fff}
+/* il «new» resta anche sull'icona (13/10/2026, suo: «lascia il new su temp e satellite»); sparisce con le temperature accese */
+#tq-btn.p-mappa::after{content:'new';position:absolute;top:-7px;right:-6px;background:#e12b2b;color:#fff;font-size:8.5px;font-weight:700;
+  letter-spacing:.3px;padding:1px 4px;border-radius:6px;line-height:1.35;pointer-events:none;animation:newPulsa 1.6s ease-in-out infinite}
+#tq-btn.p-mappa.on::after{display:none}
+@media (prefers-reduced-motion:reduce){#tq-btn.p-mappa::after{animation:none}}
+/* la riga dello storico: Radar pioggia | Mappa boschi | Satellite, tre tasti uguali (13/10/2026, sua scelta «3») */
+.rd-coppia.con-sat{grid-template-columns:1fr 1fr 1fr}
+body.modo-radar .rd-coppia.con-sat,body.modo-boschi .rd-coppia.con-sat{grid-template-columns:1fr 1fr}
+body.modo-radar #time-panel .rd-coppia.con-sat > #btn-sat-riga,body.modo-boschi #time-panel .rd-coppia.con-sat > #btn-sat-riga{display:none !important}   /* piu' forte della regola «niente a capo» qui sotto */
+#btn-sat-riga{position:relative}
+#btn-sat-riga::after{content:'new';position:absolute;top:-6px;right:-4px;background:#e12b2b;color:#fff;font-size:8.5px;font-weight:700;
+  letter-spacing:.3px;padding:1px 4px;border-radius:6px;line-height:1.35;pointer-events:none;animation:newPulsa 1.6s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){#btn-sat-riga::after{animation:none}}
+/* in un terzo di riga «🌧️ Radar pioggia» andava a capo (41 → 60 px): niente a capo, margini stretti, un filo piu' piccolo */
+#time-panel .rd-coppia.con-sat > *{display:flex !important;align-items:center;justify-content:center;gap:4px;white-space:nowrap;
+  padding-left:2px !important;padding-right:2px !important;letter-spacing:-.2px}
+@media(min-width:901px){#time-panel .rd-coppia.con-sat > .tp-custom-btn{font-size:12.5px !important}}
+@media(max-width:900px){#time-panel .rd-coppia.con-sat > .tp-custom-btn{font-size:13px !important}}
+@media(max-width:380px){#time-panel .rd-coppia.con-sat > .tp-custom-btn{font-size:12px !important;letter-spacing:-.3px}}
+/* al computer l'icona prende il posto della vetrina (sua idea, 13/10): quando c'e' l'icona la vetrina se ne va,
+   e l'icona sta sempre sotto la ricerca, senza saltare quando si accende */
+@media(min-width:901px){body.tq-vis #channel-logo{display:none !important}}
 </style>
 <script>
 (function(){
@@ -15725,7 +15756,7 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
   }
   var TERM='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1f6fd1" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M14 14.8V4a2 2 0 0 0-4 0v10.8a4 4 0 1 0 4 0z"/><path d="M12 9v8"/></svg>';
   function disegnaTasto(){
-    btn.innerHTML=POS==='riga' ? TERM+'<span>Temp. ieri</span>' : TERM+giorno;
+    btn.innerHTML=POS==='riga' ? TERM+'<span>Temp. ieri</span>' : TERM+'<span>ieri</span>';
     btn.title=on?'Nascondi le temperature del '+giorno:'Minima e massima del '+giorno+' accanto ai pluviometri';
     btn.classList.toggle('on',on);
     document.body.classList.toggle('tq-on',on);
@@ -15741,9 +15772,13 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
     if(!btn) return;
     // ⚠️ il tasto esce INSIEME agli altri della riga (3/10, suo: «appare in ritardo»): non aspetta
     // ne' il file ne' i pallini, sparisce solo se il file non c'e' o col radar e coi boschi
-    var vis=!datiKo && !modoAltro();
+    // dal 13/10/2026 anche: almeno una regione scelta (senza non ci sono pluviometri) e mai nelle previsioni
+    var reg=window._regioniAttive?window._regioniAttive().length>0:false;
+    var vis=!datiKo && !modoAltro() && reg && !document.body.classList.contains('modo-prev');
     btn.classList.toggle('vis',vis);
-    if(btn.parentNode && btn.parentNode.classList) btn.parentNode.classList.toggle('con-tq',vis);
+    if(POS!=='riga') document.body.classList.toggle('tq-vis',vis);
+    if(POS==='riga' && btn.parentNode && btn.parentNode.classList) btn.parentNode.classList.toggle('con-tq',vis);
+    if(POS!=='riga') posiziona();
     if(POS==='riga') copiaAspetto();
     // si spegne solo entrando nel radar o nei boschi: mentre un'analisi ridisegna i pallini
     // per un attimo non ce n'e' nessuno, e non deve spegnersi per quello
@@ -15820,7 +15855,7 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
   /* IL POSTO DEL TASTO (3/10, deciso dopo tre prove dal vivo: in basso sulla mappa «non lo vede
      nessuno», nel pannello e nella testata «un tasto aggiunto a caso»): terzo tasto IN MEZZO alla riga
      «Radar pioggia | Mappa boschi». Se la riga non c'e' ancora, aspetta sulla mappa. */
-  var POS='riga';
+  var POS='mappa';   // dal 13/10/2026 un'icona sulla mappa (vedi il CSS); 'riga' resta per la storia
   /* (3/10 sera, sua idea): terzo tasto nella riga «Radar pioggia | Mappa boschi», che si
      stringono. Prende l'aspetto dei due vicini (colori, bordo, altezza) leggendolo da loro. */
   function copiaAspetto(){
@@ -15828,7 +15863,12 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
     var cs=getComputedStyle(rb);
     if(!on){ btn.style.background=cs.backgroundColor; btn.style.color=cs.color; }
     else { btn.style.background=''; btn.style.color=''; }
-    btn.style.borderRadius=cs.borderRadius; btn.style.minHeight=cs.height;
+    /* ⚠️ L'ALTEZZA NON SI COPIA PIU' (13/10/2026, sue schermate: Radar | Temp. ieri | Boschi alti 60 invece di 41).
+       Copiarla da Radar faceva un cricchetto: entrando nelle previsioni questo tasto si nasconde, «Mappa boschi»
+       finiva nella colonna stretta e andava a capo, la riga saliva a 60, si copiavano i 60, e da li' la riga non
+       scendeva piu' (Radar, allungato dalla griglia, rileggeva sempre 60). Stando nella stessa griglia il tasto
+       prende comunque l'altezza della riga. */
+    btn.style.borderRadius=cs.borderRadius; btn.style.minHeight='';
     btn.style.borderColor=on?'':cs.borderTopColor; btn.style.borderWidth=cs.borderTopWidth;
   }
   function posiziona(){
@@ -15844,14 +15884,36 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
     if(btn.parentNode!==mpEl) mpEl.appendChild(btn);
     btn.classList.add('p-mappa'); btn.classList.remove('p-riga');
     if(!tel){
+      /* nel posto della vetrina (13/10/2026): sotto la casella di ricerca, allineata a destra; se la vetrina
+         c'e' ancora (regione scelta, date no) sotto la vetrina, cosi' non si coprono mai */
+      var mb=mpEl.getBoundingClientRect(), vis=function(e){ if(!e) return null; var r=e.getBoundingClientRect(); return getComputedStyle(e).display!=='none'&&r.height>0?r:null; };
+      var lb=vis(document.getElementById('loc-box')), vt=vis(document.getElementById('channel-logo'));
+      if(lb && lb.left>mb.left+mb.width/2){
+        var sotto=(vt && vt.left>mb.left+mb.width/2 && vt.top>=lb.top) ? vt : lb;
+        btn.style.top=Math.round(sotto.bottom-mb.top+10)+'px'; btn.style.right=Math.round(mb.right-lb.right)+'px'; return;
+      }
       var at=document.querySelector('#map .leaflet-control-attribution');
       btn.style.bottom=((at?at.offsetHeight:18)+10)+'px'; return;
     }
-    // sul telefono sotto la barra delle regioni, che cambia altezza: si misura (come il Satellite)
-    var rp=document.getElementById('region-panel'), giu=8;
-    if(rp && getComputedStyle(rp).display!=='none'){ var r=rp.getBoundingClientRect(); if(r.height>0) giu=Math.round(r.bottom-mpEl.getBoundingClientRect().top+8); }
-    btn.style.top=giu+'px';
+    /* ⚠️ AL TELEFONO IN BASSO A DESTRA (13/10/2026, suo: «lo metterei in basso a dx, se uno riduce scende ancora»):
+       appoggiata 10 px sopra il pannello in basso (il periodo prima delle date, la legenda dopo), qualunque sia la sua
+       altezza: riducendo il pannello l'icona scende con lui. La misura la rifanno l'osservatore sui pannelli e la fine
+       delle loro animazioni (vedi collegaPannelli). */
+    var mt=mpEl.getBoundingClientRect(), copre=0;
+    ['legend-panel','time-panel'].forEach(function(id){ var e=document.getElementById(id); if(!e) return; var s=getComputedStyle(e);
+      if(s.display==='none'||s.visibility==='hidden') return; var r=e.getBoundingClientRect();
+      if(r.height>20 && r.bottom>=mt.bottom-2 && r.top<mt.bottom) copre=Math.max(copre,mt.bottom-Math.max(r.top,mt.top)); });
+    btn.style.top=''; btn.style.bottom=Math.round(copre+10)+'px';
   }
+  // i pannelli in basso cambiano altezza (riduci, periodo, legenda) e scorrono con un'animazione: l'icona li segue
+  var pannelliSeguiti=false;
+  function collegaPannelli(){
+    if(pannelliSeguiti) return; pannelliSeguiti=true;
+    ['legend-panel','time-panel'].forEach(function(id){ var e=document.getElementById(id); if(!e) return;
+      try{ if(window.ResizeObserver) new ResizeObserver(function(){ posiziona(); }).observe(e); }catch(x){}
+      e.addEventListener('transitionend',function(){ posiziona(); }); });
+  }
+  window._tqPosiziona=function(){ if(btn&&POS!=='riga') posiziona(); };   // la chiama la riga della fonte quando si sposta
   /* ⚠️ IL TASTO NASCE SUBITO, senza aspettare la mappa (3/10, suo: «appare in ritardo, quella
      riga non esce insieme alle altre»). Un osservatore sul pannello lo infila nella riga «Radar |
      Boschi» nello stesso istante in cui quella riga viene costruita; mappa ed etichette si
@@ -15873,8 +15935,17 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
       // da lontano ci si avvicina (sua scelta «a»), al centro dei pallini della regione e non della
       // mappa (3/10: da lontano si vedevano solo le etichette del bordo, il resto copriva altri pallini)
       var ps=pallini();   // senza regione scelta non c'e' niente su cui avvicinarsi
-      if(mp && on && ps.length && mp.getZoom()<ZOOM_VICINO-0.5){
-        mp.setView(L.latLngBounds(ps.map(function(p){ return p._latlng; })).getCenter(),ZOOM_VICINO); return;   // il moveend ridisegna
+      /* ⚠️ QUANTO AVVICINARSI (13/10/2026, sue prove dal telefono e dal computer):
+         - telefono: mezzo livello in piu' (+0,5) restando dove si e', e solo da lontano: lo zoom 9 di prima era
+           «troppo grande» (della regione restava un pezzo); con +0,5 le temperature leggibili quasi raddoppiano
+           (Lombardia 36 → 64) e la regione si vede ancora quasi tutta;
+         - computer senza date: l'inquadratura che darebbe l'analisi (_fitRegioni), quella che si ha scegliendo le date;
+         - computer con le date: niente, la mappa e' gia' a quella distanza. */
+      if(mp && on && ps.length){
+        if(window.innerWidth<=900){ if(mp.getZoom()<ZOOM_VICINO-0.5){ mp.setZoom(mp.getZoom()+0.5); return; } }   // il moveend ridisegna
+        else if(!(window._storicoStato&&window._storicoStato().analisi) && window._fitRegioni && window._regioniAttive){
+          var z0=mp.getZoom(); try{ window._fitRegioni(window._regioniAttive()); }catch(e){} if(mp.getZoom()!==z0) return;
+        }
       }
       disegna();
     });
@@ -15893,10 +15964,48 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
     var mp=m();
     if(!mp||!window.L){ setTimeout(collega,100); return; }
     mp.on('zoomend moveend',function(){ if(on) rinvia(); });
+    collegaPannelli();
     mp.on('layeradd layerremove',rinvia);
     try{ var at0=document.querySelector('#map .leaflet-control-attribution'); if(at0) new MutationObserver(posiziona).observe(at0,{childList:true,subtree:true,characterData:true}); }catch(e){}
     posiziona(); aggiorna();
   }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',nasci); else nasci();
+})();
+</script>
+<script>
+/* IL SATELLITE NELLA RIGA DELLO STORICO (13/10/2026, sua scelta «3»: Radar pioggia | Mappa boschi | Satellite,
+   tre tasti uguali). Prima si arrivava al satellite con due tocchi (Mappa boschi, poi Satellite), e lo trovava
+   gia' una persona su quattro di quelle che entrano nei boschi. Il tasto fa quei due tocchi da solo: apre i boschi
+   e accende la foto. ⚠️ Resta la regola del 29/9 per le tessere Esri: il satellite c'e' solo dentro i boschi.
+   Nel radar e nei boschi il tasto sparisce (lo dice il CSS accanto a #tq-btn). */
+(function(){
+  function nasci(){
+    var rg=document.querySelector('#time-panel .rd-coppia'), bb=document.getElementById('btn-boschi');
+    if(!rg||!bb||bb.parentNode!==rg){ setTimeout(nasci,150); return; }
+    if(document.getElementById('btn-sat-riga')) return;
+    var b=document.createElement('div'); b.className='tp-custom-btn rd-btn'; b.id='btn-sat-riga';
+    b.title='Foto dal satellite, con i tipi di bosco sopra';
+    b.innerHTML='<span class="rd-ic">🛰️</span> Satellite';
+    bb.parentNode.insertBefore(b,bb.nextSibling); rg.classList.add('con-sat');
+    b.addEventListener('click',function(){
+      daRiga=true;
+      try{ gtag('event','mappa_satellite',{stato:'riga'}); }catch(e){}
+      function foto(){ if(!window._satOn && window._satToggle) window._satToggle(); }
+      if(window._boschiAcceso){ foto(); return; }
+      var bo=document.getElementById('btn-boschi'); if(bo) bo.click();
+      var giri=0; (function prova(){ if(window._boschiAcceso){ foto(); return; } if(++giri<80) setTimeout(prova,100); })();
+    });
+  }
+  /* ⚠️ «TORNA ALLA MAPPA» RIPORTA DOVE ERI (13/10/2026, suo: «vado su satellite dalla schermata iniziale, tocco Torna
+     alla mappa e mi porta ai boschi»). Arrivati dal tasto della riga, spegnere il satellite (tasto, freccia del browser,
+     «↩ Indietro») esce anche dai boschi. Entrati dai boschi e poi Satellite, resta come prima: si torna ai boschi. */
+  var daRiga=false, satPrima=false;
+  try{ new MutationObserver(function(){
+    var c=document.body.classList, sat=c.contains('sat-on');
+    if(!c.contains('modo-boschi')){ daRiga=false; satPrima=false; return; }
+    if(daRiga && satPrima && !sat){ daRiga=false; satPrima=false; var bo=document.getElementById('btn-boschi'); if(bo) setTimeout(function(){ bo.click(); },0); return; }
+    satPrima=sat;
+  }).observe(document.body,{attributes:true,attributeFilter:['class']}); }catch(e){}
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',nasci); else nasci();
 })();
 </script>
