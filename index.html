@@ -4476,6 +4476,14 @@ function posizionaChipFonte(){
   c.style.top=Math.round(el ? (el.getBoundingClientRect().bottom-top+8) : 6)+'px';
 }
 window.posizionaChipFonte=posizionaChipFonte;
+/* ⚠️ LA CHIP SEGUE IL PANNELLO IN ALTO A OGNI CAMBIO D'ALTEZZA (13/10/2026, suo: al telefono
+   «il numero dei pluviometri e la fonte delle previsioni stanno troppo in basso»). Si posizionava
+   solo in certi momenti: scegliendo una regione compare la riga delle vicine e la chip ci finiva
+   sopra; togliendo la regione o passando alle previsioni la riga sparisce e la chip restava 31 px
+   piu' giu'. Ora la rimette a posto ogni cambio d'altezza del pannello, qualunque sia la causa
+   (la funzione sopra i 600 px non fa niente). */
+try{ var _rpChip=document.getElementById('region-panel');
+  if(_rpChip&&window.ResizeObserver) new ResizeObserver(function(){ posizionaChipFonte(); }).observe(_rpChip); }catch(e){}
 
 function positionPanels(){
   posizionaChipFonte();          // vale su TUTTE le larghezze, quindi prima del taglio
