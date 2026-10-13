@@ -4472,8 +4472,11 @@ function posizionaChipFonte(){
   var el=[document.getElementById('region-panel'),
           document.getElementById('map-hint-panel'),
           document.getElementById('btn-reset-regions')].filter(vis)[0];
-  var top=m.getBoundingClientRect().top;
-  c.style.top=Math.round(el ? (el.getBoundingClientRect().bottom-top+8) : 6)+'px';
+  var top=m.getBoundingClientRect().top, y=el ? (el.getBoundingClientRect().bottom-top+8) : 6;
+  // la casella «Cerca la tua localita'» delle previsioni (13/10/2026) sta qui, e la chip scende sotto di lei
+  var cb=document.getElementById('pv-cerca-tel');
+  if(cb&&vis(cb)){ cb.style.top=Math.round(y)+'px'; y+=cb.getBoundingClientRect().height+8; }
+  c.style.top=Math.round(y)+'px';
 }
 window.posizionaChipFonte=posizionaChipFonte;
 /* ⚠️ LA CHIP SEGUE IL PANNELLO IN ALTO A OGNI CAMBIO D'ALTEZZA (13/10/2026, suo: al telefono
@@ -16006,6 +16009,18 @@ body.modo-prev.pv-vuoto #pv-pan #loc-input{animation:loc-bordo-pulsa 1.7s ease-i
 /* ── il dettaglio del posto ── */
 #pv-det{position:absolute;z-index:1250;display:none;flex-direction:column;overflow:hidden;background:#fff;border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.3);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;top:14px;right:40px;width:470px;max-height:calc(100% - 70px);box-sizing:border-box}
 .modo-prev #pv-det.vivo{display:flex}
+/* ⚠️ «CERCA LA TUA LOCALITA'» SULLA MAPPA, AL TELEFONO (13/10/2026, sua scelta «C» dal mockup): la gente
+   guardava solo i capoluoghi che mettiamo noi. Non e' un secondo campo: toccandola si apre la ricerca vera
+   della tendina in alto, gia' pronta (dal riquadro in basso la tastiera faceva salire tutto, 7/10). Senza
+   scelte non c'e': li' pulsa gia' la barra. La tabella del posto (z 1250) la copre. Il top lo mette
+   posizionaChipFonte, che fa scendere sotto di lei la riga della fonte. */
+#pv-cerca-tel{display:none}
+@media(max-width:600px){
+  body.modo-prev:not(.pv-vuoto) #pv-cerca-tel{display:flex;position:absolute;top:53px;left:12px;right:12px;z-index:1200;align-items:center;gap:9px;
+    box-sizing:border-box;height:44px;padding:0 14px;background:#fff;border:2px solid #2c5489;border-radius:12px;color:#5a6b82;
+    font:600 16px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;box-shadow:0 2px 8px rgba(27,63,110,.18);white-space:nowrap;overflow:hidden;cursor:pointer}
+  #pv-cerca-tel svg{flex:none}
+}
 #pv-det .hd{padding:10px 12px 6px;border-bottom:1px solid #e3e9f2;display:flex;align-items:flex-start;gap:8px;flex-shrink:0}
 #pv-det .hd .nm{font-size:22px;font-weight:800;line-height:1.1;color:#1b3f6e;flex:1;min-width:0}   /* ⚠️ niente «font:… inherit»: il browser scartava la riga (8/10) */
 #pv-det .hd .nm i{font-style:normal;font-weight:500;font-size:13px;color:#6b7684;white-space:nowrap}   /* «1009 m» non si spezza (8/10) */
@@ -16081,6 +16096,8 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
   function map(){ return window._mapDebug; }
   function regioni(){ return window._regioniAttive?window._regioniAttive():[]; }
   function tel(){ return window.innerWidth<=900; }
+  // dove finisce, dall'alto della mappa, la casella «Cerca la tua localita'» del telefono (0 se non c'e')
+  function casellaSotto(mb){ var cb=el('pv-cerca-tel'); if(!cb) return 0; var r=cb.getBoundingClientRect(); return r.height>0?Math.max(0,r.bottom-mb.top):0; }
   /* l'ora italiana, per il giorno di partenza (suo, 7/10: «oggi», ma dopo le 20 «domani») */
   function oraRoma(){ try{ return +new Intl.DateTimeFormat('it-IT',{timeZone:'Europe/Rome',hour:'2-digit',hourCycle:'h23'}).format(new Date())%24; }catch(e){ return new Date().getHours(); } }
   /* IL POSTO CERCATO (suo, 7/10): chiudendo la scheda la mappa restava vuota, centrata sul paese ma senza
@@ -16159,6 +16176,12 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
       +'<div class="fo"><span id="pv-fo"></span><span id="pv-radar-r"> · <a id="pv-radar">📡 Diretta radar</a></span></div>';
     mp.appendChild(pan);
     var det=document.createElement('div'); det.id='pv-det'; mp.appendChild(det);
+    // la casella «Cerca la tua localita'» del telefono (13/10/2026, vedi il CSS): apre la tendina con la ricerca pronta
+    var cb=document.createElement('div'); cb.id='pv-cerca-tel'; cb.setAttribute('role','button');
+    cb.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2c5489" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>Cerca la tua località'; mp.appendChild(cb);
+    if(window.L){ L.DomEvent.disableClickPropagation(cb); L.DomEvent.disableScrollPropagation(cb); }
+    cb.addEventListener('click',function(){ if(window._regApri) window._regApri(); var li=el('loc-input'); if(li){ try{ li.focus(); }catch(e){} } ga('casella'); });
+    try{ if(window.ResizeObserver) new ResizeObserver(function(){ if(window.posizionaChipFonte) window.posizionaChipFonte(); }).observe(cb); }catch(e){}
     if(window.L){ L.DomEvent.disableClickPropagation(pan); L.DomEvent.disableScrollPropagation(pan); L.DomEvent.disableClickPropagation(det); L.DomEvent.disableScrollPropagation(det); }
     el('pv-gg').addEventListener('click',function(e){ var c=e.target.closest('.pv-gg'); if(c) scegliGiorno(+c.dataset.i);
       // toccando l'invito: sul telefono si apre la tendina, sul computer il cursore va nella casella
@@ -16225,13 +16248,14 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     if(document.body.classList.contains('modo-boschi') && el('btn-boschi')) el('btn-boschi').click();
     try{ var sh=el('st-history'); if(sh&&sh.style.display==='block') el('sh-close').click(); }catch(e){}
     document.body.classList.add('modo-prev'); document.body.classList.add('senza-pallini');
+    if(window.posizionaChipFonte) window.posizionaChipFonte();   // la casella del telefono prima di inquadrare
     heat(false);
     el('sez-prev').classList.add('on'); el('sez-storico').classList.remove('on');
     var ft=el('fonte-tag'); if(ft){ fonteVecchia=ft.textContent; }
     try{ map().attributionControl.addAttribution('Previsioni: MET Norway'); }catch(e){}
     /* sul computer il cerca localita' entra nel riquadro; sul telefono resta nella tendina in alto, come nello
        storico (suo, 8/10: «non ha piu' senso in alto?»; il 7/10 era sceso nel riquadro, che saliva toccandolo) */
-    if(!tel()){ var lb=el('loc-box'); if(lb&&!locCasa){ locCasa={p:lb.parentNode,n:lb.nextSibling}; el('pv-cerca-slot').appendChild(lb); var li=el('loc-input'); if(li){ locCasa.ph=li.placeholder; li.placeholder='Cerca una località o toccane una sulla mappa'; } } }
+    if(!tel()){ var lb=el('loc-box'); if(lb&&!locCasa){ locCasa={p:lb.parentNode,n:lb.nextSibling}; el('pv-cerca-slot').appendChild(lb); var li=el('loc-input'); if(li){ locCasa.ph=li.placeholder; li.placeholder='Cerca la tua località o toccane una sulla mappa'; } } }
     // la pillola della vetrina scende in fondo al riquadro (sul telefono vive nel pannello dello storico, qui nascosto)
     if(tel()){ var pl=el('channel-pill'), pn=el('pv-pan'); if(pl&&pn&&!pillCasa){ pillCasa={p:pl.parentNode,n:pl.nextSibling}; pn.appendChild(pl); } }
     posiziona();
@@ -16251,6 +16275,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     togliPassi(false);
     acceso=false; window._prevAttivo=false; sorveglia(false); fumetto(false);
     document.body.classList.remove('modo-prev'); document.body.classList.remove('senza-pallini');
+    if(window.posizionaChipFonte) window.posizionaChipFonte();
     heat(true);
     el('sez-prev').classList.remove('on'); el('sez-storico').classList.add('on');
     var ft=el('fonte-tag'); if(ft&&fonteVecchia!=null){ ft.textContent=fonteVecchia; fonteVecchia=null; }
@@ -16301,6 +16326,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     var sotto=0, sopra=0;
     if(pan){ var r=pan.getBoundingClientRect(); if(r.height>40) sotto=Math.max(0,mb.bottom-Math.max(r.top,mb.top)); }
     if(rp){ var rr=rp.getBoundingClientRect(); if(getComputedStyle(rp).display!=='none'&&rr.height>10) sopra=Math.max(0,Math.min(rr.bottom,mb.bottom)-mb.top); }
+      sopra=Math.max(sopra,casellaSotto(mb));   // la casella «Cerca la tua localita'» (13/10/2026)
     var pts=[]; rk.forEach(function(k){ var a=aree[k]; if(a&&a.capoluoghi) a.capoluoghi.forEach(function(c){ pts.push([c.lat,c.lon]); }); });
     /* ⚠️ su uno schermo BASSO la striscia libera puo' essere di poche decine di px: col bordo pieno
        fitBounds sceglie uno zoom assurdo e la Liguria finiva in mare davanti a Genova (visto il 7/10
@@ -16328,9 +16354,10 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     var rr=el('pv-radar-r'); if(rr) rr.style.display=rk.length?'':'none';
     var eraVuoto=document.body.classList.contains('pv-vuoto');
     document.body.classList.toggle('pv-vuoto',!rk.length);
+    if(window.posizionaChipFonte) window.posizionaChipFonte();   // la casella del telefono c'e' solo con delle scelte (13/10/2026)
     if(eraVuoto!==!rk.length) posiziona();   // «Indietro» compare o sparisce: il riquadro si riaggancia
     // sul computer, finche' non ci sono capoluoghi, la casella non li nomina (suo, 8/10)
-    if(locCasa){ var lci=el('loc-input'); if(lci) lci.placeholder=rk.length?'Cerca una località o toccane una sulla mappa':'Cerca un paese o una località'; }
+    if(locCasa){ var lci=el('loc-input'); if(lci) lci.placeholder=rk.length?'Cerca la tua località o toccane una sulla mappa':'Cerca un paese o una località'; }
     if(!rk.length){ var ft0=el('fonte-tag'); if(ft0) ft0.textContent='Previsioni modello ECMWF via MET Norway';
       tt.textContent='☀️ Previsioni'; fumetto(tel()); el('pv-gg').innerHTML=tel()?''
         :'<div class="avviso pv-inv"><div class="r"><span class="c"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span><span>Cerca un paese nella casella qui sopra</span></div><div class="o"><span></span>oppure<span></span></div><div class="r"><span class="c"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span><span>Clicca una regione sulla mappa</span></div></div>';   /* computer: la variante «C4» scelta da lui l'8/10; il telefono resta com'era */ el('pv-fo').textContent=''; if(gruppo) gruppo.clearLayers(); return; }
@@ -16497,6 +16524,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
       var pan=el('pv-pan'), rp=el('region-panel'), sotto=0, sopra=0;
       if(pan){ var r=pan.getBoundingClientRect(); if(r.height>40) sotto=Math.max(0,mb.bottom-Math.max(r.top,mb.top)); }
       if(rp){ var rr=rp.getBoundingClientRect(); if(getComputedStyle(rp).display!=='none'&&rr.height>10) sopra=Math.max(0,Math.min(rr.bottom,mb.bottom)-mb.top); }
+      sopra=Math.max(sopra,casellaSotto(mb));   // la casella «Cerca la tua localita'» (13/10/2026)
       tl=[34,sopra+44]; br=[70,sotto+30];   // a destra piu' largo: la targhetta sta a destra del suo punto
     } else {
       var pn=el('pv-pan'), dt=el('pv-det');
