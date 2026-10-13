@@ -1757,7 +1757,7 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
          un sito-mappa la casetta si legge come "torna alla vista iniziale", non
          come "vai su un altro sito". Da misurare su click_home / click_youtube. -->
     <a href="https://avventuremicologiche.it" target="_blank" rel="noopener" title="Vai al sito Avventure Micologiche" onclick="try{gtag('event','click_home',{pulsante:'archie-header'})}catch(e){}" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#f3efe6;text-decoration:none;flex-shrink:0;margin-right:2px;border:1.5px solid rgba(255,255,255,.85);box-sizing:border-box;overflow:hidden;">
-      <img src="archie-avatar.png" alt="Avventure Micologiche" style="width:100%;height:100%;object-fit:cover;display:block;">
+      <img src="archie-avatar.webp" alt="Avventure Micologiche" style="width:100%;height:100%;object-fit:cover;display:block;">
     </a>
     <span style="font-size:18px" class="hdr-goccia">🌧</span>
     <div class="hdr-titolo">
@@ -1852,7 +1852,7 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
        onclick="try{gtag('event','click_youtube',{pulsante:'box-desktop'})}catch(e){}"
        id="channel-logo" class="prevetrina">
       <div class="v-alto v-iscr">
-        <img src="archie-avatar.png" alt="Archie" class="ch-ava">
+        <img src="archie-avatar.webp" alt="Archie" class="ch-ava">
         <div class="v-dx">
           <div class="v-occhio v-iscr"><svg width="16" height="12" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#FF0000"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg> Canale YouTube</div>
           <div class="v-nome">Avventure Micologiche</div>
@@ -2144,7 +2144,7 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
       <a href="https://www.youtube.com/@avventuremicologiche" target="_blank"
          onclick="try{gtag('event','click_youtube',{pulsante:'pillola-mobile'})}catch(e){}"
          id="channel-pill" class="prevetrina">
-        <img src="archie-avatar.png" alt="Archie">
+        <img src="archie-avatar.webp" alt="Archie">
         <div class="cp-t">Più di 1.000 analisi al giorno<small>Grazie a tutti · iscriviti al canale</small></div>
         <div class="cp-yt">
           <svg width="26" height="19" viewBox="0 0 42 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -7334,8 +7334,14 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
 // qui sopra copre qualunque percorso sotto /main/, quindi se raw tossisce arriva
 // la copia del sito, come per i file giorno. Il 17/8 il problema era dipendere da
 // un repo ALTRUI senza riserva; qui il repo e' nostro e la riserva c'e'.
-var GEOJSON_URL='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/italia-regioni-confine.geojson';
-var GEOJSON_PROVINCE_URL='https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/italia-province-tn-bz-confine.geojson';
+// ⚠️ 13/10/2026: DI NUOVO DAL NOSTRO DOMINIO. Su Cloudflare Pages la banda non costa (il motivo del 5/10 era
+// Netlify), il file arriva in brotli e si tiene in memoria 30 giorni (regola in _headers di pubblica-pages.js):
+// raw lo tiene 5 minuti, quindi chi tornava lo riscaricava ogni volta. In piu' le coordinate sono arrotondate a
+// 5 decimali (1 metro; erano 15, cioe' il nanometro), stessi 70.908 punti: compresso da 1.136 a ~400 KB.
+// Misurato su telefono a 4G lento: la mappa d'apertura pronta in 11,2 s, di cui ~6 per questo file.
+// ⚠️ ?v= va alzato se si cambia il file, se no chi l'ha in memoria tiene il vecchio per 30 giorni.
+var GEOJSON_URL='/italia-regioni-confine.geojson?v=20261013';
+var GEOJSON_PROVINCE_URL='/italia-province-tn-bz-confine.geojson?v=20261013';
 var geojsonCache=null;
 var geojsonProvinceCache=null;
 // 5/10/2026: UNA richiesta sola anche se chiamano in venti insieme. All'apertura ogni
@@ -11992,7 +11998,7 @@ function loadDefaultMarkers(){
         +'<div class="v-dx">'
           +'<div class="v-occhio">'+ytPieno+' '+V.occhiello+'</div>'
           +'<div class="v-gancio'+(V.gancio2?'':' v-uno')+'"'+(V.ganciopx?' style="font-size:'+V.ganciopx+'px"':'')+'><b>'+V.gancio1+'</b>'+(V.gancio2?'<b>'+V.gancio2+'</b>':'')+'</div>'
-          +'<div class="v-canale"><img src="archie-avatar.png" alt="">'+V.canale+'</div>'
+          +'<div class="v-canale"><img src="archie-avatar.webp" alt="">'+V.canale+'</div>'
         +'</div></div>'
         +'<div class="v-btn">'+V.bottone+'</div>';
       copertinaRipiego(box.querySelector('.v-cop'), V.copertina);
@@ -12038,7 +12044,7 @@ function loadDefaultMarkers(){
       nuova.className='cp-social';
       nuova.innerHTML=
         '<a class="cp-alto" href="'+V.link+'" target="_blank" rel="noopener" onclick="'+tracc('vetrina-mobile').replace(/"/g,'&quot;')+'">'
-        +(V.copertina ? '<img class="cp-cop" src="'+urlCopertina(V.copertina)+'" alt="">' : '<img src="archie-avatar.png" alt="Archie">')
+        +(V.copertina ? '<img class="cp-cop" src="'+urlCopertina(V.copertina)+'" alt="">' : '<img src="archie-avatar.webp" alt="Archie">')
         +'<div class="cp-t">'+(V.gancioP||V.gancio)+'<small>'+segno+' '+V.occhielloP+' \u00B7 '+V.canale+'</small></div>'
         +'</a>'
         +'<div class="cp-riga">'+riga+'</div>';
