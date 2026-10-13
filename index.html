@@ -8552,6 +8552,12 @@ function buildRegionSelector(){
           }
           return;
         }
+        /* ⚠️ NEL RADAR E NELLE PREVISIONI un clic dentro una regione scelta non la spegne (13/10/2026, suo:
+           «2 regioni, previsioni, tocco un punto che non e' una citta' e si deseleziona la mappa»; vale
+           anche per il radar, sua scelta). Le citta' delle previsioni hanno il loro clic; una regione non
+           scelta si aggiunge come sempre; si toglie con la ✕ sotto «↩ Indietro» (nelle previsioni: Indietro,
+           poi la ✕). Al telefono questi poligoni non ci sono. */
+        if(selIsOn(rk)&&window.innerWidth>900&&/(^| )modo-(radar|prev)( |$)/.test(document.body.className)) return;
         toggleRegionFromMap(rk);
       });
       // lo SPEGNEVA invece di accenderlo (trovato dall'utente il 2/8): per lui
