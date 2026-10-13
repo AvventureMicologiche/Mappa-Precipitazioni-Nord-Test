@@ -79,8 +79,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mappa Pluviometrica Italia, Svizzera, Austria, Francia e Slovenia</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- 13/10/2026: Leaflet dal NOSTRO dominio (stessa versione 1.9.4, copiata da unpkg in lib/): un collegamento a un sito
+     esterno in meno all'apertura, che su un telefono con poca rete vale qualche decimo di secondo, e niente dipendenza da unpkg -->
+<link rel="stylesheet" href="/lib/leaflet/1.9.4/leaflet.css"/>
+<script src="/lib/leaflet/1.9.4/leaflet.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html{height:100%}
@@ -8536,7 +8538,15 @@ function buildRegionSelector(){
     var loader=cfg.geojsonUrl
       ? function(cb2){loadGeoJSONUrl(cfg.geojsonUrl,cb2);}
       : (filterField?loadGeoJSONProvince:loadGeoJSONOnce);
-    loader(function(data){
+    /* ⚠️ I CONFINI ESTERI DOPO QUELLI ITALIANI (13/10/2026, misura della velocita'): sono 16 file, ~385 KB compressi
+       (13 regioni francesi, Svizzera, Austria, Slovenia), e all'apertura si contendevano la rete coi confini italiani,
+       che sono quelli che servono subito. Ora partono quando l'Italia e' arrivata. Una regione estera gia' scelta
+       (link) parte subito. Al telefono questa mappa cliccabile non c'e' e non cambia niente. */
+    var parti=function(fn){
+      if(cfg.geojsonUrl&&!selIsOn(rk)) loadGeoJSONOnce(function(){ setTimeout(function(){ loader(fn); },200); });
+      else loader(fn);
+    };
+    parti(function(data){
       var filter=(cfg.geojsonFilter||'').toLowerCase();
       var feat=null;
       data.features.forEach(function(f){
@@ -9420,7 +9430,17 @@ try{ new MutationObserver(function(){ locCollocaCasella();
    presi quando non danno fastidio a nessuno, cosi' chi tocca la casella li
    trova gia' li' invece di aspettarli. La griglia da 1,4 MB NON parte qui:
    quella serve solo a chi sceglie davvero un paese, e si prende al tocco. */
-setTimeout(function () { try { locCarica(); } catch (e) {} }, 3000);
+/* ⚠️ 13/10/2026: non piu' a 3 secondi fissi ma a mappa finita (misura della velocita' al telefono): su 4G lento un
+   link condiviso impiega 11 s, e i 137 KB dell'elenco partivano a 3 s togliendo banda ai file della pioggia. Si
+   aspetta che il caricamento sia finito (niente isLoading, loader spento), comunque almeno 3 s e al massimo 30.
+   Chi tocca la casella prima li fa partire subito (il focus chiama locCarica). */
+(function precaricaPaesi(t0){
+  var lo=document.getElementById('loader');
+  var fermo=(typeof isLoading==='undefined'||!isLoading)&&(!lo||getComputedStyle(lo).display==='none');
+  var passati=Date.now()-t0;
+  if((fermo&&passati>=3000)||passati>=30000){ try { locCarica(); } catch (e) {} return; }
+  setTimeout(function(){ precaricaPaesi(t0); },500);
+})(Date.now());
 
 function regRender(){
   var sel=document.getElementById('region-select'), lista=document.getElementById('reg-lista');
