@@ -8577,6 +8577,15 @@ function buildRegionSelector(){
            scelta si aggiunge come sempre; si toglie con la ✕ sotto «↩ Indietro» (nelle previsioni: Indietro,
            poi la ✕). Al telefono questi poligoni non ci sono. */
         if(selIsOn(rk)&&window.innerWidth>900&&/(^| )modo-(radar|prev)( |$)/.test(document.body.className)) return;
+        /* ⚠️ E ORA DAPPERTUTTO, ANCHE PRIMA DELLE DATE (13/10/2026, sua regola: «applica la regola anche allo
+           storico»): una regione GIA' SCELTA non si spegne col clic, si toglie solo con la sua ✕ sotto «↩ Indietro»
+           (che dal 13/10 c'e' appena si sceglie la prima). Cercato Ovada, un clic vuoto in Piemonte lo toglieva.
+           Il clic su una regione NON scelta la aggiunge come sempre. */
+        if(selIsOn(rk)&&window.innerWidth>900) return;
+        /* ...e nelle previsioni nemmeno dentro le regioni del POSTO CERCATO (13/10/2026, suo: «cerco Ovada, zooma,
+           clicco un punto vuoto e mi toglie lo zoom»): cercando un paese le sue regioni si vedono ma non risultano
+           «scelte», e il clic ne sceglieva una rifacendo l'inquadratura sulla regione intera. */
+        if(window.innerWidth>900&&document.body.classList.contains('modo-prev')&&window._prevZone&&window._prevZone().indexOf(rk)>=0) return;
         toggleRegionFromMap(rk);
       });
       // lo SPEGNEVA invece di accenderlo (trovato dall'utente il 2/8): per lui
@@ -11348,6 +11357,9 @@ function drawDefaultMarkers(stazioni,cfg){
         if(!rk) return;
         L.DomEvent.stopPropagation(e);
         if(histEl.style.display==='block'&&Date.now()-histOpenedAt>=400){ closeStationHistory(); return; }
+        /* dal 13/10/2026 una regione GIA' SCELTA non si toglie col clic (neanche sul pallino): si toglie con la ✕.
+           Il pallino resta col suo riquadro «Scegli un periodo per vedere i millimetri». */
+        if(selIsOn(rk)) return;
         hideTooltip(); toggleRegionFromMap(rk);
       });
     }(m,s));
@@ -16534,6 +16546,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     try{ m.fitBounds(L.latLngBounds(pts),{paddingTopLeft:tl,paddingBottomRight:br,maxZoom:11,animate:false}); }catch(e){}
   }
   window._prevEntra=entra; window._prevEsci=esci;
+  window._prevZone=zone;   // le regioni mostrate, anche quelle del posto cercato: servono al clic sui confini (13/10/2026)
 
   function nasci(){ if(!window._mapDebug||!window.L||!el('time-panel')){ setTimeout(nasci,150); return; } monta(); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',nasci); else nasci();
