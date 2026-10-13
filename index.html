@@ -7569,8 +7569,11 @@ function updateGuidePulse(){
   var hasPeriod=!!currentLabel;
   // Su desktop il pannello bianco "Seleziona regione" non si mostra mai: al suo
   // posto due pannelli blu che si alternano — l'HINT ("Clicca sulla mappa…")
-  // in fase di scelta, "↩ Indietro" dopo il click della data (= allo zoom).
-  var showBack = nSel>0 && hasPeriod;
+  // finche' non c'e' nessuna regione, "↩ Indietro" (con le regioni e la loro ✕)
+  // appena ce n'e' una. Prima aspettava le date (13/10/2026, suo, versione «V1» dal
+  // mockup: «2 regioni, previsioni, indietro: niente Indietro, le devo cliccare»):
+  // senza date non c'era modo di tornare indietro ne' di togliere una regione col tasto.
+  var showBack = nSel>0;
   rp.style.display='none';
   rp.classList.remove('panel-pulse');
   if(hint){
@@ -8609,8 +8612,8 @@ var _btnResetRegions=document.getElementById('btn-reset-regions');
    radar, faccio indietro e mi ritrovo alla pagina iniziale»). Spegne l'ultimo strato
    acceso sopra la heatmap (scheda, satellite, temperature, boschi, radar) con la
    memoria dei passi (_indietroUnPasso, modulo in fondo); quando resta solo la heatmap
-   torna alla mappa d'apertura come sempre: al computer lo stato «regioni senza date»
-   non ha questo tasto, ci si resterebbe senza. */
+   torna alla mappa d'apertura come sempre (anche dallo stato «regioni senza date», che
+   dal 13/10/2026 ha il tasto anche lui). */
 if(_btnResetRegions) _btnResetRegions.addEventListener('click',function(){
   if(window._indietroUnPasso&&window._indietroUnPasso()) return;
   resetToStart();
