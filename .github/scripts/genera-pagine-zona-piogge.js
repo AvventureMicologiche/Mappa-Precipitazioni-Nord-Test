@@ -270,6 +270,8 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
   function num(n){ return (Math.round(n*10)/10).toFixed(1).replace('.', ','); }
   // Sotto i 10 mm il decimale conta (0,4 non e' zero), sopra no.
   function mm(n){ return n===0 ? '0' : n<10 ? num(n) : String(Math.round(n)); }
+  // La media grande: «meno di 0,1» se arrotondata fa zero ma qualcuno ha misurato pioggia (17/10/2026).
+  function mediaMm(d){ return Math.round(d.media*10)===0 && d.top && d.top.length && d.top[0].mm > 0 ? '<small style="margin:0 .3em 0 0">meno di</small>0,1' : mm(d.media); }
   function mmCella(v){ return v==null ? '–' : num(v) + ' mm'; }
   function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   // «Ieri» solo se e' davvero ieri: il riepilogo puo' essere di altroieri.
@@ -305,7 +307,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
     }
     box.innerHTML = '<div class="verdetto">'
       + '<div class="si">' + (t === 'Ieri' ? 'Ieri, ' + lungo(d.ultimo) : t) + '</div>'
-      + '<div class="gr">' + mm(d.media) + ' mm<small>di media</small></div>'
+      + '<div class="gr">' + mediaMm(d) + ' mm<small>di media</small></div>'
       + '<div class="top">' + dett + '</div>'
       + '<div class="dett">Media di ' + d.stazioni + ' pluviometri della zona.</div>'
       + (t === 'Ieri' ? '' : '<div class="dett">I dati di ieri non sono ancora arrivati da tutti i pluviometri: questa è l’ultima giornata intera.</div>')
@@ -342,7 +344,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
   function scriviPeriodo(k, d){
     var el = document.getElementById('rip' + k + '-media');
     if (!d) { el.innerHTML = '<span class="attesa">dati non disponibili al momento</span>'; return; }
-    el.innerHTML = mm(d.media) + ' mm <small>di media</small>';
+    el.innerHTML = mediaMm(d) + ' mm <small>di media</small>';
     var cont = document.getElementById('rip' + k + '-top');
     if (!d.top || !d.top.length || d.top[0].mm < 1) {
       cont.innerHTML = '<p class="nota">Periodo quasi asciutto in tutta la zona.</p>';
