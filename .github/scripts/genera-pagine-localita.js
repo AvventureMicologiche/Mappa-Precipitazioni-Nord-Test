@@ -553,30 +553,36 @@ ${JS_AGGIORNATO}
       + '<p class="gg-leg"><i style="background:var(--blu)"></i>da 13 a 20 giorni fa &nbsp; '
       + '<i style="background:#b9cbe2"></i>gli altri giorni</p>';
 
-    /* durata e punta del giorno toccato (serieI: solo i giorni da 5 mm in su) */
+    /* durata e punta del giorno toccato (serieI: solo i giorni da 5 mm in su).
+       17/10/2026, suo: la barra risponde SEMPRE, anche dove la stazione non ha
+       le ore (Toscana, Emilia, Trentino, Veneto, Alto Adige): li' dice i
+       millimetri e che l'intensita' manca. Prima il clic non faceva niente. */
     var sI = (j.serieI && j.serieI[ID]) || null;
+    var reteOre = !!(j.serieI && Object.keys(j.serieI).length);
     function rigaInt(n) {
       var el = document.getElementById('ggint');
-      if (!el || !sI) return;
-      var v = s[n-1] || 0, o = sI[n-1];
+      if (!el) return;
+      var v = s[n-1] || 0, o = sI && sI[n-1];
       [].forEach.call(document.querySelectorAll('#grafico .b.scelto'), function (b) { b.classList.remove('scelto'); });
       var b = document.querySelector('#grafico .b[data-n="' + n + '"]');
       if (b) b.classList.add('scelto');
       var t = '<b>' + gg(iso(menoDa(j.oggi, n))) + '</b> · ' + num(v) + ' mm';
       if (o) t += ' in <b>' + o[0] + (o[0] === 1 ? ' ora' : ' ore') + '</b> · punta <b>' + num(o[1]) + ' mm</b> in un’ora';
+      /* sotto i 5 mm serieI non ha niente per scelta: non si dice nulla */
+      else if (v >= 5) t += (sI || reteOre) ? ' · durata non misurata' : ' · intensità non disponibile per questa stazione';
       var dito = !(window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches);
       el.innerHTML = t + '<span class="gg-invito">' + (dito ? 'Tocca' : 'Clicca')
-        + ' una barra per vedere durata e punta di un altro giorno.</span>';
+        + ' una barra per vedere ' + (sI ? 'durata e punta' : 'i millimetri') + ' di un altro giorno.</span>';
     }
-    if (sI) {
-      var nMax = null;
-      for (var k2 in sI) { var n2 = +k2 + 1; if (nMax === null || (s[n2-1] || 0) > (s[nMax-1] || 0)) nMax = n2; }
-      if (nMax) rigaInt(nMax);
-      document.getElementById('grafico').addEventListener('click', function (e) {
-        var b = e.target && e.target.closest && e.target.closest('.b[data-n]');
-        if (b) rigaInt(+b.getAttribute('data-n'));
-      });
-    }
+    /* all'apertura il giorno piu' piovoso: fra quelli con le ore, se ci sono */
+    var nMax = null;
+    if (sI) for (var k2 in sI) { var n2 = +k2 + 1; if (nMax === null || (s[n2-1] || 0) > (s[nMax-1] || 0)) nMax = n2; }
+    else for (var n2b = 1; n2b <= GIORNI; n2b++) if ((s[n2b-1] || 0) > 0 && (nMax === null || s[n2b-1] > s[nMax-1])) nMax = n2b;
+    if (nMax) rigaInt(nMax);
+    document.getElementById('grafico').addEventListener('click', function (e) {
+      var b = e.target && e.target.closest && e.target.closest('.b[data-n]');
+      if (b) rigaInt(+b.getAttribute('data-n'));
+    });
 
     /* ── la pioggia che conta: le 8 giornate, larghe ── */
     document.getElementById('h-conta').textContent = 'Però attenzione: la pioggia che conta è quella caduta ' + dalAl(daG, aG);

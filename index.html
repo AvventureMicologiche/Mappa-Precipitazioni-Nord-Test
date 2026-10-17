@@ -3675,8 +3675,10 @@ function histRenderPioggia(days,serie,selFrom,selTo){
   h+='<div class="sh-bars">';
   days.forEach(function(ds,i){
     var v=vals[i];
-    var sel=(ds>=selFrom&&ds<=selTo);
-    var col=(v===null)?'#262626':(sel?histColor(v):(v>0?'#5f5f5f':'#2f2f2f'));
+    // 17/10/2026, suo: colorate tutte e trenta, non solo quelle del periodo
+    // scelto (prima le altre erano grige). Il periodo non si segna: fascia
+    // chiara e linea gialla sull'asse provate e bocciate.
+    var col=(v===null)?'#262626':histColor(v);
     var hh=(v===null)?2:Math.max(2,Math.round(v/scale*100));
     var lbl=(v===null)?'dato non disponibile':(v+' mm');
     h+='<div class="sh-bar" data-d="'+ds+'" style="height:'+hh+'%;background:'+col+'" title="'+ds+' · '+lbl+'"></div>';
@@ -3737,11 +3739,19 @@ function histRigaIntensita(ds){
   var el=document.getElementById('sh-int'); if(!el||!histCurrent) return;
   var serie=histCurrent.serie,o=ds&&serie[ds];
   document.querySelectorAll('#sh-body .sh-bar.scelto').forEach(function(b){b.classList.remove('scelto');});
-  if(!o||!histReteHaOre(histCurrent.days,serie)){ el.innerHTML=''; return; }
+  // 17/10/2026, suo: la barra risponde SEMPRE, anche dove la stazione non ha le
+  // ore (Toscana, Emilia, Trentino, Veneto, Alto Adige): li' dice i millimetri
+  // e che l'intensita' manca. Prima il clic non faceva niente e sembrava rotto.
+  if(!ds){ el.innerHTML=''; return; }
   var b=document.querySelector('#sh-body .sh-bar[data-d="'+ds+'"]'); if(b) b.classList.add('scelto');
-  var t='<b>'+histGiorno(ds)+'</b> · '+histNum(o.mm)+' mm';
-  if(o.i) t+=' in <b>'+o.i[0]+(o.i[0]===1?' ora':' ore')+'</b> · punta <b>'+histNum(o.i[1])+' mm</b> in un’ora';
-  else if(o.mm>0) t+=' · durata non misurata';
+  var t='<b>'+histGiorno(ds)+'</b> · ';
+  if(!o) t+='dato non disponibile';
+  else{
+    t+=histNum(o.mm)+' mm';
+    // sotto 0,5 mm l'intensita' non si scrive per scelta (vedi lib-intensita.js): niente da dire
+    if(o.i) t+=' in <b>'+o.i[0]+(o.i[0]===1?' ora':' ore')+'</b> · punta <b>'+histNum(o.i[1])+' mm</b> in un’ora';
+    else if(o.mm>=0.5) t+=histReteHaOre(histCurrent.days,serie)?' · durata non misurata':' · intensità non disponibile per questa stazione';
+  }
   // ⚠️ L'invito a toccare: senza, nessuno scopre che le barre rispondono.
   var dito=!(window.matchMedia&&matchMedia('(hover:hover) and (pointer:fine)').matches);
   el.innerHTML=t+'<span class="sh-invito">'+(dito?'Tocca':'Clicca')+' una barra per un altro giorno</span>';
@@ -3788,9 +3798,9 @@ function histMinMaxDaMostrare(c,tipo){
 }
 function histSoloInvito(){
   var el=document.getElementById('sh-int'); if(!el||!histCurrent||el.innerHTML) return;
-  if(!histReteHaOre(histCurrent.days,histCurrent.serie)) return;
   var dito=!(window.matchMedia&&matchMedia('(hover:hover) and (pointer:fine)').matches);
-  el.innerHTML='<span class="sh-invito" style="margin-top:0">'+(dito?'Tocca':'Clicca')+' una barra per durata e punta di quel giorno</span>';
+  el.innerHTML='<span class="sh-invito" style="margin-top:0">'+(dito?'Tocca':'Clicca')+' una barra per '
+    +(histReteHaOre(histCurrent.days,histCurrent.serie)?'durata e punta':'i millimetri')+' di quel giorno</span>';
 }
 // Il giorno da raccontare all'apertura: il piu' piovoso del periodo scelto fra
 // quelli che hanno le ore. Col periodo di un giorno solo la riga resta vuota,
