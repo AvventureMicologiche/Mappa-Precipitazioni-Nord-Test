@@ -5241,6 +5241,9 @@ function loadData(pastDate,nowDate,labelPeriodo){
     alert('Seleziona almeno una regione!');
     return;
   }
+  // senza date non si parte: una chiamata storta moriva piu' sotto su fmtISOLocal(null) con
+  // isLoading gia' a vero, e tutti i tasti del periodo restavano muti (18/10/2026)
+  if(!pastDate||!nowDate) return;
 
   // Statistica analisi per regione (Google Analytics). LE SCELTE, non le
   // espanse: chi analizza «Piemonte-VdA» deve contare UN evento 'piemonte-vda',
@@ -8653,6 +8656,10 @@ function svuotaScelta(){
 }
 /* via l'analisi, le regioni restano: la usa anche il tasto «indietro» del telefono (8/10/2026) */
 function svuotaAnalisi(){
+  // il ricarico differito dei checkbox (550 ms, vedi il gestore del change) non deve piu' partire:
+  // senza questa riga «Indietro» entro mezzo secondo dalla spunta dava l'alert «Seleziona almeno
+  // una regione» o, dalla freccia del browser, loadData(null) e isLoading bloccato (18/10/2026)
+  clearTimeout(window.__multiRegLoadT);
   clearMarkers(); clearHeatmap();
   document.getElementById('legend-panel').style.display='none';
   hideLegendMobile();
@@ -9725,6 +9732,8 @@ document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(
       clearTimeout(window.__multiRegLoadT);
       _ts.textContent='⏳ aggiorno ('+regions.length+(regions.length===1?' regione)':' regioni)');
       window.__multiRegLoadT=setTimeout(function(){
+        // lo stato si rilegge ADESSO: in mezzo secondo l'analisi o le regioni possono essere sparite (18/10/2026)
+        if(!(currentPast&&currentNow)||!getActiveRegions().length) return;
         isLoading=false;
         loadData(currentPast,currentNow,currentLabel);
       }, 550);
@@ -16295,7 +16304,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
 <script>
 (function(){
   var API=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)&&location.port!=='8788' ? 'http://127.0.0.1:8788/api/previsioni' : '/api/previsioni';
-  var API_V='&v=10';   // si alza quando cambia la funzione o l'elenco dei capoluoghi: la cache del browser non rilegge la risposta vecchia
+  var API_V='&v=11';   // si alza quando cambia la funzione o l'elenco dei capoluoghi: la cache del browser non rilegge la risposta vecchia (11: simbolo del giorno, 18/10/2026)
   var GI=['dom','lun','mar','mer','gio','ven','sab'], GIL=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
   var MESI=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
   var MESIL=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];

@@ -48,7 +48,7 @@
 const fs = require('fs');
 const path = require('path');
 const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
-const { bello, slug, slugRegione, elenco, diZona } = require('./lib-nomi.js');
+const { bello, slug, slugRegione, elenco, diZona, postiDellaZona } = require('./lib-nomi.js');
 const { rigaStagione } = require('./lib-stagione.js');
 const { perLink } = require('./lib-vicine.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
@@ -75,17 +75,17 @@ const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 // elenco() e diZona() stanno in lib-nomi.js dal 13/9/2026: le usa anche
 // genera-pagine-zona-piogge.js.
 
-// id del posto -> regione, e id -> slug della sua pagina localita'
-const REG_DI = {};
-const SLUG_DI = {};
-for (const [k, v] of Object.entries(POSTI)) {
-  const sl = slugRegione(v);
-  for (const p of v) { REG_DI[p[0]] = k; SLUG_DI[p[0]] = sl[p[0]]; }
-}
+// regione -> (id -> slug della pagina localita'). ⚠️ Per REGIONE: gli id non sono unici
+// fra regioni (18/10/2026), la regione di ogni pluviometro la decide postiDellaZona per
+// vicinanza al centro della zona (lib-nomi.js).
+const SLUG_REG = {};
+for (const [k, v] of Object.entries(POSTI)) SLUG_REG[k] = slugRegione(v);
 
 function pagina(z) {
   const zslug = slug(z.n);
-  const regioni = [...new Set(z.posti.map(id => REG_DI[id]))].filter(Boolean);
+  const { ids, regDi: REG_DI } = postiDellaZona(POSTI, z);   // senza doppioni
+  const SLUG_DI = id => SLUG_REG[REG_DI[id]][id];
+  const regioni = [...new Set(ids.map(id => REG_DI[id]))];
   const casa = REGIONI.find(x => x.k === z.reg) || REGIONI.find(x => x.k === regioni[0]);
   const nomeReg = casa.nomeTitolo || casa.nome;
 
@@ -121,8 +121,8 @@ function pagina(z) {
   // descrizione niente millimetri: la pagina si rigenera ogni tre mesi e un
   // numero cotto qui sarebbe vecchio; il verdetto lo scrive il browser.
   const DESCR = [
-    'Meteo funghi ' + z.n + ': quanta pioggia è caduta negli ultimi 20 giorni, da ' + z.posti.length + ' pluviometri da bosco, e il verdetto per la crescita dei funghi. Aggiornato ogni mattina.',
-    'Meteo funghi ' + z.n + ': la pioggia degli ultimi 20 giorni da ' + z.posti.length + ' pluviometri da bosco e il verdetto per la crescita dei funghi.',
+    'Meteo funghi ' + z.n + ': quanta pioggia è caduta negli ultimi 20 giorni, da ' + ids.length + ' pluviometri da bosco, e il verdetto per la crescita dei funghi. Aggiornato ogni mattina.',
+    'Meteo funghi ' + z.n + ': la pioggia degli ultimi 20 giorni da ' + ids.length + ' pluviometri da bosco e il verdetto per la crescita dei funghi.',
     'Meteo funghi ' + z.n + ': la pioggia degli ultimi 20 giorni e il verdetto per la crescita dei funghi.',
   ].find(t => t.length <= 158) || ('Funghi ' + z.dove + ' oggi: le piogge degli ultimi 25 giorni.');
 
@@ -136,9 +136,9 @@ function pagina(z) {
 
   // L'anagrafe dei soli posti della zona, cotta dentro: sono da 3 a 21 righe,
   // cioe' meno di un chilobyte. Il file dei giorni porta i numeri.
-  const anag = z.posti.map(id => {
+  const anag = ids.map(id => {
     const p = POSTI[REG_DI[id]].find(x => x[0] === id);
-    return [id, bello(p[1]), p[2], p[3], p[4], p[5], SLUG_DI[id], REG_DI[id]];
+    return [id, bello(p[1]), p[2], p[3], p[4], p[5], SLUG_DI(id), REG_DI[id]];
   });
 
   // ⚠️ IL RITRATTO DI UNA ZONA E' LA MEDIA DEI SUOI PLUVIOMETRI, e si fa solo
@@ -153,7 +153,7 @@ function pagina(z) {
   }
   // 17/10/2026: senza i pluviometri sospesi (esclusi dalla mappa, lib-escluse.js).
   // La Calvana scriveva «il piu' asciutto e' Cantagallo», fermo a zero dal 19/9.
-  const perZona = z.posti
+  const perZona = ids
     .filter(id => !escluso(ESCLUSE, REG_DI[id], POSTI[REG_DI[id]].find(x => x[0] === id) || [id]))
     .map(id => ({ id, n: bello((POSTI[REG_DI[id]].find(x => x[0] === id) || [])[1] || ''),
                   c: (climi[REG_DI[id]] || {})[id] }))
@@ -246,7 +246,7 @@ ${RILIEVO}${QUIZ_REGIONI[casa.k] ? QUIZ_CSS : ''}</style>
 <p class="nota" style="margin-bottom:6px"><a href="${SITO}/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="${SITO}/funghi/${casa.k}/" style="color:var(--blu)">${esc(nomeReg)}</a></p>
 
 <h1>Funghi ${esc(z.dove)} oggi: stanno nascendo?</h1>
-<p class="breve" style="margin-top:-2px">Meteo funghi ${esc(z.n)}: la pioggia vera ${z.posti.length > 1 ? 'di ' + z.posti.length + ' pluviometri da bosco' : 'del pluviometro'}, per capire la crescita dei funghi.</p>
+<p class="breve" style="margin-top:-2px">Meteo funghi ${esc(z.n)}: la pioggia vera ${ids.length > 1 ? 'di ' + ids.length + ' pluviometri da bosco' : 'del pluviometro'}, per capire la crescita dei funghi.</p>
 ${rigaStagione()}
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
@@ -305,7 +305,7 @@ ${haBoschi(casa.k) ? `<h2>Che boschi ci sono nella zona</h2>
 ` : ''}
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano i <b>${z.posti.length} pluviometri</b> di ${esc(elenco(agenzie))} nelle zone
+<p>I millimetri li misurano i <b>${ids.length} pluviometri</b> di ${esc(elenco(agenzie))} nelle zone
 da bosco ${esc(diZona(z.dove))}: quota fra 200 e 1600 metri e almeno il 37% di bosco entro 3 km.
 I numeri in cima sono la media dei pluviometri, giorno per giorno. Ogni pluviometro va alla zona più
 vicina, e a una sola. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>
@@ -315,7 +315,7 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 <a href="${SITO}/zone/${zslug}/">dove ha piovuto ${esc(z.dove)}</a>.</p>
 ${RITRATTO ? `<h2>L'archivio della zona</h2>
 <p>Da ${meseIso(RITRATTO.dal)} a ${meseIso(RITRATTO.al)}, in ${RITRATTO.giorni} giorni di misura, i ${RITRATTO.quanti} pluviometri
-${esc(diZona(z.dove))}${RITRATTO.quanti < z.posti.length ? ' che leggiamo dallo stesso giorno' : ''} hanno contato
+${esc(diZona(z.dove))}${RITRATTO.quanti < ids.length ? ' che leggiamo dallo stesso giorno' : ''} hanno contato
 <b>${migliaia(RITRATTO.media)} mm</b> di pioggia a testa, in media. Il più bagnato è <b>${esc(RITRATTO.alto.n)}</b> con
 ${migliaia(RITRATTO.alto.c.mm)} mm, il più asciutto ${esc(RITRATTO.basso.n)} con ${migliaia(RITRATTO.basso.c.mm)}.
 La giornata più piovosa è stata ${artGiorno(RITRATTO.forte.c.maxData)}<b>${dataBella(RITRATTO.forte.c.maxData)}</b> ${aNome(RITRATTO.forte.n)}${esc(RITRATTO.forte.n)},

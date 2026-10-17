@@ -38,7 +38,7 @@
 const fs = require('fs');
 const path = require('path');
 const { REGIONI, navAltre, briciolaJson } = require('./genera-pagine-regione.js');
-const { LOCALITA, bello, slug, slugRegione } = require('./lib-nomi.js');
+const { LOCALITA, bello, slug, slugRegione, postiDellaZona } = require('./lib-nomi.js');
 const { rigaStagione } = require('./lib-stagione.js');
 // 24/9/2026: verdetto, barre e finestra comuni con le pagine di zona
 const { STILE_NUOVO, JS_COMUNE, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = require('./lib-pagina-funghi.js');
@@ -338,8 +338,8 @@ ${(function(){
      solo quelli di casa la lista diceva un numero e la pagina della zona un
      altro: il 13/9/2026, prima di pubblicare, 41 zone su 114 non tornavano
      (Montefeltro 24,6 mm in lista e 7,9 aprendola). */
-  const regDi = {};
-  Object.keys(POSTI).forEach(k => POSTI[k].forEach(p => { regDi[p[0]] = k; }));
+  // regione di ogni pluviometro per VICINANZA al centro della zona: gli id non sono unici fra regioni (18/10/2026, lib-nomi.js)
+  const postiDi = z => { const { ids, regDi } = postiDellaZona(POSTI, z); return ids.map(id => regDi[id] + ':' + id); };
   return `
 <h2>Le zone dove andare a funghi ${gen}</h2>
 <p class="nota">Le valli da bosco ${gen}, <b>dalla più bagnata</b>. Il numero è la pioggia
@@ -347,7 +347,7 @@ caduta da 13 a 20 giorni fa, in media sui pluviometri della zona: lo stesso che 
 aprendola.</p>
 <ol class="zone-dove" id="zone-dove">
 ` + zz.map(z =>
-  `<li data-posti="${z.posti.filter(id => regDi[id]).map(id => regDi[id] + ':' + id).join(',')}"><a href="${SITO}/funghi/zone/${slug(z.n)}/">${z.n}</a><span class="zmm"></span></li>`).join('\n') + `
+  `<li data-posti="${postiDi(z).join(',')}"><a href="${SITO}/funghi/zone/${slug(z.n)}/">${z.n}</a><span class="zmm"></span></li>`).join('\n') + `
 </ol>`;
 }())}
 

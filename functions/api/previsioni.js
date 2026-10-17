@@ -12,7 +12,7 @@
 const UA = 'precipitazioni.avventuremicologiche.it (avventuremicologiche@gmail.com)';
 const PROB = true;
 const TETTO_CACHE = 3600, MIN_CACHE = 600;
-const VERSIONE = 10; // alzare quando cambia la forma della risposta: la cache vecchia non si rilegge
+const VERSIONE = 11; // alzare quando cambia la forma della risposta: la cache vecchia non si rilegge (11: simbolo del giorno, 18/10/2026)
 const ORIGINI = /^https?:\/\/(precipitazioni\.avventuremicologiche\.it|avventurepluvio(-test)?\.pages\.dev|localhost(:\d+)?|127\.0\.0\.1(:\d+)?)$/;
 const TZ = 'Europe/Rome';
 
@@ -70,19 +70,19 @@ async function perPunto(lat, lon, q, request, conOre, conProb) {
   for (const t of d.properties.timeseries) {
     const { g, h } = oraLocale(t.time);
     const x = t.data.instant.details, n1 = t.data.next_1_hours, n6 = t.data.next_6_hours;
-    const e = giorni[g] || (giorni[g] = { g, mn: 99, mx: -99, mm: 0, sym: {}, pc: null });
+    const e = giorni[g] || (giorni[g] = { g, mn: 99, mx: -99, mm: 0, righe: [], pc: null });
     e.mn = Math.min(e.mn, x.air_temperature); e.mx = Math.max(e.mx, x.air_temperature);
     const s = ((n1 || n6 || {}).summary || {}).symbol_code || null;
     if (n1) { e.mm += n1.details.precipitation_amount; if (conOre) ore.push({ g, h, t: x.air_temperature, mm: n1.details.precipitation_amount, s, v: x.wind_speed, vd: x.wind_from_direction, u: x.relative_humidity, pc: pr[g + '_' + h] ?? null }); }
     else if (n6) { e.mm += n6.details.precipitation_amount; if (conOre) ore.push({ g, h, h6: true, t: x.air_temperature, mm: n6.details.precipitation_amount, s, v: x.wind_speed, vd: x.wind_from_direction, u: x.relative_humidity, pc: maxProb(pr, g, h) }); }
-    if (s && h >= 6 && h <= 18) e.sym[s] = (e.sym[s] || 0) + 1;
+    if (s) e.righe.push({ s, h, n6: !n1 && !!n6, mm: (n1 || n6).details.precipitation_amount || 0 });
     // la % del giorno = il massimo delle sue righe: nelle fasce di 6 h prima si guardavano solo i 4 orari d'inizio e
     // l'intestazione poteva dire meno della tabella (giro dell'8/10: Belluno 8% contro 23%)
     const p = n1 ? pr[g + '_' + h] : n6 ? maxProb(pr, g, h) : pr[g + '_' + h]; if (p != null) e.pc = Math.max(e.pc ?? 0, p);
   }
   const lista = Object.values(giorni).sort((a, b) => a.g < b.g ? -1 : 1).slice(0, 7).map(e => ({
     g: e.g, mn: Math.round(e.mn), mx: Math.round(e.mx), mm: Math.round(e.mm * 10) / 10, pc: e.pc,
-    s: Object.keys(e.sym).sort((a, b) => e.sym[b] - e.sym[a])[0] || null,
+    s: scegliSimbolo(e.righe),
   }));
   const dati = { lat: +la, lon: +lo, q: qq ? +qq : null, agg: d.properties.meta.updated_at, giorni: lista, ...(conOre ? { ore } : {}), fonte: 'MET Norway (ECMWF)' + (PROB ? ' · % Open-Meteo' : ''), ...((PROB && conProb) ? { probStato: prob ? prob.status : 'rete' } : {}) };   // probStato: cosa ha risposto Open-Meteo (8/10, per capire i buchi della %)
 
@@ -124,6 +124,35 @@ function oraLocale(iso) {
   const v = {}; for (const x of p) v[x.type] = x.value;
   return { g: `${v.year}-${v.month}-${v.day}`, h: +v.hour % 24 };
 }
+/* ⚠️ IL SIMBOLO DEL GIORNO (18/10/2026). Fino a oggi si contavano «a voti» le righe con ora 6-18, una
+   riga un voto. Nei primi due giorni MET da' una riga ogni ora e va bene; dal terzo da' righe orarie solo
+   di NOTTE (fino alle 7) e poi fasce di 6 ore alle 8, 14 e 20: i voti diurni diventavano le 6 e le 7
+   (buio: clearsky_night, fair_night) e le fasce delle 8 e delle 14, un voto a testa, pareggio, vinceva la
+   notte. Visto sul sito: Garfagnana 20/10, 🌙 con 44,5 mm, 28,7 dei quali nella fascia delle 20 che non
+   votava. Adesso: ogni riga pesa le ORE che copre fra le 6 e le 21 (un'ora o le sue sei), i simboli
+   notturni contano solo se nel giorno non c'e' niente di diurno (oggi dopo il tramonto), e quando nella
+   finestra c'e' pioggia (≥ 0,5 mm) vince il simbolo piu' severo: chi guarda la scheda chiede «piove?»,
+   e la fascia 14-20 con 15 mm deve battere il «variabile» delle 8-14. Senza pioggia vince il peso. */
+const SEVERITA = [/thunder/, /snow|sleet/, /heavyrain/, /rain|drizzle/, /^cloudy|fog/, /partlycloudy/, /fair|clearsky/];
+function scegliSimbolo(righe) {
+  const peso = {}; let mm = 0;
+  for (const r of righe) {
+    const w = Math.max(0, Math.min(r.h + (r.n6 ? 6 : 1), 21) - Math.max(r.h, 6));   // ore dentro 6-21
+    if (!w) continue;
+    peso[r.s] = (peso[r.s] || 0) + w; mm += r.mm;
+  }
+  let sim = Object.keys(peso);
+  const diurni = sim.filter(s => !/_night$/.test(s)); if (diurni.length) sim = diurni;
+  if (!sim.length) return null;
+  const grado = s => { const i = SEVERITA.findIndex(re => re.test(s)); return i < 0 ? SEVERITA.length : i; };
+  if (mm >= 0.5) {
+    // col piu' severo comanda, ma non un'ora sola: un'ora di nevischio alle 7 non deve coprire un giorno di pioggia
+    const solidi = sim.filter(s => peso[s] >= 2); if (solidi.length) sim = solidi;
+    sim.sort((a, b) => grado(a) - grado(b) || peso[b] - peso[a]);
+  } else sim.sort((a, b) => peso[b] - peso[a] || grado(a) - grado(b));
+  return sim[0];
+}
+export { scegliSimbolo };   // per le prove in locale (prova-simbolo.mjs nello scratchpad della scheda 86)
 function maxProb(pr, g, h) { let m = null; for (let k = 0; k < 6; k++) { const p = pr[g + '_' + (h + k)]; if (p != null) m = Math.max(m ?? 0, p); } return m; }
 function restante(resp) {
   const m = /max-age=(\d+)/.exec(resp.headers.get('Cache-Control') || ''), d = Date.parse(resp.headers.get('Date') || '');

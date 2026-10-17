@@ -467,7 +467,10 @@ temperatura, vento e umidità.</p>
   // ── Le zone: valore dei 7 giorni (per l'ordine) e testo della casella ──
   out.zone = {};
   (j.zone || []).forEach(function (z) {
-    out.zone[z.s] = { val: z.m7, html: mm(z.m7) + ' mm' + (z.m1 != null ? '<small>ieri ' + mm(z.m1) + '</small>' : '') };
+    // «meno di 0,1» anche qui (18/10/2026): prima la lista diceva «ieri 0» in 20 zone dove la pagina
+    // di zona, per lo stesso giorno, diceva «meno di 0,1 mm». Le spie p1/p7 le scrive il riepilogo.
+    var zmm = function (v, piovuto) { return Math.round(v * 10) === 0 && piovuto ? '<small style="margin:0 .3em 0 0">meno di</small>0,1' : mm(v); };
+    out.zone[z.s] = { val: z.m7, html: zmm(z.m7, z.p7) + ' mm' + (z.m1 != null ? '<small>ieri ' + (Math.round(z.m1 * 10) === 0 && z.p1 ? 'meno di 0,1' : mm(z.m1)) + '</small>' : '') };
   });
 
   return out;

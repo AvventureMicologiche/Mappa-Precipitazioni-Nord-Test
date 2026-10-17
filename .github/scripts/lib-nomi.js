@@ -179,4 +179,53 @@ function diZona(dove) {
   return /^[AEIOUÀÈÉÌÒÙ]/.test(n) ? "dell'" + n : 'della ' + n;
 }
 
-module.exports = { LOCALITA, bello, slug, slugRegione, santiIgnoti, elenco, diZona };
+/* ⚠️ GLI ID DEI PLUVIOMETRI NON SONO UNICI FRA REGIONI (18/10/2026). Sono quelli delle
+   agenzie, e sette coincidono: «156» e' Crodo per il Piemonte e Crespano del Grappa per il
+   Veneto, «246» Castelletto Uzzone e Costalta, «219» Castellania e Rovina di Cancia, «132»
+   Varallo e Pescul, «135» Valdisotto, Serole e Rifugio la Guardia, piu' «9» e «200». Le
+   mappe «id -> regione» costruite per solo id (vinceva l'ultima regione in elenco) davano
+   la pagina di Crodo sui Colli Asolani, e tre zone venete contavano un pluviometro due
+   volte perche' l'anagrafe aveva preso anche l'omonimo piemontese. Qui la regola unica:
+   fra le regioni che hanno quell'id si prende quella col pluviometro piu' VICINO al punto
+   (il centro della zona, o il posto stesso). */
+function kmFraPunti(lat1, lon1, lat2, lon2) {
+  return Math.hypot((lat1 - lat2) * 111, (lon1 - lon2) * 111 * Math.cos(lat1 * Math.PI / 180));
+}
+function regioneDelPosto(POSTI, id, lat, lon) {
+  let migliore = null, dm = Infinity;
+  for (const k of Object.keys(POSTI)) for (const p of POSTI[k]) {
+    if (p[0] !== id) continue;
+    const d = lat == null ? 0 : kmFraPunti(lat, lon, p[4], p[5]);
+    if (d < dm) { dm = d; migliore = k; }
+  }
+  return migliore;
+}
+// I pluviometri di una zona, senza doppioni, con la regione di ognuno (vicinanza al centro della zona)
+function postiDellaZona(POSTI, z) {
+  const regDi = {}, ids = [];
+  for (const id of z.posti) {
+    if (regDi[id] !== undefined) continue;
+    const k = regioneDelPosto(POSTI, id, z.lat, z.lon);
+    regDi[id] = k;
+    if (k) ids.push(id);
+  }
+  return { ids, regDi };
+}
+// La zona di un posto: fra quelle che lo elencano, la piu' vicina, e solo entro 80 km
+function zonaDelPosto(ZONE, id, lat, lon) {
+  let migliore = null, dm = 80;
+  for (const z of ZONE) {
+    if (!z.posti.includes(id)) continue;
+    const d = kmFraPunti(lat, lon, z.lat, z.lon);
+    if (d < dm) { dm = d; migliore = z; }
+  }
+  return migliore;
+}
+// Gli id usati da piu' regioni: la spia nel log del giro del mattino (genera-funghi.js)
+function idDoppi(POSTI) {
+  const per = {};
+  for (const k of Object.keys(POSTI)) for (const p of POSTI[k]) (per[p[0]] = per[p[0]] || []).push(k);
+  return Object.entries(per).filter(([, l]) => l.length > 1).map(([id, l]) => `${id} (${l.join(', ')})`);
+}
+
+module.exports = { LOCALITA, bello, slug, slugRegione, santiIgnoti, elenco, diZona, regioneDelPosto, postiDellaZona, zonaDelPosto, idDoppi };

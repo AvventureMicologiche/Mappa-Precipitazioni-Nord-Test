@@ -93,8 +93,17 @@ function etichette(prov) {
   };
 }
 
+/* ⚠️ LA COPERTURA (18/10/2026): un totale su N giorni vale solo se il pluviometro c'era
+   almeno il 60% dei giorni in cui la regione ha il file, la stessa soglia della mappa
+   (copFiltro) e di genera-funghi.js (coperto). Fino a oggi qui entrava chiunque avesse UN
+   giorno: /toscana/ diceva «1º Campagrina 27,6 mm» nei 7 giorni con Campagrina muta
+   dall'11/10 (un giorno su sette), e la Val Gallina metteva Erto e Casso primo nei 7
+   giorni con 17 giorni nulli su 25, mentre la pagina funghi della stessa zona lo
+   escludeva: due pagine, due numeri. Vale per le regioni (riepilogo) e per le zone. */
+const COPERTURA_MIN = 0.6;
+
 function riepilogo(r, giorni, fuori) {
-  const somma = {}, nomi = {}, prov = {};
+  const somma = {}, nomi = {}, prov = {}, conDato = {};
   let presenti = 0, primo = null, ultimo = null;
   for (const g of giorni) {
     let qualcosa = false;
@@ -107,6 +116,7 @@ function riepilogo(r, giorni, fuori) {
         const id = dir + ':' + s.id;
         if (fuori.has(id)) continue;
         somma[id] = (somma[id] || 0) + s.mm;
+        conDato[id] = (conDato[id] || 0) + 1;
         nomi[id] = s.n;
         if (s.p) prov[id] = s.p;
       }
@@ -117,7 +127,7 @@ function riepilogo(r, giorni, fuori) {
     primo = g;
   }
   if (!presenti) return null;
-  const chiavi = Object.keys(somma);
+  const chiavi = Object.keys(somma).filter(id => conDato[id] >= presenti * COPERTURA_MIN);   // copertura, vedi sopra
   if (!chiavi.length) return null;
   const et = etichette(prov);
   const media = chiavi.reduce((a, id) => a + somma[id], 0) / chiavi.length;
@@ -294,14 +304,15 @@ for (const r of REGIONI) {
 // ⚠️ L'ULTIMO GIORNO COMPLETO della zona e' il piu' vecchio fra quelli delle
 // sue regioni: se una delle due non ha ancora consegnato ieri, si parte da
 // altroieri per tutte, e non si mescolano giorni diversi nella stessa media.
-const { slug, bello } = require('./lib-nomi.js');
+const { slug, bello, postiDellaZona } = require('./lib-nomi.js');
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
 const USCITA_ZONE = path.join(USCITA, 'zone');
 fs.mkdirSync(USCITA_ZONE, { recursive: true });
 
-const regDi = {}, nomeDi = {};
-for (const k of Object.keys(POSTI)) for (const p of POSTI[k]) { regDi[p[0]] = k; nomeDi[p[0]] = bello(p[1]); }
+// nomi per REGIONE+id: gli id non sono unici fra regioni (18/10/2026, vedi lib-nomi.js)
+const nomeDi = {};
+for (const k of Object.keys(POSTI)) for (const p of POSTI[k]) nomeDi[k + ':' + p[0]] = bello(p[1]);
 
 const cache = {};
 function datiRegione(k) {
@@ -343,7 +354,7 @@ let zScritte = 0, zSaltate = [];
 const zonePer = {};
 for (const r of REGIONI) if (perRegione[r.k]) zonePer[r.k] = [];
 for (const z of ZONE) {
-  const ids = z.posti.filter(id => regDi[id]);
+  const { ids, regDi } = postiDellaZona(POSTI, z);   // senza doppioni, regione per vicinanza
   const regs = [...new Set(ids.map(id => regDi[id]))];
   const inizi = regs.map(k => datiRegione(k).da).filter(x => x !== null);
   if (!ids.length || !inizi.length) { zSaltate.push(z.n); continue; }
@@ -355,13 +366,15 @@ for (const z of ZONE) {
     const giorniConDati = new Set();
     for (const id of ids) {
       const rd = datiRegione(regDi[id]);
-      let somma = 0, visti = 0;
+      let somma = 0, visti = 0, disponibili = 0;
       for (let i = da; i < da + n; i++) {
+        if (rd.mm[i].size) disponibili++;     // la sua regione ha il file quel giorno
         const v = rd.mm[i].get(id);
         if (v == null) continue;
         somma += v; visti++; giorniConDati.add(i);
       }
-      (valori[id] = valori[id] || [null, null, null])[j] = visti ? uno(somma) : null;
+      // copertura (18/10/2026): sotto il 60% dei giorni della sua regione il totale non vale, come in genera-funghi
+      (valori[id] = valori[id] || [null, null, null])[j] = visti && visti >= disponibili * COPERTURA_MIN ? uno(somma) : null;
     }
     const con = ids.filter(id => valori[id][j] != null);
     if (!con.length) continue;
@@ -373,7 +386,7 @@ for (const z of ZONE) {
       giorni: dentro.length,
       primo: giorni[dentro[dentro.length - 1]],
       ultimo: giorni[dentro[0]],
-      top: ord.slice(0, 3).map(id => ({ n: nomeDi[id], mm: valori[id][j] })),
+      top: ord.slice(0, 3).map(id => ({ n: nomeDi[regDi[id] + ':' + id], mm: valori[id][j] })),
     };
   }
   if (!periodi['7']) { zSaltate.push(z.n); continue; }
@@ -398,8 +411,12 @@ for (const z of ZONE) {
   // ⚠️ Nella lista della regione vanno gli STESSI numeri della pagina di zona:
   // chi clicca deve trovare il numero che ha appena letto (la lezione delle 41
   // zone su 114 che non tornavano, 13/9/2026).
+  // p1/p7/p30 (18/10/2026): «qualcuno ha misurato» nel periodo, per scrivere «meno di 0,1»
+  // invece di «0» nella lista della regione, come fa la scheda grande (regola dei decimali del 17/10)
+  const piovuto = n => !!(periodi[n] && periodi[n].top.length && periodi[n].top[0].mm > 0);
   if (zonePer[z.reg]) zonePer[z.reg].push({ s: slug(z.n), n: z.n, ultimo: giorni[da],
-    m1: (periodi['1'] || {}).media ?? null, m7: periodi['7'].media, m30: (periodi['30'] || {}).media ?? null });
+    m1: (periodi['1'] || {}).media ?? null, m7: periodi['7'].media, m30: (periodi['30'] || {}).media ?? null,
+    p1: piovuto('1'), p7: piovuto('7'), p30: piovuto('30') });
 }
 console.log(`${zScritte} riepiloghi di zona scritti su ${ZONE.length}${zSaltate.length ? ', SALTATE: ' + zSaltate.join(', ') : ''}`);
 

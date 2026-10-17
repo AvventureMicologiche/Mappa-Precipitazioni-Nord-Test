@@ -55,7 +55,7 @@ const fs = require('fs');
 const path = require('path');
 const { REGIONI } = require('./genera-pagine-regione.js');
 const { DATI, oggiItalia, giorniIndietro, leggi } = require('./lib-giorni.js');
-const { LOCALITA, bello, slugRegione } = require('./lib-nomi.js');
+const { LOCALITA, bello, slugRegione, idDoppi } = require('./lib-nomi.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
 // I pluviometri che la mappa esclude perche' misurano male (lib-escluse.js):
@@ -478,3 +478,6 @@ for (const k of Object.keys(POSTI)) {
 
 console.log(`\n${scritti} file scritti su ${Object.keys(POSTI).length}` +
   (saltati.length ? ', SALTATI: ' + saltati.join(', ') : ''));
+// la spia (18/10/2026): gli id usati da piu' regioni si risolvono per vicinanza (lib-nomi.js), ma devono restare pochi e noti
+const doppi = idDoppi(POSTI);
+if (doppi.length) console.log(`⚠️ id usati da piu' regioni (${doppi.length}): ${doppi.join('; ')}`);

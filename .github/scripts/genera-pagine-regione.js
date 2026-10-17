@@ -853,7 +853,15 @@ if (require.main === module) {
     const cotta = /<div id="attesa" style="display:none">/.test(html);
     console.log(`  /${r.k}/  ${r.nome} — ${r.staz} staz., ${r.dirs.join('+')}${cotta ? ' · cotta' : COTTE.includes(r.k) ? ' · guscio (riepilogo assente o vecchio)' : ' · guscio (fuori da COTTE)'}`);
   });
-  if (solo.length) process.exit(0);
+  if (solo.length) {
+    /* ⚠️ 18/10/2026: il giro del mattino (SOLO=cotte) riscrive ANCHE le sitemap. Il
+       lastmod delle pagine cotte e' la data dei numeri dentro (genera-sitemap.js legge
+       il bottone «ieri»), quindi cambia con loro; pagine-regione.yml le committa dal
+       17/10, ma fino a oggi questo exit stava PRIMA di scriviSitemap e il git add
+       trovava due file mai toccati. La mappa del sito (fonti, guida) resta fuori. */
+    if (process.env.SOLO === 'cotte') console.log(`sitemap.xml con ${scriviSitemap(SITO, radice)} indirizzi.`);
+    process.exit(0);
+  }
   mappaDelSito(radice);
   const voci = scriviSitemap(SITO, radice);
   console.log(`\n${REGIONI.length} pagine scritte, sitemap.xml con ${voci} indirizzi.`);

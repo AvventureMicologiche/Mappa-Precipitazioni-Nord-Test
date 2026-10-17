@@ -33,7 +33,7 @@
 const fs = require('fs');
 const path = require('path');
 const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
-const { bello, slug, slugRegione, elenco, diZona } = require('./lib-nomi.js');
+const { bello, slug, slugRegione, elenco, diZona, postiDellaZona } = require('./lib-nomi.js');
 const { perLink } = require('./lib-vicine.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
@@ -61,10 +61,12 @@ const CANALE = 'https://www.youtube.com/@avventuremicologiche';
 
 const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
-const REG_DI = {}, SLUG_DI = {}, ANAG = {};
+// Per REGIONE: gli id non sono unici fra regioni (18/10/2026), la regione di ogni
+// pluviometro la decide postiDellaZona per vicinanza al centro della zona (lib-nomi.js).
+const SLUG_REG = {}, ANAG_REG = {};
 for (const [k, v] of Object.entries(POSTI)) {
-  const sl = slugRegione(v);
-  for (const p of v) { REG_DI[p[0]] = k; SLUG_DI[p[0]] = sl[p[0]]; ANAG[p[0]] = p; }
+  SLUG_REG[k] = slugRegione(v); ANAG_REG[k] = {};
+  for (const p of v) ANAG_REG[k][p[0]] = p;
 }
 
 function scrivi(dest, testo) {
@@ -74,7 +76,8 @@ function scrivi(dest, testo) {
 
 function pagina(z) {
   const zslug = slug(z.n);
-  const ids = z.posti.filter(id => REG_DI[id]);
+  const { ids, regDi: REG_DI } = postiDellaZona(POSTI, z);   // senza doppioni
+  const SLUG_DI = id => SLUG_REG[REG_DI[id]][id], ANAG = id => ANAG_REG[REG_DI[id]][id];
   const regioni = [...new Set(ids.map(id => REG_DI[id]))];
   const casa = REGIONI.find(x => x.k === z.reg) || REGIONI.find(x => x.k === regioni[0]);
   const nomeReg = casa.nomeTitolo || casa.nome;
@@ -108,8 +111,8 @@ function pagina(z) {
 
   // Le righe della tabella, cotte coi loro link: i nomi e i link li legge
   // Google, i millimetri e l'ordine li mette il javascript.
-  const righe = ids.map(id => ANAG[id]).sort((a, b) => bello(a[1]).localeCompare(bello(b[1]), 'it'))
-    .map(p => `<tr data-id="${esc(p[0])}"><td><a href="${SITO}/funghi/${REG_DI[p[0]]}/${SLUG_DI[p[0]]}/">${esc(bello(p[1]))}</a>` +
+  const righe = ids.map(id => ANAG(id)).sort((a, b) => bello(a[1]).localeCompare(bello(b[1]), 'it'))
+    .map(p => `<tr data-id="${esc(p[0])}"><td><a href="${SITO}/funghi/${REG_DI[p[0]]}/${SLUG_DI(p[0])}/">${esc(bello(p[1]))}</a>` +
       `<span class="com">${esc(p[2])} · ${p[3]} m</span></td>` +
       `<td class="mm v1">–</td><td class="mm v7">–</td><td class="mm v30">–</td></tr>`).join('\n');
 
@@ -400,7 +403,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
 if (require.main === module) {
   let n = 0;
   for (const z of ZONE) {
-    if (!z.posti.some(id => REG_DI[id])) continue;
+    if (!postiDellaZona(POSTI, z).ids.length) continue;
     scrivi(path.join(RADICE, 'zone', slug(z.n), 'index.html'), pagina(z));
     n++;
   }

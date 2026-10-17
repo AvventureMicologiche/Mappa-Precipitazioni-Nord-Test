@@ -56,8 +56,9 @@ const { clima, buono, periodo, dataBella, meseBello, migliaia, virgola, artGiorn
 // singolo pluviometro alla valle. `dove` e' gia' scritto con la preposizione
 // giusta («in Garfagnana», «nelle Langhe»): non si ricostruisce, si usa.
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
-const ZONA_DI = {};
-for (const z of ZONE) for (const id of z.posti) ZONA_DI[id] = z;
+// ⚠️ per id E vicinanza, non per solo id (18/10/2026): «156» e' Crodo in Piemonte e Crespano
+// del Grappa in Veneto, e la pagina di Crodo finiva sui Colli Asolani. Vedi lib-nomi.js.
+const { zonaDelPosto } = require('./lib-nomi.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const RADICE = path.join(__dirname, '..', '..');
@@ -208,7 +209,7 @@ function pagina(r, posto, slug, sl) {
     `Meteo funghi ${nomePosto}${SIGLA_T}: quanta pioggia è caduta negli ultimi 20 giorni, misurata dal pluviometro, e il verdetto per la crescita dei funghi.`,
     `Meteo funghi ${nomePosto}${SIGLA_T}: la pioggia degli ultimi 20 giorni e il verdetto per la crescita dei funghi.`,
   ].find(t => t.length <= 158) || `Funghi ${DOVE} oggi: le piogge degli ultimi 25 giorni.`;
-  const ZONA = ZONA_DI[ID];
+  const ZONA = zonaDelPosto(ZONE, ID, lat, lon);
   const PIOGGE_URL = ZONA ? `${SITO}/zone/${slugDaNome(ZONA.n)}/` : `${SITO}/${REG}/`;
   const PIOGGE_DOVE = ZONA ? ZONA.dove : `${r.prep} ${r.nomeTitolo || r.nome}`;
 
@@ -416,7 +417,7 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 <p>Ti serve un altro periodo? Per ieri e gli ultimi 30 giorni c’è
 <a href="${PIOGGE_URL}">dove ha piovuto ${esc(PIOGGE_DOVE)}</a>.${ZONA ? ` Questo pluviometro sta
 ${esc(ZONA.dove)}: <a href="${SITO}/funghi/zone/${slugDaNome(ZONA.n)}/">guarda tutta la zona</a>,
-con i suoi ${ZONA.posti.length} pluviometri insieme.` : ''}</p>
+con i suoi ${new Set(ZONA.posti).size} pluviometri insieme.` : ''}</p>
 ${RITRATTO ? `<h2>L'archivio di questo pluviometro</h2>
 <p><b>${periodo(RITRATTO)}</b>, in ${RITRATTO.giorni} giorni di misura, ${bagnate(RITRATTO)}
 Il giorno più bagnato è stato ${artGiorno(RITRATTO.maxData)}<b>${dataBella(RITRATTO.maxData)}</b>, con
