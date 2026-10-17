@@ -169,5 +169,10 @@ function periodo(c) {
 // Basta l'archivio di questa stazione per scriverne qualcosa?
 const buono = c => !!c && c.giorni >= GIORNI_MINIMI;
 
-module.exports = { clima, buono, periodo, dataBella, meseBello, migliaia, virgola,
+// 17/10/2026: «il 9 ottobre» ma «l’8», «l’11», «l’1»; «a Erto» ma «ad Azzano».
+// Prima uscivano «il 8 ottobre» e «a Azzano» nei testi d'archivio.
+function artGiorno(iso) { const g = Number(String(iso || '').split('-')[2]); return (g === 1 || g === 8 || g === 11) ? 'l’' : 'il '; }
+function aNome(n) { return /^[Aa]/.test(String(n || '')) ? 'ad ' : 'a '; }
+
+module.exports = { artGiorno, aNome, clima, buono, periodo, dataBella, meseBello, migliaia, virgola,
   GIORNI_MINIMI, MESI };

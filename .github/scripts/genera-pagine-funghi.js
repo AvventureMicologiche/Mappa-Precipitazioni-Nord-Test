@@ -45,6 +45,9 @@ const { STILE_NUOVO, JS_COMUNE, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = 
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
+// I pluviometri esclusi dalla mappa (lib-escluse.js): cotti nella pagina per il ripiego daiFile (17/10/2026)
+const { escluse, escluso } = require('./lib-escluse.js');
+const ESCLUSE = escluse(path.join(__dirname, '..', '..'));
 // Le zone, per non lasciarle orfane: fino al 3/9/2026 le 114 pagine di zona
 // non le linkava NESSUNO e le trovava solo la sitemap. E' lo stesso errore
 // delle 42 pagine di agosto, ripetuto identico.
@@ -438,6 +441,7 @@ ${navAltre('funghi')}
         «Reppia (Ne)»: uniforme su diciannove regioni, un'informazione in meno
         qui. Deciso il 2/9/2026. */
   var POSTI = ${JSON.stringify(posti.map(p => [p[0], bello(p[1])].concat(p.slice(2))))};
+  var SOSPESI = ${JSON.stringify(Object.fromEntries(posti.filter(p => escluso(ESCLUSE, r.k, p)).map(p => [p[0], 1])))};
 
   var REG = '${r.k}', DIRS = ${JSON.stringify(r.dirs)}, NOME = ${JSON.stringify(nome)};
   /* In locale i dati si leggono dalla cartella del repo, sul sito dal raw di
@@ -486,14 +490,17 @@ ${JS_COMUNE}
     .catch(function(){ return null; })
     .then(function(j){
       if (!j || !j.serie || !j.oggi) return;
-      var ids = POSTI.map(function(p){ return p[0]; }).filter(function(id){ return j.serie[id]; });
+      /* 17/10/2026: senza i pluviometri sospesi (esclusi dalla mappa, vedi lib-escluse.js) */
+      var ids = POSTI.map(function(p){ return p[0]; }).filter(function(id){ return j.serie[id] && !(j.sospesi && j.sospesi[id]); });
       if (!ids.length) return;
       var s = [], sT = [];
       for (var i = 0; i < GIORNI; i++) {
-        var t = 0, n = 0, a = 0, b = 0, m = 0;
+        var t = 0, n = 0, a = 0, b = 0, ma = 0, mb = 0;
+        // minima e massima contate a parte: una delle due puo' mancare (17/10/2026)
         ids.forEach(function(id){ var v = j.serie[id][i]; if (v != null) { t += v; n++; }
-          var tt = ((j.serieT || {})[id] || [])[i]; if (tt) { a += tt[0]; b += tt[1]; m++; } });
-        s.push(n ? uno(t / n) : 0); sT.push(m ? [uno(a / m), uno(b / m)] : null);
+          var tt = ((j.serieT || {})[id] || [])[i]; if (tt) { if (tt[0] != null) { a += tt[0]; ma++; } if (tt[1] != null) { b += tt[1]; mb++; } } });
+        s.push(n ? t / n : null)   /* 17/10/2026: valore pieno, si arrotonda solo scrivendo (prima 16 zone su 114 non tornavano con la lista regionale) */;
+        sT.push(ma || mb ? [ma ? uno(a / ma) : null, mb ? uno(b / mb) : null] : null);
       }
       var o = j.oggi, daG = iso(menoDa(o,20)), aG = iso(menoDa(o,13)), ieri = iso(menoDa(o,1));
       var lk = function(dal, al){ return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al + '&s=p'; };
@@ -567,7 +574,13 @@ ${JS_COMUNE}
           if (perGiorno[n] && perGiorno[n][id] >= FORTE) return { g:n, mm:uno(perGiorno[n][id]) };
         return null;
       }
-      mostra(POSTI.map(function(p){
+      /* ⚠️ GEMELLO DI genera-funghi.js (17/10/2026): fuori i sospesi e chi ha dati in
+         meno del 60% dei giorni (sui 25 e sulla finestra 13-20), se no un giorno
+         assente conta come asciutto e il posto scende in classifica. */
+      function coperto(id, da, a){ var c = 0, d = 0;
+        for (var n = da; n >= a; n--) if (perGiorno[n]) { d++; if (perGiorno[n][id] != null) c++; }
+        return d > 0 && c >= d * 0.6; }
+      mostra(POSTI.filter(function(p){ return !SOSPESI[p[0]] && coperto(p[0], GIORNI, 1) && coperto(p[0], 20, 13); }).map(function(p){
         return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5],
           mm:somma(20,13,p[0]), mm7:somma(7,1,p[0]), mm25:somma(GIORNI,1,p[0]),
           forte:ultimaForte(p[0]) };
@@ -580,7 +593,7 @@ ${JS_COMUNE}
     var g=document.getElementById('guasto');
     g.style.display='block';
     g.innerHTML='⚠️ Non riesco a leggere l’archivio delle piogge in questo momento'
-      + (quanti ? ' (trovati solo '+quanti+' giorni su '+GIORNI+')' : '')
+      + (quanti ? ' (trovat'+(quanti===1?'o solo 1 giorno':'i solo '+quanti+' giorni')+' su '+GIORNI+')' : '')
       + '. Non dipende da te: riprova fra qualche minuto, oppure vai direttamente '
       + '<a href="'+MAPPA+'?r='+REG+'">sulla mappa</a>.';
   }
@@ -593,7 +606,7 @@ ${JS_COMUNE}
      regioni: e quello che mostra la pagina della zona, e chi clicca deve
      ritrovarlo uguale. I file delle regioni vicine sono pochi chilobyte e si
      chiedono solo se una zona li nomina. */
-  function ordinaZone(tutte){
+  function ordinaZone(tutte, oggiISO){
     var lista = document.getElementById('zone-dove');
     if (!lista) return;
     var mm = {};
@@ -612,7 +625,9 @@ ${JS_COMUNE}
         .catch(function(){ return null; })
         .then(function(j){
           mm[reg] = {};
-          if (j && j.posti) Object.keys(j.posti).forEach(function(id){ mm[reg][id] = j.posti[id][0]; });
+          /* 17/10/2026: solo se e' dello STESSO giorno, se no la finestra 13-20 e' spostata;
+             la parte della zona resta fuori dalla media, come quando il file non arriva */
+          if (j && j.posti && (!oggiISO || j.oggi === oggiISO)) Object.keys(j.posti).forEach(function(id){ mm[reg][id] = j.posti[id][0]; });
         });
     })).then(function(){
       voci.forEach(function(li){
@@ -631,7 +646,7 @@ ${JS_COMUNE}
   }
 
   function mostra(righe, oggiISO){
-    ordinaZone(righe);
+    ordinaZone(righe, oggiISO);
     righe = righe.sort(function(a,b){ return b.mm - a.mm; }).slice(0, QUANTI);
     var maxMm = Math.max.apply(null, righe.map(function(r){ return Math.max(r.mm, r.mm7, r.mm25); }).concat([1]));
 
@@ -669,7 +684,8 @@ ${JS_COMUNE}
        averla gia' detta. Qui restano le DATE, che in cima non ci possono
        stare: cambiano ogni giorno e il titolo e' cotto nel guscio. */
     document.getElementById('finestra2').innerHTML =
-      'Gli otto giorni della finestra sono fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG)
+      'Gli otto giorni della finestra sono fra ' + ilGg(daG).slice(0, -gg(daG).length) + '<b>' + gg(daG) + '</b> e '
+      + ilGg(aG).slice(0, -gg(aG).length) + '<b>' + gg(aG)
       + '</b>. Sono millimetri misurati a terra dai pluviometri, non una previsione.';
 
     var trs = righe.map(function(r, i){
@@ -700,11 +716,15 @@ ${JS_COMUNE}
 
     /* ⚠️ «15 dei primi 15» era un modo storto di dire «tutti»: quando il conto
        coincide col totale si scrive cosi', se no «12 posti su 15». */
-    var conForte = righe.filter(function(r){ return r.forte; }).length;
+    /* ⚠️ SOLO QUELLE DEI 25 GIORNI (17/10/2026): «forte» arriva anche da piu'
+       indietro (genera-funghi la cerca fino a 150 giorni), e nel Veneto la nota
+       diceva «tutti e 15 negli ultimi 25 giorni» con le piogge di 30-37 giorni fa. */
+    var conForte = righe.filter(function(r){ return r.forte && r.forte.g <= GIORNI; }).length;
     var quanti = (conForte === righe.length)
       ? 'Tutti e ' + righe.length + ' i posti in elenco ne hanno avuta una'
       : (conForte === 0)
         ? 'Nessuno dei ' + righe.length + ' posti in elenco ne ha avuta una'
+        : conForte === 1 ? '1 posto su ' + righe.length + ' ne ha avuta una'
         : conForte + ' posti su ' + righe.length + ' ne hanno avuta una';
     document.getElementById('notaforte').innerHTML =
       '«Pioggia forte» vuol dire almeno ' + FORTE + ' mm in un giorno solo: è quella che bagna '

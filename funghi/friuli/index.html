@@ -194,6 +194,8 @@ nav.altre a{color:var(--blu);}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
 .img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
 .tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
@@ -396,6 +398,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
         «Reppia (Ne)»: uniforme su diciannove regioni, un'informazione in meno
         qui. Deciso il 2/9/2026. */
   var POSTI = [["46.30922_13.05566","Alesso","UD",200,46.3092,13.0557,61],["46.19888_12.61183","Andreis","PN",423,46.1989,12.6118,61],["46.48616_13.18959","Bevorchians","UD",757,46.4862,13.1896,70],["46.25861_12.70056","Ca' Selva Invaso","PN",476,46.2586,12.7006,78],["46.29222_12.71611","Ca' Zul Invaso","PN",582,46.2922,12.7161,81],["46.25922_12.83135","Campone","PN",452,46.2592,12.8314,71],["46.29734_12.60182","Casera Podestine","PN",1017,46.2973,12.6018,53],["osmer_CDP","Cave del Predil","UD",911,46.4371,13.5677,44],["osmer_CHI","Chievolis","PN",378,46.2545,12.734,68],["46.45216_13.37191","Chiout","UD",904,46.4522,13.3719,68],["46.40478_13.31748","Chiusaforte","UD",404,46.4048,13.3175,72],["46.28565_12.44085","Cimolais","PN",641,46.2856,12.4409,55],["46.26356_12.50019","Claut Tre Pini","PN",555,46.2636,12.5002,70],["46.22990_12.91797","Clauzetto","PN",583,46.2299,12.918,67],["46.58555_12.83911","Collina (Forni Avoltri)","UD",1278,46.5856,12.8391,56],["46.51697_12.86492","Comeglians","UD",572,46.517,12.8649,57],["46.34791_13.39220","Coritis","UD",616,46.3479,13.3922,61],["osmer_ENE","Enemonzo","UD",439,46.4104,12.8625,52],["46.27774_12.37064","Erto e Casso","PN",871,46.2777,12.3706,67],["46.58674_12.77375","Forni Avoltri","UD",895,46.5867,12.7738,72],["46.39282_12.71476","Forni di Sotto","UD",659,46.3928,12.7148,58],["46.46682_13.66207","Fusine Alpe del Lago","UD",1001,46.4668,13.6621,52],["46.49603_13.68688","Fusine Valico","UD",847,46.496,13.6869,61],["46.50789_13.44178","Malborghetto F.Fella","UD",761,46.5079,13.4418,64],["46.23591_12.67612","Malga Valine","PN",1329,46.2359,12.6761,63],["46.21791_12.77319","Meduno","PN",251,46.2179,12.7732,44],["46.40013_13.18510","Moggio Udinese","UD",288,46.4001,13.1851,56],["46.24110_12.99317","Monte Prat","UD",781,46.2411,12.9932,57],["46.19449_13.53292","Montemaggiore","UD",972,46.1945,13.5329,47],["osmer_MUS","Musi","UD",638,46.3127,13.2747,53],["46.19596_12.65909","Pala Barzana","PN",854,46.196,12.6591,53],["46.52811_13.01204","Paluzza","UD",577,46.5281,13.012,61],["46.55973_13.27515","Passo Pramollo","UD",1530,46.5597,13.2752,38],["46.41878_13.57375","Passo Predil","UD",1125,46.4188,13.5738,49],["46.52640_13.12100","Paularo","UD",635,46.5264,13.121,71],["46.52188_12.77518","Pesariis","UD",776,46.5219,12.7752,68],["osmer_PIA","Piancavallo","PN",1272,46.1149,12.5244,51],["46.24283_13.38005","Platischis","UD",709,46.2428,13.3801,75],["46.26681_13.32935","Ponte Sambo","UD",391,46.2668,13.3294,54],["46.19283_12.48901","Prescudin","PN",650,46.1928,12.489,68],["46.51946_12.91741","Ravascletto","UD",900,46.5195,12.9174,64],["46.37610_13.29567","Resia","UD",460,46.3761,13.2957,73],["46.34521_12.59097","Rifugio Pussa","PN",933,46.3452,12.591,71],["46.31249_12.93636","San Francesco T.P.","PN",386,46.3125,12.9364,76],["46.16490_13.64252","San Volfango","UD",725,46.1649,13.6425,69],["46.40279_13.37535","Saletto","UD",501,46.4028,13.3754,61],["45.76547_13.68680","San Pelagio","TS",225,45.7655,13.6868,50],["46.46727_12.68200","Sauris di Sopra","UD",1407,46.4673,12.682,47],["46.35890_12.94029","Sella Chianzutan","UD",951,46.3589,12.9403,54],["46.46221_13.44854","Sella di Sompdogna","UD",1394,46.4622,13.4485,40],["46.39060_13.47604","Sella Nevea","UD",1173,46.3906,13.476,43],["osmer_SGO","Sgonico-Zgonik","TS",271,45.738,13.7421,49],["osmer_TAR","Tarvisio","UD",794,46.5108,13.5519,70],["46.57636_13.00688","Timau","UD",816,46.5764,13.0069,56],["osmer_343700","Tolmezzo Meteo","UD",350,46.4218,13.0219,49],["46.29817_12.79312","Tramonti di Sotto","PN",340,46.2982,12.7931,72],["46.24056_12.75028","Tramonti Invaso","PN",303,46.2406,12.7503,63],["46.30650_13.40035","Uccea","UD",645,46.3065,13.4004,62],["46.54317_13.47489","Val Ugovizza","UD",1138,46.5432,13.4749,68],["46.33526_13.13480","Venzone Tagliamento","UD",225,46.3353,13.1348,52],["46.41124_12.90668","Villa Santina T.Degano","UD",369,46.4112,12.9067,41]];
+  var SOSPESI = {};
 
   var REG = 'friuli', DIRS = ["friuli-osmer","meteohub-friuli"], NOME = "Friuli";
   /* In locale i dati si leggono dalla cartella del repo, sul sito dal raw di
@@ -418,6 +421,8 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
   function menoDa(s, n){ var p = String(s).split("-");
     var d = new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return d; }
   function gg(s){ var p = String(s).split("-"); return (+p[2]) + " " + MESI[(+p[1])-1]; }
+  /* «il 9 ottobre», ma «l’8», «l’11», «l’1» (17/10/2026: si leggeva «il 8 ottobre») */
+  function ilGg(s){ var d = +String(s).split("-")[2]; return (d === 1 || d === 8 || d === 11 ? "l’" : "il ") + gg(s); }
   /* «dal 4 all'11 settembre»: il mese una volta sola, l'apostrofo davanti a 1, 8, 11 */
   function dalAl(a, b){ var pa = a.split("-"), pb = b.split("-"), da = +pa[2], db = +pb[2];
     var al = (db === 1 || db === 8 || db === 11) ? "all’" : "al ";
@@ -437,12 +442,23 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
              {fino:1e9,t:"Ha piovuto benissimo",c:"#2e9d44"}];
 
   function scriviVerdetto(s, oggi, href, sotto){
+    /* 17/10/2026: un giorno senza nessun dato e' null, non zero. Sotto il 60% di
+       giorni con dato (la soglia della mappa) niente verdetto: lo si dice. */
+    var g20 = 0; for (var n0 = 20; n0 >= 1; n0--) if (s[n0-1] != null) g20++;
+    if (g20 < 12) {
+      document.getElementById("verdetto").innerHTML = "<div class=\"verdetto\">"
+        + "<div class=\"si\"><span class=\"pallino\" style=\"background:#8a97a6\"></span>Dati incompleti</div>"
+        + "<div class=\"dett\">Negli ultimi 20 giorni i pluviometri hanno mandato dati solo <b>" + g20 + (g20 === 1 ? " giorno" : " giorni")
+        + "</b>: il totale sarebbe più basso del vero.</div>"
+        + "<div class=\"capo-btns\"><a class=\"capo-btn\" href=\"" + href + "\">Vedi sulla mappa</a></div></div>";
+      return;
+    }
     var m20 = somma(s, 20, 1);
     var liv = LIV.filter(function(l){ return m20 < l.fino; })[0], k = LIV.indexOf(liv);
     var big = [];
     for (var n = 20; n >= 1; n--) if ((s[n-1]||0) >= 10) big.push(n);
     var dett = big.length
-      ? big.slice(-4).map(function(n){ return "<b>" + num(s[n-1]) + " mm</b> il " + gg(iso(menoDa(oggi,n))); }).join(", ") + "."
+      ? big.slice(-4).map(function(n){ return "<b>" + num(s[n-1]) + " mm</b> " + ilGg(iso(menoDa(oggi,n))); }).join(", ") + "."
       : "Nessuna giornata sopra i 10 mm.";
     var sc = "";
     for (var q = 0; q < 4; q++) sc += "<div" + (q <= k ? " style=\"background:" + liv.c + "\"" : "") + "></div>";
@@ -469,13 +485,19 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
       .forEach(function (c) { if (!lab[c-1] && !lab[c+1]) lab[c] = 1; });
     for (var i = GIORNI; i >= 1; i--) {
       var v = s[i-1] || 0, d = menoDa(oggi, i), cl = (i >= 13 && i <= 20) ? " dentro" : "";
+      if (s[i-1] == null) {   /* nessun dato: barra vuota tratteggiata, non uno zero (17/10/2026) */
+        barre += "<div class=\"b nodato\" title=\"" + gg(iso(d)) + ": nessun dato\"><i></i></div>";
+        ax += "<span>" + ((i === GIORNI || i === 1 || i % 5 === 0) ? (d.getDate() + "/" + (d.getMonth()+1)) : "") + "</span>";
+        continue;
+      }
       barre += "<div class=\"b" + cl + "\" title=\"" + gg(iso(d)) + ": " + num(v) + " mm\">" + (lab[i] ? "<b>" + num(v) + "</b>" : "")
         + "<i style=\"height:" + Math.max(2, Math.round(v/max*86)) + "%\"></i></div>";
       ax += "<span>" + ((i === GIORNI || i === 1 || i % 5 === 0) ? (d.getDate() + "/" + (d.getMonth()+1)) : "") + "</span>";
     }
     document.getElementById("grafico").innerHTML = "<div class=\"gg\">" + barre + "</div><div class=\"gg-x\">" + ax + "</div>"
       + "<p class=\"gg-leg\"><i style=\"background:var(--blu)\"></i>da 13 a 20 giorni fa &nbsp; "
-      + "<i style=\"background:#b9cbe2\"></i>gli altri giorni</p>";
+      + "<i style=\"background:#b9cbe2\"></i>gli altri giorni"
+      + (s.slice(0, GIORNI).some(function(x){ return x == null; }) ? " &nbsp; <i style=\"background:none;border:1px dashed #9fb3cc;box-sizing:border-box\"></i>nessun dato" : "") + "</p>";
     return ax;
   }
 
@@ -484,13 +506,15 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
     var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13));
     document.getElementById("h-conta").textContent = "Però attenzione: la pioggia che conta è quella caduta " + dalAl(daG, aG);
     document.getElementById("p-conta").innerHTML = "Il fungo spunta 12-13 giorni dopo una bella pioggia: "
-      + "i funghi di oggi nascono da queste otto giornate, che qui hanno fatto " + quale + " <b>" + num(somma(s,20,13)) + " mm</b>.";
+      + "i funghi di oggi nascono da queste otto giornate, che qui hanno fatto " + quale + " <b>" + num(somma(s,20,13)) + " mm</b>"
+      + (function(){ var m = 0; for (var q = 20; q >= 13; q--) if (s[q-1] == null) m++; return m ? " (ma di " + m + (m === 1 ? " giorno" : " giorni") + " il dato manca)" : ""; })() + ".";
     var fmax = 1;
     for (var n = 20; n >= 13; n--) fmax = Math.max(fmax, s[n-1]||0);
     var fb = "", fx = "";
     for (var n2 = 20; n2 >= 13; n2--) {
       var v = s[n2-1] || 0, d = menoDa(oggi, n2);
-      fb += "<div class=\"c\">" + (v > 0 ? "<b>" + num(v) + "</b>" : "") + "<i style=\"height:" + Math.max(2, Math.round(v/fmax*88)) + "%\"></i></div>";
+      if (s[n2-1] == null) fb += "<div class=\"c nodato\" title=\"nessun dato\"><b>–</b><i></i></div>";
+      else fb += "<div class=\"c\">" + (v > 0 ? "<b>" + num(v) + "</b>" : "") + "<i style=\"height:" + Math.max(2, Math.round(v/fmax*88)) + "%\"></i></div>";
       fx += "<span>" + GS[d.getDay()] + "<br>" + d.getDate() + "/" + (d.getMonth()+1) + "</span>";
     }
     document.getElementById("finestra").innerHTML = "<div class=\"fin\">" + fb + "</div><div class=\"fin-x\">" + fx + "</div>";
@@ -499,7 +523,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
   /* minima e massima degli ultimi 25 giorni, a linee */
   function scriviTemperatura(sT, ax, nota){
     var vals = [];
-    for (var q = 0; q < GIORNI; q++) if (sT[q]) { vals.push(sT[q][0]); vals.push(sT[q][1]); }
+    for (var q = 0; q < GIORNI; q++) if (sT[q]) { if (sT[q][0] != null) vals.push(sT[q][0]); if (sT[q][1] != null) vals.push(sT[q][1]); }
     if (!vals.length) return;
     var lo = Math.floor(Math.min.apply(null, vals) - 1), hi = Math.ceil(Math.max.apply(null, vals) + 1);
     var passi = [1, 2, 2.5, 5, 10], p = 10;
@@ -512,14 +536,14 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
     }
     function linea(c){ var pz = [], cur = [];
       for (var i = GIORNI; i >= 1; i--) { var d = sT[i-1];
-        if (!d) { if (cur.length > 1) pz.push(cur.join(" ")); cur = []; continue; }
+        if (!d || d[c] == null) { if (cur.length > 1) pz.push(cur.join(" ")); cur = []; continue; }
         cur.push(((GIORNI - i) / (GIORNI - 1) * 100).toFixed(1) + "," + y(d[c]).toFixed(1)); }
       if (cur.length > 1) pz.push(cur.join(" "));
       return pz; }
     ["min","max"].forEach(function(cl, c){ linea(c).forEach(function(pts){ svg += "<polyline class=\"" + cl + "\" points=\"" + pts + "\"/>"; }); });
     var ieri = sT[0];
     document.getElementById("meteo").innerHTML = "<h2>Temperatura degli ultimi 25 giorni</h2>"
-      + (ieri ? "<p class=\"breve\">Ieri minima <b>" + num(ieri[0]) + "°</b>, massima <b>" + num(ieri[1]) + "°</b>" + (nota ? ", " + nota : "") + ".</p>" : "")
+      + (ieri ? "<p class=\"breve\">Ieri minima <b>" + (ieri[0] == null ? "—" : num(ieri[0]) + "°") + "</b>, massima <b>" + (ieri[1] == null ? "—" : num(ieri[1]) + "°") + "</b>" + (nota ? ", " + nota : "") + ".</p>" : "")
       + "<div class=\"tt-box\"><svg class=\"tt\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\">" + svg + "</svg>"
       + "<div class=\"tt-y\">" + et + "</div></div><div class=\"gg-x tt-x\">" + ax + "</div>"
       + "<p class=\"gg-leg\"><i style=\"background:#d1603d\"></i>massima &nbsp; <i style=\"background:#3a6ea8\"></i>minima</p>";
@@ -559,14 +583,17 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
     .catch(function(){ return null; })
     .then(function(j){
       if (!j || !j.serie || !j.oggi) return;
-      var ids = POSTI.map(function(p){ return p[0]; }).filter(function(id){ return j.serie[id]; });
+      /* 17/10/2026: senza i pluviometri sospesi (esclusi dalla mappa, vedi lib-escluse.js) */
+      var ids = POSTI.map(function(p){ return p[0]; }).filter(function(id){ return j.serie[id] && !(j.sospesi && j.sospesi[id]); });
       if (!ids.length) return;
       var s = [], sT = [];
       for (var i = 0; i < GIORNI; i++) {
-        var t = 0, n = 0, a = 0, b = 0, m = 0;
+        var t = 0, n = 0, a = 0, b = 0, ma = 0, mb = 0;
+        // minima e massima contate a parte: una delle due puo' mancare (17/10/2026)
         ids.forEach(function(id){ var v = j.serie[id][i]; if (v != null) { t += v; n++; }
-          var tt = ((j.serieT || {})[id] || [])[i]; if (tt) { a += tt[0]; b += tt[1]; m++; } });
-        s.push(n ? uno(t / n) : 0); sT.push(m ? [uno(a / m), uno(b / m)] : null);
+          var tt = ((j.serieT || {})[id] || [])[i]; if (tt) { if (tt[0] != null) { a += tt[0]; ma++; } if (tt[1] != null) { b += tt[1]; mb++; } } });
+        s.push(n ? t / n : null)   /* 17/10/2026: valore pieno, si arrotonda solo scrivendo (prima 16 zone su 114 non tornavano con la lista regionale) */;
+        sT.push(ma || mb ? [ma ? uno(a / ma) : null, mb ? uno(b / mb) : null] : null);
       }
       var o = j.oggi, daG = iso(menoDa(o,20)), aG = iso(menoDa(o,13)), ieri = iso(menoDa(o,1));
       var lk = function(dal, al){ return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al + '&s=p'; };
@@ -640,7 +667,13 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
           if (perGiorno[n] && perGiorno[n][id] >= FORTE) return { g:n, mm:uno(perGiorno[n][id]) };
         return null;
       }
-      mostra(POSTI.map(function(p){
+      /* ⚠️ GEMELLO DI genera-funghi.js (17/10/2026): fuori i sospesi e chi ha dati in
+         meno del 60% dei giorni (sui 25 e sulla finestra 13-20), se no un giorno
+         assente conta come asciutto e il posto scende in classifica. */
+      function coperto(id, da, a){ var c = 0, d = 0;
+        for (var n = da; n >= a; n--) if (perGiorno[n]) { d++; if (perGiorno[n][id] != null) c++; }
+        return d > 0 && c >= d * 0.6; }
+      mostra(POSTI.filter(function(p){ return !SOSPESI[p[0]] && coperto(p[0], GIORNI, 1) && coperto(p[0], 20, 13); }).map(function(p){
         return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5],
           mm:somma(20,13,p[0]), mm7:somma(7,1,p[0]), mm25:somma(GIORNI,1,p[0]),
           forte:ultimaForte(p[0]) };
@@ -653,7 +686,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
     var g=document.getElementById('guasto');
     g.style.display='block';
     g.innerHTML='⚠️ Non riesco a leggere l’archivio delle piogge in questo momento'
-      + (quanti ? ' (trovati solo '+quanti+' giorni su '+GIORNI+')' : '')
+      + (quanti ? ' (trovat'+(quanti===1?'o solo 1 giorno':'i solo '+quanti+' giorni')+' su '+GIORNI+')' : '')
       + '. Non dipende da te: riprova fra qualche minuto, oppure vai direttamente '
       + '<a href="'+MAPPA+'?r='+REG+'">sulla mappa</a>.';
   }
@@ -666,7 +699,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
      regioni: e quello che mostra la pagina della zona, e chi clicca deve
      ritrovarlo uguale. I file delle regioni vicine sono pochi chilobyte e si
      chiedono solo se una zona li nomina. */
-  function ordinaZone(tutte){
+  function ordinaZone(tutte, oggiISO){
     var lista = document.getElementById('zone-dove');
     if (!lista) return;
     var mm = {};
@@ -685,7 +718,9 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
         .catch(function(){ return null; })
         .then(function(j){
           mm[reg] = {};
-          if (j && j.posti) Object.keys(j.posti).forEach(function(id){ mm[reg][id] = j.posti[id][0]; });
+          /* 17/10/2026: solo se e' dello STESSO giorno, se no la finestra 13-20 e' spostata;
+             la parte della zona resta fuori dalla media, come quando il file non arriva */
+          if (j && j.posti && (!oggiISO || j.oggi === oggiISO)) Object.keys(j.posti).forEach(function(id){ mm[reg][id] = j.posti[id][0]; });
         });
     })).then(function(){
       voci.forEach(function(li){
@@ -704,7 +739,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
   }
 
   function mostra(righe, oggiISO){
-    ordinaZone(righe);
+    ordinaZone(righe, oggiISO);
     righe = righe.sort(function(a,b){ return b.mm - a.mm; }).slice(0, QUANTI);
     var maxMm = Math.max.apply(null, righe.map(function(r){ return Math.max(r.mm, r.mm7, r.mm25); }).concat([1]));
 
@@ -742,7 +777,8 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
        averla gia' detta. Qui restano le DATE, che in cima non ci possono
        stare: cambiano ogni giorno e il titolo e' cotto nel guscio. */
     document.getElementById('finestra2').innerHTML =
-      'Gli otto giorni della finestra sono fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG)
+      'Gli otto giorni della finestra sono fra ' + ilGg(daG).slice(0, -gg(daG).length) + '<b>' + gg(daG) + '</b> e '
+      + ilGg(aG).slice(0, -gg(aG).length) + '<b>' + gg(aG)
       + '</b>. Sono millimetri misurati a terra dai pluviometri, non una previsione.';
 
     var trs = righe.map(function(r, i){
@@ -773,11 +809,15 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Friuli Venezia Giul
 
     /* ⚠️ «15 dei primi 15» era un modo storto di dire «tutti»: quando il conto
        coincide col totale si scrive cosi', se no «12 posti su 15». */
-    var conForte = righe.filter(function(r){ return r.forte; }).length;
+    /* ⚠️ SOLO QUELLE DEI 25 GIORNI (17/10/2026): «forte» arriva anche da piu'
+       indietro (genera-funghi la cerca fino a 150 giorni), e nel Veneto la nota
+       diceva «tutti e 15 negli ultimi 25 giorni» con le piogge di 30-37 giorni fa. */
+    var conForte = righe.filter(function(r){ return r.forte && r.forte.g <= GIORNI; }).length;
     var quanti = (conForte === righe.length)
       ? 'Tutti e ' + righe.length + ' i posti in elenco ne hanno avuta una'
       : (conForte === 0)
         ? 'Nessuno dei ' + righe.length + ' posti in elenco ne ha avuta una'
+        : conForte === 1 ? '1 posto su ' + righe.length + ' ne ha avuta una'
         : conForte + ' posti su ' + righe.length + ' ne hanno avuta una';
     document.getElementById('notaforte').innerHTML =
       '«Pioggia forte» vuol dire almeno ' + FORTE + ' mm in un giorno solo: è quella che bagna '

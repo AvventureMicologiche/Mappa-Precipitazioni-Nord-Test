@@ -194,6 +194,8 @@ nav.altre a{color:var(--blu);}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
 .img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
 .tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
@@ -420,6 +422,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
         «Reppia (Ne)»: uniforme su diciannove regioni, un'informazione in meno
         qui. Deciso il 2/9/2026. */
   var POSTI = [["TOS11000114","Abbadia San Salvatore - Laghetto Verde 1","SI",910,42.883,11.662,64],["TOS07000001","Abbadia San Salvatore","SI",855,42.894,11.669,62],["TOS11000094","Acquerino","PT",950,44.023,11.025,82],["TOS11000077","Albano","PT",465,43.877,10.86,39],["TOS03000775","Alpe di Poti","AR",971,43.471,11.975,69],["TOS01002085","Anqua","SI",440,43.215,10.987,73],["TOS11000079","Argentario","GR",615,42.387,11.17,37],["TOS02000083","Azzano","LU",430,44.024,10.229,56],["TOS01000811","Badia Agnano","AR",261,43.436,11.649,49],["TOS01000621","Badia Prataglia","AR",845,43.794,11.877,69],["TOS30233300","Badia Tedalda","AR",843,43.686,12.134,61],["TOS01001263","Baggio","PT",525,43.991,10.964,72],["TOS11000092","Bagni di Lucca","LU",565,44.034,10.6,66],["TOS11000022","Barberino","FI",430,43.512,11.236,47],["TOS30287500","Barco","FI",780,44.054,11.392,67],["TOS30248000","Bibbiana","FI",786,44.124,11.508,78],["TOS09000023","Bosco di Rossano","MS",670,44.305,9.798,62],["TOS02000351","Boscolungo","PT",1345,44.139,10.674,58],["TOS01000611","Camaldoli","AR",1111,43.81,11.817,75],["TOS02000241","Campagrina","LU",807,44.059,10.259,37],["TOS01002779","Campiano","GR",500,43.102,11.039,76],["TOS11000029","Campocecina","MS",960,44.116,10.104,52],["TOS02004115","Camporgiano","LU",390,44.163,10.338,45],["TOS01002171","Canneto 9","PI",300,43.202,10.739,59],["TOS01001151","Cantagallo","PO",555,44.022,11.079,74],["TOS02000161","Capanne di Sillano","LU",1035,44.256,10.31,78],["TOS02000077","Cardoso","LU",390,44.01,10.319,67],["TOS11000096","Careggine","LU",1100,44.104,10.337,74],["TOS30248400","Casaglia","FI",749,44.037,11.518,72],["TOS02000221","Casone di Profecchia","LU",1297,44.21,10.447,68],["TOS02004215","Casotti di Cutigliano","PT",593,44.098,10.752,69],["TOS03001286","Castellina in Chianti","SI",572,43.473,11.288,49],["TOS11000056","Castelnuovo Val di Cecina","PI",770,43.204,10.881,42],["TOS11000058","Castiglione d'Orcia","SI",672,42.961,11.618,60],["TOS01001102","Cercina","FI",305,43.844,11.261,42],["TOS02000081","Cervaiole","LU",1140,44.039,10.246,55],["TOS02000515","Chiatri","LU",285,43.874,10.379,61],["TOS03001802","Cimone - Monte Serra","PI",705,43.731,10.553,55],["TOS09001143","Comano","MS",734,44.304,10.12,63],["TOS01001041","Consuma","FI",955,43.784,11.585,59],["TOS02000483","Convalle","LU",285,43.952,10.423,75],["TOS30290100","Cottede","PO",770,44.105,11.171,65],["TOS03000755","Croce di Lignano","AR",817,43.406,11.883,54],["TOS09001220","Equi Terme","MS",250,44.169,10.15,66],["TOS02000332","Fabbriche di Vallico","LU",345,44,10.432,80],["TOS01001273","Fattoria Iavello","PO",518,43.959,11.07,64],["TOS02000281","Fornovolasco","LU",493,44.029,10.361,75],["TOS03001965","Gabbro","LI",245,43.5,10.413,58],["TOS11000087","Gaiole in Chianti","SI",360,43.457,11.422,51],["TOS02000078","Gallena","LU",345,43.992,10.252,59],["TOS01001161","Gavigno","PO",752,44.07,11.093,71],["TOS01002071","Gerfalco","GR",740,43.143,10.974,77],["TOS11000108","Giogo","FI",880,44.047,11.389,69],["TOS02000494","Gombitelli","LU",475,43.92,10.37,59],["TOS09001130","Iera","MS",538,44.333,10.034,67],["TOS01001679","La Madonnina","PI",607,43.442,10.953,65],["TOS01000639","La Verna","AR",1125,43.707,11.931,46],["TOS30209600","Lago Paduli","MS",1168,44.338,10.138,53],["TOS11000023","Lamole","FI",536,43.542,11.355,63],["TOS01001189","Le Croci di Calenzano","FI",421,43.945,11.214,43],["TOS01002161","Libbiano","PI",440,43.281,10.807,56],["TOS03002643","Madonna a Brolio","SI",440,43.414,11.456,64],["TOS01000921","Mangona","FI",540,44.05,11.196,72],["TOS30250000","Marradi","FI",323,44.074,11.609,45],["TOS11000050","Massa Marittima Filetto","GR",670,43.122,10.922,75],["TOS09001200","Mazzola","MS",460,44.211,10.117,50],["TOS02000359","Melo","PT",1000,44.133,10.743,60],["TOS03001385","Mensano","SI",365,43.291,11.071,57],["TOS01002011","Miemo","PI",420,43.41,10.671,79],["TOS09001210","Minucciano","LU",666,44.171,10.208,72],["TOS01001253","Montagnana","PT",385,43.954,10.823,64],["TOS03002733","Montalcinello","SI",380,43.203,11.077,38],["TOS02000171","Monte Castellino","LU",858,44.235,10.333,77],["TOS01000916","Monte di Fò","FI",820,44.08,11.281,65],["TOS30287700","Monte Faggiola","FI",882,44.136,11.493,76],["TOS03000757","Monte Ginezzo","AR",921,43.275,12.088,52],["TOS03001001","Monte Giovi","FI",960,43.877,11.448,80],["TOS03002621","Monte Oliveto","SI",267,43.175,11.545,41],["TOS02000421","Monte Oppio","PT",810,44.042,10.833,69],["TOS11000511","Monte Perone","LI",713,42.775,10.191,40],["TOS11000512","Monte Pisano Nord","LU",216,43.794,10.522,52],["TOS02000275","Monte Romecchio","LU",1591,44.164,10.521,79],["TOS11000020","Monte Serra","PI",890,43.747,10.554,61],["TOS03000653","Montecchio","AR",585,43.58,11.903,62],["TOS01000591","Montemignaio","AR",745,43.74,11.621,83],["TOS01002371","Monterotondo","GR",595,43.146,10.863,56],["TOS03002742","Monticiano La Pineta","SI",450,43.134,11.242,79],["TOS11000099","Novegigola","MS",420,44.222,9.9,68],["TOS01000831","Nusenna in Chianti","SI",560,43.45,11.531,80],["TOS01001711","Orciatico","PI",312,43.434,10.725,51],["TOS11000097","Orecchiella","LU",1169,44.2,10.36,64],["TOS01000601","Ortignano","AR",346,43.682,11.752,64],["TOS02000177","Orto di Donna","LU",1070,44.135,10.197,51],["TOS02000329","Palagnana","LU",861,43.996,10.363,68],["TOS19000703","Palazzo del Pero 1","AR",410,43.421,11.979,66],["TOS30290400","Palazzuolo sul Senio","FI",496,44.11,11.542,68],["TOS09001110","Parana","MS",695,44.282,9.863,78],["TOS03002789","Pari","GR",330,43.063,11.323,47],["TOS09000024","Passo del Brattello","MS",955,44.456,9.823,77],["TOS09001160","Passo del Cerreto","MS",1250,44.304,10.217,45],["TOS09001053","Passo della Cisa","MS",1014,44.466,9.92,66],["TOS02000155","Passo Pradarena","LU",1580,44.285,10.301,68],["TOS09001061","Patigno","MS",744,44.355,9.764,53],["TOS11000080","Pentolina","SI",450,43.209,11.18,67],["TOS01000056","Pian della Fioba","MS",860,44.057,10.207,51],["TOS01000881","Pian di Scò","AR",395,43.65,11.555,38],["TOS11000034","Piazza al Serchio","LU",660,44.192,10.292,42],["TOS09000022","Pietra Piccata","MS",955,44.34,9.823,74],["TOS11000040","Pieve Santo Stefano","AR",750,43.674,12.102,47],["TOS03001841","Pizzorne","LU",938,43.934,10.585,85],["TOS01001445","Poggio Aglione","FI",441,43.53,10.928,50],["TOS03001135","Poggio alla Croce","FI",500,43.65,11.392,46],["TOS02000075","Pomezzana","LU",600,43.985,10.315,72],["TOS01002115","Ponsano","PI",340,43.365,10.99,58],["TOS01000931","Ponte a Olmo","FI",459,44.049,11.304,71],["TOS02004231","Ponte di Lucchio","PT",350,44.044,10.72,74],["TOS30150800","Pracchia","PT",620,44.055,10.907,81],["TOS03002073","Prata","GR",528,43.076,10.985,67],["TOS11000078","Pratomagno","AR",695,43.57,11.724,65],["TOS02000441","Prunetta","PT",960,44.008,10.804,78],["TOS01001284","Radda in Chianti","SI",495,43.486,11.379,44],["TOS01000979","Razzuolo","FI",637,44.032,11.468,79],["TOS03000278","Renaio","LU",1013,44.109,10.527,92],["TOS02000079","Retignano","LU",420,44.005,10.272,69],["TOS03000715","Rigomagno","SI",395,43.263,11.695,42],["TOS11000059","Ripa d'Orcia","SI",506,43.027,11.582,43],["TOS01002231","Riparbella","PI",230,43.367,10.602,48],["TOS09001088","Rocca Sigillina","MS",484,44.366,9.956,66],["TOS03002531","Roccastrada","GR",504,43.016,11.165,39],["TOS11000015","Roccatederighi","GR",475,43.033,11.064,67],["TOS01000991","Ronta","FI",380,44.009,11.436,62],["TOS01001059","Santa Brigida all'Opaco","FI",407,43.849,11.402,54],["TOS01005377","San Dalmazio","PI",247,43.253,10.944,47],["TOS03001137","San Donato in Collina","FI",382,43.721,11.381,41],["TOS03002476","San Ferdinando","GR",334,43.07,10.815,72],["TOS11000052","Santa Fiora 1","GR",813,42.854,11.556,40],["TOS02000431","San Marcello Pistoiese","PT",618,44.055,10.789,65],["TOS11000032","San Pietro a Marcigliano","LU",238,43.906,10.593,43],["TOS01000651","Salutio","AR",315,43.615,11.813,62],["TOS03001241","Sammommè","PT",785,44.037,10.92,72],["TOS01002181","Sassa","PI",398,43.258,10.691,57],["TOS01002381","Sassetta","LI",351,43.124,10.64,72],["TOS02000401","Selva dei Porci","PT",755,44.072,10.794,61],["TOS01001561","Serra Pistoiese","PT",790,43.972,10.756,75],["TOS01001379","Simignano","SI",420,43.292,11.167,70],["TOS11000091","Sorana","PT",560,43.969,10.716,68],["TOS03002819","Spineta","SI",633,42.951,11.853,37],["TOS11000105","Stia Monte","AR",838,43.832,11.701,72],["TOS09001230","Tendola","MS",410,44.156,10.034,60],["TOS02000339","Tereglio","LU",590,44.06,10.568,85],["TOS02000064","Terrinca","LU",840,44.029,10.276,58],["TOS03000855","Trappola","AR",869,43.619,11.653,64],["TOS30290700","Treppio","PT",727,44.075,11.035,78],["TOS09001180","Turano","MS",500,44.246,10.152,57],["TOS02000191","Vagli di Sotto","LU",581,44.109,10.289,80],["TOS01000941","Vaglia","FI",340,43.908,11.275,61],["TOS03002640","Vagliagli","SI",524,43.421,11.346,63],["TOS11000503","Vaiano acquedotto","PO",322,43.965,11.147,45],["TOS01001961","Valle Benedetta","LI",300,43.521,10.404,56],["TOS02000108","Vallelunga","LU",671,43.969,10.336,56],["TOS01000901","Vallombrosa","FI",980,43.731,11.557,62],["TOS01000571","Vallucciole","AR",745,43.842,11.657,71],["TOS01001171","Vernio","PO",695,44.057,11.121,67],["TOS02000203","Villacollemandina","LU",502,44.159,10.386,41],["TOS01001011","Villore","FI",365,43.964,11.541,75],["TOS01001371","Vinci","FI",250,43.786,10.96,40],["TOS10002910","Vivo d'Orcia","SI",842,42.935,11.638,66]];
+  var SOSPESI = {"TOS01001151":1,"TOS03001802":1,"TOS03001965":1,"TOS09001110":1,"TOS01002181":1,"TOS01001561":1};
 
   var REG = 'toscana', DIRS = ["toscana"], NOME = "Toscana";
   /* In locale i dati si leggono dalla cartella del repo, sul sito dal raw di
@@ -442,6 +445,8 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
   function menoDa(s, n){ var p = String(s).split("-");
     var d = new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return d; }
   function gg(s){ var p = String(s).split("-"); return (+p[2]) + " " + MESI[(+p[1])-1]; }
+  /* «il 9 ottobre», ma «l’8», «l’11», «l’1» (17/10/2026: si leggeva «il 8 ottobre») */
+  function ilGg(s){ var d = +String(s).split("-")[2]; return (d === 1 || d === 8 || d === 11 ? "l’" : "il ") + gg(s); }
   /* «dal 4 all'11 settembre»: il mese una volta sola, l'apostrofo davanti a 1, 8, 11 */
   function dalAl(a, b){ var pa = a.split("-"), pb = b.split("-"), da = +pa[2], db = +pb[2];
     var al = (db === 1 || db === 8 || db === 11) ? "all’" : "al ";
@@ -461,12 +466,23 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
              {fino:1e9,t:"Ha piovuto benissimo",c:"#2e9d44"}];
 
   function scriviVerdetto(s, oggi, href, sotto){
+    /* 17/10/2026: un giorno senza nessun dato e' null, non zero. Sotto il 60% di
+       giorni con dato (la soglia della mappa) niente verdetto: lo si dice. */
+    var g20 = 0; for (var n0 = 20; n0 >= 1; n0--) if (s[n0-1] != null) g20++;
+    if (g20 < 12) {
+      document.getElementById("verdetto").innerHTML = "<div class=\"verdetto\">"
+        + "<div class=\"si\"><span class=\"pallino\" style=\"background:#8a97a6\"></span>Dati incompleti</div>"
+        + "<div class=\"dett\">Negli ultimi 20 giorni i pluviometri hanno mandato dati solo <b>" + g20 + (g20 === 1 ? " giorno" : " giorni")
+        + "</b>: il totale sarebbe più basso del vero.</div>"
+        + "<div class=\"capo-btns\"><a class=\"capo-btn\" href=\"" + href + "\">Vedi sulla mappa</a></div></div>";
+      return;
+    }
     var m20 = somma(s, 20, 1);
     var liv = LIV.filter(function(l){ return m20 < l.fino; })[0], k = LIV.indexOf(liv);
     var big = [];
     for (var n = 20; n >= 1; n--) if ((s[n-1]||0) >= 10) big.push(n);
     var dett = big.length
-      ? big.slice(-4).map(function(n){ return "<b>" + num(s[n-1]) + " mm</b> il " + gg(iso(menoDa(oggi,n))); }).join(", ") + "."
+      ? big.slice(-4).map(function(n){ return "<b>" + num(s[n-1]) + " mm</b> " + ilGg(iso(menoDa(oggi,n))); }).join(", ") + "."
       : "Nessuna giornata sopra i 10 mm.";
     var sc = "";
     for (var q = 0; q < 4; q++) sc += "<div" + (q <= k ? " style=\"background:" + liv.c + "\"" : "") + "></div>";
@@ -493,13 +509,19 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
       .forEach(function (c) { if (!lab[c-1] && !lab[c+1]) lab[c] = 1; });
     for (var i = GIORNI; i >= 1; i--) {
       var v = s[i-1] || 0, d = menoDa(oggi, i), cl = (i >= 13 && i <= 20) ? " dentro" : "";
+      if (s[i-1] == null) {   /* nessun dato: barra vuota tratteggiata, non uno zero (17/10/2026) */
+        barre += "<div class=\"b nodato\" title=\"" + gg(iso(d)) + ": nessun dato\"><i></i></div>";
+        ax += "<span>" + ((i === GIORNI || i === 1 || i % 5 === 0) ? (d.getDate() + "/" + (d.getMonth()+1)) : "") + "</span>";
+        continue;
+      }
       barre += "<div class=\"b" + cl + "\" title=\"" + gg(iso(d)) + ": " + num(v) + " mm\">" + (lab[i] ? "<b>" + num(v) + "</b>" : "")
         + "<i style=\"height:" + Math.max(2, Math.round(v/max*86)) + "%\"></i></div>";
       ax += "<span>" + ((i === GIORNI || i === 1 || i % 5 === 0) ? (d.getDate() + "/" + (d.getMonth()+1)) : "") + "</span>";
     }
     document.getElementById("grafico").innerHTML = "<div class=\"gg\">" + barre + "</div><div class=\"gg-x\">" + ax + "</div>"
       + "<p class=\"gg-leg\"><i style=\"background:var(--blu)\"></i>da 13 a 20 giorni fa &nbsp; "
-      + "<i style=\"background:#b9cbe2\"></i>gli altri giorni</p>";
+      + "<i style=\"background:#b9cbe2\"></i>gli altri giorni"
+      + (s.slice(0, GIORNI).some(function(x){ return x == null; }) ? " &nbsp; <i style=\"background:none;border:1px dashed #9fb3cc;box-sizing:border-box\"></i>nessun dato" : "") + "</p>";
     return ax;
   }
 
@@ -508,13 +530,15 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
     var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13));
     document.getElementById("h-conta").textContent = "Però attenzione: la pioggia che conta è quella caduta " + dalAl(daG, aG);
     document.getElementById("p-conta").innerHTML = "Il fungo spunta 12-13 giorni dopo una bella pioggia: "
-      + "i funghi di oggi nascono da queste otto giornate, che qui hanno fatto " + quale + " <b>" + num(somma(s,20,13)) + " mm</b>.";
+      + "i funghi di oggi nascono da queste otto giornate, che qui hanno fatto " + quale + " <b>" + num(somma(s,20,13)) + " mm</b>"
+      + (function(){ var m = 0; for (var q = 20; q >= 13; q--) if (s[q-1] == null) m++; return m ? " (ma di " + m + (m === 1 ? " giorno" : " giorni") + " il dato manca)" : ""; })() + ".";
     var fmax = 1;
     for (var n = 20; n >= 13; n--) fmax = Math.max(fmax, s[n-1]||0);
     var fb = "", fx = "";
     for (var n2 = 20; n2 >= 13; n2--) {
       var v = s[n2-1] || 0, d = menoDa(oggi, n2);
-      fb += "<div class=\"c\">" + (v > 0 ? "<b>" + num(v) + "</b>" : "") + "<i style=\"height:" + Math.max(2, Math.round(v/fmax*88)) + "%\"></i></div>";
+      if (s[n2-1] == null) fb += "<div class=\"c nodato\" title=\"nessun dato\"><b>–</b><i></i></div>";
+      else fb += "<div class=\"c\">" + (v > 0 ? "<b>" + num(v) + "</b>" : "") + "<i style=\"height:" + Math.max(2, Math.round(v/fmax*88)) + "%\"></i></div>";
       fx += "<span>" + GS[d.getDay()] + "<br>" + d.getDate() + "/" + (d.getMonth()+1) + "</span>";
     }
     document.getElementById("finestra").innerHTML = "<div class=\"fin\">" + fb + "</div><div class=\"fin-x\">" + fx + "</div>";
@@ -523,7 +547,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
   /* minima e massima degli ultimi 25 giorni, a linee */
   function scriviTemperatura(sT, ax, nota){
     var vals = [];
-    for (var q = 0; q < GIORNI; q++) if (sT[q]) { vals.push(sT[q][0]); vals.push(sT[q][1]); }
+    for (var q = 0; q < GIORNI; q++) if (sT[q]) { if (sT[q][0] != null) vals.push(sT[q][0]); if (sT[q][1] != null) vals.push(sT[q][1]); }
     if (!vals.length) return;
     var lo = Math.floor(Math.min.apply(null, vals) - 1), hi = Math.ceil(Math.max.apply(null, vals) + 1);
     var passi = [1, 2, 2.5, 5, 10], p = 10;
@@ -536,14 +560,14 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
     }
     function linea(c){ var pz = [], cur = [];
       for (var i = GIORNI; i >= 1; i--) { var d = sT[i-1];
-        if (!d) { if (cur.length > 1) pz.push(cur.join(" ")); cur = []; continue; }
+        if (!d || d[c] == null) { if (cur.length > 1) pz.push(cur.join(" ")); cur = []; continue; }
         cur.push(((GIORNI - i) / (GIORNI - 1) * 100).toFixed(1) + "," + y(d[c]).toFixed(1)); }
       if (cur.length > 1) pz.push(cur.join(" "));
       return pz; }
     ["min","max"].forEach(function(cl, c){ linea(c).forEach(function(pts){ svg += "<polyline class=\"" + cl + "\" points=\"" + pts + "\"/>"; }); });
     var ieri = sT[0];
     document.getElementById("meteo").innerHTML = "<h2>Temperatura degli ultimi 25 giorni</h2>"
-      + (ieri ? "<p class=\"breve\">Ieri minima <b>" + num(ieri[0]) + "°</b>, massima <b>" + num(ieri[1]) + "°</b>" + (nota ? ", " + nota : "") + ".</p>" : "")
+      + (ieri ? "<p class=\"breve\">Ieri minima <b>" + (ieri[0] == null ? "—" : num(ieri[0]) + "°") + "</b>, massima <b>" + (ieri[1] == null ? "—" : num(ieri[1]) + "°") + "</b>" + (nota ? ", " + nota : "") + ".</p>" : "")
       + "<div class=\"tt-box\"><svg class=\"tt\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\">" + svg + "</svg>"
       + "<div class=\"tt-y\">" + et + "</div></div><div class=\"gg-x tt-x\">" + ax + "</div>"
       + "<p class=\"gg-leg\"><i style=\"background:#d1603d\"></i>massima &nbsp; <i style=\"background:#3a6ea8\"></i>minima</p>";
@@ -583,14 +607,17 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
     .catch(function(){ return null; })
     .then(function(j){
       if (!j || !j.serie || !j.oggi) return;
-      var ids = POSTI.map(function(p){ return p[0]; }).filter(function(id){ return j.serie[id]; });
+      /* 17/10/2026: senza i pluviometri sospesi (esclusi dalla mappa, vedi lib-escluse.js) */
+      var ids = POSTI.map(function(p){ return p[0]; }).filter(function(id){ return j.serie[id] && !(j.sospesi && j.sospesi[id]); });
       if (!ids.length) return;
       var s = [], sT = [];
       for (var i = 0; i < GIORNI; i++) {
-        var t = 0, n = 0, a = 0, b = 0, m = 0;
+        var t = 0, n = 0, a = 0, b = 0, ma = 0, mb = 0;
+        // minima e massima contate a parte: una delle due puo' mancare (17/10/2026)
         ids.forEach(function(id){ var v = j.serie[id][i]; if (v != null) { t += v; n++; }
-          var tt = ((j.serieT || {})[id] || [])[i]; if (tt) { a += tt[0]; b += tt[1]; m++; } });
-        s.push(n ? uno(t / n) : 0); sT.push(m ? [uno(a / m), uno(b / m)] : null);
+          var tt = ((j.serieT || {})[id] || [])[i]; if (tt) { if (tt[0] != null) { a += tt[0]; ma++; } if (tt[1] != null) { b += tt[1]; mb++; } } });
+        s.push(n ? t / n : null)   /* 17/10/2026: valore pieno, si arrotonda solo scrivendo (prima 16 zone su 114 non tornavano con la lista regionale) */;
+        sT.push(ma || mb ? [ma ? uno(a / ma) : null, mb ? uno(b / mb) : null] : null);
       }
       var o = j.oggi, daG = iso(menoDa(o,20)), aG = iso(menoDa(o,13)), ieri = iso(menoDa(o,1));
       var lk = function(dal, al){ return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al + '&s=p'; };
@@ -664,7 +691,13 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
           if (perGiorno[n] && perGiorno[n][id] >= FORTE) return { g:n, mm:uno(perGiorno[n][id]) };
         return null;
       }
-      mostra(POSTI.map(function(p){
+      /* ⚠️ GEMELLO DI genera-funghi.js (17/10/2026): fuori i sospesi e chi ha dati in
+         meno del 60% dei giorni (sui 25 e sulla finestra 13-20), se no un giorno
+         assente conta come asciutto e il posto scende in classifica. */
+      function coperto(id, da, a){ var c = 0, d = 0;
+        for (var n = da; n >= a; n--) if (perGiorno[n]) { d++; if (perGiorno[n][id] != null) c++; }
+        return d > 0 && c >= d * 0.6; }
+      mostra(POSTI.filter(function(p){ return !SOSPESI[p[0]] && coperto(p[0], GIORNI, 1) && coperto(p[0], 20, 13); }).map(function(p){
         return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5],
           mm:somma(20,13,p[0]), mm7:somma(7,1,p[0]), mm25:somma(GIORNI,1,p[0]),
           forte:ultimaForte(p[0]) };
@@ -677,7 +710,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
     var g=document.getElementById('guasto');
     g.style.display='block';
     g.innerHTML='⚠️ Non riesco a leggere l’archivio delle piogge in questo momento'
-      + (quanti ? ' (trovati solo '+quanti+' giorni su '+GIORNI+')' : '')
+      + (quanti ? ' (trovat'+(quanti===1?'o solo 1 giorno':'i solo '+quanti+' giorni')+' su '+GIORNI+')' : '')
       + '. Non dipende da te: riprova fra qualche minuto, oppure vai direttamente '
       + '<a href="'+MAPPA+'?r='+REG+'">sulla mappa</a>.';
   }
@@ -690,7 +723,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
      regioni: e quello che mostra la pagina della zona, e chi clicca deve
      ritrovarlo uguale. I file delle regioni vicine sono pochi chilobyte e si
      chiedono solo se una zona li nomina. */
-  function ordinaZone(tutte){
+  function ordinaZone(tutte, oggiISO){
     var lista = document.getElementById('zone-dove');
     if (!lista) return;
     var mm = {};
@@ -709,7 +742,9 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
         .catch(function(){ return null; })
         .then(function(j){
           mm[reg] = {};
-          if (j && j.posti) Object.keys(j.posti).forEach(function(id){ mm[reg][id] = j.posti[id][0]; });
+          /* 17/10/2026: solo se e' dello STESSO giorno, se no la finestra 13-20 e' spostata;
+             la parte della zona resta fuori dalla media, come quando il file non arriva */
+          if (j && j.posti && (!oggiISO || j.oggi === oggiISO)) Object.keys(j.posti).forEach(function(id){ mm[reg][id] = j.posti[id][0]; });
         });
     })).then(function(){
       voci.forEach(function(li){
@@ -728,7 +763,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
   }
 
   function mostra(righe, oggiISO){
-    ordinaZone(righe);
+    ordinaZone(righe, oggiISO);
     righe = righe.sort(function(a,b){ return b.mm - a.mm; }).slice(0, QUANTI);
     var maxMm = Math.max.apply(null, righe.map(function(r){ return Math.max(r.mm, r.mm7, r.mm25); }).concat([1]));
 
@@ -766,7 +801,8 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
        averla gia' detta. Qui restano le DATE, che in cima non ci possono
        stare: cambiano ogni giorno e il titolo e' cotto nel guscio. */
     document.getElementById('finestra2').innerHTML =
-      'Gli otto giorni della finestra sono fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG)
+      'Gli otto giorni della finestra sono fra ' + ilGg(daG).slice(0, -gg(daG).length) + '<b>' + gg(daG) + '</b> e '
+      + ilGg(aG).slice(0, -gg(aG).length) + '<b>' + gg(aG)
       + '</b>. Sono millimetri misurati a terra dai pluviometri, non una previsione.';
 
     var trs = righe.map(function(r, i){
@@ -797,11 +833,15 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
 
     /* ⚠️ «15 dei primi 15» era un modo storto di dire «tutti»: quando il conto
        coincide col totale si scrive cosi', se no «12 posti su 15». */
-    var conForte = righe.filter(function(r){ return r.forte; }).length;
+    /* ⚠️ SOLO QUELLE DEI 25 GIORNI (17/10/2026): «forte» arriva anche da piu'
+       indietro (genera-funghi la cerca fino a 150 giorni), e nel Veneto la nota
+       diceva «tutti e 15 negli ultimi 25 giorni» con le piogge di 30-37 giorni fa. */
+    var conForte = righe.filter(function(r){ return r.forte && r.forte.g <= GIORNI; }).length;
     var quanti = (conForte === righe.length)
       ? 'Tutti e ' + righe.length + ' i posti in elenco ne hanno avuta una'
       : (conForte === 0)
         ? 'Nessuno dei ' + righe.length + ' posti in elenco ne ha avuta una'
+        : conForte === 1 ? '1 posto su ' + righe.length + ' ne ha avuta una'
         : conForte + ' posti su ' + righe.length + ' ne hanno avuta una';
     document.getElementById('notaforte').innerHTML =
       '«Pioggia forte» vuol dire almeno ' + FORTE + ' mm in un giorno solo: è quella che bagna '

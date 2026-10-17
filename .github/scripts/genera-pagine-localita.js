@@ -50,7 +50,7 @@ const { haBoschi, cartaBreve, cartaDi, fonteNota } = require('./lib-boschi.js');
 // Il ritratto del pluviometro, cotto dentro la pagina il giorno che si
 // genera: totale dell'archivio, giorni di pioggia, giorno piu' bagnato,
 // mese piu' piovoso. Il perche' sta in cima a lib-clima.js.
-const { clima, buono, periodo, dataBella, meseBello, migliaia, virgola } = require('./lib-clima.js');
+const { clima, buono, periodo, dataBella, meseBello, migliaia, virgola, artGiorno } = require('./lib-clima.js');
 // La zona a cui appartiene il posto, se ce n'e' una. Serve a non lasciare
 // orfane le pagine di zona, e a chi legge serve per allargare lo sguardo dal
 // singolo pluviometro alla valle. `dove` e' gia' scritto con la preposizione
@@ -62,6 +62,8 @@ const { scriviSitemap } = require('./genera-sitemap.js');
 
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
+const { escluse, escluso } = require('./lib-escluse.js');
+const ESCLUSE = escluse(path.join(__dirname, '..', '..'));
 
 const SITO = 'https://avventurepluvio-test.pages.dev';
 const GA_ID = 'G-9R7MXXS0V4';
@@ -118,6 +120,14 @@ function bagnate(c) {
   return `${testa} in ${quante}.${coda}`;
 }
 
+// ⚠️ OMONIMI FRA REGIONI (17/10/2026): «San Michele» c'e' a Piacenza e nel Sulcis.
+// Stesso titolo e stessa h1 su due pagine diverse: per Google sono doppioni. A
+// questi nomi titolo, descrizione e h1 aggiungono la sigla della provincia.
+const OMONIMI = (() => { const visti = {}, doppi = new Set();
+  for (const k of Object.keys(POSTI)) for (const p of POSTI[k]) { const n = bello(p[1]);
+    if (visti[n] && visti[n] !== k) doppi.add(n); visti[n] = visti[n] || k; }
+  return doppi; })();
+
 function pagina(r, posto, slug, sl) {
   const [ID, nomePosto, sigla, quota, lat, lon, bosco] = posto;
   const REG = r.k;
@@ -126,6 +136,7 @@ function pagina(r, posto, slug, sl) {
   const CORTA = r.agenziaCorta || r.agenzia.replace(/\s*\(.*\)$/, '');
   const GEN = GENITIVO[REG];
   const DOVE = aPosto(nomePosto);
+  const SIGLA_T = OMONIMI.has(nomePosto) && sigla ? ' (' + sigla + ')' : '';   // vedi OMONIMI
 
   // ⚠️ IL SEGNAPOSTO NEL LINK (3/9/2026). pl = coordinate, pn = nome: la mappa
   // ci mette la puntina, scrive il nome nella casella di ricerca e lo fa
@@ -155,15 +166,18 @@ function pagina(r, posto, slug, sl) {
 
   // Il ritratto dell'archivio. `null` se il pluviometro ha misurato troppo poco:
   // la sezione allora non si scrive proprio, invece di scrivere un numero fragile.
+  // 17/10/2026: un pluviometro sospeso (escluso dalla mappa, lib-escluse.js) non ha
+  // ritratto d'archivio: sono i millimetri di uno strumento guasto («Cantagallo 165º»).
+  const SOSPESO = escluso(ESCLUSE, REG, posto);
   const C = clima(r.dirs)[ID];
-  const RITRATTO = buono(C) ? C : null;
+  const RITRATTO = !SOSPESO && buono(C) ? C : null;
   // La classifica ha senso solo fra pluviometri con lo STESSO periodo alle
   // spalle: uno entrato in archivio a meta' avrebbe meno millimetri per un
   // motivo che con la pioggia non c'entra niente.
   let POSTO_IN_CLASSIFICA = 0, QUANTI_CONFRONTABILI = 0;
   if (RITRATTO) {
     const tuttiC = clima(r.dirs);
-    const pari = POSTI[REG].map(p => tuttiC[p[0]])
+    const pari = POSTI[REG].filter(p => !escluso(ESCLUSE, REG, p)).map(p => tuttiC[p[0]])
       .filter(x => x && x.giorni >= RITRATTO.giorni * 0.9 && x.giorni <= RITRATTO.giorni * 1.1)
       .sort((a, b) => b.mm - a.mm);
     if (pari.length >= 10) {
@@ -182,17 +196,17 @@ function pagina(r, posto, slug, sl) {
   // ⚠️ 24/9/2026: «stanno nascendo?» in coda, deciso da lui. Davanti resta
   // «Funghi <posto> oggi», la forma delle ricerche vere (Search Console).
   const TITOLO = [
-    `Funghi ${DOVE} oggi: stanno nascendo?`,
-    `Funghi ${DOVE} oggi`,
-  ].find(t => t.length <= 62) || `Funghi ${DOVE}`;
+    `Funghi ${DOVE}${SIGLA_T} oggi: stanno nascendo?`,
+    `Funghi ${DOVE}${SIGLA_T} oggi`,
+  ].find(t => t.length <= 62) || `Funghi ${DOVE}${SIGLA_T}`;
   // ⚠️ 26/9/2026: «METEO FUNGHI» E «CRESCITA» (Search Console: le ricerche
   // sono «funghi X oggi», «meteo funghi X», «crescita funghi X»; il titolo
   // copre solo la prima). Il titolo non si tocca, lo ha deciso lui. Niente
   // millimetri qui: la pagina si rigenera ogni tre mesi, il verdetto e' del browser.
   const DESCR = [
-    `Meteo funghi ${nomePosto}: quanta pioggia è caduta negli ultimi 20 giorni, dal pluviometro di ${CORTA} a ${quota} metri, e il verdetto per la crescita dei funghi.`,
-    `Meteo funghi ${nomePosto}: quanta pioggia è caduta negli ultimi 20 giorni, misurata dal pluviometro, e il verdetto per la crescita dei funghi.`,
-    `Meteo funghi ${nomePosto}: la pioggia degli ultimi 20 giorni e il verdetto per la crescita dei funghi.`,
+    `Meteo funghi ${nomePosto}${SIGLA_T}: quanta pioggia è caduta negli ultimi 20 giorni, dal pluviometro di ${CORTA} a ${quota} metri, e il verdetto per la crescita dei funghi.`,
+    `Meteo funghi ${nomePosto}${SIGLA_T}: quanta pioggia è caduta negli ultimi 20 giorni, misurata dal pluviometro, e il verdetto per la crescita dei funghi.`,
+    `Meteo funghi ${nomePosto}${SIGLA_T}: la pioggia degli ultimi 20 giorni e il verdetto per la crescita dei funghi.`,
   ].find(t => t.length <= 158) || `Funghi ${DOVE} oggi: le piogge degli ultimi 25 giorni.`;
   const ZONA = ZONA_DI[ID];
   const PIOGGE_URL = ZONA ? `${SITO}/zone/${slugDaNome(ZONA.n)}/` : `${SITO}/${REG}/`;
@@ -324,7 +338,7 @@ ${/* ⚠️ 24/9/2026, SCHEMA DETTATO DA LUI: prima i dati (ha piovuto abbastanz
      le barre, la pioggia che conta, le mappe), poi in fondo le spiegazioni.
      Il titolo tiene davanti «Funghi <posto> oggi», che e' la forma che la
      gente cerca davvero (Search Console, 90 giorni), e aggiunge la domanda. */''}
-<h1>Funghi ${esc(DOVE)} oggi: stanno nascendo?</h1>
+<h1>Funghi ${esc(DOVE)}${SIGLA_T} oggi: stanno nascendo?</h1>
 <p class="breve" style="margin-top:-2px">Meteo funghi ${esc(nomePosto)}: la pioggia vera del pluviometro, per capire la crescita dei funghi.</p>
 ${rigaStagione()}
 
@@ -405,7 +419,7 @@ ${esc(ZONA.dove)}: <a href="${SITO}/funghi/zone/${slugDaNome(ZONA.n)}/">guarda t
 con i suoi ${ZONA.posti.length} pluviometri insieme.` : ''}</p>
 ${RITRATTO ? `<h2>L'archivio di questo pluviometro</h2>
 <p><b>${periodo(RITRATTO)}</b>, in ${RITRATTO.giorni} giorni di misura, ${bagnate(RITRATTO)}
-Il giorno più bagnato è stato il <b>${dataBella(RITRATTO.maxData)}</b>, con
+Il giorno più bagnato è stato ${artGiorno(RITRATTO.maxData)}<b>${dataBella(RITRATTO.maxData)}</b>, con
 <b>${virgola(RITRATTO.maxMm)} mm</b>.${RITRATTO.mese && RITRATTO.meseMm >= 1 ? ` Il mese più piovoso,
 fra quelli che abbiamo per intero, è <b>${meseBello(RITRATTO.mese)}</b> con
 ${migliaia(RITRATTO.meseMm)} mm.` : ''}${POSTO_IN_CLASSIFICA ? ` Su ${QUANTI_CONFRONTABILI} pluviometri
@@ -450,6 +464,8 @@ ${JS_AGGIORNATO}
   function menoDa(s, n){ var p=String(s).split('-');
     var d=new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return d; }
   function gg(s){ var p=String(s).split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
+  /* «il 9 ottobre», ma «l’8», «l’11», «l’1» (17/10/2026) */
+  function ilGg(s){ var d=+String(s).split('-')[2]; return (d===1||d===8||d===11?'l’':'il ')+gg(s); }
   /* «dal 4 all'11 settembre»: il mese una volta sola se e' lo stesso, e
      l'apostrofo davanti a 1, 8 e 11 (24/9/2026). */
   function dalAl(a,b){ var pa=a.split('-'), pb=b.split('-'), da=+pa[2], db=+pb[2];
@@ -476,7 +492,12 @@ ${JS_AGGIORNATO}
      conterebbe come asciutti i giorni mancanti: niente verdetto, niente
      classifica, e lo si dice. */
   function conDati(s, da, a){ var c=0; for (var n=da; n>=a; n--) if (s[n-1] != null) c++; return c; }
-  function coperto(s, da, a){ return conDati(s, da, a) >= (da - a + 1) * 0.6; }
+  /* ⚠️ I GIORNI DELLA RETE, NON 25 FISSI (17/10/2026): un giorno in cui manca tutta la
+     regione non pesa sul singolo pluviometro, come in genera-funghi.js. RETE[i] e'
+     vero se almeno un posto della regione ha il dato quel giorno; si riempie in disegna. */
+  var RETE = null;
+  function giorniRete(da, a){ if (!RETE) return da - a + 1; var c=0; for (var n=da; n>=a; n--) if (RETE[n-1]) c++; return c; }
+  function coperto(s, da, a){ var d = giorniRete(da, a); return d > 0 && conDati(s, da, a) >= d * 0.6; }
 
   /* ⚠️ LA SCALA DEL VERDETTO E' SUA (24/9/2026): la pioggia degli ULTIMI 20
      GIORNI. Sotto 30 mm troppo poco, da 30 poco, da 60 bene, da 100 benissimo.
@@ -521,29 +542,32 @@ ${JS_AGGIORNATO}
     /* IERI, per chi cerca «quanto ha piovuto ieri a». Si dice il giorno vero:
        il file puo' essere stato scritto prima di mezzanotte. */
     var ieriVero = iso(menoDa(iso(new Date()),1));
-    document.getElementById('ieri').innerHTML = (ieri === ieriVero ? 'Ieri, ' : 'Il ')
-      + gg(ieri) + ': ' + (s[0] == null ? 'il dato non è ancora arrivato.' : '<b>' + num(s[0]) + ' mm</b>.');
+    document.getElementById('ieri').innerHTML = (ieri === ieriVero ? 'Ieri, ' + gg(ieri)
+      : ilGg(ieri).charAt(0).toUpperCase() + ilGg(ieri).slice(1)) + ': ' + (s[0] == null ? 'il dato non è ancora arrivato.' : '<b>' + num(s[0]) + ' mm</b>.');
 
     /* ── il verdetto ── */
     var liv = LIV.filter(function(l){ return m20 < l.fino; })[0], k = LIV.indexOf(liv);
     var big = [];
     for (var n=20; n>=1; n--) if ((s[n-1]||0) >= 10) big.push(n);
     var dett = big.length
-      ? big.slice(-4).map(function(n){ return '<b>' + num(s[n-1]) + ' mm</b> il ' + gg(iso(menoDa(j.oggi,n))); }).join(', ') + '.'
+      ? big.slice(-4).map(function(n){ return '<b>' + num(s[n-1]) + ' mm</b> ' + ilGg(iso(menoDa(j.oggi,n))); }).join(', ') + '.'
       : 'Nessuna giornata sopra i 10 mm.';
     var scala = '';
     for (var q=0; q<4; q++) scala += '<div' + (q<=k ? ' style="background:'+liv.c+'"' : '') + '></div>';
-    var g20 = conDati(s, 20, 1);
-    if (g20 < 12) {
+    RETE = []; for (var ir = 0; ir < GIORNI; ir++) RETE.push(Object.keys(j.serie).some(function(id){ return j.serie[id][ir] != null; }));
+    var g20 = conDati(s, 20, 1), r20 = giorniRete(20, 1);
+    if (g20 < r20 * 0.6 || r20 < 12) {
       /* troppi giorni senza dato: il totale sarebbe piu' basso del vero */
       var ultimoDato = null;
       for (var nu = 1; nu <= GIORNI; nu++) if (s[nu-1] != null) { ultimoDato = nu; break; }
-      var perche = g20 === 0
-        ? 'Questo pluviometro non manda dati ' + (ultimoDato ? 'dal ' + gg(iso(menoDa(j.oggi, ultimoDato))) : 'da più di ' + GIORNI + ' giorni') + '.'
-        : 'Negli ultimi 20 giorni questo pluviometro ha mandato dati solo <b>' + g20 + ' giorni</b>: il totale sarebbe più basso del vero.';
+      var perche = r20 < 12 && r20 > 0
+        ? 'Negli ultimi 20 giorni la rete dei pluviometri della regione ha mandato dati solo <b>' + r20 + (r20 === 1 ? ' giorno' : ' giorni') + '</b>: il totale sarebbe più basso del vero.'
+        : g20 === 0
+        ? 'Questo pluviometro non manda dati ' + (ultimoDato ? ilGg(iso(menoDa(j.oggi, ultimoDato))).replace(/^il /, 'dal ').replace(/^l’/, 'dall’') : 'da più di ' + GIORNI + ' giorni') + '.'
+        : 'Negli ultimi 20 giorni questo pluviometro ha mandato dati solo <b>' + g20 + (g20 === 1 ? ' giorno' : ' giorni') + '</b> su ' + r20 + ': il totale sarebbe più basso del vero.';
       document.getElementById('verdetto').innerHTML = '<div class="verdetto">'
         + '<div class="si"><span class="pallino" style="background:#8a97a6"></span>Dati incompleti</div>'
-        + '<div class="dett">' + perche + ' Guarda i pluviometri vicini qui sotto.</div>'
+        + '<div class="dett">' + perche + (r20 < 12 ? '' : ' Guarda i pluviometri vicini qui sotto.') + '</div>'
         + '<div class="capo-btns"><a class="capo-btn" href="'+link(daG, ieri)+'">Vedi sulla mappa</a></div></div>';
     } else
     document.getElementById('verdetto').innerHTML = '<div class="verdetto">'
@@ -760,9 +784,9 @@ ${JS_AGGIORNATO}
       var H = '<h2>' + che + ' degli ultimi 25 giorni</h2>';
       if (sT) {
         var vals = [];
-        for (var q4 = 0; q4 < GIORNI; q4++) if (sT[q4]) { vals.push(sT[q4][0]); vals.push(sT[q4][1]); }
+        for (var q4 = 0; q4 < GIORNI; q4++) if (sT[q4]) { if (sT[q4][0] != null) vals.push(sT[q4][0]); if (sT[q4][1] != null) vals.push(sT[q4][1]); }
         var lo = Math.floor(Math.min.apply(null, vals) - 1), hi = Math.ceil(Math.max.apply(null, vals) + 1);
-        H += (sT[0] ? '<p class="breve">Ieri minima <b>' + num(sT[0][0]) + '°</b>, massima <b>' + num(sT[0][1]) + '°</b>.</p>' : '')
+        H += (sT[0] ? '<p class="breve">Ieri minima <b>' + (sT[0][0] == null ? '—' : num(sT[0][0]) + '°') + '</b>, massima <b>' + (sT[0][1] == null ? '—' : num(sT[0][1]) + '°') + '</b>.</p>' : '')
           + grafico(sT, 'tt-temp', [
               { cl: 'min', leggi: function (d) { return d ? d[0] : null; } },
               { cl: 'max', leggi: function (d) { return d ? d[1] : null; } }], lo, hi, '&deg;C')

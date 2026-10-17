@@ -54,6 +54,8 @@ const STILE_NUOVO = `
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
 .img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
 .tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
@@ -83,6 +85,8 @@ function comune() {
   function menoDa(s, n){ var p = String(s).split("-");
     var d = new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return d; }
   function gg(s){ var p = String(s).split("-"); return (+p[2]) + " " + MESI[(+p[1])-1]; }
+  /* «il 9 ottobre», ma «l’8», «l’11», «l’1» (17/10/2026: si leggeva «il 8 ottobre») */
+  function ilGg(s){ var d = +String(s).split("-")[2]; return (d === 1 || d === 8 || d === 11 ? "l’" : "il ") + gg(s); }
   /* «dal 4 all'11 settembre»: il mese una volta sola, l'apostrofo davanti a 1, 8, 11 */
   function dalAl(a, b){ var pa = a.split("-"), pb = b.split("-"), da = +pa[2], db = +pb[2];
     var al = (db === 1 || db === 8 || db === 11) ? "all’" : "al ";
@@ -102,12 +106,23 @@ function comune() {
              {fino:1e9,t:"Ha piovuto benissimo",c:"#2e9d44"}];
 
   function scriviVerdetto(s, oggi, href, sotto){
+    /* 17/10/2026: un giorno senza nessun dato e' null, non zero. Sotto il 60% di
+       giorni con dato (la soglia della mappa) niente verdetto: lo si dice. */
+    var g20 = 0; for (var n0 = 20; n0 >= 1; n0--) if (s[n0-1] != null) g20++;
+    if (g20 < 12) {
+      document.getElementById("verdetto").innerHTML = "<div class=\"verdetto\">"
+        + "<div class=\"si\"><span class=\"pallino\" style=\"background:#8a97a6\"></span>Dati incompleti</div>"
+        + "<div class=\"dett\">Negli ultimi 20 giorni i pluviometri hanno mandato dati solo <b>" + g20 + (g20 === 1 ? " giorno" : " giorni")
+        + "</b>: il totale sarebbe più basso del vero.</div>"
+        + "<div class=\"capo-btns\"><a class=\"capo-btn\" href=\"" + href + "\">Vedi sulla mappa</a></div></div>";
+      return;
+    }
     var m20 = somma(s, 20, 1);
     var liv = LIV.filter(function(l){ return m20 < l.fino; })[0], k = LIV.indexOf(liv);
     var big = [];
     for (var n = 20; n >= 1; n--) if ((s[n-1]||0) >= 10) big.push(n);
     var dett = big.length
-      ? big.slice(-4).map(function(n){ return "<b>" + num(s[n-1]) + " mm</b> il " + gg(iso(menoDa(oggi,n))); }).join(", ") + "."
+      ? big.slice(-4).map(function(n){ return "<b>" + num(s[n-1]) + " mm</b> " + ilGg(iso(menoDa(oggi,n))); }).join(", ") + "."
       : "Nessuna giornata sopra i 10 mm.";
     var sc = "";
     for (var q = 0; q < 4; q++) sc += "<div" + (q <= k ? " style=\"background:" + liv.c + "\"" : "") + "></div>";
@@ -134,13 +149,19 @@ function comune() {
       .forEach(function (c) { if (!lab[c-1] && !lab[c+1]) lab[c] = 1; });
     for (var i = GIORNI; i >= 1; i--) {
       var v = s[i-1] || 0, d = menoDa(oggi, i), cl = (i >= 13 && i <= 20) ? " dentro" : "";
+      if (s[i-1] == null) {   /* nessun dato: barra vuota tratteggiata, non uno zero (17/10/2026) */
+        barre += "<div class=\"b nodato\" title=\"" + gg(iso(d)) + ": nessun dato\"><i></i></div>";
+        ax += "<span>" + ((i === GIORNI || i === 1 || i % 5 === 0) ? (d.getDate() + "/" + (d.getMonth()+1)) : "") + "</span>";
+        continue;
+      }
       barre += "<div class=\"b" + cl + "\" title=\"" + gg(iso(d)) + ": " + num(v) + " mm\">" + (lab[i] ? "<b>" + num(v) + "</b>" : "")
         + "<i style=\"height:" + Math.max(2, Math.round(v/max*86)) + "%\"></i></div>";
       ax += "<span>" + ((i === GIORNI || i === 1 || i % 5 === 0) ? (d.getDate() + "/" + (d.getMonth()+1)) : "") + "</span>";
     }
     document.getElementById("grafico").innerHTML = "<div class=\"gg\">" + barre + "</div><div class=\"gg-x\">" + ax + "</div>"
       + "<p class=\"gg-leg\"><i style=\"background:var(--blu)\"></i>da 13 a 20 giorni fa &nbsp; "
-      + "<i style=\"background:#b9cbe2\"></i>gli altri giorni</p>";
+      + "<i style=\"background:#b9cbe2\"></i>gli altri giorni"
+      + (s.slice(0, GIORNI).some(function(x){ return x == null; }) ? " &nbsp; <i style=\"background:none;border:1px dashed #9fb3cc;box-sizing:border-box\"></i>nessun dato" : "") + "</p>";
     return ax;
   }
 
@@ -149,13 +170,15 @@ function comune() {
     var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13));
     document.getElementById("h-conta").textContent = "Però attenzione: la pioggia che conta è quella caduta " + dalAl(daG, aG);
     document.getElementById("p-conta").innerHTML = "Il fungo spunta 12-13 giorni dopo una bella pioggia: "
-      + "i funghi di oggi nascono da queste otto giornate, che qui hanno fatto " + quale + " <b>" + num(somma(s,20,13)) + " mm</b>.";
+      + "i funghi di oggi nascono da queste otto giornate, che qui hanno fatto " + quale + " <b>" + num(somma(s,20,13)) + " mm</b>"
+      + (function(){ var m = 0; for (var q = 20; q >= 13; q--) if (s[q-1] == null) m++; return m ? " (ma di " + m + (m === 1 ? " giorno" : " giorni") + " il dato manca)" : ""; })() + ".";
     var fmax = 1;
     for (var n = 20; n >= 13; n--) fmax = Math.max(fmax, s[n-1]||0);
     var fb = "", fx = "";
     for (var n2 = 20; n2 >= 13; n2--) {
       var v = s[n2-1] || 0, d = menoDa(oggi, n2);
-      fb += "<div class=\"c\">" + (v > 0 ? "<b>" + num(v) + "</b>" : "") + "<i style=\"height:" + Math.max(2, Math.round(v/fmax*88)) + "%\"></i></div>";
+      if (s[n2-1] == null) fb += "<div class=\"c nodato\" title=\"nessun dato\"><b>–</b><i></i></div>";
+      else fb += "<div class=\"c\">" + (v > 0 ? "<b>" + num(v) + "</b>" : "") + "<i style=\"height:" + Math.max(2, Math.round(v/fmax*88)) + "%\"></i></div>";
       fx += "<span>" + GS[d.getDay()] + "<br>" + d.getDate() + "/" + (d.getMonth()+1) + "</span>";
     }
     document.getElementById("finestra").innerHTML = "<div class=\"fin\">" + fb + "</div><div class=\"fin-x\">" + fx + "</div>";
@@ -164,7 +187,7 @@ function comune() {
   /* minima e massima degli ultimi 25 giorni, a linee */
   function scriviTemperatura(sT, ax, nota){
     var vals = [];
-    for (var q = 0; q < GIORNI; q++) if (sT[q]) { vals.push(sT[q][0]); vals.push(sT[q][1]); }
+    for (var q = 0; q < GIORNI; q++) if (sT[q]) { if (sT[q][0] != null) vals.push(sT[q][0]); if (sT[q][1] != null) vals.push(sT[q][1]); }
     if (!vals.length) return;
     var lo = Math.floor(Math.min.apply(null, vals) - 1), hi = Math.ceil(Math.max.apply(null, vals) + 1);
     var passi = [1, 2, 2.5, 5, 10], p = 10;
@@ -177,14 +200,14 @@ function comune() {
     }
     function linea(c){ var pz = [], cur = [];
       for (var i = GIORNI; i >= 1; i--) { var d = sT[i-1];
-        if (!d) { if (cur.length > 1) pz.push(cur.join(" ")); cur = []; continue; }
+        if (!d || d[c] == null) { if (cur.length > 1) pz.push(cur.join(" ")); cur = []; continue; }
         cur.push(((GIORNI - i) / (GIORNI - 1) * 100).toFixed(1) + "," + y(d[c]).toFixed(1)); }
       if (cur.length > 1) pz.push(cur.join(" "));
       return pz; }
     ["min","max"].forEach(function(cl, c){ linea(c).forEach(function(pts){ svg += "<polyline class=\"" + cl + "\" points=\"" + pts + "\"/>"; }); });
     var ieri = sT[0];
     document.getElementById("meteo").innerHTML = "<h2>Temperatura degli ultimi 25 giorni</h2>"
-      + (ieri ? "<p class=\"breve\">Ieri minima <b>" + num(ieri[0]) + "°</b>, massima <b>" + num(ieri[1]) + "°</b>" + (nota ? ", " + nota : "") + ".</p>" : "")
+      + (ieri ? "<p class=\"breve\">Ieri minima <b>" + (ieri[0] == null ? "—" : num(ieri[0]) + "°") + "</b>, massima <b>" + (ieri[1] == null ? "—" : num(ieri[1]) + "°") + "</b>" + (nota ? ", " + nota : "") + ".</p>" : "")
       + "<div class=\"tt-box\"><svg class=\"tt\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\">" + svg + "</svg>"
       + "<div class=\"tt-y\">" + et + "</div></div><div class=\"gg-x tt-x\">" + ax + "</div>"
       + "<p class=\"gg-leg\"><i style=\"background:#d1603d\"></i>massima &nbsp; <i style=\"background:#3a6ea8\"></i>minima</p>";

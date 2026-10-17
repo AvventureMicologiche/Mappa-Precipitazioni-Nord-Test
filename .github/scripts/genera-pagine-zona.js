@@ -55,13 +55,15 @@ const { scriviSitemap } = require('./genera-sitemap.js');
 const { haBoschi, cartaBreve, cartaDi, fonteNota } = require('./lib-boschi.js');
 // Il ritratto dell'archivio, cotto dentro la pagina: il perche' sta in cima
 // a lib-clima.js. Qui e' di zona, cioe' la media dei suoi pluviometri.
-const { clima, buono, dataBella, meseBello, migliaia, virgola } = require('./lib-clima.js');
+const { clima, buono, dataBella, meseBello, migliaia, virgola, artGiorno, aNome } = require('./lib-clima.js');
 // 24/9/2026: grafica e codice di pagina comuni con le pagine di regione
 const { STILE_NUOVO, JS_COMUNE, JS_AGGIORNATO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz, stileDelModello } = require('./lib-pagina-funghi.js');
 
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
+const { escluse, escluso } = require('./lib-escluse.js');
+const ESCLUSE = escluse(path.join(__dirname, '..', '..'));
 
 const SITO = 'https://avventurepluvio-test.pages.dev';
 const GA_ID = 'G-9R7MXXS0V4';
@@ -149,7 +151,10 @@ function pagina(z) {
     const r = REGIONI.find(x => x.k === k);
     if (r) climi[k] = clima(r.dirs);
   }
+  // 17/10/2026: senza i pluviometri sospesi (esclusi dalla mappa, lib-escluse.js).
+  // La Calvana scriveva «il piu' asciutto e' Cantagallo», fermo a zero dal 19/9.
   const perZona = z.posti
+    .filter(id => !escluso(ESCLUSE, REG_DI[id], POSTI[REG_DI[id]].find(x => x[0] === id) || [id]))
     .map(id => ({ id, n: bello((POSTI[REG_DI[id]].find(x => x[0] === id) || [])[1] || ''),
                   c: (climi[REG_DI[id]] || {})[id] }))
     .filter(x => buono(x.c));
@@ -313,7 +318,7 @@ ${RITRATTO ? `<h2>L'archivio della zona</h2>
 ${esc(diZona(z.dove))}${RITRATTO.quanti < z.posti.length ? ' che leggiamo dallo stesso giorno' : ''} hanno contato
 <b>${migliaia(RITRATTO.media)} mm</b> di pioggia a testa, in media. Il più bagnato è <b>${esc(RITRATTO.alto.n)}</b> con
 ${migliaia(RITRATTO.alto.c.mm)} mm, il più asciutto ${esc(RITRATTO.basso.n)} con ${migliaia(RITRATTO.basso.c.mm)}.
-La giornata più piovosa è stata il <b>${dataBella(RITRATTO.forte.c.maxData)}</b> a ${esc(RITRATTO.forte.n)},
+La giornata più piovosa è stata ${artGiorno(RITRATTO.forte.c.maxData)}<b>${dataBella(RITRATTO.forte.c.maxData)}</b> ${aNome(RITRATTO.forte.n)}${esc(RITRATTO.forte.n)},
 con <b>${virgola(RITRATTO.forte.c.maxMm)} mm</b>.</p>` : ''}
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
@@ -369,12 +374,21 @@ ${JS_AGGIORNATO}
     var buoni = js.filter(function(j){ return j && fresco(j); });
     if (buoni.length !== REGIONI.length) return guasto();
     var serie = {}, serieT = {}, sospesi = {}, oggi = null, gen = null;
+    /* ⚠️ SI ALLINEA PER DATA, NON PER POSIZIONE (17/10/2026). serie[0] e' «ieri» del
+       SUO file: se una regione quella mattina non e' stata aggiornata, il suo file
+       parte dal giorno prima e affiancando per posizione la media mescolava giorni
+       diversi. Riferimento: il file piu' recente; quello piu' vecchio scorre di k
+       giorni, con «nessun dato» davanti. */
+    buoni.forEach(function(j){ if (!oggi || j.oggi > oggi) oggi = j.oggi; });
+    var giorniFra = function(a, b){ var x = a.split("-"), y = b.split("-");
+      return Math.round((Date.UTC(+x[0], +x[1]-1, +x[2]) - Date.UTC(+y[0], +y[1]-1, +y[2])) / 864e5); };
+    var scorri = function(arr, k){ if (!k) return arr; var o = []; for (var q = 0; q < arr.length; q++) o.push(q < k ? null : arr[q-k]); return o; };
     buoni.forEach(function(j){
       if (!gen || j.generato < gen) gen = j.generato;   // la data della parte PIU VECCHIA
-      Object.keys(j.serie).forEach(function(id){ serie[id] = j.serie[id]; });
-      Object.keys(j.serieT || {}).forEach(function(id){ serieT[id] = j.serieT[id]; });
+      var k = giorniFra(oggi, j.oggi);
+      Object.keys(j.serie).forEach(function(id){ serie[id] = scorri(j.serie[id], k); });
+      Object.keys(j.serieT || {}).forEach(function(id){ serieT[id] = scorri(j.serieT[id], k); });
       Object.keys(j.sospesi || {}).forEach(function(id){ sospesi[id] = 1; });
-      if (!oggi || j.oggi < oggi) oggi = j.oggi;
     });
     /* 17/10/2026: i pluviometri sospesi (la mappa li esclude perche' misurano
        male, lib-escluse.js) non entrano nella media: in tabella restano col «—» */
@@ -407,19 +421,24 @@ ${JS_AGGIORNATO}
     for (var i = 0; i < GIORNI; i++) {
       var t = 0, n = 0;
       righe.forEach(function(p){ var v = serie[p[0]][i]; if (v != null) { t += v; n++; } });
-      s.push(n ? uno(t / n) : 0);
+      s.push(n ? t / n : null)   /* 17/10/2026: valore pieno, si arrotonda solo scrivendo (prima 16 zone su 114 non tornavano con la lista regionale) */;
     }
     var sT = [];
     for (var i2 = 0; i2 < GIORNI; i2++) {
-      var a = 0, b = 0, n2 = 0;
-      righe.forEach(function(p){ var v = (serieT[p[0]] || [])[i2]; if (v) { a += v[0]; b += v[1]; n2++; } });
-      sT.push(n2 ? [uno(a / n2), uno(b / n2)] : null);
+      var a = 0, b = 0, na = 0, nb = 0;
+      // minima e massima contate a parte: una delle due puo' mancare (17/10/2026)
+      righe.forEach(function(p){ var v = (serieT[p[0]] || [])[i2]; if (v) { if (v[0] != null) { a += v[0]; na++; } if (v[1] != null) { b += v[1]; nb++; } } });
+      sT.push(na || nb ? [na ? uno(a / na) : null, nb ? uno(b / nb) : null] : null);
     }
     var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13)), ieri = iso(menoDa(oggi,1));
     scriviVerdetto(s, oggi, link(daG, ieri), "in media, negli ultimi 20 giorni");
     var ax = scriviBarre(s, oggi);
-    document.getElementById("ieri").innerHTML = "Ieri, " + gg(ieri) + ": in media <b>" + num(s[0]) + " mm</b> sui "
-      + righe.length + " pluviometri della zona.";
+    /* 17/10/2026: «Ieri» solo se e' davvero ieri. Fra mezzanotte e il primo giro
+       del mattino il file e' ancora quello del giorno prima (come nelle pagine di paese). */
+    var ieriVero = iso(menoDa(iso(new Date()), 1)), giornoIeri = ilGg(ieri);
+    document.getElementById("ieri").innerHTML = (ieri === ieriVero ? "Ieri, " + gg(ieri)
+      : giornoIeri.charAt(0).toUpperCase() + giornoIeri.slice(1)) + ": " + (s[0] == null ? "il dato non è ancora arrivato."
+      : "in media <b>" + num(s[0]) + " mm</b> sui " + righe.length + " pluviometri della zona.");
     scriviFinestra(s, oggi, null, "in media");
     document.getElementById("t-conta").href = link(daG, aG);
     document.getElementById("lnk-pioggia").href = link(daG, ieri);
@@ -432,8 +451,10 @@ ${JS_AGGIORNATO}
        dei giorni (sui 25 o sulla finestra 13-20) resta senza numeri, «—» e in
        fondo: coi giorni mancanti contati asciutti sembrerebbe il piu' asciutto. */
     function conD(ss, da, a){ var c = 0; for (var n = da; n >= a; n--) if (ss[n-1] != null) c++; return c; }
+    /* i giorni in cui la zona ha almeno un dato: se manca tutta la rete non pesa sul singolo (17/10/2026) */
+    function giorniZona(da, a){ var c = 0; for (var n = da; n >= a; n--) if (righe.some(function(p){ return serie[p[0]][n-1] != null; })) c++; return c; }
     righe.forEach(function(p){ var ss = serie[p[0]];
-      if (conD(ss,GIORNI,1) < GIORNI*0.6 || conD(ss,20,13) < 8*0.6) return;
+      if (conD(ss,GIORNI,1) < giorniZona(GIORNI,1)*0.6 || conD(ss,20,13) < giorniZona(20,13)*0.6) return;
       dati[p[0]] = { mm: somma(ss,20,13), mm7: somma(ss,7,1), mm25: somma(ss,GIORNI,1) }; });
     var corpo = document.getElementById("tabella");
     var trs = [].slice.call(corpo.querySelectorAll("tr[data-id]"));

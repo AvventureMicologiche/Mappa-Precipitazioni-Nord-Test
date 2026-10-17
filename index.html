@@ -9930,8 +9930,10 @@ setTimeout(positionPanels, 100);
 function buildShareUrl(){
   var regions=getActiveRegions();
   // nella mappa forestale le date non servono: senza periodo il link porta regione, vista e boschi
+  // ⚠️ E NEMMENO COL RADAR (17/10/2026): aperto dai tasti «📡 Radar adesso» delle pagine non c'e'
+  // periodo, e «Invia link» usciva senza fare niente. Il link porta regione e radar=ora.
   var senzaDate=!currentPast||!currentNow;
-  if(regions.length===0||(senzaDate&&!window._boschiAcceso)) return null;
+  if(regions.length===0||(senzaDate&&!window._boschiAcceso&&!window._radarModo)) return null;
   var p=new URLSearchParams();
   p.set('r',regions.join(','));
   if(!senzaDate){ p.set('da',fmtISOLocal(new Date(currentPast))); p.set('a',fmtISOLocal(new Date(currentNow))); }
@@ -9957,6 +9959,7 @@ function buildShareUrl(){
   if(_vistaPaese && !_vistaPaese.priv){
     p.set('pl', _vistaPaese.lat.toFixed(5)+','+_vistaPaese.lon.toFixed(5));
     if(_vistaPaese.n) p.set('pn', _vistaPaese.n);
+    if(_vistaPaese.z) p.set('pz', '1');   // 17/10/2026: una zona riaperta diventava un punto, un livello piu' vicino
   }
   // Nota (7/8/2026): si era provato ad aggiungere `w`, la larghezza della mappa
   // di chi condivide, per far vedere a chi riceve la STESSA PORZIONE di
@@ -10038,8 +10041,22 @@ window._segnaVistaUtente=function(){ _vistaUtente=true; };
    `boschi=1`, o ha cercato un paese e poi preme il tasto, deve vedere i boschi
    INTORNO AL PAESE e non la regione intera. Restituisce false se un paese non
    c'e', e allora il blocco boschi inquadra la regione come prima. */
+var _boschiVistaLinkUsata=false;
 window._fitPaeseBoschi=function(){
   if(!_vistaPaese) return false;
+  /* ⚠️ IL LINK CONDIVISO COMANDA (17/10/2026). Col posto qui si rifaceva sempre la
+     tacca dei boschi, e un «Copia link» fatto sulla mappa boschi si riapriva con
+     un altro zoom (10,25 → 11,25 sulla Garfagnana). Se il link porta z e c, la
+     prima inquadratura e' la sua; poi, spegnendo e riaccendendo, torna la regola. */
+  if(!_boschiVistaLinkUsata){
+    _boschiVistaLinkUsata=true;
+    var _q=new URLSearchParams(location.search), _z=parseFloat(_q.get('z')), _c=(_q.get('c')||'').split(',').map(Number);
+    if(_q.get('boschi')==='1'&&isFinite(_z)&&_c.length===2&&isFinite(_c[0])&&isFinite(_c[1])){
+      _vistaDaLink=true;
+      try{ map.setView([_c[0],_c[1]],_z,{animate:false}); }catch(e){}
+      return true;
+    }
+  }
   fitMapToPunto(_vistaPaese.lat,_vistaPaese.lon,_vistaPaese.z?LOC_TACCA_BOSCHI_ZONA:LOC_TACCA_BOSCHI);
   return true;
 };

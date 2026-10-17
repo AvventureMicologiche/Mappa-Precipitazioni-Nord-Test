@@ -352,7 +352,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
       cont.innerHTML = ''; cont.appendChild(ol);
     }
     document.getElementById('rip' + k + '-date').textContent = dalAl(d.primo, d.ultimo)
-      + (d.giorni < +k ? ', ' + d.giorni + ' giornate di dati' : '') + '.';
+      + (d.giorni < +k ? ', ' + d.giorni + (d.giorni === 1 ? ' giornata di dati' : ' giornate di dati') : '') + '.';
   }
 
   function guasto(){
@@ -367,7 +367,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
       var ultimo = (j.periodi['1'] || j.periodi['7']).ultimo;
       tasti(ultimo);
       scriviIeri(j.periodi['1']);
-      scriviBarre(j.serie, ultimo);
+      scriviBarre(j.serie, j.ultimoGiorno || ultimo);   // 17/10/2026: la data di serie[0] scritta dal riepilogo
       scriviPeriodo('7', j.periodi['7']); scriviPeriodo('30', j.periodi['30']);
       var t = nomeGiorno(ultimo);
       document.getElementById('th1').textContent = t === 'Ieri' ? 'Ieri' : breve(ultimo);

@@ -245,8 +245,20 @@ console.log(`  letture: ${conteggio.stazioni} pluviometri in ${conteggio.cartell
 // Cosi' la pagina regione resta a UNA richiesta.
 const perRegione = {};
 const saltati = [];
+/* ⚠️ I PLUVIOMETRI CHE LA MAPPA ESCLUDE (17/10/2026): misurano male, e la mappa
+   non li mostra (liste *_ESCLUSE di index.html, lette da lib-escluse.js). Qui
+   entravano lo stesso, e le pagine regione e le zone delle piogge dicevano
+   numeri diversi dalla mappa (la Calvana faceva la media con Cantagallo fermo
+   a zero dal 19/9). Stesso insieme `fuori` dei doppioni fra due fonti. */
+const { escluse, escluso } = require('./lib-escluse.js');
+const ESCLUSE = escluse(path.join(__dirname, '..', '..'));
+function esclusiDallaMappa(r, fuori) {
+  for (const dir of r.dirs) for (const g of giorni)
+    for (const s of leggi(dir, g) || []) if (escluso(ESCLUSE, r.k, [s.id, s.n])) fuori.add(dir + ':' + s.id);
+  return fuori;
+}
 for (const r of REGIONI) {
-  const fuori = gemelleDaScartare(r.dirs, giorni);
+  const fuori = esclusiDallaMappa(r, gemelleDaScartare(r.dirs, giorni));
   const periodi = {};
   const da = ultimoCompleto(r.dirs);
   if (da !== null) {
@@ -264,7 +276,8 @@ for (const r of REGIONI) {
   // saltato.
   if (!periodi['20']) { saltati.push(r.k); continue; }
   const serie = giorni.slice(da, da + GIORNI_SERIE).map(g => mediaGiorno(r, g, fuori));
-  perRegione[r.k] = { periodi, serie };
+  // serieDa (17/10/2026): la data di serie[0], scritta e non dedotta da periodi['1']
+  perRegione[r.k] = { periodi, serie, serieDa: giorni[da] };
 }
 
 // ── LE ZONE: i riepiloghi delle pagine «dove ha piovuto» di zona (13/9/2026) ──
@@ -299,6 +312,7 @@ function datiRegione(k) {
     const m = new Map();
     for (const d of (r ? r.dirs : [])) {
       for (const st of leggi(d, giorni[i]) || []) {
+        if (escluso(ESCLUSE, k, [st.id, st.n])) continue;   // esclusi dalla mappa, vedi sopra
         if (st.mm != null && !m.has(st.id)) m.set(st.id, st.mm);
       }
     }
@@ -396,7 +410,7 @@ for (const r of REGIONI) {
   if (!x) continue;
   const dest = path.join(USCITA, r.k + '.json');
   const testo = JSON.stringify({ regione: r.k, generato: new Date().toISOString(),
-    periodi: x.periodi, serie: x.serie, zone: zonePer[r.k] || [] }, null, 1) + '\n';
+    periodi: x.periodi, serie: x.serie, serieDa: x.serieDa, zone: zonePer[r.k] || [] }, null, 1) + '\n';
   const prima = fs.existsSync(dest) ? fs.readFileSync(dest, 'utf8') : '';
   // Il campo `generato` cambia a ogni giro: se il resto e' identico non si
   // riscrive, cosi' un run in piu' non produce un commit di sole date.

@@ -295,7 +295,8 @@ for (const k of Object.keys(POSTI)) {
       for (let n = 1; n <= GIORNI; n++) {
         const vt = g.t[n] && g.t[n][p[0]];
         const vw = g.w[n] && g.w[n][p[0]];
-        if (vt) { haT = true; t.push([uno(vt[0]), uno(vt[1])]); } else t.push(null);
+        // 17/10/2026: una temperatura che manca resta null, non 0° (uno(null) dava 0)
+        if (vt) { haT = true; t.push([vt[0] == null ? null : uno(vt[0]), vt[1] == null ? null : uno(vt[1])]); } else t.push(null);
         if (vw && vw[0] != null) { haW = true; w.push(uno(vw[0])); } else w.push(null);
       }
       if (haT) serieT[p[0]] = t;
@@ -371,10 +372,24 @@ for (const k of Object.keys(POSTI)) {
    non sa in che regione sia la stazione cliccata finche' non guarda qui.
    Il file lo scarica solo chi apre una stazione, mai chi guarda la mappa. */
 {
+  /* ⚠️ LE COORDINATE DI OGGI, NON QUELLE DELL'ELENCO (17/10/2026). La mappa cerca la
+     pagina con le coordinate del file del giorno; l'elenco dei posti le ha scritte una
+     volta. Quando un ente sposta la stazione (Val Masino S. Martino, ARPA Lombardia,
+     ~400 m) o le arrotonda diverso (Arvier) il tasto «vai alla scheda» spariva. Si
+     mettono tutte e due le chiavi: quella del file piu' recente e quella dell'elenco. */
+  const recenti = giorniIndietro(oggi, 4);
   const indice = {};
   for (const k of LOCALITA) {
     const sl = slugRegione(POSTI[k] || []);
-    for (const p of (POSTI[k] || [])) indice[p[4].toFixed(4) + ',' + p[5].toFixed(4)] = k + '/' + sl[p[0]];
+    const r = REGIONI.find(x => x.k === k);
+    const dove = {};
+    for (const g of recenti.slice().reverse()) for (const d of (r ? r.dirs : []))
+      for (const s of leggi(d, g) || []) if (s.lat != null && s.lon != null) dove[String(s.id)] = [+s.lat, +s.lon];
+    for (const p of (POSTI[k] || [])) {
+      indice[p[4].toFixed(4) + ',' + p[5].toFixed(4)] = k + '/' + sl[p[0]];
+      const c = dove[String(p[0])];
+      if (c) indice[c[0].toFixed(4) + ',' + c[1].toFixed(4)] = k + '/' + sl[p[0]];
+    }
   }
   const destI = path.join(USCITA, 'indice.json');
   const testoI = JSON.stringify(indice) + '\n';

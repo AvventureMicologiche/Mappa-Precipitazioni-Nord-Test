@@ -189,6 +189,8 @@ nav.altre a{color:var(--blu);}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
 .img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
 .tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
@@ -491,6 +493,8 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
   function menoDa(s, n){ var p=String(s).split('-');
     var d=new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return d; }
   function gg(s){ var p=String(s).split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
+  /* «il 9 ottobre», ma «l’8», «l’11», «l’1» (17/10/2026) */
+  function ilGg(s){ var d=+String(s).split('-')[2]; return (d===1||d===8||d===11?'l’':'il ')+gg(s); }
   /* «dal 4 all'11 settembre»: il mese una volta sola se e' lo stesso, e
      l'apostrofo davanti a 1, 8 e 11 (24/9/2026). */
   function dalAl(a,b){ var pa=a.split('-'), pb=b.split('-'), da=+pa[2], db=+pb[2];
@@ -517,7 +521,12 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
      conterebbe come asciutti i giorni mancanti: niente verdetto, niente
      classifica, e lo si dice. */
   function conDati(s, da, a){ var c=0; for (var n=da; n>=a; n--) if (s[n-1] != null) c++; return c; }
-  function coperto(s, da, a){ return conDati(s, da, a) >= (da - a + 1) * 0.6; }
+  /* ⚠️ I GIORNI DELLA RETE, NON 25 FISSI (17/10/2026): un giorno in cui manca tutta la
+     regione non pesa sul singolo pluviometro, come in genera-funghi.js. RETE[i] e'
+     vero se almeno un posto della regione ha il dato quel giorno; si riempie in disegna. */
+  var RETE = null;
+  function giorniRete(da, a){ if (!RETE) return da - a + 1; var c=0; for (var n=da; n>=a; n--) if (RETE[n-1]) c++; return c; }
+  function coperto(s, da, a){ var d = giorniRete(da, a); return d > 0 && conDati(s, da, a) >= d * 0.6; }
 
   /* ⚠️ LA SCALA DEL VERDETTO E' SUA (24/9/2026): la pioggia degli ULTIMI 20
      GIORNI. Sotto 30 mm troppo poco, da 30 poco, da 60 bene, da 100 benissimo.
@@ -562,29 +571,32 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
     /* IERI, per chi cerca «quanto ha piovuto ieri a». Si dice il giorno vero:
        il file puo' essere stato scritto prima di mezzanotte. */
     var ieriVero = iso(menoDa(iso(new Date()),1));
-    document.getElementById('ieri').innerHTML = (ieri === ieriVero ? 'Ieri, ' : 'Il ')
-      + gg(ieri) + ': ' + (s[0] == null ? 'il dato non è ancora arrivato.' : '<b>' + num(s[0]) + ' mm</b>.');
+    document.getElementById('ieri').innerHTML = (ieri === ieriVero ? 'Ieri, ' + gg(ieri)
+      : ilGg(ieri).charAt(0).toUpperCase() + ilGg(ieri).slice(1)) + ': ' + (s[0] == null ? 'il dato non è ancora arrivato.' : '<b>' + num(s[0]) + ' mm</b>.');
 
     /* ── il verdetto ── */
     var liv = LIV.filter(function(l){ return m20 < l.fino; })[0], k = LIV.indexOf(liv);
     var big = [];
     for (var n=20; n>=1; n--) if ((s[n-1]||0) >= 10) big.push(n);
     var dett = big.length
-      ? big.slice(-4).map(function(n){ return '<b>' + num(s[n-1]) + ' mm</b> il ' + gg(iso(menoDa(j.oggi,n))); }).join(', ') + '.'
+      ? big.slice(-4).map(function(n){ return '<b>' + num(s[n-1]) + ' mm</b> ' + ilGg(iso(menoDa(j.oggi,n))); }).join(', ') + '.'
       : 'Nessuna giornata sopra i 10 mm.';
     var scala = '';
     for (var q=0; q<4; q++) scala += '<div' + (q<=k ? ' style="background:'+liv.c+'"' : '') + '></div>';
-    var g20 = conDati(s, 20, 1);
-    if (g20 < 12) {
+    RETE = []; for (var ir = 0; ir < GIORNI; ir++) RETE.push(Object.keys(j.serie).some(function(id){ return j.serie[id][ir] != null; }));
+    var g20 = conDati(s, 20, 1), r20 = giorniRete(20, 1);
+    if (g20 < r20 * 0.6 || r20 < 12) {
       /* troppi giorni senza dato: il totale sarebbe piu' basso del vero */
       var ultimoDato = null;
       for (var nu = 1; nu <= GIORNI; nu++) if (s[nu-1] != null) { ultimoDato = nu; break; }
-      var perche = g20 === 0
-        ? 'Questo pluviometro non manda dati ' + (ultimoDato ? 'dal ' + gg(iso(menoDa(j.oggi, ultimoDato))) : 'da più di ' + GIORNI + ' giorni') + '.'
-        : 'Negli ultimi 20 giorni questo pluviometro ha mandato dati solo <b>' + g20 + ' giorni</b>: il totale sarebbe più basso del vero.';
+      var perche = r20 < 12 && r20 > 0
+        ? 'Negli ultimi 20 giorni la rete dei pluviometri della regione ha mandato dati solo <b>' + r20 + (r20 === 1 ? ' giorno' : ' giorni') + '</b>: il totale sarebbe più basso del vero.'
+        : g20 === 0
+        ? 'Questo pluviometro non manda dati ' + (ultimoDato ? ilGg(iso(menoDa(j.oggi, ultimoDato))).replace(/^il /, 'dal ').replace(/^l’/, 'dall’') : 'da più di ' + GIORNI + ' giorni') + '.'
+        : 'Negli ultimi 20 giorni questo pluviometro ha mandato dati solo <b>' + g20 + (g20 === 1 ? ' giorno' : ' giorni') + '</b> su ' + r20 + ': il totale sarebbe più basso del vero.';
       document.getElementById('verdetto').innerHTML = '<div class="verdetto">'
         + '<div class="si"><span class="pallino" style="background:#8a97a6"></span>Dati incompleti</div>'
-        + '<div class="dett">' + perche + ' Guarda i pluviometri vicini qui sotto.</div>'
+        + '<div class="dett">' + perche + (r20 < 12 ? '' : ' Guarda i pluviometri vicini qui sotto.') + '</div>'
         + '<div class="capo-btns"><a class="capo-btn" href="'+link(daG, ieri)+'">Vedi sulla mappa</a></div></div>';
     } else
     document.getElementById('verdetto').innerHTML = '<div class="verdetto">'
@@ -801,9 +813,9 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
       var H = '<h2>' + che + ' degli ultimi 25 giorni</h2>';
       if (sT) {
         var vals = [];
-        for (var q4 = 0; q4 < GIORNI; q4++) if (sT[q4]) { vals.push(sT[q4][0]); vals.push(sT[q4][1]); }
+        for (var q4 = 0; q4 < GIORNI; q4++) if (sT[q4]) { if (sT[q4][0] != null) vals.push(sT[q4][0]); if (sT[q4][1] != null) vals.push(sT[q4][1]); }
         var lo = Math.floor(Math.min.apply(null, vals) - 1), hi = Math.ceil(Math.max.apply(null, vals) + 1);
-        H += (sT[0] ? '<p class="breve">Ieri minima <b>' + num(sT[0][0]) + '°</b>, massima <b>' + num(sT[0][1]) + '°</b>.</p>' : '')
+        H += (sT[0] ? '<p class="breve">Ieri minima <b>' + (sT[0][0] == null ? '—' : num(sT[0][0]) + '°') + '</b>, massima <b>' + (sT[0][1] == null ? '—' : num(sT[0][1]) + '°') + '</b>.</p>' : '')
           + grafico(sT, 'tt-temp', [
               { cl: 'min', leggi: function (d) { return d ? d[0] : null; } },
               { cl: 'max', leggi: function (d) { return d ? d[1] : null; } }], lo, hi, '&deg;C')

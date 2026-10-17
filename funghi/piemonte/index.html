@@ -194,6 +194,8 @@ nav.altre a{color:var(--blu);}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
 .img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
 .tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
@@ -396,6 +398,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
         «Reppia (Ne)»: uniforme su diciannove regioni, un'informazione in meno
         qui. Deciso il 2/9/2026. */
   var POSTI = [["250","Ala di Stura","TO",1006,45.3125,7.3103,44],["S3931","Andonno Gesso","CN",712,44.2908,7.4342,65],["162","Anzino","VB",680,45.9867,8.1558,70],["S3218","Armeno","NO",865,45.8264,8.5061,61],["S2565","Arvogno","VB",1240,46.1681,8.4564,63],["354","Barge","CN",950,44.7319,7.2496,62],["325","Bergalli","CN",385,44.4067,8.1822,39],["S2888","Bielmonte","BI",1480,45.6611,8.0758,41],["S2586","Bobbio Pellice","TO",1312,44.8186,7.1156,46],["343","Boccioleto","VC",809,45.8347,8.1114,73],["310","Borello","CN",970,44.2238,7.8332,61],["143","Borgone","TO",390,45.1164,7.2439,47],["413","Borgosesia Sesia","VC",371,45.7367,8.2606,63],["S6159","Bric Castellaro","AL",415,44.6447,8.7914,39],["227","Brignano Frascata","AL",512,44.8033,9.0303,46],["356","Brossasco","CN",576,44.5683,7.3733,74],["S4103","Cabella Ligure","AL",480,44.6739,9.0919,47],["344","Camparient","BI",1515,45.7322,8.085,53],["604","Candoglia Toce","VB",201,45.9747,8.4217,58],["357","Canosio","CN",1220,44.4544,7.0864,55],["121","Capanne di Cosola","AL",1550,44.6751,9.2001,56],["141","Capanne Marcarolo","AL",780,44.5631,8.7683,61],["219","Castellania","AL",390,44.7986,8.9311,40],["246","Castelletto Uzzone","CN",405,44.4927,8.1885,52],["S4591","Cellio con Breia","VC",692,45.7523,8.3284,69],["S2568","Cesara","VB",522,45.8361,8.3647,58],["S2569","Chiaves","TO",1590,45.3356,7.4125,56],["307","Chiusa Pesio","CN",935,44.2333,7.6603,72],["340","Cicogna","VB",753,46.0038,8.4915,73],["260","Coazze","TO",1130,45.0419,7.2436,59],["428","Corio","TO",562,45.3092,7.5447,45],["156","Crodo","VB",554,46.2267,8.3236,65],["S2571","Demonte","CN",745,44.3164,7.3122,50],["295","Diga la Piastra","CN",950,44.2267,7.3886,40],["117","Domodossola","VB",252,46.1031,8.3022,40],["129","Druogno","VB",840,46.1342,8.4261,72],["327","Feisoglio","CN",770,44.5458,8.1122,46],["437","Fobello","VC",1047,45.8937,8.1594,48],["445","Fomarco","VB",445,46.0132,8.2533,53],["336","Formazza Bruggi","VB",1226,46.3478,8.4289,37],["228","Fraconalto","AL",725,44.5919,8.8797,63],["151","Gad","TO",1055,45.0428,6.8403,40],["S3216","Garbagna","AL",410,44.7842,8.9919,58],["415","Lanzo Stura di Lanzo","TO",454,45.2683,7.4828,40],["S4109","Lavagnina Lago","AL",343,44.6065,8.7541,71],["S2578","Lemie","TO",995,45.2278,7.2736,37],["105","Luserna San Giovanni","TO",475,44.8128,7.2411,42],["352","Massello","TO",1386,44.9599,7.0649,58],["S3758","Mombasiglio Mongia","CN",438,44.3681,7.9644,51],["361","Monte Carza","VB",1110,46.0425,8.6797,56],["S4113","Monte Mesma","NO",532,45.7753,8.4425,47],["385","Monterosso Grana","CN",720,44.4094,7.3244,76],["635","Mottarone - Baita Cai","VB",1399,45.8802,8.4471,75],["S4114","Omegna Lago d'Orta","VB",292,45.8744,8.4092,56],["277","Paesana","CN",1257,44.6615,7.2628,63],["S4151","Paesana Erasca","CN",638,44.6819,7.2636,61],["311","Pamparato","CN",975,44.2831,7.9044,67],["363","Paroldo","CN",795,44.4458,8.0811,40],["S4115","Paruzzaro","NO",332,45.7489,8.5122,37],["136","Perlo","CN",700,44.3303,8.0833,64],["276","Perrero Germanasca","TO",662,44.9467,7.1628,80],["S2562","Piani di Carrega","AL",1245,44.6136,9.1875,69],["157","Pizzanco","VB",1142,46.1239,8.1778,54],["S2590","Ponte di Nava Tanaro","CN",820,44.1178,7.8675,59],["127","Ponzone Bric Berton","AL",773,44.5183,8.5392,41],["243","Ponzone Cimaferle","AL",705,44.5536,8.4922,58],["S3099","Pradeboni","CN",985,44.2986,7.6386,65],["095","Pragelato - Trampolino a Valle","TO",1540,45.0089,6.9414,40],["264","Praly","TO",1385,44.9047,7.0575,58],["S2575","Premia","VB",755,46.3039,8.3692,53],["314","Priero","CN",610,44.3772,8.1081,43],["322","Prunetto","CN",751,44.5097,8.1631,41],["185","Rassa","VC",916,45.7693,8.0164,58],["S3926","Robilante Vermenagna","CN",740,44.2639,7.5183,70],["222","Roccaforte Ligure","AL",770,44.6786,9.0231,40],["S3950","Roccaforte Mondovi'","CN",595,44.31,7.7442,69],["358","San Giacomo Demonte","CN",1297,44.3456,7.2031,40],["150","Salbertrand","TO",1010,45.0711,6.8939,56],["638","Sambughetto","VB",813,45.9061,8.3114,57],["S2570","San Damiano Macra","CN",1095,44.5069,7.2503,75],["417","San Martino Chisone","TO",410,44.8853,7.2831,52],["229","Sardigliano","AL",320,44.7561,8.9067,56],["135","Serole Bric Puschera","AT",778,44.5631,8.2581,38],["326","Someraro","VB",425,45.8889,8.5119,39],["268","Talucco","TO",776,44.9489,7.2906,90],["278","Trana Sangone","TO",371,45.0356,7.42,47],["S3375","Trasquera","VB",1145,46.215,8.2058,60],["S4124","Unchio Trobaso","VB",302,45.9603,8.5314,51],["308","Upega","CN",1310,44.1294,7.7253,51],["353","Vaccera","TO",1435,44.875,7.2017,75],["149","Val Clarea","TO",1040,45.1407,6.9634,37],["189","Valdilana","BI",1108,45.675,8.1475,50],["132","Varallo","VC",499,45.8194,8.2739,73],["438","Varallo Sabbia","VC",729,45.8568,8.2368,80],["S3949","Viola","CN",1050,44.2861,7.9539,69],["S4127","Viu' Centrale Fucine","TO",715,45.2316,7.3654,52]];
+  var SOSPESI = {};
 
   var REG = 'piemonte', DIRS = ["piemonte"], NOME = "Piemonte";
   /* In locale i dati si leggono dalla cartella del repo, sul sito dal raw di
@@ -418,6 +421,8 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
   function menoDa(s, n){ var p = String(s).split("-");
     var d = new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return d; }
   function gg(s){ var p = String(s).split("-"); return (+p[2]) + " " + MESI[(+p[1])-1]; }
+  /* «il 9 ottobre», ma «l’8», «l’11», «l’1» (17/10/2026: si leggeva «il 8 ottobre») */
+  function ilGg(s){ var d = +String(s).split("-")[2]; return (d === 1 || d === 8 || d === 11 ? "l’" : "il ") + gg(s); }
   /* «dal 4 all'11 settembre»: il mese una volta sola, l'apostrofo davanti a 1, 8, 11 */
   function dalAl(a, b){ var pa = a.split("-"), pb = b.split("-"), da = +pa[2], db = +pb[2];
     var al = (db === 1 || db === 8 || db === 11) ? "all’" : "al ";
@@ -437,12 +442,23 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
              {fino:1e9,t:"Ha piovuto benissimo",c:"#2e9d44"}];
 
   function scriviVerdetto(s, oggi, href, sotto){
+    /* 17/10/2026: un giorno senza nessun dato e' null, non zero. Sotto il 60% di
+       giorni con dato (la soglia della mappa) niente verdetto: lo si dice. */
+    var g20 = 0; for (var n0 = 20; n0 >= 1; n0--) if (s[n0-1] != null) g20++;
+    if (g20 < 12) {
+      document.getElementById("verdetto").innerHTML = "<div class=\"verdetto\">"
+        + "<div class=\"si\"><span class=\"pallino\" style=\"background:#8a97a6\"></span>Dati incompleti</div>"
+        + "<div class=\"dett\">Negli ultimi 20 giorni i pluviometri hanno mandato dati solo <b>" + g20 + (g20 === 1 ? " giorno" : " giorni")
+        + "</b>: il totale sarebbe più basso del vero.</div>"
+        + "<div class=\"capo-btns\"><a class=\"capo-btn\" href=\"" + href + "\">Vedi sulla mappa</a></div></div>";
+      return;
+    }
     var m20 = somma(s, 20, 1);
     var liv = LIV.filter(function(l){ return m20 < l.fino; })[0], k = LIV.indexOf(liv);
     var big = [];
     for (var n = 20; n >= 1; n--) if ((s[n-1]||0) >= 10) big.push(n);
     var dett = big.length
-      ? big.slice(-4).map(function(n){ return "<b>" + num(s[n-1]) + " mm</b> il " + gg(iso(menoDa(oggi,n))); }).join(", ") + "."
+      ? big.slice(-4).map(function(n){ return "<b>" + num(s[n-1]) + " mm</b> " + ilGg(iso(menoDa(oggi,n))); }).join(", ") + "."
       : "Nessuna giornata sopra i 10 mm.";
     var sc = "";
     for (var q = 0; q < 4; q++) sc += "<div" + (q <= k ? " style=\"background:" + liv.c + "\"" : "") + "></div>";
@@ -469,13 +485,19 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
       .forEach(function (c) { if (!lab[c-1] && !lab[c+1]) lab[c] = 1; });
     for (var i = GIORNI; i >= 1; i--) {
       var v = s[i-1] || 0, d = menoDa(oggi, i), cl = (i >= 13 && i <= 20) ? " dentro" : "";
+      if (s[i-1] == null) {   /* nessun dato: barra vuota tratteggiata, non uno zero (17/10/2026) */
+        barre += "<div class=\"b nodato\" title=\"" + gg(iso(d)) + ": nessun dato\"><i></i></div>";
+        ax += "<span>" + ((i === GIORNI || i === 1 || i % 5 === 0) ? (d.getDate() + "/" + (d.getMonth()+1)) : "") + "</span>";
+        continue;
+      }
       barre += "<div class=\"b" + cl + "\" title=\"" + gg(iso(d)) + ": " + num(v) + " mm\">" + (lab[i] ? "<b>" + num(v) + "</b>" : "")
         + "<i style=\"height:" + Math.max(2, Math.round(v/max*86)) + "%\"></i></div>";
       ax += "<span>" + ((i === GIORNI || i === 1 || i % 5 === 0) ? (d.getDate() + "/" + (d.getMonth()+1)) : "") + "</span>";
     }
     document.getElementById("grafico").innerHTML = "<div class=\"gg\">" + barre + "</div><div class=\"gg-x\">" + ax + "</div>"
       + "<p class=\"gg-leg\"><i style=\"background:var(--blu)\"></i>da 13 a 20 giorni fa &nbsp; "
-      + "<i style=\"background:#b9cbe2\"></i>gli altri giorni</p>";
+      + "<i style=\"background:#b9cbe2\"></i>gli altri giorni"
+      + (s.slice(0, GIORNI).some(function(x){ return x == null; }) ? " &nbsp; <i style=\"background:none;border:1px dashed #9fb3cc;box-sizing:border-box\"></i>nessun dato" : "") + "</p>";
     return ax;
   }
 
@@ -484,13 +506,15 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
     var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13));
     document.getElementById("h-conta").textContent = "Però attenzione: la pioggia che conta è quella caduta " + dalAl(daG, aG);
     document.getElementById("p-conta").innerHTML = "Il fungo spunta 12-13 giorni dopo una bella pioggia: "
-      + "i funghi di oggi nascono da queste otto giornate, che qui hanno fatto " + quale + " <b>" + num(somma(s,20,13)) + " mm</b>.";
+      + "i funghi di oggi nascono da queste otto giornate, che qui hanno fatto " + quale + " <b>" + num(somma(s,20,13)) + " mm</b>"
+      + (function(){ var m = 0; for (var q = 20; q >= 13; q--) if (s[q-1] == null) m++; return m ? " (ma di " + m + (m === 1 ? " giorno" : " giorni") + " il dato manca)" : ""; })() + ".";
     var fmax = 1;
     for (var n = 20; n >= 13; n--) fmax = Math.max(fmax, s[n-1]||0);
     var fb = "", fx = "";
     for (var n2 = 20; n2 >= 13; n2--) {
       var v = s[n2-1] || 0, d = menoDa(oggi, n2);
-      fb += "<div class=\"c\">" + (v > 0 ? "<b>" + num(v) + "</b>" : "") + "<i style=\"height:" + Math.max(2, Math.round(v/fmax*88)) + "%\"></i></div>";
+      if (s[n2-1] == null) fb += "<div class=\"c nodato\" title=\"nessun dato\"><b>–</b><i></i></div>";
+      else fb += "<div class=\"c\">" + (v > 0 ? "<b>" + num(v) + "</b>" : "") + "<i style=\"height:" + Math.max(2, Math.round(v/fmax*88)) + "%\"></i></div>";
       fx += "<span>" + GS[d.getDay()] + "<br>" + d.getDate() + "/" + (d.getMonth()+1) + "</span>";
     }
     document.getElementById("finestra").innerHTML = "<div class=\"fin\">" + fb + "</div><div class=\"fin-x\">" + fx + "</div>";
@@ -499,7 +523,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
   /* minima e massima degli ultimi 25 giorni, a linee */
   function scriviTemperatura(sT, ax, nota){
     var vals = [];
-    for (var q = 0; q < GIORNI; q++) if (sT[q]) { vals.push(sT[q][0]); vals.push(sT[q][1]); }
+    for (var q = 0; q < GIORNI; q++) if (sT[q]) { if (sT[q][0] != null) vals.push(sT[q][0]); if (sT[q][1] != null) vals.push(sT[q][1]); }
     if (!vals.length) return;
     var lo = Math.floor(Math.min.apply(null, vals) - 1), hi = Math.ceil(Math.max.apply(null, vals) + 1);
     var passi = [1, 2, 2.5, 5, 10], p = 10;
@@ -512,14 +536,14 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
     }
     function linea(c){ var pz = [], cur = [];
       for (var i = GIORNI; i >= 1; i--) { var d = sT[i-1];
-        if (!d) { if (cur.length > 1) pz.push(cur.join(" ")); cur = []; continue; }
+        if (!d || d[c] == null) { if (cur.length > 1) pz.push(cur.join(" ")); cur = []; continue; }
         cur.push(((GIORNI - i) / (GIORNI - 1) * 100).toFixed(1) + "," + y(d[c]).toFixed(1)); }
       if (cur.length > 1) pz.push(cur.join(" "));
       return pz; }
     ["min","max"].forEach(function(cl, c){ linea(c).forEach(function(pts){ svg += "<polyline class=\"" + cl + "\" points=\"" + pts + "\"/>"; }); });
     var ieri = sT[0];
     document.getElementById("meteo").innerHTML = "<h2>Temperatura degli ultimi 25 giorni</h2>"
-      + (ieri ? "<p class=\"breve\">Ieri minima <b>" + num(ieri[0]) + "°</b>, massima <b>" + num(ieri[1]) + "°</b>" + (nota ? ", " + nota : "") + ".</p>" : "")
+      + (ieri ? "<p class=\"breve\">Ieri minima <b>" + (ieri[0] == null ? "—" : num(ieri[0]) + "°") + "</b>, massima <b>" + (ieri[1] == null ? "—" : num(ieri[1]) + "°") + "</b>" + (nota ? ", " + nota : "") + ".</p>" : "")
       + "<div class=\"tt-box\"><svg class=\"tt\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\">" + svg + "</svg>"
       + "<div class=\"tt-y\">" + et + "</div></div><div class=\"gg-x tt-x\">" + ax + "</div>"
       + "<p class=\"gg-leg\"><i style=\"background:#d1603d\"></i>massima &nbsp; <i style=\"background:#3a6ea8\"></i>minima</p>";
@@ -559,14 +583,17 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
     .catch(function(){ return null; })
     .then(function(j){
       if (!j || !j.serie || !j.oggi) return;
-      var ids = POSTI.map(function(p){ return p[0]; }).filter(function(id){ return j.serie[id]; });
+      /* 17/10/2026: senza i pluviometri sospesi (esclusi dalla mappa, vedi lib-escluse.js) */
+      var ids = POSTI.map(function(p){ return p[0]; }).filter(function(id){ return j.serie[id] && !(j.sospesi && j.sospesi[id]); });
       if (!ids.length) return;
       var s = [], sT = [];
       for (var i = 0; i < GIORNI; i++) {
-        var t = 0, n = 0, a = 0, b = 0, m = 0;
+        var t = 0, n = 0, a = 0, b = 0, ma = 0, mb = 0;
+        // minima e massima contate a parte: una delle due puo' mancare (17/10/2026)
         ids.forEach(function(id){ var v = j.serie[id][i]; if (v != null) { t += v; n++; }
-          var tt = ((j.serieT || {})[id] || [])[i]; if (tt) { a += tt[0]; b += tt[1]; m++; } });
-        s.push(n ? uno(t / n) : 0); sT.push(m ? [uno(a / m), uno(b / m)] : null);
+          var tt = ((j.serieT || {})[id] || [])[i]; if (tt) { if (tt[0] != null) { a += tt[0]; ma++; } if (tt[1] != null) { b += tt[1]; mb++; } } });
+        s.push(n ? t / n : null)   /* 17/10/2026: valore pieno, si arrotonda solo scrivendo (prima 16 zone su 114 non tornavano con la lista regionale) */;
+        sT.push(ma || mb ? [ma ? uno(a / ma) : null, mb ? uno(b / mb) : null] : null);
       }
       var o = j.oggi, daG = iso(menoDa(o,20)), aG = iso(menoDa(o,13)), ieri = iso(menoDa(o,1));
       var lk = function(dal, al){ return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al + '&s=p'; };
@@ -640,7 +667,13 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
           if (perGiorno[n] && perGiorno[n][id] >= FORTE) return { g:n, mm:uno(perGiorno[n][id]) };
         return null;
       }
-      mostra(POSTI.map(function(p){
+      /* ⚠️ GEMELLO DI genera-funghi.js (17/10/2026): fuori i sospesi e chi ha dati in
+         meno del 60% dei giorni (sui 25 e sulla finestra 13-20), se no un giorno
+         assente conta come asciutto e il posto scende in classifica. */
+      function coperto(id, da, a){ var c = 0, d = 0;
+        for (var n = da; n >= a; n--) if (perGiorno[n]) { d++; if (perGiorno[n][id] != null) c++; }
+        return d > 0 && c >= d * 0.6; }
+      mostra(POSTI.filter(function(p){ return !SOSPESI[p[0]] && coperto(p[0], GIORNI, 1) && coperto(p[0], 20, 13); }).map(function(p){
         return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5],
           mm:somma(20,13,p[0]), mm7:somma(7,1,p[0]), mm25:somma(GIORNI,1,p[0]),
           forte:ultimaForte(p[0]) };
@@ -653,7 +686,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
     var g=document.getElementById('guasto');
     g.style.display='block';
     g.innerHTML='⚠️ Non riesco a leggere l’archivio delle piogge in questo momento'
-      + (quanti ? ' (trovati solo '+quanti+' giorni su '+GIORNI+')' : '')
+      + (quanti ? ' (trovat'+(quanti===1?'o solo 1 giorno':'i solo '+quanti+' giorni')+' su '+GIORNI+')' : '')
       + '. Non dipende da te: riprova fra qualche minuto, oppure vai direttamente '
       + '<a href="'+MAPPA+'?r='+REG+'">sulla mappa</a>.';
   }
@@ -666,7 +699,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
      regioni: e quello che mostra la pagina della zona, e chi clicca deve
      ritrovarlo uguale. I file delle regioni vicine sono pochi chilobyte e si
      chiedono solo se una zona li nomina. */
-  function ordinaZone(tutte){
+  function ordinaZone(tutte, oggiISO){
     var lista = document.getElementById('zone-dove');
     if (!lista) return;
     var mm = {};
@@ -685,7 +718,9 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
         .catch(function(){ return null; })
         .then(function(j){
           mm[reg] = {};
-          if (j && j.posti) Object.keys(j.posti).forEach(function(id){ mm[reg][id] = j.posti[id][0]; });
+          /* 17/10/2026: solo se e' dello STESSO giorno, se no la finestra 13-20 e' spostata;
+             la parte della zona resta fuori dalla media, come quando il file non arriva */
+          if (j && j.posti && (!oggiISO || j.oggi === oggiISO)) Object.keys(j.posti).forEach(function(id){ mm[reg][id] = j.posti[id][0]; });
         });
     })).then(function(){
       voci.forEach(function(li){
@@ -704,7 +739,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
   }
 
   function mostra(righe, oggiISO){
-    ordinaZone(righe);
+    ordinaZone(righe, oggiISO);
     righe = righe.sort(function(a,b){ return b.mm - a.mm; }).slice(0, QUANTI);
     var maxMm = Math.max.apply(null, righe.map(function(r){ return Math.max(r.mm, r.mm7, r.mm25); }).concat([1]));
 
@@ -742,7 +777,8 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
        averla gia' detta. Qui restano le DATE, che in cima non ci possono
        stare: cambiano ogni giorno e il titolo e' cotto nel guscio. */
     document.getElementById('finestra2').innerHTML =
-      'Gli otto giorni della finestra sono fra il <b>' + gg(daG) + '</b> e il <b>' + gg(aG)
+      'Gli otto giorni della finestra sono fra ' + ilGg(daG).slice(0, -gg(daG).length) + '<b>' + gg(daG) + '</b> e '
+      + ilGg(aG).slice(0, -gg(aG).length) + '<b>' + gg(aG)
       + '</b>. Sono millimetri misurati a terra dai pluviometri, non una previsione.';
 
     var trs = righe.map(function(r, i){
@@ -773,11 +809,15 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
 
     /* ⚠️ «15 dei primi 15» era un modo storto di dire «tutti»: quando il conto
        coincide col totale si scrive cosi', se no «12 posti su 15». */
-    var conForte = righe.filter(function(r){ return r.forte; }).length;
+    /* ⚠️ SOLO QUELLE DEI 25 GIORNI (17/10/2026): «forte» arriva anche da piu'
+       indietro (genera-funghi la cerca fino a 150 giorni), e nel Veneto la nota
+       diceva «tutti e 15 negli ultimi 25 giorni» con le piogge di 30-37 giorni fa. */
+    var conForte = righe.filter(function(r){ return r.forte && r.forte.g <= GIORNI; }).length;
     var quanti = (conForte === righe.length)
       ? 'Tutti e ' + righe.length + ' i posti in elenco ne hanno avuta una'
       : (conForte === 0)
         ? 'Nessuno dei ' + righe.length + ' posti in elenco ne ha avuta una'
+        : conForte === 1 ? '1 posto su ' + righe.length + ' ne ha avuta una'
         : conForte + ' posti su ' + righe.length + ' ne hanno avuta una';
     document.getElementById('notaforte').innerHTML =
       '«Pioggia forte» vuol dire almeno ' + FORTE + ' mm in un giorno solo: è quella che bagna '

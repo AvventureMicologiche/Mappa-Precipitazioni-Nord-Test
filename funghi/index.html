@@ -192,6 +192,8 @@ nav.altre a{color:var(--blu);}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
 .img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
 .tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
@@ -414,8 +416,12 @@ licenza ODbL. La provincia viene dai confini provinciali ISTAT.</p>
          averla gia' detta. Qui servono solo le DATE, che in cima non ci sono
          perche' cambiano ogni giorno e il titolo e' cotto nel guscio. */
       document.getElementById('finestra').innerHTML =
-        'Gli otto giorni della finestra sono <b>dal ' + gg(j.finestra[0]) + ' al ' +
-        gg(j.finestra[1]) + '</b>. Sono millimetri misurati a terra dai pluviometri, non una previsione.';
+        'Gli otto giorni della finestra sono <b>' + dalAl(j.finestra[0], j.finestra[1])
+        + '</b>. Sono millimetri misurati a terra dai pluviometri, non una previsione.';
+      /* 17/10/2026: «dal 8 ottobre al 15 ottobre» → «dall’8 al 15 ottobre», come le altre pagine */
+      function dalAl(a, b){ var pa = a.split('-'), pb = b.split('-'), da = +pa[2], db = +pb[2];
+        return ((da === 1 || da === 8 || da === 11) ? 'dall’' : 'dal ') + (pa[1] === pb[1] ? da : gg(a))
+          + ((db === 1 || db === 8 || db === 11) ? ' all’' : ' al ') + gg(b); }
 
       /* ⚠️ NIENTE COLONNA «REGIONE», e non e' per far posto. Al primo giro
          c'era, e diceva «Bagnone MS — Liguria»: Bagnone e' in provincia di

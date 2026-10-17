@@ -90,7 +90,7 @@ function numeriRegione(j, oggi, K, SITO) {
     cand.sort(function (a, b) { return s[b - 1] - s[a - 1]; })
       .forEach(function (c) { if (!lab[c - 1] && !lab[c + 1]) lab[c] = 1; });
     for (i = n; i >= 1; i--) {
-      var v = s[i - 1], g = menoDa(ultimo, i - 1), cl = i <= 7 ? ' dentro' : '';
+      var v = s[i - 1], g = menoDa(j.serieDa || ultimo, i - 1), cl = i <= 7 ? ' dentro' : '';   // 17/10/2026: la data della serie la dice il riepilogo
       barre += '<div class="b' + cl + '" title="' + lungo(iso(g)) + ': ' + (v == null ? 'nessun dato' : num(v) + ' mm') + '">' + (lab[i] ? '<b>' + mm(v) + '</b>' : '')
         + '<i style="height:' + (v == null ? 0 : Math.max(2, Math.round(v / max * 86))) + '%"></i></div>';
       ax += '<span>' + ((i === n || i === 1 || i % 5 === 0) ? (g.getDate() + '/' + (g.getMonth() + 1)) : '') + '</span>';
@@ -115,7 +115,7 @@ function numeriRegione(j, oggi, K, SITO) {
       media: Math.round(d.media) + ' mm <small>di media</small>',
       top: top,
       // Le giornate si dicono solo se ne manca qualcuna: se no e' il titolo ripetuto.
-      date: dalAl(d.primo, d.ultimo) + (d.giorni < +k ? ', ' + d.giorni + ' giornate di dati' : '') + '.',
+      date: dalAl(d.primo, d.ultimo) + (d.giorni < +k ? ', ' + d.giorni + (d.giorni === 1 ? ' giornata di dati' : ' giornate di dati') : '') + '.',
     };
   });
 

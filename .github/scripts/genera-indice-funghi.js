@@ -293,8 +293,12 @@ ${/* ⚠️ Qui NON si chiama navAltre: quella scrive due elenchi, regioni e
          averla gia' detta. Qui servono solo le DATE, che in cima non ci sono
          perche' cambiano ogni giorno e il titolo e' cotto nel guscio. */
       document.getElementById('finestra').innerHTML =
-        'Gli otto giorni della finestra sono <b>dal ' + gg(j.finestra[0]) + ' al ' +
-        gg(j.finestra[1]) + '</b>. Sono millimetri misurati a terra dai pluviometri, non una previsione.';
+        'Gli otto giorni della finestra sono <b>' + dalAl(j.finestra[0], j.finestra[1])
+        + '</b>. Sono millimetri misurati a terra dai pluviometri, non una previsione.';
+      /* 17/10/2026: «dal 8 ottobre al 15 ottobre» → «dall’8 al 15 ottobre», come le altre pagine */
+      function dalAl(a, b){ var pa = a.split('-'), pb = b.split('-'), da = +pa[2], db = +pb[2];
+        return ((da === 1 || da === 8 || da === 11) ? 'dall’' : 'dal ') + (pa[1] === pb[1] ? da : gg(a))
+          + ((db === 1 || db === 8 || db === 11) ? ' all’' : ' al ') + gg(b); }
 
       /* ⚠️ NIENTE COLONNA «REGIONE», e non e' per far posto. Al primo giro
          c'era, e diceva «Bagnone MS — Liguria»: Bagnone e' in provincia di
