@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pluviometria Austria: dove ha piovuto e dati dei pluviometri</title>
-<meta name="description" content="Dove ha piovuto ieri in Austria e negli ultimi 7, 20 e 30 giorni: dati pluviometrici di quasi 270 pluviometri di GeoSphere Austria. Aggiornate ogni giorno.">
-<link rel="canonical" href="https://avventurepluvio-test.netlify.app/austria/">
+<title>Pluviometria Austria: mappa di quasi 270 pluviometri, 30 giorni</title>
+<meta name="description" content="Mappa di quasi 270 pluviometri GeoSphere Austria aggiornata ogni mattina. Ieri e ultimi 30 giorni. Tocca un paese e vedi il grafico.">
+<link rel="canonical" href="https://avventurepluvio-test.pages.dev/austria/">
 <meta property="og:title" content="Dove ha piovuto in Austria: ieri e negli ultimi giorni">
 <meta property="og:description" content="Riepilogo degli ultimi 7, 20 e 30 giorni con le zone più bagnate, da quasi 270 pluviometri di GeoSphere Austria.">
-<meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
-<meta property="og:url" content="https://avventurepluvio-test.netlify.app/austria/">
+<meta property="og:image" content="https://avventurepluvio-test.pages.dev/preview.jpg">
+<meta property="og:url" content="https://avventurepluvio-test.pages.dev/austria/">
 <meta property="og:type" content="website">
 <!-- Google tag (gtag.js) — stessa proprietà del sito.
      ⚠️ Il config sta dietro al controllo sull'HOSTNAME, come in index.html dal
@@ -81,7 +81,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
 .gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
 .gg .b.dentro i{background:var(--blu);}
-.gg .b b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10.5px;
+.gg .b b{align-self:center;margin-bottom:2px;line-height:1.1;font-size:10.5px;
   font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
 .gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
 .gg-x span{flex:1;text-align:center;}
@@ -136,12 +136,66 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 /* Sulle pagine piogge l'etichetta sta SOPRA la sua barra, non in cima al
    grafico: con 30 barre strette, in cima non si capiva di chi fosse. */
 .gg .b b{position:static;transform:none;align-self:center;margin-bottom:2px;line-height:1.1;}
-.verdetto .dett{font-size:14px;opacity:.75;}
+/* ── IL BOTTONE DI IERI, versione V2 (11/10/2026, sua scelta fra tre) ──
+   Guardando la pagina dal PC: «le scritte cosi' piccole fanno schifo, i
+   bottoni non sembrano bottoni». Fondo pieno, ombra profonda con un bordo
+   sotto come un tasto, e la freccia in un tondo: il segno che si tocca.
+   Gli altri bottoni (previsioni, tasti dei periodi, «Apri la mappa» delle
+   schede, scritte del riquadro) stanno nel blocco COMUNE RILIEVO di
+   lib-pagina-funghi.js, uguale per tutte le pagine: qui sotto, in fondo. */
+.ieri-btn{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px;width:100%;
+  text-decoration:none;background:#fff;color:#10263f;padding:14px 16px 15px 20px;border-radius:14px;line-height:1.35;
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 6px 0 #7f97b6,0 12px 22px rgba(0,0,0,.38);
+  transition:transform .08s,box-shadow .08s;}
+.ieri-btn b{font-size:19px;font-weight:700;}
+.ieri-btn small{font-size:15px;font-weight:500;color:#3f5672;}
+.ieri-btn i{grid-row:1/span 2;grid-column:2;font-style:normal;width:40px;height:40px;border-radius:50%;
+  background:#2a5490;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 0 #183a68;}
+.ieri-btn:hover{background:#f3f7fc;}
+.ieri-btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #7f97b6,0 5px 10px rgba(0,0,0,.3);}
+@media(max-width:480px){.ieri-btn b{font-size:17.5px;}.ieri-btn small{font-size:14px;}}
+/* BOTTONI IN RILIEVO (lib-pagina-funghi.js) */
+.capo-btns{gap:12px;margin-top:15px;}
+.capo-btn{background:#fff;border:none;color:#10263f;font-size:16px;font-weight:700;padding:12px 18px 13px;border-radius:12px;
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 5px 0 #7f97b6,0 10px 18px rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s;}
+.capo-btn:hover{background:#f3f7fc;}
+.capo-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #7f97b6,0 5px 10px rgba(0,0,0,.3);}
+.banda-prev{padding:15px 16px 16px;border-radius:14px;box-shadow:0 6px 0 #164f97,0 12px 22px rgba(20,60,120,.38);transition:transform .08s,box-shadow .08s;}
+.banda-prev b{font-size:19px;}
+.banda-prev span{font-size:15px;}
+.banda-prev .fr{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;}
+.banda-prev:active{transform:translateY(4px);box-shadow:0 2px 0 #164f97,0 5px 10px rgba(20,60,120,.3);}
+.tasti{gap:12px;margin-top:12px;}
+.tasti a{background:#fff;border:1px solid #d3deeb;border-radius:12px;padding:13px 6px 14px;font-size:16px;
+  box-shadow:0 4px 0 #9fb3cc,0 8px 14px rgba(15,45,77,.16);transition:transform .08s,box-shadow .08s;}
+.tasti a:hover{background:#f3f7fc;}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);box-shadow:0 4px 0 #0c2440,0 8px 14px rgba(15,45,77,.25);}
+.tasti a.forte:hover{background:#24508a;}
+.tasti a:active{transform:translateY(3px);box-shadow:0 1px 0 #9fb3cc,0 3px 6px rgba(15,45,77,.16);}
+.tasti a.forte:active{box-shadow:0 1px 0 #0c2440,0 3px 6px rgba(15,45,77,.25);}
+.card .vai{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:auto;background:var(--blu);color:#fff;font-size:16px;font-weight:700;
+  padding:11px 14px 12px;border-radius:12px;text-decoration:none;box-shadow:0 4px 0 #0c2440,0 8px 14px rgba(15,45,77,.22);transition:transform .08s,box-shadow .08s;}
+.card .nota{margin-bottom:14px;}
+.card .vai:hover{background:#24508a;}
+.card .vai:active{transform:translateY(3px);box-shadow:0 1px 0 #0c2440,0 3px 6px rgba(15,45,77,.22);}
+.verdetto .top{font-size:17.5px;line-height:1.55;}
+.verdetto .dett{font-size:15px;opacity:.85;}
+@media(max-width:480px){.banda-prev b{font-size:17.5px;}.banda-prev span{font-size:14px;}.tasti a{font-size:15px;}.capo-btn{font-size:15.5px;}
+  .verdetto .top{font-size:16px;}.verdetto .dett{font-size:14px;}}
+/* BOTTONE YOUTUBE (lib-pagina-funghi.js) */
+.yt-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
+  font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 4px 0 #7d0d12,0 9px 18px rgba(160,20,27,.32);transition:transform .08s,box-shadow .08s;}
+.yt-btn svg{width:26px;height:18px;flex:none;}
+.yt-btn svg rect{fill:#fff;}
+.yt-btn svg polygon{fill:#e12b2b;}
+.yt-btn:hover{background:linear-gradient(180deg,#e8323a,#c01820);}
+.yt-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7d0d12,0 4px 8px rgba(160,20,27,.3);}
 </style>
 </head>
 <body>
 <header>
-  <a class="logo" href="https://avventurepluvio-test.netlify.app/">🌧️ Mappa Pluviometrica</a>
+  <a class="logo" href="https://avventurepluvio-test.pages.dev/">🌧️ Mappa Pluviometrica</a>
   <a class="yt" href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener"
      onclick="try{gtag('event','click_youtube',{pulsante:'pagina-austria'})}catch(e){}">▶ Iscriviti</a>
 </header>
@@ -155,7 +209,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
      le mappe. Le spiegazioni stanno in fondo, in piccolo. -->
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="verdetto"></div>
-<a class="banda-prev" href="https://avventurepluvio-test.netlify.app/?r=austria&amp;m=prev"
+<a class="banda-prev" href="https://avventurepluvio-test.pages.dev/?r=austria&amp;m=prev"
    onclick="try{gtag('event','apri_mappa',{da:'pagina-austria-banda-previsioni'})}catch(e){}">
   <span class="ic">☀️</span><span><b>Che tempo farà in Austria</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
 
@@ -172,7 +226,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
     <!-- ⚠️ L'indirizzo scritto qui deve GIA' portare alla regione (23/8/2026):
          lo script in fondo lo riscrive con le date esatte, ma solo dopo che i
          dati sono arrivati. Il parametro g sono i giorni: la mappa li fa date. -->
-    <a class="vai" id="cta7" href="https://avventurepluvio-test.netlify.app/?r=austria&amp;g=7"
+    <a class="vai" id="cta7" href="https://avventurepluvio-test.pages.dev/?r=austria&amp;g=7"
        onclick="try{gtag('event','apri_mappa',{da:'pagina-austria-7gg'})}catch(e){}">Apri la mappa →</a>
   </div>
   <div class="card">
@@ -180,7 +234,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
     <div class="numerone" id="rip20-media"><span class="attesa">…</span></div>
     <div id="rip20-top"></div>
     <p class="nota" id="rip20-date"></p>
-    <a class="vai" id="cta20" href="https://avventurepluvio-test.netlify.app/?r=austria&amp;g=20"
+    <a class="vai" id="cta20" href="https://avventurepluvio-test.pages.dev/?r=austria&amp;g=20"
        onclick="try{gtag('event','apri_mappa',{da:'pagina-austria-20gg'})}catch(e){}">Apri la mappa →</a>
   </div>
   <div class="card" id="card30">
@@ -188,30 +242,30 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
     <div class="numerone" id="rip30-media"><span class="attesa">…</span></div>
     <div id="rip30-top"></div>
     <p class="nota" id="rip30-date"></p>
-    <a class="vai" id="cta30" href="https://avventurepluvio-test.netlify.app/?r=austria&amp;g=30"
+    <a class="vai" id="cta30" href="https://avventurepluvio-test.pages.dev/?r=austria&amp;g=30"
        onclick="try{gtag('event','apri_mappa',{da:'pagina-austria-30gg'})}catch(e){}">Apri la mappa →</a>
   </div>
 </div>
 
 <h2>Mappa pluviometrica dell'Austria: guardala in dettaglio</h2>
 <div class="tasti">
-  <a class="forte" id="t1" href="https://avventurepluvio-test.netlify.app/?r=austria&amp;g=1"
+  <a class="forte" id="t1" href="https://avventurepluvio-test.pages.dev/?r=austria&amp;g=1"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-austria-1gg'})}catch(e){}">Ieri</a>
-  <a id="t7" href="https://avventurepluvio-test.netlify.app/?r=austria&amp;g=7"
+  <a id="t7" href="https://avventurepluvio-test.pages.dev/?r=austria&amp;g=7"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-austria-7gg'})}catch(e){}">Ultimi 7 gg</a>
-  <a id="t15" href="https://avventurepluvio-test.netlify.app/?r=austria&amp;g=15"
+  <a id="t15" href="https://avventurepluvio-test.pages.dev/?r=austria&amp;g=15"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-austria-15gg'})}catch(e){}">Ultimi 15 gg</a>
-  <a id="t20" href="https://avventurepluvio-test.netlify.app/?r=austria&amp;g=20"
+  <a id="t20" href="https://avventurepluvio-test.pages.dev/?r=austria&amp;g=20"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-austria-20gg'})}catch(e){}">Ultimi 20 gg</a>
-  <a id="t30" href="https://avventurepluvio-test.netlify.app/?r=austria&amp;g=30"
+  <a id="t30" href="https://avventurepluvio-test.pages.dev/?r=austria&amp;g=30"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-austria-30gg'})}catch(e){}">Ultimi 30 gg</a>
-  <a href="https://avventurepluvio-test.netlify.app/?r=austria&amp;radar=ora"
+  <a href="https://avventurepluvio-test.pages.dev/?r=austria&amp;radar=ora"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-austria-radar'})}catch(e){}">📡 Radar adesso</a>
-  <a class="t-prev" href="https://avventurepluvio-test.netlify.app/?r=austria&amp;m=prev"
+  <a class="t-prev" href="https://avventurepluvio-test.pages.dev/?r=austria&amp;m=prev"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-austria-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">La pioggia degli ultimi 20 giorni in Austria, pluviometro per pluviometro.</p>
-<a href="https://avventurepluvio-test.netlify.app/?r=austria&amp;g=20" id="lnk-img" style="display:block;text-decoration:none;"
+<a href="https://avventurepluvio-test.pages.dev/?r=austria&amp;g=20" id="lnk-img" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'pagina-austria-anteprima'})}catch(e){}">
   <img class="img-mappa" src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/austria.jpg" alt="La mappa delle piogge in Austria: le zone più bagnate, stazione per stazione"
        width="1600" height="1000" loading="lazy"></a>
@@ -223,7 +277,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 I numeri in cima sono la media dei pluviometri della regione, giorno per giorno; sotto, i più bagnati di ogni periodo.
 La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>
 <h2>Dove piove oggi in Austria? La diretta radar</h2>
-<p>Per la pioggia in corso c'è la <a href="https://avventurepluvio-test.netlify.app/?r=austria&amp;radar=ora"
+<p>Per la pioggia in corso c'è la <a href="https://avventurepluvio-test.pages.dev/?r=austria&amp;radar=ora"
    onclick="try{gtag('event','apri_mappa',{da:'pagina-austria-radar-testo'})}catch(e){}">diretta radar</a>:
 dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti seguenti. Il radar misura dal cielo,
 a 2 km di risoluzione, e serve a vedere dove piove adesso; i millimetri di questa pagina sono quelli misurati a terra.</p>
@@ -231,9 +285,9 @@ a 2 km di risoluzione, e serve a vedere dove piove adesso; i millimetri di quest
 <p>Il colore mostra i millimetri cumulati nel periodo che scegli: più è acceso, più acqua è caduta. Ogni pallino è
 un pluviometro: cliccandolo trovi quota, grafico della pioggia degli ultimi 30 giorni e, dove ci sono i sensori,
 temperatura, vento e umidità.</p>
-<p><a href="https://avventurepluvio-test.netlify.app/guida/" onclick="try{gtag('event','click_guida',{pulsante:'pagina-austria'})}catch(e){}">📖 Guida alla mappa: come si usa, tutte le funzioni</a> ·
-<a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" style="color:#e12b2b"
-   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-austria-fondo'})}catch(e){}">▶ Vieni a trovarci su YouTube</a></p>
+<p><a href="https://avventurepluvio-test.pages.dev/guida/" onclick="try{gtag('event','click_guida',{pulsante:'pagina-austria'})}catch(e){}">📖 Guida alla mappa: come si usa, tutte le funzioni</a></p>
+<p style="margin:22px 0 4px;"><a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt-btn"
+   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-austria-fondo'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
 </div>
 </main>
 
@@ -241,19 +295,19 @@ temperatura, vento e umidità.</p>
 <nav class="altre">
   <div style="background:#f4fbf3;border:1px solid #cfe8cf;border-radius:9px;padding:1px 15px 11px;margin-top:16px;">
     <b style="color:#2d6a30">🍄 Dove ha piovuto di più?</b>
-    <p><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:#2d6a30;font-weight:600">La nostra selezione, le località più bagnate</a>
-    <span style="color:#7a8b9a">·</span> oppure il riepilogo delle regioni: <a href="https://avventurepluvio-test.netlify.app/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/sardegna/">Sardegna</a></p>
+    <p><a href="https://avventurepluvio-test.pages.dev/funghi/" style="color:#2d6a30;font-weight:600">La nostra selezione, le località più bagnate</a>
+    <span style="color:#7a8b9a">·</span> oppure il riepilogo delle regioni: <a href="https://avventurepluvio-test.pages.dev/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sardegna/">Sardegna</a></p>
   </div>
 </nav>
   Dati: GeoSphere Austria ·
-  <a href="https://avventurepluvio-test.netlify.app/fonti.html">tutte le fonti e licenze</a> ·
+  <a href="https://avventurepluvio-test.pages.dev/fonti">tutte le fonti e licenze</a> ·
   <a href="https://avventuremicologiche.it">Avventure Micologiche</a><br>
   La mappa copre Italia, Svizzera, Austria, Francia e Slovenia — 5000+ stazioni.
 </footer>
 
 <script>
 (function(){
-  var DIRS=["austria"], K="austria", SITO="https://avventurepluvio-test.netlify.app";
+  var DIRS=["austria"], K="austria", SITO="https://avventurepluvio-test.pages.dev";
   // In locale si legge la cartella del repo, come fa la mappa per l'indice dei
   // funghi: cosi' un riepilogo appena rigenerato si prova senza pubblicarlo.
   var BASE=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'/data/':'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
@@ -276,7 +330,7 @@ temperatura, vento e umidità.</p>
     if(s===iso(giornoFa(1))) return 'Ieri';
     return GIORNI[daIso(s).getDay()]+' '+lungo(s);
   }
-  function link(da,a){ return SITO+'/?r='+K+'&da='+da+'&a='+a; }
+  function link(da,a){ return SITO+'/?r='+K+'&da='+da+'&a='+a+'&s=p'; }
   // «dal 18 al 24 settembre»: il mese una volta sola, l'apostrofo davanti a 1, 8, 11
   function dalAl(a,b){ var pa=a.split('-'), pb=b.split('-'), da=+pa[2], db=+pb[2];
     var ap=function(n){ return n===1||n===8||n===11; };
@@ -291,91 +345,139 @@ temperatura, vento e umidità.</p>
   }
   tasti(iso(giornoFa(1)));
 
+  // ⚠️ 11/10/2026: IL DISEGNO DEI NUMERI sta in lib-numeri-regione.js ed e'
+  // la STESSA funzione con cui il generatore cuoce la pagina ogni mattina: qui
+  // la copia il generatore. Se i numeri cambiano faccia, si cambia la' e basta.
+  function numeriRegione(j, oggi, K, SITO) {
+  var MESI = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  var MESI_L = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  var GIORNI = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+  var NG = 30;
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function iso(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function daIso(s) { var p = String(s).split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function menoDa(s, n) { var d = daIso(s); d.setDate(d.getDate() - n); return d; }
+  function lungo(s) { var p = String(s).split('-'); return (+p[2]) + ' ' + MESI_L[(+p[1]) - 1]; }
+  function num(n) { return (Math.round(n * 10) / 10).toFixed(1).replace('.', ','); }
+  // Sotto i 10 mm il decimale conta (0,4 non e' zero), sopra no.
+  function mm(n) { return n === 0 ? '0' : n < 10 ? num(n) : String(Math.round(n)); }
+  function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+  function link(da, a) { return SITO + '/?r=' + K + '&da=' + da + '&a=' + a + '&s=p'; }
+  // «dal 18 al 24 settembre»: il mese una volta sola, l'apostrofo davanti a 1, 8, 11
+  function dalAl(a, b) {
+    var pa = a.split('-'), pb = b.split('-'), da = +pa[2], db = +pb[2];
+    var ap = function (n) { return n === 1 || n === 8 || n === 11; };
+    return (ap(da) ? 'Dall’' : 'Dal ') + (pa[1] === pb[1] ? da : lungo(a)) + (ap(db) ? ' all’' : ' al ') + lungo(b);
+  }
+  var ieri = iso(menoDa(oggi, 1));
+  // «Ieri» solo se e' davvero ieri: il riepilogo puo' essere di altroieri.
+  function nomeGiorno(s) { return s === ieri ? 'Ieri' : GIORNI[daIso(s).getDay()] + ' ' + lungo(s); }
+
+  var p = j.periodi, ultimo = (p['1'] || p['7']).ultimo, out = { ultimo: ultimo, ieri: ultimo === ieri };
+
+  // Gli indirizzi dei tasti, con le date VERE
+  out.tasti = {};
+  [['t1',1],['t7',7],['t15',15],['t20',20],['t30',30],['cta7',7],['cta20',20],['cta30',30],['lnk-img',20]].forEach(function (x) {
+    out.tasti[x[0]] = link(iso(menoDa(ultimo, x[1] - 1)), ultimo);
+  });
+
   // ── IERI, in cima: la risposta alla domanda del titolo ──
-  function scriviIeri(d){
-    var box=document.getElementById('verdetto');
-    if(!d||!d.giorni){ box.innerHTML=''; return; }
-    var t=nomeGiorno(d.ultimo), top=(d.top||[]).filter(function(s){ return s.mm>=1; }).slice(0,3), dett;
-    if(top.length){
-      dett='Dove ha piovuto di più: '+top.map(function(s){ return '<b>'+esc(s.n)+'</b> '+num(s.mm)+' mm'; }).join(', ')+'.';
-    }else if(d.top&&d.top.length&&d.top[0].mm>0){
-      dett='Giornata quasi asciutta: il massimo è stato '+num(d.top[0].mm)+' mm a '+esc(d.top[0].n)+'.';
-    }else{
-      dett='Giornata asciutta: nessun pluviometro ha misurato pioggia.';
-    }
-    box.innerHTML='<div class="verdetto">'
-      +'<div class="si">'+(t==='Ieri'?'Ieri, '+lungo(d.ultimo):t)+'</div>'
-      +'<div class="gr">'+mm(d.media)+' mm<small>di media</small></div>'
-      +'<div class="top">'+dett+'</div>'
-      +'<div class="dett">Media di '+d.stazioni+' pluviometri.</div>'
-      +(t==='Ieri'?'':'<div class="dett">I dati di ieri non sono ancora arrivati da tutte le reti: questa è l’ultima giornata intera.</div>')
-      +'<div class="capo-btns"><a class="capo-btn" href="'+link(d.ultimo,d.ultimo)+'"'
-      +' onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'pagina-'+K+'-ieri-box\'})}catch(e){}">Vedi '+(t==='Ieri'?'ieri':'quel giorno')+' sulla mappa</a></div></div>';
+  var d = p['1'];
+  if (!d || !d.giorni) out.verdetto = '';
+  else {
+    var t = nomeGiorno(d.ultimo), top = (d.top || []).filter(function (s) { return s.mm >= 1; }).slice(0, 3), dett;
+    if (top.length) dett = 'Dove ha piovuto di più: ' + top.map(function (s) { return '<b>' + esc(s.n) + '</b> ' + num(s.mm) + ' mm'; }).join(', ') + '.';
+    else if (d.top && d.top.length && d.top[0].mm > 0) dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm a ' + esc(d.top[0].n) + '.';
+    else dett = 'Giornata asciutta: nessun pluviometro ha misurato pioggia.';
+    out.verdetto = '<div class="verdetto">'
+      + '<div class="si">' + (t === 'Ieri' ? 'Ieri, ' + lungo(d.ultimo) : t) + '</div>'
+      + '<div class="gr">' + mm(d.media) + ' mm<small>di media</small></div>'
+      + '<div class="top">' + dett + '</div>'
+      + '<div class="dett">Media di ' + d.stazioni + ' pluviometri.</div>'
+      + (t === 'Ieri' ? '' : '<div class="dett">I dati di ieri non sono ancora arrivati da tutte le reti: questa è l’ultima giornata intera.</div>')
+      // 11/10/2026, sua scelta B fra quattro: bottone pieno a tutta larghezza,
+      // titolo e sottotitolo su due righe volute (la frase lunga andava a capo
+      // e non sembrava piu' un bottone). Forma dei banner della home.
+      + '<div class="capo-btns"><a class="ieri-btn" href="' + esc(link(d.ultimo, d.ultimo)) + '"'
+      + ' onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'pagina-' + K + '-ieri-box\'})}catch(e){}">'
+      + '<b>Apri la mappa ' + (t === 'Ieri' ? 'di ieri' : 'di quel giorno') + '</b><i>→</i>'
+      + '<small>la pioggia in tutte le località</small></a></div></div>';
   }
 
   // ── Le 30 barre, l'ultimo giorno a destra. Gli ultimi 7 in blu pieno ──
-  function scriviBarre(s, ultimo){
-    var el=document.getElementById('grafico');
-    if(!s||!s.length){ el.innerHTML='<p class="nota">Il grafico giorno per giorno arriva col prossimo aggiornamento.</p>'; return; }
-    var n=Math.min(NG,s.length), max=1, barre='', ax='';
-    for(var q=0;q<n;q++) max=Math.max(max,s[q]||0);
+  var s = j.serie;
+  if (!s || !s.length) out.grafico = '<p class="nota">Il grafico giorno per giorno arriva col prossimo aggiornamento.</p>';
+  else {
+    var n = Math.min(NG, s.length), max = 1, barre = '', ax = '', q, c, i;
+    for (q = 0; q < n; q++) max = Math.max(max, s[q] || 0);
     // Le etichette si danno dalla barra piu' alta in giu', saltando le vicine
     // di una gia' etichettata: cosi' la piu' alta il suo numero ce l'ha sempre.
-    var cand=[], lab={};
-    for(var c=1;c<=n;c++) if(s[c-1]!=null && s[c-1]>=1 && s[c-1]>=max*0.2) cand.push(c);
-    cand.sort(function(a,b){ return s[b-1]-s[a-1]; })
-      .forEach(function(c){ if(!lab[c-1]&&!lab[c+1]) lab[c]=1; });
-    for(var i=n;i>=1;i--){
-      var v=s[i-1], d=menoDa(ultimo,i-1), cl=i<=7?' dentro':'';
-      barre+='<div class="b'+cl+'" title="'+lungo(iso(d))+': '+(v==null?'nessun dato':num(v)+' mm')+'">'+(lab[i]?'<b>'+mm(v)+'</b>':'')
-        +'<i style="height:'+(v==null?0:Math.max(2,Math.round(v/max*86)))+'%"></i></div>';
-      ax+='<span>'+((i===n||i===1||i%5===0)?(d.getDate()+'/'+(d.getMonth()+1)):'')+'</span>';
+    var cand = [], lab = {};
+    for (c = 1; c <= n; c++) if (s[c - 1] != null && s[c - 1] >= 1 && s[c - 1] >= max * 0.2) cand.push(c);
+    cand.sort(function (a, b) { return s[b - 1] - s[a - 1]; })
+      .forEach(function (c) { if (!lab[c - 1] && !lab[c + 1]) lab[c] = 1; });
+    for (i = n; i >= 1; i--) {
+      var v = s[i - 1], g = menoDa(ultimo, i - 1), cl = i <= 7 ? ' dentro' : '';
+      barre += '<div class="b' + cl + '" title="' + lungo(iso(g)) + ': ' + (v == null ? 'nessun dato' : num(v) + ' mm') + '">' + (lab[i] ? '<b>' + mm(v) + '</b>' : '')
+        + '<i style="height:' + (v == null ? 0 : Math.max(2, Math.round(v / max * 86))) + '%"></i></div>';
+      ax += '<span>' + ((i === n || i === 1 || i % 5 === 0) ? (g.getDate() + '/' + (g.getMonth() + 1)) : '') + '</span>';
     }
-    el.innerHTML='<div class="gg">'+barre+'</div><div class="gg-x">'+ax+'</div>'
-      +'<p class="gg-leg"><i style="background:var(--blu)"></i>ultimi 7 giorni &nbsp; '
-      +'<i style="background:#b9cbe2"></i>i giorni prima &nbsp;·&nbsp; media dei pluviometri della regione, in mm</p>';
+    out.grafico = '<div class="gg">' + barre + '</div><div class="gg-x">' + ax + '</div>'
+      + '<p class="gg-leg"><i style="background:var(--blu)"></i>ultimi 7 giorni &nbsp; '
+      + '<i style="background:#b9cbe2"></i>i giorni prima &nbsp;·&nbsp; media dei pluviometri della regione, in mm</p>';
   }
 
-  function scriviPeriodo(k, d){
-    var el=document.getElementById('rip'+k+'-media');
-    if(!d||!d.giorni){ el.innerHTML='<span class="attesa">dati non disponibili al momento</span>'; return; }
-    el.innerHTML=Math.round(d.media)+' mm <small>di media</small>';
-    var cont=document.getElementById('rip'+k+'-top');
-    if(!d.top||!d.top.length||d.top[0].mm<1){
-      cont.innerHTML='<p class="nota">Periodo quasi asciutto in tutta la regione.</p>';
-    }else{
-      var ol=document.createElement('ol'); ol.className='top-staz';
-      d.top.forEach(function(s){ var li=document.createElement('li'); li.textContent=s.n+' — '+num(s.mm)+' mm'; ol.appendChild(li); });
-      cont.innerHTML=''; cont.appendChild(ol);
-    }
-    // Le giornate si dicono solo se ne manca qualcuna: se no e' il titolo ripetuto.
-    document.getElementById('rip'+k+'-date').textContent=dalAl(d.primo,d.ultimo)
-      +(d.giorni<+k?', '+d.giorni+' giornate di dati':'')+'.';
-  }
+  // ── I tre periodi ──
+  out.periodi = {};
+  ['7','20','30'].forEach(function (k) {
+    var d = p[k];
+    // ⚠️ Un riepilogo scritto PRIMA del 13/9 il mese non ce l'ha: la scheda si
+    // nasconde invece di dire «dati non disponibili», che sarebbe falso.
+    if (!d && k === '30') { out.periodi[k] = { nascondi: true }; return; }
+    if (!d || !d.giorni) { out.periodi[k] = { media: '<span class="attesa">dati non disponibili al momento</span>', top: '', date: '' }; return; }
+    var top;
+    if (!d.top || !d.top.length || d.top[0].mm < 1) top = '<p class="nota">Periodo quasi asciutto in tutta la regione.</p>';
+    else top = '<ol class="top-staz">' + d.top.map(function (s) { return '<li>' + esc(s.n) + ' — ' + num(s.mm) + ' mm</li>'; }).join('') + '</ol>';
+    out.periodi[k] = {
+      media: Math.round(d.media) + ' mm <small>di media</small>',
+      top: top,
+      // Le giornate si dicono solo se ne manca qualcuna: se no e' il titolo ripetuto.
+      date: dalAl(d.primo, d.ultimo) + (d.giorni < +k ? ', ' + d.giorni + ' giornate di dati' : '') + '.',
+    };
+  });
 
-  // Le zone: si riempiono i numeri e si RIORDINANO le righe spostando i nodi,
-  // cosi' i link cotti nell'HTML restano quelli che Google legge.
-  function scriviZone(zone){
-    var ol=document.getElementById('zone'); if(!ol||!zone||!zone.length) return;
-    var per={}; zone.forEach(function(z){ per[z.s]=z; });
-    var li=[].slice.call(ol.querySelectorAll('li[data-z]'));
-    li.forEach(function(x){ var z=per[x.getAttribute('data-z')]; x.valore=z?z.m7:null;
-      if(z) x.querySelector('.zmm').innerHTML=mm(z.m7)+' mm'+(z.m1!=null?'<small>ieri '+mm(z.m1)+'</small>':''); });
-    li.sort(function(a,b){ if(a.valore==null) return 1; if(b.valore==null) return -1; return b.valore-a.valore; })
-      .forEach(function(x){ ol.appendChild(x); });
-  }
+  // ── Le zone: valore dei 7 giorni (per l'ordine) e testo della casella ──
+  out.zone = {};
+  (j.zone || []).forEach(function (z) {
+    out.zone[z.s] = { val: z.m7, html: mm(z.m7) + ' mm' + (z.m1 != null ? '<small>ieri ' + mm(z.m1) + '</small>' : '') };
+  });
+
+  return out;
+}
 
   function disegna(j){
     document.getElementById('attesa').style.display='none';
-    var p=j.periodi, ultimo=(p['1']||p['7']).ultimo;
-    tasti(ultimo);
-    scriviIeri(p['1']);
-    scriviBarre(j.serie, ultimo);
-    scriviPeriodo('7',p['7']); scriviPeriodo('20',p['20']);
-    // ⚠️ Un riepilogo scritto PRIMA del 13/9 il mese non ce l'ha: si nasconde
-    // la scheda invece di dire «dati non disponibili», che sarebbe falso.
-    if(p['30']) scriviPeriodo('30',p['30']); else document.getElementById('card30').style.display='none';
-    scriviZone(j.zone);
+    var N=numeriRegione(j, iso(new Date()), K, SITO);
+    Object.keys(N.tasti).forEach(function(id){ var el=document.getElementById(id); if(el) el.href=N.tasti[id]; });
+    document.getElementById('verdetto').innerHTML=N.verdetto;
+    document.getElementById('grafico').innerHTML=N.grafico;
+    ['7','20','30'].forEach(function(k){
+      var x=N.periodi[k];
+      if(x.nascondi){ var c=document.getElementById('card'+k); if(c) c.style.display='none'; return; }
+      document.getElementById('rip'+k+'-media').innerHTML=x.media;
+      document.getElementById('rip'+k+'-top').innerHTML=x.top;
+      document.getElementById('rip'+k+'-date').textContent=x.date;
+    });
+    // Le zone: si riempiono i numeri e si RIORDINANO le righe spostando i nodi,
+    // cosi' i link cotti nell'HTML restano quelli che Google legge.
+    var ol=document.getElementById('zone');
+    if(ol&&j.zone&&j.zone.length){
+      var li=[].slice.call(ol.querySelectorAll('li[data-z]'));
+      li.forEach(function(x){ var z=N.zone[x.getAttribute('data-z')]; x.valore=z?z.val:null;
+        if(z) x.querySelector('.zmm').innerHTML=z.html; });
+      li.sort(function(a,b){ if(a.valore==null) return 1; if(b.valore==null) return -1; return b.valore-a.valore; })
+        .forEach(function(x){ ol.appendChild(x); });
+    }
   }
 
   // ── RIPIEGO: i giorni uno per uno, come faceva la pagina fino al 24/8/2026 ──

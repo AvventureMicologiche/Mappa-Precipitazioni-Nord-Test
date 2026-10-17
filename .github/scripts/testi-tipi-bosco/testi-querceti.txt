@@ -31,7 +31,7 @@ Mappa dei querceti d'Italia: dove sono e a che altitudine
 
 == descrizione ==
 # (le due righe sotto il titolo su Google, massimo ~155 lettere)
-Dove sono i boschi di querce in Italia, regione per regione e a che altitudine, e i loro funghi: porcino nero, ovolo, colombina. Dalle carte forestali ufficiali.
+Dove sono i boschi di querce in Italia, regione per regione e a che quota, e i loro funghi: porcino nero, ovolo, colombina. Dalle carte forestali ufficiali.
 
 == titolo grande ==
 Mappa dei querceti d'Italia

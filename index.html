@@ -71,7 +71,7 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:alt" content="Mappa delle precipitazioni degli ultimi 30 giorni in tutta Italia">
-  <meta property="og:url" content="https://precipitazioni.avventuremicologiche.it">
+  <meta property="og:url" content="https://precipitazioni.avventuremicologiche.it/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://avventurepluvio-test.netlify.app/preview.jpg?v=20260803">
@@ -2087,7 +2087,7 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
         <div id="tp-links">
           <a href="/guida/" target="_blank" rel="noopener" id="faq-funghi"
              onclick="try{gtag('event','click_guida',{pulsante:'guida-mobile'})}catch(e){}">Guida</a>
-          <a href="/fonti.html#feedback" id="tp-feedback"
+          <a href="/fonti#feedback" id="tp-feedback"
              onclick="try{gtag('event','click_feedback',{pulsante:'mappa-mobile'})}catch(e){}">invia feedback</a>
         </div>
 
@@ -2162,8 +2162,8 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
 <div class="fonte">
   © 2024-2026 <a href="https://avventuremicologiche.it" target="_blank" rel="noopener">Avventure Micologiche</a> ·
   Dati: <span id="fonte-dati">agenzie regionali</span> ·
-  <a href="/fonti.html">Fonti e licenze</a> ·
-  <a href="/fonti.html#feedback" onclick="try{gtag('event','click_feedback',{pulsante:'mappa-footer'})}catch(e){}">Feedback e contatti</a> ·
+  <a href="/fonti">Fonti e licenze</a> ·
+  <a href="/fonti#feedback" onclick="try{gtag('event','click_feedback',{pulsante:'mappa-footer'})}catch(e){}">Feedback e contatti</a> ·
   Mappa: <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap</a>
 </div>
 
@@ -10820,6 +10820,15 @@ if(_btnShot){
       var _pin=pinDaLink(q);
       if(!vistaDalLink && !_pin && window.innerWidth<=900){
         try{ fitMapToRegions(keys); }catch(e){}
+      }
+      /* ⚠️ COL POSTO E SENZA VISTA SI INQUADRA IL POSTO (17/10/2026). I tasti
+         «Ieri / 7 / 20 / 30 gg» delle 911 pagine di paese e quelli delle 114
+         zone delle piogge portano `pl` e il periodo ma non `z`/`c`: loadData
+         qui sopra inquadra PRIMA che la puntina esista, quindi al computer
+         usciva la regione intera e al telefono, dove loadData non inquadra,
+         l'ITALIA a zoom 5. Stessa tacca della ricerca seguita dal periodo. */
+      if(!vistaDalLink && _pin){
+        try{ fitMapToPunto(_vistaPaese.lat,_vistaPaese.lon,_vistaPaese.z?LOC_TACCA_ZONA:LOC_TACCA_FINE); }catch(e){}
       }
     });
   });

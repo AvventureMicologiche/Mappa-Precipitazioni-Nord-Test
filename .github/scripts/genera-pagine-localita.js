@@ -38,7 +38,7 @@
 const fs = require('fs');
 const path = require('path');
 const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
-const { JS_AGGIORNATO } = require('./lib-pagina-funghi.js');
+const { JS_AGGIORNATO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz, stileDelModello } = require('./lib-pagina-funghi.js');
 // ⚠️ `slug` si chiama qui `slugDaNome`: dentro pagina() c'e' gia' un parametro
 // che si chiama slug ed e' una STRINGA. Importandola col suo nome la funzione
 // veniva coperta e usciva «slug is not a function» solo a generazione avviata,
@@ -63,7 +63,7 @@ const { scriviSitemap } = require('./genera-sitemap.js');
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
 
-const SITO = 'https://avventurepluvio-test.netlify.app';
+const SITO = 'https://avventurepluvio-test.pages.dev';
 const GA_ID = 'G-9R7MXXS0V4';
 const CANALE = 'https://www.youtube.com/@avventuremicologiche';
 const ANTEPRIME = 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime';
@@ -205,7 +205,7 @@ function pagina(r, posto, slug, sl) {
     process.exit(1);
   }
   const m = fs.readFileSync(modello, 'utf8');
-  const STILE = m.slice(m.indexOf('<style>') + 7, m.indexOf('</style>'));
+  const STILE = stileDelModello(m);   // senza RILIEVO e QUIZ_CSS: si aggiungono in fondo
 
   return `<!DOCTYPE html>
 <html lang="it">
@@ -238,7 +238,7 @@ ${STILE}
 .gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
 .gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
 .gg .b.dentro i{background:var(--blu);}
-.gg .b b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10.5px;
+.gg .b b{align-self:center;margin-bottom:2px;line-height:1.1;font-size:10.5px;
   font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
 .gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
 .gg-x span{flex:1;text-align:center;}
@@ -288,6 +288,9 @@ nav.altre .io{font-weight:700;color:var(--blu-scuro);}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
+/* 17/10/2026: un giorno senza dato non e' una barra a zero, e' una barra vuota */
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
 .int{margin-top:12px;border:1px solid var(--bordo);border-radius:9px;overflow:hidden;}
 .int div{padding:9px 13px;border-bottom:1px solid var(--bordo);font-size:15.5px;display:flex;gap:10px;align-items:baseline;}
 .int div:last-child{border-bottom:0;}
@@ -304,7 +307,7 @@ nav.altre .io{font-weight:700;color:var(--blu-scuro);}
 .noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
 .noioso p{margin-bottom:8px;}
 .noioso a{color:var(--blu);}
-</style>
+${RILIEVO}${QUIZ_REGIONI[REG] ? QUIZ_CSS : ''}</style>
 </head>
 <body>
 
@@ -413,8 +416,8 @@ valgono regole proprie.</p>
 <p>Dati di ${esc(AGENZIA)} via il nostro archivio. Il bosco entro 3 km è calcolato su dati
 OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</p>
 </div>
-<p style="margin:22px 0 4px;"><a href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;text-decoration:none;"
-   onclick="try{gtag('event','click_youtube',{pulsante:'localita-fondo-${REG}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
+${coppiaQuiz(REG, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
+   onclick="try{gtag('event','click_youtube',{pulsante:'localita-fondo-${REG}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a>`, `localita-fondo-${REG}`)}
 
 <h2 style="margin-top:30px">Quanto ha piovuto? Trova un'altra località</h2>
 <nav class="altre" id="altri"><p class="nota">Sto leggendo l'elenco…</p></nav>
@@ -424,7 +427,7 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
   <a href="${SITO}/">Mappa delle piogge</a> ·
   <a href="${SITO}/${REG}/">Dove ha piovuto ${r.prep} ${esc(NOME)}</a> ·
   <a href="${SITO}/funghi/${REG}/">Piogge per funghi ${r.prep} ${esc(NOME)}</a> ·
-  <a href="${SITO}/fonti.html">tutte le fonti e licenze</a><br>
+  <a href="${SITO}/fonti">tutte le fonti e licenze</a><br>
   La mappa copre Italia, Svizzera, Austria, Francia e Slovenia — 5000+ stazioni.
 </footer>
 
@@ -468,6 +471,12 @@ ${JS_AGGIORNATO}
   }
   /* serie[0] e' IERI; n va dal piu' lontano al piu' vicino. */
   function somma(s, da, a){ var t=0; for (var n=da; n>=a; n--) t += (s[n-1]||0); return uno(t); }
+  /* ⚠️ ASSENTE NON E' ZERO (17/10/2026): nella serie un giorno senza dato e'
+     null. Sotto il 60% dei giorni con dato (la soglia della mappa) un totale
+     conterebbe come asciutti i giorni mancanti: niente verdetto, niente
+     classifica, e lo si dice. */
+  function conDati(s, da, a){ var c=0; for (var n=da; n>=a; n--) if (s[n-1] != null) c++; return c; }
+  function coperto(s, da, a){ return conDati(s, da, a) >= (da - a + 1) * 0.6; }
 
   /* ⚠️ LA SCALA DEL VERDETTO E' SUA (24/9/2026): la pioggia degli ULTIMI 20
      GIORNI. Sotto 30 mm troppo poco, da 30 poco, da 60 bene, da 100 benissimo.
@@ -498,7 +507,7 @@ ${JS_AGGIORNATO}
   }
 
   function link(dal, al){
-    return MAPPA + '?r=' + REGS + '&da=' + dal + '&a=' + al
+    return MAPPA + '?r=' + REGS + '&da=' + dal + '&a=' + al + '&s=p'
       + '&pl=' + LAT.toFixed(4) + ',' + LON.toFixed(4) + '&pn=' + encodeURIComponent(POSTO)
       + '&z=11&c=' + LAT.toFixed(4) + ',' + LON.toFixed(4);
   }
@@ -524,6 +533,19 @@ ${JS_AGGIORNATO}
       : 'Nessuna giornata sopra i 10 mm.';
     var scala = '';
     for (var q=0; q<4; q++) scala += '<div' + (q<=k ? ' style="background:'+liv.c+'"' : '') + '></div>';
+    var g20 = conDati(s, 20, 1);
+    if (g20 < 12) {
+      /* troppi giorni senza dato: il totale sarebbe piu' basso del vero */
+      var ultimoDato = null;
+      for (var nu = 1; nu <= GIORNI; nu++) if (s[nu-1] != null) { ultimoDato = nu; break; }
+      var perche = g20 === 0
+        ? 'Questo pluviometro non manda dati ' + (ultimoDato ? 'dal ' + gg(iso(menoDa(j.oggi, ultimoDato))) : 'da più di ' + GIORNI + ' giorni') + '.'
+        : 'Negli ultimi 20 giorni questo pluviometro ha mandato dati solo <b>' + g20 + ' giorni</b>: il totale sarebbe più basso del vero.';
+      document.getElementById('verdetto').innerHTML = '<div class="verdetto">'
+        + '<div class="si"><span class="pallino" style="background:#8a97a6"></span>Dati incompleti</div>'
+        + '<div class="dett">' + perche + ' Guarda i pluviometri vicini qui sotto.</div>'
+        + '<div class="capo-btns"><a class="capo-btn" href="'+link(daG, ieri)+'">Vedi sulla mappa</a></div></div>';
+    } else
     document.getElementById('verdetto').innerHTML = '<div class="verdetto">'
       + '<div class="si"><span class="pallino" style="background:'+liv.c+'"></span>'+liv.t+'</div>'
       + '<div class="gr">'+Math.round(m20)+' mm<small>negli ultimi 20 giorni</small></div>'
@@ -534,24 +556,36 @@ ${JS_AGGIORNATO}
 
     /* ── le 25 barre, ieri a destra ── */
     var max = Math.max.apply(null, s.concat([1]));
-    var barre = '', ascisse = '', ultimaEt = null;
+    var barre = '', ascisse = '';
+    /* il numero sopra la barra solo se e' alta e non accanto a un'altra scritta
+       (a 375 px due etichette vicine si sovrappongono). 17/10/2026: si danno
+       dalla barra PIU' ALTA in giu', non in ordine di data: a Pieve Santo
+       Stefano il 7/10 (5,9) prendeva il numero e l'8/10 (23,9) restava senza,
+       e il 5,9 sembrava suo. Il numero sta sopra la SUA barra (CSS .gg .b b),
+       per questo la piu' alta arriva all'86%. */
+    var cand = [], lab = {};
+    for (var c = 1; c <= GIORNI; c++) if ((s[c-1] || 0) >= 1 && (s[c-1] || 0) >= max*0.2) cand.push(c);
+    cand.sort(function (a, b) { return s[b-1] - s[a-1]; })
+      .forEach(function (c) { if (!lab[c-1] && !lab[c+1]) lab[c] = 1; });
     for (var i = GIORNI; i >= 1; i--) {
       var v = s[i-1] || 0, d = menoDa(j.oggi, i);
       var cl = (i>=13 && i<=20) ? ' dentro' : '';
-      /* il numero sopra la barra solo se e' alta e lontana dall'ultima scritta:
-         a 375 px due etichette vicine si sovrappongono */
-      var etich = v >= max*0.2 && (ultimaEt === null || ultimaEt - i >= 2);
-      if (etich) ultimaEt = i;
+      if (s[i-1] == null) {   /* nessun dato: barra vuota tratteggiata, non uno zero */
+        barre += '<div class="b nodato" data-n="' + i + '" title="' + gg(iso(d)) + ': nessun dato"><i></i></div>';
+        ascisse += '<span>' + ((i===GIORNI || i===1 || i%5===0) ? (d.getDate()+'/'+(d.getMonth()+1)) : '') + '</span>';
+        continue;
+      }
       barre += '<div class="b' + cl + '" data-n="' + i + '" title="' + gg(iso(d)) + ': ' + num(v) + ' mm">'
-        + (etich ? '<b>' + num(v) + '</b>' : '')
-        + '<i style="height:' + Math.max(2, Math.round(v/max*100)) + '%"></i></div>';
+        + (lab[i] ? '<b>' + num(v) + '</b>' : '')
+        + '<i style="height:' + Math.max(2, Math.round(v/max*86)) + '%"></i></div>';
       ascisse += '<span>' + ((i===GIORNI || i===1 || i%5===0) ? (d.getDate()+'/'+(d.getMonth()+1)) : '') + '</span>';
     }
     document.getElementById('grafico').innerHTML =
       '<div class="gg">' + barre + '</div><div class="gg-x">' + ascisse + '</div>'
       + '<p class="gg-int" id="ggint"></p>'
       + '<p class="gg-leg"><i style="background:var(--blu)"></i>da 13 a 20 giorni fa &nbsp; '
-      + '<i style="background:#b9cbe2"></i>gli altri giorni</p>';
+      + '<i style="background:#b9cbe2"></i>gli altri giorni'
+      + (conDati(s, GIORNI, 1) < GIORNI ? ' &nbsp; <i style="background:none;border:1px dashed #9fb3cc;box-sizing:border-box"></i>nessun dato' : '') + '</p>';
 
     /* durata e punta del giorno toccato (serieI: solo i giorni da 5 mm in su).
        17/10/2026, suo: la barra risponde SEMPRE, anche dove la stazione non ha
@@ -566,8 +600,8 @@ ${JS_AGGIORNATO}
       [].forEach.call(document.querySelectorAll('#grafico .b.scelto'), function (b) { b.classList.remove('scelto'); });
       var b = document.querySelector('#grafico .b[data-n="' + n + '"]');
       if (b) b.classList.add('scelto');
-      var t = '<b>' + gg(iso(menoDa(j.oggi, n))) + '</b> · ' + num(v) + ' mm';
-      if (o) t += ' in <b>' + o[0] + (o[0] === 1 ? ' ora' : ' ore') + '</b> · punta <b>' + num(o[1]) + ' mm</b> in un’ora';
+      var t = '<b>' + gg(iso(menoDa(j.oggi, n))) + '</b> · ' + (s[n-1] == null ? 'nessun dato quel giorno' : num(v) + ' mm');
+      if (s[n-1] != null && o) t += ' in <b>' + o[0] + (o[0] === 1 ? ' ora' : ' ore') + '</b> · punta <b>' + num(o[1]) + ' mm</b> in un’ora';
       /* sotto i 5 mm serieI non ha niente per scelta: non si dice nulla */
       else if (v >= 5) t += (sI || reteOre) ? ' · durata non misurata' : ' · intensità non disponibile per questa stazione';
       var dito = !(window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches);
@@ -587,13 +621,17 @@ ${JS_AGGIORNATO}
     /* ── la pioggia che conta: le 8 giornate, larghe ── */
     document.getElementById('h-conta').textContent = 'Però attenzione: la pioggia che conta è quella caduta ' + dalAl(daG, aG);
     document.getElementById('p-conta').innerHTML = 'Il fungo spunta 12-13 giorni dopo una bella pioggia: '
-      + 'i funghi di oggi nascono da queste otto giornate, che qui hanno fatto <b>' + num(mm) + ' mm</b>.';
+      + 'i funghi di oggi nascono da queste otto giornate, '
+      + (conDati(s, 20, 13) === 0 ? 'ma di nessuna abbiamo il dato di questo pluviometro.'
+        : 'che qui hanno fatto <b>' + num(mm) + ' mm</b>'
+          + (conDati(s, 20, 13) < 8 ? ' (ma di ' + (8 - conDati(s, 20, 13)) + (8 - conDati(s, 20, 13) === 1 ? ' giorno' : ' giorni') + ' il dato manca)' : '') + '.');
     var fmax = 1;
     for (var n3=20; n3>=13; n3--) fmax = Math.max(fmax, s[n3-1]||0);
     var fb = '', fx = '', righe = '';
     for (var n4=20; n4>=13; n4--) {
       var v4 = s[n4-1] || 0, d4 = menoDa(j.oggi, n4);
-      fb += '<div class="c">' + (v4 > 0 ? '<b>' + num(v4) + '</b>' : '')
+      fb += s[n4-1] == null ? '<div class="c nodato" title="nessun dato"><b>–</b><i></i></div>'
+        : '<div class="c">' + (v4 > 0 ? '<b>' + num(v4) + '</b>' : '')
         + '<i style="height:' + Math.max(2, Math.round(v4/fmax*88)) + '%"></i></div>';
       fx += '<span>' + GS[d4.getDay()] + '<br>' + d4.getDate() + '/' + (d4.getMonth()+1) + '</span>';
       /* come e' caduta: lenta sotto 2 mm all'ora, battente sopra 6 (scala
@@ -615,11 +653,31 @@ ${JS_AGGIORNATO}
     document.getElementById('t-conta').href = link(daG, aG);
     document.getElementById('lnk-pioggia').href = link(daG, ieri);
 
+    /* ⚠️ PLUVIOMETRO SOSPESO (17/10/2026): la mappa lo esclude perche' misura
+       molto meno dei vicini (le liste *_ESCLUSE di index.html, lette da
+       lib-escluse.js). I suoi millimetri sono sbagliati: al posto della pioggia
+       si dice perche', e si manda ai vicini. Temperatura e vento restano. */
+    var sospesi = j.sospesi || {};
+    if (sospesi[ID]) {
+      document.getElementById('ieri').innerHTML = '';
+      document.getElementById('verdetto').innerHTML = '<div class="verdetto">'
+        + '<div class="si"><span class="pallino" style="background:#8a97a6"></span>Pluviometro in manutenzione</div>'
+        + '<div class="dett">Questo pluviometro al momento è in manutenzione: lo ripristineremo appena possibile. '
+        + 'Intanto guarda i pluviometri vicini qui sotto.</div>'
+        + '<div class="capo-btns"><a class="capo-btn" href="'+link(daG, ieri)+'">Vedi i vicini sulla mappa</a></div></div>';
+      document.getElementById('grafico').innerHTML = '<p class="nota">Il grafico tornerà appena il pluviometro sarà ripristinato.</p>';
+      document.getElementById('p-conta').innerHTML = 'Il fungo spunta 12-13 giorni dopo una bella pioggia: per sapere quanto è piovuto qui in quelle otto giornate guarda i pluviometri vicini.';
+      document.getElementById('finestra').innerHTML = '';
+      document.getElementById('intensita').innerHTML = '';
+    }
+
     /* ── vicini e posti piu' bagnati ──
        L'anagrafe arriva dal file: [id, nome, sigla, quota, lat, lon, bosco%, slug] */
     var tutti = j.anagrafe.map(function(p){
+      if (sospesi[p[0]]) return null;
       var ss = j.serie[p[0]];
-      return ss ? { id:p[0], n:p[1], sig:p[2], q:p[3], slug:p[7], mm:somma(ss,20,13), d:km(LAT, LON, p[4], p[5]) } : null;
+      /* chi ha troppi giorni senza dato non entra: in classifica sembrerebbe il piu' asciutto */
+      return ss && coperto(ss,25,1) && coperto(ss,20,13) ? { id:p[0], n:p[1], sig:p[2], q:p[3], slug:p[7], mm:somma(ss,20,13), d:km(LAT, LON, p[4], p[5]) } : null;
     }).filter(Boolean);
     function pag(x){ return SITO + '/funghi/' + REG + '/' + x.slug + '/'; }
     var perId = {};
@@ -654,8 +712,10 @@ ${JS_AGGIORNATO}
             + '<td class="mm"><span class="barra" style="width:' + Math.round(x.mm / mxp * 100) + '%"></span>'
             + '<span class="v">' + num(x.mm) + ' mm</span></td></tr>';
         }).join('') + '</tbody></table>';
-    document.getElementById('notavicini').innerHTML =
-      'Questo pluviometro è <b>' + pos + 'º su ' + tutti.length + '</b> fra i posti da bosco della regione. '
+    document.getElementById('notavicini').innerHTML = (pos
+      ? 'Questo pluviometro è <b>' + pos + 'º su ' + tutti.length + '</b> fra i posti da bosco della regione. '
+      : sospesi[ID] ? 'Questo pluviometro è in manutenzione e per ora non entra in classifica. '
+      : 'Questo pluviometro ha troppi giorni senza dato per entrare in classifica. ')
       + '<a href="' + SITO + '/funghi/' + REG + '/">Vedi i primi 15</a>.';
 
     /* ── temperatura e vento, se il pluviometro ce li ha ──

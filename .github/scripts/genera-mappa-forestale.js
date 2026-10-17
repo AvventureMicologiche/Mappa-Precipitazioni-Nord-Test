@@ -34,12 +34,13 @@
  *   node .github/scripts/genera-mappa-forestale.js
  */
 const fs = require('fs');
+const { YT_BTN, stileDelModello } = require('./lib-pagina-funghi.js');
 const path = require('path');
 const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
 const { slug } = require('./lib-nomi.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
-const SITO = 'https://avventurepluvio-test.netlify.app';
+const SITO = 'https://avventurepluvio-test.pages.dev';
 const RADICE = path.join(__dirname, '..', '..');
 const D = JSON.parse(fs.readFileSync(path.join(__dirname, 'mappa-forestale-dati.json'), 'utf8'));
 const IND = JSON.parse(fs.readFileSync(path.join(RADICE, 'tessere-boschi', 'italia', 'indice.json'), 'utf8'));
@@ -49,7 +50,7 @@ const ANTEPRIME = 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-
 
 // Il foglio di stile e' quello delle pagine funghi di zona (lo aveva il mockup approvato)
 const modello = fs.readFileSync(path.join(RADICE, 'funghi', 'zone', 'garfagnana', 'index.html'), 'utf8');
-const STILE = modello.slice(modello.indexOf('<style>') + 7, modello.indexOf('</style>'));
+const STILE = stileDelModello(modello);   // senza RILIEVO: qui va solo YT_BTN, aggiunto in fondo
 const STILE_MF = `
 .cta{display:block;text-align:center;background:var(--blu);color:#fff !important;text-decoration:none;font-weight:700;font-size:18px;border-radius:12px;padding:15px 14px;margin:16px 0 10px;}
 .img-f{width:100%;height:auto;border-radius:10px;border:1px solid var(--bordo);display:block;margin:6px 0 4px;}
@@ -184,7 +185,7 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);
 gtag("js",new Date());
 if(/(^|\\.)avventuremicologiche\\.it$/.test(location.hostname))gtag("config","G-9R7MXXS0V4");
 </script>
-<style>${STILE}${STILE_MF}</style>
+<style>${STILE}${STILE_MF}${YT_BTN}</style>
 </head>
 <body>
 <header>
@@ -196,14 +197,14 @@ if(/(^|\\.)avventuremicologiche\\.it$/.test(location.hostname))gtag("config","G-
 `;
 }
 const PIEDE = `</main>
-<footer><a href="${SITO}/">Mappa delle piogge</a> · <a href="${SITO}/mappa-forestale/">Mappa forestale d'Italia</a> · <a href="${SITO}/guida/">Guida</a> · <a href="${SITO}/fonti.html">tutte le fonti e licenze</a></footer>
+<footer><a href="${SITO}/">Mappa delle piogge</a> · <a href="${SITO}/mappa-forestale/">Mappa forestale d'Italia</a> · <a href="${SITO}/guida/">Guida</a> · <a href="${SITO}/fonti">tutte le fonti e licenze</a></footer>
 </body>
 </html>
 `;
 // «Vieni a trovarci su YouTube» in fondo, come sulle pagine funghi (27/9/2026, sua
 // richiesta: le pagine forestali avevano solo il tasto della testata). Evento GA
 // «forestale-fondo-<pagina>», per contarli a parte.
-const youtube = id => `<p style="margin:22px 0 4px;"><a href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;text-decoration:none;"
+const youtube = id => `<p style="margin:22px 0 4px;"><a href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
    onclick="try{gtag('event','click_youtube',{pulsante:'forestale-fondo-${id}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
 `;
 const tit = (...v) => v.find(t => t.length <= 62) || v[v.length - 1];
@@ -487,7 +488,7 @@ ${tastiPioggia(`${SITO}/?${vista}`)}
 function paginaItalia() {
   const I = D.italia, url = `${SITO}/mappa-forestale/`, MAPPA = `${SITO}/?boschi=1`;
   const titolo = "Mappa forestale d'Italia: le carte forestali di tutte le regioni";
-  const descr = 'Le carte forestali di tutte le regioni italiane in una mappa sola: faggete, castagneti, querceti, pinete e lariceti. Per funghi, castagne, foliage ed escursioni.';
+  const descr = 'Le carte forestali di tutte le regioni italiane in una mappa: faggete, castagneti, querceti, pinete e lariceti. Per funghi, castagne, foliage ed escursioni.';
   let h = testa({ titolo, descr, url, img: `${url}scorcio.jpg`, briciola: [["Mappa forestale d'Italia"]] });
   h += `<h1>${esc(titolo)}</h1>
 <p class="breve" style="margin-top:-2px">Ogni regione pubblica la sua carta forestale, ognuna sul suo geoportale e con le sue sigle. Qui sono <b>tutte insieme, in una mappa sola</b>: undici colori sopra il rilievo, anche dal telefono. Tocchi un punto e sai che bosco è, a che quota e su quale versante.</p>

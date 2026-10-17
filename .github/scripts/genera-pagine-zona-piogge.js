@@ -41,7 +41,7 @@ const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
 
-const SITO = 'https://avventurepluvio-test.netlify.app';
+const SITO = 'https://avventurepluvio-test.pages.dev';
 const RAW = 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
 // ⚠️ L'ANTEPRIMA DELLA MAPPA, dal ramo `anteprime` (22/9/2026, sua richiesta:
 // «ce l'abbiamo, usiamolo»). Era l'unica famiglia di pagine senza: regione,
@@ -247,7 +247,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
 
 <footer>
   Dati: ${esc(elenco(agenzie))} ·
-  <a href="${SITO}/fonti.html">tutte le fonti e licenze</a> ·
+  <a href="${SITO}/fonti">tutte le fonti e licenze</a> ·
   <a href="${SITO}/guida/">guida alla mappa</a> ·
   <a href="https://avventuremicologiche.it">Avventure Micologiche</a>
 </footer>
@@ -277,7 +277,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
     if (s === iso(giornoFa(1))) return 'Ieri';
     return GIORNI[daIso(s).getDay()] + ' ' + lungo(s);
   }
-  function link(da, a){ return SITO + '/?r=' + REGS + '&da=' + da + '&a=' + a + '&' + PIN; }
+  function link(da, a){ return SITO + '/?r=' + REGS + '&da=' + da + '&a=' + a + '&s=p&' + PIN; }
   // «dal 18 al 24 settembre»: il mese una volta sola, l'apostrofo davanti a 1, 8, 11
   function dalAl(a, b){ var pa=a.split('-'), pb=b.split('-'), da=+pa[2], db=+pb[2];
     var ap=function(n){ return n===1||n===8||n===11; };
@@ -309,9 +309,12 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
       + '<div class="top">' + dett + '</div>'
       + '<div class="dett">Media di ' + d.stazioni + ' pluviometri della zona.</div>'
       + (t === 'Ieri' ? '' : '<div class="dett">I dati di ieri non sono ancora arrivati da tutti i pluviometri: questa è l’ultima giornata intera.</div>')
-      + '<div class="capo-btns"><a class="capo-btn" href="' + link(d.ultimo, d.ultimo) + '"'
-      + ' onclick="try{gtag(\\'event\\',\\'apri_mappa\\',{da:\\'zona-piogge-' + ZONA + '-ieri-box\\'})}catch(e){}">Vedi '
-      + (t === 'Ieri' ? 'ieri' : 'quel giorno') + ' sulla mappa</a></div></div>';
+      // 11/10/2026: lo stesso bottone a due righe delle pagine regione (.ieri-btn,
+      // che arriva con lo stile copiato dalla pagina regione)
+      + '<div class="capo-btns"><a class="ieri-btn" href="' + link(d.ultimo, d.ultimo) + '"'
+      + ' onclick="try{gtag(\\'event\\',\\'apri_mappa\\',{da:\\'zona-piogge-' + ZONA + '-ieri-box\\'})}catch(e){}">'
+      + '<b>Apri la mappa ' + (t === 'Ieri' ? 'di ieri' : 'di quel giorno') + '</b><i>→</i>'
+      + '<small>la pioggia in tutte le località</small></a></div></div>';
   }
 
   function scriviBarre(s, ultimo){

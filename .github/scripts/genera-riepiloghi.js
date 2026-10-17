@@ -308,6 +308,23 @@ function datiRegione(k) {
 }
 const uno = x => Math.round(x * 10) / 10;
 
+// ⚠️ IDENTICO NON VUOL DIRE DA NON RISCRIVERE, PER SEMPRE (11/10/2026).
+// Se il resto e' uguale il file non si riscrive, cosi' un giro in piu' non fa
+// un commit di sole date. Ma le pagine giudicano il riepilogo dal campo
+// `generato` (36 ore): quando una fonte e' ferma i numeri restano giustamente
+// uguali (l'ultimo giorno COMPLETO non avanza) e il file invecchiava lo
+// stesso. Trovato con la Svizzera: OASI muto dal 9/10, riepilogo fermo
+// all'8/10, scritto l'ultima volta il 9/10; la pagina lo credeva vecchio e
+// ricalcolava dai file mescolando giorni senza il Ticino. Quindi: identico si
+// salta, ma non se e' stato scritto da piu' di 20 ore (il giro delle 23:20
+// salta, quello del mattino dopo riscrive: un commit al giorno al massimo).
+function daRiscrivere(prima, testo, re) {
+  if (!prima) return true;
+  if (prima.replace(re, '') !== testo.replace(re, '')) return true;
+  const m = prima.match(/"generato":\s*"([^"]+)"/);
+  return !m || Date.now() - new Date(m[1]).getTime() > 20 * 3600 * 1000;
+}
+
 let zScritte = 0, zSaltate = [];
 const zonePer = {};
 for (const r of REGIONI) if (perRegione[r.k]) zonePer[r.k] = [];
@@ -362,8 +379,7 @@ for (const z of ZONE) {
   const testo = JSON.stringify({ zona: z.n, generato: new Date().toISOString(),
     ultimoGiorno: giorni[da], periodi, posti: valori, serie }) + '\n';
   const prima = fs.existsSync(dest) ? fs.readFileSync(dest, 'utf8') : '';
-  const uguale = prima && prima.replace(/"generato":"[^"]+",/, '') === testo.replace(/"generato":"[^"]+",/, '');
-  if (!uguale) { fs.writeFileSync(dest, testo, 'utf8'); zScritte++; }
+  if (daRiscrivere(prima, testo, /"generato":"[^"]+",/)) { fs.writeFileSync(dest, testo, 'utf8'); zScritte++; }
 
   // ⚠️ Nella lista della regione vanno gli STESSI numeri della pagina di zona:
   // chi clicca deve trovare il numero che ha appena letto (la lezione delle 41
@@ -384,7 +400,7 @@ for (const r of REGIONI) {
   const prima = fs.existsSync(dest) ? fs.readFileSync(dest, 'utf8') : '';
   // Il campo `generato` cambia a ogni giro: se il resto e' identico non si
   // riscrive, cosi' un run in piu' non produce un commit di sole date.
-  const uguale = prima && prima.replace(/"generato":[^,]+,/, '') === testo.replace(/"generato":[^,]+,/, '');
+  const uguale = !daRiscrivere(prima, testo, /"generato":[^,]+,/);
   if (!uguale) { fs.writeFileSync(dest, testo, 'utf8'); scritti++; }
   const p20 = x.periodi['20'];
   console.log(`  ${r.k.padEnd(12)} ${String(p20.stazioni).padStart(4)} staz.  ${String(Math.round(p20.media)).padStart(3)} mm/20gg  ${p20.primo}→${p20.ultimo}${uguale ? '  (invariato)' : ''}`);

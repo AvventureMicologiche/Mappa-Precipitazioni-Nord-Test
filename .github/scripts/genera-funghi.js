@@ -58,6 +58,10 @@ const { DATI, oggiItalia, giorniIndietro, leggi } = require('./lib-giorni.js');
 const { LOCALITA, bello, slugRegione } = require('./lib-nomi.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
+// I pluviometri che la mappa esclude perche' misurano male (lib-escluse.js):
+// fuori dai totali e segnati «sospesi» nel file dei giorni (17/10/2026).
+const { escluse, escluso } = require('./lib-escluse.js');
+const ESCLUSE = escluse(path.join(__dirname, '..', '..'));
 const USCITA = path.join(DATI, 'funghi');
 
 const GIORNI = 25;                  // la finestra piu' lunga della pagina
@@ -118,6 +122,17 @@ function somma(mm, da, a, id) {
   let t = 0;
   for (let n = da; n >= a; n--) if (mm[n] && mm[n][id] != null) t += mm[n][id];
   return uno(t);
+}
+// ⚠️ LA COPERTURA (17/10/2026): un totale vale solo se il pluviometro c'era
+// almeno il 60% dei giorni che la regione ha in archivio, la stessa soglia
+// della mappa. Sotto, la somma conta come asciutti i giorni senza dato: il
+// posto esce dalla classifica della regione, dalla media delle zone e dalla
+// classifica italiana, invece di finirci in fondo come «il piu' asciutto».
+const COPERTURA_MIN = 0.6;
+function coperto(mm, da, a, id) {
+  let c = 0, d = 0;
+  for (let n = da; n >= a; n--) if (mm[n]) { d++; if (mm[n][id] != null) c++; }
+  return d > 0 && c >= d * COPERTURA_MIN;
 }
 // Il giorno piu' RECENTE in cui quel posto ha preso almeno FORTE mm.
 function forte(mm, id) {
@@ -209,12 +224,22 @@ for (const k of Object.keys(POSTI)) {
     if (tr.length > 2) { posti[id][5] = tr[2]; posti[id][6] = tr[3]; }
   }
 
+  // Chi ha troppi giorni senza dato non entra nei totali (vedi COPERTURA_MIN):
+  // ne' sui 25 giorni, ne' sulla finestra 13-20 che fa la classifica.
+  // E chi la mappa esclude perche' misura male non entra mai (lib-escluse.js).
+  const coperti = {}, sospesi = {};
+  for (const p of POSTI[k]) {
+    if (escluso(ESCLUSE, k, p)) { sospesi[p[0]] = 1; continue; }
+    if (coperto(g.mm, GIORNI, 1, p[0]) && coperto(g.mm, DA, A, p[0])) coperti[p[0]] = posti[p[0]];
+  }
+
   // ⚠️ Entrano solo le regioni che hanno le pagine di paese: la classifica
   // nazionale e' fatta di righe CLICCABILI, e una riga senza pagina sarebbe un
   // nome scritto per niente. Oggi sono tutte e 19, ma la condizione resta.
   if (LOCALITA.includes(k)) {
     const sln = slugRegione(POSTI[k]);
     for (const p of POSTI[k]) {
+      if (!coperti[p[0]]) continue;
       const v = posti[p[0]][0];
       if (v > 0) italia.push([bello(p[1]), p[2], k, sln[p[0]], v, p[4], p[5]]);
     }
@@ -230,7 +255,7 @@ for (const k of Object.keys(POSTI)) {
     // vero che l'archivio finisce li'; con 150 in Liguria no, e' solo fin dove
     // abbiamo guardato — scriverlo come «da quando abbiamo archivio» sarebbe
     // falso.
-    cercatoFino: oltre.arrivatoA, tetto: FINESTRA_FORTE, posti,
+    cercatoFino: oltre.arrivatoA, tetto: FINESTRA_FORTE, posti: coperti,
   }) + '\n';
 
   // Il campo `generato` cambia a ogni giro: se il resto e' identico non si
@@ -247,7 +272,15 @@ for (const k of Object.keys(POSTI)) {
     const serie = {};
     for (const p of POSTI[k]) {
       const a = [];
-      for (let n = 1; n <= GIORNI; n++) a.push(uno((g.mm[n] && g.mm[n][p[0]]) || 0));
+      // ⚠️ ASSENTE NON E' ZERO (17/10/2026): un giorno in cui il pluviometro non
+      // c'e' nel file va come null, non come 0. Prima Cannobio (sparito dal 13/9)
+      // e Rullato (rinumerato da ARPAE) uscivano «0 mm in 20 giorni», ed Erto e
+      // Casso o Biscubio, presenti 6-8 giorni su 25, sembravano piu' asciutti
+      // del vero. Le pagine sanno gia' che null vuol dire «nessun dato».
+      for (let n = 1; n <= GIORNI; n++) {
+        const v = g.mm[n] && g.mm[n][p[0]];
+        a.push(v == null ? null : uno(v));
+      }
       serie[p[0]] = a;
     }
     /* ⚠️ TEMPERATURA E VENTO: due serie parallele alla pioggia, ma scritte
@@ -304,6 +337,8 @@ for (const k of Object.keys(POSTI)) {
       cercatoFino: oltre.arrivatoA, tetto: FINESTRA_FORTE,
       anagrafe, serie, forte: forteMap,
       serieT, serieW, serieI,
+      // solo se ce n'e' qualcuno: le regioni senza sospesi non cambiano file
+      ...(Object.keys(sospesi).length ? { sospesi } : {}),
     }) + '\n';
     const destG = path.join(USCITA, k + '-giorni.json');
     const primaG = fs.existsSync(destG) ? fs.readFileSync(destG, 'utf8') : '';

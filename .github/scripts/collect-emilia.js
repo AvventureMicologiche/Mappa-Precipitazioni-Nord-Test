@@ -10,6 +10,13 @@ const path  = require('path');
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'emilia');
 const MAX_DAYS = 730;
+
+// Nomi che l'anagrafe ARPAE scrive sbagliati (17/10/2026). «DIga di Quarto»
+// finiva cosi' nel titolo della sua pagina funghi e nella scheda in mappa.
+// Una tabella e non una regola («due maiuscole di fila»): il caso era uno solo
+// su tutte le reti, e una regola toccherebbe sigle scritte apposta cosi'.
+const NOMI_CORRETTI = { 'DIga di Quarto': 'Diga di Quarto' };
+const nomeGiusto = n => NOMI_CORRETTI[n] || n;
 const API_URL  = 'https://apps.arpae.it/REST/meteo_giornalieri?max_results=1000';
 
 function getItalyOffset(date) {
@@ -71,6 +78,12 @@ function estraiMeteo(day) {
              (fx != null && fx >= 0 && fx < 90) ? Math.round(fx * 3.6 * 10) / 10 : null];
   if (un != null && ux != null && un >= 0 && ux <= 100 && un <= ux)
     out.u = [Math.round(un), Math.round(ux)];
+  // Direzione del vento (2/10/2026): `direzione_vento_prevalente_giornaliera_10m`,
+  // il SETTORE PREVALENTE gia' calcolato da ARPAE in gradi a 8 settori (45, 90 …
+  // 360 = nord). Non e' la nostra media vettoriale e non puo' dire "variabile":
+  // e' il dato dell'ente, si riporta com'e' (360 → 0).
+  const dd = num(day.direzione_vento_prevalente_giornaliera_10m);
+  if (out.w && dd != null && dd >= 0 && dd <= 360) out.wd = Math.round(dd) % 360;
   return out;
 }
 
@@ -172,7 +185,7 @@ async function main() {
 
       const rec = {
         id:  s._id,
-        n:   ana.nome || '—',
+        n:   nomeGiusto(ana.nome) || '—',
         lat: Math.round(lat * 10000) / 10000,
         lon: Math.round(lon * 10000) / 10000,
         q:   ana.altitudine || 0,
@@ -268,7 +281,7 @@ async function main() {
           const v=parseFloat(_grezzo);
           if(isNaN(v)||v<0||v>=500) return;
           const mm=Math.round(v*10)/10;
-          const _rec={id:s._id,n:ana.nome||'—',lat:Math.round(lat*10000)/10000,lon:Math.round(lon*10000)/10000,q:ana.altitudine||0,p:ana.provincia||'—',mm};
+          const _rec={id:s._id,n:nomeGiusto(ana.nome)||'—',lat:Math.round(lat*10000)/10000,lon:Math.round(lon*10000)/10000,q:ana.altitudine||0,p:ana.provincia||'—',mm};
           if(dd&&dd['0000']) Object.assign(_rec,estraiMeteo(dd['0000']));
           _out.push(_rec);
         } catch(e) {}

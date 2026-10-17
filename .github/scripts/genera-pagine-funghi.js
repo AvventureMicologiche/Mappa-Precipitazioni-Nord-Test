@@ -41,7 +41,7 @@ const { REGIONI, navAltre, briciolaJson } = require('./genera-pagine-regione.js'
 const { LOCALITA, bello, slug, slugRegione } = require('./lib-nomi.js');
 const { rigaStagione } = require('./lib-stagione.js');
 // 24/9/2026: verdetto, barre e finestra comuni con le pagine di zona
-const { STILE_NUOVO, JS_COMUNE } = require('./lib-pagina-funghi.js');
+const { STILE_NUOVO, JS_COMUNE, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = require('./lib-pagina-funghi.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
@@ -50,7 +50,7 @@ const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json
 // delle 42 pagine di agosto, ripetuto identico.
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
 const RADICE = path.resolve(__dirname, '..', '..');
-const SITO = 'https://avventurepluvio-test.netlify.app';
+const SITO = 'https://avventurepluvio-test.pages.dev';
 const { haBoschi, cartaBreve, cartaDi, fonteNota } = require('./lib-boschi.js');
 
 // Solo la lingua: «della Liguria», «delle Marche». Nell'anagrafe delle pagine
@@ -267,11 +267,11 @@ nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2p
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
 ${STILE_NUOVO}
-</style>
+${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}</style>
 </head>
 <body>
 <header>
-  <a href="https://precipitazioni.avventuremicologiche.it/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
+  <a href="${SITO}/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
   <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt">▶ <span class="yt-l">Canale </span>YouTube</a>
 </header>
 <main>
@@ -355,7 +355,7 @@ aprendola.</p>
 <div id="meteo"></div>
 
 <h2>Ecco cosa vedi sulla mappa</h2>
-<a href="https://precipitazioni.avventuremicologiche.it/?r=${r.k}" style="display:block;text-decoration:none;"
+<a href="${SITO}/?r=${r.k}" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'funghi-${r.k}-anteprima'})}catch(e){}">
   <img src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/${r.k}.jpg"
        alt="La mappa delle piogge ${r.prep} ${nome}: le zone più bagnate, stazione per stazione"
@@ -399,7 +399,9 @@ valgono regole proprie.</p>
 <p>Dati di ${r.agenzia} via il nostro archivio. Il bosco è calcolato su dati OpenStreetMap, licenza ODbL.
 La provincia viene dai confini provinciali ISTAT.</p>
 </div>
-
+${/* Il bottone YouTube in fondo (12/10/2026): qui prima non c'era, ora c'e' in tutte,
+     in coppia col quiz tartufi nelle regioni che il quiz ha (coppiaQuiz). */ ''}${coppiaQuiz(r.k, `<a href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
+   onclick="try{gtag('event','click_youtube',{pulsante:'funghi-fondo-${r.k}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a>`, `funghi-fondo-${r.k}`) + '\n'}
 ${LOCALITA.includes(r.k) ? `
 ${/* ⚠️ Il titolo dice «quanto ha piovuto» perche' sono le parole con cui la
      gente cerca davvero («quanto ha piovuto a Imperia»), e questa e' una
@@ -447,7 +449,7 @@ ${navAltre('funghi')}
   var LOCALE = /^(localhost|127\\.0\\.0\\.1|\\[::1\\])$/.test(location.hostname);
   var BASE = LOCALE ? '/data/'
     : 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
-  var MAPPA = 'https://precipitazioni.avventuremicologiche.it/';
+  var MAPPA = '${SITO}/';
   var QUANTI = 15, FORTE = 30;
 ${JS_COMUNE}
 
@@ -494,7 +496,7 @@ ${JS_COMUNE}
         s.push(n ? uno(t / n) : 0); sT.push(m ? [uno(a / m), uno(b / m)] : null);
       }
       var o = j.oggi, daG = iso(menoDa(o,20)), aG = iso(menoDa(o,13)), ieri = iso(menoDa(o,1));
-      var lk = function(dal, al){ return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al; };
+      var lk = function(dal, al){ return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al + '&s=p'; };
       scriviVerdetto(s, o, lk(daG, ieri), 'in media, negli ultimi 20 giorni');
       var ax = scriviBarre(s, o);
       scriviFinestra(s, o, null, 'in media');
@@ -635,7 +637,7 @@ ${JS_COMUNE}
 
     var daG = menoDaI(oggiISO,20), aG = menoDaI(oggiISO,13), a20 = menoDaI(oggiISO,1);
     function link(r, dal, al){
-      return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al
+      return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al + '&s=p'
         + (r ? '&z=11&c=' + r.lat.toFixed(4) + ',' + r.lon.toFixed(4) : '');
     }
     function luogo(r){ return r.sig ? esc(r.sig) : ''; }

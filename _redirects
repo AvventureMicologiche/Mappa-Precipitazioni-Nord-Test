@@ -51,3 +51,17 @@
 /funghi/liguria/turano/ /funghi/toscana/turano/ 301
 /funghi/marche/casteldelci/ /funghi/emilia/casteldelci/ 301
 /funghi/toscana/passo-radici/ /funghi/emilia/passo-delle-radici/ 301
+
+# DUE POSTI OMONIMI NELLA STESSA PROVINCIA — 17/10/2026
+# Due pluviometri diversi con lo stesso nome e la stessa sigla: due pagine col
+# titolo identico e due voci uguali negli elenchi. Si tiene quello piu' in alto
+# (Pieve Santo Stefano 750 m contro 434 m, Corniolo 735 m contro 553 m), che ha
+# gia' l'indirizzo senza sigla. Il pluviometro tolto resta sulla mappa.
+/funghi/toscana/pieve-santo-stefano-ar/ /funghi/toscana/pieve-santo-stefano/ 301
+/funghi/emilia/corniolo-fc/ /funghi/emilia/corniolo/ 301
+
+# CANNOBIO NON C'E' PIU' — 17/10/2026
+# Il Piemonte non pubblica il pluviometro di Cannobio (339) dal 13/9/2026: la
+# pagina mostrava zero pioggia per un mese. Si manda al piu' vicino con una
+# pagina, Monte Carza, a 2,7 km.
+/funghi/piemonte/cannobio/ /funghi/piemonte/monte-carza/ 301

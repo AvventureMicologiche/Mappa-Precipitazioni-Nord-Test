@@ -43,11 +43,12 @@ const { REGIONI } = require('./genera-pagine-regione.js');
 const { LOCALITA, slug } = require('./lib-nomi.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 const { rigaStagione } = require('./lib-stagione.js');
+const { stileDelModello } = require('./lib-pagina-funghi.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
 const RADICE = path.resolve(__dirname, '..', '..');
-const SITO = 'https://avventurepluvio-test.netlify.app';
+const SITO = 'https://avventurepluvio-test.pages.dev';
 
 // Le regioni che una pagina funghi ce l'hanno davvero, nell'ordine in cui il
 // resto del sito le elenca (nord -> sud, estero a parte): l'anagrafe sta in un
@@ -63,7 +64,7 @@ if (!fs.existsSync(modello)) {
   process.exit(1);
 }
 const m = fs.readFileSync(modello, 'utf8');
-const STILE = m.slice(m.indexOf('<style>') + 7, m.indexOf('</style>'));
+const STILE = stileDelModello(m);   // senza RILIEVO e QUIZ_CSS, che l'indice non ha
 
 const nomeDi = r => r.nomeTitolo || r.nome;
 
@@ -244,7 +245,7 @@ ${/* Il tasto grande sta ora SOPRA, sotto l'anteprima: qui sarebbe il secondo
      nella stessa pagina, e due volte lo stesso invito non ne vale due. */''}
 
 <p class="nota" style="margin-top:22px">Dati degli enti pubblici via il nostro archivio, elencati
-in <a href="${SITO}/fonti.html">fonti e licenze</a>. Il bosco è calcolato su dati OpenStreetMap,
+in <a href="${SITO}/fonti">fonti e licenze</a>. Il bosco è calcolato su dati OpenStreetMap,
 licenza ODbL. La provincia viene dai confini provinciali ISTAT.</p>
 
 ${/* ⚠️ Qui NON si chiama navAltre: quella scrive due elenchi, regioni e

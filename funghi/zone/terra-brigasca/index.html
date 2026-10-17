@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Funghi in Terra brigasca oggi: stanno nascendo?</title>
 <meta name="description" content="Meteo funghi Terra brigasca: la pioggia degli ultimi 20 giorni da 7 pluviometri da bosco e il verdetto per la crescita dei funghi.">
-<link rel="canonical" href="https://avventurepluvio-test.netlify.app/funghi/zone/terra-brigasca/">
+<link rel="canonical" href="https://avventurepluvio-test.pages.dev/funghi/zone/terra-brigasca/">
 <meta property="og:title" content="Funghi in Terra brigasca oggi: stanno nascendo?">
 <meta property="og:description" content="Le piogge degli ultimi 25 giorni, misurate dai pluviometri nelle zone da bosco.">
-<meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg">
-<meta property="og:url" content="https://avventurepluvio-test.netlify.app/funghi/zone/terra-brigasca/">
+<meta property="og:image" content="https://avventurepluvio-test.pages.dev/preview.jpg">
+<meta property="og:url" content="https://avventurepluvio-test.pages.dev/funghi/zone/terra-brigasca/">
 <meta property="og:type" content="website">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Piogge per funghi","item":"https://avventurepluvio-test.netlify.app/funghi/"},{"@type":"ListItem","position":2,"name":"Liguria","item":"https://avventurepluvio-test.netlify.app/funghi/liguria/"},{"@type":"ListItem","position":3,"name":"Terra brigasca"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Piogge per funghi","item":"https://avventurepluvio-test.pages.dev/funghi/"},{"@type":"ListItem","position":2,"name":"Liguria","item":"https://avventurepluvio-test.pages.dev/funghi/liguria/"},{"@type":"ListItem","position":3,"name":"Terra brigasca"}]}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
@@ -155,7 +155,7 @@ nav.altre a{color:var(--blu);}
 .gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
 .gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
 .gg .b.dentro i{background:var(--blu);}
-.gg .b b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10.5px;
+.gg .b b{align-self:center;margin-bottom:2px;line-height:1.1;font-size:10.5px;
   font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
 .gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
 .gg-x span{flex:1;text-align:center;}
@@ -213,7 +213,7 @@ nav.altre a{color:var(--blu);}
 .gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
 .gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
 .gg .b.dentro i{background:var(--blu);}
-.gg .b b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10.5px;
+.gg .b b{align-self:center;margin-bottom:2px;line-height:1.1;font-size:10.5px;
   font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
 .gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
 .gg-x span{flex:1;text-align:center;}
@@ -269,18 +269,55 @@ nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;fon
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
+/* BOTTONI IN RILIEVO (lib-pagina-funghi.js) */
+.capo-btns{gap:12px;margin-top:15px;}
+.capo-btn{background:#fff;border:none;color:#10263f;font-size:16px;font-weight:700;padding:12px 18px 13px;border-radius:12px;
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 5px 0 #7f97b6,0 10px 18px rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s;}
+.capo-btn:hover{background:#f3f7fc;}
+.capo-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #7f97b6,0 5px 10px rgba(0,0,0,.3);}
+.banda-prev{padding:15px 16px 16px;border-radius:14px;box-shadow:0 6px 0 #164f97,0 12px 22px rgba(20,60,120,.38);transition:transform .08s,box-shadow .08s;}
+.banda-prev b{font-size:19px;}
+.banda-prev span{font-size:15px;}
+.banda-prev .fr{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;}
+.banda-prev:active{transform:translateY(4px);box-shadow:0 2px 0 #164f97,0 5px 10px rgba(20,60,120,.3);}
+.tasti{gap:12px;margin-top:12px;}
+.tasti a{background:#fff;border:1px solid #d3deeb;border-radius:12px;padding:13px 6px 14px;font-size:16px;
+  box-shadow:0 4px 0 #9fb3cc,0 8px 14px rgba(15,45,77,.16);transition:transform .08s,box-shadow .08s;}
+.tasti a:hover{background:#f3f7fc;}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);box-shadow:0 4px 0 #0c2440,0 8px 14px rgba(15,45,77,.25);}
+.tasti a.forte:hover{background:#24508a;}
+.tasti a:active{transform:translateY(3px);box-shadow:0 1px 0 #9fb3cc,0 3px 6px rgba(15,45,77,.16);}
+.tasti a.forte:active{box-shadow:0 1px 0 #0c2440,0 3px 6px rgba(15,45,77,.25);}
+.card .vai{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:auto;background:var(--blu);color:#fff;font-size:16px;font-weight:700;
+  padding:11px 14px 12px;border-radius:12px;text-decoration:none;box-shadow:0 4px 0 #0c2440,0 8px 14px rgba(15,45,77,.22);transition:transform .08s,box-shadow .08s;}
+.card .nota{margin-bottom:14px;}
+.card .vai:hover{background:#24508a;}
+.card .vai:active{transform:translateY(3px);box-shadow:0 1px 0 #0c2440,0 3px 6px rgba(15,45,77,.22);}
+.verdetto .top{font-size:17.5px;line-height:1.55;}
+.verdetto .dett{font-size:15px;opacity:.85;}
+@media(max-width:480px){.banda-prev b{font-size:17.5px;}.banda-prev span{font-size:14px;}.tasti a{font-size:15px;}.capo-btn{font-size:15.5px;}
+  .verdetto .top{font-size:16px;}.verdetto .dett{font-size:14px;}}
+/* BOTTONE YOUTUBE (lib-pagina-funghi.js) */
+.yt-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
+  font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 4px 0 #7d0d12,0 9px 18px rgba(160,20,27,.32);transition:transform .08s,box-shadow .08s;}
+.yt-btn svg{width:26px;height:18px;flex:none;}
+.yt-btn svg rect{fill:#fff;}
+.yt-btn svg polygon{fill:#e12b2b;}
+.yt-btn:hover{background:linear-gradient(180deg,#e8323a,#c01820);}
+.yt-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7d0d12,0 4px 8px rgba(160,20,27,.3);}
 </style>
 </head>
 <body>
 
 <header>
-  <a href="https://avventurepluvio-test.netlify.app/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
+  <a href="https://avventurepluvio-test.pages.dev/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
   <a class="yt" href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener"
      onclick="try{gtag('event','click_youtube',{pulsante:'zona-liguria'})}catch(e){}">▶ <span class="yt-l">Canale </span>YouTube</a>
 </header>
 
 <main>
-<p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.netlify.app/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="https://avventurepluvio-test.netlify.app/funghi/liguria/" style="color:var(--blu)">Liguria</a></p>
+<p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.pages.dev/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/" style="color:var(--blu)">Liguria</a></p>
 
 <h1>Funghi in Terra brigasca oggi: stanno nascendo?</h1>
 <p class="breve" style="margin-top:-2px">Meteo funghi Terra brigasca: la pioggia vera di 7 pluviometri da bosco, per capire la crescita dei funghi.</p>
@@ -290,7 +327,7 @@ nav.altre a{color:var(--blu);}
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="guasto"></div>
 <div id="verdetto"></div>
-<a class="banda-prev" href="https://avventurepluvio-test.netlify.app/?r=liguria&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;m=prev"
+<a class="banda-prev" href="https://avventurepluvio-test.pages.dev/?r=liguria&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;m=prev"
    onclick="try{gtag('event','apri_mappa',{da:'zona-terra-brigasca-banda-previsioni'})}catch(e){}">
   <span class="ic">☀️</span><span><b>Che tempo farà in Terra brigasca</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
 
@@ -305,18 +342,18 @@ nav.altre a{color:var(--blu);}
 <h2>Dove ha piovuto di più in Terra brigasca? Guardalo sulla mappa</h2>
 <style>@media(max-width:880px){#tasti,.tasti{grid-template-columns:repeat(2,1fr)}#t-conta,.tasti a.t-radar{grid-column:1 / -1}}</style>
 <div class="tasti">
-  <a href="https://avventurepluvio-test.netlify.app/?r=liguria,piemonte,francia-provenza&amp;g=1&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;z=10&amp;c=44.0625,7.61639">Ieri</a>
-  <a href="https://avventurepluvio-test.netlify.app/?r=liguria,piemonte,francia-provenza&amp;g=7&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;z=10&amp;c=44.0625,7.61639">Ultimi 7 gg</a>
-  <a href="https://avventurepluvio-test.netlify.app/?r=liguria,piemonte,francia-provenza&amp;g=20&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;z=10&amp;c=44.0625,7.61639">Ultimi 20 gg</a>
-  <a href="https://avventurepluvio-test.netlify.app/?r=liguria,piemonte,francia-provenza&amp;g=30&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;z=10&amp;c=44.0625,7.61639">Ultimi 30 gg</a>
-  <a class="forte" id="t-conta" href="https://avventurepluvio-test.netlify.app/?r=liguria,piemonte,francia-provenza&amp;g=20&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;z=10&amp;c=44.0625,7.61639">Range crescita funghi 13-20 gg fa</a>
-  <a class="t-radar" href="https://avventurepluvio-test.netlify.app/?r=liguria&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;radar=ora"
+  <a href="https://avventurepluvio-test.pages.dev/?r=liguria,piemonte,francia-provenza&amp;g=1&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;z=10&amp;c=44.0625,7.61639">Ieri</a>
+  <a href="https://avventurepluvio-test.pages.dev/?r=liguria,piemonte,francia-provenza&amp;g=7&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;z=10&amp;c=44.0625,7.61639">Ultimi 7 gg</a>
+  <a href="https://avventurepluvio-test.pages.dev/?r=liguria,piemonte,francia-provenza&amp;g=20&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;z=10&amp;c=44.0625,7.61639">Ultimi 20 gg</a>
+  <a href="https://avventurepluvio-test.pages.dev/?r=liguria,piemonte,francia-provenza&amp;g=30&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;z=10&amp;c=44.0625,7.61639">Ultimi 30 gg</a>
+  <a class="forte" id="t-conta" href="https://avventurepluvio-test.pages.dev/?r=liguria,piemonte,francia-provenza&amp;g=20&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;z=10&amp;c=44.0625,7.61639">Range crescita funghi 13-20 gg fa</a>
+  <a class="t-radar" href="https://avventurepluvio-test.pages.dev/?r=liguria&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;radar=ora"
      onclick="try{gtag('event','apri_mappa',{da:'zona-terra-brigasca-radar'})}catch(e){}">📡 Radar adesso</a>
-  <a class="t-radar t-prev" href="https://avventurepluvio-test.netlify.app/?r=liguria&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;m=prev"
+  <a class="t-radar t-prev" href="https://avventurepluvio-test.pages.dev/?r=liguria&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;m=prev"
      onclick="try{gtag('event','apri_mappa',{da:'zona-terra-brigasca-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">Ogni pallino è un pluviometro: cerca quello più bagnato vicino ai tuoi boschi.</p>
-<a href="https://avventurepluvio-test.netlify.app/?r=liguria,piemonte,francia-provenza&amp;g=20&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;z=10&amp;c=44.0625,7.61639" id="lnk-pioggia"
+<a href="https://avventurepluvio-test.pages.dev/?r=liguria,piemonte,francia-provenza&amp;g=20&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;z=10&amp;c=44.0625,7.61639" id="lnk-pioggia"
    onclick="try{gtag('event','apri_mappa',{da:'zona-terra-brigasca-20gg'})}catch(e){}">
   <img class="img-mappa" src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/liguria.jpg" alt="La mappa delle piogge in Liguria"
        width="1600" height="1000" loading="lazy"></a>
@@ -324,13 +361,13 @@ nav.altre a{color:var(--blu);}
 <h2 style="font-size:18px">I pluviometri della zona, dal più bagnato</h2>
 <table class="vic"><thead><tr><th>Località</th><th>13-20 gg fa</th><th>Ultimi 7</th><th class="tagl">Ultimi 25</th></tr></thead>
 <tbody id="tabella">
-<tr data-id="BELEN"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/liguria/colle-belenda/"><b>Colle Belenda</b></a><span class="com">IM · 1357 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
-<tr data-id="CODOG"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/liguria/colle-d-oggia/"><b>Colle D'Oggia</b></a><span class="com">IM · 1163 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
-<tr data-id="MONTL"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/liguria/montalto-ligure/"><b>Montalto Ligure</b></a><span class="com">IM · 240 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
-<tr data-id="PORNA"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/liguria/pornassio/"><b>Pornassio</b></a><span class="com">IM · 475 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
-<tr data-id="TRIOR"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/liguria/triora/"><b>Triora</b></a><span class="com">IM · 789 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
-<tr data-id="308"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/piemonte/upega/"><b>Upega</b></a><span class="com">CN · 1310 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
-<tr data-id="VERDE"><td><a class="loc" href="https://avventurepluvio-test.netlify.app/funghi/liguria/verdeggia/"><b>Verdeggia</b></a><span class="com">IM · 1120 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="BELEN"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/liguria/colle-belenda/"><b>Colle Belenda</b></a><span class="com">IM · 1357 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="CODOG"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/liguria/colle-d-oggia/"><b>Colle D'Oggia</b></a><span class="com">IM · 1163 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="MONTL"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/liguria/montalto-ligure/"><b>Montalto Ligure</b></a><span class="com">IM · 240 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="PORNA"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/liguria/pornassio/"><b>Pornassio</b></a><span class="com">IM · 475 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="TRIOR"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/liguria/triora/"><b>Triora</b></a><span class="com">IM · 789 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="308"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/piemonte/upega/"><b>Upega</b></a><span class="com">CN · 1310 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="VERDE"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/liguria/verdeggia/"><b>Verdeggia</b></a><span class="com">IM · 1120 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 </tbody></table>
 <p class="nota">Ogni nome porta alla sua pagina, con la pioggia giorno per giorno.</p>
 
@@ -338,7 +375,7 @@ nav.altre a{color:var(--blu);}
 
 <h2>Che boschi ci sono nella zona</h2>
 <p class="breve">Faggete, castagneti, querceti e abetaie colorati per tipo, con il rilievo sotto.</p>
-<a href="https://avventurepluvio-test.netlify.app/?r=liguria&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;boschi=1" style="display:block;text-decoration:none;"
+<a href="https://avventurepluvio-test.pages.dev/?r=liguria&amp;pl=44.0625,7.61639&amp;pn=Terra%20brigasca&amp;pz=1&amp;boschi=1" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'zona-terra-brigasca-boschi'})}catch(e){}">
   <img class="img-mappa" src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/tessere-boschi/anteprime/liguria.jpg"
        alt="La mappa boschi in Liguria: faggete, castagneti, querceti e abetaie colorati per tipo"
@@ -356,37 +393,31 @@ vicina, e a una sola. La giornata di oggi non è contata perché i pluviometri l
 <p>Perché da 13 a 20 giorni fa: dopo una pioggia il fungo impiega almeno dodici o tredici giorni
 a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due settimane.</p>
 <p>Ti serve un altro periodo? Per ieri e gli ultimi 30 giorni c’è
-<a href="https://avventurepluvio-test.netlify.app/zone/terra-brigasca/">dove ha piovuto in Terra brigasca</a>.</p>
-<h2>L'archivio della zona</h2>
-<p>Da giugno 2026 a ottobre 2026, in 107 giorni di misura, i 7 pluviometri
-della Terra brigasca hanno contato
-<b>159 mm</b> di pioggia a testa, in media. Il più bagnato è <b>Upega</b> con
-234 mm, il più asciutto Montalto Ligure con 89.
-La giornata più piovosa è stata il <b>21 agosto 2026</b> a Colle Belenda,
-con <b>66,8 mm</b>.</p>
+<a href="https://avventurepluvio-test.pages.dev/zone/terra-brigasca/">dove ha piovuto in Terra brigasca</a>.</p>
+
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
 <p>Dati di ARPA Piemonte e ARPA Liguria via il nostro archivio. Il bosco entro 3 km è calcolato su dati
 OpenStreetMap, licenza ODbL.</p>
 </div>
-<p style="margin:22px 0 4px;"><a href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" style="color:#e12b2b;font-weight:600;display:inline-flex;align-items:center;gap:7px;text-decoration:none;"
+<p style="margin:22px 0 4px;"><a href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
    onclick="try{gtag('event','click_youtube',{pulsante:'zona-fondo-liguria'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
 
 <h2 style="margin-top:30px">Le altre zone della Liguria</h2>
-<nav class="altre"><p><a href="https://avventurepluvio-test.netlify.app/funghi/zone/riviera-di-levante/">Riviera di Levante</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-bisagno/">Val Bisagno</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-bormida/">Val Bormida</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-cichero/">Val Cichero</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-d-aveto/">Val d'Aveto</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-di-vara/">Val di Vara</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-neva/">Val Neva</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-roia/">Val Roia</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-varatella/">Val Varatella</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/val-varenna/">Val Varenna</a> · <a href="https://avventurepluvio-test.netlify.app/funghi/zone/valle-dei-campassi/">Valle dei Campassi</a></p></nav>
+<nav class="altre"><p><a href="https://avventurepluvio-test.pages.dev/funghi/zone/riviera-di-levante/">Riviera di Levante</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/zone/val-bisagno/">Val Bisagno</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/zone/val-bormida/">Val Bormida</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/zone/val-cichero/">Val Cichero</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/zone/val-d-aveto/">Val d'Aveto</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/zone/val-di-vara/">Val di Vara</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/zone/val-neva/">Val Neva</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/zone/val-roia/">Val Roia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/zone/val-varatella/">Val Varatella</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/zone/val-varenna/">Val Varenna</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/zone/valle-dei-campassi/">Valle dei Campassi</a></p></nav>
 </main>
 
 <footer>
-  <a href="https://avventurepluvio-test.netlify.app/">Mappa delle piogge</a> ·
-  <a href="https://avventurepluvio-test.netlify.app/liguria/">Dove ha piovuto in Liguria</a> ·
-  <a href="https://avventurepluvio-test.netlify.app/funghi/liguria/">Piogge per funghi in Liguria</a> ·
-  <a href="https://avventurepluvio-test.netlify.app/fonti.html">tutte le fonti e licenze</a><br>
+  <a href="https://avventurepluvio-test.pages.dev/">Mappa delle piogge</a> ·
+  <a href="https://avventurepluvio-test.pages.dev/liguria/">Dove ha piovuto in Liguria</a> ·
+  <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/">Piogge per funghi in Liguria</a> ·
+  <a href="https://avventurepluvio-test.pages.dev/fonti">tutte le fonti e licenze</a><br>
   La mappa copre Italia, Svizzera, Austria, Francia e Slovenia — 5000+ stazioni.
 </footer>
 
 <script>
 (function(){
-  var SITO = "https://avventurepluvio-test.netlify.app", MAPPA = SITO + "/";
+  var SITO = "https://avventurepluvio-test.pages.dev", MAPPA = SITO + "/";
   var ZONA = "Terra brigasca", DOVE = "in Terra brigasca";
   var REGIONI = ["piemonte","liguria"], REGS = "liguria,piemonte,francia-provenza";
   var LAT = 44.0625, LON = 7.61639;
@@ -443,13 +474,20 @@ OpenStreetMap, licenza ODbL.</p>
 
   /* le 25 barre, ieri a destra; restituisce le ascisse per i grafici sotto */
   function scriviBarre(s, oggi){
-    var max = Math.max.apply(null, s.concat([1])), barre = "", ax = "", ult = null;
+    var max = Math.max.apply(null, s.concat([1])), barre = "", ax = "";
+    /* 17/10/2026: i numeri si danno dalla barra PIU' ALTA in giu', saltando le
+       vicine di una gia' numerata (come le pagine delle piogge). Prima andavano
+       in ordine di data: a Pieve Santo Stefano il 7/10 (5,9) prendeva il numero
+       e l'8/10 (23,9), accanto, restava senza, e il 5,9 sembrava suo. Il numero
+       sta sopra la SUA barra (CSS .gg .b b), per questo la piu' alta arriva all'86%. */
+    var cand = [], lab = {};
+    for (var c = 1; c <= GIORNI; c++) if ((s[c-1] || 0) >= 1 && (s[c-1] || 0) >= max*0.2) cand.push(c);
+    cand.sort(function (a, b) { return s[b-1] - s[a-1]; })
+      .forEach(function (c) { if (!lab[c-1] && !lab[c+1]) lab[c] = 1; });
     for (var i = GIORNI; i >= 1; i--) {
       var v = s[i-1] || 0, d = menoDa(oggi, i), cl = (i >= 13 && i <= 20) ? " dentro" : "";
-      var et = v >= max*0.2 && (ult === null || ult - i >= 2);
-      if (et) ult = i;
-      barre += "<div class=\"b" + cl + "\" title=\"" + gg(iso(d)) + ": " + num(v) + " mm\">" + (et ? "<b>" + num(v) + "</b>" : "")
-        + "<i style=\"height:" + Math.max(2, Math.round(v/max*100)) + "%\"></i></div>";
+      barre += "<div class=\"b" + cl + "\" title=\"" + gg(iso(d)) + ": " + num(v) + " mm\">" + (lab[i] ? "<b>" + num(v) + "</b>" : "")
+        + "<i style=\"height:" + Math.max(2, Math.round(v/max*86)) + "%\"></i></div>";
       ax += "<span>" + ((i === GIORNI || i === 1 || i % 5 === 0) ? (d.getDate() + "/" + (d.getMonth()+1)) : "") + "</span>";
     }
     document.getElementById("grafico").innerHTML = "<div class=\"gg\">" + barre + "</div><div class=\"gg-x\">" + ax + "</div>"
@@ -543,14 +581,17 @@ OpenStreetMap, licenza ODbL.</p>
   })).then(function(js){
     var buoni = js.filter(function(j){ return j && fresco(j); });
     if (buoni.length !== REGIONI.length) return guasto();
-    var serie = {}, serieT = {}, oggi = null, gen = null;
+    var serie = {}, serieT = {}, sospesi = {}, oggi = null, gen = null;
     buoni.forEach(function(j){
       if (!gen || j.generato < gen) gen = j.generato;   // la data della parte PIU VECCHIA
       Object.keys(j.serie).forEach(function(id){ serie[id] = j.serie[id]; });
       Object.keys(j.serieT || {}).forEach(function(id){ serieT[id] = j.serieT[id]; });
+      Object.keys(j.sospesi || {}).forEach(function(id){ sospesi[id] = 1; });
       if (!oggi || j.oggi < oggi) oggi = j.oggi;
     });
-    var righe = POSTI.filter(function(p){ return serie[p[0]]; });
+    /* 17/10/2026: i pluviometri sospesi (la mappa li esclude perche' misurano
+       male, lib-escluse.js) non entrano nella media: in tabella restano col «—» */
+    var righe = POSTI.filter(function(p){ return serie[p[0]] && !sospesi[p[0]]; });
     if (righe.length < 2) return guasto();
     disegna(serie, serieT, oggi, righe);
     scriviAggiornato(gen);
@@ -566,7 +607,7 @@ OpenStreetMap, licenza ODbL.</p>
   }
 
   function link(dal, al){
-    return MAPPA + "?r=" + REGS + "&da=" + dal + "&a=" + al
+    return MAPPA + "?r=" + REGS + "&da=" + dal + "&a=" + al + "&s=p"
       + "&pl=" + LAT.toFixed(4) + "," + LON.toFixed(4) + "&pn=" + encodeURIComponent(ZONA) + "&pz=1"
       + "&z=10&c=" + LAT.toFixed(4) + "," + LON.toFixed(4);
   }
@@ -600,7 +641,13 @@ OpenStreetMap, licenza ODbL.</p>
     /* ⚠️ La tabella e GIA NELL HTML coi link: qui si riempiono le caselle e si
        RIORDINA dal piu bagnato spostando le righe, senza innerHTML. */
     var dati = {};
-    righe.forEach(function(p){ var ss = serie[p[0]]; dati[p[0]] = { mm: somma(ss,20,13), mm7: somma(ss,7,1), mm25: somma(ss,GIORNI,1) }; });
+    /* 17/10/2026: assente non e' zero. Un pluviometro col dato in meno del 60%
+       dei giorni (sui 25 o sulla finestra 13-20) resta senza numeri, «—» e in
+       fondo: coi giorni mancanti contati asciutti sembrerebbe il piu' asciutto. */
+    function conD(ss, da, a){ var c = 0; for (var n = da; n >= a; n--) if (ss[n-1] != null) c++; return c; }
+    righe.forEach(function(p){ var ss = serie[p[0]];
+      if (conD(ss,GIORNI,1) < GIORNI*0.6 || conD(ss,20,13) < 8*0.6) return;
+      dati[p[0]] = { mm: somma(ss,20,13), mm7: somma(ss,7,1), mm25: somma(ss,GIORNI,1) }; });
     var corpo = document.getElementById("tabella");
     var trs = [].slice.call(corpo.querySelectorAll("tr[data-id]"));
     var mx = 1; Object.keys(dati).forEach(function(id){ mx = Math.max(mx, dati[id].mm); });

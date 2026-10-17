@@ -80,9 +80,17 @@ function scriviSitemap(SITO, RADICE) {
   if (c_e(path.join('guida', 'index.html')))
     voci.push({ loc: SITO + '/guida/', lastmod: '2026-09-12', freq: 'monthly', pri: '0.6' });
 
+  // ⚠️ LE PAGINE REGIONE COTTE CAMBIANO OGNI MATTINA (17/10/2026, suo ok). Dall'11/10
+  // hanno «dove ha piovuto ieri, 16 ottobre» e i numeri scritti nell'HTML: per loro la
+  // data fissa diceva il falso al contrario. La data e' quella dei numeri cotti, letta
+  // dal bottone «ieri» della pagina (da=a=giorno). Le pagine non cotte (la Slovenia)
+  // non hanno quel bottone col giorno e restano alla data del guscio, come tutto il resto.
   for (const r of REGIONI) {
-    if (c_e(path.join(r.k, 'index.html')))
-      voci.push({ loc: `${SITO}/${r.k}/`, lastmod: NASCITA_REGIONI, freq: 'weekly', pri: '0.8' });
+    const rel = path.join(r.k, 'index.html');
+    if (!c_e(rel)) continue;
+    const m = /class="ieri-btn" href="[^"]*[?&](?:amp;)?da=(\d{4}-\d\d-\d\d)&amp;a=\1/.exec(fs.readFileSync(path.join(RADICE, rel), 'utf8'));
+    const lm = m && m[1] > NASCITA_REGIONI ? m[1] : NASCITA_REGIONI;
+    voci.push({ loc: `${SITO}/${r.k}/`, lastmod: lm, freq: m ? 'daily' : 'weekly', pri: '0.8' });
   }
   // Le pagine funghi restano a 0.7: la priorita' e' solo un peso RELATIVO
   // dentro il sito, e la pagina regione e' quella che vogliamo far uscire

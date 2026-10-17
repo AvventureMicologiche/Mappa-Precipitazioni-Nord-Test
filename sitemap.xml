@@ -4,27 +4,27 @@
      pagine sono gusci statici, i numeri li scarica il browser. -->
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>https://avventurepluvio-test.netlify.app/sitemap-mappa.xml</loc>
+    <loc>https://avventurepluvio-test.pages.dev/sitemap-mappa.xml</loc>
+    <lastmod>2026-10-08</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://avventurepluvio-test.pages.dev/sitemap-funghi.xml</loc>
     <lastmod>2026-10-07</lastmod>
   </sitemap>
   <sitemap>
-    <loc>https://avventurepluvio-test.netlify.app/sitemap-funghi.xml</loc>
+    <loc>https://avventurepluvio-test.pages.dev/sitemap-localita.xml</loc>
     <lastmod>2026-10-07</lastmod>
   </sitemap>
   <sitemap>
-    <loc>https://avventurepluvio-test.netlify.app/sitemap-localita.xml</loc>
+    <loc>https://avventurepluvio-test.pages.dev/sitemap-zone.xml</loc>
     <lastmod>2026-10-07</lastmod>
   </sitemap>
   <sitemap>
-    <loc>https://avventurepluvio-test.netlify.app/sitemap-zone.xml</loc>
+    <loc>https://avventurepluvio-test.pages.dev/sitemap-zone-piogge.xml</loc>
     <lastmod>2026-10-07</lastmod>
   </sitemap>
   <sitemap>
-    <loc>https://avventurepluvio-test.netlify.app/sitemap-zone-piogge.xml</loc>
-    <lastmod>2026-10-07</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>https://avventurepluvio-test.netlify.app/sitemap-mappa-forestale.xml</loc>
+    <loc>https://avventurepluvio-test.pages.dev/sitemap-mappa-forestale.xml</loc>
     <lastmod>2026-09-28</lastmod>
   </sitemap>
 </sitemapindex>

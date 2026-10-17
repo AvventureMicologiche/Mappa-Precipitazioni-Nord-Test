@@ -20,7 +20,7 @@ const STILE_NUOVO = `
 .gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
 .gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
 .gg .b.dentro i{background:var(--blu);}
-.gg .b b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10.5px;
+.gg .b b{align-self:center;margin-bottom:2px;line-height:1.1;font-size:10.5px;
   font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
 .gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
 .gg-x span{flex:1;text-align:center;}
@@ -122,13 +122,20 @@ function comune() {
 
   /* le 25 barre, ieri a destra; restituisce le ascisse per i grafici sotto */
   function scriviBarre(s, oggi){
-    var max = Math.max.apply(null, s.concat([1])), barre = "", ax = "", ult = null;
+    var max = Math.max.apply(null, s.concat([1])), barre = "", ax = "";
+    /* 17/10/2026: i numeri si danno dalla barra PIU' ALTA in giu', saltando le
+       vicine di una gia' numerata (come le pagine delle piogge). Prima andavano
+       in ordine di data: a Pieve Santo Stefano il 7/10 (5,9) prendeva il numero
+       e l'8/10 (23,9), accanto, restava senza, e il 5,9 sembrava suo. Il numero
+       sta sopra la SUA barra (CSS .gg .b b), per questo la piu' alta arriva all'86%. */
+    var cand = [], lab = {};
+    for (var c = 1; c <= GIORNI; c++) if ((s[c-1] || 0) >= 1 && (s[c-1] || 0) >= max*0.2) cand.push(c);
+    cand.sort(function (a, b) { return s[b-1] - s[a-1]; })
+      .forEach(function (c) { if (!lab[c-1] && !lab[c+1]) lab[c] = 1; });
     for (var i = GIORNI; i >= 1; i--) {
       var v = s[i-1] || 0, d = menoDa(oggi, i), cl = (i >= 13 && i <= 20) ? " dentro" : "";
-      var et = v >= max*0.2 && (ult === null || ult - i >= 2);
-      if (et) ult = i;
-      barre += "<div class=\"b" + cl + "\" title=\"" + gg(iso(d)) + ": " + num(v) + " mm\">" + (et ? "<b>" + num(v) + "</b>" : "")
-        + "<i style=\"height:" + Math.max(2, Math.round(v/max*100)) + "%\"></i></div>";
+      barre += "<div class=\"b" + cl + "\" title=\"" + gg(iso(d)) + ": " + num(v) + " mm\">" + (lab[i] ? "<b>" + num(v) + "</b>" : "")
+        + "<i style=\"height:" + Math.max(2, Math.round(v/max*86)) + "%\"></i></div>";
       ax += "<span>" + ((i === GIORNI || i === 1 || i % 5 === 0) ? (d.getDate() + "/" + (d.getMonth()+1)) : "") + "</span>";
     }
     document.getElementById("grafico").innerHTML = "<div class=\"gg\">" + barre + "</div><div class=\"gg-x\">" + ax + "</div>"
@@ -226,4 +233,99 @@ const JS_AGGIORNATO = aggiornato.toString()
   .replace(/^function aggiornato\(\)\s*\{/, '')
   .replace(/\}\s*$/, '');
 
-module.exports = { STILE_NUOVO, JS_COMUNE, JS_AGGIORNATO };
+/* ── I BOTTONI IN RILIEVO, comuni a tutte le pagine (11/10/2026) ──────────────
+   Nati sulle pagine regione (sua scelta V2 fra tre: «le scritte cosi' piccole
+   fanno schifo, i bottoni non sembrano bottoni»), poi estesi a funghi, zone e
+   paesi su sua richiesta. UN SOLO BLOCCO per tutti: prima lo stesso bottone
+   era scritto in quattro generatori.
+   ⚠️ VA IN FONDO AL FOGLIO DI STILE di ogni pagina, dopo tutto il resto: le
+   schede dei paesi e le zone copiano lo stile delle pagine funghi e poi
+   ridefiniscono .tasti e .banda-prev, e l'ultima regola vince.
+   ⚠️ La chiave «BOTTONI IN RILIEVO» nel commento la usa chi lo inserisce nelle
+   pagine gia' fatte senza rigenerarle (per non toccare i numeri d'archivio):
+   se c'e' gia', non lo rimette. */
+/* Il bottone rosso «Vieni a trovarci su YouTube» in fondo alle pagine (11/10/2026,
+   sua richiesta: «solo bottone rosso 3D», niente schede col video). Il logo
+   nel bottone si rovescia: rettangolo bianco, triangolo rosso. Sta anche da
+   solo (YT_BTN) per le pagine della mappa forestale, che RILIEVO non lo hanno. */
+const YT_BTN = `/* BOTTONE YOUTUBE (lib-pagina-funghi.js) */
+.yt-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
+  font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 4px 0 #7d0d12,0 9px 18px rgba(160,20,27,.32);transition:transform .08s,box-shadow .08s;}
+.yt-btn svg{width:26px;height:18px;flex:none;}
+.yt-btn svg rect{fill:#fff;}
+.yt-btn svg polygon{fill:#e12b2b;}
+.yt-btn:hover{background:linear-gradient(180deg,#e8323a,#c01820);}
+.yt-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7d0d12,0 4px 8px rgba(160,20,27,.3);}
+`;
+const RILIEVO = `/* BOTTONI IN RILIEVO (lib-pagina-funghi.js) */
+.capo-btns{gap:12px;margin-top:15px;}
+.capo-btn{background:#fff;border:none;color:#10263f;font-size:16px;font-weight:700;padding:12px 18px 13px;border-radius:12px;
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 5px 0 #7f97b6,0 10px 18px rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s;}
+.capo-btn:hover{background:#f3f7fc;}
+.capo-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #7f97b6,0 5px 10px rgba(0,0,0,.3);}
+.banda-prev{padding:15px 16px 16px;border-radius:14px;box-shadow:0 6px 0 #164f97,0 12px 22px rgba(20,60,120,.38);transition:transform .08s,box-shadow .08s;}
+.banda-prev b{font-size:19px;}
+.banda-prev span{font-size:15px;}
+.banda-prev .fr{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;}
+.banda-prev:active{transform:translateY(4px);box-shadow:0 2px 0 #164f97,0 5px 10px rgba(20,60,120,.3);}
+.tasti{gap:12px;margin-top:12px;}
+.tasti a{background:#fff;border:1px solid #d3deeb;border-radius:12px;padding:13px 6px 14px;font-size:16px;
+  box-shadow:0 4px 0 #9fb3cc,0 8px 14px rgba(15,45,77,.16);transition:transform .08s,box-shadow .08s;}
+.tasti a:hover{background:#f3f7fc;}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);box-shadow:0 4px 0 #0c2440,0 8px 14px rgba(15,45,77,.25);}
+.tasti a.forte:hover{background:#24508a;}
+.tasti a:active{transform:translateY(3px);box-shadow:0 1px 0 #9fb3cc,0 3px 6px rgba(15,45,77,.16);}
+.tasti a.forte:active{box-shadow:0 1px 0 #0c2440,0 3px 6px rgba(15,45,77,.25);}
+.card .vai{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:auto;background:var(--blu);color:#fff;font-size:16px;font-weight:700;
+  padding:11px 14px 12px;border-radius:12px;text-decoration:none;box-shadow:0 4px 0 #0c2440,0 8px 14px rgba(15,45,77,.22);transition:transform .08s,box-shadow .08s;}
+.card .nota{margin-bottom:14px;}
+.card .vai:hover{background:#24508a;}
+.card .vai:active{transform:translateY(3px);box-shadow:0 1px 0 #0c2440,0 3px 6px rgba(15,45,77,.22);}
+.verdetto .top{font-size:17.5px;line-height:1.55;}
+.verdetto .dett{font-size:15px;opacity:.85;}
+@media(max-width:480px){.banda-prev b{font-size:17.5px;}.banda-prev span{font-size:14px;}.tasti a{font-size:15px;}.capo-btn{font-size:15.5px;}
+  .verdetto .top{font-size:16px;}.verdetto .dett{font-size:14px;}}
+` + YT_BTN;
+
+/* ── IL QUIZ ESAME TARTUFI ACCANTO A YOUTUBE (12/10/2026, sua scelta) ─────────
+   Solo nelle regioni che il quiz ha: bottone giallo ACCANTO a «Vieni a trovarci
+   su YouTube», simmetrico (celle uguali, 53 px: lui, «devi ricordarti sempre le
+   simmetrie»). Sta qui perche' lo usano le pagine regione, funghi, zone e paesi:
+   una regione nuova nel quiz = una riga in QUIZ_REGIONI, e al primo giro le
+   pagine che si rigenerano lo prendono da sole. Le pagine funghi che NON si
+   rigenerano l'hanno avuto con uno script d'inserimento (banco, 12/10). */
+const QUIZ = 'https://avventuremicologiche.it/esame-tartufi/';
+const QUIZ_REGIONI = { toscana: 'Toscana', lazio: 'Lazio', marche: 'Marche', campania: 'Campania' };
+const QUIZ_CSS = `
+/* QUIZ ACCANTO A YOUTUBE: due celle uguali, una sotto l'altra sul telefono */
+.coppia-btn{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 4px;}
+.coppia-btn a{justify-content:center;box-sizing:border-box;min-height:53px;width:100%;}
+.coppia-btn svg{width:26px;flex:none;}
+.quiz-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,#F9C93E,#EDA40C);color:#3d1f04 !important;
+  font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 4px 0 #a06a08,0 9px 18px rgba(150,95,10,.32);transition:transform .08s,box-shadow .08s;}
+.quiz-btn:hover{background:linear-gradient(180deg,#FBD150,#F0AC1A);}
+.quiz-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a06a08,0 4px 8px rgba(150,95,10,.3);}
+@media(max-width:560px){.coppia-btn{grid-template-columns:1fr;}}
+`;
+const COPPA_SVG = '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#7A3A08" d="M7 3h10v2h3v3a4 4 0 0 1-4 4h-.3A5 5 0 0 1 13 14.9V17h3v3H8v-3h3v-2.1A5 5 0 0 1 8.3 12H8a4 4 0 0 1-4-4V5h3zm-1 4v1a2 2 0 0 0 2 2V7zm12 0v3a2 2 0 0 0 2-2V7z"/></svg>';
+// Il bottone YouTube (ytA = il suo <a>) da solo, o in coppia col quiz della regione k.
+// `pulsante` e' il valore dell'evento GA click_quiz, come quello di click_youtube.
+const coppiaQuiz = (k, ytA, pulsante) => QUIZ_REGIONI[k]
+  ? `<div class="coppia-btn">${ytA}
+<a href="${QUIZ}${k}/" target="_blank" rel="noopener" class="quiz-btn"
+   onclick="try{gtag('event','click_quiz',{pulsante:'${pulsante}'})}catch(e){}">${COPPA_SVG}Quiz esame tartufi ${QUIZ_REGIONI[k]}</a></div>`
+  : `<p style="margin:22px 0 4px;">${ytA}</p>`;
+
+/* Lo stile di una pagina gia' fatta, da usare come base per un'altra (17/10/2026).
+   ⚠️ Paesi, zone, indice funghi e mappa forestale copiano il <style> di una pagina
+   funghi, che dall'11-12/10 contiene gia' RILIEVO (con YT_BTN in coda) e QUIZ_CSS;
+   poi li aggiungevano di nuovo, e rigenerando il blocco usciva DOPPIO (visto il 17/10
+   sulle 911 pagine di paese). Qui si tolgono: chi li vuole li aggiunge da se'. */
+function stileDelModello(html) {
+  const s = html.slice(html.indexOf('<style>') + 7, html.indexOf('</style>'));
+  return s.split(RILIEVO).join('').split(YT_BTN).join('').split(QUIZ_CSS).join('');
+}
+
+module.exports = { STILE_NUOVO, JS_COMUNE, JS_AGGIORNATO, RILIEVO, YT_BTN, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz, stileDelModello };
