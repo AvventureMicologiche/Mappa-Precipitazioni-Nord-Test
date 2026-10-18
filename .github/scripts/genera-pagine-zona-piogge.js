@@ -36,6 +36,9 @@ const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
 const { bello, slug, slugRegione, elenco, diZona, postiDellaZona } = require('./lib-nomi.js');
 const { perLink } = require('./lib-vicine.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
+// il bottone YouTube in fondo, col quiz accanto SOLO nelle regioni che ce l'hanno (18/10/2026):
+// la pagina regione gemella ce l'aveva dall'11/10, queste no
+const { coppiaQuiz } = require('./lib-pagina-funghi.js');
 
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
@@ -245,6 +248,8 @@ vuol dire che quel pluviometro in quei giorni non ha pubblicato.</p>
    onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-${zslug}-radar-testo'})}catch(e){}">diretta radar</a>:
 dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti seguenti. Il radar misura dal cielo, a 2 km
 di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
+${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
+   onclick="try{gtag('event','click_youtube',{pulsante:'zona-piogge-${zslug}-fondo'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a>`, `zona-piogge-${zslug}-fondo`)}
 </div>
 </main>
 
