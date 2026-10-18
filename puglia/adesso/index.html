@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dove sta piovendo adesso in Puglia: radar pioggia in diretta</title>
+<meta name="description" content="Il radar della pioggia in Puglia in diretta: dove piove in questo momento, le ultime 2 ore e i prossimi 40 minuti, e le previsioni delle città.">
+<link rel="canonical" href="https://avventurepluvio-test.pages.dev/puglia/adesso/">
+<meta property="og:title" content="Dove sta piovendo adesso in Puglia">
+<meta property="og:description" content="Il radar della pioggia in diretta e le previsioni delle città.">
+<meta property="og:image" content="https://avventurepluvio-test.pages.dev/preview.jpg">
+<meta property="og:url" content="https://avventurepluvio-test.pages.dev/puglia/adesso/">
+<meta property="og:type" content="website">
+<!-- Google tag: il config solo sul dominio vero, come le pagine regione -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  if (/(^|\.)avventuremicologiche\.it$/.test(location.hostname)) {
+    gtag('config', 'G-9R7MXXS0V4');
+  }
+</script>
+<link rel="stylesheet" href="/lib/leaflet/1.9.4/leaflet.css">
+<style>
+:root{--blu:#1b3f6e;--blu-scuro:#123252;--grigio:#f0f4fb;--bordo:#d0d8e8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#222;background:#fff;font-size:17px;line-height:1.6;}
+header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+header a{color:#fff;text-decoration:none;}
+header .logo{font-weight:600;font-size:15px;display:flex;align-items:center;gap:7px;}
+header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;}
+main{max-width:760px;margin:0 auto;padding:22px 16px 4px;}
+h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
+h1,h2{text-wrap:balance;}
+p,li{text-wrap:pretty;}
+.sotto{color:#555;font-size:17px;margin-bottom:12px;}
+h2{color:var(--blu-scuro);font-size:22px;margin:34px 0 10px;}
+p{margin-bottom:12px;}
+.cta{display:block;text-align:center;background:var(--blu);color:#fff;font-size:19px;font-weight:600;padding:15px 18px;border-radius:9px;text-decoration:none;margin:22px 0;}
+.cta:hover{background:#2a5490;}
+.griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0;}
+.card{background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:14px 15px;display:flex;flex-direction:column;}
+.card h3{margin:0 0 4px;font-size:17px;color:var(--blu-scuro);}
+.numerone{font-size:30px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}
+.numerone small{font-size:14px;font-weight:400;color:#555;}
+.card .vai{margin-top:auto;padding-top:10px;font-size:15px;font-weight:600;color:var(--blu);text-decoration:none;}
+.attesa{color:#777;font-style:italic;}
+.nota{font-size:14px;color:#666;margin-top:8px;}
+.top-staz{margin:6px 0 0;font-size:15px;}
+.top-staz li{margin:3px 0 3px 20px;}
+.verdetto .top{font-size:16px;opacity:.92;margin-top:8px;}
+.verdetto .top b{font-weight:700;}
+#attesa{color:#6a7789;font-size:16px;padding:18px 0;}
+ol.zone-dove{list-style:none;margin:10px 0 6px;padding:0;counter-reset:z;}
+ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
+ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
+ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
+ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;color:var(--blu-scuro);}
+ol.zone-dove .zmm small{font-weight:400;color:#6a7789;font-size:13px;margin-left:6px;}
+footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;font-size:14px;color:#555;text-align:center;}
+footer a{color:var(--blu);}
+nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
+nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
+nav.altre p{line-height:1.9;}
+nav.altre a{color:var(--blu);}
+footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
+.capo-btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px;}
+.capo-btn{display:inline-block;text-decoration:none;color:#0f2d4d;font-weight:700;font-size:14.5px;
+  padding:9px 15px 10px;border-radius:9px;border:1px solid #b9c7da;
+  background:linear-gradient(180deg,#ffffff 0%,#f5f8fd 48%,#e8eef8 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 3px 0 #aebfd4, 0 6px 13px rgba(0,0,0,.28);}
+@media(max-width:480px){h1{font-size:25px;}body{font-size:16px;}}
+
+.gg{display:flex;align-items:flex-end;gap:3px;height:150px;margin:14px 0 4px;}
+.gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
+.gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
+.gg .b.dentro i{background:var(--blu);}
+.gg .b b{align-self:center;margin-bottom:2px;line-height:1.1;font-size:10.5px;
+  font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
+.gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
+.gg-x span{flex:1;text-align:center;}
+.gg-leg{font-size:13.5px;color:#555;margin-top:8px;}
+.gg-leg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
+.tt-box{position:relative;padding-right:42px;margin:14px 0 2px;}
+.tt{width:100%;height:150px;display:block;overflow:visible;}
+.tt .griglia{stroke:#e6eaf0;stroke-width:1;vector-effect:non-scaling-stroke;}
+.tt polyline{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+.tt .max{stroke:#d1603d;}
+.tt .min{stroke:#3a6ea8;}
+.tt-y{position:absolute;top:0;right:0;width:42px;height:150px;pointer-events:none;}
+.tt-y span{position:absolute;right:0;transform:translateY(-50%);font-size:11px;color:#6b7a8d;line-height:1;padding-left:5px;}
+.tt-x{padding-right:42px;}
+.vic td:last-child,.vic th:last-child{text-align:right;}
+.vic .qui{background:#eef4fd;}
+.verdetto{background:#0f2d4d;color:#fff;border-radius:12px;padding:18px 18px 16px;margin:14px 0 8px;}
+.verdetto .si{font-size:27px;font-weight:800;line-height:1.2;}
+.verdetto .pallino{display:inline-block;width:15px;height:15px;border-radius:50%;margin-right:9px;vertical-align:2px;}
+.verdetto .gr{font-size:44px;font-weight:800;line-height:1.1;margin-top:10px;}
+.verdetto .gr small{font-size:18px;font-weight:600;opacity:.85;margin-left:6px;}
+.verdetto .dett{font-size:16px;opacity:.9;margin-top:6px;}
+.scala{display:flex;gap:4px;margin-top:14px;}
+.scala div{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.18);}
+.scala-t{display:flex;font-size:11.5px;opacity:.75;margin-top:4px;}
+.scala-t span{flex:1;text-align:center;}
+.breve{font-size:16px;color:#333;margin:6px 0 4px;}
+.fin{display:flex;gap:6px;align-items:flex-end;height:170px;margin:16px 0 4px;}
+.fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
+.fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
+.fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+.fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
+.fin-x span{flex:1;text-align:center;line-height:1.25;}
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
+.img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
+.tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
+  padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+.tasti a.t-prev{grid-column:1 / -1;}
+@media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.banda-prev{display:flex;align-items:center;gap:12px;margin:10px 0 4px;padding:13px 16px;border-radius:12px;background:linear-gradient(135deg,#1f6fd1,#3f8fe8);color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(31,111,209,.25);}
+.banda-prev .ic{font-size:30px;line-height:1;flex:none;}
+.banda-prev b{display:block;font-size:17px;line-height:1.2;}
+.banda-prev span{display:block;font-size:13px;opacity:.92;margin-top:2px;}
+.banda-prev .fr{margin-left:auto;font-size:22px;flex:none;}
+.banda-prev:hover{background:linear-gradient(135deg,#1b5fb3,#3580d6);}
+.noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
+.noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
+.noioso p{margin-bottom:8px;}
+.noioso a{color:var(--blu);}
+
+/* Sulle pagine piogge l'etichetta sta SOPRA la sua barra, non in cima al
+   grafico: con 30 barre strette, in cima non si capiva di chi fosse. */
+.gg .b b{position:static;transform:none;align-self:center;margin-bottom:2px;line-height:1.1;}
+/* ── IL BOTTONE DI IERI, versione V2 (11/10/2026, sua scelta fra tre) ──
+   Guardando la pagina dal PC: «le scritte cosi' piccole fanno schifo, i
+   bottoni non sembrano bottoni». Fondo pieno, ombra profonda con un bordo
+   sotto come un tasto, e la freccia in un tondo: il segno che si tocca.
+   Gli altri bottoni (previsioni, tasti dei periodi, «Apri la mappa» delle
+   schede, scritte del riquadro) stanno nel blocco COMUNE RILIEVO di
+   lib-pagina-funghi.js, uguale per tutte le pagine: qui sotto, in fondo. */
+.ieri-btn{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px;width:100%;
+  text-decoration:none;background:#fff;color:#10263f;padding:14px 16px 15px 20px;border-radius:14px;line-height:1.35;
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 6px 0 #7f97b6,0 12px 22px rgba(0,0,0,.38);
+  transition:transform .08s,box-shadow .08s;}
+.ieri-btn b{font-size:19px;font-weight:700;}
+.ieri-btn small{font-size:15px;font-weight:500;color:#3f5672;}
+.ieri-btn i{grid-row:1/span 2;grid-column:2;font-style:normal;width:40px;height:40px;border-radius:50%;
+  background:#2a5490;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 0 #183a68;}
+.ieri-btn:hover{background:#f3f7fc;}
+.ieri-btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #7f97b6,0 5px 10px rgba(0,0,0,.3);}
+@media(max-width:480px){.ieri-btn b{font-size:17.5px;}.ieri-btn small{font-size:14px;}}
+/* BOTTONI IN RILIEVO (lib-pagina-funghi.js) */
+.capo-btns{gap:12px;margin-top:15px;}
+.capo-btn{background:#fff;border:none;color:#10263f;font-size:16px;font-weight:700;padding:12px 18px 13px;border-radius:12px;
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 5px 0 #7f97b6,0 10px 18px rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s;}
+.capo-btn:hover{background:#f3f7fc;}
+.capo-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #7f97b6,0 5px 10px rgba(0,0,0,.3);}
+.banda-prev{padding:15px 16px 16px;border-radius:14px;box-shadow:0 6px 0 #164f97,0 12px 22px rgba(20,60,120,.38);transition:transform .08s,box-shadow .08s;}
+.banda-prev b{font-size:19px;}
+.banda-prev span{font-size:15px;}
+.banda-prev .fr{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;}
+.banda-prev:active{transform:translateY(4px);box-shadow:0 2px 0 #164f97,0 5px 10px rgba(20,60,120,.3);}
+.tasti{gap:12px;margin-top:12px;}
+.tasti a{background:#fff;border:1px solid #d3deeb;border-radius:12px;padding:13px 6px 14px;font-size:16px;
+  box-shadow:0 4px 0 #9fb3cc,0 8px 14px rgba(15,45,77,.16);transition:transform .08s,box-shadow .08s;}
+.tasti a:hover{background:#f3f7fc;}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);box-shadow:0 4px 0 #0c2440,0 8px 14px rgba(15,45,77,.25);}
+.tasti a.forte:hover{background:#24508a;}
+.tasti a:active{transform:translateY(3px);box-shadow:0 1px 0 #9fb3cc,0 3px 6px rgba(15,45,77,.16);}
+.tasti a.forte:active{box-shadow:0 1px 0 #0c2440,0 3px 6px rgba(15,45,77,.25);}
+.card .vai{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:auto;background:var(--blu);color:#fff;font-size:16px;font-weight:700;
+  padding:11px 14px 12px;border-radius:12px;text-decoration:none;box-shadow:0 4px 0 #0c2440,0 8px 14px rgba(15,45,77,.22);transition:transform .08s,box-shadow .08s;}
+.card .nota{margin-bottom:14px;}
+.card .vai:hover{background:#24508a;}
+.card .vai:active{transform:translateY(3px);box-shadow:0 1px 0 #0c2440,0 3px 6px rgba(15,45,77,.22);}
+.verdetto .top{font-size:17.5px;line-height:1.55;}
+.verdetto .dett{font-size:15px;opacity:.85;}
+@media(max-width:480px){.banda-prev b{font-size:17.5px;}.banda-prev span{font-size:14px;}.tasti a{font-size:15px;}.capo-btn{font-size:15.5px;}
+  .verdetto .top{font-size:16px;}.verdetto .dett{font-size:14px;}}
+/* BOTTONE YOUTUBE (lib-pagina-funghi.js) */
+.yt-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
+  font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 4px 0 #7d0d12,0 9px 18px rgba(160,20,27,.32);transition:transform .08s,box-shadow .08s;}
+.yt-btn svg{width:26px;height:18px;flex:none;}
+.yt-btn svg rect{fill:#fff;}
+.yt-btn svg polygon{fill:#e12b2b;}
+.yt-btn:hover{background:linear-gradient(180deg,#e8323a,#c01820);}
+.yt-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7d0d12,0 4px 8px rgba(160,20,27,.3);}
+
+.rb{border:1px solid var(--bordo);border-radius:14px;overflow:hidden;background:#fff;margin:14px 0 8px;box-shadow:0 8px 20px rgba(15,45,77,.14);}
+.rb-testa{display:flex;align-items:center;gap:10px;background:#0f2d4d;color:#fff;padding:10px 14px;font-size:15.5px;}
+.rb-testa b{font-weight:800;letter-spacing:.3px;}
+.rb-testa .quando{margin-left:auto;opacity:.9;font-size:14.5px;white-space:nowrap;}
+.vivo{width:11px;height:11px;border-radius:50%;background:#ff3b30;flex:none;box-shadow:0 0 0 0 rgba(255,59,48,.7);animation:vivo 1.6s infinite;}
+@keyframes vivo{0%{box-shadow:0 0 0 0 rgba(255,59,48,.7)}70%{box-shadow:0 0 0 9px rgba(255,59,48,0)}100%{box-shadow:0 0 0 0 rgba(255,59,48,0)}}
+/* fondo = il mare di OpenStreetMap: al telefono fra due tessere resta un filo di fondo (la mappa cade a mezzo pixel) */
+#mappa{height:470px;background:#aad3df;}
+.rb .tasti{grid-template-columns:repeat(3,1fr);margin:0;padding:12px 12px 4px;}
+.rb .tasti a{cursor:pointer;user-select:none;}
+.rb-scala{padding:8px 14px 12px;}
+.rb-barra{height:11px;border-radius:4px;background:linear-gradient(90deg,#00a3e0 0%,#005588 26%,#ffee00 45%,#ffaa00 63%,#ff4400 81%,#c10000 100%);}
+.rb-num{display:flex;justify-content:space-between;font-size:12px;color:#6b7a8d;margin-top:3px;}
+.rb-par{display:flex;justify-content:space-between;font-size:13px;color:#445;margin-top:1px;font-weight:600;}
+.rb-stato{font-size:13.5px;color:#6b7a8d;padding:0 14px 12px;margin-top:-4px;}
+.rb-stato.err{color:#b3261e;font-weight:600;}
+.pila{display:grid;gap:18px;margin:22px 0 10px;}
+.reg-lista{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 14px;margin:10px 0 4px;padding:0;list-style:none;}
+.reg-lista a{display:block;padding:7px 2px;border-bottom:1px solid var(--bordo);font-weight:600;color:var(--blu);text-decoration:none;font-size:16px;}
+.reg-lista a:hover{text-decoration:underline;}
+.leaflet-container{font:inherit;}
+.leaflet-container .leaflet-control-attribution{font-size:11px;line-height:1.4;}
+/* leaflet.css mette «plus-lighter» sulle tessere: col fondo non nero il filo fra due tessere diventa PIU' CHIARO */
+#mappa .fondo img.leaflet-tile{mix-blend-mode:normal;}
+.pv-cerca{position:relative;background:#fff;border:2px solid var(--blu);border-radius:14px;padding:14px 16px 12px;margin:12px 0 6px;box-shadow:0 6px 16px rgba(15,45,77,.14);}
+.pv-cerca label{display:block;font-weight:800;font-size:18px;color:var(--blu-scuro);margin-bottom:8px;}
+.pv-riga{display:flex;gap:10px;}
+.pv-riga input{flex:1;min-width:0;font:inherit;font-size:17px;padding:11px 13px;border:1px solid #b9c7da;border-radius:10px;color:#10263f;}
+.pv-riga input:focus{outline:2px solid #3f8fe8;outline-offset:0;border-color:#3f8fe8;}
+.pv-riga button{font:inherit;font-size:16px;font-weight:700;color:#fff;background:var(--blu);border:none;border-radius:10px;padding:0 18px;cursor:pointer;box-shadow:0 3px 0 #0c2440;}
+.pv-cerca .nota{margin:8px 0 0;font-size:13.5px;}
+.pv-lista{position:absolute;left:16px;right:16px;top:100%;margin-top:-6px;z-index:900;list-style:none;padding:4px 0;background:#fff;border:1px solid #c9d6e6;border-radius:10px;box-shadow:0 12px 28px rgba(15,45,77,.25);display:none;}
+.pv-lista.aperta{display:block;}
+.pv-lista li{display:flex;align-items:baseline;gap:8px;padding:10px 14px;cursor:pointer;font-size:16.5px;}
+.pv-lista li:hover,.pv-lista li.su{background:#eef4fd;}
+.pv-lista li small{color:#6b7a8d;font-size:13.5px;margin-left:auto;white-space:nowrap;}
+.pv-lista li.vuoto{color:#6b7a8d;cursor:default;}
+.cit-tit{font-size:18px;color:var(--blu-scuro);margin:22px 0 2px;}
+#pv-quando{margin:0 0 10px;}
+/* le carte vanno a capo e l'ULTIMA RIGA SI CENTRA: in 12 regioni su 19 l'ultima riga non e' piena */
+.citta{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;}
+.cit{flex:0 0 calc((100% - 24px) / 3);display:flex;flex-direction:column;background:var(--grigio);border:1px solid var(--bordo);border-radius:14px;padding:12px 14px 13px;text-decoration:none;color:#334;transition:background .1s;}
+.cit:hover{background:#e7eef9;}
+.cit-testa{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;}
+.cit-testa b{font-size:17px;color:var(--blu-scuro);line-height:1.25;}
+.cit-ic{font-size:34px;line-height:1;margin-top:-2px;}
+.cit-t{font-size:34px;font-weight:800;color:var(--blu-scuro);line-height:1.05;margin-top:-6px;}
+.cit-t small{font-size:13.5px;font-weight:600;color:#6b7a8d;margin-left:6px;letter-spacing:0;}
+.cit-cond{font-size:14px;color:#555;margin:2px 0 8px;}
+.cit-gg{font-size:14px;line-height:1.55;padding-bottom:10px;}
+.cit-gg b{color:var(--blu-scuro);}
+.cit-gg .mmw,.cit-cond .mmw{color:#1f6fd1;font-weight:700;white-space:nowrap;margin-left:3px;}
+.cit-vai{margin-top:auto;align-self:flex-start;font-size:14px;font-weight:700;color:var(--blu);background:#fff;border:1px solid #c9d6e6;border-radius:20px;padding:4px 13px;white-space:nowrap;}
+@media(max-width:640px){.citta{gap:10px;} .cit{flex-basis:calc((100% - 10px) / 2);padding:11px 12px 12px;}
+  .cit-t{font-size:30px;} .cit-ic{font-size:30px;} .cit-gg{font-size:13.5px;} .cit-vai{font-size:13.5px;padding:4px 11px;}
+  #mappa{height:380px;} .reg-lista{grid-template-columns:repeat(2,1fr);}
+  .rb-testa{font-size:14.5px;} .rb-testa .quando{font-size:13.5px;}}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="https://avventurepluvio-test.pages.dev/">🌧️ Mappa Pluviometrica</a>
+  <a class="yt" href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener"
+     onclick="try{gtag('event','click_youtube',{pulsante:'pagina-puglia-adesso'})}catch(e){}">▶ Iscriviti</a>
+</header>
+<main>
+<h1>Dove sta piovendo adesso in Puglia</h1>
+<p class="sotto"><b>Radar della pioggia in diretta</b>: le macchie colorate sono la pioggia che sta cadendo adesso. Si aggiorna da solo ogni 5 minuti.</p>
+
+<div class="rb">
+  <div class="rb-testa"><span class="vivo"></span><b>IN DIRETTA</b><span class="quando" id="quando">carico il radar…</span></div>
+  <div id="mappa"></div>
+  <div class="tasti">
+    <a class="forte" data-id="ora">Adesso</a>
+    <a data-id="due">▶ −2 ore</a>
+    <a data-id="prev">+40 min</a>
+  </div>
+  <div class="rb-scala">
+    <div class="rb-barra"></div>
+    <div class="rb-num"><span>0,5</span><span>3</span><span>6</span><span>12</span><span>24</span><span>50 mm/h</span></div>
+    <div class="rb-par"><span>pioviggine</span><span>pioggia forte</span></div>
+  </div>
+  <div class="rb-stato" id="stato">Radar europeo OPERA, risoluzione 2 km.</div>
+</div>
+
+<div class="pila">
+  <a class="ieri-btn" href="https://avventurepluvio-test.pages.dev/?r=puglia&amp;radar=ora"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-puglia-adesso-mappa'})}catch(e){}">
+    <b>Apri il radar sulla mappa completa</b><small>Ingrandisci, spostati, guarda le regioni vicine</small><i>→</i></a>
+</div>
+
+<h2>Previsioni meteo in Puglia</h2>
+<div class="pv-cerca">
+  <label for="pv-in">☀️ Cerca una località</label>
+  <div class="pv-riga"><input id="pv-in" type="search" placeholder="Paese o città" autocomplete="off" enterkeyhint="search"><button id="pv-vai" type="button">Cerca</button></div>
+  <ul class="pv-lista" id="pv-lista"></ul>
+  <p class="nota">Tutti i comuni d'Italia: si aprono le previsioni a 7 giorni, ora per ora.</p>
+</div>
+
+<h3 class="cit-tit">Previsioni nelle città della Puglia</h3>
+<p class="nota" id="pv-quando">Previsioni del modello ECMWF via MET Norway. La pioggia che cade adesso la mostra il radar qui sopra.</p>
+<div class="citta" id="citta">
+<a class="cit" data-i="0" href="https://avventurepluvio-test.pages.dev/?r=puglia&amp;m=prev&amp;pl=41.126,16.867&amp;pn=Bari"><div class="cit-testa"><b>Bari</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="1" href="https://avventurepluvio-test.pages.dev/?r=puglia&amp;m=prev&amp;pl=40.474,17.232&amp;pn=Taranto"><div class="cit-testa"><b>Taranto</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="2" href="https://avventurepluvio-test.pages.dev/?r=puglia&amp;m=prev&amp;pl=41.462,15.543&amp;pn=Foggia"><div class="cit-testa"><b>Foggia</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="3" href="https://avventurepluvio-test.pages.dev/?r=puglia&amp;m=prev&amp;pl=41.227,16.295&amp;pn=Andria"><div class="cit-testa"><b>Andria</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="4" href="https://avventurepluvio-test.pages.dev/?r=puglia&amp;m=prev&amp;pl=41.32,16.277&amp;pn=Barletta"><div class="cit-testa"><b>Barletta</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="5" href="https://avventurepluvio-test.pages.dev/?r=puglia&amp;m=prev&amp;pl=40.354,18.172&amp;pn=Lecce"><div class="cit-testa"><b>Lecce</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="6" href="https://avventurepluvio-test.pages.dev/?r=puglia&amp;m=prev&amp;pl=40.638,17.946&amp;pn=Brindisi"><div class="cit-testa"><b>Brindisi</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+</div>
+
+<h2>Quanta pioggia è caduta</h2>
+<p>Il radar dice dove piove adesso. Quanta acqua è caduta davvero lo misurano i pluviometri a terra, millimetro per millimetro: ieri, negli ultimi 7, 20 e 30 giorni.</p>
+<a class="ieri-btn" href="https://avventurepluvio-test.pages.dev/puglia/">
+  <b>Dove ha piovuto ieri in Puglia</b><small>I millimetri di oltre 120 pluviometri, zona per zona</small><i>→</i></a>
+
+<h2>Dove sta piovendo adesso nelle altre regioni</h2>
+<ul class="reg-lista">
+<li><a href="https://avventurepluvio-test.pages.dev/lombardia/adesso/">Lombardia</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/piemonte/adesso/">Piemonte</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/valledaosta/adesso/">Valle d'Aosta</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/liguria/adesso/">Liguria</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/emilia/adesso/">Emilia-Romagna</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/veneto/adesso/">Veneto</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/friuli/adesso/">Friuli Venezia Giulia</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/trentino/adesso/">Trentino</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/altoadige/adesso/">Alto Adige</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/toscana/adesso/">Toscana</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/umbria/adesso/">Umbria</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/marche/adesso/">Marche</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/lazio/adesso/">Lazio</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/abruzzo/adesso/">Abruzzo</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/molise/adesso/">Molise</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/campania/adesso/">Campania</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/basilicata/adesso/">Basilicata</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/calabria/adesso/">Calabria</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/sicilia/adesso/">Sicilia</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/sardegna/adesso/">Sardegna</a></li>
+</ul>
+
+<div class="noioso">
+<h2>Come funziona il radar</h2>
+<p>Il radar meteo manda un fascio di onde radio e misura quanto ne torna indietro dalle gocce: più il colore è acceso, più forte piove.
+Le immagini sono quelle della rete radar europea OPERA, a 2 km di risoluzione, distribuite da LibreWXR. Un fotogramma nuovo arriva ogni 5 minuti
+e la pagina lo carica da sola.</p>
+<h2>Le ultime 2 ore e i prossimi 40 minuti</h2>
+<p>«▶ −2 ore» fa scorrere i fotogrammi delle ultime due ore: si vede da dove arriva la pioggia e dove sta andando. «+40 min»
+sposta le macchie di adesso nella direzione in cui si muovono, per i prossimi quaranta minuti. Non è una previsione del tempo, vale solo per l'ora che viene.</p>
+<h2>Radar e pluviometri: perché a volte non coincidono</h2>
+<p>Il radar guarda la pioggia in quota: può vedere gocce che evaporano prima di toccare terra, o perderla dietro le montagne.
+I pluviometri la misurano a terra. Per sapere quanta ne è caduta c'è la pagina <a href="https://avventurepluvio-test.pages.dev/puglia/">Dove ha piovuto in Puglia</a>.</p>
+<p><a href="https://avventurepluvio-test.pages.dev/guida/" onclick="try{gtag('event','click_guida',{pulsante:'pagina-puglia-adesso'})}catch(e){}">📖 Guida alla mappa: come si usa, tutte le funzioni</a></p>
+<p style="margin:22px 0 4px;"><a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt-btn"
+   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-puglia-adesso-fondo'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
+</div>
+</main>
+
+<footer>
+<nav class="altre">
+  <div style="background:#f4fbf3;border:1px solid #cfe8cf;border-radius:9px;padding:1px 15px 11px;margin-top:16px;">
+    <b style="color:#2d6a30">🍄 Dove ha piovuto di più?</b>
+    <p><a href="https://avventurepluvio-test.pages.dev/funghi/" style="color:#2d6a30;font-weight:600">La nostra selezione, le località più bagnate</a>
+    <span style="color:#7a8b9a">·</span> oppure il riepilogo delle regioni: <a href="https://avventurepluvio-test.pages.dev/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sardegna/">Sardegna</a></p>
+  </div>
+</nav>
+  Radar: <a href="https://librewxr.net/" target="_blank" rel="noopener">LibreWXR</a> / EUMETNET OPERA (CC BY) ·
+  Previsioni: MET Norway (CC BY 4.0) ·
+  <a href="https://avventurepluvio-test.pages.dev/fonti">tutte le fonti e licenze</a> ·
+  <a href="https://avventuremicologiche.it">Avventure Micologiche</a><br>
+  La mappa copre Italia, Svizzera, Austria, Francia e Slovenia — 5000+ stazioni.
+</footer>
+
+<script id="adesso-dati" type="application/json">{"k":"puglia","sito":"https://avventurepluvio-test.pages.dev","citta":[{"n":"Bari","lat":41.126,"lon":16.867,"q":15,"reg":"puglia"},{"n":"Taranto","lat":40.474,"lon":17.232,"q":19,"reg":"puglia"},{"n":"Foggia","lat":41.462,"lon":15.543,"q":76,"reg":"puglia"},{"n":"Andria","lat":41.227,"lon":16.295,"q":157,"reg":"puglia"},{"n":"Barletta","lat":41.32,"lon":16.277,"q":25,"reg":"puglia"},{"n":"Lecce","lat":40.354,"lon":18.172,"q":57,"reg":"puglia"},{"n":"Brindisi","lat":40.638,"lon":17.946,"q":14,"reg":"puglia"}],"confine":{"type":"Feature","properties":{},"geometry":{"type":"MultiPolygon","coordinates":[[[[15.098,41.391],[15.087,41.404],[15.087,41.409],[15.092,41.418],[15.103,41.421],[15.098,41.434],[15.076,41.433],[15.063,41.441],[15.05,41.443],[15.038,41.454],[15.032,41.453],[15.03,41.455],[15.029,41.468],[15.02,41.48],[15.008,41.486],[14.996,41.497],[14.979,41.506],[14.966,41.519],[14.939,41.524],[14.936,41.542],[14.938,41.551],[14.946,41.563],[14.948,41.574],[14.946,41.579],[14.95,41.592],[14.947,41.596],[14.946,41.61],[14.934,41.619],[14.95,41.633],[14.955,41.642],[14.964,41.643],[14.987,41.639],[14.99,41.633],[15.008,41.622],[15.026,41.623],[15.023,41.628],[15.026,41.635],[15.034,41.638],[15.045,41.637],[15.049,41.657],[15.055,41.66],[15.069,41.661],[15.073,41.665],[15.09,41.672],[15.086,41.675],[15.089,41.682],[15.094,41.679],[15.095,41.674],[15.102,41.672],[15.105,41.675],[15.103,41.68],[15.106,41.686],[15.117,41.694],[15.162,41.709],[15.158,41.712],[15.146,41.712],[15.122,41.72],[15.117,41.728],[15.102,41.742],[15.103,41.749],[15.117,41.749],[15.099,41.765],[15.102,41.782],[15.115,41.789],[15.117,41.799],[15.114,41.806],[15.116,41.815],[15.108,41.822],[15.105,41.831],[15.1,41.834],[15.106,41.85],[15.114,41.85],[15.119,41.854],[15.13,41.874],[15.141,41.879],[15.132,41.903],[15.136,41.915],[15.135,41.923],[15.138,41.927],[15.205,41.919],[15.293,41.92],[15.341,41.917],[15.354,41.906],[15.363,41.903],[15.416,41.901],[15.455,41.903],[15.513,41.91],[15.611,41.925],[15.62,41.929],[15.656,41.921],[15.666,41.921],[15.672,41.916],[15.677,41.915],[15.706,41.914],[15.8,41.92],[15.884,41.931],[15.898,41.93],[15.933,41.934],[15.982,41.942],[15.994,41.948],[16.006,41.946],[16.009,41.95],[16.019,41.949],[16.024,41.946],[16.059,41.948],[16.09,41.939],[16.097,41.931],[16.106,41.929],[16.117,41.917],[16.131,41.912],[16.141,41.914],[16.152,41.907],[16.161,41.892],[16.169,41.887],[16.179,41.887],[16.185,41.884],[16.178,41.88],[16.177,41.877],[16.176,41.856],[16.181,41.845],[16.197,41.822],[16.195,41.796],[16.189,41.784],[16.19,41.777],[16.18,41.768],[16.167,41.766],[16.162,41.754],[16.15,41.75],[16.144,41.742],[16.128,41.738],[16.121,41.739],[16.118,41.734],[16.105,41.73],[16.088,41.714],[16.073,41.711],[16.065,41.696],[16.036,41.678],[16.031,41.678],[16.014,41.669],[15.989,41.661],[15.938,41.638],[15.937,41.636],[15.948,41.619],[15.936,41.637],[15.913,41.625],[15.914,41.622],[15.907,41.621],[15.901,41.615],[15.897,41.604],[15.894,41.575],[15.903,41.535],[15.926,41.493],[15.94,41.476],[15.956,41.462],[15.984,41.444],[16.006,41.433],[16.066,41.412],[16.13,41.386],[16.135,41.388],[16.165,41.371],[16.213,41.357],[16.243,41.337],[16.258,41.33],[16.347,41.309],[16.359,41.305],[16.387,41.29],[16.401,41.285],[16.419,41.283],[16.448,41.262],[16.459,41.26],[16.469,41.255],[16.478,41.256],[16.485,41.251],[16.497,41.25],[16.505,41.247],[16.505,41.243],[16.517,41.244],[16.531,41.239],[16.542,41.229],[16.56,41.225],[16.584,41.212],[16.585,41.208],[16.592,41.205],[16.601,41.205],[16.633,41.193],[16.637,41.195],[16.652,41.191],[16.672,41.19],[16.682,41.182],[16.749,41.167],[16.763,41.161],[16.776,41.161],[16.792,41.148],[16.802,41.143],[16.828,41.137],[16.846,41.14],[16.852,41.13],[16.865,41.13],[16.871,41.136],[16.871,41.14],[16.867,41.143],[16.854,41.145],[16.87,41.143],[16.873,41.14],[16.873,41.126],[16.877,41.123],[16.915,41.113],[16.927,41.112],[16.96,41.097],[17.058,41.076],[17.091,41.063],[17.145,41.036],[17.176,41.029],[17.199,41.011],[17.204,41.006],[17.2,41.006],[17.206,41.001],[17.236,40.993],[17.257,40.981],[17.258,40.978],[17.26,40.98],[17.264,40.975],[17.282,40.97],[17.283,40.966],[17.302,40.958],[17.306,40.951],[17.317,40.941],[17.329,40.935],[17.35,40.906],[17.389,40.892],[17.422,40.866],[17.466,40.844],[17.47,40.84],[17.468,40.84],[17.469,40.835],[17.473,40.832],[17.502,40.819],[17.552,40.8],[17.677,40.769],[17.709,40.758],[17.733,40.745],[17.748,40.733],[17.775,40.721],[17.799,40.715],[17.797,40.711],[17.801,40.708],[17.839,40.691],[17.926,40.679],[17.933,40.68],[17.935,40.682],[17.933,40.685],[17.936,40.686],[17.942,40.682],[17.947,40.669],[17.954,40.664],[17.976,40.663],[17.968,40.657],[17.968,40.662],[17.962,40.663],[17.96,40.655],[17.952,40.647],[17.946,40.644],[17.931,40.643],[17.927,40.64],[17.933,40.639],[17.944,40.643],[17.951,40.637],[17.953,40.645],[17.969,40.649],[17.986,40.644],[17.99,40.65],[17.999,40.649],[18.004,40.644],[18.017,40.64],[18.014,40.634],[18.016,40.625],[18.021,40.618],[18.045,40.598],[18.042,40.584],[18.035,40.575],[18.037,40.564],[18.05,40.552],[18.074,40.539],[18.082,40.524],[18.109,40.51],[18.127,40.493],[18.137,40.488],[18.166,40.481],[18.186,40.469],[18.203,40.467],[18.222,40.453],[18.244,40.442],[18.28,40.406],[18.301,40.395],[18.306,40.389],[18.305,40.384],[18.315,40.375],[18.351,40.352],[18.366,40.339],[18.382,40.318],[18.425,40.291],[18.429,40.287],[18.431,40.271],[18.441,40.269],[18.447,40.251],[18.457,40.24],[18.464,40.227],[18.465,40.222],[18.458,40.212],[18.46,40.2],[18.464,40.193],[18.478,40.18],[18.48,40.17],[18.487,40.161],[18.49,40.147],[18.495,40.145],[18.497,40.148],[18.514,40.138],[18.514,40.133],[18.508,40.13],[18.507,40.125],[18.52,40.107],[18.483,40.077],[18.485,40.076],[18.479,40.062],[18.476,40.045],[18.468,40.039],[18.436,40.025],[18.431,40.012],[18.432,40.001],[18.424,40.001],[18.417,39.995],[18.407,39.976],[18.408,39.973],[18.403,39.96],[18.401,39.945],[18.395,39.93],[18.394,39.916],[18.39,39.908],[18.398,39.893],[18.399,39.88],[18.398,39.871],[18.393,39.868],[18.395,39.864],[18.392,39.861],[18.39,39.848],[18.385,39.841],[18.385,39.834],[18.391,39.823],[18.391,39.817],[18.369,39.794],[18.36,39.797],[18.346,39.791],[18.332,39.797],[18.326,39.807],[18.318,39.81],[18.315,39.808],[18.301,39.819],[18.266,39.836],[18.238,39.835],[18.203,39.839],[18.19,39.847],[18.173,39.851],[18.162,39.859],[18.148,39.863],[18.12,39.885],[18.093,39.899],[18.088,39.899],[18.063,39.922],[18.05,39.928],[18.045,39.936],[18.03,39.949],[18.03,39.957],[18.026,39.963],[18.013,39.969],[17.995,39.994],[17.993,40],[18.008,39.996],[18.015,40.003],[18.021,40.016],[18.017,40.033],[18.004,40.048],[17.981,40.056],[17.979,40.053],[17.973,40.053],[17.975,40.059],[17.983,40.062],[17.976,40.059],[17.977,40.057],[17.987,40.058],[18.004,40.071],[18.011,40.086],[18.012,40.1],[18.01,40.109],[17.998,40.121],[17.995,40.131],[17.986,40.14],[17.982,40.139],[17.976,40.142],[17.975,40.146],[17.967,40.147],[17.946,40.169],[17.938,40.171],[17.925,40.184],[17.926,40.187],[17.918,40.194],[17.921,40.213],[17.927,40.219],[17.925,40.224],[17.911,40.234],[17.912,40.239],[17.909,40.238],[17.9,40.244],[17.895,40.251],[17.91,40.241],[17.909,40.25],[17.903,40.258],[17.891,40.26],[17.88,40.272],[17.871,40.273],[17.868,40.279],[17.861,40.284],[17.845,40.286],[17.839,40.282],[17.813,40.29],[17.795,40.29],[17.785,40.294],[17.773,40.295],[17.767,40.293],[17.763,40.294],[17.764,40.296],[17.761,40.298],[17.742,40.295],[17.735,40.299],[17.723,40.301],[17.673,40.305],[17.508,40.295],[17.504,40.297],[17.504,40.303],[17.497,40.309],[17.46,40.316],[17.453,40.324],[17.443,40.33],[17.426,40.333],[17.395,40.332],[17.39,40.337],[17.386,40.337],[17.378,40.347],[17.365,40.349],[17.361,40.353],[17.35,40.354],[17.34,40.362],[17.324,40.362],[17.308,40.369],[17.296,40.379],[17.279,40.38],[17.276,40.386],[17.235,40.401],[17.223,40.409],[17.206,40.409],[17.202,40.414],[17.209,40.421],[17.212,40.423],[17.232,40.424],[17.247,40.438],[17.251,40.448],[17.247,40.462],[17.227,40.48],[17.211,40.477],[17.192,40.477],[17.185,40.48],[17.182,40.482],[17.181,40.493],[17.177,40.49],[17.166,40.501],[17.157,40.495],[17.155,40.497],[17.165,40.504],[17.163,40.506],[17.147,40.495],[17.144,40.495],[17.149,40.507],[17.137,40.515],[17.123,40.519],[17.074,40.519],[17.042,40.512],[16.993,40.494],[16.949,40.47],[16.919,40.449],[16.901,40.435],[16.867,40.398],[16.861,40.4],[16.859,40.404],[16.853,40.404],[16.834,40.412],[16.81,40.433],[16.805,40.455],[16.798,40.46],[16.785,40.463],[16.762,40.462],[16.755,40.464],[16.757,40.468],[16.754,40.47],[16.749,40.465],[16.744,40.465],[16.736,40.468],[16.72,40.48],[16.736,40.501],[16.737,40.507],[16.735,40.512],[16.723,40.515],[16.717,40.524],[16.722,40.537],[16.715,40.545],[16.706,40.549],[16.706,40.554],[16.716,40.587],[16.712,40.593],[16.728,40.601],[16.724,40.602],[16.714,40.614],[16.71,40.63],[16.726,40.678],[16.727,40.688],[16.709,40.693],[16.696,40.703],[16.704,40.711],[16.709,40.705],[16.725,40.714],[16.673,40.738],[16.663,40.749],[16.662,40.737],[16.653,40.736],[16.649,40.738],[16.652,40.741],[16.637,40.748],[16.639,40.751],[16.627,40.754],[16.614,40.753],[16.607,40.756],[16.594,40.753],[16.589,40.755],[16.589,40.761],[16.586,40.763],[16.575,40.762],[16.568,40.758],[16.567,40.752],[16.578,40.742],[16.572,40.737],[16.568,40.737],[16.561,40.746],[16.559,40.754],[16.553,40.758],[16.537,40.753],[16.531,40.745],[16.538,40.742],[16.537,40.735],[16.543,40.73],[16.544,40.726],[16.538,40.725],[16.52,40.74],[16.524,40.743],[16.523,40.746],[16.508,40.753],[16.507,40.758],[16.501,40.762],[16.496,40.759],[16.482,40.739],[16.43,40.704],[16.414,40.702],[16.4,40.707],[16.385,40.733],[16.347,40.752],[16.318,40.782],[16.284,40.799],[16.254,40.828],[16.252,40.834],[16.243,40.838],[16.231,40.857],[16.226,40.882],[16.219,40.892],[16.214,40.905],[16.202,40.918],[16.163,40.929],[16.156,40.923],[16.149,40.924],[16.137,40.918],[16.135,40.907],[16.123,40.902],[16.121,40.898],[16.102,40.915],[16.092,40.921],[16.067,40.927],[16.026,40.944],[15.983,40.954],[15.977,40.958],[15.972,40.972],[16.003,40.97],[16.009,40.972],[16.01,40.976],[16.023,40.986],[16.032,41.001],[16.027,41.014],[16.028,41.025],[16.033,41.028],[16.04,41.028],[16.04,41.034],[16.035,41.041],[16.02,41.052],[16.009,41.057],[15.999,41.055],[15.982,41.077],[15.98,41.082],[15.984,41.086],[15.977,41.094],[15.954,41.093],[15.959,41.097],[15.96,41.101],[15.952,41.111],[15.938,41.114],[15.932,41.109],[15.921,41.112],[15.901,41.126],[15.894,41.123],[15.878,41.138],[15.874,41.137],[15.87,41.14],[15.866,41.131],[15.855,41.133],[15.847,41.13],[15.845,41.124],[15.839,41.125],[15.84,41.13],[15.833,41.13],[15.825,41.118],[15.821,41.12],[15.804,41.111],[15.802,41.098],[15.798,41.091],[15.791,41.088],[15.788,41.088],[15.788,41.091],[15.783,41.09],[15.769,41.083],[15.753,41.095],[15.752,41.098],[15.742,41.099],[15.732,41.099],[15.72,41.09],[15.684,41.087],[15.656,41.091],[15.651,41.089],[15.636,41.092],[15.631,41.097],[15.623,41.098],[15.58,41.097],[15.56,41.089],[15.554,41.078],[15.54,41.072],[15.539,41.07],[15.544,41.059],[15.543,41.056],[15.49,41.07],[15.479,41.076],[15.478,41.079],[15.463,41.076],[15.446,41.078],[15.426,41.095],[15.412,41.097],[15.409,41.101],[15.396,41.107],[15.393,41.101],[15.366,41.085],[15.352,41.094],[15.333,41.096],[15.314,41.104],[15.298,41.094],[15.283,41.097],[15.262,41.108],[15.264,41.113],[15.236,41.14],[15.216,41.145],[15.21,41.15],[15.208,41.156],[15.21,41.164],[15.225,41.183],[15.258,41.198],[15.263,41.198],[15.246,41.224],[15.246,41.236],[15.28,41.241],[15.279,41.243],[15.274,41.25],[15.25,41.271],[15.234,41.272],[15.228,41.266],[15.22,41.265],[15.216,41.276],[15.2,41.279],[15.198,41.282],[15.201,41.286],[15.15,41.283],[15.149,41.28],[15.138,41.286],[15.14,41.293],[15.135,41.299],[15.127,41.303],[15.131,41.317],[15.113,41.319],[15.097,41.329],[15.072,41.332],[15.068,41.352],[15.058,41.372],[15.068,41.376],[15.08,41.388],[15.098,41.391]],[[16.634,40.755],[16.641,40.752],[16.646,40.753],[16.646,40.755],[16.636,40.758],[16.634,40.755]]],[[[15.501,42.123],[15.5,42.121],[15.497,42.122],[15.501,42.123]]],[[[15.493,42.123],[15.497,42.12],[15.491,42.109],[15.483,42.104],[15.476,42.107],[15.476,42.112],[15.488,42.124],[15.492,42.125],[15.493,42.123]]],[[[15.51,42.122],[15.505,42.119],[15.505,42.122],[15.514,42.129],[15.518,42.128],[15.51,42.122]]],[[[15.516,42.14],[15.518,42.138],[15.508,42.129],[15.51,42.138],[15.516,42.14]]],[[[15.744,42.226],[15.752,42.225],[15.747,42.223],[15.744,42.226]]],[[[17.177,40.439],[17.179,40.437],[17.173,40.44],[17.177,40.439]]],[[[17.161,40.454],[17.167,40.448],[17.152,40.445],[17.143,40.451],[17.159,40.456],[17.161,40.454]]],[[[17.95,40.052],[17.955,40.05],[17.953,40.047],[17.946,40.045],[17.945,40.049],[17.948,40.053],[17.95,40.052]]],[[[17.884,40.26],[17.888,40.255],[17.884,40.256],[17.881,40.262],[17.884,40.26]]],[[[17.866,40.271],[17.869,40.269],[17.864,40.271],[17.866,40.271]]]]}}}</script>
+<script src="/lib/leaflet/1.9.4/leaflet.js"></script>
+<script src="/lib/pagina-adesso.js?v=1"></script>
+</body>
+</html>

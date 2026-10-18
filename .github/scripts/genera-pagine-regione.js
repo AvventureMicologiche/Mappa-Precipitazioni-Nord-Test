@@ -307,6 +307,82 @@ const COTTE = ['lombardia','piemonte','valledaosta','liguria','emilia','veneto',
   // lei «ieri» non esiste mai.
   'svizzera','puglia','sicilia','basilicata','molise'];
 
+/* Lo stile base delle pagine regione (18/10/2026): sta in una costante perche' lo usano anche
+   le pagine «adesso» (genera-pagine-adesso.js). Spostato qui tale e quale: le pagine escono identiche. */
+const STILE_BASE = `:root{--blu:#1b3f6e;--blu-scuro:#123252;--grigio:#f0f4fb;--bordo:#d0d8e8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#222;background:#fff;font-size:17px;line-height:1.6;}
+header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+header a{color:#fff;text-decoration:none;}
+header .logo{font-weight:600;font-size:15px;display:flex;align-items:center;gap:7px;}
+header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;}
+main{max-width:760px;margin:0 auto;padding:22px 16px 4px;}
+h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
+h1,h2{text-wrap:balance;}
+p,li{text-wrap:pretty;}
+.sotto{color:#555;font-size:17px;margin-bottom:12px;}
+h2{color:var(--blu-scuro);font-size:22px;margin:34px 0 10px;}
+p{margin-bottom:12px;}
+.cta{display:block;text-align:center;background:var(--blu);color:#fff;font-size:19px;font-weight:600;padding:15px 18px;border-radius:9px;text-decoration:none;margin:22px 0;}
+.cta:hover{background:#2a5490;}
+.griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0;}
+.card{background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:14px 15px;display:flex;flex-direction:column;}
+.card h3{margin:0 0 4px;font-size:17px;color:var(--blu-scuro);}
+.numerone{font-size:30px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}
+.numerone small{font-size:14px;font-weight:400;color:#555;}
+.card .vai{margin-top:auto;padding-top:10px;font-size:15px;font-weight:600;color:var(--blu);text-decoration:none;}
+.attesa{color:#777;font-style:italic;}
+.nota{font-size:14px;color:#666;margin-top:8px;}
+.top-staz{margin:6px 0 0;font-size:15px;}
+.top-staz li{margin:3px 0 3px 20px;}
+.verdetto .top{font-size:16px;opacity:.92;margin-top:8px;}
+.verdetto .top b{font-weight:700;}
+#attesa{color:#6a7789;font-size:16px;padding:18px 0;}
+ol.zone-dove{list-style:none;margin:10px 0 6px;padding:0;counter-reset:z;}
+ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
+ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
+ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
+ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;color:var(--blu-scuro);}
+ol.zone-dove .zmm small{font-weight:400;color:#6a7789;font-size:13px;margin-left:6px;}
+footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;font-size:14px;color:#555;text-align:center;}
+footer a{color:var(--blu);}
+nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
+nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
+nav.altre p{line-height:1.9;}
+nav.altre a{color:var(--blu);}
+footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
+.capo-btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px;}
+.capo-btn{display:inline-block;text-decoration:none;color:#0f2d4d;font-weight:700;font-size:14.5px;
+  padding:9px 15px 10px;border-radius:9px;border:1px solid #b9c7da;
+  background:linear-gradient(180deg,#ffffff 0%,#f5f8fd 48%,#e8eef8 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 3px 0 #aebfd4, 0 6px 13px rgba(0,0,0,.28);}
+@media(max-width:480px){h1{font-size:25px;}body{font-size:16px;}}`;
+// Lo stile delle etichette delle barre e del bottone di ieri (18/10/2026): costante per le pagine «adesso»,
+// che usano lo stesso bottone. Spostato tale e quale.
+const STILE_IERI = `/* Sulle pagine piogge l'etichetta sta SOPRA la sua barra, non in cima al
+   grafico: con 30 barre strette, in cima non si capiva di chi fosse. */
+.gg .b b{position:static;transform:none;align-self:center;margin-bottom:2px;line-height:1.1;}
+/* ── IL BOTTONE DI IERI, versione V2 (11/10/2026, sua scelta fra tre) ──
+   Guardando la pagina dal PC: «le scritte cosi' piccole fanno schifo, i
+   bottoni non sembrano bottoni». Fondo pieno, ombra profonda con un bordo
+   sotto come un tasto, e la freccia in un tondo: il segno che si tocca.
+   Gli altri bottoni (previsioni, tasti dei periodi, «Apri la mappa» delle
+   schede, scritte del riquadro) stanno nel blocco COMUNE RILIEVO di
+   lib-pagina-funghi.js, uguale per tutte le pagine: qui sotto, in fondo. */
+.ieri-btn{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px;width:100%;
+  text-decoration:none;background:#fff;color:#10263f;padding:14px 16px 15px 20px;border-radius:14px;line-height:1.35;
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 6px 0 #7f97b6,0 12px 22px rgba(0,0,0,.38);
+  transition:transform .08s,box-shadow .08s;}
+.ieri-btn b{font-size:19px;font-weight:700;}
+.ieri-btn small{font-size:15px;font-weight:500;color:#3f5672;}
+.ieri-btn i{grid-row:1/span 2;grid-column:2;font-style:normal;width:40px;height:40px;border-radius:50%;
+  background:#2a5490;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 0 #183a68;}
+.ieri-btn:hover{background:#f3f7fc;}
+.ieri-btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #7f97b6,0 5px 10px rgba(0,0,0,.3);}
+@media(max-width:480px){.ieri-btn b{font-size:17.5px;}.ieri-btn small{font-size:14px;}}`;
+// le regioni senza pagina «adesso» (18/10/2026): il radar delle loro pagine porta ancora alla mappa
+const ESTERE = ['svizzera', 'austria', 'slovenia'];
+
 function pagina(r, radice){
   const rip = radice && COTTE.includes(r.k) ? riepilogoFresco(radice, r.k) : null;
   const N = rip ? numeriRegione(rip, oggiItalia(), r.k, SITO) : null;
@@ -383,76 +459,9 @@ function pagina(r, radice){
   }
 </script>
 <style>
-:root{--blu:#1b3f6e;--blu-scuro:#123252;--grigio:#f0f4fb;--bordo:#d0d8e8;}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#222;background:#fff;font-size:17px;line-height:1.6;}
-header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-header a{color:#fff;text-decoration:none;}
-header .logo{font-weight:600;font-size:15px;display:flex;align-items:center;gap:7px;}
-header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;}
-main{max-width:760px;margin:0 auto;padding:22px 16px 4px;}
-h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
-h1,h2{text-wrap:balance;}
-p,li{text-wrap:pretty;}
-.sotto{color:#555;font-size:17px;margin-bottom:12px;}
-h2{color:var(--blu-scuro);font-size:22px;margin:34px 0 10px;}
-p{margin-bottom:12px;}
-.cta{display:block;text-align:center;background:var(--blu);color:#fff;font-size:19px;font-weight:600;padding:15px 18px;border-radius:9px;text-decoration:none;margin:22px 0;}
-.cta:hover{background:#2a5490;}
-.griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0;}
-.card{background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:14px 15px;display:flex;flex-direction:column;}
-.card h3{margin:0 0 4px;font-size:17px;color:var(--blu-scuro);}
-.numerone{font-size:30px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}
-.numerone small{font-size:14px;font-weight:400;color:#555;}
-.card .vai{margin-top:auto;padding-top:10px;font-size:15px;font-weight:600;color:var(--blu);text-decoration:none;}
-.attesa{color:#777;font-style:italic;}
-.nota{font-size:14px;color:#666;margin-top:8px;}
-.top-staz{margin:6px 0 0;font-size:15px;}
-.top-staz li{margin:3px 0 3px 20px;}
-.verdetto .top{font-size:16px;opacity:.92;margin-top:8px;}
-.verdetto .top b{font-weight:700;}
-#attesa{color:#6a7789;font-size:16px;padding:18px 0;}
-ol.zone-dove{list-style:none;margin:10px 0 6px;padding:0;counter-reset:z;}
-ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
-ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
-ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
-ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;color:var(--blu-scuro);}
-ol.zone-dove .zmm small{font-weight:400;color:#6a7789;font-size:13px;margin-left:6px;}
-footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;font-size:14px;color:#555;text-align:center;}
-footer a{color:var(--blu);}
-nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
-nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
-nav.altre p{line-height:1.9;}
-nav.altre a{color:var(--blu);}
-footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
-.capo-btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px;}
-.capo-btn{display:inline-block;text-decoration:none;color:#0f2d4d;font-weight:700;font-size:14.5px;
-  padding:9px 15px 10px;border-radius:9px;border:1px solid #b9c7da;
-  background:linear-gradient(180deg,#ffffff 0%,#f5f8fd 48%,#e8eef8 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 3px 0 #aebfd4, 0 6px 13px rgba(0,0,0,.28);}
-@media(max-width:480px){h1{font-size:25px;}body{font-size:16px;}}
+${STILE_BASE}
 ${STILE_NUOVO}
-/* Sulle pagine piogge l'etichetta sta SOPRA la sua barra, non in cima al
-   grafico: con 30 barre strette, in cima non si capiva di chi fosse. */
-.gg .b b{position:static;transform:none;align-self:center;margin-bottom:2px;line-height:1.1;}
-/* ── IL BOTTONE DI IERI, versione V2 (11/10/2026, sua scelta fra tre) ──
-   Guardando la pagina dal PC: «le scritte cosi' piccole fanno schifo, i
-   bottoni non sembrano bottoni». Fondo pieno, ombra profonda con un bordo
-   sotto come un tasto, e la freccia in un tondo: il segno che si tocca.
-   Gli altri bottoni (previsioni, tasti dei periodi, «Apri la mappa» delle
-   schede, scritte del riquadro) stanno nel blocco COMUNE RILIEVO di
-   lib-pagina-funghi.js, uguale per tutte le pagine: qui sotto, in fondo. */
-.ieri-btn{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px;width:100%;
-  text-decoration:none;background:#fff;color:#10263f;padding:14px 16px 15px 20px;border-radius:14px;line-height:1.35;
-  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 6px 0 #7f97b6,0 12px 22px rgba(0,0,0,.38);
-  transition:transform .08s,box-shadow .08s;}
-.ieri-btn b{font-size:19px;font-weight:700;}
-.ieri-btn small{font-size:15px;font-weight:500;color:#3f5672;}
-.ieri-btn i{grid-row:1/span 2;grid-column:2;font-style:normal;width:40px;height:40px;border-radius:50%;
-  background:#2a5490;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 0 #183a68;}
-.ieri-btn:hover{background:#f3f7fc;}
-.ieri-btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #7f97b6,0 5px 10px rgba(0,0,0,.3);}
-@media(max-width:480px){.ieri-btn b{font-size:17.5px;}.ieri-btn small{font-size:14px;}}
+${STILE_IERI}
 ${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}</style>
 </head>
 <body>
@@ -537,8 +546,9 @@ ${zz.map(z => `<li data-z="${slug(z.n)}"><a href="${SITO}/zone/${slug(z.n)}/">${
      onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-20gg'})}catch(e){}">Ultimi 20 gg</a>
   <a id="t30" href="${cotto(() => attr(N.tasti['t30']), `${SITO}/?r=${r.k}&amp;g=30`)}"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-30gg'})}catch(e){}">Ultimi 30 gg</a>
-  <a href="${SITO}/?r=${r.k}&amp;radar=ora"
-     onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-radar'})}catch(e){}">📡 Radar adesso</a>
+  ${ESTERE.includes(r.k) ? `<a href="${SITO}/?r=${r.k}&amp;radar=ora"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-radar'})}catch(e){}">` : `<a href="${SITO}/${r.k}/adesso/"
+     onclick="try{gtag('event','apri_adesso',{da:'pagina-${r.k}-tasto'})}catch(e){}">`}📡 Radar adesso</a>
   <a class="t-prev" href="${SITO}/?r=${r.k}&amp;m=prev"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
@@ -560,10 +570,13 @@ ${FUNGHI.includes(r.k) ? `
 <p>I millimetri li misurano <b>${r.staz} pluviometri di ${r.agenzia}</b>, strumenti a terra, non stime da modello.
 I numeri in cima sono la media dei pluviometri della regione, giorno per giorno; sotto, i più bagnati di ogni periodo.
 La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>${r.nota ? `\n<p>${r.nota}</p>` : ''}
-<h2>Dove piove oggi ${r.prep} ${r.nome}? La diretta radar</h2>
+${ESTERE.includes(r.k) ? `<h2>Dove piove oggi ${r.prep} ${r.nome}? La diretta radar</h2>
 <p>Per la pioggia in corso c'è la <a href="${SITO}/?r=${r.k}&amp;radar=ora"
    onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-radar-testo'})}catch(e){}">diretta radar</a>:
-dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti seguenti. Il radar misura dal cielo,
+dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti seguenti.` : `<h2>La pioggia in corso: la diretta radar</h2>
+<p>Per la pioggia in corso c'è la pagina <a href="${SITO}/${r.k}/adesso/"
+   onclick="try{gtag('event','apri_adesso',{da:'pagina-${r.k}-testo'})}catch(e){}">dove sta piovendo adesso ${r.prep} ${r.nome}</a>,
+con la diretta radar, le ultime due ore e le previsioni delle città.`} Il radar misura dal cielo,
 a 2 km di risoluzione, e serve a vedere dove piove adesso; i millimetri di questa pagina sono quelli misurati a terra.</p>
 <h2>Come si legge la mappa</h2>
 <p>Il colore mostra i millimetri cumulati nel periodo che scegli: più è acceso, più acqua è caduta. Ogni pallino è
@@ -837,7 +850,7 @@ function mappaInUnFile(radice, rel) {
   console.log(`  ${rel}  mappa del sito: ${REGIONI.length} regioni e ${FUNGHI.length} funghi`);
 }
 
-module.exports = { REGIONI, FUNGHI, GEN, navAltre, briciolaJson };   // GEN: anche per le pagine di zona (18/10/2026)
+module.exports = { REGIONI, FUNGHI, GEN, navAltre, briciolaJson, STILE_BASE, STILE_IERI, ESTERE, SITO, GA_ID, CANALE, scrivi };   // GEN: anche per le pagine di zona (18/10/2026)
 
 if (require.main === module) {
   const radice = path.resolve(__dirname, '..', '..');

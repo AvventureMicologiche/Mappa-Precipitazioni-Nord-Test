@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dove sta piovendo adesso in Friuli: radar pioggia in diretta</title>
+<meta name="description" content="Il radar della pioggia in Friuli in diretta: dove piove in questo momento, le ultime 2 ore e i prossimi 40 minuti, e le previsioni delle città.">
+<link rel="canonical" href="https://avventurepluvio-test.pages.dev/friuli/adesso/">
+<meta property="og:title" content="Dove sta piovendo adesso in Friuli Venezia Giulia">
+<meta property="og:description" content="Il radar della pioggia in diretta e le previsioni delle città.">
+<meta property="og:image" content="https://avventurepluvio-test.pages.dev/preview.jpg">
+<meta property="og:url" content="https://avventurepluvio-test.pages.dev/friuli/adesso/">
+<meta property="og:type" content="website">
+<!-- Google tag: il config solo sul dominio vero, come le pagine regione -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  if (/(^|\.)avventuremicologiche\.it$/.test(location.hostname)) {
+    gtag('config', 'G-9R7MXXS0V4');
+  }
+</script>
+<link rel="stylesheet" href="/lib/leaflet/1.9.4/leaflet.css">
+<style>
+:root{--blu:#1b3f6e;--blu-scuro:#123252;--grigio:#f0f4fb;--bordo:#d0d8e8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#222;background:#fff;font-size:17px;line-height:1.6;}
+header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+header a{color:#fff;text-decoration:none;}
+header .logo{font-weight:600;font-size:15px;display:flex;align-items:center;gap:7px;}
+header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;}
+main{max-width:760px;margin:0 auto;padding:22px 16px 4px;}
+h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
+h1,h2{text-wrap:balance;}
+p,li{text-wrap:pretty;}
+.sotto{color:#555;font-size:17px;margin-bottom:12px;}
+h2{color:var(--blu-scuro);font-size:22px;margin:34px 0 10px;}
+p{margin-bottom:12px;}
+.cta{display:block;text-align:center;background:var(--blu);color:#fff;font-size:19px;font-weight:600;padding:15px 18px;border-radius:9px;text-decoration:none;margin:22px 0;}
+.cta:hover{background:#2a5490;}
+.griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0;}
+.card{background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:14px 15px;display:flex;flex-direction:column;}
+.card h3{margin:0 0 4px;font-size:17px;color:var(--blu-scuro);}
+.numerone{font-size:30px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}
+.numerone small{font-size:14px;font-weight:400;color:#555;}
+.card .vai{margin-top:auto;padding-top:10px;font-size:15px;font-weight:600;color:var(--blu);text-decoration:none;}
+.attesa{color:#777;font-style:italic;}
+.nota{font-size:14px;color:#666;margin-top:8px;}
+.top-staz{margin:6px 0 0;font-size:15px;}
+.top-staz li{margin:3px 0 3px 20px;}
+.verdetto .top{font-size:16px;opacity:.92;margin-top:8px;}
+.verdetto .top b{font-weight:700;}
+#attesa{color:#6a7789;font-size:16px;padding:18px 0;}
+ol.zone-dove{list-style:none;margin:10px 0 6px;padding:0;counter-reset:z;}
+ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
+ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
+ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
+ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;color:var(--blu-scuro);}
+ol.zone-dove .zmm small{font-weight:400;color:#6a7789;font-size:13px;margin-left:6px;}
+footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;font-size:14px;color:#555;text-align:center;}
+footer a{color:var(--blu);}
+nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
+nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
+nav.altre p{line-height:1.9;}
+nav.altre a{color:var(--blu);}
+footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
+.capo-btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px;}
+.capo-btn{display:inline-block;text-decoration:none;color:#0f2d4d;font-weight:700;font-size:14.5px;
+  padding:9px 15px 10px;border-radius:9px;border:1px solid #b9c7da;
+  background:linear-gradient(180deg,#ffffff 0%,#f5f8fd 48%,#e8eef8 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 3px 0 #aebfd4, 0 6px 13px rgba(0,0,0,.28);}
+@media(max-width:480px){h1{font-size:25px;}body{font-size:16px;}}
+
+.gg{display:flex;align-items:flex-end;gap:3px;height:150px;margin:14px 0 4px;}
+.gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
+.gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
+.gg .b.dentro i{background:var(--blu);}
+.gg .b b{align-self:center;margin-bottom:2px;line-height:1.1;font-size:10.5px;
+  font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
+.gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
+.gg-x span{flex:1;text-align:center;}
+.gg-leg{font-size:13.5px;color:#555;margin-top:8px;}
+.gg-leg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
+.tt-box{position:relative;padding-right:42px;margin:14px 0 2px;}
+.tt{width:100%;height:150px;display:block;overflow:visible;}
+.tt .griglia{stroke:#e6eaf0;stroke-width:1;vector-effect:non-scaling-stroke;}
+.tt polyline{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+.tt .max{stroke:#d1603d;}
+.tt .min{stroke:#3a6ea8;}
+.tt-y{position:absolute;top:0;right:0;width:42px;height:150px;pointer-events:none;}
+.tt-y span{position:absolute;right:0;transform:translateY(-50%);font-size:11px;color:#6b7a8d;line-height:1;padding-left:5px;}
+.tt-x{padding-right:42px;}
+.vic td:last-child,.vic th:last-child{text-align:right;}
+.vic .qui{background:#eef4fd;}
+.verdetto{background:#0f2d4d;color:#fff;border-radius:12px;padding:18px 18px 16px;margin:14px 0 8px;}
+.verdetto .si{font-size:27px;font-weight:800;line-height:1.2;}
+.verdetto .pallino{display:inline-block;width:15px;height:15px;border-radius:50%;margin-right:9px;vertical-align:2px;}
+.verdetto .gr{font-size:44px;font-weight:800;line-height:1.1;margin-top:10px;}
+.verdetto .gr small{font-size:18px;font-weight:600;opacity:.85;margin-left:6px;}
+.verdetto .dett{font-size:16px;opacity:.9;margin-top:6px;}
+.scala{display:flex;gap:4px;margin-top:14px;}
+.scala div{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.18);}
+.scala-t{display:flex;font-size:11.5px;opacity:.75;margin-top:4px;}
+.scala-t span{flex:1;text-align:center;}
+.breve{font-size:16px;color:#333;margin:6px 0 4px;}
+.fin{display:flex;gap:6px;align-items:flex-end;height:170px;margin:16px 0 4px;}
+.fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
+.fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
+.fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+.fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
+.fin-x span{flex:1;text-align:center;line-height:1.25;}
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
+.img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
+.tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
+  padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+.tasti a.t-prev{grid-column:1 / -1;}
+@media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.banda-prev{display:flex;align-items:center;gap:12px;margin:10px 0 4px;padding:13px 16px;border-radius:12px;background:linear-gradient(135deg,#1f6fd1,#3f8fe8);color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(31,111,209,.25);}
+.banda-prev .ic{font-size:30px;line-height:1;flex:none;}
+.banda-prev b{display:block;font-size:17px;line-height:1.2;}
+.banda-prev span{display:block;font-size:13px;opacity:.92;margin-top:2px;}
+.banda-prev .fr{margin-left:auto;font-size:22px;flex:none;}
+.banda-prev:hover{background:linear-gradient(135deg,#1b5fb3,#3580d6);}
+.noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
+.noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
+.noioso p{margin-bottom:8px;}
+.noioso a{color:var(--blu);}
+
+/* Sulle pagine piogge l'etichetta sta SOPRA la sua barra, non in cima al
+   grafico: con 30 barre strette, in cima non si capiva di chi fosse. */
+.gg .b b{position:static;transform:none;align-self:center;margin-bottom:2px;line-height:1.1;}
+/* ── IL BOTTONE DI IERI, versione V2 (11/10/2026, sua scelta fra tre) ──
+   Guardando la pagina dal PC: «le scritte cosi' piccole fanno schifo, i
+   bottoni non sembrano bottoni». Fondo pieno, ombra profonda con un bordo
+   sotto come un tasto, e la freccia in un tondo: il segno che si tocca.
+   Gli altri bottoni (previsioni, tasti dei periodi, «Apri la mappa» delle
+   schede, scritte del riquadro) stanno nel blocco COMUNE RILIEVO di
+   lib-pagina-funghi.js, uguale per tutte le pagine: qui sotto, in fondo. */
+.ieri-btn{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px;width:100%;
+  text-decoration:none;background:#fff;color:#10263f;padding:14px 16px 15px 20px;border-radius:14px;line-height:1.35;
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 6px 0 #7f97b6,0 12px 22px rgba(0,0,0,.38);
+  transition:transform .08s,box-shadow .08s;}
+.ieri-btn b{font-size:19px;font-weight:700;}
+.ieri-btn small{font-size:15px;font-weight:500;color:#3f5672;}
+.ieri-btn i{grid-row:1/span 2;grid-column:2;font-style:normal;width:40px;height:40px;border-radius:50%;
+  background:#2a5490;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 0 #183a68;}
+.ieri-btn:hover{background:#f3f7fc;}
+.ieri-btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #7f97b6,0 5px 10px rgba(0,0,0,.3);}
+@media(max-width:480px){.ieri-btn b{font-size:17.5px;}.ieri-btn small{font-size:14px;}}
+/* BOTTONI IN RILIEVO (lib-pagina-funghi.js) */
+.capo-btns{gap:12px;margin-top:15px;}
+.capo-btn{background:#fff;border:none;color:#10263f;font-size:16px;font-weight:700;padding:12px 18px 13px;border-radius:12px;
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 5px 0 #7f97b6,0 10px 18px rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s;}
+.capo-btn:hover{background:#f3f7fc;}
+.capo-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #7f97b6,0 5px 10px rgba(0,0,0,.3);}
+.banda-prev{padding:15px 16px 16px;border-radius:14px;box-shadow:0 6px 0 #164f97,0 12px 22px rgba(20,60,120,.38);transition:transform .08s,box-shadow .08s;}
+.banda-prev b{font-size:19px;}
+.banda-prev span{font-size:15px;}
+.banda-prev .fr{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;}
+.banda-prev:active{transform:translateY(4px);box-shadow:0 2px 0 #164f97,0 5px 10px rgba(20,60,120,.3);}
+.tasti{gap:12px;margin-top:12px;}
+.tasti a{background:#fff;border:1px solid #d3deeb;border-radius:12px;padding:13px 6px 14px;font-size:16px;
+  box-shadow:0 4px 0 #9fb3cc,0 8px 14px rgba(15,45,77,.16);transition:transform .08s,box-shadow .08s;}
+.tasti a:hover{background:#f3f7fc;}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);box-shadow:0 4px 0 #0c2440,0 8px 14px rgba(15,45,77,.25);}
+.tasti a.forte:hover{background:#24508a;}
+.tasti a:active{transform:translateY(3px);box-shadow:0 1px 0 #9fb3cc,0 3px 6px rgba(15,45,77,.16);}
+.tasti a.forte:active{box-shadow:0 1px 0 #0c2440,0 3px 6px rgba(15,45,77,.25);}
+.card .vai{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:auto;background:var(--blu);color:#fff;font-size:16px;font-weight:700;
+  padding:11px 14px 12px;border-radius:12px;text-decoration:none;box-shadow:0 4px 0 #0c2440,0 8px 14px rgba(15,45,77,.22);transition:transform .08s,box-shadow .08s;}
+.card .nota{margin-bottom:14px;}
+.card .vai:hover{background:#24508a;}
+.card .vai:active{transform:translateY(3px);box-shadow:0 1px 0 #0c2440,0 3px 6px rgba(15,45,77,.22);}
+.verdetto .top{font-size:17.5px;line-height:1.55;}
+.verdetto .dett{font-size:15px;opacity:.85;}
+@media(max-width:480px){.banda-prev b{font-size:17.5px;}.banda-prev span{font-size:14px;}.tasti a{font-size:15px;}.capo-btn{font-size:15.5px;}
+  .verdetto .top{font-size:16px;}.verdetto .dett{font-size:14px;}}
+/* BOTTONE YOUTUBE (lib-pagina-funghi.js) */
+.yt-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
+  font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 4px 0 #7d0d12,0 9px 18px rgba(160,20,27,.32);transition:transform .08s,box-shadow .08s;}
+.yt-btn svg{width:26px;height:18px;flex:none;}
+.yt-btn svg rect{fill:#fff;}
+.yt-btn svg polygon{fill:#e12b2b;}
+.yt-btn:hover{background:linear-gradient(180deg,#e8323a,#c01820);}
+.yt-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7d0d12,0 4px 8px rgba(160,20,27,.3);}
+
+.rb{border:1px solid var(--bordo);border-radius:14px;overflow:hidden;background:#fff;margin:14px 0 8px;box-shadow:0 8px 20px rgba(15,45,77,.14);}
+.rb-testa{display:flex;align-items:center;gap:10px;background:#0f2d4d;color:#fff;padding:10px 14px;font-size:15.5px;}
+.rb-testa b{font-weight:800;letter-spacing:.3px;}
+.rb-testa .quando{margin-left:auto;opacity:.9;font-size:14.5px;white-space:nowrap;}
+.vivo{width:11px;height:11px;border-radius:50%;background:#ff3b30;flex:none;box-shadow:0 0 0 0 rgba(255,59,48,.7);animation:vivo 1.6s infinite;}
+@keyframes vivo{0%{box-shadow:0 0 0 0 rgba(255,59,48,.7)}70%{box-shadow:0 0 0 9px rgba(255,59,48,0)}100%{box-shadow:0 0 0 0 rgba(255,59,48,0)}}
+/* fondo = il mare di OpenStreetMap: al telefono fra due tessere resta un filo di fondo (la mappa cade a mezzo pixel) */
+#mappa{height:470px;background:#aad3df;}
+.rb .tasti{grid-template-columns:repeat(3,1fr);margin:0;padding:12px 12px 4px;}
+.rb .tasti a{cursor:pointer;user-select:none;}
+.rb-scala{padding:8px 14px 12px;}
+.rb-barra{height:11px;border-radius:4px;background:linear-gradient(90deg,#00a3e0 0%,#005588 26%,#ffee00 45%,#ffaa00 63%,#ff4400 81%,#c10000 100%);}
+.rb-num{display:flex;justify-content:space-between;font-size:12px;color:#6b7a8d;margin-top:3px;}
+.rb-par{display:flex;justify-content:space-between;font-size:13px;color:#445;margin-top:1px;font-weight:600;}
+.rb-stato{font-size:13.5px;color:#6b7a8d;padding:0 14px 12px;margin-top:-4px;}
+.rb-stato.err{color:#b3261e;font-weight:600;}
+.pila{display:grid;gap:18px;margin:22px 0 10px;}
+.reg-lista{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 14px;margin:10px 0 4px;padding:0;list-style:none;}
+.reg-lista a{display:block;padding:7px 2px;border-bottom:1px solid var(--bordo);font-weight:600;color:var(--blu);text-decoration:none;font-size:16px;}
+.reg-lista a:hover{text-decoration:underline;}
+.leaflet-container{font:inherit;}
+.leaflet-container .leaflet-control-attribution{font-size:11px;line-height:1.4;}
+/* leaflet.css mette «plus-lighter» sulle tessere: col fondo non nero il filo fra due tessere diventa PIU' CHIARO */
+#mappa .fondo img.leaflet-tile{mix-blend-mode:normal;}
+.pv-cerca{position:relative;background:#fff;border:2px solid var(--blu);border-radius:14px;padding:14px 16px 12px;margin:12px 0 6px;box-shadow:0 6px 16px rgba(15,45,77,.14);}
+.pv-cerca label{display:block;font-weight:800;font-size:18px;color:var(--blu-scuro);margin-bottom:8px;}
+.pv-riga{display:flex;gap:10px;}
+.pv-riga input{flex:1;min-width:0;font:inherit;font-size:17px;padding:11px 13px;border:1px solid #b9c7da;border-radius:10px;color:#10263f;}
+.pv-riga input:focus{outline:2px solid #3f8fe8;outline-offset:0;border-color:#3f8fe8;}
+.pv-riga button{font:inherit;font-size:16px;font-weight:700;color:#fff;background:var(--blu);border:none;border-radius:10px;padding:0 18px;cursor:pointer;box-shadow:0 3px 0 #0c2440;}
+.pv-cerca .nota{margin:8px 0 0;font-size:13.5px;}
+.pv-lista{position:absolute;left:16px;right:16px;top:100%;margin-top:-6px;z-index:900;list-style:none;padding:4px 0;background:#fff;border:1px solid #c9d6e6;border-radius:10px;box-shadow:0 12px 28px rgba(15,45,77,.25);display:none;}
+.pv-lista.aperta{display:block;}
+.pv-lista li{display:flex;align-items:baseline;gap:8px;padding:10px 14px;cursor:pointer;font-size:16.5px;}
+.pv-lista li:hover,.pv-lista li.su{background:#eef4fd;}
+.pv-lista li small{color:#6b7a8d;font-size:13.5px;margin-left:auto;white-space:nowrap;}
+.pv-lista li.vuoto{color:#6b7a8d;cursor:default;}
+.cit-tit{font-size:18px;color:var(--blu-scuro);margin:22px 0 2px;}
+#pv-quando{margin:0 0 10px;}
+/* le carte vanno a capo e l'ULTIMA RIGA SI CENTRA: in 12 regioni su 19 l'ultima riga non e' piena */
+.citta{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;}
+.cit{flex:0 0 calc((100% - 24px) / 3);display:flex;flex-direction:column;background:var(--grigio);border:1px solid var(--bordo);border-radius:14px;padding:12px 14px 13px;text-decoration:none;color:#334;transition:background .1s;}
+.cit:hover{background:#e7eef9;}
+.cit-testa{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;}
+.cit-testa b{font-size:17px;color:var(--blu-scuro);line-height:1.25;}
+.cit-ic{font-size:34px;line-height:1;margin-top:-2px;}
+.cit-t{font-size:34px;font-weight:800;color:var(--blu-scuro);line-height:1.05;margin-top:-6px;}
+.cit-t small{font-size:13.5px;font-weight:600;color:#6b7a8d;margin-left:6px;letter-spacing:0;}
+.cit-cond{font-size:14px;color:#555;margin:2px 0 8px;}
+.cit-gg{font-size:14px;line-height:1.55;padding-bottom:10px;}
+.cit-gg b{color:var(--blu-scuro);}
+.cit-gg .mmw,.cit-cond .mmw{color:#1f6fd1;font-weight:700;white-space:nowrap;margin-left:3px;}
+.cit-vai{margin-top:auto;align-self:flex-start;font-size:14px;font-weight:700;color:var(--blu);background:#fff;border:1px solid #c9d6e6;border-radius:20px;padding:4px 13px;white-space:nowrap;}
+@media(max-width:640px){.citta{gap:10px;} .cit{flex-basis:calc((100% - 10px) / 2);padding:11px 12px 12px;}
+  .cit-t{font-size:30px;} .cit-ic{font-size:30px;} .cit-gg{font-size:13.5px;} .cit-vai{font-size:13.5px;padding:4px 11px;}
+  #mappa{height:380px;} .reg-lista{grid-template-columns:repeat(2,1fr);}
+  .rb-testa{font-size:14.5px;} .rb-testa .quando{font-size:13.5px;}}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="https://avventurepluvio-test.pages.dev/">🌧️ Mappa Pluviometrica</a>
+  <a class="yt" href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener"
+     onclick="try{gtag('event','click_youtube',{pulsante:'pagina-friuli-adesso'})}catch(e){}">▶ Iscriviti</a>
+</header>
+<main>
+<h1>Dove sta piovendo adesso in Friuli Venezia Giulia</h1>
+<p class="sotto"><b>Radar della pioggia in diretta</b>: le macchie colorate sono la pioggia che sta cadendo adesso. Si aggiorna da solo ogni 5 minuti.</p>
+
+<div class="rb">
+  <div class="rb-testa"><span class="vivo"></span><b>IN DIRETTA</b><span class="quando" id="quando">carico il radar…</span></div>
+  <div id="mappa"></div>
+  <div class="tasti">
+    <a class="forte" data-id="ora">Adesso</a>
+    <a data-id="due">▶ −2 ore</a>
+    <a data-id="prev">+40 min</a>
+  </div>
+  <div class="rb-scala">
+    <div class="rb-barra"></div>
+    <div class="rb-num"><span>0,5</span><span>3</span><span>6</span><span>12</span><span>24</span><span>50 mm/h</span></div>
+    <div class="rb-par"><span>pioviggine</span><span>pioggia forte</span></div>
+  </div>
+  <div class="rb-stato" id="stato">Radar europeo OPERA, risoluzione 2 km.</div>
+</div>
+
+<div class="pila">
+  <a class="ieri-btn" href="https://avventurepluvio-test.pages.dev/?r=friuli&amp;radar=ora"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-friuli-adesso-mappa'})}catch(e){}">
+    <b>Apri il radar sulla mappa completa</b><small>Ingrandisci, spostati, guarda le regioni vicine</small><i>→</i></a>
+</div>
+
+<h2>Previsioni meteo in Friuli Venezia Giulia</h2>
+<div class="pv-cerca">
+  <label for="pv-in">☀️ Cerca una località</label>
+  <div class="pv-riga"><input id="pv-in" type="search" placeholder="Paese o città" autocomplete="off" enterkeyhint="search"><button id="pv-vai" type="button">Cerca</button></div>
+  <ul class="pv-lista" id="pv-lista"></ul>
+  <p class="nota">Tutti i comuni d'Italia: si aprono le previsioni a 7 giorni, ora per ora.</p>
+</div>
+
+<h3 class="cit-tit">Previsioni nelle città del Friuli Venezia Giulia</h3>
+<p class="nota" id="pv-quando">Previsioni del modello ECMWF via MET Norway. La pioggia che cade adesso la mostra il radar qui sopra.</p>
+<div class="citta" id="citta">
+<a class="cit" data-i="0" href="https://avventurepluvio-test.pages.dev/?r=friuli&amp;m=prev&amp;pl=45.649,13.768&amp;pn=Trieste"><div class="cit-testa"><b>Trieste</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="1" href="https://avventurepluvio-test.pages.dev/?r=friuli&amp;m=prev&amp;pl=46.063,13.235&amp;pn=Udine"><div class="cit-testa"><b>Udine</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="2" href="https://avventurepluvio-test.pages.dev/?r=friuli&amp;m=prev&amp;pl=45.954,12.66&amp;pn=Pordenone"><div class="cit-testa"><b>Pordenone</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="3" href="https://avventurepluvio-test.pages.dev/?r=friuli&amp;m=prev&amp;pl=45.941,13.622&amp;pn=Gorizia"><div class="cit-testa"><b>Gorizia</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="4" href="https://avventurepluvio-test.pages.dev/?r=friuli&amp;m=prev&amp;pl=46.406,13.015&amp;pn=Tolmezzo"><div class="cit-testa"><b>Tolmezzo</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="5" href="https://avventurepluvio-test.pages.dev/?r=friuli&amp;m=prev&amp;pl=45.688,13.13&amp;pn=Lignano%20Sabbiadoro"><div class="cit-testa"><b>Lignano Sabbiadoro</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="6" href="https://avventurepluvio-test.pages.dev/?r=friuli&amp;m=prev&amp;pl=46.506,13.573&amp;pn=Tarvisio"><div class="cit-testa"><b>Tarvisio</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+</div>
+
+<h2>Quanta pioggia è caduta</h2>
+<p>Il radar dice dove piove adesso. Quanta acqua è caduta davvero lo misurano i pluviometri a terra, millimetro per millimetro: ieri, negli ultimi 7, 20 e 30 giorni.</p>
+<a class="ieri-btn" href="https://avventurepluvio-test.pages.dev/friuli/">
+  <b>Dove ha piovuto ieri in Friuli Venezia Giulia</b><small>I millimetri di oltre 130 pluviometri, zona per zona</small><i>→</i></a>
+
+<h2>Dove sta piovendo adesso nelle altre regioni</h2>
+<ul class="reg-lista">
+<li><a href="https://avventurepluvio-test.pages.dev/lombardia/adesso/">Lombardia</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/piemonte/adesso/">Piemonte</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/valledaosta/adesso/">Valle d'Aosta</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/liguria/adesso/">Liguria</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/emilia/adesso/">Emilia-Romagna</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/veneto/adesso/">Veneto</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/trentino/adesso/">Trentino</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/altoadige/adesso/">Alto Adige</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/toscana/adesso/">Toscana</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/umbria/adesso/">Umbria</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/marche/adesso/">Marche</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/lazio/adesso/">Lazio</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/abruzzo/adesso/">Abruzzo</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/molise/adesso/">Molise</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/campania/adesso/">Campania</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/puglia/adesso/">Puglia</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/basilicata/adesso/">Basilicata</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/calabria/adesso/">Calabria</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/sicilia/adesso/">Sicilia</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/sardegna/adesso/">Sardegna</a></li>
+</ul>
+
+<div class="noioso">
+<h2>Come funziona il radar</h2>
+<p>Il radar meteo manda un fascio di onde radio e misura quanto ne torna indietro dalle gocce: più il colore è acceso, più forte piove.
+Le immagini sono quelle della rete radar europea OPERA, a 2 km di risoluzione, distribuite da LibreWXR. Un fotogramma nuovo arriva ogni 5 minuti
+e la pagina lo carica da sola.</p>
+<h2>Le ultime 2 ore e i prossimi 40 minuti</h2>
+<p>«▶ −2 ore» fa scorrere i fotogrammi delle ultime due ore: si vede da dove arriva la pioggia e dove sta andando. «+40 min»
+sposta le macchie di adesso nella direzione in cui si muovono, per i prossimi quaranta minuti. Non è una previsione del tempo, vale solo per l'ora che viene.</p>
+<h2>Radar e pluviometri: perché a volte non coincidono</h2>
+<p>Il radar guarda la pioggia in quota: può vedere gocce che evaporano prima di toccare terra, o perderla dietro le montagne.
+I pluviometri la misurano a terra. Per sapere quanta ne è caduta c'è la pagina <a href="https://avventurepluvio-test.pages.dev/friuli/">Dove ha piovuto in Friuli Venezia Giulia</a>.</p>
+<p><a href="https://avventurepluvio-test.pages.dev/guida/" onclick="try{gtag('event','click_guida',{pulsante:'pagina-friuli-adesso'})}catch(e){}">📖 Guida alla mappa: come si usa, tutte le funzioni</a></p>
+<p style="margin:22px 0 4px;"><a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt-btn"
+   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-friuli-adesso-fondo'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
+</div>
+</main>
+
+<footer>
+<nav class="altre">
+  <div style="background:#f4fbf3;border:1px solid #cfe8cf;border-radius:9px;padding:1px 15px 11px;margin-top:16px;">
+    <b style="color:#2d6a30">🍄 Dove ha piovuto di più?</b>
+    <p><a href="https://avventurepluvio-test.pages.dev/funghi/" style="color:#2d6a30;font-weight:600">La nostra selezione, le località più bagnate</a>
+    <span style="color:#7a8b9a">·</span> oppure il riepilogo delle regioni: <a href="https://avventurepluvio-test.pages.dev/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sardegna/">Sardegna</a></p>
+  </div>
+</nav>
+  Radar: <a href="https://librewxr.net/" target="_blank" rel="noopener">LibreWXR</a> / EUMETNET OPERA (CC BY) ·
+  Previsioni: MET Norway (CC BY 4.0) ·
+  <a href="https://avventurepluvio-test.pages.dev/fonti">tutte le fonti e licenze</a> ·
+  <a href="https://avventuremicologiche.it">Avventure Micologiche</a><br>
+  La mappa copre Italia, Svizzera, Austria, Francia e Slovenia — 5000+ stazioni.
+</footer>
+
+<script id="adesso-dati" type="application/json">{"k":"friuli","sito":"https://avventurepluvio-test.pages.dev","citta":[{"n":"Trieste","lat":45.649,"lon":13.768,"q":15,"reg":"friuli"},{"n":"Udine","lat":46.063,"lon":13.235,"q":123,"reg":"friuli"},{"n":"Pordenone","lat":45.954,"lon":12.66,"q":25,"reg":"friuli"},{"n":"Gorizia","lat":45.941,"lon":13.622,"q":89,"reg":"friuli"},{"n":"Tolmezzo","lat":46.406,"lon":13.015,"q":331,"reg":"friuli"},{"n":"Lignano Sabbiadoro","lat":45.688,"lon":13.13,"q":1,"reg":"friuli"},{"n":"Tarvisio","lat":46.506,"lon":13.573,"q":778,"reg":"friuli"}],"confine":{"type":"Feature","properties":{},"geometry":{"type":"MultiPolygon","coordinates":[[[[13.517,46.383],[13.517,46.377],[13.482,46.369],[13.476,46.363],[13.47,46.361],[13.448,46.363],[13.438,46.36],[13.437,46.355],[13.447,46.337],[13.447,46.33],[13.434,46.322],[13.426,46.323],[13.418,46.318],[13.415,46.314],[13.416,46.311],[13.403,46.3],[13.376,46.298],[13.378,46.29],[13.382,46.289],[13.384,46.291],[13.392,46.28],[13.397,46.258],[13.406,46.243],[13.422,46.234],[13.414,46.225],[13.41,46.217],[13.411,46.212],[13.423,46.206],[13.446,46.213],[13.448,46.217],[13.445,46.224],[13.448,46.225],[13.484,46.225],[13.497,46.222],[13.498,46.217],[13.501,46.216],[13.516,46.215],[13.53,46.217],[13.529,46.212],[13.546,46.212],[13.561,46.204],[13.566,46.194],[13.565,46.187],[13.567,46.186],[13.574,46.184],[13.59,46.191],[13.59,46.188],[13.595,46.189],[13.615,46.184],[13.635,46.19],[13.646,46.188],[13.663,46.18],[13.664,46.17],[13.655,46.162],[13.652,46.148],[13.645,46.138],[13.638,46.134],[13.634,46.135],[13.622,46.123],[13.603,46.113],[13.595,46.104],[13.583,46.1],[13.574,46.09],[13.547,46.083],[13.53,46.068],[13.52,46.064],[13.508,46.061],[13.501,46.062],[13.497,46.057],[13.497,46.049],[13.51,46.046],[13.507,46.032],[13.497,46.018],[13.491,46.014],[13.48,46.012],[13.476,46.006],[13.5,45.982],[13.516,45.978],[13.526,45.972],[13.527,45.968],[13.531,45.966],[13.545,45.965],[13.546,45.967],[13.556,45.969],[13.569,45.969],[13.576,45.98],[13.59,45.99],[13.62,45.984],[13.635,45.989],[13.642,45.984],[13.635,45.954],[13.636,45.934],[13.616,45.911],[13.609,45.899],[13.595,45.892],[13.597,45.887],[13.59,45.888],[13.591,45.873],[13.577,45.853],[13.577,45.858],[13.574,45.843],[13.579,45.841],[13.589,45.831],[13.595,45.821],[13.596,45.808],[13.603,45.804],[13.623,45.798],[13.656,45.8],[13.671,45.798],[13.701,45.779],[13.721,45.769],[13.73,45.767],[13.737,45.762],[13.736,45.76],[13.746,45.755],[13.755,45.755],[13.769,45.75],[13.784,45.748],[13.798,45.742],[13.811,45.723],[13.828,45.714],[13.834,45.707],[13.835,45.701],[13.831,45.693],[13.833,45.689],[13.845,45.681],[13.86,45.664],[13.879,45.652],[13.898,45.643],[13.903,45.643],[13.919,45.634],[13.918,45.631],[13.907,45.625],[13.874,45.61],[13.862,45.596],[13.853,45.592],[13.849,45.585],[13.839,45.582],[13.811,45.581],[13.781,45.584],[13.746,45.598],[13.723,45.595],[13.72,45.606],[13.731,45.609],[13.757,45.608],[13.773,45.605],[13.778,45.6],[13.786,45.599],[13.802,45.609],[13.807,45.607],[13.805,45.61],[13.808,45.613],[13.797,45.611],[13.784,45.613],[13.779,45.616],[13.774,45.624],[13.774,45.63],[13.778,45.631],[13.774,45.635],[13.767,45.637],[13.766,45.631],[13.757,45.628],[13.755,45.631],[13.759,45.632],[13.756,45.636],[13.747,45.639],[13.749,45.644],[13.755,45.65],[13.76,45.647],[13.769,45.653],[13.766,45.659],[13.76,45.663],[13.753,45.677],[13.754,45.68],[13.734,45.696],[13.712,45.705],[13.714,45.707],[13.712,45.711],[13.701,45.717],[13.676,45.738],[13.644,45.756],[13.631,45.768],[13.599,45.773],[13.581,45.782],[13.58,45.777],[13.562,45.778],[13.543,45.8],[13.533,45.805],[13.539,45.802],[13.545,45.796],[13.545,45.793],[13.539,45.788],[13.533,45.79],[13.53,45.788],[13.537,45.783],[13.546,45.787],[13.548,45.783],[13.544,45.784],[13.536,45.78],[13.525,45.77],[13.521,45.763],[13.523,45.751],[13.517,45.744],[13.526,45.737],[13.554,45.729],[13.552,45.723],[13.532,45.724],[13.486,45.704],[13.472,45.704],[13.465,45.707],[13.468,45.703],[13.457,45.691],[13.432,45.682],[13.433,45.679],[13.389,45.675],[13.384,45.675],[13.368,45.683],[13.348,45.679],[13.323,45.687],[13.295,45.7],[13.3,45.699],[13.292,45.704],[13.255,45.708],[13.246,45.72],[13.244,45.719],[13.245,45.713],[13.186,45.711],[13.171,45.703],[13.152,45.701],[13.153,45.695],[13.149,45.69],[13.109,45.663],[13.104,45.655],[13.101,45.643],[13.094,45.648],[13.083,45.65],[13.084,45.658],[13.063,45.657],[13.062,45.664],[13.067,45.672],[13.063,45.679],[13.056,45.678],[13.044,45.684],[13.044,45.688],[13.049,45.687],[13.052,45.69],[13.053,45.696],[13.048,45.697],[13.045,45.694],[13.036,45.7],[13.039,45.701],[13.041,45.706],[13.039,45.717],[13.03,45.725],[13.029,45.737],[13.016,45.731],[13.015,45.724],[13.008,45.725],[13.008,45.731],[13.016,45.735],[13.016,45.742],[13.001,45.749],[13.006,45.766],[12.989,45.776],[12.978,45.788],[12.979,45.793],[12.992,45.798],[12.991,45.801],[12.988,45.801],[12.987,45.797],[12.981,45.797],[12.975,45.808],[12.978,45.814],[12.983,45.815],[12.987,45.809],[12.991,45.809],[12.993,45.815],[12.985,45.819],[12.973,45.82],[12.974,45.823],[12.982,45.827],[12.974,45.823],[12.971,45.828],[12.979,45.834],[12.966,45.841],[12.961,45.847],[12.952,45.844],[12.952,45.822],[12.93,45.817],[12.921,45.831],[12.915,45.825],[12.907,45.829],[12.894,45.82],[12.89,45.82],[12.87,45.834],[12.877,45.843],[12.876,45.846],[12.861,45.851],[12.837,45.845],[12.838,45.841],[12.829,45.836],[12.819,45.834],[12.819,45.825],[12.809,45.82],[12.802,45.823],[12.8,45.827],[12.799,45.833],[12.804,45.842],[12.803,45.845],[12.789,45.849],[12.782,45.854],[12.774,45.853],[12.744,45.827],[12.739,45.829],[12.732,45.837],[12.729,45.837],[12.695,45.806],[12.671,45.791],[12.662,45.792],[12.659,45.797],[12.65,45.802],[12.654,45.81],[12.651,45.812],[12.648,45.82],[12.638,45.818],[12.631,45.825],[12.611,45.833],[12.606,45.838],[12.594,45.831],[12.597,45.822],[12.592,45.82],[12.596,45.817],[12.594,45.815],[12.588,45.815],[12.582,45.823],[12.573,45.824],[12.566,45.832],[12.564,45.832],[12.563,45.826],[12.559,45.826],[12.555,45.829],[12.55,45.839],[12.557,45.843],[12.55,45.861],[12.531,45.863],[12.536,45.869],[12.533,45.88],[12.508,45.897],[12.523,45.903],[12.516,45.904],[12.51,45.909],[12.506,45.916],[12.508,45.92],[12.505,45.924],[12.482,45.926],[12.467,45.932],[12.456,45.943],[12.456,45.946],[12.453,45.947],[12.437,45.945],[12.426,45.947],[12.423,45.956],[12.427,45.975],[12.427,45.996],[12.419,46.009],[12.415,46.02],[12.415,46.028],[12.399,46.041],[12.405,46.043],[12.41,46.059],[12.416,46.059],[12.425,46.069],[12.429,46.078],[12.439,46.085],[12.471,46.095],[12.485,46.107],[12.494,46.121],[12.492,46.125],[12.497,46.13],[12.499,46.138],[12.495,46.151],[12.49,46.157],[12.457,46.171],[12.447,46.18],[12.442,46.197],[12.446,46.208],[12.425,46.209],[12.406,46.207],[12.4,46.211],[12.409,46.221],[12.405,46.227],[12.402,46.229],[12.389,46.228],[12.376,46.223],[12.365,46.23],[12.359,46.229],[12.352,46.236],[12.343,46.241],[12.341,46.24],[12.33,46.254],[12.324,46.256],[12.321,46.265],[12.321,46.269],[12.329,46.283],[12.336,46.286],[12.339,46.285],[12.351,46.294],[12.356,46.309],[12.355,46.32],[12.375,46.329],[12.403,46.329],[12.41,46.331],[12.421,46.342],[12.417,46.355],[12.429,46.352],[12.463,46.369],[12.455,46.392],[12.464,46.388],[12.469,46.39],[12.489,46.409],[12.499,46.412],[12.492,46.424],[12.504,46.44],[12.516,46.447],[12.525,46.449],[12.528,46.453],[12.527,46.46],[12.531,46.465],[12.542,46.458],[12.548,46.464],[12.568,46.476],[12.595,46.471],[12.607,46.464],[12.618,46.475],[12.637,46.474],[12.655,46.465],[12.662,46.468],[12.657,46.481],[12.63,46.501],[12.632,46.509],[12.624,46.521],[12.619,46.54],[12.629,46.561],[12.637,46.572],[12.644,46.576],[12.657,46.573],[12.667,46.582],[12.675,46.585],[12.688,46.6],[12.708,46.602],[12.705,46.619],[12.711,46.626],[12.727,46.63],[12.746,46.64],[12.751,46.645],[12.76,46.648],[12.792,46.643],[12.809,46.631],[12.818,46.629],[12.831,46.631],[12.837,46.627],[12.834,46.622],[12.835,46.609],[12.852,46.605],[12.868,46.609],[12.888,46.607],[12.895,46.609],[12.922,46.609],[12.935,46.608],[12.95,46.603],[12.958,46.606],[12.988,46.599],[13.002,46.602],[13.017,46.602],[13.027,46.598],[13.045,46.596],[13.082,46.6],[13.094,46.599],[13.143,46.589],[13.164,46.589],[13.182,46.577],[13.195,46.572],[13.215,46.57],[13.228,46.563],[13.232,46.559],[13.233,46.554],[13.237,46.553],[13.257,46.56],[13.278,46.56],[13.301,46.559],[13.304,46.556],[13.321,46.552],[13.346,46.569],[13.368,46.569],[13.372,46.578],[13.376,46.579],[13.406,46.572],[13.408,46.57],[13.408,46.562],[13.425,46.558],[13.476,46.558],[13.498,46.566],[13.504,46.566],[13.512,46.551],[13.518,46.547],[13.542,46.554],[13.564,46.551],[13.569,46.545],[13.569,46.539],[13.577,46.538],[13.584,46.54],[13.586,46.544],[13.591,46.546],[13.597,46.546],[13.599,46.544],[13.627,46.542],[13.638,46.536],[13.675,46.523],[13.714,46.523],[13.717,46.515],[13.716,46.508],[13.703,46.501],[13.704,46.488],[13.708,46.483],[13.705,46.477],[13.695,46.468],[13.697,46.454],[13.694,46.444],[13.69,46.44],[13.684,46.437],[13.654,46.442],[13.654,46.444],[13.647,46.446],[13.599,46.439],[13.58,46.428],[13.577,46.409],[13.57,46.402],[13.533,46.386],[13.517,46.383]]]]}}}</script>
+<script src="/lib/leaflet/1.9.4/leaflet.js"></script>
+<script src="/lib/pagina-adesso.js?v=1"></script>
+</body>
+</html>

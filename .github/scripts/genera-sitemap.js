@@ -92,6 +92,13 @@ function scriviSitemap(SITO, RADICE) {
     const lm = m && m[1] > NASCITA_REGIONI ? m[1] : NASCITA_REGIONI;
     voci.push({ loc: `${SITO}/${r.k}/`, lastmod: lm, freq: m ? 'daily' : 'weekly', pri: '0.8' });
   }
+  // Le pagine «Dove sta piovendo adesso» (18/10/2026, genera-pagine-adesso.js): guscio fisso,
+  // radar e previsioni dal vivo, quindi la data e' quella del guscio. Si trovano guardando le
+  // cartelle, come le localita': c'e' anche l'Abruzzo, che la pagina regione non ce l'ha.
+  for (const d of fs.readdirSync(RADICE).sort()) {
+    if (c_e(path.join(d, 'adesso', 'index.html')))
+      voci.push({ loc: `${SITO}/${d}/adesso/`, lastmod: LASTMOD.adesso || NASCITA_REGIONI, freq: 'weekly', pri: '0.8' });
+  }
   // Le pagine funghi restano a 0.7: la priorita' e' solo un peso RELATIVO
   // dentro il sito, e la pagina regione e' quella che vogliamo far uscire
   // quando uno cerca «pioggia in Liguria». Questa e' la risposta a una domanda

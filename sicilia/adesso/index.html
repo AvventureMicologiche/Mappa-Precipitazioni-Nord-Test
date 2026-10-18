@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dove sta piovendo adesso in Sicilia: radar pioggia in diretta</title>
+<meta name="description" content="Il radar della pioggia in Sicilia in diretta: dove piove in questo momento, le ultime 2 ore e i prossimi 40 minuti, e le previsioni delle città.">
+<link rel="canonical" href="https://avventurepluvio-test.pages.dev/sicilia/adesso/">
+<meta property="og:title" content="Dove sta piovendo adesso in Sicilia">
+<meta property="og:description" content="Il radar della pioggia in diretta e le previsioni delle città.">
+<meta property="og:image" content="https://avventurepluvio-test.pages.dev/preview.jpg">
+<meta property="og:url" content="https://avventurepluvio-test.pages.dev/sicilia/adesso/">
+<meta property="og:type" content="website">
+<!-- Google tag: il config solo sul dominio vero, come le pagine regione -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  if (/(^|\.)avventuremicologiche\.it$/.test(location.hostname)) {
+    gtag('config', 'G-9R7MXXS0V4');
+  }
+</script>
+<link rel="stylesheet" href="/lib/leaflet/1.9.4/leaflet.css">
+<style>
+:root{--blu:#1b3f6e;--blu-scuro:#123252;--grigio:#f0f4fb;--bordo:#d0d8e8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#222;background:#fff;font-size:17px;line-height:1.6;}
+header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+header a{color:#fff;text-decoration:none;}
+header .logo{font-weight:600;font-size:15px;display:flex;align-items:center;gap:7px;}
+header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;}
+main{max-width:760px;margin:0 auto;padding:22px 16px 4px;}
+h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
+h1,h2{text-wrap:balance;}
+p,li{text-wrap:pretty;}
+.sotto{color:#555;font-size:17px;margin-bottom:12px;}
+h2{color:var(--blu-scuro);font-size:22px;margin:34px 0 10px;}
+p{margin-bottom:12px;}
+.cta{display:block;text-align:center;background:var(--blu);color:#fff;font-size:19px;font-weight:600;padding:15px 18px;border-radius:9px;text-decoration:none;margin:22px 0;}
+.cta:hover{background:#2a5490;}
+.griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0;}
+.card{background:var(--grigio);border:1px solid var(--bordo);border-radius:9px;padding:14px 15px;display:flex;flex-direction:column;}
+.card h3{margin:0 0 4px;font-size:17px;color:var(--blu-scuro);}
+.numerone{font-size:30px;font-weight:700;color:var(--blu-scuro);line-height:1.2;}
+.numerone small{font-size:14px;font-weight:400;color:#555;}
+.card .vai{margin-top:auto;padding-top:10px;font-size:15px;font-weight:600;color:var(--blu);text-decoration:none;}
+.attesa{color:#777;font-style:italic;}
+.nota{font-size:14px;color:#666;margin-top:8px;}
+.top-staz{margin:6px 0 0;font-size:15px;}
+.top-staz li{margin:3px 0 3px 20px;}
+.verdetto .top{font-size:16px;opacity:.92;margin-top:8px;}
+.verdetto .top b{font-weight:700;}
+#attesa{color:#6a7789;font-size:16px;padding:18px 0;}
+ol.zone-dove{list-style:none;margin:10px 0 6px;padding:0;counter-reset:z;}
+ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
+ol.zone-dove li:before{content:counter(z);min-width:22px;text-align:right;color:#8a97a6;font-size:13px;}
+ol.zone-dove a{font-weight:600;color:var(--blu);text-decoration:none;}
+ol.zone-dove .zmm{margin-left:auto;font-weight:700;white-space:nowrap;color:var(--blu-scuro);}
+ol.zone-dove .zmm small{font-weight:400;color:#6a7789;font-size:13px;margin-left:6px;}
+footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;font-size:14px;color:#555;text-align:center;}
+footer a{color:var(--blu);}
+nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;font-size:15px;color:#555;}
+nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
+nav.altre p{line-height:1.9;}
+nav.altre a{color:var(--blu);}
+footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
+.capo-btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px;}
+.capo-btn{display:inline-block;text-decoration:none;color:#0f2d4d;font-weight:700;font-size:14.5px;
+  padding:9px 15px 10px;border-radius:9px;border:1px solid #b9c7da;
+  background:linear-gradient(180deg,#ffffff 0%,#f5f8fd 48%,#e8eef8 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 3px 0 #aebfd4, 0 6px 13px rgba(0,0,0,.28);}
+@media(max-width:480px){h1{font-size:25px;}body{font-size:16px;}}
+
+.gg{display:flex;align-items:flex-end;gap:3px;height:150px;margin:14px 0 4px;}
+.gg .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
+.gg .b i{display:block;background:#b9cbe2;border-radius:3px 3px 0 0;min-height:2px;}
+.gg .b.dentro i{background:var(--blu);}
+.gg .b b{align-self:center;margin-bottom:2px;line-height:1.1;font-size:10.5px;
+  font-weight:700;color:var(--blu-scuro);white-space:nowrap;}
+.gg-x{display:flex;gap:3px;font-size:10.5px;color:#6b7a8d;}
+.gg-x span{flex:1;text-align:center;}
+.gg-leg{font-size:13.5px;color:#555;margin-top:8px;}
+.gg-leg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
+.tt-box{position:relative;padding-right:42px;margin:14px 0 2px;}
+.tt{width:100%;height:150px;display:block;overflow:visible;}
+.tt .griglia{stroke:#e6eaf0;stroke-width:1;vector-effect:non-scaling-stroke;}
+.tt polyline{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+.tt .max{stroke:#d1603d;}
+.tt .min{stroke:#3a6ea8;}
+.tt-y{position:absolute;top:0;right:0;width:42px;height:150px;pointer-events:none;}
+.tt-y span{position:absolute;right:0;transform:translateY(-50%);font-size:11px;color:#6b7a8d;line-height:1;padding-left:5px;}
+.tt-x{padding-right:42px;}
+.vic td:last-child,.vic th:last-child{text-align:right;}
+.vic .qui{background:#eef4fd;}
+.verdetto{background:#0f2d4d;color:#fff;border-radius:12px;padding:18px 18px 16px;margin:14px 0 8px;}
+.verdetto .si{font-size:27px;font-weight:800;line-height:1.2;}
+.verdetto .pallino{display:inline-block;width:15px;height:15px;border-radius:50%;margin-right:9px;vertical-align:2px;}
+.verdetto .gr{font-size:44px;font-weight:800;line-height:1.1;margin-top:10px;}
+.verdetto .gr small{font-size:18px;font-weight:600;opacity:.85;margin-left:6px;}
+.verdetto .dett{font-size:16px;opacity:.9;margin-top:6px;}
+.scala{display:flex;gap:4px;margin-top:14px;}
+.scala div{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.18);}
+.scala-t{display:flex;font-size:11.5px;opacity:.75;margin-top:4px;}
+.scala-t span{flex:1;text-align:center;}
+.breve{font-size:16px;color:#333;margin:6px 0 4px;}
+.fin{display:flex;gap:6px;align-items:flex-end;height:170px;margin:16px 0 4px;}
+.fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
+.fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
+.fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+.fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
+.fin-x span{flex:1;text-align:center;line-height:1.25;}
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
+.img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
+.tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
+  padding:11px 6px;border:1px solid #b9c7da;border-radius:9px;background:linear-gradient(180deg,#fff,#eef3fa);}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);}
+.tasti a.t-prev{grid-column:1 / -1;}
+@media(max-width:640px){.verdetto .gr{font-size:38px;} .tasti{grid-template-columns:repeat(2,1fr);}}
+.banda-prev{display:flex;align-items:center;gap:12px;margin:10px 0 4px;padding:13px 16px;border-radius:12px;background:linear-gradient(135deg,#1f6fd1,#3f8fe8);color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(31,111,209,.25);}
+.banda-prev .ic{font-size:30px;line-height:1;flex:none;}
+.banda-prev b{display:block;font-size:17px;line-height:1.2;}
+.banda-prev span{display:block;font-size:13px;opacity:.92;margin-top:2px;}
+.banda-prev .fr{margin-left:auto;font-size:22px;flex:none;}
+.banda-prev:hover{background:linear-gradient(135deg,#1b5fb3,#3580d6);}
+.noioso{margin-top:34px;padding-top:6px;border-top:1px solid var(--bordo);color:#555;font-size:15px;}
+.noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
+.noioso p{margin-bottom:8px;}
+.noioso a{color:var(--blu);}
+
+/* Sulle pagine piogge l'etichetta sta SOPRA la sua barra, non in cima al
+   grafico: con 30 barre strette, in cima non si capiva di chi fosse. */
+.gg .b b{position:static;transform:none;align-self:center;margin-bottom:2px;line-height:1.1;}
+/* ── IL BOTTONE DI IERI, versione V2 (11/10/2026, sua scelta fra tre) ──
+   Guardando la pagina dal PC: «le scritte cosi' piccole fanno schifo, i
+   bottoni non sembrano bottoni». Fondo pieno, ombra profonda con un bordo
+   sotto come un tasto, e la freccia in un tondo: il segno che si tocca.
+   Gli altri bottoni (previsioni, tasti dei periodi, «Apri la mappa» delle
+   schede, scritte del riquadro) stanno nel blocco COMUNE RILIEVO di
+   lib-pagina-funghi.js, uguale per tutte le pagine: qui sotto, in fondo. */
+.ieri-btn{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px;width:100%;
+  text-decoration:none;background:#fff;color:#10263f;padding:14px 16px 15px 20px;border-radius:14px;line-height:1.35;
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 6px 0 #7f97b6,0 12px 22px rgba(0,0,0,.38);
+  transition:transform .08s,box-shadow .08s;}
+.ieri-btn b{font-size:19px;font-weight:700;}
+.ieri-btn small{font-size:15px;font-weight:500;color:#3f5672;}
+.ieri-btn i{grid-row:1/span 2;grid-column:2;font-style:normal;width:40px;height:40px;border-radius:50%;
+  background:#2a5490;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 0 #183a68;}
+.ieri-btn:hover{background:#f3f7fc;}
+.ieri-btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #7f97b6,0 5px 10px rgba(0,0,0,.3);}
+@media(max-width:480px){.ieri-btn b{font-size:17.5px;}.ieri-btn small{font-size:14px;}}
+/* BOTTONI IN RILIEVO (lib-pagina-funghi.js) */
+.capo-btns{gap:12px;margin-top:15px;}
+.capo-btn{background:#fff;border:none;color:#10263f;font-size:16px;font-weight:700;padding:12px 18px 13px;border-radius:12px;
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 5px 0 #7f97b6,0 10px 18px rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s;}
+.capo-btn:hover{background:#f3f7fc;}
+.capo-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #7f97b6,0 5px 10px rgba(0,0,0,.3);}
+.banda-prev{padding:15px 16px 16px;border-radius:14px;box-shadow:0 6px 0 #164f97,0 12px 22px rgba(20,60,120,.38);transition:transform .08s,box-shadow .08s;}
+.banda-prev b{font-size:19px;}
+.banda-prev span{font-size:15px;}
+.banda-prev .fr{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;}
+.banda-prev:active{transform:translateY(4px);box-shadow:0 2px 0 #164f97,0 5px 10px rgba(20,60,120,.3);}
+.tasti{gap:12px;margin-top:12px;}
+.tasti a{background:#fff;border:1px solid #d3deeb;border-radius:12px;padding:13px 6px 14px;font-size:16px;
+  box-shadow:0 4px 0 #9fb3cc,0 8px 14px rgba(15,45,77,.16);transition:transform .08s,box-shadow .08s;}
+.tasti a:hover{background:#f3f7fc;}
+.tasti a.forte{background:var(--blu);color:#fff;border-color:var(--blu);box-shadow:0 4px 0 #0c2440,0 8px 14px rgba(15,45,77,.25);}
+.tasti a.forte:hover{background:#24508a;}
+.tasti a:active{transform:translateY(3px);box-shadow:0 1px 0 #9fb3cc,0 3px 6px rgba(15,45,77,.16);}
+.tasti a.forte:active{box-shadow:0 1px 0 #0c2440,0 3px 6px rgba(15,45,77,.25);}
+.card .vai{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:auto;background:var(--blu);color:#fff;font-size:16px;font-weight:700;
+  padding:11px 14px 12px;border-radius:12px;text-decoration:none;box-shadow:0 4px 0 #0c2440,0 8px 14px rgba(15,45,77,.22);transition:transform .08s,box-shadow .08s;}
+.card .nota{margin-bottom:14px;}
+.card .vai:hover{background:#24508a;}
+.card .vai:active{transform:translateY(3px);box-shadow:0 1px 0 #0c2440,0 3px 6px rgba(15,45,77,.22);}
+.verdetto .top{font-size:17.5px;line-height:1.55;}
+.verdetto .dett{font-size:15px;opacity:.85;}
+@media(max-width:480px){.banda-prev b{font-size:17.5px;}.banda-prev span{font-size:14px;}.tasti a{font-size:15px;}.capo-btn{font-size:15.5px;}
+  .verdetto .top{font-size:16px;}.verdetto .dett{font-size:14px;}}
+/* BOTTONE YOUTUBE (lib-pagina-funghi.js) */
+.yt-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
+  font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 4px 0 #7d0d12,0 9px 18px rgba(160,20,27,.32);transition:transform .08s,box-shadow .08s;}
+.yt-btn svg{width:26px;height:18px;flex:none;}
+.yt-btn svg rect{fill:#fff;}
+.yt-btn svg polygon{fill:#e12b2b;}
+.yt-btn:hover{background:linear-gradient(180deg,#e8323a,#c01820);}
+.yt-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7d0d12,0 4px 8px rgba(160,20,27,.3);}
+
+.rb{border:1px solid var(--bordo);border-radius:14px;overflow:hidden;background:#fff;margin:14px 0 8px;box-shadow:0 8px 20px rgba(15,45,77,.14);}
+.rb-testa{display:flex;align-items:center;gap:10px;background:#0f2d4d;color:#fff;padding:10px 14px;font-size:15.5px;}
+.rb-testa b{font-weight:800;letter-spacing:.3px;}
+.rb-testa .quando{margin-left:auto;opacity:.9;font-size:14.5px;white-space:nowrap;}
+.vivo{width:11px;height:11px;border-radius:50%;background:#ff3b30;flex:none;box-shadow:0 0 0 0 rgba(255,59,48,.7);animation:vivo 1.6s infinite;}
+@keyframes vivo{0%{box-shadow:0 0 0 0 rgba(255,59,48,.7)}70%{box-shadow:0 0 0 9px rgba(255,59,48,0)}100%{box-shadow:0 0 0 0 rgba(255,59,48,0)}}
+/* fondo = il mare di OpenStreetMap: al telefono fra due tessere resta un filo di fondo (la mappa cade a mezzo pixel) */
+#mappa{height:470px;background:#aad3df;}
+.rb .tasti{grid-template-columns:repeat(3,1fr);margin:0;padding:12px 12px 4px;}
+.rb .tasti a{cursor:pointer;user-select:none;}
+.rb-scala{padding:8px 14px 12px;}
+.rb-barra{height:11px;border-radius:4px;background:linear-gradient(90deg,#00a3e0 0%,#005588 26%,#ffee00 45%,#ffaa00 63%,#ff4400 81%,#c10000 100%);}
+.rb-num{display:flex;justify-content:space-between;font-size:12px;color:#6b7a8d;margin-top:3px;}
+.rb-par{display:flex;justify-content:space-between;font-size:13px;color:#445;margin-top:1px;font-weight:600;}
+.rb-stato{font-size:13.5px;color:#6b7a8d;padding:0 14px 12px;margin-top:-4px;}
+.rb-stato.err{color:#b3261e;font-weight:600;}
+.pila{display:grid;gap:18px;margin:22px 0 10px;}
+.reg-lista{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 14px;margin:10px 0 4px;padding:0;list-style:none;}
+.reg-lista a{display:block;padding:7px 2px;border-bottom:1px solid var(--bordo);font-weight:600;color:var(--blu);text-decoration:none;font-size:16px;}
+.reg-lista a:hover{text-decoration:underline;}
+.leaflet-container{font:inherit;}
+.leaflet-container .leaflet-control-attribution{font-size:11px;line-height:1.4;}
+/* leaflet.css mette «plus-lighter» sulle tessere: col fondo non nero il filo fra due tessere diventa PIU' CHIARO */
+#mappa .fondo img.leaflet-tile{mix-blend-mode:normal;}
+.pv-cerca{position:relative;background:#fff;border:2px solid var(--blu);border-radius:14px;padding:14px 16px 12px;margin:12px 0 6px;box-shadow:0 6px 16px rgba(15,45,77,.14);}
+.pv-cerca label{display:block;font-weight:800;font-size:18px;color:var(--blu-scuro);margin-bottom:8px;}
+.pv-riga{display:flex;gap:10px;}
+.pv-riga input{flex:1;min-width:0;font:inherit;font-size:17px;padding:11px 13px;border:1px solid #b9c7da;border-radius:10px;color:#10263f;}
+.pv-riga input:focus{outline:2px solid #3f8fe8;outline-offset:0;border-color:#3f8fe8;}
+.pv-riga button{font:inherit;font-size:16px;font-weight:700;color:#fff;background:var(--blu);border:none;border-radius:10px;padding:0 18px;cursor:pointer;box-shadow:0 3px 0 #0c2440;}
+.pv-cerca .nota{margin:8px 0 0;font-size:13.5px;}
+.pv-lista{position:absolute;left:16px;right:16px;top:100%;margin-top:-6px;z-index:900;list-style:none;padding:4px 0;background:#fff;border:1px solid #c9d6e6;border-radius:10px;box-shadow:0 12px 28px rgba(15,45,77,.25);display:none;}
+.pv-lista.aperta{display:block;}
+.pv-lista li{display:flex;align-items:baseline;gap:8px;padding:10px 14px;cursor:pointer;font-size:16.5px;}
+.pv-lista li:hover,.pv-lista li.su{background:#eef4fd;}
+.pv-lista li small{color:#6b7a8d;font-size:13.5px;margin-left:auto;white-space:nowrap;}
+.pv-lista li.vuoto{color:#6b7a8d;cursor:default;}
+.cit-tit{font-size:18px;color:var(--blu-scuro);margin:22px 0 2px;}
+#pv-quando{margin:0 0 10px;}
+/* le carte vanno a capo e l'ULTIMA RIGA SI CENTRA: in 12 regioni su 19 l'ultima riga non e' piena */
+.citta{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;}
+.cit{flex:0 0 calc((100% - 24px) / 3);display:flex;flex-direction:column;background:var(--grigio);border:1px solid var(--bordo);border-radius:14px;padding:12px 14px 13px;text-decoration:none;color:#334;transition:background .1s;}
+.cit:hover{background:#e7eef9;}
+.cit-testa{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;}
+.cit-testa b{font-size:17px;color:var(--blu-scuro);line-height:1.25;}
+.cit-ic{font-size:34px;line-height:1;margin-top:-2px;}
+.cit-t{font-size:34px;font-weight:800;color:var(--blu-scuro);line-height:1.05;margin-top:-6px;}
+.cit-t small{font-size:13.5px;font-weight:600;color:#6b7a8d;margin-left:6px;letter-spacing:0;}
+.cit-cond{font-size:14px;color:#555;margin:2px 0 8px;}
+.cit-gg{font-size:14px;line-height:1.55;padding-bottom:10px;}
+.cit-gg b{color:var(--blu-scuro);}
+.cit-gg .mmw,.cit-cond .mmw{color:#1f6fd1;font-weight:700;white-space:nowrap;margin-left:3px;}
+.cit-vai{margin-top:auto;align-self:flex-start;font-size:14px;font-weight:700;color:var(--blu);background:#fff;border:1px solid #c9d6e6;border-radius:20px;padding:4px 13px;white-space:nowrap;}
+@media(max-width:640px){.citta{gap:10px;} .cit{flex-basis:calc((100% - 10px) / 2);padding:11px 12px 12px;}
+  .cit-t{font-size:30px;} .cit-ic{font-size:30px;} .cit-gg{font-size:13.5px;} .cit-vai{font-size:13.5px;padding:4px 11px;}
+  #mappa{height:380px;} .reg-lista{grid-template-columns:repeat(2,1fr);}
+  .rb-testa{font-size:14.5px;} .rb-testa .quando{font-size:13.5px;}}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="https://avventurepluvio-test.pages.dev/">🌧️ Mappa Pluviometrica</a>
+  <a class="yt" href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener"
+     onclick="try{gtag('event','click_youtube',{pulsante:'pagina-sicilia-adesso'})}catch(e){}">▶ Iscriviti</a>
+</header>
+<main>
+<h1>Dove sta piovendo adesso in Sicilia</h1>
+<p class="sotto"><b>Radar della pioggia in diretta</b>: le macchie colorate sono la pioggia che sta cadendo adesso. Si aggiorna da solo ogni 5 minuti.</p>
+
+<div class="rb">
+  <div class="rb-testa"><span class="vivo"></span><b>IN DIRETTA</b><span class="quando" id="quando">carico il radar…</span></div>
+  <div id="mappa"></div>
+  <div class="tasti">
+    <a class="forte" data-id="ora">Adesso</a>
+    <a data-id="due">▶ −2 ore</a>
+    <a data-id="prev">+40 min</a>
+  </div>
+  <div class="rb-scala">
+    <div class="rb-barra"></div>
+    <div class="rb-num"><span>0,5</span><span>3</span><span>6</span><span>12</span><span>24</span><span>50 mm/h</span></div>
+    <div class="rb-par"><span>pioviggine</span><span>pioggia forte</span></div>
+  </div>
+  <div class="rb-stato" id="stato">Radar europeo OPERA, risoluzione 2 km.</div>
+</div>
+
+<div class="pila">
+  <a class="ieri-btn" href="https://avventurepluvio-test.pages.dev/?r=sicilia&amp;radar=ora"
+     onclick="try{gtag('event','apri_mappa',{da:'pagina-sicilia-adesso-mappa'})}catch(e){}">
+    <b>Apri il radar sulla mappa completa</b><small>Ingrandisci, spostati, guarda le regioni vicine</small><i>→</i></a>
+</div>
+
+<h2>Previsioni meteo in Sicilia</h2>
+<div class="pv-cerca">
+  <label for="pv-in">☀️ Cerca una località</label>
+  <div class="pv-riga"><input id="pv-in" type="search" placeholder="Paese o città" autocomplete="off" enterkeyhint="search"><button id="pv-vai" type="button">Cerca</button></div>
+  <ul class="pv-lista" id="pv-lista"></ul>
+  <p class="nota">Tutti i comuni d'Italia: si aprono le previsioni a 7 giorni, ora per ora.</p>
+</div>
+
+<h3 class="cit-tit">Previsioni nelle città della Sicilia</h3>
+<p class="nota" id="pv-quando">Previsioni del modello ECMWF via MET Norway. La pioggia che cade adesso la mostra il radar qui sopra.</p>
+<div class="citta" id="citta">
+<a class="cit" data-i="0" href="https://avventurepluvio-test.pages.dev/?r=sicilia&amp;m=prev&amp;pl=38.116,13.362&amp;pn=Palermo"><div class="cit-testa"><b>Palermo</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="1" href="https://avventurepluvio-test.pages.dev/?r=sicilia&amp;m=prev&amp;pl=37.503,15.087&amp;pn=Catania"><div class="cit-testa"><b>Catania</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="2" href="https://avventurepluvio-test.pages.dev/?r=sicilia&amp;m=prev&amp;pl=38.194,15.556&amp;pn=Messina"><div class="cit-testa"><b>Messina</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="3" href="https://avventurepluvio-test.pages.dev/?r=sicilia&amp;m=prev&amp;pl=37.06,15.293&amp;pn=Siracusa"><div class="cit-testa"><b>Siracusa</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="4" href="https://avventurepluvio-test.pages.dev/?r=sicilia&amp;m=prev&amp;pl=36.925,14.731&amp;pn=Ragusa"><div class="cit-testa"><b>Ragusa</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="5" href="https://avventurepluvio-test.pages.dev/?r=sicilia&amp;m=prev&amp;pl=38.019,12.514&amp;pn=Trapani"><div class="cit-testa"><b>Trapani</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="6" href="https://avventurepluvio-test.pages.dev/?r=sicilia&amp;m=prev&amp;pl=37.492,14.062&amp;pn=Caltanissetta"><div class="cit-testa"><b>Caltanissetta</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="7" href="https://avventurepluvio-test.pages.dev/?r=sicilia&amp;m=prev&amp;pl=37.31,13.585&amp;pn=Agrigento"><div class="cit-testa"><b>Agrigento</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+<a class="cit" data-i="8" href="https://avventurepluvio-test.pages.dev/?r=sicilia&amp;m=prev&amp;pl=37.567,14.279&amp;pn=Enna"><div class="cit-testa"><b>Enna</b><span class="cit-ic"></span></div><div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>
+</div>
+
+<h2>Quanta pioggia è caduta</h2>
+<p>Il radar dice dove piove adesso. Quanta acqua è caduta davvero lo misurano i pluviometri a terra, millimetro per millimetro: ieri, negli ultimi 7, 20 e 30 giorni.</p>
+<a class="ieri-btn" href="https://avventurepluvio-test.pages.dev/sicilia/">
+  <b>Dove ha piovuto ieri in Sicilia</b><small>I millimetri di oltre 400 pluviometri, zona per zona</small><i>→</i></a>
+
+<h2>Dove sta piovendo adesso nelle altre regioni</h2>
+<ul class="reg-lista">
+<li><a href="https://avventurepluvio-test.pages.dev/lombardia/adesso/">Lombardia</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/piemonte/adesso/">Piemonte</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/valledaosta/adesso/">Valle d'Aosta</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/liguria/adesso/">Liguria</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/emilia/adesso/">Emilia-Romagna</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/veneto/adesso/">Veneto</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/friuli/adesso/">Friuli Venezia Giulia</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/trentino/adesso/">Trentino</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/altoadige/adesso/">Alto Adige</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/toscana/adesso/">Toscana</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/umbria/adesso/">Umbria</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/marche/adesso/">Marche</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/lazio/adesso/">Lazio</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/abruzzo/adesso/">Abruzzo</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/molise/adesso/">Molise</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/campania/adesso/">Campania</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/puglia/adesso/">Puglia</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/basilicata/adesso/">Basilicata</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/calabria/adesso/">Calabria</a></li>
+<li><a href="https://avventurepluvio-test.pages.dev/sardegna/adesso/">Sardegna</a></li>
+</ul>
+
+<div class="noioso">
+<h2>Come funziona il radar</h2>
+<p>Il radar meteo manda un fascio di onde radio e misura quanto ne torna indietro dalle gocce: più il colore è acceso, più forte piove.
+Le immagini sono quelle della rete radar europea OPERA, a 2 km di risoluzione, distribuite da LibreWXR. Un fotogramma nuovo arriva ogni 5 minuti
+e la pagina lo carica da sola.</p>
+<h2>Le ultime 2 ore e i prossimi 40 minuti</h2>
+<p>«▶ −2 ore» fa scorrere i fotogrammi delle ultime due ore: si vede da dove arriva la pioggia e dove sta andando. «+40 min»
+sposta le macchie di adesso nella direzione in cui si muovono, per i prossimi quaranta minuti. Non è una previsione del tempo, vale solo per l'ora che viene.</p>
+<h2>Radar e pluviometri: perché a volte non coincidono</h2>
+<p>Il radar guarda la pioggia in quota: può vedere gocce che evaporano prima di toccare terra, o perderla dietro le montagne.
+I pluviometri la misurano a terra. Per sapere quanta ne è caduta c'è la pagina <a href="https://avventurepluvio-test.pages.dev/sicilia/">Dove ha piovuto in Sicilia</a>.</p>
+<p><a href="https://avventurepluvio-test.pages.dev/guida/" onclick="try{gtag('event','click_guida',{pulsante:'pagina-sicilia-adesso'})}catch(e){}">📖 Guida alla mappa: come si usa, tutte le funzioni</a></p>
+<p style="margin:22px 0 4px;"><a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt-btn"
+   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-sicilia-adesso-fondo'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
+</div>
+</main>
+
+<footer>
+<nav class="altre">
+  <div style="background:#f4fbf3;border:1px solid #cfe8cf;border-radius:9px;padding:1px 15px 11px;margin-top:16px;">
+    <b style="color:#2d6a30">🍄 Dove ha piovuto di più?</b>
+    <p><a href="https://avventurepluvio-test.pages.dev/funghi/" style="color:#2d6a30;font-weight:600">La nostra selezione, le località più bagnate</a>
+    <span style="color:#7a8b9a">·</span> oppure il riepilogo delle regioni: <a href="https://avventurepluvio-test.pages.dev/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sardegna/">Sardegna</a></p>
+  </div>
+</nav>
+  Radar: <a href="https://librewxr.net/" target="_blank" rel="noopener">LibreWXR</a> / EUMETNET OPERA (CC BY) ·
+  Previsioni: MET Norway (CC BY 4.0) ·
+  <a href="https://avventurepluvio-test.pages.dev/fonti">tutte le fonti e licenze</a> ·
+  <a href="https://avventuremicologiche.it">Avventure Micologiche</a><br>
+  La mappa copre Italia, Svizzera, Austria, Francia e Slovenia — 5000+ stazioni.
+</footer>
+
+<script id="adesso-dati" type="application/json">{"k":"sicilia","sito":"https://avventurepluvio-test.pages.dev","citta":[{"n":"Palermo","lat":38.116,"lon":13.362,"q":25,"reg":"sicilia"},{"n":"Catania","lat":37.503,"lon":15.087,"q":20,"reg":"sicilia"},{"n":"Messina","lat":38.194,"lon":15.556,"q":11,"reg":"sicilia"},{"n":"Siracusa","lat":37.06,"lon":15.293,"q":22,"reg":"sicilia"},{"n":"Ragusa","lat":36.925,"lon":14.731,"q":495,"reg":"sicilia"},{"n":"Trapani","lat":38.019,"lon":12.514,"q":0,"reg":"sicilia"},{"n":"Caltanissetta","lat":37.492,"lon":14.062,"q":588,"reg":"sicilia"},{"n":"Agrigento","lat":37.31,"lon":13.585,"q":277,"reg":"sicilia"},{"n":"Enna","lat":37.567,"lon":14.279,"q":939,"reg":"sicilia"}],"confine":{"type":"Feature","properties":{},"geometry":{"type":"MultiPolygon","coordinates":[[[[12.908,38.025],[12.948,38.031],[12.986,38.043],[12.998,38.048],[13.005,38.054],[13.031,38.064],[13.039,38.072],[13.053,38.072],[13.078,38.088],[13.068,38.12],[13.053,38.137],[13.066,38.143],[13.072,38.142],[13.072,38.147],[13.07,38.148],[13.072,38.151],[13.085,38.16],[13.085,38.164],[13.079,38.174],[13.108,38.192],[13.119,38.192],[13.135,38.187],[13.138,38.184],[13.157,38.187],[13.162,38.184],[13.161,38.175],[13.163,38.171],[13.191,38.169],[13.223,38.178],[13.238,38.186],[13.244,38.193],[13.242,38.2],[13.255,38.199],[13.259,38.201],[13.272,38.199],[13.302,38.221],[13.315,38.225],[13.328,38.212],[13.326,38.203],[13.332,38.197],[13.347,38.191],[13.36,38.19],[13.366,38.183],[13.367,38.17],[13.376,38.153],[13.37,38.144],[13.375,38.129],[13.369,38.136],[13.363,38.134],[13.363,38.129],[13.384,38.109],[13.408,38.099],[13.451,38.095],[13.486,38.101],[13.504,38.108],[13.508,38.12],[13.529,38.111],[13.538,38.113],[13.539,38.109],[13.535,38.107],[13.534,38.1],[13.54,38.097],[13.541,38.09],[13.538,38.084],[13.542,38.078],[13.536,38.067],[13.542,38.057],[13.565,38.04],[13.604,38.024],[13.618,38.012],[13.635,38.008],[13.664,37.994],[13.693,37.991],[13.706,37.992],[13.722,37.987],[13.723,37.985],[13.709,37.991],[13.704,37.99],[13.707,37.98],[13.711,37.977],[13.736,37.975],[13.745,37.97],[13.799,37.975],[13.823,37.983],[13.832,37.982],[13.891,38.002],[13.934,38.021],[13.946,38.029],[13.965,38.03],[13.967,38.033],[13.972,38.034],[13.982,38.029],[13.996,38.033],[14.006,38.032],[14.019,38.037],[14.019,38.04],[14.023,38.041],[14.032,38.04],[14.039,38.033],[14.066,38.018],[14.083,38.019],[14.113,38.015],[14.127,38.017],[14.143,38.023],[14.146,38.027],[14.165,38.02],[14.173,38.019],[14.18,38.021],[14.202,38.015],[14.237,38.01],[14.258,38.009],[14.27,38.013],[14.285,38.007],[14.312,38.008],[14.339,38.019],[14.351,38.019],[14.356,38.017],[14.356,38.015],[14.373,38.016],[14.394,38.022],[14.427,38.041],[14.439,38.041],[14.445,38.035],[14.453,38.033],[14.47,38.033],[14.52,38.041],[14.532,38.044],[14.556,38.06],[14.586,38.059],[14.617,38.073],[14.635,38.072],[14.655,38.087],[14.67,38.093],[14.678,38.099],[14.748,38.166],[14.751,38.166],[14.76,38.157],[14.786,38.151],[14.861,38.169],[14.875,38.168],[14.891,38.172],[14.897,38.179],[14.915,38.192],[14.924,38.19],[14.928,38.185],[14.94,38.18],[14.947,38.175],[14.952,38.167],[14.968,38.154],[14.975,38.151],[15.005,38.149],[15.037,38.151],[15.047,38.149],[15.056,38.142],[15.056,38.132],[15.07,38.127],[15.075,38.122],[15.084,38.12],[15.102,38.122],[15.134,38.138],[15.15,38.142],[15.174,38.153],[15.209,38.183],[15.225,38.203],[15.241,38.242],[15.241,38.245],[15.236,38.248],[15.235,38.253],[15.237,38.265],[15.233,38.268],[15.224,38.269],[15.23,38.271],[15.24,38.269],[15.252,38.252],[15.253,38.246],[15.241,38.217],[15.249,38.211],[15.259,38.208],[15.293,38.206],[15.328,38.215],[15.354,38.218],[15.378,38.224],[15.42,38.241],[15.429,38.242],[15.451,38.252],[15.517,38.296],[15.542,38.302],[15.551,38.3],[15.569,38.288],[15.589,38.28],[15.618,38.273],[15.641,38.273],[15.653,38.268],[15.652,38.265],[15.611,38.257],[15.582,38.245],[15.571,38.231],[15.558,38.197],[15.558,38.19],[15.56,38.188],[15.564,38.188],[15.57,38.196],[15.562,38.197],[15.572,38.198],[15.575,38.193],[15.563,38.183],[15.534,38.148],[15.494,38.075],[15.48,38.062],[15.473,38.051],[15.457,38.04],[15.441,38.024],[15.441,38.02],[15.431,38.009],[15.364,37.94],[15.348,37.922],[15.345,37.915],[15.349,37.913],[15.336,37.905],[15.304,37.876],[15.297,37.865],[15.297,37.859],[15.3,37.858],[15.302,37.853],[15.292,37.847],[15.286,37.848],[15.27,37.833],[15.269,37.827],[15.276,37.823],[15.274,37.82],[15.248,37.8],[15.214,37.757],[15.205,37.741],[15.205,37.737],[15.219,37.712],[15.215,37.701],[15.199,37.677],[15.196,37.662],[15.2,37.655],[15.175,37.633],[15.176,37.629],[15.172,37.61],[15.177,37.576],[15.166,37.572],[15.164,37.565],[15.149,37.555],[15.145,37.545],[15.115,37.531],[15.117,37.523],[15.107,37.515],[15.099,37.501],[15.1,37.484],[15.099,37.5],[15.097,37.502],[15.092,37.497],[15.093,37.492],[15.086,37.483],[15.085,37.471],[15.091,37.412],[15.091,37.359],[15.094,37.334],[15.099,37.318],[15.105,37.31],[15.135,37.31],[15.162,37.289],[15.172,37.293],[15.186,37.287],[15.189,37.282],[15.195,37.283],[15.197,37.292],[15.205,37.294],[15.225,37.27],[15.241,37.26],[15.245,37.248],[15.256,37.241],[15.254,37.236],[15.247,37.232],[15.239,37.236],[15.236,37.241],[15.231,37.243],[15.225,37.241],[15.223,37.234],[15.225,37.216],[15.234,37.199],[15.232,37.198],[15.225,37.215],[15.22,37.218],[15.217,37.224],[15.218,37.236],[15.213,37.247],[15.206,37.245],[15.197,37.235],[15.186,37.236],[15.195,37.226],[15.193,37.221],[15.183,37.216],[15.185,37.195],[15.202,37.178],[15.2,37.165],[15.206,37.153],[15.212,37.15],[15.222,37.15],[15.227,37.153],[15.227,37.159],[15.235,37.159],[15.244,37.146],[15.237,37.147],[15.229,37.153],[15.224,37.151],[15.22,37.145],[15.221,37.128],[15.231,37.123],[15.237,37.115],[15.259,37.11],[15.263,37.106],[15.279,37.108],[15.28,37.11],[15.296,37.107],[15.301,37.093],[15.3,37.079],[15.29,37.066],[15.296,37.066],[15.298,37.062],[15.296,37.054],[15.287,37.064],[15.28,37.066],[15.271,37.058],[15.271,37.051],[15.277,37.037],[15.282,37.033],[15.292,37.033],[15.298,37.042],[15.301,37.043],[15.31,37.037],[15.312,37.038],[15.316,37.035],[15.322,37.022],[15.337,37.007],[15.336,37.002],[15.315,37.004],[15.304,37.015],[15.298,37.015],[15.293,37.01],[15.283,37.006],[15.277,37.008],[15.265,36.999],[15.264,36.995],[15.269,36.987],[15.262,36.981],[15.257,36.98],[15.262,36.974],[15.239,36.972],[15.22,36.962],[15.214,36.964],[15.206,36.959],[15.206,36.954],[15.197,36.953],[15.18,36.939],[15.173,36.924],[15.159,36.92],[15.154,36.916],[15.142,36.893],[15.137,36.877],[15.139,36.875],[15.137,36.866],[15.127,36.866],[15.112,36.851],[15.106,36.835],[15.109,36.819],[15.106,36.806],[15.102,36.802],[15.099,36.803],[15.096,36.796],[15.095,36.776],[15.109,36.749],[15.115,36.744],[15.12,36.745],[15.119,36.741],[15.117,36.741],[15.117,36.736],[15.121,36.732],[15.123,36.703],[15.138,36.687],[15.137,36.677],[15.131,36.666],[15.125,36.669],[15.127,36.671],[15.121,36.675],[15.113,36.674],[15.104,36.662],[15.08,36.648],[15.069,36.66],[15.057,36.662],[15.052,36.678],[15.043,36.689],[15.02,36.702],[15,36.703],[14.993,36.701],[14.991,36.698],[14.973,36.693],[14.956,36.694],[14.919,36.72],[14.902,36.728],[14.882,36.731],[14.868,36.731],[14.849,36.727],[14.832,36.718],[14.828,36.712],[14.82,36.717],[14.815,36.717],[14.801,36.708],[14.78,36.704],[14.783,36.707],[14.778,36.711],[14.758,36.71],[14.753,36.718],[14.743,36.721],[14.718,36.721],[14.708,36.718],[14.691,36.721],[14.685,36.725],[14.672,36.742],[14.649,36.751],[14.64,36.761],[14.602,36.769],[14.59,36.777],[14.575,36.778],[14.555,36.783],[14.544,36.78],[14.531,36.78],[14.516,36.788],[14.493,36.787],[14.467,36.815],[14.464,36.817],[14.459,36.816],[14.46,36.827],[14.457,36.839],[14.453,36.844],[14.443,36.872],[14.439,36.875],[14.436,36.885],[14.425,36.892],[14.426,36.896],[14.422,36.904],[14.385,36.954],[14.363,36.979],[14.308,37.028],[14.297,37.037],[14.271,37.05],[14.263,37.046],[14.268,37.052],[14.259,37.058],[14.234,37.067],[14.226,37.066],[14.209,37.077],[14.155,37.096],[14.072,37.111],[14.039,37.108],[14.036,37.106],[14.004,37.11],[13.976,37.109],[13.934,37.095],[13.922,37.099],[13.912,37.097],[13.894,37.098],[13.866,37.11],[13.859,37.115],[13.857,37.12],[13.843,37.135],[13.826,37.144],[13.788,37.147],[13.774,37.145],[13.75,37.149],[13.723,37.172],[13.712,37.172],[13.696,37.179],[13.68,37.19],[13.663,37.193],[13.656,37.212],[13.644,37.226],[13.63,37.235],[13.625,37.236],[13.622,37.234],[13.595,37.258],[13.577,37.261],[13.576,37.268],[13.559,37.284],[13.552,37.287],[13.533,37.284],[13.521,37.286],[13.507,37.292],[13.479,37.287],[13.466,37.295],[13.448,37.296],[13.438,37.302],[13.429,37.304],[13.426,37.307],[13.427,37.31],[13.401,37.334],[13.388,37.336],[13.374,37.348],[13.361,37.352],[13.351,37.359],[13.321,37.364],[13.311,37.378],[13.293,37.39],[13.287,37.392],[13.272,37.391],[13.267,37.404],[13.256,37.422],[13.235,37.437],[13.227,37.449],[13.215,37.461],[13.208,37.465],[13.196,37.465],[13.186,37.48],[13.17,37.492],[13.156,37.497],[13.144,37.497],[13.13,37.493],[13.077,37.506],[13.053,37.504],[13.04,37.496],[13.022,37.495],[13.012,37.5],[13.015,37.508],[12.994,37.536],[12.971,37.554],[12.963,37.563],[12.945,37.572],[12.918,37.577],[12.905,37.574],[12.91,37.573],[12.907,37.572],[12.897,37.577],[12.858,37.583],[12.846,37.581],[12.778,37.581],[12.685,37.56],[12.673,37.56],[12.663,37.566],[12.656,37.575],[12.649,37.578],[12.635,37.595],[12.62,37.616],[12.614,37.635],[12.596,37.647],[12.583,37.651],[12.579,37.65],[12.567,37.661],[12.56,37.663],[12.543,37.662],[12.535,37.658],[12.518,37.661],[12.517,37.666],[12.501,37.675],[12.49,37.69],[12.47,37.705],[12.472,37.715],[12.469,37.721],[12.472,37.743],[12.461,37.758],[12.448,37.783],[12.44,37.791],[12.434,37.794],[12.431,37.793],[12.425,37.803],[12.432,37.806],[12.441,37.816],[12.44,37.812],[12.442,37.81],[12.462,37.817],[12.468,37.828],[12.469,37.836],[12.464,37.843],[12.465,37.848],[12.471,37.85],[12.486,37.874],[12.482,37.882],[12.474,37.885],[12.466,37.892],[12.468,37.897],[12.459,37.906],[12.459,37.909],[12.494,37.953],[12.499,37.966],[12.494,37.978],[12.494,37.984],[12.507,37.994],[12.51,38.01],[12.52,38.009],[12.52,38.014],[12.496,38.014],[12.493,38.016],[12.498,38.018],[12.51,38.017],[12.524,38.025],[12.528,38.031],[12.555,38.053],[12.56,38.065],[12.576,38.07],[12.6,38.065],[12.613,38.067],[12.626,38.07],[12.645,38.079],[12.65,38.086],[12.659,38.09],[12.663,38.095],[12.657,38.103],[12.657,38.108],[12.66,38.112],[12.678,38.114],[12.681,38.113],[12.683,38.108],[12.698,38.105],[12.71,38.109],[12.729,38.125],[12.726,38.13],[12.737,38.139],[12.716,38.172],[12.716,38.178],[12.726,38.188],[12.734,38.19],[12.732,38.18],[12.737,38.176],[12.768,38.18],[12.772,38.171],[12.767,38.164],[12.768,38.154],[12.771,38.15],[12.78,38.15],[12.791,38.135],[12.789,38.126],[12.79,38.112],[12.811,38.081],[12.822,38.073],[12.827,38.066],[12.859,38.048],[12.864,38.052],[12.869,38.051],[12.872,38.043],[12.871,38.037],[12.881,38.029],[12.893,38.024],[12.908,38.025]]],[[[12.302,37.916],[12.304,37.915],[12.3,37.915],[12.302,37.916]]],[[[12.308,37.956],[12.317,37.936],[12.323,37.931],[12.344,37.937],[12.349,37.935],[12.35,37.93],[12.355,37.926],[12.361,37.923],[12.367,37.924],[12.371,37.918],[12.367,37.907],[12.351,37.907],[12.337,37.92],[12.309,37.919],[12.288,37.915],[12.281,37.92],[12.279,37.93],[12.273,37.937],[12.278,37.945],[12.29,37.943],[12.308,37.956]]],[[[12.063,37.993],[12.065,37.993],[12.062,37.988],[12.065,37.979],[12.078,37.962],[12.081,37.952],[12.092,37.948],[12.083,37.946],[12.05,37.955],[12.045,37.96],[12.034,37.989],[12.03,37.987],[12.028,37.991],[12.03,37.993],[12.038,37.993],[12.061,37.99],[12.063,37.993]]],[[[12.425,37.99],[12.427,37.989],[12.424,37.988],[12.425,37.99]]],[[[12.336,38.02],[12.342,38.004],[12.353,37.993],[12.351,37.989],[12.34,37.985],[12.327,37.989],[12.32,38],[12.322,38.007],[12.33,38.01],[12.333,38.021],[12.336,38.02]]],[[[12.471,37.87],[12.472,37.866],[12.465,37.864],[12.464,37.869],[12.471,37.87]]],[[[12.455,37.887],[12.465,37.878],[12.458,37.882],[12.455,37.887]]],[[[12.455,37.905],[12.455,37.899],[12.448,37.895],[12.448,37.885],[12.452,37.874],[12.448,37.867],[12.452,37.853],[12.451,37.848],[12.446,37.844],[12.437,37.881],[12.429,37.895],[12.446,37.898],[12.455,37.905]]],[[[11.955,36.839],[11.973,36.835],[11.98,36.826],[11.992,36.822],[12.004,36.822],[12.006,36.825],[12.011,36.826],[12.037,36.804],[12.05,36.798],[12.055,36.781],[12.055,36.763],[12.047,36.75],[12.023,36.734],[11.993,36.737],[11.982,36.744],[11.972,36.764],[11.956,36.772],[11.952,36.783],[11.927,36.802],[11.928,36.825],[11.934,36.833],[11.942,36.831],[11.945,36.836],[11.955,36.839]]],[[[12.496,38.012],[12.497,38.005],[12.497,38.009],[12.494,38.012],[12.496,38.012]]],[[[13.237,38.212],[13.238,38.208],[13.235,38.208],[13.234,38.212],[13.237,38.212]]],[[[13.181,38.721],[13.185,38.717],[13.196,38.715],[13.201,38.71],[13.191,38.701],[13.174,38.692],[13.155,38.693],[13.153,38.699],[13.16,38.71],[13.17,38.717],[13.181,38.721]]],[[[14.847,38.538],[14.828,38.547],[14.807,38.553],[14.796,38.561],[14.799,38.571],[14.806,38.581],[14.82,38.583],[14.838,38.582],[14.846,38.579],[14.859,38.583],[14.869,38.583],[14.873,38.58],[14.871,38.576],[14.874,38.562],[14.868,38.552],[14.871,38.539],[14.867,38.536],[14.859,38.535],[14.847,38.538]]],[[[14.96,38.432],[14.969,38.425],[14.962,38.42],[14.964,38.412],[14.981,38.41],[14.997,38.396],[15.005,38.376],[15.003,38.371],[14.991,38.366],[14.983,38.367],[14.949,38.388],[14.94,38.402],[14.939,38.409],[14.946,38.417],[14.956,38.419],[14.953,38.424],[14.954,38.429],[14.96,38.432]]],[[[14.96,38.523],[14.962,38.522],[14.963,38.49],[14.97,38.485],[14.977,38.486],[14.981,38.483],[14.98,38.479],[14.958,38.478],[14.955,38.474],[14.957,38.46],[14.962,38.451],[14.959,38.442],[14.953,38.439],[14.942,38.443],[14.935,38.459],[14.913,38.465],[14.9,38.478],[14.899,38.486],[14.905,38.512],[14.914,38.519],[14.926,38.523],[14.931,38.52],[14.948,38.52],[14.96,38.523]]],[[[14.362,38.554],[14.366,38.551],[14.366,38.546],[14.36,38.532],[14.347,38.531],[14.342,38.533],[14.339,38.542],[14.34,38.548],[14.348,38.554],[14.362,38.554]]],[[[14.553,38.586],[14.576,38.581],[14.581,38.575],[14.58,38.562],[14.585,38.559],[14.592,38.56],[14.594,38.558],[14.593,38.555],[14.587,38.554],[14.576,38.558],[14.554,38.56],[14.541,38.572],[14.539,38.578],[14.544,38.585],[14.553,38.586]]],[[[15.114,38.64],[15.116,38.639],[15.112,38.639],[15.114,38.64]]],[[[15.073,38.647],[15.077,38.644],[15.078,38.637],[15.074,38.629],[15.056,38.625],[15.055,38.629],[15.06,38.644],[15.073,38.647]]],[[[15.114,38.666],[15.118,38.665],[15.118,38.661],[15.11,38.662],[15.114,38.666]]],[[[15.221,38.812],[15.243,38.805],[15.242,38.8],[15.232,38.791],[15.227,38.777],[15.217,38.772],[15.195,38.781],[15.188,38.788],[15.187,38.791],[15.19,38.796],[15.199,38.799],[15.216,38.812],[15.221,38.812]]],[[[12.559,35.511],[12.56,35.509],[12.557,35.51],[12.559,35.511]]],[[[12.541,35.529],[12.553,35.525],[12.565,35.526],[12.591,35.521],[12.608,35.524],[12.61,35.522],[12.623,35.522],[12.633,35.518],[12.632,35.515],[12.626,35.515],[12.625,35.512],[12.625,35.505],[12.633,35.502],[12.632,35.494],[12.608,35.494],[12.605,35.503],[12.6,35.498],[12.594,35.498],[12.564,35.512],[12.529,35.516],[12.517,35.52],[12.527,35.528],[12.541,35.529]]],[[[12.321,35.551],[12.32,35.553],[12.323,35.552],[12.321,35.551]]],[[[12.875,35.875],[12.879,35.873],[12.883,35.86],[12.882,35.855],[12.859,35.855],[12.85,35.871],[12.859,35.875],[12.875,35.875]]],[[[15.106,36.79],[15.103,36.792],[15.106,36.793],[15.106,36.79]]],[[[15.152,36.689],[15.154,36.689],[15.152,36.685],[15.143,36.682],[15.145,36.688],[15.152,36.689]]]]}}}</script>
+<script src="/lib/leaflet/1.9.4/leaflet.js"></script>
+<script src="/lib/pagina-adesso.js?v=1"></script>
+</body>
+</html>
