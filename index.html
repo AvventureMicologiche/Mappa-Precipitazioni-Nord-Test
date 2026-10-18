@@ -12013,13 +12013,19 @@ function loadDefaultMarkers(){
     // 4/10/2026: il dado vale per la PRIMA; dopo, a giro (vedi `_giro` sopra).
     // L'elenco si ricalcola a ogni passo, cosi' una vetrina che scade nel frattempo
     // esce dal giro da sola: si riparte da quella che segue l'ultima mostrata.
+    // ⚠️ SI RICORDA LA POSIZIONE, NON IL NOME (18/10/2026). Nel sorteggio una chiave
+    // ripetuta pesa di piu' (il quiz sta tre volte): con `indexOf` ogni quiz tornava al
+    // PRIMO quiz dell'elenco e il giro restava inchiodato li' (13 quiz su 14 analisi).
+    // Se l'elenco e' cambiato (una vetrina scaduta) si ripiega sul nome, come prima.
+    var _k;
     if(gira && _giro.scelte){
-      var _j=scelte.indexOf(_giro.scelte[_giro.i]);
-      QUALE=scelte[(_j+1)%scelte.length];
+      var _j=(scelte[_giro.i]===_giro.scelte[_giro.i]) ? _giro.i : scelte.indexOf(_giro.scelte[_giro.i]);
+      _k=(_j+1)%scelte.length;
     } else {
-      QUALE=scelte[Math.floor(Math.random()*scelte.length)];
+      _k=Math.floor(Math.random()*scelte.length);
     }
-    _giro.scelte=scelte; _giro.i=scelte.indexOf(QUALE);
+    QUALE=scelte[_k];
+    _giro.scelte=scelte; _giro.i=_k;
     // La chiave vecchia non si legge piu': si toglie di mezzo una volta sola,
     // se no resta li' a sporcare il browser di chi c'era prima.
     try{ if(localStorage.getItem('vetrina')) localStorage.removeItem('vetrina'); }catch(e){}
