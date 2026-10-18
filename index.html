@@ -1107,6 +1107,15 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
   text-shadow:0 1px 1px rgba(0,0,0,.35);}
 #channel-logo.vetrina:active .v-btn{transform:translateY(2px);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.45), 0 1px 0 #8e0000, 0 3px 8px rgba(140,0,0,.3);}
+/* Vetrina social (18/10/2026): un colore solo per social, mai mischiati. Il rosso qui sopra e' YouTube. */
+#channel-logo.v-fb .v-occhio{color:#1877F2;}
+#channel-logo.v-fb .v-btn{background:linear-gradient(180deg,#4a97f7 0%,#1877F2 48%,#0f5fcc 100%);border-color:#0b4ea8;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(0,0,0,.18),0 3px 0 #0a3f88,0 6px 14px rgba(10,63,136,.35);}
+#channel-logo.v-fb.vetrina:active .v-btn{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 1px 0 #0a3f88,0 3px 8px rgba(10,63,136,.3);}
+#channel-logo.v-ig .v-occhio{color:#c13584;}
+#channel-logo.v-ig .v-btn{background:linear-gradient(45deg,#f9a03f 0%,#e4405f 45%,#a033b5 80%,#5b51d8 100%);border-color:#8a2a8f;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(0,0,0,.18),0 3px 0 #6a1f74,0 6px 14px rgba(120,40,120,.35);}
+#channel-logo.v-ig.vetrina:active .v-btn{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 1px 0 #6a1f74,0 3px 8px rgba(120,40,120,.3);}
 
 /* ── Frecce tutorial ── */
 .spinner{width:36px;height:36px;border:3px solid #eee;
@@ -12045,9 +12054,19 @@ function loadDefaultMarkers(){
     // Al suo posto una coppa: accanto all'occhiello sul computer, nella riga piccola e nel
     // bottone giallo della pillola sul telefono (mockup B scelto da lui).
     var gioco=V.tipo==='gioco';
+    /* ⚠️ VETRINA SOCIAL (18/10/2026, mockup approvato): "tipo":"social" e "social":"yt|fb|ig" nel file.
+       Un colore solo per vetrina, mai mischiati: YouTube rosso (il vestito di sempre della scheda),
+       Facebook blu, Instagram la sua sfumatura. Occhiello, bottone, bollino della pillola e segno della
+       riga piccola seguono il social; a sinistra la foto di Archie, diversa per social (copertina). */
+    var social=V.tipo==='social' ? (V.social||'yt') : (suFb ? 'fb' : null);
+    var SOC={fb:{nome:'Facebook',bg:'#1877F2',svg:'<path fill="#fff" d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0022 12z"/>'},
+             ig:{nome:'Instagram',bg:'linear-gradient(45deg,#f9a03f 0%,#e4405f 45%,#a033b5 80%,#5b51d8 100%)',svg:'<rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="17.4" cy="6.6" r="1.4" fill="#fff"/>'}};
+    // il bollino del social: quadratino col logo bianco, w x h, angoli in proporzione
+    function bollino(w,h,s){ var b=SOC[s], ic=Math.round(Math.min(w,h)*0.62); return '<span style="display:inline-flex;align-items:center;justify-content:center;width:'+w+'px;height:'+h+'px;border-radius:'+Math.max(3,Math.round(h/4))+'px;background:'+b.bg+'"><svg width="'+ic+'" height="'+ic+'" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+b.svg+'</svg></span>'; }
+    if(SOC[social]) ytPieno=bollino(16,16,social);
     function coppa(px,col){ return '<svg width="'+px+'" height="'+px+'" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="'+col+'" d="M7 3h10v2h3v3a4 4 0 0 1-4 4h-.3A5 5 0 0 1 13 14.9V17h3v3H8v-3h3v-2.1A5 5 0 0 1 8.3 12H8a4 4 0 0 1-4-4V5h3zm-1 4v1a2 2 0 0 0 2 2V7zm12 0v3a2 2 0 0 0 2-2V7z"/></svg>'; }
     if(gioco) ytPieno=coppa(14,'#E8A317');
-    var segno= gioco ? '🏆' : '▶';   // davanti alla riga piccola della pillola
+    var segno= gioco ? '🏆' : SOC[social] ? bollino(13,13,social) : '▶';   // davanti alla riga piccola della pillola
 
     // L'onclick e' un attributo scritto nel markup: va SOSTITUITO, non aggiunto,
     // altrimenti a ogni clic partirebbero due eventi.
@@ -12068,8 +12087,9 @@ function loadDefaultMarkers(){
     var box=document.getElementById('channel-logo');
     if(box){
       box.classList.add('vetrina');
+      box.classList.remove('v-fb','v-ig'); if(SOC[social]) box.classList.add('v-'+social);   // i colori del social (CSS)
       box.href=V.link;
-      box.title= gioco ? 'Gioca' : 'Guarda il video nuovo';
+      box.title= gioco ? 'Gioca' : SOC[social] ? 'Seguici su '+SOC[social].nome : (social==='yt' ? 'Iscriviti al canale' : 'Guarda il video nuovo');
       box.setAttribute('onclick',tracc('vetrina-desktop'));
       box.innerHTML='<div class="v-alto">'
         +'<div class="v-cop" style="background-image:url(&quot;'+urlCopertina(V.copertina)+'&quot;)"></div>'
@@ -12099,6 +12119,7 @@ function loadDefaultMarkers(){
         t.innerHTML=(V.gancioP||V.gancio)+'<small>'+segno+' '+V.occhielloP+' \u00B7 '+V.canale+'</small>';
         var ic=pill.querySelector('.cp-yt');
         if(ic && gioco) ic.innerHTML='<span style="display:inline-flex;align-items:center;justify-content:center;width:52px;height:36px;border-radius:9px;background:#F6B91A">'+coppa(24,'#7A3A08')+'</span>';
+        else if(ic && SOC[social]) ic.innerHTML=bollino(52,36,social);   // il bollino del social al posto di quello YouTube
         var im=pill.querySelector('img');
         if(im && V.copertina){ im.src=urlCopertina(V.copertina); im.className='cp-cop'; im.alt=''; }
         pill.href=V.link;
