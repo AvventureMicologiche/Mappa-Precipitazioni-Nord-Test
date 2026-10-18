@@ -33,7 +33,7 @@ const { STILE_NUOVO, RILIEVO } = require('./lib-pagina-funghi.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const RADICE = path.resolve(__dirname, '..', '..');
-const VERSIONE_JS = 1;   // si alza quando cambia lib/pagina-adesso.js: il browser riprende il file nuovo
+const VERSIONE_JS = 2;   // si alza quando cambia lib/pagina-adesso.js: il browser riprende il file nuovo
 
 // le regioni: l'anagrafe italiana + l'Abruzzo dopo il Lazio (stesso ordine nord-sud delle altre liste)
 const ABRUZZO = { k:'abruzzo', nome:'Abruzzo', prep:'in', senzaPagina:true };

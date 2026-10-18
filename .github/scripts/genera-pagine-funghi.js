@@ -38,7 +38,7 @@
 const fs = require('fs');
 const path = require('path');
 const { REGIONI, navAltre, briciolaJson } = require('./genera-pagine-regione.js');
-const { LOCALITA, bello, slug, slugRegione, postiDellaZona } = require('./lib-nomi.js');
+const { LOCALITA, bello, slug, slugRegione, postiDellaZona, diEnte } = require('./lib-nomi.js');
 const { rigaStagione } = require('./lib-stagione.js');
 // 24/9/2026: verdetto, barre e finestra comuni con le pagine di zona
 const { STILE_NUOVO, JS_COMUNE, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = require('./lib-pagina-funghi.js');
@@ -118,7 +118,7 @@ function pagina(r, posti) {
 <meta name="description" content="${descr}">
 <link rel="canonical" href="${SITO}/funghi/${r.k}/">
 <meta property="og:title" content="Funghi ${r.prep} ${nome} oggi: dove stanno nascendo?">
-<meta property="og:description" content="Dove e' caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
+<meta property="og:description" content="Dove è caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
 <meta property="og:image" content="${SITO}/preview.jpg">
 <meta property="og:url" content="${SITO}/funghi/${r.k}/">
 <meta property="og:type" content="website">
@@ -196,7 +196,7 @@ td b{color:var(--blu-scuro);}
    Certenoli» andava su quattro righe. */
 .hd-c{display:none;}
 td.mm{position:relative;min-width:118px;}
-.barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;
+.barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;max-width:calc(100% - 7px);
   min-width:3px;background:#cfe0f5;border-radius:4px;}
 .mm .v{position:relative;font-weight:700;color:var(--blu-scuro);padding-left:7px;}
 .mm .v.zero{color:#a0aab8;font-weight:400;}
@@ -390,7 +390,7 @@ c'è, non se quest'anno ci sono nati funghi.</p>
 
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano i pluviometri di ${corta} nei posti da bosco ${gen}: un pluviometro vero,
+<p>I millimetri li misurano i pluviometri ${diEnte(corta)} nei posti da bosco ${gen}: un pluviometro vero,
 quota fra 200 e 1600 metri, almeno il 37% di bosco entro 3 km sulle mappe di OpenStreetMap. I numeri in
 cima sono la media di questi pluviometri, giorno per giorno, aggiornata ogni mattina.</p>
 <p>Perché da 13 a 20 giorni fa: dopo una pioggia il fungo impiega almeno dodici o tredici giorni
@@ -399,7 +399,7 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 <a href="${SITO}/${r.k}/">dove ha piovuto ${r.prep} ${nome}</a>.</p>
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
-<p>Dati di ${r.agenzia} via il nostro archivio. Il bosco è calcolato su dati OpenStreetMap, licenza ODbL.
+<p>Dati ${diEnte(r.agenzia)} via il nostro archivio. Il bosco è calcolato su dati OpenStreetMap, licenza ODbL.
 La provincia viene dai confini provinciali ISTAT.</p>
 </div>
 ${/* Il bottone YouTube in fondo (12/10/2026): qui prima non c'era, ora c'e' in tutte,
@@ -423,7 +423,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco ${gen}.</p>
 
 
 <h2 style="margin-top:30px">Tutta la pioggia ${r.prep} ${nome}</h2>
-<p>Questa pagina guarda solo i pluviometri in mezzo al bosco. Per la regione intera, pianura compresa, c'è <a href="${SITO}/${r.k}/">dove ha piovuto ${r.prep} ${nome}</a>: ${r.staz} pluviometri di ${r.agenzia}.</p>
+<p>Questa pagina guarda solo i pluviometri in mezzo al bosco. Per la regione intera, pianura compresa, c'è <a href="${SITO}/${r.k}/">dove ha piovuto ${r.prep} ${nome}</a>: ${r.staz} pluviometri ${diEnte(r.agenzia)}.</p>
 
 ${navAltre('funghi')}
 </main>
@@ -669,7 +669,7 @@ ${JS_COMUNE}
     document.getElementById('testa').innerHTML =
       '<div class="capo"><div class="et">Dove ha piovuto di più 13-20 giorni fa?</div>'
       + '<div class="gr">' + esc(primo.n) + ', ' + num(primo.mm) + ' mm</div>'
-      + '<div class="pic">' + luogo(primo) + ' · ' + primo.q + ' MT'
+      + '<div class="pic">' + luogo(primo) + ' · ' + primo.q + ' m'
       + (primo.forte ? ' · ultima pioggia forte ' + (primo.forte.g===1?'ieri':primo.forte.g+' giorni fa')
                         + ' (' + num(primo.forte.mm) + ' mm)' : '') + '</div>'
       + '<div class="capo-btns">'
@@ -697,7 +697,7 @@ ${JS_COMUNE}
         : '<span class="vuoto">niente di forte</span>';
       return '<tr><td class="pos">' + (i+1) + '</td>'
         + '<td><a class="loc" href="' + link(r, daG, aG) + '" title="Apri la mappa su ' + esc(r.n) + '">'
-        + '<b>' + esc(r.n) + '</b><span class="com">' + luogo(r) + ' · ' + r.q + ' MT</span>'
+        + '<b>' + esc(r.n) + '</b><span class="com">' + luogo(r) + ' · ' + r.q + ' m</span>'
         /* ⚠️ SUL TELEFONO la colonna «ultima pioggia forte» e' nascosta, e senza
            questa riga la nota che la spiega parlava di una cosa invisibile.
            Qui sotto il nome lo spazio c'e', e il dato e' piu' utile della

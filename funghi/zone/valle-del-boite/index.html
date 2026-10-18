@@ -77,7 +77,7 @@ td b{color:var(--blu-scuro);}
    Certenoli» andava su quattro righe. */
 .hd-c{display:none;}
 td.mm{position:relative;min-width:118px;}
-.barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;
+.barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;max-width:calc(100% - 7px);
   min-width:3px;background:#cfe0f5;border-radius:4px;}
 .mm .v{position:relative;font-weight:700;color:var(--blu-scuro);padding-left:7px;}
 .mm .v.zero{color:#a0aab8;font-weight:400;}
@@ -397,12 +397,12 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 <p>Ti serve un altro periodo? Per ieri e gli ultimi 30 giorni c’è
 <a href="https://avventurepluvio-test.pages.dev/zone/valle-del-boite/">dove ha piovuto in Valle del Boite</a>.</p>
 <h2>L'archivio della zona</h2>
-<p>Da giugno 2026 a agosto 2026, in 45 giorni di misura, i 5 pluviometri
+<p>Da giugno 2026 a ottobre 2026, in 136 giorni di misura, i 5 pluviometri
 della Valle del Boite hanno contato
-<b>77 mm</b> di pioggia a testa, in media. Il più bagnato è <b>Rio Rudan INADEF Sentiero CAI 230</b> con
-100 mm, il più asciutto Villanova (Borca di Cadore) con 56.
-La giornata più piovosa è stata il <b>14 luglio 2026</b> a Rio Rudan INADEF Sentiero CAI 230,
-con <b>18,5 mm</b>.</p>
+<b>325 mm</b> di pioggia a testa, in media. Il più bagnato è <b>Rio Rudan INADEF Sentiero CAI 230</b> con
+353 mm, il più asciutto Rio Rudan INADEF DX briglia con 297.
+La giornata più piovosa è stata il <b>10 settembre 2026</b> a Pescul,
+con <b>57,6 mm</b>.</p>
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
 <p>Dati di ARPA Veneto via il nostro archivio. Il bosco entro 3 km è calcolato su dati
@@ -675,7 +675,7 @@ OpenStreetMap, licenza ODbL.</p>
     var ieriVero = iso(menoDa(iso(new Date()), 1)), giornoIeri = ilGg(ieri);
     document.getElementById("ieri").innerHTML = (ieri === ieriVero ? "Ieri, " + gg(ieri)
       : giornoIeri.charAt(0).toUpperCase() + giornoIeri.slice(1)) + ": " + (s[0] == null ? "il dato non è ancora arrivato."
-      : "in media <b>" + num(s[0]) + " mm</b> sui " + righe.length + " pluviometri della zona.");
+      : "in media <b>" + (s[0] > 0 && Math.round(s[0] * 10) === 0 ? "meno di 0,1" : num(s[0])) + " mm</b> sui " + righe.length + " pluviometri della zona.");
     scriviFinestra(s, oggi, null, "in media");
     document.getElementById("t-conta").href = link(daG, aG);
     document.getElementById("lnk-pioggia").href = link(daG, ieri);

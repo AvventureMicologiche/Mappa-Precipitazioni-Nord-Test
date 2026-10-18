@@ -58,7 +58,7 @@ const { clima, buono, periodo, dataBella, meseBello, migliaia, virgola, artGiorn
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
 // ⚠️ per id E vicinanza, non per solo id (18/10/2026): «156» e' Crodo in Piemonte e Crespano
 // del Grappa in Veneto, e la pagina di Crodo finiva sui Colli Asolani. Vedi lib-nomi.js.
-const { zonaDelPosto } = require('./lib-nomi.js');
+const { zonaDelPosto, artNum, vocaleNum, diEnte } = require('./lib-nomi.js');   // «l'81%», «l'8º» (18/10/2026)
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const RADICE = path.join(__dirname, '..', '..');
@@ -94,9 +94,19 @@ function kmFra(la, lo, lb, lob) {
 
 // «al Passo del Turchino», «a Reppia», «all'Alpe di Vobbia»: la preposizione
 // giusta si sceglie dall'articolo che il nome si porta dietro.
+// ⚠️ 18/10/2026 (quarto check): «Valle», «Villa», «Cima» stavano con l'«all'» e
+// uscivano «all'Villa Santina», «all'Valle di Cadore»: sono nomi di paese, vogliono «a».
+// I nomi con l'articolo dentro («La Verna», «Il Gelso») davano «a La Verna»: ora la
+// preposizione articolata. E le localita' che non sono paesi (dighe, malghe, piani).
 function aPosto(n) {
-  if (/^(Passo|Colle|Monte|Bric|Rifugio|Lago|Piano|Ponte|Bosco|Forte|Poggio)\b/.test(n)) return 'al ' + n;
-  if (/^(Alpe|Isola|Alta|Valle|Villa|Cima)\b/.test(n)) return "all'" + n;
+  const art = n.match(/^(La|Le|Il|Lo|I|Gli)\s+(.+)$/);
+  if (art) return { La: 'alla ', Le: 'alle ', Il: 'al ', Lo: 'allo ', I: 'ai ', Gli: 'agli ' }[art[1]] + art[2];
+  if (/^L'/.test(n)) return "all'" + n.slice(2);
+  if (/^(Passo|Colle|Monte|Bric|Rifugio|Lago|Piano|Ponte|Bosco|Forte|Poggio|Col|Giogo|Pratomagno)\b/.test(n)
+      || /^Pian (della|delle|del|dei|degli)\b/.test(n)) return 'al ' + n;   // «Pian di Scò», «Pian Camuno» sono paesi: «a»
+  if (/^(Diga|Malga|Casera|Fattoria)\b/.test(n)) return 'alla ' + n;
+  if (/^Piani\b/.test(n)) return 'ai ' + n;
+  if (/^(Alpe|Isola|Alta|Abbazia)\b/.test(n)) return "all'" + n;
   // «ad Anterselva», «ad Aulla»: davanti alla a si scrive ad (13/9/2026, il
   // titolo nuovo comincia proprio da qui e «a Anterselva» si leggeva male).
   if (/^A/.test(n)) return 'ad ' + n;
@@ -205,7 +215,7 @@ function pagina(r, posto, slug, sl) {
   // copre solo la prima). Il titolo non si tocca, lo ha deciso lui. Niente
   // millimetri qui: la pagina si rigenera ogni tre mesi, il verdetto e' del browser.
   const DESCR = [
-    `Meteo funghi ${nomePosto}${SIGLA_T}: quanta pioggia è caduta negli ultimi 20 giorni, dal pluviometro di ${CORTA} a ${quota} metri, e il verdetto per la crescita dei funghi.`,
+    `Meteo funghi ${nomePosto}${SIGLA_T}: quanta pioggia è caduta negli ultimi 20 giorni, dal pluviometro ${diEnte(CORTA)} a ${quota} metri, e il verdetto per la crescita dei funghi.`,
     `Meteo funghi ${nomePosto}${SIGLA_T}: quanta pioggia è caduta negli ultimi 20 giorni, misurata dal pluviometro, e il verdetto per la crescita dei funghi.`,
     `Meteo funghi ${nomePosto}${SIGLA_T}: la pioggia degli ultimi 20 giorni e il verdetto per la crescita dei funghi.`,
   ].find(t => t.length <= 158) || `Funghi ${DOVE} oggi: le piogge degli ultimi 25 giorni.`;
@@ -390,7 +400,7 @@ ${VICINI5.map(v => `<tr${v.io ? ' class="qui"' : ''} data-id="${esc(v.id)}"><td>
 <td class="mm"><span class="v">…</span></td></tr>`).join('\n')}
 </tbody></table>
 
-<h2 style="font-size:18px">Dove è piovuto di più ${esc(GEN)}</h2>
+<h2 style="font-size:18px">Dove è piovuto di più ${r.prep} ${esc(NOME)}</h2>
 <div id="migliori"></div>
 <p class="nota" id="notavicini"></p>
 
@@ -409,8 +419,8 @@ ${haBoschi(REG) ? `<h2>Che boschi ci sono intorno</h2>
 ` : ''}
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misura il pluviometro di ${esc(AGENZIA)} ${esc(DOVE)}: ${esc(sigla)}, ${quota} metri,
-con il ${bosco}% di bosco entro 3 km. Sono misure a terra, giorno per giorno, aggiornate ogni mattina.
+<p>I millimetri li misura il pluviometro ${esc(diEnte(AGENZIA))} ${esc(DOVE)}: ${esc(sigla)}, ${quota} metri,
+con ${artNum('il', bosco + '%')} di bosco entro 3 km. Sono misure a terra, giorno per giorno, aggiornate ogni mattina.
 La giornata di oggi non è contata perché il pluviometro la sta ancora misurando.</p>
 <p>Perché da 13 a 20 giorni fa: dopo una pioggia il fungo impiega almeno dodici o tredici giorni
 a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due settimane.</p>
@@ -419,16 +429,16 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 ${esc(ZONA.dove)}: <a href="${SITO}/funghi/zone/${slugDaNome(ZONA.n)}/">guarda tutta la zona</a>,
 con i suoi ${new Set(ZONA.posti).size} pluviometri insieme.` : ''}</p>
 ${RITRATTO ? `<h2>L'archivio di questo pluviometro</h2>
-<p><b>${periodo(RITRATTO)}</b>, in ${RITRATTO.giorni} giorni di misura, ${bagnate(RITRATTO)}
+<p><b>${(t => t.charAt(0).toUpperCase() + t.slice(1))(periodo(RITRATTO))}</b>, in ${RITRATTO.giorni} giorni di misura, ${bagnate(RITRATTO)}
 Il giorno più bagnato è stato ${artGiorno(RITRATTO.maxData)}<b>${dataBella(RITRATTO.maxData)}</b>, con
 <b>${virgola(RITRATTO.maxMm)} mm</b>.${RITRATTO.mese && RITRATTO.meseMm >= 1 ? ` Il mese più piovoso,
 fra quelli che abbiamo per intero, è <b>${meseBello(RITRATTO.mese)}</b> con
 ${migliaia(RITRATTO.meseMm)} mm.` : ''}${POSTO_IN_CLASSIFICA ? ` Su ${QUANTI_CONFRONTABILI} pluviometri
-da bosco ${esc(GEN)} con lo stesso periodo alle spalle, questo è il <b>${POSTO_IN_CLASSIFICA}º</b>
+da bosco ${esc(GEN)} con lo stesso periodo alle spalle, questo è ${vocaleNum(POSTO_IN_CLASSIFICA, true) ? "l'" : 'il '}<b>${POSTO_IN_CLASSIFICA}º</b>
 per acqua caduta.` : ''}</p>` : ''}
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
-<p>Dati di ${esc(AGENZIA)} via il nostro archivio. Il bosco entro 3 km è calcolato su dati
+<p>Dati ${esc(diEnte(AGENZIA))} via il nostro archivio. Il bosco entro 3 km è calcolato su dati
 OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</p>
 </div>
 ${coppiaQuiz(REG, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"

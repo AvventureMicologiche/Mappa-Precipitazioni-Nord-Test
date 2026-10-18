@@ -77,7 +77,7 @@ td b{color:var(--blu-scuro);}
    Certenoli» andava su quattro righe. */
 .hd-c{display:none;}
 td.mm{position:relative;min-width:118px;}
-.barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;
+.barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;max-width:calc(100% - 7px);
   min-width:3px;background:#cfe0f5;border-radius:4px;}
 .mm .v{position:relative;font-weight:700;color:var(--blu-scuro);padding-left:7px;}
 .mm .v.zero{color:#a0aab8;font-weight:400;}
@@ -189,6 +189,8 @@ nav.altre a{color:var(--blu);}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
 .img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
 .tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
@@ -247,6 +249,8 @@ nav.altre a{color:var(--blu);}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
 .img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
 .tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
@@ -322,7 +326,7 @@ ul.paesi .quota{flex:none;width:64px;text-align:right;font-weight:800;color:var(
 <p class="nota">Carnia, intorno a Enemonzo: pinete in fucsia, faggete in verde, castagneti in arancio. <a href="https://avventurepluvio-test.pages.dev/?r=friuli&amp;boschi=1&amp;z=12&amp;c=46.39444,12.77417">Apri la mappa</a> per vedere il resto della zona.</p>
 
 <h2>Che boschi ci sono in Carnia</h2>
-<p class="breve">Il bosco copre il 80% del territorio intorno ai pluviometri della zona. Ecco come si divide.</p>
+<p class="breve">Il bosco copre l'80% del territorio intorno ai pluviometri della zona. Ecco come si divide.</p>
 <div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#e7298a"></span><b>pinete</b><span class="fr-v">38,5%</span></div><div class="fr-b"><i style="width:100%;background:#e7298a"></i></div><div class="fr-s">pino silvestre, nero, marittimo, domestico e d'Aleppo</div></div>
 <div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#1b9e77"></span><b>faggete</b><span class="fr-v">35,1%</span></div><div class="fr-b"><i style="width:91%;background:#1b9e77"></i></div><div class="fr-s">boschi di faggio, dalla media montagna in su</div></div>
 <div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#2e9bd6"></span><b>carpino, orniello e aceri</b><span class="fr-v">8,5%</span></div><div class="fr-b"><i style="width:22%;background:#2e9bd6"></i></div><div class="fr-s">carpino nero e orniello, sui versanti asciutti</div></div>

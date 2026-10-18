@@ -32,7 +32,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { DATI } = require('./lib-giorni.js');
+const { DATI, oggiItalia } = require('./lib-giorni.js');
 const { AFFIDABILE_DA } = require('./lib-affidabile.js');
 
 // 30 giorni, scelto su un conto e non a occhio (4/9/2026): con questa soglia
@@ -47,8 +47,13 @@ const MESI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'lug
 
 // Tutti i giorni che una cartella ha in archivio, dal piu' vecchio al piu'
 // recente. Si guarda il disco, non un calendario: i buchi sono normali.
+// ⚠️ OGGI NO (18/10/2026, quarto check). Toscana, Piemonte, Veneto e Alto Adige
+// scrivono gia' il file del giorno in corso: senza questo taglio il ritratto
+// contava una giornata a meta' (Bosco di Rossano «99 giorni» invece di 98) sotto
+// la frase «La giornata di oggi non e' contata». Il giorno italiano, non UTC.
 function giorniDi(dirs) {
   const s = new Set();
+  const oggi = oggiItalia();
   for (const dir of dirs) {
     let f = [];
     try { f = fs.readdirSync(path.join(DATI, dir)); } catch (e) { continue; }
@@ -59,6 +64,7 @@ function giorniDi(dirs) {
       // ⚠️ Il taglio e' PER CARTELLA, non sulla finestra intera: una regione a
       // due cartelle (Friuli, Svizzera) perderebbe i giorni sani dell'altra.
       if (da && g < da) continue;
+      if (g >= oggi) continue;
       s.add(g);
     }
   }

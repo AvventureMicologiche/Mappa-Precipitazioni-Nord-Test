@@ -37,7 +37,7 @@ const fs = require('fs');
 const { YT_BTN, stileDelModello } = require('./lib-pagina-funghi.js');
 const path = require('path');
 const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
-const { slug } = require('./lib-nomi.js');
+const { slug, artNum } = require('./lib-nomi.js');   // artNum: «l'81%», «sull'87%» (18/10/2026)
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const SITO = 'https://avventurepluvio-test.pages.dev';
@@ -149,11 +149,11 @@ const tipiInLinea = (tipi, n = 3) => principali(tipi, n).map(([t, v]) =>
 function usi(T, dove, extra) {
   const u = [];
   const fungo = (T.castagneti || 0) + (T.faggete || 0) + (T.querceti || 0) + (T['abetaie e peccete'] || 0);
-  u.push(['🍄', 'Funghi', `Porcini e compagni stanno sotto castagni, faggi, querce e abeti: ${dove} sono il ${Math.round(fungo)}% del bosco. E con la pioggia degli ultimi giorni sai anche se è il momento: ${extra.funghi}.`]);
-  if (T.castagneti >= 3) u.push(['🌰', 'Castagne', `I castagneti sono il ${pc(T.castagneti)} del bosco.${extra.castagne ? ' Dove ce ne sono di più: ' + extra.castagne + '.' : ''} Prima di raccogliere assicurati che il bosco sia libero: molti castagneti sono proprietà private.`]);
+  u.push(['🍄', 'Funghi', `Porcini e compagni stanno sotto castagni, faggi, querce e abeti: ${dove} sono ${artNum('il', Math.round(fungo) + '%')} del bosco. E con la pioggia degli ultimi giorni sai anche se è il momento: ${extra.funghi}.`]);
+  if (T.castagneti >= 3) u.push(['🌰', 'Castagne', `I castagneti sono ${artNum('il', pc(T.castagneti))} del bosco.${extra.castagne ? ' Dove ce ne sono di più: ' + extra.castagne + '.' : ''} Prima di raccogliere assicurati che il bosco sia libero: molti castagneti sono proprietà private.`]);
   if ((T.faggete || 0) + (T.lariceti || 0) >= 5) u.push(['🍂', "Foliage d'autunno", `Il giallo e il rosso di ottobre sono delle faggete (${pc(T.faggete || 0)})${T.lariceti >= 1 ? ` e dei lariceti (${pc(T.lariceti)}), che diventano oro prima di perdere gli aghi` : ''}.${extra.faggete ? ' Faggete: ' + extra.faggete + '.' : ''}`]);
   u.push(['🥾', 'Escursioni e sentieri', 'Prima di partire guardi che bosco attraversa il sentiero, a che quota e su quale versante: tocchi un punto sulla mappa e lo apri su Google Maps.']);
-  if ((T.lariceti || 0) + (T['abetaie e peccete'] || 0) >= 5) u.push(['🌿', 'Mirtilli', `Crescono sotto lariceti, peccete e faggete d'alta quota: ${dove} larici e abeti sono il ${Math.round(T.lariceti + T['abetaie e peccete'])}% del bosco.`]);
+  if ((T.lariceti || 0) + (T['abetaie e peccete'] || 0) >= 5) u.push(['🌿', 'Mirtilli', `Crescono sotto lariceti, peccete e faggete d'alta quota: ${dove} larici e abeti sono ${artNum('il', Math.round(T.lariceti + T['abetaie e peccete']) + '%')} del bosco.`]);
   if (T.querceti >= 10 || T['pioppi, salici, ontani e frassini'] >= 2) u.push(['🟤', 'Tartufi', `Si cercano soprattutto nei querceti (${pc(T.querceti || 0)}) e lungo i fiumi, fra pioppi, salici e ontani (${pc(T['pioppi, salici, ontani e frassini'] || 0)}).`]);
   return '<ul class="usi">\n' + u.map(([i, t, x]) => `<li><span class="ic">${i}</span><div><b>${esc(t)}</b><br>${x}</div></li>`).join('\n') + '\n</ul>';
 }
@@ -256,7 +256,7 @@ ${usi(T, esc(r.inn), { funghi, castagne: zoneCon(r.k, 'castagneti', 30), faggete
 <h2>Le valli e le zone ${esc(r.del)}</h2>
 <p class="breve">Che bosco c'è in ogni zona, intorno ai suoi pluviometri. Ogni zona ha la sua pagina con la mappa.</p>
 <ul class="dove">
-${Z.slice().sort((a, b) => a.n.localeCompare(b.n, 'it')).map(z => `<li>${zlink(z).replace(/>([^<]+)<\/a>$/, '><b>$1</b></a>')} <span class="pc">· bosco sul ${Math.round(z.bosco)}% del territorio</span><br>${tipiInLinea(z.tipi)}</li>`).join('\n')}
+${Z.slice().sort((a, b) => a.n.localeCompare(b.n, 'it')).map(z => `<li>${zlink(z).replace(/>([^<]+)<\/a>$/, '><b>$1</b></a>')} <span class="pc">· bosco ${artNum('sul', Math.round(z.bosco) + '%')} del territorio</span><br>${tipiInLinea(z.tipi)}</li>`).join('\n')}
 </ul>
 `;
   }
@@ -304,7 +304,7 @@ function paginaZona(z) {
 <p class="nota">${esc(didascalia(tipiDelPunto(S, T), doveS))}. <a href="${MAPPA}">Apri la mappa</a> per vedere il resto della zona.</p>
 
 <h2>Che boschi ci sono ${esc(z.dove)}</h2>
-<p class="breve">Il bosco copre il ${Math.round(z.bosco)}% del territorio intorno ai pluviometri della zona. Ecco come si divide.</p>
+<p class="breve">Il bosco copre ${artNum('il', Math.round(z.bosco) + '%')} del territorio intorno ai pluviometri della zona. Ecco come si divide.</p>
 ${barre(T)}
 `;
   if (paesi.length) h += `
@@ -424,7 +424,7 @@ ${paragrafiT(B['apertura'], V, 'breve')}
 <h2>${tit('regioni: titolo')}</h2>
 ${paragrafiT(B['regioni: testo'], V, 'breve')}
 ${perReg.filter(x => x.ha >= 1000).map(x => `<div class="fr"><div class="fr-t"><span class="fr-sw" style="background:${COL[T]}"></span><a href="${SITO}/mappa-forestale/${x.r.k}/"><b>${esc(x.r.nome)}</b></a><span class="fr-v">${n1(Math.round(x.ha / 100) * 100)} ha</span></div>` +
-  `<div class="fr-b"><i style="width:${Math.round(x.ha / perReg[0].ha * 100)}%;background:${COL[T]}"></i></div><div class="fr-s">il ${pc(x.pc)} del bosco ${esc(x.r.del)}</div></div>`).join('\n')}
+  `<div class="fr-b"><i style="width:${Math.round(x.ha / perReg[0].ha * 100)}%;background:${COL[T]}"></i></div><div class="fr-s">${artNum('il', pc(x.pc))} del bosco ${esc(x.r.del)}</div></div>`).join('\n')}
 
 <h2>${tit('altitudine: titolo')}</h2>
 ${paragrafiT(B['altitudine: testo'], V, 'breve')}
@@ -447,7 +447,7 @@ ${paragrafiT(B['funghi: dopo'], V)}
 <h2>${tit('valli: titolo')}</h2>
 ${paragrafiT(B['valli: testo'], V, 'breve')}
 <ul class="dove">
-${zone.map(z => `<li>${zlink(z).replace(/>([^<]+)<\/a>$/, '><b>$1</b></a>')} <span class="pc">· ${esc(DI_REG[z.reg].nome)}</span><br><span class="fr-sw" style="background:${COL[T]}"></span>${esc(T)} <b>${Math.round(z.tipi[T])}%</b> del bosco <span class="pc">· bosco sul ${Math.round(z.bosco)}% del territorio</span></li>`).join('\n')}
+${zone.map(z => `<li>${zlink(z).replace(/>([^<]+)<\/a>$/, '><b>$1</b></a>')} <span class="pc">· ${esc(DI_REG[z.reg].nome)}</span><br><span class="fr-sw" style="background:${COL[T]}"></span>${esc(T)} <b>${Math.round(z.tipi[T])}%</b> del bosco <span class="pc">· bosco ${artNum('sul', Math.round(z.bosco) + '%')} del territorio</span></li>`).join('\n')}
 </ul>
 `;
   if (paesi.length) h += `

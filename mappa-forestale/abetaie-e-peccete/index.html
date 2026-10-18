@@ -77,7 +77,7 @@ td b{color:var(--blu-scuro);}
    Certenoli» andava su quattro righe. */
 .hd-c{display:none;}
 td.mm{position:relative;min-width:118px;}
-.barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;
+.barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;max-width:calc(100% - 7px);
   min-width:3px;background:#cfe0f5;border-radius:4px;}
 .mm .v{position:relative;font-weight:700;color:var(--blu-scuro);padding-left:7px;}
 .mm .v.zero{color:#a0aab8;font-weight:400;}
@@ -189,6 +189,8 @@ nav.altre a{color:var(--blu);}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
 .img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
 .tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
@@ -247,6 +249,8 @@ nav.altre a{color:var(--blu);}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
+.gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
+.fin .c.nodato b{color:#8a97a6;font-weight:400;}
 .img-mappa{width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);margin-top:10px;}
 .tasti{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
 .tasti a{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:14.5px;color:var(--blu-scuro);
@@ -332,7 +336,7 @@ ul.paesi .quota{flex:none;width:64px;text-align:right;font-weight:800;color:var(
 <div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#264b73"></span><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/friuli/"><b>Friuli Venezia Giulia</b></a><span class="fr-v">47.400 ha</span></div><div class="fr-b"><i style="width:22%;background:#264b73"></i></div><div class="fr-s">il 15,1% del bosco del Friuli Venezia Giulia</div></div>
 <div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#264b73"></span><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/piemonte/"><b>Piemonte</b></a><span class="fr-v">25.100 ha</span></div><div class="fr-b"><i style="width:12%;background:#264b73"></i></div><div class="fr-s">il 2,5% del bosco del Piemonte</div></div>
 <div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#264b73"></span><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/valledaosta/"><b>Valle d'Aosta</b></a><span class="fr-v">15.300 ha</span></div><div class="fr-b"><i style="width:7%;background:#264b73"></i></div><div class="fr-s">il 15,6% del bosco della Valle d'Aosta</div></div>
-<div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#264b73"></span><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/emilia/"><b>Emilia-Romagna</b></a><span class="fr-v">7.600 ha</span></div><div class="fr-b"><i style="width:4%;background:#264b73"></i></div><div class="fr-s">il 1,1% del bosco dell'Emilia-Romagna</div></div>
+<div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#264b73"></span><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/emilia/"><b>Emilia-Romagna</b></a><span class="fr-v">7.600 ha</span></div><div class="fr-b"><i style="width:4%;background:#264b73"></i></div><div class="fr-s">l'1,1% del bosco dell'Emilia-Romagna</div></div>
 <div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#264b73"></span><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/calabria/"><b>Calabria</b></a><span class="fr-v">3.600 ha</span></div><div class="fr-b"><i style="width:2%;background:#264b73"></i></div><div class="fr-s">il 0,6% del bosco della Calabria</div></div>
 <div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#264b73"></span><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/toscana/"><b>Toscana</b></a><span class="fr-v">1.000 ha</span></div><div class="fr-b"><i style="width:0%;background:#264b73"></i></div><div class="fr-s">il 0,1% del bosco della Toscana</div></div>
 
@@ -363,7 +367,7 @@ ul.paesi .quota{flex:none;width:64px;text-align:right;font-weight:800;color:var(
 <li><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/zone/val-chiarso/"><b>Val Chiarsò</b></a> <span class="pc">· Friuli Venezia Giulia</span><br><span class="fr-sw" style="background:#264b73"></span>abetaie e peccete <b>48%</b> del bosco <span class="pc">· bosco sul 65% del territorio</span></li>
 <li><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/zone/altopiano-del-tesino/"><b>Altopiano del Tesino</b></a> <span class="pc">· Trentino</span><br><span class="fr-sw" style="background:#264b73"></span>abetaie e peccete <b>46%</b> del bosco <span class="pc">· bosco sul 73% del territorio</span></li>
 <li><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/zone/val-sedornia/"><b>Val Sedornia</b></a> <span class="pc">· Lombardia</span><br><span class="fr-sw" style="background:#264b73"></span>abetaie e peccete <b>45%</b> del bosco <span class="pc">· bosco sul 58% del territorio</span></li>
-<li><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/zone/val-terragnolo/"><b>Val Terragnolo</b></a> <span class="pc">· Trentino</span><br><span class="fr-sw" style="background:#264b73"></span>abetaie e peccete <b>44%</b> del bosco <span class="pc">· bosco sul 81% del territorio</span></li>
+<li><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/zone/val-terragnolo/"><b>Val Terragnolo</b></a> <span class="pc">· Trentino</span><br><span class="fr-sw" style="background:#264b73"></span>abetaie e peccete <b>44%</b> del bosco <span class="pc">· bosco sull'81% del territorio</span></li>
 <li><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/zone/val-di-non/"><b>Val di Non</b></a> <span class="pc">· Trentino</span><br><span class="fr-sw" style="background:#264b73"></span>abetaie e peccete <b>44%</b> del bosco <span class="pc">· bosco sul 61% del territorio</span></li>
 <li><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/zone/valle-del-but/"><b>Valle del But</b></a> <span class="pc">· Friuli Venezia Giulia</span><br><span class="fr-sw" style="background:#264b73"></span>abetaie e peccete <b>44%</b> del bosco <span class="pc">· bosco sul 65% del territorio</span></li>
 </ul>

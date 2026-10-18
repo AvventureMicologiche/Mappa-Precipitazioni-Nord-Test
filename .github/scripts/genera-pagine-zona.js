@@ -48,7 +48,7 @@
 const fs = require('fs');
 const path = require('path');
 const { REGIONI, GEN, briciolaJson } = require('./genera-pagine-regione.js');
-const { bello, slug, slugRegione, elenco, diZona, postiDellaZona } = require('./lib-nomi.js');
+const { bello, slug, slugRegione, elenco, diZona, postiDellaZona, diEnte } = require('./lib-nomi.js');
 const { rigaStagione } = require('./lib-stagione.js');
 const { perLink } = require('./lib-vicine.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
@@ -306,7 +306,7 @@ ${haBoschi(casa.k) ? `<h2>Che boschi ci sono nella zona</h2>
 ` : ''}
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano i <b>${ids.length} pluviometri</b> di ${esc(elenco(agenzie))} nelle zone
+<p>I millimetri li misurano i <b>${ids.length} pluviometri</b> ${esc(diEnte(elenco(agenzie)))} nelle zone
 da bosco ${esc(diZona(z.dove))}: quota fra 200 e 1600 metri e almeno il 37% di bosco entro 3 km.
 I numeri in cima sono la media dei pluviometri, giorno per giorno. Ogni pluviometro va alla zona più
 vicina, e a una sola. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>
@@ -323,7 +323,7 @@ La giornata più piovosa è stata ${artGiorno(RITRATTO.forte.c.maxData)}<b>${dat
 con <b>${virgola(RITRATTO.forte.c.maxMm)} mm</b>.</p>` : ''}
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
-<p>Dati di ${esc(elenco(agenzie))} via il nostro archivio. Il bosco entro 3 km è calcolato su dati
+<p>Dati ${esc(diEnte(elenco(agenzie)))} via il nostro archivio. Il bosco entro 3 km è calcolato su dati
 OpenStreetMap, licenza ODbL.</p>
 </div>
 ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
@@ -439,7 +439,7 @@ ${JS_AGGIORNATO}
     var ieriVero = iso(menoDa(iso(new Date()), 1)), giornoIeri = ilGg(ieri);
     document.getElementById("ieri").innerHTML = (ieri === ieriVero ? "Ieri, " + gg(ieri)
       : giornoIeri.charAt(0).toUpperCase() + giornoIeri.slice(1)) + ": " + (s[0] == null ? "il dato non è ancora arrivato."
-      : "in media <b>" + num(s[0]) + " mm</b> sui " + righe.length + " pluviometri della zona.");
+      : "in media <b>" + (s[0] > 0 && Math.round(s[0] * 10) === 0 ? "meno di 0,1" : num(s[0])) + " mm</b> sui " + righe.length + " pluviometri della zona.");
     scriviFinestra(s, oggi, null, "in media");
     document.getElementById("t-conta").href = link(daG, aG);
     document.getElementById("lnk-pioggia").href = link(daG, ieri);

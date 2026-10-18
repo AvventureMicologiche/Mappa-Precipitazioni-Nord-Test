@@ -47,7 +47,7 @@
 const fs = require('fs');
 const path = require('path');
 const { scriviSitemap } = require('./genera-sitemap.js');
-const { slug } = require('./lib-nomi.js');
+const { slug, diEnte } = require('./lib-nomi.js');
 // 25/9/2026: le barre, il riquadro in cima e i tasti delle pagine funghi
 const { STILE_NUOVO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = require('./lib-pagina-funghi.js');
 // 11/10/2026: i numeri cotti nella pagina, con la STESSA funzione del browser
@@ -261,6 +261,8 @@ const nomeBello = n => {
   if (prov && prov.length > 2 && !/[a-zà-ü]/.test(prov)) prov = bello(prov);
   return base + (prov != null ? ' (' + prov + ')' : '');
 };
+// «1,4 mm» come la scheda, non «1 mm»: sotto i 10 mm il decimale (18/10/2026, descrizioni delle pagine regione)
+const mmD = v => v < 10 ? String(Math.round(v * 10) / 10).replace('.', ',') : String(Math.round(v));
 function descrMappa(r, j, N, n) {
   const ag = r.agenziaCorta || r.agenzia;
   const di = /^Provincia/.test(ag) ? 'della ' : /^Centro/.test(ag) ? 'del ' : '';
@@ -270,7 +272,7 @@ function descrMappa(r, j, N, n) {
   const d1 = j.periodi['1'], d7 = j.periodi['7'], t1 = d1 && d1.top && d1.top[0], t7 = d7 && d7.top && d7.top[0];
   const quando = N.ieri ? 'Ieri' : 'Il ' + lungoIso(N.ultimo);
   const uno = !d1 || !d1.giorni ? null : t1 && t1.mm >= 1 ? `${quando} ${virgola(t1.mm)} mm ${aDi(nomeBello(t1.n))}` : `${quando} giornata ${t1 && t1.mm > 0 ? 'quasi ' : ''}asciutta`;
-  const sette = t7 && t7.mm >= 1 ? `in 7 giorni ${Math.round(t7.mm)} mm ${aDi(nomeBello(t7.n))}` : null;
+  const sette = t7 && t7.mm >= 1 ? `in 7 giorni ${mmD(t7.mm)} mm ${aDi(nomeBello(t7.n))}` : null;
   const numeri = [uno, sette].filter(Boolean).join(', ');
   const forme = [`${apre} ${numeri}. ${coda}`, `${apre} ${numeri}.`, `${apre} ${uno ? uno + '.' : ''} ${coda}`, apre];
   return forme.map(t => t.replace(/\s+/g, ' ').replace(/ \./g, '.').trim()).find(t => t.length <= 158);
@@ -284,7 +286,7 @@ function descrCotta(r, j, N) {
     : `${quando}: giornata ${t1 && t1.mm > 0 ? 'quasi ' : ''}asciutta ${r.prep} ${r.nome}.`;
   const sette = `Ultimi 7 giorni: ${virgola(d7.media)} mm di media su ${d7.stazioni} pluviometri ${ag}`;
   const forme = [
-    [primo, sette + (t7 && t7.mm >= 1 ? `, ${Math.round(t7.mm)} mm ${aDi(t7.n)}.` : '.')],
+    [primo, sette + (t7 && t7.mm >= 1 ? `, ${mmD(t7.mm)} mm ${aDi(t7.n)}.` : '.')],
     [primo, sette + '.'],
     [primo, `Ultimi 7 giorni: ${virgola(d7.media)} mm di media.`],
     [primo],
@@ -438,7 +440,7 @@ function pagina(r, radice){
 <meta name="description" content="${attr(TITOLO_IERI.has(r.k) ? ((N && descrCotta(r, rip, N)) || descr) : descrMappa(r, rip, N, N ? rip.periodi['7'].stazioni : r.staz))}">
 <link rel="canonical" href="${SITO}/${r.k}/">
 <meta property="og:title" content="${titolo}: ieri e negli ultimi giorni">
-<meta property="og:description" content="Riepilogo degli ultimi 7, 20 e 30 giorni con le zone più bagnate, da ${r.staz} pluviometri di ${r.agenzia}.">
+<meta property="og:description" content="Riepilogo degli ultimi 7, 20 e 30 giorni con le zone più bagnate, da ${r.staz} pluviometri ${diEnte(r.agenzia)}.">
 <meta property="og:image" content="${SITO}/preview.jpg">
 <meta property="og:url" content="${SITO}/${r.k}/">
 <meta property="og:type" content="website">
@@ -472,7 +474,7 @@ ${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}</style>
 </header>
 <main>
 <h1>${titolo}</h1>
-<p class="sotto"><b>Pluviometria ${gen}</b>: i dati di ${r.staz} pluviometri di ${r.agenzia}, ieri e nell'ultimo mese, ${r.geo}.</p>
+<p class="sotto"><b>Pluviometria ${gen}</b>: i dati di ${r.staz} pluviometri ${diEnte(r.agenzia)}, ieri e nell'ultimo mese, ${r.geo}.</p>
 
 <!-- ⚠️ 25/9/2026: LO SCHEMA «PRIMA I DATI», lo stesso delle pagine funghi del
      24/9 (deciso da lui guardando Santo Stefano d'Aveto): in cima la risposta
@@ -567,7 +569,7 @@ ${FUNGHI.includes(r.k) ? `
 
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano <b>${r.staz} pluviometri di ${r.agenzia}</b>, strumenti a terra, non stime da modello.
+<p>I millimetri li misurano <b>${r.staz} pluviometri ${diEnte(r.agenzia)}</b>, strumenti a terra, non stime da modello.
 I numeri in cima sono la media dei pluviometri della regione, giorno per giorno; sotto, i più bagnati di ogni periodo.
 La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>${r.nota ? `\n<p>${r.nota}</p>` : ''}
 ${ESTERE.includes(r.k) ? `<h2>Dove piove oggi ${r.prep} ${r.nome}? La diretta radar</h2>

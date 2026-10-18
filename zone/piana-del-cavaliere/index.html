@@ -372,9 +372,9 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
     if (!d) { box.innerHTML = ''; return; }
     var t = nomeGiorno(d.ultimo), top = (d.top||[]).filter(function(s){ return s.mm >= 1; }), dett;
     if (top.length) {
-      dett = 'Dove ha piovuto di più: ' + top.map(function(s){ return '<b>' + esc(s.n) + '</b> ' + num(s.mm) + ' mm'; }).join(', ') + '.';
+      dett = 'Dove ha piovuto di più: ' + top.map(function(s){ return '<b>' + esc(s.n) + '</b> ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm'; }).join(', ') + '.';
     } else if (d.top && d.top.length && d.top[0].mm > 0) {
-      dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm a ' + esc(d.top[0].n) + '.';
+      dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm a ' + esc(d.top[0].n) + (/\.$/.test(d.top[0].n) ? '' : '.');   /* «T.P.» non prende un altro punto; doppia barra: sta dentro il modello (18/10/2026) */
     } else {
       dett = 'Giornata asciutta: nessun pluviometro della zona ha misurato pioggia.';
     }
@@ -423,7 +423,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
       cont.innerHTML = '<p class="nota">Periodo quasi asciutto in tutta la zona.</p>';
     } else {
       var ol = document.createElement('ol'); ol.className = 'top-staz';
-      d.top.forEach(function(s){ var li = document.createElement('li'); li.textContent = s.n + ' — ' + num(s.mm) + ' mm'; ol.appendChild(li); });
+      d.top.forEach(function(s){ var li = document.createElement('li'); li.textContent = s.n + ' — ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm';   /* lo zero vero e' «0», come in tabella (18/10/2026) */ ol.appendChild(li); });
       cont.innerHTML = ''; cont.appendChild(ol);
     }
     document.getElementById('rip' + k + '-date').textContent = dalAl(d.primo, d.ultimo)

@@ -62,8 +62,8 @@ function numeriRegione(j, oggi, K, SITO) {
   if (!d || !d.giorni) out.verdetto = '';
   else {
     var t = nomeGiorno(d.ultimo), top = (d.top || []).filter(function (s) { return s.mm >= 1; }).slice(0, 3), dett;
-    if (top.length) dett = 'Dove ha piovuto di più: ' + top.map(function (s) { return '<b>' + esc(s.n) + '</b> ' + num(s.mm) + ' mm'; }).join(', ') + '.';
-    else if (d.top && d.top.length && d.top[0].mm > 0) dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm a ' + esc(d.top[0].n) + '.';
+    if (top.length) dett = 'Dove ha piovuto di più: ' + top.map(function (s) { return '<b>' + esc(s.n) + '</b> ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm'; }).join(', ') + '.';
+    else if (d.top && d.top.length && d.top[0].mm > 0) dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm a ' + esc(d.top[0].n) + (/\.$/.test(d.top[0].n) ? '' : '.');   // «T.P.» non prende un altro punto (18/10/2026)
     else dett = 'Giornata asciutta: nessun pluviometro ha misurato pioggia.';
     out.verdetto = '<div class="verdetto">'
       + '<div class="si">' + (t === 'Ieri' ? 'Ieri, ' + lungo(d.ultimo) : t) + '</div>'
@@ -113,7 +113,7 @@ function numeriRegione(j, oggi, K, SITO) {
     if (!d || !d.giorni) { out.periodi[k] = { media: '<span class="attesa">dati non disponibili al momento</span>', top: '', date: '' }; return; }
     var top;
     if (!d.top || !d.top.length || d.top[0].mm < 1) top = '<p class="nota">Periodo quasi asciutto in tutta la regione.</p>';
-    else top = '<ol class="top-staz">' + d.top.map(function (s) { return '<li>' + esc(s.n) + ' — ' + num(s.mm) + ' mm</li>'; }).join('') + '</ol>';
+    else top = '<ol class="top-staz">' + d.top.map(function (s) { return '<li>' + esc(s.n) + ' — ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm</li>'; }).join('') + '</ol>';   // lo zero vero e' «0» (18/10/2026)
     out.periodi[k] = {
       media: mediaMm(d) + ' mm <small>di media</small>',   // 17/10/2026: anche qui il decimale sotto i 10 mm (prima «1 mm» dove la zona diceva 0,8)
       top: top,

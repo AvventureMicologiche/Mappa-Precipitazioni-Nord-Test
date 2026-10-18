@@ -228,4 +228,31 @@ function idDoppi(POSTI) {
   return Object.entries(per).filter(([, l]) => l.length > 1).map(([id, l]) => `${id} (${l.join(', ')})`);
 }
 
-module.exports = { LOCALITA, bello, slug, slugRegione, santiIgnoti, elenco, diZona, regioneDelPosto, postiDellaZona, zonaDelPosto, idDoppi };
+// L'articolo davanti a un numero che si legge con la vocale (18/10/2026, quarto check):
+// «l'81%», «sull'87%», «l'11,7%», «l'1%», «l'8º». Prima «il 81%» e «questo è il 8º» in
+// ~150 pagine. Si guarda la parte intera: 1 (solo cardinale: «l'uno», ma «il primo»),
+// 8, 11, 80-89, 800-899. `prep` = il, sul, al, del, nel, dal (anche con la maiuscola).
+const ELISA = { il: "l'", sul: "sull'", al: "all'", del: "dell'", nel: "nell'", dal: "dall'" };
+function vocaleNum(n, ordinale) {
+  const i = parseInt(String(n).replace(/\./g, ''), 10);
+  if (!isFinite(i)) return false;
+  return (!ordinale && i === 1) || i === 8 || i === 11 || (i >= 80 && i <= 89) || (i >= 800 && i <= 899);
+}
+// «il» + «81%» -> «l'81%»; «il» + «7%» -> «il 7%»
+function artNum(prep, testo, ordinale) {
+  if (!vocaleNum(testo, ordinale)) return prep + ' ' + testo;
+  const e = ELISA[prep.toLowerCase()]; if (!e) return prep + ' ' + testo;
+  return (prep[0] === prep[0].toUpperCase() ? e[0].toUpperCase() + e.slice(1) : e) + testo;
+}
+
+// «di» + ente con l'articolo dentro (18/10/2026, quarto check): «della Provincia autonoma di
+// Bolzano», «del Centro Funzionale VdA», «di ARPA Liguria». Prima «pluviometri di Provincia…»
+// in 61 pagine. E' la regola `prep2` che la pagina regione aveva gia' nella description.
+function diEnte(t) {
+  t = String(t);
+  if (/^Provincia\b/.test(t)) return 'della ' + t;
+  if (/^Centro\b/.test(t)) return 'del ' + t;
+  return 'di ' + t;
+}
+
+module.exports = { LOCALITA, bello, slug, slugRegione, santiIgnoti, elenco, diZona, regioneDelPosto, postiDellaZona, zonaDelPosto, idDoppi, artNum, vocaleNum, diEnte };

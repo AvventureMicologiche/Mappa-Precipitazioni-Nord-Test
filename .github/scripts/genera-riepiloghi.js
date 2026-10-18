@@ -132,7 +132,8 @@ function riepilogo(r, giorni, fuori) {
   const et = etichette(prov);
   const media = chiavi.reduce((a, id) => a + somma[id], 0) / chiavi.length;
   const top = chiavi.sort((a, b) => somma[b] - somma[a]).slice(0, 5)
-    .map(id => ({ n: et(id, nomi[id]), mm: Math.round(somma[id] * 10) / 10 }));
+    .map(id => ({ n: et(id, require('./lib-nomi.js').bello(nomi[id])), mm:   // «Colle dell'Agnello», non «COLLE DELL'AGNELLO» (18/10/2026)
+      Math.round(somma[id] * 10) / 10 }));
   return {
     media: Math.round(media * 10) / 10,
     giorni: presenti,

@@ -33,7 +33,7 @@
 const fs = require('fs');
 const path = require('path');
 const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
-const { bello, slug, slugRegione, elenco, diZona, postiDellaZona } = require('./lib-nomi.js');
+const { bello, slug, slugRegione, elenco, diZona, postiDellaZona, diEnte } = require('./lib-nomi.js');
 const { perLink } = require('./lib-vicine.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 // il bottone YouTube in fondo, col quiz accanto SOLO nelle regioni che ce l'hanno (18/10/2026):
@@ -99,7 +99,7 @@ function pagina(z) {
     `Dove ha piovuto ${z.dove}`,
   ].find(t => t.length <= 62) || `Pioggia ${z.dove}`;
   const DESCR = [
-    `Quanta pioggia è caduta ${z.dove} ieri e negli ultimi 7 e 30 giorni, pluviometro per pluviometro: ${ids.length} pluviometri di ${elenco(agenzie)}. Aggiornato ogni giorno.`,
+    `Quanta pioggia è caduta ${z.dove} ieri e negli ultimi 7 e 30 giorni, pluviometro per pluviometro: ${ids.length} pluviometri ${diEnte(elenco(agenzie))}. Aggiornato ogni giorno.`,
     `Quanta pioggia è caduta ${z.dove} ieri e negli ultimi 7 e 30 giorni, pluviometro per pluviometro. Aggiornato ogni giorno.`,
     `Quanta pioggia è caduta ${z.dove} ieri e negli ultimi 7 e 30 giorni.`,
   ].find(t => t.length <= 158);
@@ -185,7 +185,7 @@ ${briciolaJson([['Mappa pluviometrica', `${SITO}/`], [nomeReg, `${SITO}/${casa.k
 <main>
 <p class="bric"><a href="${SITO}/">Mappa pluviometrica</a> › <a href="${SITO}/${casa.k}/">${esc(nomeReg)}</a> › ${esc(z.n)}</p>
 <h1>Dove ha piovuto ${esc(z.dove)}</h1>
-<p class="sotto"><b>Pluviometria ${esc(di)}</b>: i dati dei ${ids.length} pluviometri di ${esc(elenco(agenzie))}, ieri e nell'ultimo mese.</p>
+<p class="sotto"><b>Pluviometria ${esc(di)}</b>: i dati dei ${ids.length} pluviometri ${esc(diEnte(elenco(agenzie)))}, ieri e nell'ultimo mese.</p>
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="verdetto"></div>
@@ -239,7 +239,7 @@ ${righe}
 
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano i ${ids.length} pluviometri di ${esc(elenco(agenzie))} che stanno ${esc(z.dove)}: strumenti a terra,
+<p>I millimetri li misurano i ${ids.length} pluviometri ${esc(diEnte(elenco(agenzie)))} che stanno ${esc(z.dove)}: strumenti a terra,
 con il loro nome e la loro quota, non stime da modello. I numeri in cima sono la media dei pluviometri della zona, giorno
 per giorno. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando. Nella tabella il trattino
 vuol dire che quel pluviometro in quei giorni non ha pubblicato.</p>
@@ -308,9 +308,9 @@ ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel
     if (!d) { box.innerHTML = ''; return; }
     var t = nomeGiorno(d.ultimo), top = (d.top||[]).filter(function(s){ return s.mm >= 1; }), dett;
     if (top.length) {
-      dett = 'Dove ha piovuto di più: ' + top.map(function(s){ return '<b>' + esc(s.n) + '</b> ' + num(s.mm) + ' mm'; }).join(', ') + '.';
+      dett = 'Dove ha piovuto di più: ' + top.map(function(s){ return '<b>' + esc(s.n) + '</b> ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm'; }).join(', ') + '.';
     } else if (d.top && d.top.length && d.top[0].mm > 0) {
-      dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm a ' + esc(d.top[0].n) + '.';
+      dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm a ' + esc(d.top[0].n) + (/\\.$/.test(d.top[0].n) ? '' : '.');   /* «T.P.» non prende un altro punto; doppia barra: sta dentro il modello (18/10/2026) */
     } else {
       dett = 'Giornata asciutta: nessun pluviometro della zona ha misurato pioggia.';
     }
@@ -359,7 +359,7 @@ ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel
       cont.innerHTML = '<p class="nota">Periodo quasi asciutto in tutta la zona.</p>';
     } else {
       var ol = document.createElement('ol'); ol.className = 'top-staz';
-      d.top.forEach(function(s){ var li = document.createElement('li'); li.textContent = s.n + ' — ' + num(s.mm) + ' mm'; ol.appendChild(li); });
+      d.top.forEach(function(s){ var li = document.createElement('li'); li.textContent = s.n + ' — ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm';   /* lo zero vero e' «0», come in tabella (18/10/2026) */ ol.appendChild(li); });
       cont.innerHTML = ''; cont.appendChild(ol);
     }
     document.getElementById('rip' + k + '-date').textContent = dalAl(d.primo, d.ultimo)

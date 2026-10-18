@@ -96,11 +96,21 @@ header{background:#1b3f6e;color:#fff;padding:0 12px;height:46px;
 h1{font-size:14px;font-weight:600;white-space:nowrap}
 .hdr-sub{font-size:9px;opacity:.6;white-space:nowrap}
 
-#badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+/* ⚠️ #badge NON STA PIU' A META' HEADER (18/10/2026). Era centrato in posizione
+   assoluta, e dall'8/10 a meta' header c'e' il tasto doppio «Storico piogge |
+   Previsioni»: fino a 900 px (e fino a 1180 con tre regioni) la scritta copriva
+   «Previsioni» e ne mangiava il tocco. Adesso e' il figlio di mezzo dell'header
+   (space-between), quindi sta nel posto libero fra il tasto doppio e i social e
+   non puo' coprire niente; se li' non ci sta intera, setBadge le mette .stretto
+   e non si vede, come gia' sotto i 600 px (stazioni e fonte restano in legenda). */
+#badge{flex:0 1 auto;min-width:0;overflow:hidden;
   font-size:9px;padding:2px 8px;border-radius:10px;
   background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
   white-space:nowrap;}
 #badge:empty{display:none;}
+/* fuori dal flusso, non solo invisibile: nascosta ma in fila avrebbe ancora preso
+   bordo, padding e uno spazio fra gli elementi (26 px misurati a 601) */
+#badge.stretto{position:absolute;visibility:hidden;}
 #hdr-yt{display:none;}
 .hdr-socials{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .hdr-soc{color:#fff;display:flex;line-height:0;text-decoration:none;opacity:.9;transition:opacity .15s;}
@@ -3367,7 +3377,21 @@ function setBadge(testo){
   if(b) b.textContent=testo||'';
   var p=document.querySelector('.hdr-paesi');
   if(p) p.style.display=testo?'none':'';
+  badgeCiSta();
 }
+// Una scritta tagliata a meta' («368 stazioni · SIR To») non serve: o intera o
+// niente. Lo spazio si misura fra i due blocchi dell'header, che stanno ai lati
+// sia con la scritta in fila sia senza; la scritta vuole la sua larghezza piena
+// (scrollWidth + bordo) piu' i due spazi fra gli elementi. Si rimisura quando
+// cambia la finestra o il blocco di sinistra (il tasto doppio arriva dopo).
+function badgeCiSta(){
+  var b=document.getElementById('badge'), h=b&&b.parentNode; if(!b||!h) return;
+  var sx=h.querySelector('.hdr-l'), dx=h.querySelector('.hdr-r'); if(!sx||!dx) return;
+  var gap=parseFloat(getComputedStyle(h).columnGap)||0;
+  var libero=dx.getBoundingClientRect().left-sx.getBoundingClientRect().right;
+  b.classList.toggle('stretto', b.scrollWidth+2+2*gap>libero);
+}
+try{ var _roB=new ResizeObserver(badgeCiSta); _roB.observe(document.querySelector('header')); _roB.observe(document.querySelector('header .hdr-l')); }catch(e){}
 // ── Riserva per l'archivio dati (17/8/2026) ──────────────────────────────
 // Tutti i file giornalieri arrivano da raw.githubusercontent.com. Il 17/8/2026
 // GitHub ha risposto 429 a tutti per ore e la mappa e' rimasta muta: l'unico
@@ -3533,12 +3557,29 @@ function histColor(v){
 // Ogni voce della serie è un OGGETTO {mm, t, w}: t=[min,max] °C e w=[media,
 // raffica] km/h esistono solo dove il collector li scrive — altrove restano
 // null e le schede Temp/Vento dicono "non disponibile".
+// ⚠️ I NOMI NON SONO UNICI (18/10/2026). Nello stesso file ci sono stazioni omonime
+// (Bastia in Corsica a 18 km, le due Agira di cui una esclusa, Villafranca, S.Gemini a
+// 200 m: 14 coppie in 8 reti il 17/10). Con la sola chiave del nome vinceva l'ultima e
+// la scheda di una mostrava pioggia, temperatura e vento dell'altra. Il codice stazione
+// non arriva fin qui (i caricatori non lo copiano), quindi: per i nomi doppi si tengono
+// tutte le stazioni con le coordinate, e vince la piu' vicina a quella cliccata.
+var histDoppi={};
+function histRec(region,ds,station){
+  var key=region+'/'+ds, m=histFileCache[key]; if(!m) return null;
+  var l=histDoppi[key]&&histDoppi[key][station.n];
+  if(l&&typeof station.lat==='number'&&typeof station.lon==='number'){
+    var best=null,bd=Infinity;
+    l.forEach(function(x){ var d=Math.pow(x.lat-station.lat,2)+Math.pow(x.lon-station.lon,2); if(d<bd){bd=d;best=x.r;} });
+    if(best) return best;
+  }
+  return m[station.n]||null;
+}
 function histFromFiles(region,station,days,cb){
   function assemble(){
     var out={};
     days.forEach(function(ds){
-      var m=histFileCache[region+'/'+ds];
-      if(m&&m[station.n]) out[ds]=m[station.n];
+      var r=histRec(region,ds,station);
+      if(r) out[ds]=r;
     });
     cb(out);
   }
@@ -3549,10 +3590,13 @@ function histFromFiles(region,station,days,cb){
     fetch(histRawBase(region)+region+'/'+ds+'.json')
       .then(function(r){if(!r.ok)throw new Error('404');return r.json();})
       .then(function(d){
-        var m={};
+        var m={}, tutti={}, dop=null;
         if(d&&d.stations) d.stations.forEach(function(s){
           m[s.n]={mm:(typeof s.mm==='number')?s.mm:0,t:s.t||null,w:s.w||null,wd:(s.wd!==undefined?s.wd:null),u:s.u||null,i:s.i||null};
+          (tutti[s.n]=tutti[s.n]||[]).push({lat:s.lat,lon:s.lon,r:m[s.n]});
         });
+        for(var nn in tutti){ if(tutti[nn].length>1){ dop=dop||{}; dop[nn]=tutti[nn]; } }   // solo gli omonimi, vedi histRec
+        if(dop) histDoppi[region+'/'+ds]=dop;
         histFileCache[region+'/'+ds]=m;
       })
       .catch(function(){histFileCache[region+'/'+ds]={};}) // giorno mancante: non ritentare
@@ -3963,7 +4007,8 @@ function histCopertura(region,station,days,campo){
     }
     if(!pubblica) return;      // giornata muta per tutti: non prova nulla
     rete++;
-    if(m[station.n]&&pieno(m[station.n][campo])) staz++;
+    var rs=histRec(region,ds,station);   // l'omonimo giusto, vedi histRec (18/10/2026)
+    if(rs&&pieno(rs[campo])) staz++;
   });
   return {rete:rete,staz:staz,visto:visto};
 }
@@ -4387,6 +4432,12 @@ map.on('click',function(e){
   // successo con la X il 27/8). Qui si guarda da DOVE arriva il clic.
   var _t=e&&e.originalEvent&&e.originalEvent.target;
   if(_t&&_t.closest&&_t.closest(SOPRA_LA_MAPPA)) return;
+  /* ⚠️ E UN CLIC IL CUI BERSAGLIO NON E' PIU' NELLA PAGINA NON E' UN CLIC SULLA MAPPA (18/10/2026, sua
+     segnalazione con Ovada nelle previsioni). Un pannello che si ridisegna DENTRO il suo gestore (i giorni
+     della scheda delle previsioni) stacca il bottone toccato prima che il clic arrivi qui: closest() non
+     trova piu' il pannello, il segno di disableClickPropagation nemmeno, e si apriva il pluviometro piu'
+     vicino a quel punto. La mappa, le tessere e i pallini non si staccano mai durante un clic. */
+  if(_t&&_t.nodeType===1&&!document.documentElement.contains(_t)) return;
   var m=stazioneVicina(e&&e.containerPoint);
   if(m){
     var ev=e.originalEvent||{};
@@ -4424,7 +4475,13 @@ function addMarkers(dati,sorted){
     // Il ritardo evita di partire con le richieste mentre si attraversa la
     // mappa; i file giorno restano in cache, quindi dalla seconda stazione
     // in poi l'apertura è immediata.
+    /* ⚠️ COL DITO IL PASSAGGIO DEL MOUSE NON ESISTE (18/10/2026, sua segnalazione con Ovada nelle
+       previsioni). Il telefono tiene il punto dell'ultimo tocco come un mouse fermo: se un pannello si
+       sposta e sotto quel punto resta un pallino (la scheda delle previsioni che si accorcia cambiando
+       giorno), arriva un «mouseover» e dopo 160 ms si apriva da sola la scheda del pluviometro. Al
+       telefono la scheda si apre solo col tocco vero (il 'click' qui sotto). */
     m.on('mouseover',function(e){
+      if(TAP_DITO) return;
       if(histHideT)clearTimeout(histHideT);
       this.setStyle({radius:8,weight:2,color:'#000'});
       if(histPinned) return;
@@ -4433,6 +4490,7 @@ function addMarkers(dati,sorted){
       histHoverT=setTimeout(function(){openStationHistory(s,rank,cx,cy);},160);
     });
     m.on('mouseout',function(){
+      if(TAP_DITO) return;   // vedi mouseover: col dito niente passaggi finti
       this.setStyle({radius:5,weight:1.5,color:'#333'});
       if(histHoverT)clearTimeout(histHoverT);
       if(histPinned) return;
@@ -5024,6 +5082,26 @@ function loadOpenMeteo(stations,pastDate,nowDate,labelPeriodo,badgePrefix){
 // lavorano sulle regioni vere senza sapere nulla dei combo.
 var COMBO_REGIONS={ 'piemonte-vda':['piemonte','valledaosta'], 'trentino-aa':['trentino','altoadige'] };
 function expandRegion(v){ return COMBO_REGIONS[v]||[v]; }
+// Le regioni di un link (`r=`) come SCELTE da spuntare, al massimo 3.
+// ⚠️ LE COPPIE SI RIUNISCONO PRIMA DEL TETTO (18/10/2026). Il link scrive le regioni
+// vere (piemonte,valledaosta,…) ma il tetto e' di 3 SCELTE e una combinata vale una:
+// «Piemonte-VdA + Liguria + Lombardia» usciva come 4 voci, il `.slice(0,3)` di chi
+// apriva buttava la Lombardia (791 stazioni -> 540). Vale anche per i link vecchi.
+// Qui anche l'alias ticino -> svizzera (link di prima del 3/8/2026) e il filtro sulle
+// regioni che la mappa conosce.
+function regioniDalLink(r){
+  var k=String(r||'').split(',').map(function(x){return x==='ticino'?'svizzera':x;})
+    .filter(function(x,i,arr){return arr.indexOf(x)===i;})
+    .filter(function(x){return document.getElementById('chk-'+x);});
+  Object.keys(COMBO_REGIONS).forEach(function(c){
+    var coppia=COMBO_REGIONS[c];
+    if(!document.getElementById('chk-'+c) || !coppia.every(function(x){return k.indexOf(x)>=0;})) return;
+    var messa=false;   // la combinata prende il posto della prima delle due
+    k=k.map(function(x){ if(coppia.indexOf(x)<0) return x; if(messa) return null; messa=true; return c; })
+       .filter(function(x){return x;});
+  });
+  return k.slice(0,3);
+}
 // Le regioni COME LE HA SCELTE L'UTENTE, senza espandere le combinate: serve
 // alla STATISTICA, mentre per CARICARE i dati serve l'elenco espanso di
 // getActiveRegions(). Le due convivono e non vanno confuse.
@@ -9681,7 +9759,12 @@ document.getElementById('region-select').addEventListener('change', function(){
   }
   clearMarkers();
   expandRegion(rk).forEach(function(r){ setRegionBorder(r, function(){ addDefaultMarkersForRegion(r); }); });
-  if(currentPast&&currentNow) loadData(currentPast, currentNow, currentLabel);
+  // ⚠️ isLoading=false PRIMA di ricaricare (18/10/2026), come fanno le caselle e
+  // «Piogge per funghi». Senza, una regione scelta mentre l'analisi di prima stava
+  // ancora caricando veniva ignorata da loadData (`if(isLoading) return`): in alto
+  // «Toscana», in legenda le 251 stazioni della Lombardia. Il caricamento vecchio
+  // lo scarta il controllo su loadSessionId.
+  if(currentPast&&currentNow){ isLoading=false; loadData(currentPast, currentNow, currentLabel); }
   // Apri time panel su mobile/tablet dopo selezione regione
   if(window.innerWidth<=900){
     var tp=document.getElementById('time-panel');
@@ -10678,10 +10761,9 @@ if(_btnShot){
     } else {
       // Senza `g`: si spuntano le regioni e ci si ferma qui. Il periodo lo
       // sceglie l'utente, ed e' l'unico passo che gli resta da fare.
-      var _kk=r.split(',').map(function(k){return k==='ticino'?'svizzera':k;})
-        .filter(function(k,ix,arr){return arr.indexOf(k)===ix;})
-        .filter(function(k){return document.getElementById('chk-'+k);}).slice(0,3);
+      var _kk=regioniDalLink(r);   // coppie riunite prima del tetto delle 3 scelte (18/10/2026)
       if(!_kk.length) return;
+      var _kkVere=[].concat.apply([],_kk.map(expandRegion));   // confini e inquadratura vogliono le regioni vere
       document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){cb.checked=false;});
       _kk.forEach(function(k){document.getElementById('chk-'+k).checked=true;});
       /* ⚠️ IL SEGNAPOSTO VA PRIMA DEL `change`, ESATTAMENTE COME IN locVai.
@@ -10709,6 +10791,8 @@ if(_btnShot){
       // change sull'ultima: il gestore di sempre disegna i confini e valida
       document.getElementById('chk-'+_kk[_kk.length-1]).dispatchEvent(new Event('change'));
       _daRicerca=false;
+      // radar + zoom e centro: li usa il radar al posto della sua inquadratura (vedi inquadra(), 18/10/2026)
+      if(_conRadar && _vistaL) window._radarVistaLink={z:_zL,c:[_cL[0],_cL[1]],rk:getSelectedValues().slice().sort().join(',')};
       /* Chi arriva da «Apri la mappa in Lombardia» si aspetta di VEDERE la
          Lombardia, non l'Italia con una regione spuntata: si inquadra subito,
          senza aspettare il click del periodo. Col segnaposto il bersaglio e'
@@ -10736,7 +10820,7 @@ if(_btnShot){
         _vistaDaLink=true;
         try{ map.setView([_cL[0],_cL[1]],_zL,{animate:false}); }catch(e){}
       } else {
-        try{ fitMapToRegions(_kk); }catch(e){}
+        try{ fitMapToRegions(_kkVere); }catch(e){}
         /* ⚠️ SUL TELEFONO IL FIT DA SOLO NON BASTA (16/9/2026, visto dall'utente
            su Android col link ?r=liguria): fitMapToRegions inquadra la mappa
            INTERA, e meta' mappa sta sotto il pannello del periodo. Misurato a
@@ -10770,10 +10854,9 @@ if(_btnShot){
   // Alias per i link già in circolazione: prima del 3/8/2026 la Svizzera in
   // mappa era il solo Ticino (regione 'ticino'). Quei link devono continuare
   // ad aprirsi: si mappano sulla regione 'svizzera' che lo contiene.
-  var keys=r.split(',').map(function(k){return k==='ticino'?'svizzera':k;})
-    .filter(function(k,i,arr){return arr.indexOf(k)===i;})
-    .filter(function(k){return document.getElementById('chk-'+k);}).slice(0,3);
+  var keys=regioniDalLink(r);   // coppie riunite prima del tetto delle 3 scelte (18/10/2026)
   if(keys.length===0) return;
+  var keysVere=[].concat.apply([],keys.map(expandRegion));   // confini e inquadratura vogliono le regioni vere
   var ieriStr=fmtISOLocal(new Date(new Date().setDate(new Date().getDate()-1)));
   if(a>ieriStr) a=ieriStr; // il link può essere di "ieri" aperto oggi: si accorcia
   if(da>ieriStr) da=ieriStr; // e l'inizio non puo' stare nel futuro: tutt'e due nel futuro = «Ieri» (18/10/2026)
@@ -10800,7 +10883,10 @@ if(_btnShot){
   // periodo gia' scelto (30/9/2026). Prima contavano come «link condivisi»: il
   // 23-29/9 erano 713 persone su 896, tutte arrivate da Google su una pagina,
   // e il passaparola vero non si vedeva piu'. Evento a parte, open_from_page.
-  var _sq=q.get('s');
+  // ⚠️ E `g=` SENZA `s` VALE `s=p` (18/10/2026, quarto check): i tasti dei periodi di paesi, zone e
+  // mappa forestale scrivono g= senza s=p (7.970 link) e finivano fra i link condivisi. g= lo scrivono
+  // SOLO le nostre pagine: «Copia link» e la foto scrivono sempre da/a, mai g.
+  var _sq=q.get('s')||(q.get('g')?'p':null);
   try{gtag('event',_sq==='i'?'open_shared_image':(_sq==='p'?'open_from_page':'open_shared_map'),{regioni:keys.join(',')})}catch(e){}
   var pastDate=new Date(da+'T00:00:00');
   var nowDate=new Date(a+'T23:59:59');
@@ -10835,7 +10921,7 @@ if(_btnShot){
   // confini, che invece servono davvero.
   function whenLombardiaReady(cb){ cb(); }
   whenLombardiaReady(function(){
-    loadAllBorders(keys,function(){
+    loadAllBorders(keysVere,function(){
       var z=parseFloat(q.get('z')),c=(q.get('c')||'').split(',').map(Number);
       // Zoom e centro si applicano TALI E QUALI, su qualunque schermo: chi
       // riceve vede la mappa alla stessa scala di chi ha condiviso, centrata
@@ -10867,7 +10953,7 @@ if(_btnShot){
          segnaposto e riempie la casella. Il cortocircuito la salterebbe. */
       var _pin=pinDaLink(q);
       if(!vistaDalLink && !_pin && window.innerWidth<=900){
-        try{ fitMapToRegions(keys); }catch(e){}
+        try{ fitMapToRegions(keysVere); }catch(e){}
       }
       /* ⚠️ COL POSTO E SENZA VISTA SI INQUADRA IL POSTO (17/10/2026). I tasti
          «Ieri / 7 / 20 / 30 gg» delle 911 pagine di paese e quelli delle 114
@@ -11408,6 +11494,11 @@ function addDefaultMarkersForRegion(regionKey){
   drawDefaultMarkers(stazioni,cfg);
 }
 function drawDefaultMarkers(stazioni,cfg){
+  // ⚠️ CON UN PERIODO SCELTO I PALLINI DI PARTENZA NON SI DISEGNANO (18/10/2026).
+  // Arrivano da un fetch e possono atterrare DOPO il clearMarkers di loadData: si
+  // posavano sotto quelli dell'analisi (736 pallini per 368 stazioni in Toscana),
+  // bianchi col riquadro «Scegli un periodo». L'analisi i pallini li disegna da se'.
+  if(currentPast&&currentNow) return;
   // Tetto 400, allineato a quello dei dati (alzato da 150 il 27/8/2026: a 150
   // si nascondeva il 44% della Liguria, Santo Stefano d'Aveto compresa). Qui era
   // rimasto 150 e non si notava, perche' le liste a mano erano corte; con le
@@ -11436,8 +11527,9 @@ function drawDefaultMarkers(stazioni,cfg){
         posTooltip(cx,cy);
         tooltip.style.display='block';
       }
-      mk.on('mouseover',function(e){showDef(e.originalEvent.clientX,e.originalEvent.clientY);});
-      mk.on('mousemove',function(e){posTooltip(e.originalEvent.clientX,e.originalEvent.clientY);});
+      // col dito il riquadro lo apre il touchstart qui sotto: niente passaggi del mouse finti (18/10/2026)
+      mk.on('mouseover',function(e){if(TAP_DITO)return;showDef(e.originalEvent.clientX,e.originalEvent.clientY);});
+      mk.on('mousemove',function(e){if(TAP_DITO)return;posTooltip(e.originalEvent.clientX,e.originalEvent.clientY);});
       mk.on('mouseout',function(){mk.setStyle({radius:5,weight:1.5,color:'#333'});hideTimer=setTimeout(hideTooltip,150);});
       mk.on('touchstart',function(e){var t=e.originalEvent.touches[0];showDef(t.clientX,t.clientY);e.originalEvent.stopPropagation();});
       mk.on('touchend',function(e){e.originalEvent.stopPropagation();});
@@ -12816,7 +12908,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
      e la lascia fare a chi di dovere. */
   function esci(ripristina){
     if(!acceso) return;
-    acceso=false; sorveglia(false); pulisci(); ultimoBuono=null; window._radarModo=null;
+    acceso=false; sorveglia(false); pulisci(); ultimoBuono=null; window._radarModo=null; window._radarVistaLink=null;
     document.body.classList.remove('modo-radar');
     el('btn-radar').innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar pioggia';
     heat(true); pallini(true);
@@ -12864,6 +12956,17 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
   function inquadra(){
     var m=map(); if(!m) return;
     var rk=regioniAttive(); if(!rk.length) return;
+    /* ⚠️ UN LINK COL RADAR E LA SUA VISTA (18/10/2026, quarto check): i «📡 Radar
+       adesso» delle 116 pagine forestali portano z=11 e il centro della zona, e
+       si aprivano sulla regione intera. Se il link ha zoom e centro, comanda
+       quella vista, finche' le regioni restano quelle del link: cambiata la
+       regione, si torna all'inquadratura del radar. Una vista sola, niente
+       sfarfallio (il motivo per cui qui non si inquadrava dal link). */
+    var vl=window._radarVistaLink;
+    if(vl){
+      if(vl.rk===rk.slice().sort().join(',')){ m.setView(vl.c,vl.z,{animate:false}); return; }
+      window._radarVistaLink=null;
+    }
     /* ⚠️ SI PARTE DALL'INQUADRATURA DEL SITO, NON DA UN FIT SUI PALLINI
        (rifatto il 31/8/2026). Prima misuravo da solo il riquadro dei pallini
        e toglievo delle tacche: ma quella base non c'entra niente con
@@ -14833,10 +14936,31 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     /* Dal link si aspetta che il sito abbia spuntato le regioni di ?r=, come fa
        il radar: con la guardia qui sopra, entrare prima voleva dire l'avviso
        «Prima scegli la regione» su un link giusto. Tetto 15 secondi, poi niente. */
-    if(new URLSearchParams(location.search).get('boschi')==='1'){
+    /* ⚠️ E SE IL LINK LA REGIONE NON CE L'HA (18/10/2026, quarto check): il bottone
+       «Apri la mappa forestale d'Italia» di /mappa-forestale/ porta a /?boschi=1. Prima
+       si aspettavano 15 secondi in silenzio e poi niente: la cartina, senza un perche'.
+       Adesso si dice quello che dice il tasto («Prima scegli la regione», sua scelta:
+       niente regione messa d'ufficio) e si aspetta: scelta la regione, i boschi si
+       accendono da soli. */
+    var _qb=new URLSearchParams(location.search);
+    if(_qb.get('boschi')==='1'){
+      var senzaR=!_qb.get('r'), avvisato=false;
       var giri=0, att=setInterval(function(){
         var rk=window._regioniAttive?window._regioniAttive():[];
-        if(rk.length){ clearInterval(att); entra(); }
+        if(rk.length){
+          clearInterval(att);
+          var a0=el('tp-status'); if(avvisato&&a0&&a0.textContent.indexOf('Prima scegli')>-1){ a0.textContent=''; a0.className=''; }
+          entra();
+        }
+        else if(senzaR){
+          ++giri;
+          if(!avvisato && giri>5){   // un secondo: la mappa e' pronta
+            avvisato=true;
+            if(window.innerWidth<=900&&window._chiediRegione) window._chiediRegione();
+            else { var a=el('tp-status'); if(a){ a.className='error'; a.textContent='⚠️ Prima scegli la regione'; } }
+          }
+          if(giri>3000) clearInterval(att);   // dieci minuti, poi si smette di aspettare
+        }
         else if(++giri>75) clearInterval(att);
       },200);
     }
@@ -16294,6 +16418,7 @@ body.modo-prev.pv-vuoto #pv-pan #loc-input{animation:loc-bordo-pulsa 1.7s ease-i
 #pv-det .rows{overflow:auto;flex:1;min-height:0}
 #pv-det .r{display:grid;grid-template-columns:52px 36px 1fr 1fr 1fr 1fr;align-items:center;padding:0 12px;height:24px;font:600 12px/1 inherit;color:#222;border-bottom:1px solid #f1f4f8}
 #pv-det .r:nth-child(even){background:#f7f9fc}
+#pv-det .sep{padding:5px 12px 4px;font:700 10px/1.2 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#1b3f6e;text-transform:uppercase;letter-spacing:.4px;background:#eef3fa;border-top:1px solid #d6e0ee;border-bottom:1px solid #d6e0ee}   /* «domani» dentro la tabella di oggi la sera (18/10/2026) */
 #pv-det .r .h{color:#1b3f6e;font-weight:800;white-space:nowrap}
 #pv-det .r .ic{font-size:15px}
 #pv-det .r span:nth-child(n+3){text-align:center}
@@ -16332,7 +16457,11 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
   #pv-fumetto small{display:block;font-weight:400;opacity:.85;margin-top:2px;font-size:12.5px}
   body:not(.reg-bloccato) #pv-fumetto.su{display:block}
   #pv-pan .fo{padding:0 12px;text-align:center}
-  #pv-det{top:76px;right:0;left:0;bottom:0;width:auto;max-height:none;border-radius:14px 14px 0 0;box-shadow:0 -3px 12px rgba(0,0,0,.3)}
+  /* ⚠️ ALTA QUANTO IL CONTENUTO, attaccata in basso (18/10/2026). Era fissata da 76 px al fondo: con
+     poche righe (la sera di oggi, i giorni a fasce di 6 ore) restavano 160-350 px bianchi prima di
+     «Storico piogge qui». Il tetto e' lo stesso di prima; con tante righe si scorre come sempre. */
+  #pv-det{top:auto;right:0;left:0;bottom:0;width:auto;max-height:calc(100% - 76px);border-radius:14px 14px 0 0;box-shadow:0 -3px 12px rgba(0,0,0,.3)}
+  #pv-det .rows{flex:0 1 auto}
   .modo-prev.pv-det-aperto .fonte-tag{display:none !important}
   #pv-det .hd .x{font:700 12.5px/1 inherit;color:#1b3f6e;background:#eef3fa;border:1.5px solid #9db4d6;border-radius:999px;padding:7px 12px;align-self:flex-start;white-space:nowrap}
   #pv-det .hd .x::after{content:' Chiudi'}
@@ -16441,10 +16570,11 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     cb.addEventListener('click',function(){ if(window._regApri) window._regApri(); var li=el('loc-input'); if(li){ try{ li.focus(); }catch(e){} } ga('casella'); });
     try{ if(window.ResizeObserver) new ResizeObserver(function(){ if(window.posizionaChipFonte) window.posizionaChipFonte(); }).observe(cb); }catch(e){}
     if(window.L){ L.DomEvent.disableClickPropagation(pan); L.DomEvent.disableScrollPropagation(pan); L.DomEvent.disableClickPropagation(det); L.DomEvent.disableScrollPropagation(det); }
-    el('pv-gg').addEventListener('click',function(e){ var c=e.target.closest('.pv-gg'); if(c) scegliGiorno(+c.dataset.i);
+    el('pv-gg').addEventListener('click',function(e){ e.stopPropagation(); var c=e.target.closest('.pv-gg'); if(c) scegliGiorno(+c.dataset.i);
       // toccando l'invito: sul telefono si apre la tendina, sul computer il cursore va nella casella
       if(e.target.closest('.avviso')&&document.body.classList.contains('pv-vuoto')){ try{ if(tel()){ if(window._regApri) window._regApri(); } else { var li=el('loc-input'); if(li) li.focus(); } }catch(x){} } });
     det.addEventListener('click',function(e){
+      e.stopPropagation();   // il clic resta qui: ridisegnando, il bottone si stacca e la mappa lo prendeva per suo (18/10/2026)
       var c=e.target.closest('.pv-gg'); if(c){ scegliGiorno(+c.dataset.i); return; }
       if(e.target.closest('.x')){ togliPassi(true); chiudiDettaglio(); return; }
       if(e.target.closest('.b')){ storicoQui(); return; }
@@ -16669,7 +16799,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     var ft=el('fonte-tag'); if(ft&&acceso) ft.textContent='Previsioni modello ECMWF via MET Norway'+(agg?' · agg. '+fmtOra(agg):'');
     // sul computer, finche' non si tocca niente, a destra sta un cenno piccolo; la tabella arriva col primo tocco
     if(!tel()&&!punto) cenno();
-    else if(punto) renderDet();
+    else if(punto){ renderDet(); if(tel()) tieniInVista(); }   // telefono: la scheda cambia altezza col giorno (18/10/2026)
     lontano();
   }
   function scegliGiorno(i){ giorno=i; disegna(); ga('giorno',{giorno:i}); }
@@ -16679,10 +16809,22 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
   }
   function lontano(){ try{ document.body.classList.toggle('pv-lontano', acceso && map().getZoom()<7.6); }catch(e){} }
   /* quando si apre la tabella, la targhetta toccata non deve finirci sotto: si scorre di quel tanto */
+  // telefono: dove finisce la barra della regione, in px dalla cima della mappa (0 se non c'e')
+  function sopraTel(){
+    var rp=el('region-panel'), mb=el('map').getBoundingClientRect(), rr=rp&&getComputedStyle(rp).display!=='none'?rp.getBoundingClientRect():null;
+    return rr&&rr.height>10?Math.max(0,rr.bottom-mb.top):0;
+  }
   function tieniInVista(){
-    if(tel()||!punto) return;
+    if(!punto) return;
     var m=map(), det=el('pv-det'); if(!m||!det||!det.classList.contains('vivo')) return;
     var pt=m.latLngToContainerPoint([punto.lat,punto.lon]), mb=el('map').getBoundingClientRect(), dr=det.getBoundingClientRect();
+    /* telefono (18/10/2026): la scheda adesso e' alta quanto il contenuto e sopra si vede la mappa; se il
+       posto finisce sotto la scheda si porta a meta' della striscia libera */
+    if(tel()){
+      var sopra=sopraTel(), libero=dr.top-mb.top;
+      if(libero-sopra>80 && (pt.y>libero-30 || pt.y<sopra)) m.panBy([0,pt.y-(sopra+libero)/2],{animate:true});
+      return;
+    }
     var limite=dr.left-mb.left-60;
     if(pt.x>limite) m.panBy([pt.x-limite,0],{animate:true});
   }
@@ -16692,8 +16834,9 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     passo('det');
     punto={n:c.n,lat:c.lat,lon:c.lon,q:c.q==null?null:c.q};
     document.body.classList.add('pv-det-aperto');
-    if(tel()){ try{ var rp=el('region-panel'), mb=el('map').getBoundingClientRect(), rr=rp&&getComputedStyle(rp).display!=='none'?rp.getBoundingClientRect():null;
-      el('pv-det').style.top=(rr&&rr.height>10?Math.max(0,rr.bottom-mb.top):0)+'px'; }catch(e){} }
+    // telefono: la barra della regione fa da tetto. ⚠️ Come ALTEZZA MASSIMA, non come top (18/10/2026): col top
+    // la scheda andava sempre da sotto la barra al fondo, anche con 4 righe, e restava il vuoto bianco
+    if(tel()){ try{ var _t=sopraTel(); el('pv-det').style.top=''; el('pv-det').style.maxHeight='calc(100% - '+_t+'px)'; }catch(e){} }
     var k=c.lat.toFixed(3)+','+c.lon.toFixed(3);
     var det=el('pv-det'); det.className='vivo';
     var pan0=el('pv-pan'); if(pan0) pan0.classList.remove('con-cenno');
@@ -16719,14 +16862,27 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     var gb=j.giorni||[]; if(!gb.length) return;
     var gi=Math.min(giorno,gb.length-1), e=gb[gi], g=e.g, d=giornoData(g);
     var ore=(j.ore||[]).filter(function(o){ return o.g===g; });
-    var righe=ore.map(function(o){
+    function riga(o){
       var h=String(o.h).padStart(2,'0')+(o.h6?'–'+String((o.h+6)%24).padStart(2,'0'):'');
       var mm=Math.round(o.mm*10)/10, pc=o.pc;
       return '<div class="r"><span class="h">'+h+'</span><span class="ic">'+icona(o.s)+'</span><span>'+Math.round(o.t)+'°</span>'
         +'<span class="mm'+(mm<0.1?' z':'')+'">'+(mm<0.1?'–':mm.toLocaleString('it-IT')+' mm')+'</span>'
         +'<span class="pc'+(pc==null?'':pc<10?' z':pc>=60?' alta':'')+'">'+(pc==null?'':pc+'%')+'</span><span>'+Math.round(o.v*3.6)+' km/h</span></div>';
-    }).join('');
-    el('pv-det').innerHTML='<div class="hd"><div class="nm">'+punto.n+(punto.q!=null?' <i>· '+punto.q+' m</i>':'')+'<div class="q1">'+(gi===0&&ore.length?'Oggi dalle '+String(ore[0].h).padStart(2,'0'):'Previsione per '+GIL[d.getDay()]+' '+d.getDate()+' '+MESI[d.getMonth()])+'</div>'+'<div class="q2">🌡 '+e.mx+'° / '+e.mn+'° · 💧 '+(e.mm).toLocaleString('it-IT')+' mm'+(e.pc!=null?' · ☔ '+(e.pc>0?'fino '+(/^(8|1$|1[1]$)/.test(String(e.pc))?'all\'':'al ')+e.pc+'%':'0%'):'')+'</div></div><button class="x" aria-label="Chiudi">×</button></div>'
+    }
+    var righe=ore.map(riga).join('');
+    /* ⚠️ LA SERA OGGI CONTINUA CON DOMANI (18/10/2026). Alle 19 di oggi restavano 5 ore e sotto il vuoto:
+       con meno di 8 ore si aggiungono le prime di domani fino a 12 righe, dopo una riga «domani». La sera
+       si guarda la notte e la mattina dopo. Solo su «oggi»: gli altri giorni restano interi e da soli. */
+    var fino='';
+    if(gi===0 && ore.length && ore.length<8 && gb[1]){
+      var dom=(j.ore||[]).filter(function(o){ return o.g===gb[1].g; }).slice(0,12-ore.length);
+      if(dom.length){
+        var dd=giornoData(gb[1].g), ul=dom[dom.length-1];
+        righe+='<div class="sep">domani · '+GI[dd.getDay()]+' '+dd.getDate()+' '+MESI[dd.getMonth()]+'</div>'+dom.map(riga).join('');
+        fino=' e domani fino alle '+String((ul.h+(ul.h6?6:1))%24).padStart(2,'0');
+      }
+    }
+    el('pv-det').innerHTML='<div class="hd"><div class="nm">'+punto.n+(punto.q!=null?' <i>· '+punto.q+' m</i>':'')+'<div class="q1">'+(gi===0&&ore.length?'Oggi dalle '+String(ore[0].h).padStart(2,'0')+fino:'Previsione per '+GIL[d.getDay()]+' '+d.getDate()+' '+MESI[d.getMonth()])+'</div>'+'<div class="q2">🌡 '+e.mx+'° / '+e.mn+'° · 💧 '+(e.mm).toLocaleString('it-IT')+' mm'+(e.pc!=null?' · ☔ '+(e.pc>0?'fino '+(/^(8|1$|1[1]$)/.test(String(e.pc))?'all\'':'al ')+e.pc+'%':'0%'):'')+'</div></div><button class="x" aria-label="Chiudi">×</button></div>'
       +'<div class="gg-r">'+gb.map(function(x,i){ return chip(x,i,i===gi,true); }).join('')+'</div>'
       +(righe?'<div class="cols"><span>ora</span><span></span><span>temp.</span><span>pioggia</span><span>prob.</span><span>vento</span></div><div class="rows">'+righe+'</div>'
              :'<div class="vuoto">Per questo giorno c’è solo il riepilogo: le ore arrivano fino a '+(function(){ var u=(j.ore||[]).slice(-1)[0]; if(!u) return 'oggi'; var ud=giornoData(u.g); return GIL[ud.getDay()]+' '+ud.getDate(); })()+'.</div>')

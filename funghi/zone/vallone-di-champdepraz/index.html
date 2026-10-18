@@ -77,7 +77,7 @@ td b{color:var(--blu-scuro);}
    Certenoli» andava su quattro righe. */
 .hd-c{display:none;}
 td.mm{position:relative;min-width:118px;}
-.barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;
+.barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;max-width:calc(100% - 7px);
   min-width:3px;background:#cfe0f5;border-radius:4px;}
 .mm .v{position:relative;font-weight:700;color:var(--blu-scuro);padding-left:7px;}
 .mm .v.zero{color:#a0aab8;font-weight:400;}
@@ -386,7 +386,7 @@ nav.altre a{color:var(--blu);}
 
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano i <b>3 pluviometri</b> di Centro Funzionale VdA nelle zone
+<p>I millimetri li misurano i <b>3 pluviometri</b> del Centro Funzionale VdA nelle zone
 da bosco del Vallone di Champdepraz: quota fra 200 e 1600 metri e almeno il 37% di bosco entro 3 km.
 I numeri in cima sono la media dei pluviometri, giorno per giorno. Ogni pluviometro va alla zona più
 vicina, e a una sola. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>
@@ -395,7 +395,7 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 <p>Ti serve un altro periodo? Per ieri e gli ultimi 30 giorni c’è
 <a href="https://avventurepluvio-test.pages.dev/zone/vallone-di-champdepraz/">dove ha piovuto nel Vallone di Champdepraz</a>.</p>
 <h2>L'archivio della zona</h2>
-<p>Da luglio 2026 a ottobre 2026, in 93 giorni di misura, i 3 pluviometri
+<p>Da luglio 2026 a ottobre 2026, in 94 giorni di misura, i 3 pluviometri
 del Vallone di Champdepraz hanno contato
 <b>129 mm</b> di pioggia a testa, in media. Il più bagnato è <b>Champdepraz - Chevrère</b> con
 173 mm, il più asciutto Saint-Denis - Raffort con 104.
@@ -403,7 +403,7 @@ La giornata più piovosa è stata il <b>4 agosto 2026</b> a Saint-Denis - Raffor
 con <b>23,6 mm</b>.</p>
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
-<p>Dati di Centro Funzionale VdA via il nostro archivio. Il bosco entro 3 km è calcolato su dati
+<p>Dati del Centro Funzionale VdA via il nostro archivio. Il bosco entro 3 km è calcolato su dati
 OpenStreetMap, licenza ODbL.</p>
 </div>
 <p style="margin:22px 0 4px;"><a href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
@@ -673,7 +673,7 @@ OpenStreetMap, licenza ODbL.</p>
     var ieriVero = iso(menoDa(iso(new Date()), 1)), giornoIeri = ilGg(ieri);
     document.getElementById("ieri").innerHTML = (ieri === ieriVero ? "Ieri, " + gg(ieri)
       : giornoIeri.charAt(0).toUpperCase() + giornoIeri.slice(1)) + ": " + (s[0] == null ? "il dato non è ancora arrivato."
-      : "in media <b>" + num(s[0]) + " mm</b> sui " + righe.length + " pluviometri della zona.");
+      : "in media <b>" + (s[0] > 0 && Math.round(s[0] * 10) === 0 ? "meno di 0,1" : num(s[0])) + " mm</b> sui " + righe.length + " pluviometri della zona.");
     scriviFinestra(s, oggi, null, "in media");
     document.getElementById("t-conta").href = link(daG, aG);
     document.getElementById("lnk-pioggia").href = link(daG, ieri);

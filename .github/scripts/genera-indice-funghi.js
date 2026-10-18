@@ -94,7 +94,7 @@ ${/* ⚠️ TITOLO IN PAGINA E TITOLO DI RICERCA SONO DUE COSE DIVERSE, e qui so
 <meta name="description" content="Dove andare a funghi oggi: le piogge per funghi da 13 a 20 giorni fa, misurate a terra in ${N_POSTI} posti da bosco di ${CON_FUNGHI.length} regioni. Aggiornato ogni giorno.">
 <link rel="canonical" href="${SITO}/funghi/">
 <meta property="og:title" content="Dove andare a funghi oggi">
-<meta property="og:description" content="Dove e' caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
+<meta property="og:description" content="Dove è caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
 <meta property="og:image" content="${SITO}/preview.jpg">
 <meta property="og:url" content="${SITO}/funghi/">
 <meta property="og:type" content="website">
