@@ -45,10 +45,17 @@ function cartaDi(k) {
 // regioni ISPRA la forma corta e' «Carta della Natura, ISPRA (habitat 1:50.000)» e
 // la frase diventava «la carta «Carta della Natura, ISPRA (...)»»: li' si scrive
 // «la «Carta della Natura» di ISPRA, scala 1:50.000». Le altre restano identiche.
+// ⚠️ 18/10/2026: dove la fonte si chiama gia' «Carta …» (Lombardia, Veneto, Lazio, Puglia…)
+// usciva «la carta «Carta forestale 2026»», carta due volte: li' l'articolo basta.
 function fonteNota(k) {
   const breve = cartaBreve(k);
   const m = breve.match(/^Carta della Natura, ISPRA \(habitat ([\d.:]+)\)$/);
-  return m ? `la «Carta della Natura» di ISPRA, scala ${m[1]}` : `la carta «${breve}»`;
+  if (m) return `la «Carta della Natura» di ISPRA, scala ${m[1]}`;
+  return /^Carta\b/.test(breve) ? `la «${breve}»` : `la carta «${breve}»`;
 }
+// La stessa frase con la preposizione articolata, per «I boschi vengono DALLA …» delle pagine
+// di paese e di zona (18/10/2026): prima i modelli scrivevano «vengono da ${fonteNota}», cioe'
+// «da la carta», in 1.022 pagine.
+function fonteDa(k) { return fonteNota(k).replace(/^la /, 'dalla '); }
 
-module.exports = { haBoschi, cartaBreve, cartaDi, fonteNota };
+module.exports = { haBoschi, cartaBreve, cartaDi, fonteNota, fonteDa };

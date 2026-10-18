@@ -344,7 +344,7 @@ con i disegni della carta forestale della Regione. Avvicinati sulla zona che ti 
        style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
   <span class="vai-mappa">Guarda i boschi in Piemonte →</span>
 </a>
-<p class="nota" style="margin-bottom:26px;">La fonte è la carta «Carta forestale 2024»: dice che bosco
+<p class="nota" style="margin-bottom:26px;">La fonte è la «Carta forestale 2024»: dice che bosco
 c'è, non se quest'anno ci sono nati funghi.</p>
 
 
@@ -749,19 +749,22 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
         + (r ? '&z=11&c=' + r.lat.toFixed(4) + ',' + r.lon.toFixed(4) : '');
     }
     function luogo(r){ return r.sig ? esc(r.sig) : ''; }
+    /* i millimetri con la virgola e un decimale, come le pagine di paese e di zona (18/10/2026):
+       qui uscivano grezzi dal JSON, «13.4» e «1» accanto al «12,6 mm» cotto piu' in alto */
+    function num(v){ return (Math.round(v * 10) / 10).toFixed(1).replace('.', ','); }
     function cella(v, cls){
       return '<td class="mm ' + (cls||'') + '">'
         + (v > 0 ? '<span class="barra" style="width:' + Math.round(v/maxMm*100) + '%"></span>' : '')
-        + '<span class="v' + (v > 0 ? '' : ' zero') + '">' + (v > 0 ? v : '—') + '</span></td>';
+        + '<span class="v' + (v > 0 ? '' : ' zero') + '">' + (v > 0 ? num(v) : '—') + '</span></td>';
     }
 
     var primo = righe[0];
     document.getElementById('testa').innerHTML =
       '<div class="capo"><div class="et">Dove ha piovuto di più 13-20 giorni fa?</div>'
-      + '<div class="gr">' + esc(primo.n) + ', ' + primo.mm + ' mm</div>'
+      + '<div class="gr">' + esc(primo.n) + ', ' + num(primo.mm) + ' mm</div>'
       + '<div class="pic">' + luogo(primo) + ' · ' + primo.q + ' MT'
       + (primo.forte ? ' · ultima pioggia forte ' + (primo.forte.g===1?'ieri':primo.forte.g+' giorni fa')
-                        + ' (' + primo.forte.mm + ' mm)' : '') + '</div>'
+                        + ' (' + num(primo.forte.mm) + ' mm)' : '') + '</div>'
       + '<div class="capo-btns">'
       + '<a class="capo-btn" href="' + link(primo, daG, aG) + '">Apri mappa · 13-20 gg fa</a>'
       + '<a class="capo-btn" href="' + link(primo, daG, a20) + '">Apri mappa · ultimi 20 gg</a>'
@@ -783,7 +786,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
 
     var trs = righe.map(function(r, i){
       var quando = r.forte
-        ? (r.forte.g===1?'ieri':r.forte.g+' giorni fa') + ' <span class="q2">' + r.forte.mm + ' mm</span>'
+        ? (r.forte.g===1?'ieri':r.forte.g+' giorni fa') + ' <span class="q2">' + num(r.forte.mm) + ' mm</span>'
         : '<span class="vuoto">niente di forte</span>';
       return '<tr><td class="pos">' + (i+1) + '</td>'
         + '<td><a class="loc" href="' + link(r, daG, aG) + '" title="Apri la mappa su ' + esc(r.n) + '">'
@@ -793,7 +796,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Piemonte.</p>
            Qui sotto il nome lo spazio c'e', e il dato e' piu' utile della
            colonna dei 25 giorni che resta comunque fuori. */
         + '<span class="com forte-m">' + (r.forte
-             ? 'forte ' + (r.forte.g===1?'ieri':r.forte.g+' gg') + ' · ' + r.forte.mm + ' mm'
+             ? 'forte ' + (r.forte.g===1?'ieri':r.forte.g+' gg') + ' · ' + num(r.forte.mm) + ' mm'
              : 'niente di forte') + '</span>'
         + '</a></td>'
         + cella(r.mm) + cella(r.mm7) + cella(r.mm25, 'tagl')

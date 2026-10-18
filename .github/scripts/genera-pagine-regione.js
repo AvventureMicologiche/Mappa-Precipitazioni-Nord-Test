@@ -837,7 +837,7 @@ function mappaInUnFile(radice, rel) {
   console.log(`  ${rel}  mappa del sito: ${REGIONI.length} regioni e ${FUNGHI.length} funghi`);
 }
 
-module.exports = { REGIONI, FUNGHI, navAltre, briciolaJson };
+module.exports = { REGIONI, FUNGHI, GEN, navAltre, briciolaJson };   // GEN: anche per le pagine di zona (18/10/2026)
 
 if (require.main === module) {
   const radice = path.resolve(__dirname, '..', '..');

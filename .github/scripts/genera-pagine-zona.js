@@ -47,12 +47,12 @@
 
 const fs = require('fs');
 const path = require('path');
-const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
+const { REGIONI, GEN, briciolaJson } = require('./genera-pagine-regione.js');
 const { bello, slug, slugRegione, elenco, diZona, postiDellaZona } = require('./lib-nomi.js');
 const { rigaStagione } = require('./lib-stagione.js');
 const { perLink } = require('./lib-vicine.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
-const { haBoschi, cartaBreve, cartaDi, fonteNota } = require('./lib-boschi.js');
+const { haBoschi, cartaBreve, cartaDi, fonteDa } = require('./lib-boschi.js');
 // Il ritratto dell'archivio, cotto dentro la pagina: il perche' sta in cima
 // a lib-clima.js. Qui e' di zona, cioe' la media dei suoi pluviometri.
 const { clima, buono, dataBella, meseBello, migliaia, virgola, artGiorno, aNome } = require('./lib-clima.js');
@@ -88,6 +88,7 @@ function pagina(z) {
   const regioni = [...new Set(ids.map(id => REG_DI[id]))];
   const casa = REGIONI.find(x => x.k === z.reg) || REGIONI.find(x => x.k === regioni[0]);
   const nomeReg = casa.nomeTitolo || casa.nome;
+  if (!GEN[casa.k]) throw new Error('manca il genitivo in GEN (genera-pagine-regione.js) per ' + casa.k);   // «Le altre zone del/della…», 18/10/2026
 
   // IL SEGNAPOSTO NEL LINK (3/9/2026). pl = coordinate del centro della zona,
   // pn = nome, pz=1 = e' un AREA e non un paese, quindi la mappa la inquadra
@@ -301,7 +302,7 @@ ${haBoschi(casa.k) ? `<h2>Che boschi ci sono nella zona</h2>
        width="1600" height="1000" loading="lazy">
   <span class="vai-mappa">🌲 Guarda i boschi ${esc(z.dove)}</span>
 </a>
-<p class="nota">La pioggia dice quando andare, il bosco dice dove. I boschi vengono da ${esc(fonteNota(casa.k))}.</p>
+<p class="nota">La pioggia dice quando andare, il bosco dice dove. I boschi vengono ${esc(fonteDa(casa.k))}.</p>
 ` : ''}
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
@@ -328,7 +329,7 @@ OpenStreetMap, licenza ODbL.</p>
 ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
    onclick="try{gtag('event','click_youtube',{pulsante:'zona-fondo-${casa.k}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a>`, `zona-fondo-${casa.k}`)}
 
-<h2 style="margin-top:30px">Le altre zone ${esc(casa.prep === 'in' ? 'della ' + nomeReg : casa.prep + ' ' + nomeReg)}</h2>
+<h2 style="margin-top:30px">Le altre zone ${esc(GEN[casa.k])}</h2>
 <nav class="altre"><p>${
   ZONE.filter(x => x.reg === z.reg && x.n !== z.n)
       .sort((a, b) => a.n.localeCompare(b.n, 'it'))

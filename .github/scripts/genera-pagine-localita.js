@@ -46,7 +46,7 @@ const { JS_AGGIORNATO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz, stileDelMode
 const { LOCALITA, bello, slug: slugDaNome, slugRegione } = require('./lib-nomi.js');
 const { perLink } = require('./lib-vicine.js');
 const { rigaStagione } = require('./lib-stagione.js');
-const { haBoschi, cartaBreve, cartaDi, fonteNota } = require('./lib-boschi.js');
+const { haBoschi, cartaBreve, cartaDi, fonteDa } = require('./lib-boschi.js');
 // Il ritratto del pluviometro, cotto dentro la pagina il giorno che si
 // genera: totale dell'archivio, giorni di pioggia, giorno piu' bagnato,
 // mese piu' piovoso. Il perche' sta in cima a lib-clima.js.
@@ -405,7 +405,7 @@ ${haBoschi(REG) ? `<h2>Che boschi ci sono intorno</h2>
        width="1600" height="1000" loading="lazy">
   <span class="vai-mappa">🌲 Guarda i boschi intorno ${esc(DOVE)}</span>
 </a>
-<p class="nota">La pioggia dice quando andare, il bosco dice dove. I boschi vengono da ${esc(fonteNota(REG))}.</p>
+<p class="nota">La pioggia dice quando andare, il bosco dice dove. I boschi vengono ${esc(fonteDa(REG))}.</p>
 ` : ''}
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>

@@ -331,7 +331,8 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
   function mm(n){ return n===0 ? '0' : n<10 ? num(n) : String(Math.round(n)); }
   // La media grande: «meno di 0,1» se arrotondata fa zero ma qualcuno ha misurato pioggia (17/10/2026).
   function mediaMm(d){ return Math.round(d.media*10)===0 && d.top && d.top.length && d.top[0].mm > 0 ? '<small style="margin:0 .3em 0 0">meno di</small>0,1' : mm(d.media); }
-  function mmCella(v){ return v==null ? '–' : num(v) + ' mm'; }
+  // lo zero vero si scrive «0 mm», come nella scheda grande (18/10/2026): prima «0,0 mm»
+  function mmCella(v){ return v==null ? '–' : v===0 ? '0 mm' : num(v) + ' mm'; }
   function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   // «Ieri» solo se e' davvero ieri: il riepilogo puo' essere di altroieri.
   function nomeGiorno(s){
@@ -368,7 +369,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
       + '<div class="si">' + (t === 'Ieri' ? 'Ieri, ' + lungo(d.ultimo) : t) + '</div>'
       + '<div class="gr">' + mediaMm(d) + ' mm<small>di media</small></div>'
       + '<div class="top">' + dett + '</div>'
-      + '<div class="dett">Media di ' + d.stazioni + ' pluviometri della zona.</div>'
+      + '<div class="dett">' + (d.stazioni === 1 ? 'Un pluviometro solo della zona.' : 'Media di ' + d.stazioni + ' pluviometri della zona.') + '</div>'
       + (t === 'Ieri' ? '' : '<div class="dett">I dati di ieri non sono ancora arrivati da tutti i pluviometri: questa è l’ultima giornata intera.</div>')
       // 11/10/2026: lo stesso bottone a due righe delle pagine regione (.ieri-btn,
       // che arriva con lo stile copiato dalla pagina regione)

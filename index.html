@@ -5244,6 +5244,12 @@ function loadData(pastDate,nowDate,labelPeriodo){
   // senza date non si parte: una chiamata storta moriva piu' sotto su fmtISOLocal(null) con
   // isLoading gia' a vero, e tutti i tasti del periodo restavano muti (18/10/2026)
   if(!pastDate||!nowDate) return;
+  /* Una nuova analisi e' una nuova inquadratura anche per chi e' arrivato da un link (18/10/2026).
+     `_vistaDaLink` protegge la PRIMA vista del link (il ramo dei link la rialza subito dopo questa
+     chiamata, insieme al setView); restava alzato anche al click su un altro periodo, e con un paese
+     cercato il fit qui sotto cadeva su fitMapToRegions: Ovada a zoom 12, «30 giorni», tre regioni
+     intere a zoom 8, mentre chi aveva condiviso restava su Ovada. */
+  _vistaDaLink=false;
 
   // Statistica analisi per regione (Google Analytics). LE SCELTE, non le
   // espanse: chi analizza «Piemonte-VdA» deve contare UN evento 'piemonte-vda',
@@ -10549,7 +10555,7 @@ if(_btnShare){
       navigator.clipboard.writeText(url).then(function(){
         _btnShare.classList.add('ok');_btnShare.textContent='✓ Copiato';
         setTimeout(function(){_btnShare.classList.remove('ok');_btnShare.textContent=_btnShare.dataset.label;},2200);
-      });
+      },function(){ prompt('Copia il link:',url); });   // clipboard negata (pagina non a fuoco, policy): il ripiego di sotto, non un errore muto (18/10/2026)
     } else { prompt('Copia il link:',url); }
   });
 }
@@ -10752,8 +10758,6 @@ if(_btnShot){
   }
   if(!r||!da||!a) return;
   if(!/^\d{4}-\d{2}-\d{2}$/.test(da)||!/^\d{4}-\d{2}-\d{2}$/.test(a)) return;
-  // date invertite (link scritto a mano): si scambiano, invece di aprire una pagina vuota senza dire niente (29/9/2026)
-  if(da>a){ var _tmp=da; da=a; a=_tmp; }
   // Alias per i link già in circolazione: prima del 3/8/2026 la Svizzera in
   // mappa era il solo Ticino (regione 'ticino'). Quei link devono continuare
   // ad aprirsi: si mappano sulla regione 'svizzera' che lo contiene.
@@ -10763,12 +10767,21 @@ if(_btnShot){
   if(keys.length===0) return;
   var ieriStr=fmtISOLocal(new Date(new Date().setDate(new Date().getDate()-1)));
   if(a>ieriStr) a=ieriStr; // il link può essere di "ieri" aperto oggi: si accorcia
+  if(da>ieriStr) da=ieriStr; // e l'inizio non puo' stare nel futuro: tutt'e due nel futuro = «Ieri» (18/10/2026)
+  /* date invertite (link scritto a mano): si scambiano, invece di aprire una pagina vuota senza dire
+     niente (29/9/2026). ⚠️ DOPO il tetto a ieri (18/10/2026): prima stava sopra, e un link con tutt'e
+     due le date nel futuro passava lo scambio intatto, poi `a` scendeva a ieri e si apriva
+     «01 nov – 16 ott», nessun dato. */
+  if(da>a){ var _tmp=da; da=a; a=_tmp; }
   var lim=new Date(); lim.setDate(lim.getDate()-365);
   if(a<fmtISOLocal(lim)){
     var _ts0=document.getElementById('tp-status');
     if(_ts0){_ts0.className='error';_ts0.textContent='⚠️ Il periodo di questo link non è più disponibile (lo storico copre 365 giorni).';}
     return;
   }
+  // il tetto vale anche per l'inizio (18/10/2026): `da=2024-10-01` chiedeva ~740 file per regione e
+  // finiva in timeout senza dirlo; le date personalizzate si fermano a 12 mesi, il link fa lo stesso
+  if(da<fmtISOLocal(lim)) da=fmtISOLocal(lim);
   document.querySelectorAll('.rcheck-wrap input[type=checkbox]').forEach(function(cb){cb.checked=false;});
   keys.forEach(function(k){document.getElementById('chk-'+k).checked=true;});
   if(typeof refreshSelectorStyles==='function') refreshSelectorStyles();
@@ -12651,13 +12664,13 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     if(bs) bs.addEventListener('click',function(e){
       if(!acceso) return;
       e.stopImmediatePropagation(); e.preventDefault();
-      var mm=map(), c=mm.getCenter();
-      var q=new URLSearchParams();
-      q.set('r', regioniAttive().join(','));
-      q.set('z', String(Math.round(mm.getZoom()*100)/100));
-      q.set('c', c.lat.toFixed(4)+','+c.lng.toFixed(4));
-      q.set('radar', scelta||'ora');
-      var url=location.origin+location.pathname+'?'+q.toString();
+      /* ⚠️ IL LINK LO FA buildShareUrl (18/10/2026). Qui se ne fabbricava uno a parte
+         con solo regione, vista e radar: perdeva la puntina del paese (pl/pn/pz, che nel
+         radar si vede dal 3/9), le temperature (tq), le date dell'analisi sotto, e il
+         centro restava a quattro decimali anche dopo «La mia posizione» (la privacy
+         vuole due). Dal 17/10 buildShareUrl col radar acceso funziona anche senza
+         periodo e scrive gia' radar=<modo> (window._radarModo segue il tasto). */
+      var url=window.buildShareUrl&&window.buildShareUrl(); if(!url) return;
       var testo={ora:'Sta piovendo adesso? Guarda il radar',
                  due:'La pioggia delle ultime due ore, al radar',
                  prev:'Dove va la pioggia nei prossimi 40 minuti',

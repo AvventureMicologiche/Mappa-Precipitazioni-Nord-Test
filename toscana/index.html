@@ -443,7 +443,7 @@ temperatura, vento e umidità.</p>
       + '<div class="si">' + (t === 'Ieri' ? 'Ieri, ' + lungo(d.ultimo) : t) + '</div>'
       + '<div class="gr">' + mediaMm(d) + ' mm<small>di media</small></div>'
       + '<div class="top">' + dett + '</div>'
-      + '<div class="dett">Media di ' + d.stazioni + ' pluviometri.</div>'
+      + '<div class="dett">' + (d.stazioni === 1 ? 'Un pluviometro solo.' : 'Media di ' + d.stazioni + ' pluviometri.') + '</div>'
       + (t === 'Ieri' ? '' : '<div class="dett">I dati di ieri non sono ancora arrivati da tutte le reti: questa è l’ultima giornata intera.</div>')
       // 11/10/2026, sua scelta B fra quattro: bottone pieno a tutta larghezza,
       // titolo e sottotitolo su due righe volute (la frase lunga andava a capo
@@ -502,7 +502,11 @@ temperatura, vento e umidità.</p>
     // «meno di 0,1» anche qui (18/10/2026): prima la lista diceva «ieri 0» in 20 zone dove la pagina
     // di zona, per lo stesso giorno, diceva «meno di 0,1 mm». Le spie p1/p7 le scrive il riepilogo.
     var zmm = function (v, piovuto) { return Math.round(v * 10) === 0 && piovuto ? '<small style="margin:0 .3em 0 0">meno di</small>0,1' : mm(v); };
-    out.zone[z.s] = { val: z.m7, html: zmm(z.m7, z.p7) + ' mm' + (z.m1 != null ? '<small>ieri ' + (Math.round(z.m1 * 10) === 0 && z.p1 ? 'meno di 0,1' : mm(z.m1)) + '</small>' : '') };
+    // «ieri» solo se il giorno della zona e' davvero ieri (18/10/2026): una zona a cavallo di due
+    // regioni parte dal giorno completo piu' vecchio fra le due, e qui usciva «ieri 0,3» con il numero
+    // dell'altroieri mentre la pagina di zona diceva «Giovedì 16 ottobre». Se no, la data corta.
+    var giornoZ = !z.ultimo || z.ultimo === ieri ? 'ieri' : (+String(z.ultimo).split('-')[2]) + ' ' + MESI[(+String(z.ultimo).split('-')[1]) - 1];
+    out.zone[z.s] = { val: z.m7, html: zmm(z.m7, z.p7) + ' mm' + (z.m1 != null ? '<small>' + giornoZ + ' ' + (Math.round(z.m1 * 10) === 0 && z.p1 ? 'meno di 0,1' : mm(z.m1)) + '</small>' : '') };
   });
 
   return out;
