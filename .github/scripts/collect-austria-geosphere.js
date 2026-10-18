@@ -73,12 +73,13 @@ function fmtDate(d) {
   return `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}`;
 }
 
-/** Finestra UTC del giorno solare italiano D: (start, end] su timestamp di FINE ora. */
+/** Finestra UTC del giorno solare italiano D: (start, end] su timestamp di FINE ora.
+ *  ⚠️ Da lib-giorno-italiano (18/10/2026): prima il fuso era quello di mezzogiorno
+ *  e la finestra durava sempre 24 ore, e il 25/10 l'ora 00-01 non finiva da nessuna parte. */
+const { finestraGiorno } = require('./lib-giorno-italiano.js');
 function dayWindow(dateStr) {
-  const noon = new Date(dateStr + 'T12:00:00Z');
-  const off  = getItalyOffset(noon) * 3600000;
-  const start = Date.parse(dateStr + 'T00:00:00Z') - off;
-  return { dateStr, start, end: start + 24 * 3600000 };
+  const { start, end } = finestraGiorno(dateStr);
+  return { dateStr, start, end };
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));

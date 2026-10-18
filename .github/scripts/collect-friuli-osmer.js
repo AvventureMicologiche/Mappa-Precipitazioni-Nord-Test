@@ -181,11 +181,24 @@ function quotaTerreno(id) {
   return typeof q === 'number' ? Math.max(0, Math.round(q)) : null;
 }
 
+/* Le ore del giorno solare italiano nelle due giornate d'archivio UTC.
+   `offset` = { da, a }: il fuso alla mezzanotte d'inizio e a quella di fine.
+   Dal giorno prima si prendono le ore dopo la (24-da)-esima, dal giorno stesso
+   le prime (24-a). ⚠️ 18/10/2026: prima c'era un fuso solo, quello di
+   mezzogiorno, e il 25/10 (25 ore) l'ora 00-01 restava fuori; a fine marzo
+   (23 ore) l'ultima ora del sabato si contava due volte. Un numero solo vale
+   ancora: stesso fuso ai due capi. */
+const { offsetItalia, giornoDopo } = require('./lib-giorno-italiano.js');
+function confini(offset) {
+  if (typeof offset === 'number') return [24 - offset, 24 - offset];
+  return [24 - offset.da, 24 - offset.a];
+}
+
 function localDayTotal(prevHours, curHours, offset) {
-  const B = 24 - offset;
+  const [Bp, Bc] = confini(offset);
   let sum = 0, valid = 0;
-  for (let h = B + 1; h <= 24; h++) { if (prevHours && prevHours[h] && prevHours[h].mm != null) { sum += prevHours[h].mm; valid++; } }
-  for (let h = 1; h <= B; h++)      { if (curHours  && curHours[h]  && curHours[h].mm  != null) { sum += curHours[h].mm;  valid++; } }
+  for (let h = Bp + 1; h <= 24; h++) { if (prevHours && prevHours[h] && prevHours[h].mm != null) { sum += prevHours[h].mm; valid++; } }
+  for (let h = 1; h <= Bc; h++)      { if (curHours  && curHours[h]  && curHours[h].mm  != null) { sum += curHours[h].mm;  valid++; } }
   if (valid < MIN_ORE) return null;
   const mm = Math.round(sum * 10) / 10;
   return (mm < 0 || mm > 500) ? null : mm;
@@ -196,18 +209,18 @@ function localDayTotal(prevHours, curHours, offset) {
     giornate d'archivio viene, se no h=23 di ieri e h=23 di oggi
     finirebbero nello stesso secchiello. */
 function localDayIntensita(prevHours, curHours, offset) {
-  const B = 24 - offset;
+  const [Bp, Bc] = confini(offset);
   const secchielli = creaOre();
-  for (let h = B + 1; h <= 24; h++)
+  for (let h = Bp + 1; h <= 24; h++)
     if (prevHours && prevHours[h] && prevHours[h].mm != null) segna(secchielli, 'p' + h, prevHours[h].mm);
-  for (let h = 1; h <= B; h++)
+  for (let h = 1; h <= Bc; h++)
     if (curHours && curHours[h] && curHours[h].mm != null) segna(secchielli, 'c' + h, curHours[h].mm);
   return intensita(secchielli);
 }
 
 /** t/w/u del giorno solare italiano dalle stesse mappe orarie → {t?, w?, u?}. */
 function localDayMeteo(prevHours, curHours, offset) {
-  const B = 24 - offset;
+  const [Bp, Bc] = confini(offset);
   const temps = [], vm = [], vx = [], um = [];
   const raccogli = (hours, h) => {
     const r = hours && hours[h];
@@ -217,8 +230,8 @@ function localDayMeteo(prevHours, curHours, offset) {
     if (r.vm != null) vm.push(r.vm);
     if (r.vx != null) vx.push(r.vx);
   };
-  for (let h = B + 1; h <= 24; h++) raccogli(prevHours, h);
-  for (let h = 1; h <= B; h++)      raccogli(curHours, h);
+  for (let h = Bp + 1; h <= 24; h++) raccogli(prevHours, h);
+  for (let h = 1; h <= Bc; h++)      raccogli(curHours, h);
   const out = {};
   if (temps.length >= MIN_ORE)
     out.t = [Math.round(Math.min(...temps) * 10) / 10, Math.round(Math.max(...temps) * 10) / 10];
@@ -312,7 +325,7 @@ async function main() {
   // Compongo ogni giorno solare italiano dalle ore in cache, poi merge.
   for (const dStr of targetDays) {
     const pd = prevOf(dStr);
-    const offset = getItalyOffset(new Date(dStr + 'T12:00:00Z'));
+    const offset = { da: offsetItalia(new Date(dStr + 'T00:00:00Z')), a: offsetItalia(new Date(giornoDopo(dStr) + 'T00:00:00Z')) };
     const stations = [];
     for (const st of stazioni) {
       const mm = localDayTotal(cache[`${st.val}|${pd}`], cache[`${st.val}|${dStr}`], offset);
