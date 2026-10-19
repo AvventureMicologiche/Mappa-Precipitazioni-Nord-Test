@@ -416,8 +416,8 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 <h2>L'archivio della zona</h2>
 <p>Da luglio 2026 a ottobre 2026, in 91 giorni di misura, i 11 pluviometri
 della Candalla hanno contato
-<b>373 mm</b> di pioggia a testa, in media. Il più bagnato è <b>Terrinca</b> con
-522 mm, il più asciutto Chiatri con 183.
+<b>376 mm</b> di pioggia a testa, in media. Il più bagnato è <b>Terrinca</b> con
+525 mm, il più asciutto Chiatri con 186.
 La giornata più piovosa è stata l’<b>8 ottobre 2026</b> a Terrinca,
 con <b>181,8 mm</b>.</p>
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
@@ -469,7 +469,9 @@ OpenStreetMap, licenza ODbL.</p>
     var al = (db === 1 || db === 8 || db === 11) ? "all’" : "al ";
     return ((da === 1 || da === 8 || da === 11) ? "dall’" : "dal ") + (pa[1] === pb[1] ? da : gg(a)) + " " + al + gg(b); }
   function esc(t){ return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
-  function uno(n){ return Math.round(n*10)/10; }
+  /* + 1e-9 (19/10/2026, B8): 8,05 fatto per due strade usciva 8,0500 e 8,0499999 e diventava 8,1 nella
+     lista della regione e 8,0 nella pagina della zona. Il margine sposta solo i casi a meta' esatta. */
+  function uno(n){ return Math.round(n*10+1e-9)/10; }
   function num(n){ return uno(n).toFixed(1).replace(".", ","); }
   /* serie[0] e' IERI; n va dal piu' lontano al piu' vicino */
   function somma(s, da, a){ var t = 0; for (var n = da; n >= a; n--) t += (s[n-1]||0); return uno(t); }
@@ -495,7 +497,9 @@ OpenStreetMap, licenza ODbL.</p>
       return;
     }
     var m20 = somma(s, 20, 1);
-    var liv = LIV.filter(function(l){ return m20 < l.fino; })[0], k = LIV.indexOf(liv);
+    /* la fascia si sceglie sul numero COME SI LEGGE (19/10/2026, quarto check B8): 29,48 usciva
+       «Troppo poca pioggia» con scritto 30 mm accanto alla scala «sotto 30». */
+    var liv = LIV.filter(function(l){ return Math.round(m20) < l.fino; })[0], k = LIV.indexOf(liv);
     var big = [];
     for (var n = 20; n >= 1; n--) if ((s[n-1]||0) >= 10) big.push(n);
     var dett = big.length

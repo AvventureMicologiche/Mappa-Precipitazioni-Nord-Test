@@ -3331,7 +3331,7 @@ function showTooltip(s,rank,mx,my){
   // Determina la regione dalla provincia della stazione
   var fonte=lastUsedFonte||'—';
   document.getElementById('tt-nome').textContent=s.n;
-  document.getElementById('tt-mm').textContent=s.mm;
+  document.getElementById('tt-mm').textContent=histNum(s.mm);
   document.getElementById('tt-prov').textContent=s.p;
   document.getElementById('tt-quota').textContent=testoQuota(s);
   document.getElementById('tt-rank').textContent='#'+rank+' / '+totalStations;
@@ -3443,10 +3443,15 @@ var TETTO_RAW_MS=6000, SCORTA_MS=1500, SCORTA_FRESCHI_MS=3000, INTERRUTTORE=8, G
     var dom=m&&_RISERVA_DATI[m[1]];
     if(!dom) return _fetch(u,o);
     var fresco=giornoFresco(m[2]);
-    var contaCopia=function(p){ return p.then(function(r2){ if(r2.ok)_archivio.riservaOk++; else _archivio.riservaKo++; return r2; },
-                                            function(e){ _archivio.riservaKo++; throw e; }); };
+    // Si contano solo i FILE DEI GIORNI (19/10/2026, quarto check A9): l'avviso parla di «giorni»,
+    // e un temperature-ieri.json o una vetrina che mancano lo facevano comparire con tutti i giorni
+    // al loro posto. Gli altri file hanno la stessa riserva, solo non fanno scattare l'avviso.
+    var diGiorno=/\d{4}-\d{2}-\d{2}\.json$/.test(m[2]);
+    var conta=function(k){ if(diGiorno) _archivio[k]++; };
+    var contaCopia=function(p){ return p.then(function(r2){ if(r2.ok)conta('riservaOk'); else conta('riservaKo'); return r2; },
+                                            function(e){ conta('riservaKo'); throw e; }); };
     var copia=function(){ return _fetch(dom+'/'+m[2],o); };
-    if(_archivio.errori>=INTERRUTTORE && !fresco){ _archivio.falliti++; return contaCopia(copia()); }
+    if(_archivio.errori>=INTERRUTTORE && !fresco){ conta('falliti'); return contaCopia(copia()); }
     return new Promise(function(resolve){
       var chiuso=false, scortaP=null, tS=null, tT=null;
       // 5/10/2026: chi perde la corsa viene ANNULLATO. Prima la copia Netlify partita a 1,5 s
@@ -3459,10 +3464,10 @@ var TETTO_RAW_MS=6000, SCORTA_MS=1500, SCORTA_FRESCHI_MS=3000, INTERRUTTORE=8, G
         try{ if(vinceCopia){ if(cR)cR.abort(); } else if(scortaP&&cC) cC.abort(); }catch(e){}
         resolve(p); };
       // raw ha fallito (errore vero o tetto): si usa la scorta se gia' in volo, altrimenti si parte ora
-      var ripiega=function(errore){ _archivio.falliti++; if(errore)_archivio.errori++; fine(contaCopia(scortaP||copia()),true); };
+      var ripiega=function(errore){ conta('falliti'); if(errore)conta('errori'); fine(contaCopia(scortaP||copia()),true); };
       tS=setTimeout(function(){ if(chiuso)return;
         scortaP=copia();
-        scortaP.then(function(r2){ if(!chiuso && r2.ok){ _archivio.scorta++; fine(r2,true); } }, function(){});
+        scortaP.then(function(r2){ if(!chiuso && r2.ok){ conta('scorta'); fine(r2,true); } }, function(){});
       }, fresco?SCORTA_FRESCHI_MS:SCORTA_MS);
       tT=setTimeout(function(){ ripiega(false); }, TETTO_RAW_MS);
       _fetch(u,conSegnale(cR)).then(function(r){ if(chiuso)return; if(r.ok||r.status===404) fine(r); else ripiega(true); },
@@ -3733,8 +3738,8 @@ function histRenderPioggia(days,serie,selFrom,selTo){
     // chiara e linea gialla sull'asse provate e bocciate.
     var col=(v===null)?'#262626':histColor(v);
     var hh=(v===null)?2:Math.max(2,Math.round(v/scale*100));
-    var lbl=(v===null)?'dato non disponibile':(v+' mm');
-    h+='<div class="sh-bar" data-d="'+ds+'" style="height:'+hh+'%;background:'+col+'" title="'+ds+' · '+lbl+'"></div>';
+    var lbl=(v===null)?'dato non disponibile':(histNum(v)+' mm');   // virgola, A12 del quarto check
+    h+='<div class="sh-bar" data-d="'+ds+'" style="height:'+hh+'%;background:'+col+'" title="'+histGiorno(ds)+' · '+lbl+'"></div>';
   });
   // Colonne trasparenti a tutta altezza: una barra da 2 px col dito non si
   // prende, la colonna si'. Toccandola la riga dell'intensita' passa a quel giorno.
@@ -3947,10 +3952,10 @@ function histRenderLinee(days,serie,tipo){
   h+='</svg><div class="sh-hits">';
   days.forEach(function(ds,i){
     var lbl;
-    if(tipo==='t') lbl=(b[i]===null&&a[i]===null)?'dato non disponibile':('min '+b[i]+'° · max '+a[i]+'°');
+    if(tipo==='t') lbl=(b[i]===null&&a[i]===null)?'dato non disponibile':('min '+histNum(b[i])+'° · max '+histNum(a[i])+'°');
     else if(tipo==='u') lbl=(b[i]===null&&a[i]===null)?'dato non disponibile':('min '+b[i]+'% · max '+a[i]+'%');
-    else lbl=(b[i]===null&&a[i]===null)?'dato non disponibile':('media '+b[i]+' · raffica '+(a[i]===null?'—':a[i])+' km/h');
-    h+='<div data-d="'+ds+'" title="'+ds+' · '+lbl+'"></div>';
+    else lbl=(b[i]===null&&a[i]===null)?'dato non disponibile':('media '+histNum(b[i])+' · raffica '+(a[i]===null?'—':histNum(a[i]))+' km/h');
+    h+='<div data-d="'+ds+'" title="'+histGiorno(ds)+' · '+lbl+'"></div>';
   });
   h+='</div></div></div>';
   // vento: una freccia per giorno fra il grafico e i numeri dei giorni (A, come nel mockup),
@@ -4162,6 +4167,18 @@ function closeStationHistory(){
   if(typeof evidenziaMarker==='function') evidenziaMarker(null);
 }
 
+// Esc (19/10/2026, quarto check A14): chiude la scheda del pluviometro, e se non c'e' il riquadro
+// «Date personalizzate». Ricerca, tendina delle regioni e Novita' hanno gia' il loro Esc: qui
+// non si tocca niente se il tasto arriva dalla casella di ricerca o con la tendina aperta.
+document.addEventListener('keydown',function(ev){
+  if(ev.key!=='Escape') return;
+  if(ev.target&&ev.target.id==='loc-input') return;
+  var sh=document.getElementById('reg-sheet'); if(sh&&sh.classList.contains('aperta')) return;
+  if(histEl.style.display==='block'){ closeStationHistory(); return; }
+  var box=document.getElementById('custom-box');
+  if(box&&box.style.display==='block') document.getElementById('btn-custom').click();   // lo stesso tasto che lo chiude
+});
+
 function openStationHistory(s,rank,mx,my){
   hideTooltip();
   if(!currentPast||!currentNow) return;
@@ -4216,7 +4233,7 @@ function openStationHistory(s,rank,mx,my){
   var notaPeriodo = (selTo<days[0]) ? 'fuori' : (selFrom<days[0]) ? 'lungo' : '';
 
   document.getElementById('sh-nome').textContent=s.n;
-  document.getElementById('sh-mm').textContent=s.mm;
+  document.getElementById('sh-mm').textContent=histNum(s.mm);
   // OMIRL Liguria non espone la provincia: il campo p contiene il comune
   // (verificato sulla fonte). Etichetta coerente col dato invece che sbagliata.
   document.getElementById('sh-prov-lbl').textContent=(regionKey==='liguria')?'Comune':'Provincia';
@@ -5717,9 +5734,9 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
   var mx=Math.max.apply(null,vals),mn=Math.min.apply(null,vals);
   var av=Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length*10)/10;
   document.getElementById('sn').textContent=dati.length;
-  document.getElementById('smx').textContent=Math.round(mx*10)/10;
-  document.getElementById('sav').textContent=av;
-  document.getElementById('smn').textContent=Math.round(mn*10)/10;
+  document.getElementById('smx').textContent=histNum(Math.round(mx*10)/10);   // virgola, A12 del quarto check
+  document.getElementById('sav').textContent=histNum(av);
+  document.getElementById('smn').textContent=histNum(Math.round(mn*10)/10);
   setBadge(dati.length+' stazioni · '+fonte);
   // L'avviso esce INSIEME ai numeri, non alla fine del calcolo della griglia:
   // la legenda con «160 stazioni · 87,3 max» compare subito, e per qualche
@@ -6663,7 +6680,9 @@ var FRANCIA_ESCLUSE={
   // 21/8 Bormes 33,4, Collobrieres 33,1, Le Luc 24, Cogolin 18,3 -> lei 0;
   // 24/8 12,9-24,4 -> lei 0. Ultimo giorno sopra 1 mm il 4/6. Restano Le Luc
   // a 7,7 km e gli altri tre fra 12 e 14 km.
-  '83075001':true,
+  // ── RIENTRATA il 19/10/2026 (ricontrollo del quarto check): 77,1 mm in 45 giorni, il 93%
+  // della mediana dei nove vicini, e coerente in ogni giornata bagnata di ottobre (1/10 6,2
+  // contro 3,1-5,6; 7/10 49,5 contro 41-61; 18/10 4,8 contro 4,6-12,3). Torna in mappa.
   // Bastia (Haute-Corse), 20033015, 26 m, esclusa il 19/10/2026: MORTA CON UNA DATA.
   // Misurava (40,8 mm a maggio, 8,2 il 25/8), poi 0,2 mm in 45 giorni mentre la mediana
   // dei sette vicini entro 25 km ne fa 52,4. Resta Barbaggio a 5,3 km. ⚠️ L'ALTRA Bastia
@@ -7068,6 +7087,9 @@ var MH_ESCLUSE={
   // Sellia Superiore (CZ): 41,4 mm negli ultimi 45 giorni, il 30% della
   // mediana dei cinque vicini (136,8) e il 30% di Sant'Elia-Jano, che sta a
   // 4,9 km. Ne restano 7 entro 10 km. Ricontrollata il 10/9/2026.
+  // ── RIENTRATA il 19/10/2026 (ricontrollo del quarto check): sorda fino al 22/9, poi
+  // coerente coi vicini in tutti e quattro i giorni di pioggia (25/9 10,2 contro 2-10;
+  // 10/10 48,6 contro 27-50; 12/10 9,6 contro 9-19; 13/10 3,4 contro 1-5). Torna in mappa.
   // Montebello Ionico (RC), 37.98750/15.72861, esclusa il 21/9/2026: MORTA.
   // 0,4 mm in 45 giorni consegnati su 45. Nei QUATTRO giorni in cui i vicini
   // hanno preso pioggia vera ha segnato 0,4 mm contro 40,5 di media loro: il
@@ -7076,7 +7098,7 @@ var MH_ESCLUSE={
   // Sulla mappa a 30 giorni e' un buco bianco in mezzo al colore. Ne restano
   // Allai (4,7 km), Rosario (6,1), Arasi' (14,8), Reggio Calabria e
   // Pietrastorta (15).
-  calabria:{'38.98528_16.62083':true,'37.98750_15.72861':true},
+  calabria:{'37.98750_15.72861':true},
   // Ponte S.Maria (PG): 0,2 mm in 57 giorni consegnati, una sola giornata
   // bagnata (0,2 mm il 18/8). Campogrande a 4,8 km ne fa 77,8 e Ponticelli a
   // 5,7 km 89,6. ⚠️ Entro 10 km ne restano solo DUE, meno dei tre che la
@@ -8509,7 +8531,7 @@ function locMostraRecenti() {
   // di testo, e su una rete lenta chi scriveva subito non vedeva nessuna riga.
   // locCarica() tiene la sua promessa, quindi chiamarla due volte non costa.
   inp.addEventListener('focus', function () {
-    try { locCarica(); locCaricaVicine(); } catch (e) {}   // i nomi e la griglia
+    try { locCarica().catch(function () {}); locCaricaVicine().catch(function () {}); } catch (e) {}   // i nomi e la griglia; .catch: niente errore non gestito senza rete (A14)
   });
   // Se imbocca l'altra strada, l'avviso del GPS ha finito il suo lavoro.
   inp.addEventListener('focus', function(){ if (typeof geoNota === 'function') geoNota(''); });
@@ -9466,7 +9488,7 @@ function geoTrova(){
   // ⚠️ L'elenco dei paesi si scarica MENTRE il GPS cerca, non dopo: sono due
   // attese che possono stare sovrapposte invece che in fila. locCarica()
   // tiene la sua promessa, quindi la seconda chiamata non riscarica niente.
-  try{ locCarica(); }catch(e){}
+  try{ locCarica().catch(function(){}); }catch(e){}   // .catch: senza rete niente errore «Failed to fetch» non gestito (A14 del quarto check)
   b.disabled = true; b.classList.add('cerca'); et.textContent = 'Ti sto cercando…';
   tmr = setTimeout(function(){
     if(miglior){ decidi(); return; }
@@ -9576,7 +9598,7 @@ try{ new MutationObserver(function(){ locCollocaCasella();
   var lo=document.getElementById('loader');
   var fermo=(typeof isLoading==='undefined'||!isLoading)&&(!lo||getComputedStyle(lo).display==='none');
   var passati=Date.now()-t0;
-  if((fermo&&passati>=3000)||passati>=30000){ try { locCarica(); } catch (e) {} return; }
+  if((fermo&&passati>=3000)||passati>=30000){ try { locCarica().catch(function () {}); } catch (e) {} return; }   // .catch: senza rete niente errore «Failed to fetch» non gestito (A14 del quarto check)
   setTimeout(function(){ precaricaPaesi(t0); },500);
 })(Date.now());
 
@@ -12831,8 +12853,9 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       if(navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)){
         navigator.share({text:testo,url:url}).catch(function(){});
       } else if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(url).then(fatto,function(){});
-      }
+        // appunti negati: la finestra col link, come il tasto principale (18/10); prima restava muto (A11, 19/10/2026)
+        navigator.clipboard.writeText(url).then(fatto,function(){ prompt('Copia il link:',url); });
+      } else { prompt('Copia il link:',url); }
     },true);
     /* ↩ Indietro del desktop: si esce dal radar e BASTA, si torna alla heatmap
        (12/10/2026, suo: «dalla heatmap vado in radar, faccio indietro e mi
@@ -15742,9 +15765,9 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     gruppo=L.layerGroup().addTo(mp);
     mp.on('moveend zoomend',pianifica);
     new MutationObserver(function(){
-      if(document.body.classList.contains('sat-on')) carica().then(pianifica); else pianifica();
+      if(document.body.classList.contains('sat-on')) carica().then(pianifica,function(){}); else pianifica();   // senza elenco niente nomi, e niente errore (A14)
     }).observe(document.body,{attributes:true,attributeFilter:['class']});
-    if(document.body.classList.contains('sat-on')) carica().then(pianifica);
+    if(document.body.classList.contains('sat-on')) carica().then(pianifica,function(){});
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',avvia); else avvia();
 })();

@@ -158,14 +158,17 @@ function scriviSitemap(SITO, RADICE) {
   // rifanno le tessere, non coi dati del giorno.
   const MF = path.join(RADICE, 'mappa-forestale');
   if (c_e(path.join('mappa-forestale', 'index.html'))) {
-    fam.forestale.push({ loc: SITO + '/mappa-forestale/', lastmod: '2026-09-28', freq: 'monthly', pri: '0.8' });
+    // Il guscio delle pagine forestali e' cambiato il 18/10/2026 (radar con zoom e centro, link ai boschi
+    // con la regione): prima la data era ferma al 28/9 (quarto check B9). Si cambia a mano quando cambiano.
+    const FORESTALE_LASTMOD = '2026-10-18';
+    fam.forestale.push({ loc: SITO + '/mappa-forestale/', lastmod: FORESTALE_LASTMOD, freq: 'monthly', pri: '0.8' });
     for (const d of fs.readdirSync(MF).sort()) {
       if (d !== 'zone' && c_e(path.join('mappa-forestale', d, 'index.html')))
-        fam.forestale.push({ loc: `${SITO}/mappa-forestale/${d}/`, lastmod: '2026-09-28', freq: 'monthly', pri: '0.7' });
+        fam.forestale.push({ loc: `${SITO}/mappa-forestale/${d}/`, lastmod: FORESTALE_LASTMOD, freq: 'monthly', pri: '0.7' });
     }
     if (fs.existsSync(path.join(MF, 'zone'))) for (const d of fs.readdirSync(path.join(MF, 'zone')).sort()) {
       if (c_e(path.join('mappa-forestale', 'zone', d, 'index.html')))
-        fam.forestale.push({ loc: `${SITO}/mappa-forestale/zone/${d}/`, lastmod: '2026-09-28', freq: 'monthly', pri: '0.6' });
+        fam.forestale.push({ loc: `${SITO}/mappa-forestale/zone/${d}/`, lastmod: FORESTALE_LASTMOD, freq: 'monthly', pri: '0.6' });
     }
   }
 

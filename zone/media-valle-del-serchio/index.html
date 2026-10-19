@@ -388,7 +388,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
       // che arriva con lo stile copiato dalla pagina regione)
       + '<div class="capo-btns"><a class="ieri-btn" href="' + link(d.ultimo, d.ultimo) + '"'
       + ' onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'zona-piogge-' + ZONA + '-ieri-box\'})}catch(e){}">'
-      + '<b>Apri la mappa ' + (t === 'Ieri' ? 'di ieri' : 'di quel giorno') + '</b><i>→</i>'
+      + '<b>' + (t === 'Ieri' ? 'Apri la mappa di ieri' : 'Mappa di quel giorno') + '</b><i>→</i>'   // «Apri la mappa di quel giorno» andava a capo gia' a 390 px (C15, 19/10/2026)
       + '<small>la pioggia in tutte le località</small></a></div></div>';
   }
 

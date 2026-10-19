@@ -439,12 +439,12 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 nel Mugello: <a href="https://avventurepluvio-test.pages.dev/funghi/zone/mugello/">guarda tutta la zona</a>,
 con i suoi 13 pluviometri insieme.</p>
 <h2>L'archivio di questo pluviometro</h2>
-<p><b>Da luglio 2026 a ottobre 2026</b>, in 98 giorni di misura, ha contato <b>273 mm</b> di pioggia in <b>18 giornate</b> bagnate. Nelle altre 80 non è caduto niente, o così poco da non contare.
+<p><b>Da luglio 2026 a ottobre 2026</b>, in 99 giorni di misura, ha contato <b>273 mm</b> di pioggia in <b>18 giornate</b> bagnate. Nelle altre 81 non è caduto niente, o così poco da non contare.
 Il giorno più bagnato è stato il <b>26 luglio 2026</b>, con
 <b>43,3 mm</b>. Il mese più piovoso,
 fra quelli che abbiamo per intero, è <b>settembre 2026</b> con
 110 mm. Su 161 pluviometri
-da bosco della Toscana con lo stesso periodo alle spalle, questo è il <b>60º</b>
+da bosco della Toscana con lo stesso periodo alle spalle, questo è il <b>61º</b>
 per acqua caduta.</p>
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
@@ -518,7 +518,7 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
     var al=(db===1||db===8||db===11) ? 'all\u2019' : 'al ';
     return ((da===1||da===8||da===11) ? 'dall\u2019' : 'dal ') + (pa[1]===pb[1] ? da : gg(a)) + ' ' + al + gg(b); }
   function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
-  function uno(n){ return Math.round(n*10)/10; }
+  function uno(n){ return Math.round(n*10+1e-9)/10; }   // margine per i casi a meta' esatta, come lib-pagina-funghi (B8, 19/10/2026)
   function num(n){ return uno(n).toFixed(1).replace('.', ','); }
   function km(a,b,c,d){ var R=6371, x=(c-a)*Math.PI/180, y=(d-b)*Math.PI/180;
     var s=Math.sin(x/2)*Math.sin(x/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(y/2)*Math.sin(y/2);
@@ -592,7 +592,7 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
       : ilGg(ieri).charAt(0).toUpperCase() + ilGg(ieri).slice(1)) + ': ' + (s[0] == null ? 'il dato non è ancora arrivato.' : '<b>' + num(s[0]) + ' mm</b>.');
 
     /* ── il verdetto ── */
-    var liv = LIV.filter(function(l){ return m20 < l.fino; })[0], k = LIV.indexOf(liv);
+    var liv = LIV.filter(function(l){ return Math.round(m20) < l.fino; })[0], k = LIV.indexOf(liv);   // sul numero come si legge (B8, 19/10/2026)
     var big = [];
     for (var n=20; n>=1; n--) if ((s[n-1]||0) >= 10) big.push(n);
     var dett = big.length
