@@ -168,14 +168,16 @@ function elenco(v) {
 // che il nome si porta gia' dietro: e' il motivo per cui la preposizione sta
 // nell'anagrafe invece di essere ricalcolata ogni volta.
 function diZona(dove) {
-  const m = dove.match(/^(sull'|negli |nelle |sulle |sui |nel |sul |in )(.*)$/);
+  const m = dove.match(/^(sull'|nell'|negli |nelle |nella |sulle |sui |nel |sul |in |a )(.*)$/);   // nella/nell'/a dal 19/10/2026
   if (!m) return 'della ' + dove;
   const pre = m[1], n = m[2];
   if (pre === 'negli ') return 'degli ' + n;
   if (pre === 'nelle ' || pre === 'sulle ') return 'delle ' + n;
   if (pre === 'sui ') return 'dei ' + n;
   if (pre === 'nel ' || pre === 'sul ') return 'del ' + n;
-  if (pre === "sull'") return "dell'" + n;
+  if (pre === "sull'" || pre === "nell'") return "dell'" + n;
+  if (pre === 'nella ') return 'della ' + n;
+  if (pre === 'a ') return 'di ' + n;
   return /^[AEIOUÀÈÉÌÒÙ]/.test(n) ? "dell'" + n : 'della ' + n;
 }
 

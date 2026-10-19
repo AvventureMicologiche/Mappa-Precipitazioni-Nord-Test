@@ -187,6 +187,8 @@ nav.altre a{color:var(--blu);}
 .fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
 .fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+/* C13 (19/10/2026): otto giornate senza pioggia, il grafico vuoto lo dice */
+.fin{position:relative}.fin-nulla{position:absolute;left:0;right:0;top:38%;text-align:center;color:#5a6b80;font-size:14px;font-weight:600}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
 .gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
@@ -263,6 +265,7 @@ nav.altre .io{font-weight:700;color:var(--blu-scuro);}
 .fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
 .fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+.fin{position:relative}.fin-nulla{position:absolute;left:0;right:0;top:38%;text-align:center;color:#5a6b80;font-size:14px;font-weight:600}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
 /* 17/10/2026: un giorno senza dato non e' una barra a zero, e' una barra vuota */
@@ -518,6 +521,7 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
   function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function uno(n){ return Math.round(n*10+1e-9)/10; }   // margine per i casi a meta' esatta, come lib-pagina-funghi (B8, 19/10/2026)
   function num(n){ return uno(n).toFixed(1).replace('.', ','); }
+  function mmT(n){ return !(n > 0) ? '0' : uno(n) === 0 ? 'meno di 0,1' : num(n); }   // 0 / meno di 0,1, come le pagine piogge (19/10/2026)
   function km(a,b,c,d){ var R=6371, x=(c-a)*Math.PI/180, y=(d-b)*Math.PI/180;
     var s=Math.sin(x/2)*Math.sin(x/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(y/2)*Math.sin(y/2);
     return R*2*Math.atan2(Math.sqrt(s), Math.sqrt(1-s)); }
@@ -587,7 +591,7 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
        il file puo' essere stato scritto prima di mezzanotte. */
     var ieriVero = iso(menoDa(iso(new Date()),1));
     document.getElementById('ieri').innerHTML = (ieri === ieriVero ? 'Ieri, ' + gg(ieri)
-      : ilGg(ieri).charAt(0).toUpperCase() + ilGg(ieri).slice(1)) + ': ' + (s[0] == null ? 'il dato non è ancora arrivato.' : '<b>' + num(s[0]) + ' mm</b>.');
+      : ilGg(ieri).charAt(0).toUpperCase() + ilGg(ieri).slice(1)) + ': ' + (s[0] == null ? 'il dato non è ancora arrivato.' : '<b>' + mmT(s[0]) + ' mm</b>.');
 
     /* ── il verdetto ── */
     var liv = LIV.filter(function(l){ return Math.round(m20) < l.fino; })[0], k = LIV.indexOf(liv);   // sul numero come si legge (B8, 19/10/2026)
@@ -691,7 +695,7 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
     document.getElementById('p-conta').innerHTML = 'Il fungo spunta 12-13 giorni dopo una bella pioggia: '
       + 'i funghi di oggi nascono da queste otto giornate, '
       + (conDati(s, 20, 13) === 0 ? 'ma di nessuna abbiamo il dato di questo pluviometro.'
-        : 'che qui hanno fatto <b>' + num(mm) + ' mm</b>'
+        : 'che qui hanno fatto <b>' + mmT(mm) + ' mm</b>'
           + (conDati(s, 20, 13) < 8 ? ' (ma di ' + (8 - conDati(s, 20, 13)) + (8 - conDati(s, 20, 13) === 1 ? ' giorno' : ' giorni') + ' il dato manca)' : '') + '.');
     var fmax = 1;
     for (var n3=20; n3>=13; n3--) fmax = Math.max(fmax, s[n3-1]||0);
@@ -699,7 +703,7 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
     for (var n4=20; n4>=13; n4--) {
       var v4 = s[n4-1] || 0, d4 = menoDa(j.oggi, n4);
       fb += s[n4-1] == null ? '<div class="c nodato" title="nessun dato"><b>–</b><i></i></div>'
-        : '<div class="c">' + (v4 > 0 ? '<b>' + num(v4) + '</b>' : '')
+        : '<div class="c">' + (uno(v4) > 0 ? '<b>' + num(v4) + '</b>' : '')
         + '<i style="height:' + Math.max(2, Math.round(v4/fmax*88)) + '%"></i></div>';
       fx += '<span>' + GS[d4.getDay()] + '<br>' + d4.getDate() + '/' + (d4.getMonth()+1) + '</span>';
       /* come e' caduta: lenta sotto 2 mm all'ora, battente sopra 6 (scala
@@ -714,6 +718,9 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
           + '<span class="tag ' + tg[1] + '">' + tg[0] + '</span></div>';
       }
     }
+    /* C13 (19/10/2026): se nei giorni con dato non e' piovuto niente, il grafico vuoto sembrava rotto */
+    var asciutto = somma(s,20,13) === 0;   // il totale delle otto giornate, lo stesso numero scritto sopra
+    if (asciutto) fb += '<p class="fin-nulla">Nessuna pioggia in questi otto giorni</p>';
     document.getElementById('finestra').innerHTML = '<div class="fin">' + fb + '</div><div class="fin-x">' + fx + '</div>';
     if (righe) document.getElementById('intensita').innerHTML =
       '<h2 style="font-size:18px">Com’è caduta</h2><p class="breve">La pioggia lenta entra nel terreno, quella battente corre via.</p>'

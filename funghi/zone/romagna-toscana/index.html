@@ -187,6 +187,8 @@ nav.altre a{color:var(--blu);}
 .fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
 .fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+/* C13 (19/10/2026): otto giornate senza pioggia, il grafico vuoto lo dice */
+.fin{position:relative}.fin-nulla{position:absolute;left:0;right:0;top:38%;text-align:center;color:#5a6b80;font-size:14px;font-weight:600}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
 .gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
@@ -247,6 +249,8 @@ nav.altre a{color:var(--blu);}
 .fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
 .fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+/* C13 (19/10/2026): otto giornate senza pioggia, il grafico vuoto lo dice */
+.fin{position:relative}.fin-nulla{position:absolute;left:0;right:0;top:38%;text-align:center;color:#5a6b80;font-size:14px;font-weight:600}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
 .gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
@@ -463,6 +467,8 @@ OpenStreetMap, licenza ODbL.</p>
      lista della regione e 8,0 nella pagina della zona. Il margine sposta solo i casi a meta' esatta. */
   function uno(n){ return Math.round(n*10+1e-9)/10; }
   function num(n){ return uno(n).toFixed(1).replace(".", ","); }
+  /* «0» se non e' piovuto, «meno di 0,1» per le tracce, la regola delle pagine piogge (19/10/2026, quarto check) */
+  function mmT(n){ return !(n > 0) ? "0" : uno(n) === 0 ? "meno di 0,1" : num(n); }
   /* serie[0] e' IERI; n va dal piu' lontano al piu' vicino */
   function somma(s, da, a){ var t = 0; for (var n = da; n >= a; n--) t += (s[n-1]||0); return uno(t); }
 
@@ -541,7 +547,7 @@ OpenStreetMap, licenza ODbL.</p>
     var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13));
     document.getElementById("h-conta").textContent = "Però attenzione: la pioggia che conta è quella caduta " + dalAl(daG, aG);
     document.getElementById("p-conta").innerHTML = "Il fungo spunta 12-13 giorni dopo una bella pioggia: "
-      + "i funghi di oggi nascono da queste otto giornate, che qui hanno fatto " + quale + " <b>" + num(somma(s,20,13)) + " mm</b>"
+      + "i funghi di oggi nascono da queste otto giornate, che qui hanno fatto " + quale + " <b>" + mmT(somma(s,20,13)) + " mm</b>"
       + (function(){ var m = 0; for (var q = 20; q >= 13; q--) if (s[q-1] == null) m++; return m ? " (ma di " + m + (m === 1 ? " giorno" : " giorni") + " il dato manca)" : ""; })() + ".";
     var fmax = 1;
     for (var n = 20; n >= 13; n--) fmax = Math.max(fmax, s[n-1]||0);
@@ -549,9 +555,12 @@ OpenStreetMap, licenza ODbL.</p>
     for (var n2 = 20; n2 >= 13; n2--) {
       var v = s[n2-1] || 0, d = menoDa(oggi, n2);
       if (s[n2-1] == null) fb += "<div class=\"c nodato\" title=\"nessun dato\"><b>–</b><i></i></div>";
-      else fb += "<div class=\"c\">" + (v > 0 ? "<b>" + num(v) + "</b>" : "") + "<i style=\"height:" + Math.max(2, Math.round(v/fmax*88)) + "%\"></i></div>";
+      else fb += "<div class=\"c\">" + (uno(v) > 0 ? "<b>" + num(v) + "</b>" : "") + "<i style=\"height:" + Math.max(2, Math.round(v/fmax*88)) + "%\"></i></div>";
       fx += "<span>" + GS[d.getDay()] + "<br>" + d.getDate() + "/" + (d.getMonth()+1) + "</span>";
     }
+    /* C13 (19/10/2026): se nei giorni con dato non e' piovuto niente, il grafico vuoto sembrava rotto */
+    var asciutto = somma(s,20,13) === 0;   /* il totale delle otto giornate, lo stesso numero scritto sopra */
+    if (asciutto) fb += "<p class=\"fin-nulla\">Nessuna pioggia in questi otto giorni</p>";
     document.getElementById("finestra").innerHTML = "<div class=\"fin\">" + fb + "</div><div class=\"fin-x\">" + fx + "</div>";
   }
 
@@ -688,7 +697,7 @@ OpenStreetMap, licenza ODbL.</p>
     var ieriVero = iso(menoDa(iso(new Date()), 1)), giornoIeri = ilGg(ieri);
     document.getElementById("ieri").innerHTML = (ieri === ieriVero ? "Ieri, " + gg(ieri)
       : giornoIeri.charAt(0).toUpperCase() + giornoIeri.slice(1)) + ": " + (s[0] == null ? "il dato non è ancora arrivato."
-      : "in media <b>" + (s[0] > 0 && Math.round(s[0] * 10) === 0 ? "meno di 0,1" : num(s[0])) + " mm</b> sui " + righe.length + " pluviometri della zona.");
+      : "in media <b>" + mmT(s[0]) + " mm</b> sui " + righe.length + " pluviometri della zona.");
     scriviFinestra(s, oggi, null, "in media");
     document.getElementById("t-conta").href = link(daG, aG);
     document.getElementById("lnk-pioggia").href = link(daG, ieri);

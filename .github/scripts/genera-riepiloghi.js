@@ -278,8 +278,62 @@ function esclusiDallaMappa(r, fuori) {
     for (const s of leggi(dir, g) || []) if (escluso(ESCLUSE, r.k, [s.id, s.n])) fuori.add(dir + ':' + s.id);
   return fuori;
 }
+/* ⚠️ FUORI DAL CONFINE (19/10/2026, quarto check B6, sua scelta): una pagina che dice «in Liguria» conta solo
+   i pluviometri che stanno in Liguria. La rete ligure pubblica anche 20 pluviometri della Lunigiana toscana
+   (Villafranca, Minucciano...) e finivano fra i «piu' bagnati della Liguria», con la media a 52 invece di 49;
+   l'Emilia ne ha 8 fra Firenze e la Lombardia. LA MAPPA NON CAMBIA: li' ogni regione carica la sua rete (21/8).
+   Si esclude solo chi sta fuori di oltre FUORI_KM dal confine: i pluviometri sui moli e sulle dighe foranee
+   (Trieste, Grado, Livorno) stanno appena fuori dal poligono e sono della regione. */
+const FUORI_KM = 2;
+const RADICE = path.join(__dirname, '..', '..');
+const CONFINI = (() => {
+  const leggiG = f => { try { return JSON.parse(fs.readFileSync(path.join(RADICE, f), 'utf8')).features; } catch (e) { return null; } };
+  const ita = leggiG('italia-regioni-confine.geojson') || [], prov = leggiG('italia-province-tn-bz-confine.geojson') || [];
+  const perNome = n => ita.filter(f => String(f.properties.reg_name || '').indexOf(n) === 0);
+  const perProv = a => prov.filter(f => f.properties.prov_acr === a);
+  const NOMI = { lombardia: 'Lombardia', piemonte: 'Piemonte', valledaosta: 'Valle', liguria: 'Liguria', emilia: 'Emilia',
+    veneto: 'Veneto', friuli: 'Friuli', toscana: 'Toscana', umbria: 'Umbria', marche: 'Marche', lazio: 'Lazio', molise: 'Molise',
+    campania: 'Campania', puglia: 'Puglia', basilicata: 'Basilicata', calabria: 'Calabria', sicilia: 'Sicilia', sardegna: 'Sardegna' };
+  const out = {};
+  for (const [k, n] of Object.entries(NOMI)) out[k] = perNome(n);
+  out.trentino = perProv('TN'); out.altoadige = perProv('BZ');
+  for (const k of ['svizzera', 'austria', 'slovenia']) out[k] = leggiG(k + '-confine.geojson') || [];
+  // gli anelli, come liste di [lon, lat]
+  for (const k of Object.keys(out)) out[k] = out[k].flatMap(f => f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates).flat();
+  return out;
+})();
+function dentro(anelli, lon, lat) {
+  let d = false;
+  for (const a of anelli) for (let i = 0, j = a.length - 1; i < a.length; j = i++) {
+    const [xi, yi] = a[i], [xj, yj] = a[j];
+    if ((yi > lat) !== (yj > lat) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) d = !d;
+  }
+  return d;
+}
+function kmDalBordo(anelli, lon, lat) {
+  const kx = 111.32 * Math.cos(lat * Math.PI / 180), ky = 110.57; let m = Infinity;
+  for (const a of anelli) for (let i = 1; i < a.length; i++) {
+    const ax = (a[i - 1][0] - lon) * kx, ay = (a[i - 1][1] - lat) * ky, bx = (a[i][0] - lon) * kx, by = (a[i][1] - lat) * ky;
+    const dx = bx - ax, dy = by - ay, l2 = dx * dx + dy * dy;
+    const t = l2 ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / l2)) : 0;
+    m = Math.min(m, Math.hypot(ax + t * dx, ay + t * dy));
+  }
+  return m;
+}
+const fuoriConfineConta = {};
+function fuoriConfine(r, fuori) {
+  const anelli = CONFINI[r.k]; if (!anelli || !anelli.length) return fuori;
+  const visti = new Set();
+  for (const dir of r.dirs) for (const g of giorni) for (const s of leggi(dir, g) || []) {
+    const id = dir + ':' + s.id; if (visti.has(id) || typeof s.lat !== 'number') continue; visti.add(id);
+    if (!dentro(anelli, s.lon, s.lat) && kmDalBordo(anelli, s.lon, s.lat) > FUORI_KM) {
+      fuori.add(id); (fuoriConfineConta[r.k] = fuoriConfineConta[r.k] || []).push(s.n);
+    }
+  }
+  return fuori;
+}
 for (const r of REGIONI) {
-  const fuori = esclusiDallaMappa(r, gemelleDaScartare(r.dirs, giorni));
+  const fuori = fuoriConfine(r, esclusiDallaMappa(r, gemelleDaScartare(r.dirs, giorni)));
   const periodi = {};
   const da = ultimoCompleto(r.dirs);
   if (da !== null) {
@@ -447,4 +501,5 @@ for (const r of REGIONI) {
   const p20 = x.periodi['20'];
   console.log(`  ${r.k.padEnd(12)} ${String(p20.stazioni).padStart(4)} staz.  ${String(Math.round(p20.media)).padStart(3)} mm/20gg  ${p20.primo}→${p20.ultimo}${uguale ? '  (invariato)' : ''}`);
 }
+console.log('fuori dal confine (B6): ' + JSON.stringify(fuoriConfineConta));
 console.log(`\n${scritti} riepiloghi scritti su ${REGIONI.length}${saltati.length ? ', SALTATI (nessun dato): ' + saltati.join(', ') : ''}`);

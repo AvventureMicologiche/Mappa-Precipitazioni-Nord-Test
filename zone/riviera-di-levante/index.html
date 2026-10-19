@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dove ha piovuto in Riviera di Levante: ieri e ultimi giorni</title>
-<meta name="description" content="Quanta pioggia è caduta in Riviera di Levante ieri e negli ultimi 7 e 30 giorni, pluviometro per pluviometro. Aggiornato ogni giorno.">
+<title>Dove ha piovuto nella Riviera di Levante: ieri e ultimi giorni</title>
+<meta name="description" content="Quanta pioggia è caduta nella Riviera di Levante ieri e negli ultimi 7 e 30 giorni, pluviometro per pluviometro. Aggiornato ogni giorno.">
 <link rel="canonical" href="https://avventurepluvio-test.pages.dev/zone/riviera-di-levante/">
-<meta property="og:title" content="Dove ha piovuto in Riviera di Levante: ieri e ultimi giorni">
+<meta property="og:title" content="Dove ha piovuto nella Riviera di Levante: ieri e ultimi giorni">
 <meta property="og:description" content="La pioggia misurata dai pluviometri della Riviera di Levante: ieri, ultimi 7 e 30 giorni.">
 <meta property="og:image" content="https://avventurepluvio-test.pages.dev/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.pages.dev/zone/riviera-di-levante/">
@@ -107,6 +107,8 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
 .fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
+/* C13 (19/10/2026): otto giornate senza pioggia, il grafico vuoto lo dice */
+.fin{position:relative}.fin-nulla{position:absolute;left:0;right:0;top:38%;text-align:center;color:#5a6b80;font-size:14px;font-weight:600}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
 .gg .b.nodato i,.fin .c.nodato i{background:none;border:1px dashed #9fb3cc;border-bottom:0;height:14%;}
@@ -210,14 +212,14 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 </header>
 <main>
 <p class="bric"><a href="https://avventurepluvio-test.pages.dev/">Mappa pluviometrica</a> › <a href="https://avventurepluvio-test.pages.dev/liguria/">Liguria</a> › Riviera di Levante</p>
-<h1>Dove ha piovuto in Riviera di Levante</h1>
+<h1>Dove ha piovuto nella Riviera di Levante</h1>
 <p class="sotto"><b>Pluviometria della Riviera di Levante</b>: i dati dei 3 pluviometri di ARPA Liguria, ieri e nell'ultimo mese.</p>
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="verdetto"></div>
 <a class="banda-prev" href="https://avventurepluvio-test.pages.dev/?r=liguria&amp;pl=44.42,9.24&amp;pn=Riviera%20di%20Levante&amp;pz=1&amp;m=prev"
    onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-riviera-di-levante-banda-previsioni'})}catch(e){}">
-  <span class="ic">☀️</span><span><b>Che tempo farà in Riviera di Levante</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
+  <span class="ic">☀️</span><span><b>Che tempo farà nella Riviera di Levante</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
 
 <h2>La pioggia degli ultimi 30 giorni</h2>
 <div id="grafico"></div>
@@ -270,16 +272,16 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
   <a class="t-prev" href="https://avventurepluvio-test.pages.dev/?r=liguria&amp;pl=44.42,9.24&amp;pn=Riviera%20di%20Levante&amp;pz=1&amp;m=prev"
      onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-riviera-di-levante-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
-<p class="breve">La pioggia degli ultimi 20 giorni in Liguria; il link apre la mappa già inquadrata in Riviera di Levante.</p>
+<p class="breve">La pioggia degli ultimi 20 giorni in Liguria; il link apre la mappa già inquadrata nella Riviera di Levante.</p>
 <a href="https://avventurepluvio-test.pages.dev/?r=liguria,emilia,piemonte&amp;g=20&amp;pl=44.42,9.24&amp;pn=Riviera%20di%20Levante&amp;pz=1&amp;z=10&amp;c=44.42,9.24" id="lnk-img" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-riviera-di-levante-anteprima'})}catch(e){}">
   <img class="img-mappa" src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/liguria.jpg" alt="La mappa delle piogge in Liguria"
        width="1600" height="1000" loading="lazy"></a>
 
-<h2>Funghi in Riviera di Levante</h2>
+<h2>Funghi nella Riviera di Levante</h2>
 <p style="margin-bottom:6px">Sei un appassionato di funghi? Guarda le nostre analisi in dettaglio:</p>
 <ul style="margin:0 0 12px 22px;line-height:1.9">
-  <li><a href="https://avventurepluvio-test.pages.dev/funghi/zone/riviera-di-levante/">Funghi in Riviera di Levante oggi, stanno nascendo?</a></li>
+  <li><a href="https://avventurepluvio-test.pages.dev/funghi/zone/riviera-di-levante/">Funghi nella Riviera di Levante oggi, stanno nascendo?</a></li>
   <li><a href="https://avventurepluvio-test.pages.dev/funghi/liguria/">Funghi in Liguria oggi</a></li>
 </ul>
 
@@ -288,11 +290,11 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano i 3 pluviometri di ARPA Liguria che stanno in Riviera di Levante: strumenti a terra,
+<p>I millimetri li misurano i 3 pluviometri di ARPA Liguria che stanno nella Riviera di Levante: strumenti a terra,
 con il loro nome e la loro quota, non stime da modello. I numeri in cima sono la media dei pluviometri della zona, giorno
 per giorno. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando. Nella tabella il trattino
 vuol dire che quel pluviometro in quei giorni non ha pubblicato.</p>
-<h2>Dove piove oggi in Riviera di Levante? La diretta radar</h2>
+<h2>Dove piove oggi nella Riviera di Levante? La diretta radar</h2>
 <p>Per la pioggia in corso c'è la <a href="https://avventurepluvio-test.pages.dev/?r=liguria&amp;pl=44.42,9.24&amp;pn=Riviera%20di%20Levante&amp;pz=1&amp;radar=ora"
    onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-riviera-di-levante-radar-testo'})}catch(e){}">diretta radar</a>:
 dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti seguenti. Il radar misura dal cielo, a 2 km

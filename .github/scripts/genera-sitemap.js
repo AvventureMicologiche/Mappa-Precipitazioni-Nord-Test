@@ -160,7 +160,7 @@ function scriviSitemap(SITO, RADICE) {
   if (c_e(path.join('mappa-forestale', 'index.html'))) {
     // Il guscio delle pagine forestali e' cambiato il 18/10/2026 (radar con zoom e centro, link ai boschi
     // con la regione): prima la data era ferma al 28/9 (quarto check B9). Si cambia a mano quando cambiano.
-    const FORESTALE_LASTMOD = '2026-10-18';
+    const FORESTALE_LASTMOD = '2026-10-19';   // 19/10: preposizioni delle zone
     fam.forestale.push({ loc: SITO + '/mappa-forestale/', lastmod: FORESTALE_LASTMOD, freq: 'monthly', pri: '0.8' });
     for (const d of fs.readdirSync(MF).sort()) {
       if (d !== 'zone' && c_e(path.join('mappa-forestale', d, 'index.html')))

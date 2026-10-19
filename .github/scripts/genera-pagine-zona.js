@@ -439,7 +439,7 @@ ${JS_AGGIORNATO}
     var ieriVero = iso(menoDa(iso(new Date()), 1)), giornoIeri = ilGg(ieri);
     document.getElementById("ieri").innerHTML = (ieri === ieriVero ? "Ieri, " + gg(ieri)
       : giornoIeri.charAt(0).toUpperCase() + giornoIeri.slice(1)) + ": " + (s[0] == null ? "il dato non è ancora arrivato."
-      : "in media <b>" + (s[0] > 0 && Math.round(s[0] * 10) === 0 ? "meno di 0,1" : num(s[0])) + " mm</b> sui " + righe.length + " pluviometri della zona.");
+      : "in media <b>" + mmT(s[0]) + " mm</b> sui " + righe.length + " pluviometri della zona.");
     scriviFinestra(s, oggi, null, "in media");
     document.getElementById("t-conta").href = link(daG, aG);
     document.getElementById("lnk-pioggia").href = link(daG, ieri);

@@ -5079,7 +5079,7 @@ function loadOpenMeteo(stations,pastDate,nowDate,labelPeriodo,badgePrefix){
     .then(function(){
       batch.forEach(function(s){
         var t=acc[s.n]||0;
-        results[s.n]=t<0.5?0:Math.round(t*10)/10;
+        results[s.n]=Math.round(t*10)/10;
       });
       onBatchDone();
     })
@@ -6051,7 +6051,7 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
       var m=meta[id];
       return {n:m.n||'—',lat:m.lat,lon:m.lon,q:m.q,qt:m.qt,p:m.p||'—',
               idsensore:id,                                  // serve al grafico storico
-              mm:rainMap[id]<0.5?0:Math.round(rainMap[id]*10)/10};
+              mm:Math.round(rainMap[id]*10)/10};   // il valore vero anche sotto 0,5 mm (19/10/2026, quarto check B5): prima 0, e la pagina dello stesso pluviometro diceva 0,2. In tutti i 18 loader; i colori non cambiano, la scala e' trasparente fino a 2 mm
     }).filter(function(s){return s&&s.lat&&s.lon;});
     if(out.length<3){ loadOpenMeteoRegion(LOMBARDIA_STATIONS,pastDate,nowDate,labelPeriodo,cb); return; } // fallback se i file mancano
     cb(out);
@@ -6136,7 +6136,7 @@ function loadOpenMeteoRegion(stations,pastDate,nowDate,labelPeriodo,cb){
     urls.reduce(function(chain,url){
       return chain.then(function(){return fetch(url);}).then(function(r){if(!r.ok)throw new Error('OM '+r.status);return r.json();}).then(function(data){processOM(data);});
     },Promise.resolve())
-    .then(function(){batch.forEach(function(s){var t=acc[s.n]||0;results[s.n]=t<0.5?0:Math.round(t*10)/10;});onBatchDone();})
+    .then(function(){batch.forEach(function(s){var t=acc[s.n]||0;results[s.n]=Math.round(t*10)/10;});onBatchDone();})
     .catch(function(e){console.warn('OM error:',e.message);batch.forEach(function(s){results[s.n]=0;});onBatchDone();});
   });
 }
@@ -6217,7 +6217,7 @@ function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
       return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,wh:s.wh,p:s.p||'',
-              mm:mm<0.5?0:Math.round(mm*10)/10};
+              mm:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
     cb(full);
@@ -6291,7 +6291,7 @@ function loadARPAVenetoRegion(pastDate,nowDate,labelPeriodo,cb){
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
       return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,wh:s.wh,p:s.p||'',
-              mm:mm<0.5?0:Math.round(mm*10)/10};
+              mm:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
     // ⚠️ NIENTE TETTO SUI DATI (21/8/2026). Qui si diradavano le stazioni
@@ -6379,7 +6379,7 @@ function loadARPALiguriaRegion(pastDate,nowDate,labelPeriodo,cb){
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
       return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,wh:s.wh,p:s.p||'',
-              mm:mm<0.5?0:Math.round(mm*10)/10};
+              mm:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
     // Usa tutte le stazioni reali — non tagliare con selectUniform per Liguria
@@ -6514,7 +6514,7 @@ function loadARPAEmiliaRegion(pastDate,nowDate,labelPeriodo,cb){
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
       return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,wh:s.wh,p:s.p||'',
-              mm:mm<0.5?0:Math.round(mm*10)/10};
+              mm:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
     // ⚠️ NIENTE TETTO SUI DATI (21/8/2026). Qui si diradavano le stazioni
@@ -6607,7 +6607,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
           if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'AT',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'AT',mm:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -6656,7 +6656,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
           if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'SI',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'SI',mm:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -6728,7 +6728,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
           if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'FR',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'FR',mm:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -6790,7 +6790,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
             var s=stMeta[key];if(!s)return null;
             var mm=rainTot[key]||0;
             return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p,_src:s._src,
-                    mm:mm<0.5?0:Math.round(mm*10)/10};
+                    mm:Math.round(mm*10)/10};
           }).filter(Boolean);
           if(full.length<5){cb([]);return;}
           full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -6844,7 +6844,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
           return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
-                  mm:mm<0.5?0:Math.round(mm*10)/10};
+                  mm:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -6925,7 +6925,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
       // cercare il file nella cartella giusta (friuli-osmer o meteohub-friuli),
       // come già fa la Svizzera con 'oasi'/'ms'.
       return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'FVG',_src:s._src,
-              mm:mm<0.5?0:Math.round(mm*10)/10};
+              mm:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([],'🟢 ARPA OSMER FVG');return;}
     full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -7042,7 +7042,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
           if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'AO',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'AO',mm:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([],'🟢 Centro Funzionale VdA');return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -7209,7 +7209,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
           if(_scarsa(key))return null;
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
-          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',mm:mm<0.5?0:Math.round(mm*10)/10};
+          return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',mm:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -7260,7 +7260,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
           return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'BZ',
-                  mm:mm<0.5?0:Math.round(mm*10)/10};
+                  mm:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -7311,7 +7311,7 @@ else if(!stMeta[key].q && s.q) stMeta[key].q=s.q;stMeta[key].qt=s.qt;   // la qu
           var s=stMeta[key];if(!s)return null;
           var mm=rainTot[key]||0;
           return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'TN',
-                  mm:mm<0.5?0:Math.round(mm*10)/10};
+                  mm:Math.round(mm*10)/10};
         }).filter(Boolean);
         if(full.length<5){cb([]);return;}
         full.sort(function(a,b){return a.n<b.n?-1:a.n>b.n?1:0;});
@@ -7444,7 +7444,7 @@ function loadCFRToscanaRegion(pastDate,nowDate,labelPeriodo,cb){
       var s=stMeta[key];if(!s)return null;
       var mm=rainTot[key]||0;
       return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,wh:s.wh,p:s.p||'',
-              mm:mm<0.5?0:Math.round(mm*10)/10};
+              mm:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([]);return;}
     cb(full);
@@ -10971,7 +10971,13 @@ if(_btnShot){
   // confini, che invece servono davvero.
   function whenLombardiaReady(cb){ cb(); }
   whenLombardiaReady(function(){
+    // Mentre si aspettano i confini la pillola di caricamento resta accesa (A10, 19/10/2026):
+    // la rete di sicurezza degli 8 s la spegneva a meta' download e con la rete lenta restavano
+    // 4-25 s senza nessun segno, fino alla rotella di loadData. Vedi la rete di sicurezza in fondo.
+    window._attesaLinkConfini=true;
     loadAllBorders(keysVere,function(){
+      window._attesaLinkConfini=false;
+      var _ld=document.getElementById('loader'); if(_ld) _ld.style.display='none';
       var z=parseFloat(q.get('z')),c=(q.get('c')||'').split(',').map(Number);
       // Zoom e centro si applicano TALI E QUALI, su qualunque schermo: chi
       // riceve vede la mappa alla stessa scala di chi ha condiviso, centrata
@@ -11264,6 +11270,13 @@ loadGeoJSONOnce(function(){
 // piu' tenere in ostaggio l'apertura del sito.
 setTimeout(function(){
   var l=document.getElementById('loader');
+  // ⚠️ Se un link condiviso sta ancora aspettando i confini la pillola NON si spegne (A10, 19/10/2026):
+  // dice che la rete e' lenta e se ne va quando arrivano, subito prima della rotella dell'analisi.
+  if(l && window._attesaLinkConfini){
+    document.getElementById('lmsg').textContent='Rete lenta: sto ancora scaricando la mappa…';
+    document.getElementById('lsub').textContent='';
+    return;
+  }
   if(l) l.style.display='none';
 },8000);
 
@@ -16376,6 +16389,9 @@ body.con-sezioni header .hdr-l{align-self:stretch;gap:6px}
   body.con-sezioni #hdr-yt{padding:6px 7px;border-radius:8px}
   body.con-sezioni #hdr-yt svg{width:20px;height:14px;display:block}
 }
+/* 601-640 px (19/10/2026, quarto check): linguette (340 px fisse) e «v11.0» arrivavano a 630 px, il tasto
+   «Guida» restava tagliato a meta' e la pagina scorreva di lato. Si toglie la versione, come sotto i 600. */
+@media(min-width:601px) and (max-width:640px){.sez-ver{display:none}}
 /* ── cosa si spegne nella sezione previsioni ── */
 .modo-prev #badge,.modo-prev #tq-btn,.modo-prev #beta-note,.modo-prev #map-hint-panel,.modo-prev #legend-panel,.modo-prev #st-tooltip,.modo-prev #vic-riga{display:none !important}
 /* sul computer il cerca localita' e' spostato nel riquadro dei giorni e il suo contenitore si spegne; sul telefono sta nella tendina delle regioni e resta */

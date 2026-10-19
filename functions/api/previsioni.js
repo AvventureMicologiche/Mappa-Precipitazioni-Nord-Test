@@ -12,7 +12,7 @@
 const UA = 'precipitazioni.avventuremicologiche.it (avventuremicologiche@gmail.com)';
 const PROB = true;
 const TETTO_CACHE = 3600, MIN_CACHE = 600;
-const VERSIONE = 11; // alzare quando cambia la forma della risposta: la cache vecchia non si rilegge (11: simbolo del giorno, 18/10/2026)
+const VERSIONE = 12; // alzare quando cambia la forma della risposta: la cache vecchia non si rilegge (11: simbolo del giorno, 18/10/2026; 12: le tre correzioni del simbolo, 19/10/2026)
 const ORIGINI = /^https?:\/\/(precipitazioni\.avventuremicologiche\.it|avventurepluvio(-test)?\.pages\.dev|localhost(:\d+)?|127\.0\.0\.1(:\d+)?)$/;
 const TZ = 'Europe/Rome';
 
@@ -134,23 +134,40 @@ function oraLocale(iso) {
    finestra c'e' pioggia (≥ 0,5 mm) vince il simbolo piu' severo: chi guarda la scheda chiede «piove?»,
    e la fascia 14-20 con 15 mm deve battere il «variabile» delle 8-14. Senza pioggia vince il peso. */
 const SEVERITA = [/thunder/, /snow|sleet/, /heavyrain/, /rain|drizzle/, /^cloudy|fog/, /partlycloudy/, /fair|clearsky/];
+/* ⚠️ TRE CORREZIONI (19/10/2026, quarto check A13):
+   1. senza pioggia si sommano le ore per FAMIGLIA (sole = fair+clearsky, poco nuvoloso, nuvoloso/nebbia...) e a
+      parita' vince la MENO cupa: Garfagnana 19/10 usciva nebbia con 4 h di nebbia contro 7 h di sole divise fra
+      fair (4) e clearsky (3);
+   2. una fascia «_night» che entra nelle ore 6-21 conta come diurna: Arezzo 24/10, rovesci forti 02-08 (8,8 mm)
+      scartati perche' «notte», e usciva la nuvola con 13,3 mm;
+   3. se nessuna riga cade fra le 6 e le 21 (oggi dopo le 21) si usano tutte le righe rimaste, notte compresa:
+      prima tornava null e la pagina metteva la nuvola anche con pioggia forte. */
 function scegliSimbolo(righe) {
-  const peso = {}; let mm = 0;
+  const grado = s => { const i = SEVERITA.findIndex(re => re.test(s)); return i < 0 ? SEVERITA.length : i; };
+  let usa = [];
   for (const r of righe) {
     const w = Math.max(0, Math.min(r.h + (r.n6 ? 6 : 1), 21) - Math.max(r.h, 6));   // ore dentro 6-21
-    if (!w) continue;
-    peso[r.s] = (peso[r.s] || 0) + w; mm += r.mm;
+    if (w) usa.push({ s: r.s.replace(/_night$/, '_day'), w, mm: r.mm });             // di giorno la notte e' giorno (2)
   }
+  if (!usa.length) usa = righe.map(r => ({ s: r.s, w: r.n6 ? 6 : 1, mm: r.mm }));     // oggi dopo le 21 (3)
+  if (!usa.length) return null;
+  const peso = {}, pesoFam = {}; let mm = 0;
+  for (const u of usa) { peso[u.s] = (peso[u.s] || 0) + u.w; pesoFam[grado(u.s)] = (pesoFam[grado(u.s)] || 0) + u.w; mm += u.mm; }
   let sim = Object.keys(peso);
-  const diurni = sim.filter(s => !/_night$/.test(s)); if (diurni.length) sim = diurni;
-  if (!sim.length) return null;
-  const grado = s => { const i = SEVERITA.findIndex(re => re.test(s)); return i < 0 ? SEVERITA.length : i; };
   if (mm >= 0.5) {
     // col piu' severo comanda, ma non un'ora sola: un'ora di nevischio alle 7 non deve coprire un giorno di pioggia
     const solidi = sim.filter(s => peso[s] >= 2); if (solidi.length) sim = solidi;
     sim.sort((a, b) => grado(a) - grado(b) || peso[b] - peso[a]);
-  } else sim.sort((a, b) => peso[b] - peso[a] || grado(a) - grado(b));
-  return sim[0];
+    return sim[0];
+  }
+  // 4. (19/10/2026, sua scelta A) di giorno asciutto ma nella giornata almeno 2 mm previsti, di notte: sole con
+  //    pioggia, cosi' l'icona non dice «sole» accanto a 4,5 mm (Ceva 21/10, pioggia fra mezzanotte e le 2).
+  //    Vale solo finche' quella notte e' davanti: MET manda le ore da adesso in poi, passata la notte i mm spariscono.
+  const mmGiorno = righe.reduce((t, r) => t + (r.mm || 0), 0);
+  if (mmGiorno >= 2) return righe.some(r => /snow|sleet/.test(r.s) && r.mm > 0) ? 'snowshowers_day' : 'rainshowers_day';
+  // senza pioggia: la famiglia con piu' ore, a parita' la meno cupa (1); dentro la famiglia il simbolo piu' presente
+  const fam = Object.keys(pesoFam).map(Number).sort((a, b) => pesoFam[b] - pesoFam[a] || b - a)[0];
+  return sim.filter(s => grado(s) === fam).sort((a, b) => peso[b] - peso[a] || (a < b ? -1 : 1))[0];
 }
 export { scegliSimbolo };   // per le prove in locale (prova-simbolo.mjs nello scratchpad della scheda 86)
 function maxProb(pr, g, h) { let m = null; for (let k = 0; k < 6; k++) { const p = pr[g + '_' + (h + k)]; if (p != null) m = Math.max(m ?? 0, p); } return m; }

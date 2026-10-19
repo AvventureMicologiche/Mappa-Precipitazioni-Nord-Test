@@ -113,7 +113,7 @@ const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 const pc = v => String(Math.round(v * 10) / 10).replace('.', ',') + '%';
 const prima = t => t.charAt(0).toUpperCase() + t.slice(1);
 // il genitivo di una zona dal suo «dove»: le «in» sono tutte femminili (Val, Valle, Garfagnana, Sabina...)
-const GEN = { 'in': 'della', 'sul': 'del', 'nel': 'del', 'negli': 'degli', 'sui': 'dei', 'nelle': 'delle', 'sulle': 'delle' };
+const GEN = { 'in': 'della', 'sul': 'del', 'nel': 'del', 'nella': 'della', 'negli': 'degli', 'sui': 'dei', 'nelle': 'delle', 'sulle': 'delle', 'a': 'di' };   // nella e a dal 19/10/2026 (preposizioni delle zone)
 function della(z) {
   if (/^sull'/.test(z.dove)) return "dell'" + z.dove.slice(5);
   const [p, ...r] = z.dove.split(' ');
