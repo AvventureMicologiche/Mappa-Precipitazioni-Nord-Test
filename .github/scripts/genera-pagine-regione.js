@@ -272,10 +272,14 @@ function descrMappa(r, j, N, n) {
   if (!N) return [`${apre} Quanto ha piovuto ieri e negli ultimi 7, 20 e 30 giorni. ${coda}`, `${apre} Ieri e ultimi 30 giorni. ${coda}`, apre].find(t => t.length <= 158);
   const d1 = j.periodi['1'], d7 = j.periodi['7'], t1 = d1 && d1.top && d1.top[0], t7 = d7 && d7.top && d7.top[0];
   const quando = N.ieri ? 'Ieri' : 'Il ' + lungoIso(N.ultimo);
-  const uno = !d1 || !d1.giorni ? null : t1 && t1.mm >= 1 ? `${quando} ${virgola(t1.mm)} mm ${aDi(nomeBello(t1.n))}` : `${quando} giornata ${t1 && t1.mm > 0 ? 'quasi ' : ''}asciutta`;
-  const sette = t7 && t7.mm >= 1 ? `in 7 giorni ${mmD(t7.mm)} mm ${aDi(nomeBello(t7.n))}` : null;
+  // il nome SENZA la provincia aggiunta dal riepilogo (`nb`, bug 8 del 19/10/2026): con «(Provincia del verbano
+  // cusio os)» due volte la frase arrivava a 226 caratteri e restava solo «Mappa di 277 pluviometri…»
+  const uno = !d1 || !d1.giorni ? null : t1 && t1.mm >= 1 ? `${quando} ${virgola(t1.mm)} mm ${aDi(nomeBello(t1.nb || t1.n))}` : `${quando} giornata ${t1 && t1.mm > 0 ? 'quasi ' : ''}asciutta`;
+  const sette = t7 && t7.mm >= 1 ? `in 7 giorni ${mmD(t7.mm)} mm ${aDi(nomeBello(t7.nb || t7.n))}` : null;
   const numeri = [uno, sette].filter(Boolean).join(', ');
-  const forme = [`${apre} ${numeri}. ${coda}`, `${apre} ${numeri}.`, `${apre} ${uno ? uno + '.' : ''} ${coda}`, apre];
+  // la forma «apertura + ieri» senza coda (19/10/2026): con un nome lungo («Gressoney-Saint-Jean - lago di Seebna»)
+  // la Valle d'Aosta sforava i 158 caratteri per la sola coda e ripiegava sull'apertura nuda
+  const forme = [`${apre} ${numeri}. ${coda}`, `${apre} ${numeri}.`, `${apre} ${uno ? uno + '.' : ''} ${coda}`, uno ? `${apre} ${uno}.` : apre, apre];
   return forme.map(t => t.replace(/\s+/g, ' ').replace(/ \./g, '.').trim()).find(t => t.length <= 158);
 }
 function descrCotta(r, j, N) {
@@ -283,11 +287,11 @@ function descrCotta(r, j, N) {
   const quando = (N.ieri ? 'Ieri ' : 'Il ') + lungoIso(N.ultimo);
   const t1 = d1 && d1.top && d1.top[0], t7 = d7.top && d7.top[0];
   const primo = !d1 || !d1.giorni ? null
-    : t1 && t1.mm >= 1 ? `${quando}: ${virgola(t1.mm)} mm ${aDi(t1.n)}.`
+    : t1 && t1.mm >= 1 ? `${quando}: ${virgola(t1.mm)} mm ${aDi(t1.nb || t1.n)}.`
     : `${quando}: giornata ${t1 && t1.mm > 0 ? 'quasi ' : ''}asciutta ${r.prep} ${r.nome}.`;
   const sette = `Ultimi 7 giorni: ${virgola(d7.media)} mm di media su ${d7.stazioni} pluviometri ${ag}`;
   const forme = [
-    [primo, sette + (t7 && t7.mm >= 1 ? `, ${mmD(t7.mm)} mm ${aDi(t7.n)}.` : '.')],
+    [primo, sette + (t7 && t7.mm >= 1 ? `, ${mmD(t7.mm)} mm ${aDi(t7.nb || t7.n)}.` : '.')],
     [primo, sette + '.'],
     [primo, `Ultimi 7 giorni: ${virgola(d7.media)} mm di media.`],
     [primo],

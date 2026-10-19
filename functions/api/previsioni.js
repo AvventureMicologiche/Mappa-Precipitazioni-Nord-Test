@@ -21,7 +21,13 @@ export async function onRequestGet({ request, env }) {
   const cors = intestazioni(request);
   try {
     const area = u.searchParams.get('capoluoghi');
-    if (area) { const d = await perArea(area, env, request); return rispondi(d, cors, d.errore ? 404 : 200, 1800); }
+    if (area) {
+      const d = await perArea(area, env, request);
+      // ⚠️ (19/10/2026, quinto check, bug 5) nessuna citta' risponde = 502 e niente cache nel browser: prima era un 200
+      // tenuto 10 minuti, e la mappa restava su «carico…»; qualcuna sola in errore = 200 ma per 2 minuti, poi si richiede
+      const stato = d.errore ? (d.capoluoghi ? 502 : 404) : 200;
+      return rispondi(d, cors, stato, (d.capoluoghi || []).some(x => x.errore) ? 120 : 1800);
+    }
     if (!u.searchParams.has('lat') || !u.searchParams.has('lon')) return rispondi({ errore: 'lat/lon mancanti' }, cors, 400);
     const lat = +u.searchParams.get('lat'), lon = +u.searchParams.get('lon'), q = u.searchParams.get('q');
     if (!isFinite(lat) || !isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return rispondi({ errore: 'lat/lon non validi' }, cors, 400);
@@ -112,6 +118,7 @@ async function perArea(area, env, request) {
     catch (e) { return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, errore: String(e && e.message || e) }; }
   }));
   const dati = { area, agg: (ris.find(x => x.agg) || {}).agg || null, capoluoghi: ris, fonte: 'MET Norway (ECMWF)' + (PROB ? ' · % Open-Meteo' : '') };
+  if (!ris.some(x => x.giorni)) dati.errore = 'nessuna citta\' risponde';   // MET giu': errore in cima, vedi onRequestGet (bug 5)
   if (!ris.some(x => x.errore)) await cache.put(chiave, new Response(JSON.stringify(dati), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=1800', 'Date': new Date().toUTCString() } }));
   return dati;
 }

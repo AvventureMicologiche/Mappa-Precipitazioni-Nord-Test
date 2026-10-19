@@ -3538,6 +3538,30 @@ var FRIULI_HIST_FROM='2026-05-19';
 // 27/7/2026: e' il limite dell'archivio MeteoHub per questa rete, anche con
 // l'account. Prima di quella data in Friuli ci sono le sole ~41 stazioni OSMER.
 var FVG_MH_HIST_FROM='2026-07-27';
+/* ⚠️ IL PRIMO GIORNO DI OGNI REGIONE (19/10/2026, quinto check, bug 7). Prima il calendario aveva una data
+   d'inizio solo per sette regioni e tutte le altre partivano dal 1/1/2021: scegliendo un periodo prima dei file
+   la mappa sommava i giorni che trovava e scriveva il periodo pieno (Sicilia, maggio: «✅ 01 mag → 31 mag» con
+   12 giorni su 31; Lombardia 15/12 → 14/1 con 14 su 31). Il filtro di copertura non lo vede: misura le stazioni
+   fra loro, e se un giorno manca a tutte passano tutte. Le date sono il primo file di ogni cartella; i cinque
+   «misti» restano al 15/5 come prima (prima ci sono solo le stime del backfill). Con piu' regioni vince la piu'
+   recente. Il tetto della retention (730 giorni) fa il resto da solo quando nel 2027 la pulizia comincia a
+   cancellare. La usano il calendario, «Applica» e loadData (che sposta l'inizio: vale anche per i link). */
+var INIZIO_STORICO={
+  lombardia:'2026-01-01',
+  piemonte:'2026-05-15', liguria:'2026-05-15', veneto:'2026-05-15', emilia:'2026-05-15', toscana:'2026-05-15',
+  valledaosta:VDA_HIST_FROM, friuli:FRIULI_HIST_FROM,
+  altoadige:'2025-08-07', trentino:'2025-08-07', svizzera:'2025-08-07', austria:'2025-08-07', slovenia:'2025-08-11', francia:'2025-08-01',
+  marche:'2026-05-14', umbria:'2026-05-14', lazio:'2026-05-20', molise:'2026-05-20', campania:'2026-05-20', puglia:'2026-05-20',
+  basilicata:'2026-05-20', calabria:'2026-05-20', sicilia:'2026-05-20', sardegna:'2026-05-20'
+};   // l'Abruzzo non c'e': e' Open-Meteo dal vivo, per lui vale solo il tetto
+var RETENTION_GIORNI=730;
+function inizioStorico(regioni){
+  var lim=new Date(); lim.setDate(lim.getDate()-RETENTION_GIORNI);
+  var d=fmtISOLocal(lim), chi=null;
+  (regioni||[]).forEach(function(r){ var x=INIZIO_STORICO[r.indexOf('francia')===0?'francia':r]; if(x&&x>d){ d=x; chi=r; } });
+  return {data:d, regione:chi};
+}
+function nomeInizio(ini){ return ini.regione ? ((REGIONS[ini.regione]&&REGIONS[ini.regione].name)||ini.regione)+': i dati partono dal '+ggmmaaaa(ini.data) : 'I dati partono dal '+ggmmaaaa(ini.data); }
 var HIST_REAL_FROM={toscana:'2026-07-12','friuli-osmer':FRIULI_HIST_FROM,'valledaosta-cf':VDA_HIST_FROM,
                     'meteohub-friuli':FVG_MH_HIST_FROM};
 var histEl=document.getElementById('st-history');
@@ -5348,6 +5372,20 @@ function loadData(pastDate,nowDate,labelPeriodo){
   // senza date non si parte: una chiamata storta moriva piu' sotto su fmtISOLocal(null) con
   // isLoading gia' a vero, e tutti i tasti del periodo restavano muti (18/10/2026)
   if(!pastDate||!nowDate) return;
+  /* ⚠️ IL PERIODO NON COMINCIA PRIMA DEI FILE (19/10/2026, quinto check, bug 7). Qui passa ogni analisi (tasti,
+     calendario, link con ?da=): se l'inizio sta prima del primo giorno delle regioni scelte si sposta li' e
+     l'etichetta dice le date vere («✅ 20 mag → 31 mag»), invece di sommare 12 giorni su 31 dichiarandone 31.
+     Se il periodo sta tutto prima, si dice che non ci sono dati e da quando partono. */
+  var _ini=inizioStorico(regions);
+  if(fmtISOLocal(nowDate)<_ini.data){
+    var _tsI=document.getElementById('tp-status'); _tsI.className='error'; _tsI.textContent='⚠️ Nessun dato per questo periodo · '+nomeInizio(_ini);
+    return;
+  }
+  if(fmtISOLocal(pastDate)<_ini.data){
+    pastDate=new Date(_ini.data+'T00:00:00');
+    var _dI=function(dd){return dd.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});};
+    labelPeriodo=_dI(pastDate)+' → '+_dI(nowDate);
+  }
   /* Una nuova analisi e' una nuova inquadratura anche per chi e' arrivato da un link (18/10/2026).
      `_vistaDaLink` protegge la PRIMA vista del link (il ramo dei link la rialza subito dopo questa
      chiamata, insieme al setView); restava alzato anche al click su un altro periodo, e con un paese
@@ -5488,7 +5526,7 @@ function loadData(pastDate,nowDate,labelPeriodo){
 
     if(source==='arpa_lombardia'){
       loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,function(dati){
-        onRegionDone(dati,'🟢 ARPA Lombardia',regionKey);
+        onRegionDone(dati,dati&&dati._ripiego?'🌍 stime Open-Meteo':'🟢 ARPA Lombardia',regionKey);
       });
     } else if(source==='arpa_piemonte'){
       loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,function(dati){
@@ -6053,7 +6091,8 @@ function loadARPALombardiaRegion(pastDate,nowDate,labelPeriodo,cb){
               idsensore:id,                                  // serve al grafico storico
               mm:Math.round(rainMap[id]*10)/10};   // il valore vero anche sotto 0,5 mm (19/10/2026, quarto check B5): prima 0, e la pagina dello stesso pluviometro diceva 0,2. In tutti i 18 loader; i colori non cambiano, la scala e' trasparente fino a 2 mm
     }).filter(function(s){return s&&s.lat&&s.lon;});
-    if(out.length<3){ loadOpenMeteoRegion(LOMBARDIA_STATIONS,pastDate,nowDate,labelPeriodo,cb); return; } // fallback se i file mancano
+    // fallback se i file mancano: sono stime, e il badge lo deve dire (bug 7, 19/10/2026: diceva «🟢 ARPA Lombardia»)
+    if(out.length<3){ loadOpenMeteoRegion(LOMBARDIA_STATIONS,pastDate,nowDate,labelPeriodo,function(d){ d._ripiego=true; cb(d); }); return; }
     cb(out);
   }
   days.forEach(function(day){
@@ -6087,7 +6126,11 @@ function loadOpenMeteoRegion(stations,pastDate,nowDate,labelPeriodo,cb){
   function onBatchDone(){
     pending--;
     if(pending>0) return;
-    var out=stations.map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p,mm:results[s.n]||0};});
+    // ⚠️ SENZA RISPOSTA NON E' ZERO (19/10/2026, quinto check, bug 3): se Open-Meteo non risponde (429, rete)
+    // la stazione resta fuori. Prima valeva 0 e la mappa diceva «✅ Nessuna pioggia» con 40 stazioni a zero:
+    // una giornata asciutta inventata. Se non risponde nessuna, arriva [] e la mappa dice che mancano i dati.
+    var out=stations.filter(function(s){return typeof results[s.n]==='number';})
+      .map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p,mm:results[s.n]};});
     cb(out);
   }
   function fmtD(d){var p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
@@ -6098,16 +6141,29 @@ function loadOpenMeteoRegion(stations,pastDate,nowDate,labelPeriodo,cb){
     var days=Math.ceil(msRange/(24*3600000));
     var isHourly=msRange<2*24*3600000;
     var cutoff=new Date(new Date().getTime()-6*24*3600000);
+    /* ⚠️ LE DATE ESATTE DEL PERIODO (19/10/2026, quinto check, bug 2). Prima fino a 92 giorni si chiedeva
+       past_days=N, cioe' «gli ULTIMI N giorni fino a oggi», e poi si tenevano le date del periodo: se il periodo
+       non finiva ieri (finestra funghi, date personalizzate, un giorno singolo di due settimane fa) quelle date non
+       c'erano e l'Abruzzo usciva «✅ Nessuna pioggia». L'API forecast accetta start_date/end_date fino a ~92 giorni
+       indietro (oltre risponde «out of allowed range»): entro 90 giorni si usa lei, prima l'archivio, che ha ~5 giorni
+       di ritardo (cutoff) e per la coda recente si completa con la forecast, sempre a date esatte. */
+    // la fine non va oltre ieri: «Ultimi N mesi» finisce ADESSO e la somma di oggi sarebbe in parte previsione
+    // (prima la toglieva past_days, che si ferma a ieri)
+    var ieriD=new Date();ieriD.setDate(ieriD.getDate()-1);if(endDate>fmtD(ieriD))endDate=fmtD(ieriD);
+    var limiteForecast=new Date(new Date().getTime()-90*24*3600000);
+    var dalOrario=fmtD(new Date(pastDate.getTime()-3600000));   // l'ora di margine del filtro orario qui sotto
+    var dopoCutoff=fmtD(new Date(cutoff.getTime()+24*3600000));
     var urls=[];
     if(isHourly){
-      urls.push('https://api.open-meteo.com/v1/forecast?latitude='+lats+'&longitude='+lons+'&hourly=precipitation&timezone=Europe%2FRome&past_days=2&forecast_days=0');
-    } else if(days<=92){
-      urls.push('https://api.open-meteo.com/v1/forecast?latitude='+lats+'&longitude='+lons+'&daily=precipitation_sum&timezone=Europe%2FRome&past_days='+days+'&forecast_days=0');
+      urls.push((pastDate>=limiteForecast ? 'https://api.open-meteo.com/v1/forecast' : 'https://archive-api.open-meteo.com/v1/archive')
+        +'?latitude='+lats+'&longitude='+lons+'&hourly=precipitation&timezone=Europe%2FRome&start_date='+dalOrario+'&end_date='+endDate);
+    } else if(pastDate>=limiteForecast){
+      urls.push('https://api.open-meteo.com/v1/forecast?latitude='+lats+'&longitude='+lons+'&daily=precipitation_sum&timezone=Europe%2FRome&start_date='+startDate+'&end_date='+endDate);
     } else if(nowDate<=cutoff){
       urls.push('https://archive-api.open-meteo.com/v1/archive?latitude='+lats+'&longitude='+lons+'&start_date='+startDate+'&end_date='+endDate+'&daily=precipitation_sum&timezone=Europe%2FRome');
     } else {
       urls.push('https://archive-api.open-meteo.com/v1/archive?latitude='+lats+'&longitude='+lons+'&start_date='+startDate+'&end_date='+fmtD(cutoff)+'&daily=precipitation_sum&timezone=Europe%2FRome');
-      urls.push('https://api.open-meteo.com/v1/forecast?latitude='+lats+'&longitude='+lons+'&daily=precipitation_sum&timezone=Europe%2FRome&past_days=6&forecast_days=0');
+      urls.push('https://api.open-meteo.com/v1/forecast?latitude='+lats+'&longitude='+lons+'&daily=precipitation_sum&timezone=Europe%2FRome&start_date='+dopoCutoff+'&end_date='+endDate);
     }
     var acc={};
     function processOM(data){
@@ -6137,7 +6193,7 @@ function loadOpenMeteoRegion(stations,pastDate,nowDate,labelPeriodo,cb){
       return chain.then(function(){return fetch(url);}).then(function(r){if(!r.ok)throw new Error('OM '+r.status);return r.json();}).then(function(data){processOM(data);});
     },Promise.resolve())
     .then(function(){batch.forEach(function(s){var t=acc[s.n]||0;results[s.n]=Math.round(t*10)/10;});onBatchDone();})
-    .catch(function(e){console.warn('OM error:',e.message);batch.forEach(function(s){results[s.n]=0;});onBatchDone();});
+    .catch(function(e){console.warn('OM error:',e.message);batch.forEach(function(s){delete results[s.n];});onBatchDone();});   // senza risposta resta fuori, vedi onBatchDone
   });
 }
 
@@ -9966,28 +10022,9 @@ document.getElementById('btn-custom').addEventListener('click',function(){
     var ieri=new Date(); ieri.setDate(ieri.getDate()-1);
     var maxDate=fmtISOLocal(ieri);
 
-    // minDate dinamico per le regioni a storico limitato (miste OM+ARPA e piloti
-    // VdA/Friuli col backfill). Le altre hanno storico Open-Meteo profondo → 2021.
-    // La finestra parte dalla data d'inizio e si allarga di 1 giorno al giorno,
-    // finché non raggiunge i 365 giorni della retention, poi il minimo scorre.
-    var REGION_HIST_START={
-      liguria:'2026-05-15', piemonte:'2026-05-15', veneto:'2026-05-15',
-      emilia:'2026-05-15', toscana:'2026-05-15',
-      valledaosta:VDA_HIST_FROM, friuli:FRIULI_HIST_FROM
-    };
-    var activeRegs=getActiveRegions();
-    // In multiregione vince la data più RESTRITTIVA (più recente) tra le attive,
-    // così ogni regione ha copertura per tutto il periodo selezionabile.
-    var starts=activeRegs.map(function(r){return REGION_HIST_START[r];}).filter(Boolean).sort();
-    var minDate;
-    if(starts.length){
-      var start=starts[starts.length-1];
-      var lim=new Date(); lim.setDate(lim.getDate()-365); // retention 365gg
-      var limStr=fmtISOLocal(lim);
-      minDate=(start>limStr)?start:limStr;
-    } else {
-      minDate='2021-01-01';
-    }
+    // minDate: il primo giorno che le regioni scelte hanno davvero (INIZIO_STORICO, bug 7 del 19/10/2026);
+    // in multiregione vince la piu' recente. Prima qui c'era una tabella di sette regioni e per le altre il 2021.
+    var minDate=inizioStorico(getActiveRegions()).data;
 
     // Assicura che il valore iniziale non sia prima del minDate
     if(fmtISOLocal(past)<minDate) past=new Date(minDate+'T00:00:00');
@@ -10020,24 +10057,10 @@ document.getElementById('cd-apply').addEventListener('click',function(){
   // Limite massimo 12 mesi
   var diffMs=new Date(to+'T23:59:59').getTime()-new Date(from+'T00:00:00').getTime();
   if(diffMs>365*24*3600000){avvisa('Il periodo massimo selezionabile è 12 mesi');return;}
-  // Limite storico dinamico per regioni con dati misti
-  var MIXED_REGIONS2=['liguria','piemonte','veneto','emilia','toscana'];
-  var activeRegs2=getActiveRegions();
-  var hasMixed2=activeRegs2.some(function(r){return MIXED_REGIONS2.indexOf(r)>=0;});
-  if(hasMixed2){
-    var baseDate2=new Date('2026-05-15T00:00:00');
-    var today2=new Date(); today2.setHours(0,0,0,0);
-    var daysSinceBase2=Math.floor((today2-baseDate2)/(24*3600*1000));
-    var minMs2=baseDate2.getTime()-daysSinceBase2*24*3600*1000;
-    var minDt2=new Date(Math.max(minMs2, new Date('2026-05-15').getTime()));
-    var minDate2=fmtISOLocal(minDt2);
-    if(from<minDate2){
-      avvisa('Per questa regione i dati affidabili partono dal '+ggmmaaaa(minDate2)+'. La finestra si amplia di 1 giorno al giorno.');
-      return;
-    }
-  } else {
-    if(from<'2021-01-01'){avvisa('I dati ARPA sono disponibili dal 1 gennaio 2021');return;}
-  }
+  // il primo giorno vero delle regioni scelte (INIZIO_STORICO): prima c'erano due copie di questa regola,
+  // il 15/5 per cinque regioni e il «1 gennaio 2021» per tutte le altre (bug 7, 19/10/2026)
+  var ini=inizioStorico(getActiveRegions());
+  if(from<ini.data){ avvisa(nomeInizio(ini)); return; }
   // Blocca se la data fine è oggi o futura (prima di chiudere il riquadro: l'avviso sta li' dentro)
   var ieriStr=fmtISOLocal(new Date(new Date().setDate(new Date().getDate()-1)));
   if(to>ieriStr){avvisa('I dati di oggi non sono ancora disponibili. La data massima è ieri ('+ggmmaaaa(ieriStr)+').');return;}
@@ -16821,7 +16844,11 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     if(mancanti.length) el('pv-fo').textContent='carico…';
     var mio=++inCorso;
     // un'area che arriva solo dal posto cercato, se non risponde, si salta: le regioni scelte invece devono esserci
-    Promise.all(mancanti.map(function(k){ return chiedi(API+'?capoluoghi='+encodeURIComponent(k)+API_V).then(function(j){ aree[k]=j; })
+    // ⚠️ un'area senza NESSUNA citta' coi giorni (MET giu') e' un errore, non si tiene (19/10/2026, quinto check, bug 5):
+    // prima entrava in aree[k], disegna() non trovava giorni e usciva zitta, e restava «carico…» per tutta la visita
+    Promise.all(mancanti.map(function(k){ return chiedi(API+'?capoluoghi='+encodeURIComponent(k)+API_V).then(function(j){
+          if(!(j.capoluoghi||[]).some(function(c){ return c.giorni&&c.giorni.length; })) throw new Error('nessuna citta');
+          aree[k]=j; })
         .catch(function(e){ if(regioni().indexOf(k)>=0) throw e; }); }))
       .then(function(){ if(mio!==inCorso) return; carica._riprovato=false; disegna(); if(riinquadra==='posto') inquadraPosto(); else if(riinquadra) inquadra(); })
       .catch(function(){ if(mio!==inCorso) return;

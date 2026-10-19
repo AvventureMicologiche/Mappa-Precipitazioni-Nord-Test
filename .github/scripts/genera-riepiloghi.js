@@ -87,8 +87,10 @@ function etichette(prov) {
   const mostra = distinti.size > 1;
   return (id, nome) => {
     if (!mostra || !prov[id]) return nome;
-    let p = String(prov[id]).replace(/^PROVINCIA DI\s+/i, '');
-    if (p === p.toUpperCase() && p.length > 4) p = p.charAt(0) + p.slice(1).toLowerCase();
+    // ⚠️ anche «PROVINCIA DEL/DELLA/DELL'» (19/10/2026, quinto check, bug 8): il Verbano-Cusio-Ossola usciva
+    // «Sambughetto (Provincia del verbano cusio os)»; la maiuscola va anche dopo il trattino
+    let p = String(prov[id]).replace(/^PROVINCIA\s+(DI|DEL|DELLA|DELL')\s*/i, '');
+    if (p === p.toUpperCase() && p.length > 4) p = p.toLowerCase().replace(/(^|-)([a-zà-ü])/g, (m, a, c) => a + c.toUpperCase());
     return nome + ' (' + p + ')';
   };
 }
@@ -142,8 +144,10 @@ function riepilogo(r, giorni, fuori) {
   // di posto da un giro all'altro (12,299999 contro 12,3 secondo l'ordine dei file): il
   // «massimo» della scheda cambiava e partiva un commit senza dati nuovi (Liguria, 18/10 09:07).
   const top = chiavi.sort((a, b) => Math.round(somma[b] * 10) - Math.round(somma[a] * 10) || pariMerito(nomi[a], nomi[b], a, b)).slice(0, 5)
-    .map(id => ({ n: et(id, require('./lib-nomi.js').bello(nomi[id])), mm:   // «Colle dell'Agnello», non «COLLE DELL'AGNELLO» (18/10/2026)
-      Math.round(somma[id] * 10) / 10 }));
+    .map(id => { const nb = require('./lib-nomi.js').bello(nomi[id]), n = et(id, nb);   // «Colle dell'Agnello», non «COLLE DELL'AGNELLO» (18/10/2026)
+      // `nb` = il nome senza la provincia aggiunta qui, solo quando c'e': la meta description lo usa per stare nei 158
+      // caratteri (bug 8, 19/10/2026; le parentesi dei nomi veri, «Monte Epomeo (Ischia)», non si toccano)
+      return n === nb ? { n, mm: Math.round(somma[id] * 10) / 10 } : { n, nb, mm: Math.round(somma[id] * 10) / 10 }; });
   return {
     media: Math.round(media * 10) / 10,
     giorni: presenti,
