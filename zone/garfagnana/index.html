@@ -201,6 +201,12 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .quiz-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a06a08,0 4px 8px rgba(150,95,10,.3);}
 @media(max-width:560px){.coppia-btn{grid-template-columns:1fr;}}
 
+.ieri-btn{padding:16px 16px 17px 20px;}
+.ieri-btn b{font-size:23px;}
+.ieri-btn small{font-size:17px;}
+.ieri-btn i{width:44px;height:44px;}
+@media(max-width:480px){.ieri-btn b{font-size:20.5px;}.ieri-btn small{font-size:15.5px;}.ieri-btn{padding-left:16px;}}
+
 
 .bric{font-size:14px;color:#666;margin-bottom:6px;}
 .bric a{color:var(--blu);}
@@ -269,6 +275,7 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-aperte .mk-dopo{display:grid;}
 .mk-tutte{display:block;width:100%;margin:10px 0 0;padding:10px;border:1px solid #c5d4e6;border-radius:10px;background:#fff;color:#1b3f6e;font:700 15px system-ui,sans-serif;cursor:pointer;}
 .mk-citta-n{font-size:13.5px;color:#5f738c;margin:10px 0 0;}
+.mk-sopra{font-size:14.5px;color:#4a6180;margin:2px 0 8px;font-weight:600;}
 .mk-citta-n a{color:#1b3f6e;font-weight:700;}
 @media(max-width:400px){.mk-cr{font-size:14px;padding:8px 9px;}.mk-cr span i{font-size:17px;}}
 .gg .b.mk-fut i{background:repeating-linear-gradient(135deg,#7fb2ec 0 5px,#a9cdf5 5px 10px);border-radius:3px 3px 0 0;}
@@ -280,12 +287,6 @@ header{position:relative;flex-wrap:nowrap;}
 /* i paesi hanno nomi lunghi («Castelnuovo di Garfagnana»): a capo invece dei puntini, colonna un filo piu' larga */
 #meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
 #meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
-/* «Apri la mappa di ieri»: com'era, ma con le scritte piu' grandi (suo, 20/10/2026; una riga anche a 360 px) */
-.ieri-btn{padding:16px 16px 17px 20px;}
-.ieri-btn b{font-size:23px;}
-.ieri-btn small{font-size:17px;}
-.ieri-btn i{width:44px;height:44px;}
-@media(max-width:480px){.ieri-btn b{font-size:20.5px;}.ieri-btn small{font-size:15.5px;}.ieri-btn{padding-left:16px;}}
 </style>
 </head>
 <body>
@@ -704,7 +705,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
         + [0, 1, 2].map(function (d) { var g = c.giorni[d]; return '<span><i>' + icona(g.s) + '</i>' + g.mx + '°'
           + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '') + '</span>'; }).join('') + '</a>';
     }).join('');
-    box.innerHTML = '<div class="mk-tab">' + testa + righe + '</div>'
+    box.innerHTML = (OPZ.sopra ? '<p class="mk-sopra">' + esc(OPZ.sopra) + '</p>' : '') + '<div class="mk-tab">' + testa + righe + '</div>'
       + (cc.length > 6 ? '<button class="mk-tutte">' + (OPZ.tutte || 'Mostra tutte le # città').replace('#', cc.length) + '</button>' : '')
       + '<p class="mk-citta-n">' + (OPZ.tocca || 'Tocca una città per vederla ora per ora sulla mappa')
       + (ADESSO ? ' · <a href="' + SITO + '/' + K + '/adesso/" data-adesso="1">dove sta piovendo adesso, col radar →</a>' : '') + '</p>';
@@ -765,7 +766,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
       if (Date.now() - t0 < 20000) setTimeout(aspetta, 200);
     })();
   });
-})("toscana", "Toscana", "https://avventurepluvio-test.pages.dev", true, {"ga":"zona-piogge-garfagnana","area":"zona=garfagnana","riepilogo":"riepiloghi/zone/garfagnana.json","media":"media della zona","guasto":"Le previsioni dei paesi","tutte":"Mostra tutti i paesi (#)","tocca":"Tocca un paese per vederlo ora per ora sulla mappa"});
+})("toscana", "Toscana", "https://avventurepluvio-test.pages.dev", true, {"ga":"zona-piogge-garfagnana","area":"zona=garfagnana","riepilogo":"riepiloghi/zone/garfagnana.json","media":"media della zona","guasto":"Le previsioni dei paesi","tutte":"Mostra tutti i paesi (#)","tocca":"Tocca un paese per vederlo ora per ora sulla mappa","sopra":"I paesi della Garfagnana e dei dintorni"});
 </script>
 </body>
 </html>

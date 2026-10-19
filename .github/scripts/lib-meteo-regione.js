@@ -74,6 +74,7 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-aperte .mk-dopo{display:grid;}
 .mk-tutte{display:block;width:100%;margin:10px 0 0;padding:10px;border:1px solid #c5d4e6;border-radius:10px;background:#fff;color:#1b3f6e;font:700 15px system-ui,sans-serif;cursor:pointer;}
 .mk-citta-n{font-size:13.5px;color:#5f738c;margin:10px 0 0;}
+.mk-sopra{font-size:14.5px;color:#4a6180;margin:2px 0 8px;font-weight:600;}
 .mk-citta-n a{color:#1b3f6e;font-weight:700;}
 @media(max-width:400px){.mk-cr{font-size:14px;padding:8px 9px;}.mk-cr span i{font-size:17px;}}
 .gg .b.mk-fut i{background:repeating-linear-gradient(135deg,#7fb2ec 0 5px,#a9cdf5 5px 10px);border-radius:3px 3px 0 0;}
@@ -97,7 +98,8 @@ ${estera ? '' : `<div class="mk-tuo"><input type="search" autocomplete="off" ari
 /* ⚠️ GIRA NEL BROWSER: la pagina la copia con toString() e la chiama coi suoi valori, come numeriRegione.
    Niente require, niente sintassi che i telefoni vecchi non capiscono.
    OPZ (20/10/2026, pagine di zona): senza, e' la pagina regione di sempre. Con: ga = prefisso degli eventi,
-   area = la domanda all'API (zona=<slug>), riepilogo = il file del grafico, e i testi «paesi» al posto di «citta'».
+   area = la domanda all'API (zona=<slug>), riepilogo = il file del grafico, i testi «paesi» al posto di «citta'» e
+   sopra = la riga sopra la tabella («I paesi della Garfagnana e dei dintorni»: un paese di confine non sembra un errore).
    I paesi arrivano gia' in ordine (per abitanti) e ognuno porta la SUA regione (r): una zona sta su due regioni. */
 function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
   OPZ = OPZ || {};
@@ -245,7 +247,7 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
         + [0, 1, 2].map(function (d) { var g = c.giorni[d]; return '<span><i>' + icona(g.s) + '</i>' + g.mx + '°'
           + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '') + '</span>'; }).join('') + '</a>';
     }).join('');
-    box.innerHTML = '<div class="mk-tab">' + testa + righe + '</div>'
+    box.innerHTML = (OPZ.sopra ? '<p class="mk-sopra">' + esc(OPZ.sopra) + '</p>' : '') + '<div class="mk-tab">' + testa + righe + '</div>'
       + (cc.length > 6 ? '<button class="mk-tutte">' + (OPZ.tutte || 'Mostra tutte le # città').replace('#', cc.length) + '</button>' : '')
       + '<p class="mk-citta-n">' + (OPZ.tocca || 'Tocca una città per vederla ora per ora sulla mappa')
       + (ADESSO ? ' · <a href="' + SITO + '/' + K + '/adesso/" data-adesso="1">dove sta piovendo adesso, col radar →</a>' : '') + '</p>';

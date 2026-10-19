@@ -83,17 +83,22 @@ function scrivi(dest, testo) {
 }
 
 /* ── I PAESI DELLA ZONA, per «Che tempo farà» (20/10/2026) ──
-   Per ogni pluviometro della zona il comune piu' vicino (elenco dei comuni, le zone «z» escluse), senza doppioni,
-   dal piu' abitato; al massimo OTTO: l'API li chiede in parallelo e sopra i 12 sfora le 50 sottorichieste di
-   Cloudflare. Ognuno porta la SUA regione (r): la Garfagnana ha pluviometri anche emiliani. Finiscono in
-   data/paesi-zone.json, che legge /api/previsioni?zona=<slug>. ⚠️ Niente quota: l'elenco non ce l'ha, e MET
-   senza altitude usa il suo terreno (meglio di una quota inventata). */
+   Le zone non hanno un confine: hanno un centro e i loro pluviometri. Quindi i candidati sono
+   (1) il comune piu' vicino a ogni pluviometro, (2) i comuni dentro l'inviluppo dei pluviometri: questi sono «certi»
+   e vengono prima; (3) per riempire, i comuni della regione della zona entro 1,6 volte la distanza mediana dei
+   pluviometri dal centro (minimo 12 km: le zone con 2-3 pluviometri restavano con 2 paesi).
+   Si ordinano per log(abitanti) x vicinanza al centro, i paesi di un'altra regione pesano 0,6: cosi' i paesi
+   principali ci sono e una citta' grande ai margini non passa davanti (Brescia in Val Trompia, La Spezia in
+   Lunigiana). Al massimo DODICI: e' il tetto dell'API (50 sottorichieste di Cloudflare).
+   ⚠️ REGOLA SUA: «meglio un paese in piu', anche fuori zona, che uno in meno». Per questo la pagina scrive
+   «I paesi della X e dei dintorni». Limite noto: in Lunigiana centro e pluviometri stanno a sud, Pontremoli e
+   Fivizzano restano fuori (la casella li trova). Ognuno porta la SUA regione (r). Finiscono in
+   data/paesi-zone.json, che legge /api/previsioni?zona=<slug>. Niente quota: MET usa il suo terreno. */
 const COMUNI = fs.readFileSync(path.join(RADICE, 'data', 'elenco-paesi.txt'), 'utf8').split('\n')
   .map(r => r.split('|')).filter(p => p.length >= 6 && (p[6] || '').trim() !== 'z')
   .map(p => ({ n: p[0], lat: +p[1], lon: +p[2], reg: p[4], pop: +p[5] || 0 }));
-const MAX_PAESI = 8;
-// ⚠️ Non bastano i comuni piu' vicini ai pluviometri: la Garfagnana restava senza Castelnuovo, che un pluviometro
-// suo non ce l'ha. Quindi anche i comuni DENTRO l'inviluppo dei pluviometri della zona (con almeno 3 pluviometri).
+const MAX_PAESI = 12;
+const km = (a, b, c, d) => 111.2 * Math.hypot(c - a, (d - b) * Math.cos(a * Math.PI / 180));
 function inviluppo(pt) {   // catena monotona di Andrew, punti [x, y]
   const p = pt.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]), x = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
   const giu = [], su = [];
@@ -110,17 +115,22 @@ function dentro(q, poli) {
   return d;
 }
 function paesiDellaZona(z) {
-  const { ids, regDi } = postiDellaZona(POSTI, z), visti = new Map(), k = Math.cos(z.lat * Math.PI / 180), punti = [];
-  for (const id of ids) {
-    const p = ANAG_REG[regDi[id]][id], la = +p[4], lo = +p[5];
-    punti.push([lo * k, la]);
-    let best = null, d0 = Infinity;
-    for (const c of COMUNI) { const d = (c.lat - la) ** 2 + ((c.lon - lo) * k) ** 2; if (d < d0) { d0 = d; best = c; } }
-    if (best) visti.set(best.n + '|' + best.reg, best);
+  const { ids, regDi } = postiDellaZona(POSTI, z), k = Math.cos(z.lat * Math.PI / 180);
+  const st = ids.map(id => ANAG_REG[regDi[id]][id]).map(p => ({ lat: +p[4], lon: +p[5] }));
+  const dist = st.map(p => km(z.lat, z.lon, p.lat, p.lon)).sort((a, b) => a - b);
+  const s = Math.max(6, dist[Math.floor(dist.length / 2)] || 0);   // la scala della zona, in km
+  const cand = new Map(), metti = (c, certo) => { const ch = c.n + '|' + c.reg, v = cand.get(ch);
+    cand.set(ch, { ...c, d: km(z.lat, z.lon, c.lat, c.lon), certo: certo || (v && v.certo) }); };
+  for (const p of st) { let best = null, d0 = Infinity; for (const c of COMUNI) { const d = km(p.lat, p.lon, c.lat, c.lon); if (d < d0) { d0 = d; best = c; } } if (best) metti(best, true); }
+  const poli = st.length >= 3 ? inviluppo(st.map(p => [p.lon * k, p.lat])) : [];
+  for (const c of COMUNI) {
+    if (poli.length >= 3 && dentro([c.lon * k, c.lat], poli)) metti(c, true);
+    else if (c.reg === z.reg && km(z.lat, z.lon, c.lat, c.lon) <= Math.max(12, 1.6 * s)) metti(c);
   }
-  const poli = punti.length >= 3 ? inviluppo(punti) : [];
-  if (poli.length >= 3) for (const c of COMUNI) if (dentro([c.lon * k, c.lat], poli)) visti.set(c.n + '|' + c.reg, c);
-  return [...visti.values()].sort((a, b) => b.pop - a.pop || a.n.localeCompare(b.n, 'it')).slice(0, MAX_PAESI)
+  // ⚠️ PRIMA I CERTI (comune di un pluviometro o dentro l'area dei pluviometri), poi il cerchio: con la sola vicinanza
+  // al centro la Garfagnana perdeva l'alta valle (Piazza al Serchio, Minucciano) per Bagni di Lucca. 20/10/2026.
+  const peso = c => Math.log10(c.pop + 10) * Math.exp(-((c.d / (2 * s)) ** 2)) * (c.reg === z.reg ? 1 : 0.6);
+  return [...cand.values()].sort((a, b) => (b.certo ? 1 : 0) - (a.certo ? 1 : 0) || peso(b) - peso(a)).slice(0, MAX_PAESI)
     .map(c => ({ n: c.n, lat: c.lat, lon: c.lon, r: c.reg }));
 }
 
@@ -230,12 +240,6 @@ ${METEO_CSS}
 /* i paesi hanno nomi lunghi («Castelnuovo di Garfagnana»): a capo invece dei puntini, colonna un filo piu' larga */
 #meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
 #meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
-/* «Apri la mappa di ieri»: com'era, ma con le scritte piu' grandi (suo, 20/10/2026; una riga anche a 360 px) */
-.ieri-btn{padding:16px 16px 17px 20px;}
-.ieri-btn b{font-size:23px;}
-.ieri-btn small{font-size:17px;}
-.ieri-btn i{width:44px;height:44px;}
-@media(max-width:480px){.ieri-btn b{font-size:20.5px;}.ieri-btn small{font-size:15.5px;}.ieri-btn{padding-left:16px;}}
 </style>
 </head>
 <body>
@@ -470,7 +474,8 @@ ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel
 <script>
 (${meteoClient.toString()})(${JSON.stringify(casa.k)}, ${JSON.stringify(nomeReg)}, ${JSON.stringify(SITO)}, ${fs.existsSync(path.join(RADICE, casa.k, 'adesso')) ? 'true' : 'false'}, ${JSON.stringify({
   ga: 'zona-piogge-' + zslug, area: 'zona=' + zslug, riepilogo: 'riepiloghi/zone/' + zslug + '.json', media: 'media della zona',
-  guasto: 'Le previsioni dei paesi', tutte: 'Mostra tutti i paesi (#)', tocca: 'Tocca un paese per vederlo ora per ora sulla mappa' })});
+  guasto: 'Le previsioni dei paesi', tutte: 'Mostra tutti i paesi (#)', tocca: 'Tocca un paese per vederlo ora per ora sulla mappa',
+  sopra: 'I paesi ' + di + ' e dei dintorni' })});
 </script>
 </body>
 </html>

@@ -53,6 +53,16 @@ const { STILE_NUOVO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = require('./
 // 11/10/2026: i numeri cotti nella pagina, con la STESSA funzione del browser
 const { numeriRegione } = require('./lib-numeri-regione.js');
 const { METEO_CSS, meteoHtml, meteoClient } = require('./lib-meteo-regione.js');   // la pagina anche meteo (19/10/2026)
+// «Apri la mappa di ieri» con le scritte piu' grandi (suo, 20/10/2026), una riga anche a 360 px. Solo qui e non in
+// STILE_IERI, che usano anche le pagine «adesso» con testi diversi. Sta PRIMA di METEO_CSS perche' le zone piogge
+// copiano il foglio della regione di casa tagliandolo all'inizio del blocco meteo: cosi' lo ereditano.
+const IERI_GRANDE = `
+.ieri-btn{padding:16px 16px 17px 20px;}
+.ieri-btn b{font-size:23px;}
+.ieri-btn small{font-size:17px;}
+.ieri-btn i{width:44px;height:44px;}
+@media(max-width:480px){.ieri-btn b{font-size:20.5px;}.ieri-btn small{font-size:15.5px;}.ieri-btn{padding-left:16px;}}
+`;
 // Le zone, per l'elenco «dove ha piovuto, zona per zona» (13/9/2026): ogni
 // regione rimanda alle pagine piogge delle sue zone, che senza questi link
 // sarebbero orfane.
@@ -473,7 +483,7 @@ function pagina(r, radice){
 ${STILE_BASE}
 ${STILE_NUOVO}
 ${STILE_IERI}
-${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}${METEO_CSS}</style>
+${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}${IERI_GRANDE}${METEO_CSS}</style>
 </head>
 <body>
 <header>

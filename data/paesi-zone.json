@@ -7,16 +7,22 @@
    "r": "trentino"
   },
   {
+   "n": "Bondone",
+   "lat": 45.805,
+   "lon": 10.551,
+   "r": "trentino"
+  },
+  {
    "n": "Bagolino",
    "lat": 45.821,
    "lon": 10.469,
    "r": "lombardia"
   },
   {
-   "n": "Bondone",
-   "lat": 45.805,
-   "lon": 10.551,
-   "r": "trentino"
+   "n": "Magasa",
+   "lat": 45.781,
+   "lon": 10.616,
+   "r": "lombardia"
   },
   {
    "n": "Valvestino",
@@ -25,19 +31,43 @@
    "r": "lombardia"
   },
   {
-   "n": "Magasa",
-   "lat": 45.781,
-   "lon": 10.616,
-   "r": "lombardia"
+   "n": "Borgo Chiese",
+   "lat": 45.891,
+   "lon": 10.601,
+   "r": "trentino"
+  },
+  {
+   "n": "Ledro",
+   "lat": 45.889,
+   "lon": 10.733,
+   "r": "trentino"
+  },
+  {
+   "n": "Pieve di Bono-Prezzo",
+   "lat": 45.943,
+   "lon": 10.641,
+   "r": "trentino"
+  },
+  {
+   "n": "Valdaone",
+   "lat": 45.948,
+   "lon": 10.622,
+   "r": "trentino"
+  },
+  {
+   "n": "Castel Condino",
+   "lat": 45.915,
+   "lon": 10.603,
+   "r": "trentino"
+  },
+  {
+   "n": "Sella Giudicarie",
+   "lat": 45.984,
+   "lon": 10.669,
+   "r": "trentino"
   }
  ],
  "val-grigna": [
-  {
-   "n": "Pian Camuno",
-   "lat": 45.844,
-   "lon": 10.157,
-   "r": "lombardia"
-  },
   {
    "n": "Bienno",
    "lat": 45.936,
@@ -55,19 +85,67 @@
    "lat": 45.865,
    "lon": 10.184,
    "r": "lombardia"
+  },
+  {
+   "n": "Pian Camuno",
+   "lat": 45.844,
+   "lon": 10.157,
+   "r": "lombardia"
+  },
+  {
+   "n": "Esine",
+   "lat": 45.924,
+   "lon": 10.259,
+   "r": "lombardia"
+  },
+  {
+   "n": "Breno",
+   "lat": 45.956,
+   "lon": 10.302,
+   "r": "lombardia"
+  },
+  {
+   "n": "Berzo Inferiore",
+   "lat": 45.932,
+   "lon": 10.279,
+   "r": "lombardia"
+  },
+  {
+   "n": "Cividate Camuno",
+   "lat": 45.943,
+   "lon": 10.28,
+   "r": "lombardia"
+  },
+  {
+   "n": "Piancogno",
+   "lat": 45.919,
+   "lon": 10.221,
+   "r": "lombardia"
+  },
+  {
+   "n": "Darfo Boario Terme",
+   "lat": 45.883,
+   "lon": 10.18,
+   "r": "lombardia"
+  },
+  {
+   "n": "Malegno",
+   "lat": 45.951,
+   "lon": 10.272,
+   "r": "lombardia"
+  },
+  {
+   "n": "Niardo",
+   "lat": 45.979,
+   "lon": 10.336,
+   "r": "lombardia"
   }
  ],
  "valle-sabbia": [
   {
-   "n": "Caino",
-   "lat": 45.613,
-   "lon": 10.316,
-   "r": "lombardia"
-  },
-  {
-   "n": "Agnosine",
-   "lat": 45.648,
-   "lon": 10.358,
+   "n": "Lavenone",
+   "lat": 45.739,
+   "lon": 10.438,
    "r": "lombardia"
   },
   {
@@ -77,9 +155,63 @@
    "r": "lombardia"
   },
   {
-   "n": "Lavenone",
-   "lat": 45.739,
-   "lon": 10.438,
+   "n": "Agnosine",
+   "lat": 45.648,
+   "lon": 10.358,
+   "r": "lombardia"
+  },
+  {
+   "n": "Caino",
+   "lat": 45.613,
+   "lon": 10.316,
+   "r": "lombardia"
+  },
+  {
+   "n": "Vestone",
+   "lat": 45.71,
+   "lon": 10.404,
+   "r": "lombardia"
+  },
+  {
+   "n": "Sabbio Chiese",
+   "lat": 45.657,
+   "lon": 10.416,
+   "r": "lombardia"
+  },
+  {
+   "n": "Idro",
+   "lat": 45.737,
+   "lon": 10.474,
+   "r": "lombardia"
+  },
+  {
+   "n": "Barghe",
+   "lat": 45.678,
+   "lon": 10.406,
+   "r": "lombardia"
+  },
+  {
+   "n": "Provaglio Val Sabbia",
+   "lat": 45.689,
+   "lon": 10.434,
+   "r": "lombardia"
+  },
+  {
+   "n": "Vobarno",
+   "lat": 45.647,
+   "lon": 10.497,
+   "r": "lombardia"
+  },
+  {
+   "n": "Preseglie",
+   "lat": 45.665,
+   "lon": 10.393,
+   "r": "lombardia"
+  },
+  {
+   "n": "Odolo",
+   "lat": 45.649,
+   "lon": 10.388,
    "r": "lombardia"
   }
  ],
@@ -91,15 +223,9 @@
    "r": "lombardia"
   },
   {
-   "n": "Pian Camuno",
-   "lat": 45.844,
-   "lon": 10.157,
-   "r": "lombardia"
-  },
-  {
-   "n": "Bovegno",
-   "lat": 45.792,
-   "lon": 10.272,
+   "n": "Tavernole sul Mella",
+   "lat": 45.748,
+   "lon": 10.24,
    "r": "lombardia"
   },
   {
@@ -109,9 +235,57 @@
    "r": "lombardia"
   },
   {
-   "n": "Tavernole sul Mella",
-   "lat": 45.748,
-   "lon": 10.24,
+   "n": "Bovegno",
+   "lat": 45.792,
+   "lon": 10.272,
+   "r": "lombardia"
+  },
+  {
+   "n": "Pian Camuno",
+   "lat": 45.844,
+   "lon": 10.157,
+   "r": "lombardia"
+  },
+  {
+   "n": "Gardone Val Trompia",
+   "lat": 45.689,
+   "lon": 10.182,
+   "r": "lombardia"
+  },
+  {
+   "n": "Lumezzane",
+   "lat": 45.65,
+   "lon": 10.262,
+   "r": "lombardia"
+  },
+  {
+   "n": "Villa Carcina",
+   "lat": 45.631,
+   "lon": 10.195,
+   "r": "lombardia"
+  },
+  {
+   "n": "Marcheno",
+   "lat": 45.706,
+   "lon": 10.214,
+   "r": "lombardia"
+  },
+  {
+   "n": "Concesio",
+   "lat": 45.604,
+   "lon": 10.218,
+   "r": "lombardia"
+  },
+  {
+   "n": "Gussago",
+   "lat": 45.592,
+   "lon": 10.153,
+   "r": "lombardia"
+  },
+  {
+   "n": "Sale Marasino",
+   "lat": 45.714,
+   "lon": 10.113,
    "r": "lombardia"
   }
  ],
@@ -133,9 +307,69 @@
    "lat": 45.946,
    "lon": 9.677,
    "r": "lombardia"
+  },
+  {
+   "n": "San Pellegrino Terme",
+   "lat": 45.838,
+   "lon": 9.663,
+   "r": "lombardia"
+  },
+  {
+   "n": "Dossena",
+   "lat": 45.879,
+   "lon": 9.697,
+   "r": "lombardia"
+  },
+  {
+   "n": "Serina",
+   "lat": 45.871,
+   "lon": 9.73,
+   "r": "lombardia"
+  },
+  {
+   "n": "Zogno",
+   "lat": 45.795,
+   "lon": 9.668,
+   "r": "lombardia"
+  },
+  {
+   "n": "Camerata Cornello",
+   "lat": 45.9,
+   "lon": 9.656,
+   "r": "lombardia"
+  },
+  {
+   "n": "Bracca",
+   "lat": 45.823,
+   "lon": 9.708,
+   "r": "lombardia"
+  },
+  {
+   "n": "Berbenno",
+   "lat": 45.812,
+   "lon": 9.568,
+   "r": "lombardia"
+  },
+  {
+   "n": "Algua",
+   "lat": 45.826,
+   "lon": 9.722,
+   "r": "lombardia"
+  },
+  {
+   "n": "Taleggio",
+   "lat": 45.894,
+   "lon": 9.565,
+   "r": "lombardia"
   }
  ],
  "val-sedornia": [
+  {
+   "n": "Gandellino",
+   "lat": 45.991,
+   "lon": 9.946,
+   "r": "lombardia"
+  },
   {
    "n": "Castione della Presolana",
    "lat": 45.908,
@@ -143,9 +377,63 @@
    "r": "lombardia"
   },
   {
-   "n": "Gandellino",
-   "lat": 45.991,
-   "lon": 9.946,
+   "n": "Gromo",
+   "lat": 45.97,
+   "lon": 9.93,
+   "r": "lombardia"
+  },
+  {
+   "n": "Ardesio",
+   "lat": 45.938,
+   "lon": 9.93,
+   "r": "lombardia"
+  },
+  {
+   "n": "Valbondione",
+   "lat": 46.038,
+   "lon": 10.013,
+   "r": "lombardia"
+  },
+  {
+   "n": "Valgoglio",
+   "lat": 45.976,
+   "lon": 9.914,
+   "r": "lombardia"
+  },
+  {
+   "n": "Colere",
+   "lat": 45.974,
+   "lon": 10.086,
+   "r": "lombardia"
+  },
+  {
+   "n": "Vilminore di Scalve",
+   "lat": 45.998,
+   "lon": 10.095,
+   "r": "lombardia"
+  },
+  {
+   "n": "Clusone",
+   "lat": 45.892,
+   "lon": 9.947,
+   "r": "lombardia"
+  },
+  {
+   "n": "Villa d'Ogna",
+   "lat": 45.908,
+   "lon": 9.931,
+   "r": "lombardia"
+  },
+  {
+   "n": "Rovetta",
+   "lat": 45.891,
+   "lon": 9.985,
+   "r": "lombardia"
+  },
+  {
+   "n": "Fino del Monte",
+   "lat": 45.89,
+   "lon": 9.992,
    "r": "lombardia"
   }
  ],
@@ -157,21 +445,9 @@
    "r": "lombardia"
   },
   {
-   "n": "San Siro",
-   "lat": 46.055,
-   "lon": 9.259,
-   "r": "lombardia"
-  },
-  {
    "n": "San Bartolomeo Val Cavargna",
    "lat": 46.083,
    "lon": 9.146,
-   "r": "lombardia"
-  },
-  {
-   "n": "Garzeno",
-   "lat": 46.134,
-   "lon": 9.25,
    "r": "lombardia"
   },
   {
@@ -197,25 +473,49 @@
    "lat": 46.074,
    "lon": 9.153,
    "r": "lombardia"
+  },
+  {
+   "n": "San Siro",
+   "lat": 46.055,
+   "lon": 9.259,
+   "r": "lombardia"
+  },
+  {
+   "n": "Garzeno",
+   "lat": 46.134,
+   "lon": 9.25,
+   "r": "lombardia"
+  },
+  {
+   "n": "Porlezza",
+   "lat": 46.036,
+   "lon": 9.12,
+   "r": "lombardia"
+  },
+  {
+   "n": "Val Rezzo",
+   "lat": 46.072,
+   "lon": 9.111,
+   "r": "lombardia"
+  },
+  {
+   "n": "Grandola ed Uniti",
+   "lat": 46.031,
+   "lon": 9.207,
+   "r": "lombardia"
+  },
+  {
+   "n": "Valsolda",
+   "lat": 46.024,
+   "lon": 9.056,
+   "r": "lombardia"
   }
  ],
  "val-serina": [
   {
-   "n": "Cene",
-   "lat": 45.779,
-   "lon": 9.826,
-   "r": "lombardia"
-  },
-  {
    "n": "Serina",
    "lat": 45.871,
    "lon": 9.73,
-   "r": "lombardia"
-  },
-  {
-   "n": "Oltre il Colle",
-   "lat": 45.893,
-   "lon": 9.767,
    "r": "lombardia"
   },
   {
@@ -225,9 +525,63 @@
    "r": "lombardia"
   },
   {
+   "n": "Oltre il Colle",
+   "lat": 45.893,
+   "lon": 9.767,
+   "r": "lombardia"
+  },
+  {
    "n": "Cornalba",
    "lat": 45.85,
    "lon": 9.745,
+   "r": "lombardia"
+  },
+  {
+   "n": "Cene",
+   "lat": 45.779,
+   "lon": 9.826,
+   "r": "lombardia"
+  },
+  {
+   "n": "San Giovanni Bianco",
+   "lat": 45.875,
+   "lon": 9.652,
+   "r": "lombardia"
+  },
+  {
+   "n": "San Pellegrino Terme",
+   "lat": 45.838,
+   "lon": 9.663,
+   "r": "lombardia"
+  },
+  {
+   "n": "Costa Serina",
+   "lat": 45.831,
+   "lon": 9.739,
+   "r": "lombardia"
+  },
+  {
+   "n": "Algua",
+   "lat": 45.826,
+   "lon": 9.722,
+   "r": "lombardia"
+  },
+  {
+   "n": "Bracca",
+   "lat": 45.823,
+   "lon": 9.708,
+   "r": "lombardia"
+  },
+  {
+   "n": "Zogno",
+   "lat": 45.795,
+   "lon": 9.668,
+   "r": "lombardia"
+  },
+  {
+   "n": "Camerata Cornello",
+   "lat": 45.9,
+   "lon": 9.656,
    "r": "lombardia"
   }
  ],
@@ -261,15 +615,51 @@
    "lat": 46.22,
    "lon": 9.864,
    "r": "lombardia"
+  },
+  {
+   "n": "Sondrio",
+   "lat": 46.171,
+   "lon": 9.871,
+   "r": "lombardia"
+  },
+  {
+   "n": "Montagna in Valtellina",
+   "lat": 46.178,
+   "lon": 9.901,
+   "r": "lombardia"
+  },
+  {
+   "n": "Castione Andevenno",
+   "lat": 46.173,
+   "lon": 9.8,
+   "r": "lombardia"
+  },
+  {
+   "n": "Poggiridenti",
+   "lat": 46.176,
+   "lon": 9.929,
+   "r": "lombardia"
+  },
+  {
+   "n": "Albosaggia",
+   "lat": 46.147,
+   "lon": 9.855,
+   "r": "lombardia"
+  },
+  {
+   "n": "Tresivio",
+   "lat": 46.175,
+   "lon": 9.945,
+   "r": "lombardia"
+  },
+  {
+   "n": "Postalesio",
+   "lat": 46.174,
+   "lon": 9.777,
+   "r": "lombardia"
   }
  ],
  "valsassina": [
-  {
-   "n": "Premana",
-   "lat": 46.052,
-   "lon": 9.423,
-   "r": "lombardia"
-  },
   {
    "n": "Cortenova",
    "lat": 46,
@@ -277,15 +667,15 @@
    "r": "lombardia"
   },
   {
-   "n": "Casargo",
-   "lat": 46.038,
-   "lon": 9.388,
+   "n": "Premana",
+   "lat": 46.052,
+   "lon": 9.423,
    "r": "lombardia"
   },
   {
-   "n": "Pagnona",
-   "lat": 46.06,
-   "lon": 9.402,
+   "n": "Casargo",
+   "lat": 46.038,
+   "lon": 9.388,
    "r": "lombardia"
   },
   {
@@ -301,6 +691,12 @@
    "r": "lombardia"
   },
   {
+   "n": "Pagnona",
+   "lat": 46.06,
+   "lon": 9.402,
+   "r": "lombardia"
+  },
+  {
    "n": "Sueglio",
    "lat": 46.086,
    "lon": 9.333,
@@ -311,15 +707,33 @@
    "lat": 46.076,
    "lon": 9.366,
    "r": "lombardia"
+  },
+  {
+   "n": "Primaluna",
+   "lat": 45.987,
+   "lon": 9.429,
+   "r": "lombardia"
+  },
+  {
+   "n": "Introbio",
+   "lat": 45.976,
+   "lon": 9.452,
+   "r": "lombardia"
+  },
+  {
+   "n": "Pasturo",
+   "lat": 45.951,
+   "lon": 9.443,
+   "r": "lombardia"
+  },
+  {
+   "n": "Mandello del Lario",
+   "lat": 45.917,
+   "lon": 9.32,
+   "r": "lombardia"
   }
  ],
  "monte-san-giorgio": [
-  {
-   "n": "Cuveglio",
-   "lat": 45.906,
-   "lon": 8.736,
-   "r": "lombardia"
-  },
   {
    "n": "Besano",
    "lat": 45.889,
@@ -333,9 +747,15 @@
    "r": "lombardia"
   },
   {
-   "n": "Brissago-Valtravaglia",
-   "lat": 45.95,
-   "lon": 8.746,
+   "n": "Cuveglio",
+   "lat": 45.906,
+   "lon": 8.736,
+   "r": "lombardia"
+  },
+  {
+   "n": "Bedero Valcuvia",
+   "lat": 45.913,
+   "lon": 8.794,
    "r": "lombardia"
   },
   {
@@ -345,9 +765,9 @@
    "r": "lombardia"
   },
   {
-   "n": "Bedero Valcuvia",
-   "lat": 45.913,
-   "lon": 8.794,
+   "n": "Brissago-Valtravaglia",
+   "lat": 45.95,
+   "lon": 8.746,
    "r": "lombardia"
   },
   {
@@ -361,25 +781,37 @@
    "lat": 45.914,
    "lon": 8.739,
    "r": "lombardia"
+  },
+  {
+   "n": "Varese",
+   "lat": 45.817,
+   "lon": 8.823,
+   "r": "lombardia"
+  },
+  {
+   "n": "Arcisate",
+   "lat": 45.859,
+   "lon": 8.86,
+   "r": "lombardia"
+  },
+  {
+   "n": "Induno Olona",
+   "lat": 45.852,
+   "lon": 8.839,
+   "r": "lombardia"
+  },
+  {
+   "n": "Viggiù",
+   "lat": 45.872,
+   "lon": 8.907,
+   "r": "lombardia"
   }
  ],
  "valle-dei-ratti": [
   {
-   "n": "Colico",
-   "lat": 46.134,
-   "lon": 9.375,
-   "r": "lombardia"
-  },
-  {
    "n": "Dubino",
    "lat": 46.153,
    "lon": 9.461,
-   "r": "lombardia"
-  },
-  {
-   "n": "Sorico",
-   "lat": 46.172,
-   "lon": 9.38,
    "r": "lombardia"
   },
   {
@@ -389,15 +821,21 @@
    "r": "lombardia"
   },
   {
-   "n": "Gera Lario",
-   "lat": 46.171,
-   "lon": 9.371,
+   "n": "Colico",
+   "lat": 46.134,
+   "lon": 9.375,
    "r": "lombardia"
   },
   {
-   "n": "Valvarrone",
-   "lat": 46.085,
-   "lon": 9.361,
+   "n": "Sorico",
+   "lat": 46.172,
+   "lon": 9.38,
+   "r": "lombardia"
+  },
+  {
+   "n": "Gera Lario",
+   "lat": 46.171,
+   "lon": 9.371,
    "r": "lombardia"
   },
   {
@@ -410,6 +848,36 @@
    "n": "Trezzone",
    "lat": 46.171,
    "lon": 9.355,
+   "r": "lombardia"
+  },
+  {
+   "n": "Valvarrone",
+   "lat": 46.085,
+   "lon": 9.361,
+   "r": "lombardia"
+  },
+  {
+   "n": "Morbegno",
+   "lat": 46.13,
+   "lon": 9.57,
+   "r": "lombardia"
+  },
+  {
+   "n": "Novate Mezzola",
+   "lat": 46.222,
+   "lon": 9.447,
+   "r": "lombardia"
+  },
+  {
+   "n": "Cosio Valtellino",
+   "lat": 46.13,
+   "lon": 9.55,
+   "r": "lombardia"
+  },
+  {
+   "n": "Traona",
+   "lat": 46.147,
+   "lon": 9.527,
    "r": "lombardia"
   }
  ],
@@ -424,6 +892,66 @@
    "n": "Paisco Loveno",
    "lat": 46.079,
    "lon": 10.293,
+   "r": "lombardia"
+  },
+  {
+   "n": "Berzo Demo",
+   "lat": 46.093,
+   "lon": 10.333,
+   "r": "lombardia"
+  },
+  {
+   "n": "Malonno",
+   "lat": 46.119,
+   "lon": 10.315,
+   "r": "lombardia"
+  },
+  {
+   "n": "Capo di Ponte",
+   "lat": 46.03,
+   "lon": 10.343,
+   "r": "lombardia"
+  },
+  {
+   "n": "Cedegolo",
+   "lat": 46.076,
+   "lon": 10.35,
+   "r": "lombardia"
+  },
+  {
+   "n": "Ono San Pietro",
+   "lat": 46.016,
+   "lon": 10.329,
+   "r": "lombardia"
+  },
+  {
+   "n": "Cevo",
+   "lat": 46.08,
+   "lon": 10.37,
+   "r": "lombardia"
+  },
+  {
+   "n": "Cerveno",
+   "lat": 46.002,
+   "lon": 10.326,
+   "r": "lombardia"
+  },
+  {
+   "n": "Ceto",
+   "lat": 46.002,
+   "lon": 10.352,
+   "r": "lombardia"
+  },
+  {
+   "n": "Cimbergo",
+   "lat": 46.024,
+   "lon": 10.363,
+   "r": "lombardia"
+  },
+  {
+   "n": "Paspardo",
+   "lat": 46.03,
+   "lon": 10.371,
    "r": "lombardia"
   }
  ],
@@ -441,25 +969,55 @@
    "r": "lombardia"
   },
   {
+   "n": "San Giacomo Filippo",
+   "lat": 46.337,
+   "lon": 9.37,
+   "r": "lombardia"
+  },
+  {
    "n": "Villa di Chiavenna",
    "lat": 46.331,
    "lon": 9.489,
    "r": "lombardia"
   },
   {
-   "n": "San Giacomo Filippo",
-   "lat": 46.337,
-   "lon": 9.37,
+   "n": "Piuro",
+   "lat": 46.329,
+   "lon": 9.421,
+   "r": "lombardia"
+  },
+  {
+   "n": "Mese",
+   "lat": 46.304,
+   "lon": 9.379,
+   "r": "lombardia"
+  },
+  {
+   "n": "Gordona",
+   "lat": 46.292,
+   "lon": 9.369,
+   "r": "lombardia"
+  },
+  {
+   "n": "Campodolcino",
+   "lat": 46.402,
+   "lon": 9.354,
+   "r": "lombardia"
+  },
+  {
+   "n": "Samolaco",
+   "lat": 46.244,
+   "lon": 9.395,
+   "r": "lombardia"
+  },
+  {
+   "n": "Madesimo",
+   "lat": 46.428,
+   "lon": 9.344,
    "r": "lombardia"
   }
  ],
  "valle-del-carlone": [
-  {
-   "n": "Varzi",
-   "lat": 44.822,
-   "lon": 9.196,
-   "r": "lombardia"
-  },
   {
    "n": "Romagnese",
    "lat": 44.837,
@@ -471,6 +1029,60 @@
    "lat": 44.771,
    "lon": 9.241,
    "r": "lombardia"
+  },
+  {
+   "n": "Varzi",
+   "lat": 44.822,
+   "lon": 9.196,
+   "r": "lombardia"
+  },
+  {
+   "n": "Bobbio",
+   "lat": 44.766,
+   "lon": 9.387,
+   "r": "emilia"
+  },
+  {
+   "n": "Coli",
+   "lat": 44.743,
+   "lon": 9.413,
+   "r": "emilia"
+  },
+  {
+   "n": "Corte Brugnatella",
+   "lat": 44.712,
+   "lon": 9.38,
+   "r": "emilia"
+  },
+  {
+   "n": "Cerignale",
+   "lat": 44.677,
+   "lon": 9.351,
+   "r": "emilia"
+  },
+  {
+   "n": "Ottone",
+   "lat": 44.622,
+   "lon": 9.332,
+   "r": "emilia"
+  },
+  {
+   "n": "Ferriere",
+   "lat": 44.646,
+   "lon": 9.498,
+   "r": "emilia"
+  },
+  {
+   "n": "Zerba",
+   "lat": 44.666,
+   "lon": 9.288,
+   "r": "emilia"
+  },
+  {
+   "n": "Pecorara",
+   "lat": 44.875,
+   "lon": 9.384,
+   "r": "emilia"
   }
  ],
  "valle-dei-campassi": [
@@ -487,15 +1099,15 @@
    "r": "liguria"
   },
   {
-   "n": "Cabella Ligure",
-   "lat": 44.673,
-   "lon": 9.096,
-   "r": "piemonte"
-  },
-  {
    "n": "Propata",
    "lat": 44.565,
    "lon": 9.185,
+   "r": "liguria"
+  },
+  {
+   "n": "Rondanina",
+   "lat": 44.562,
+   "lon": 9.218,
    "r": "liguria"
   },
   {
@@ -505,25 +1117,55 @@
    "r": "liguria"
   },
   {
-   "n": "Zerba",
-   "lat": 44.666,
-   "lon": 9.288,
-   "r": "emilia"
-  },
-  {
    "n": "Carrega Ligure",
    "lat": 44.619,
    "lon": 9.176,
    "r": "piemonte"
   },
   {
-   "n": "Rondanina",
-   "lat": 44.562,
-   "lon": 9.218,
+   "n": "Cabella Ligure",
+   "lat": 44.673,
+   "lon": 9.096,
+   "r": "piemonte"
+  },
+  {
+   "n": "Zerba",
+   "lat": 44.666,
+   "lon": 9.288,
+   "r": "emilia"
+  },
+  {
+   "n": "Vobbia",
+   "lat": 44.6,
+   "lon": 9.04,
+   "r": "liguria"
+  },
+  {
+   "n": "Montoggio",
+   "lat": 44.516,
+   "lon": 9.044,
+   "r": "liguria"
+  },
+  {
+   "n": "Crocefieschi",
+   "lat": 44.585,
+   "lon": 9.023,
+   "r": "liguria"
+  },
+  {
+   "n": "Rovegno",
+   "lat": 44.577,
+   "lon": 9.279,
    "r": "liguria"
   }
  ],
  "val-veddasca": [
+  {
+   "n": "Curiglia con Monteviasco",
+   "lat": 46.061,
+   "lon": 8.805,
+   "r": "lombardia"
+  },
   {
    "n": "Trarego Viggiona",
    "lat": 46.034,
@@ -531,17 +1173,71 @@
    "r": "piemonte"
   },
   {
-   "n": "Curiglia con Monteviasco",
-   "lat": 46.061,
-   "lon": 8.805,
+   "n": "Luino",
+   "lat": 46.002,
+   "lon": 8.742,
+   "r": "lombardia"
+  },
+  {
+   "n": "Maccagno con Pino e Veddasca",
+   "lat": 46.043,
+   "lon": 8.742,
+   "r": "lombardia"
+  },
+  {
+   "n": "Dumenza",
+   "lat": 46.023,
+   "lon": 8.785,
+   "r": "lombardia"
+  },
+  {
+   "n": "Germignaga",
+   "lat": 45.993,
+   "lon": 8.727,
+   "r": "lombardia"
+  },
+  {
+   "n": "Lavena Ponte Tresa",
+   "lat": 45.961,
+   "lon": 8.861,
+   "r": "lombardia"
+  },
+  {
+   "n": "Marchirolo",
+   "lat": 45.952,
+   "lon": 8.836,
+   "r": "lombardia"
+  },
+  {
+   "n": "Agra",
+   "lat": 46.034,
+   "lon": 8.771,
+   "r": "lombardia"
+  },
+  {
+   "n": "Cremenaga",
+   "lat": 45.989,
+   "lon": 8.807,
+   "r": "lombardia"
+  },
+  {
+   "n": "Montegrino Valtravaglia",
+   "lat": 45.973,
+   "lon": 8.768,
+   "r": "lombardia"
+  },
+  {
+   "n": "Cugliate-Fabiasco",
+   "lat": 45.947,
+   "lon": 8.821,
    "r": "lombardia"
   }
  ],
  "val-d-ala": [
   {
-   "n": "Lanzo Torinese",
-   "lat": 45.272,
-   "lon": 7.477,
+   "n": "Ala di Stura",
+   "lat": 45.315,
+   "lon": 7.304,
    "r": "piemonte"
   },
   {
@@ -557,27 +1253,57 @@
    "r": "piemonte"
   },
   {
-   "n": "Pessinetto",
-   "lat": 45.291,
-   "lon": 7.403,
-   "r": "piemonte"
-  },
-  {
    "n": "Cantoira",
    "lat": 45.343,
    "lon": 7.382,
    "r": "piemonte"
   },
   {
-   "n": "Ala di Stura",
-   "lat": 45.315,
-   "lon": 7.304,
+   "n": "Pessinetto",
+   "lat": 45.291,
+   "lon": 7.403,
+   "r": "piemonte"
+  },
+  {
+   "n": "Lanzo Torinese",
+   "lat": 45.272,
+   "lon": 7.477,
    "r": "piemonte"
   },
   {
    "n": "Monastero di Lanzo",
    "lat": 45.301,
    "lon": 7.439,
+   "r": "piemonte"
+  },
+  {
+   "n": "Chialamberto",
+   "lat": 45.363,
+   "lon": 7.346,
+   "r": "piemonte"
+  },
+  {
+   "n": "Viù",
+   "lat": 45.239,
+   "lon": 7.376,
+   "r": "piemonte"
+  },
+  {
+   "n": "Groscavallo",
+   "lat": 45.369,
+   "lon": 7.282,
+   "r": "piemonte"
+  },
+  {
+   "n": "Coassolo Torinese",
+   "lat": 45.301,
+   "lon": 7.461,
+   "r": "piemonte"
+  },
+  {
+   "n": "Traves",
+   "lat": 45.271,
+   "lon": 7.43,
    "r": "piemonte"
   }
  ],
@@ -595,21 +1321,9 @@
    "r": "piemonte"
   },
   {
-   "n": "Invorio",
-   "lat": 45.756,
-   "lon": 8.487,
-   "r": "piemonte"
-  },
-  {
    "n": "San Maurizio d'Opaglio",
    "lat": 45.772,
    "lon": 8.391,
-   "r": "piemonte"
-  },
-  {
-   "n": "Paruzzaro",
-   "lat": 45.749,
-   "lon": 8.513,
    "r": "piemonte"
   },
   {
@@ -619,15 +1333,51 @@
    "r": "piemonte"
   },
   {
+   "n": "Invorio",
+   "lat": 45.756,
+   "lon": 8.487,
+   "r": "piemonte"
+  },
+  {
    "n": "Bolzano Novarese",
    "lat": 45.763,
    "lon": 8.444,
    "r": "piemonte"
   },
   {
+   "n": "Ameno",
+   "lat": 45.789,
+   "lon": 8.439,
+   "r": "piemonte"
+  },
+  {
+   "n": "Paruzzaro",
+   "lat": 45.749,
+   "lon": 8.513,
+   "r": "piemonte"
+  },
+  {
+   "n": "Colazza",
+   "lat": 45.793,
+   "lon": 8.499,
+   "r": "piemonte"
+  },
+  {
    "n": "Massino Visconti",
    "lat": 45.822,
    "lon": 8.539,
+   "r": "piemonte"
+  },
+  {
+   "n": "Cellio",
+   "lat": 45.755,
+   "lon": 8.313,
+   "r": "piemonte"
+  },
+  {
+   "n": "Valdilana",
+   "lat": 45.666,
+   "lon": 8.144,
    "r": "piemonte"
   }
  ],
@@ -637,18 +1387,6 @@
    "lat": 44.4,
    "lon": 8.274,
    "r": "liguria"
-  },
-  {
-   "n": "Quiliano",
-   "lat": 44.293,
-   "lon": 8.411,
-   "r": "liguria"
-  },
-  {
-   "n": "Ceva",
-   "lat": 44.386,
-   "lon": 8.035,
-   "r": "piemonte"
   },
   {
    "n": "Carcare",
@@ -669,9 +1407,15 @@
    "r": "liguria"
   },
   {
-   "n": "Stella",
-   "lat": 44.397,
-   "lon": 8.493,
+   "n": "Dego",
+   "lat": 44.45,
+   "lon": 8.31,
+   "r": "liguria"
+  },
+  {
+   "n": "Cosseria",
+   "lat": 44.369,
+   "lon": 8.234,
    "r": "liguria"
   },
   {
@@ -679,9 +1423,51 @@
    "lat": 44.335,
    "lon": 8.344,
    "r": "liguria"
+  },
+  {
+   "n": "Pallare",
+   "lat": 44.328,
+   "lon": 8.275,
+   "r": "liguria"
+  },
+  {
+   "n": "Plodio",
+   "lat": 44.357,
+   "lon": 8.244,
+   "r": "liguria"
+  },
+  {
+   "n": "Roccavignale",
+   "lat": 44.362,
+   "lon": 8.192,
+   "r": "liguria"
+  },
+  {
+   "n": "Quiliano",
+   "lat": 44.293,
+   "lon": 8.411,
+   "r": "liguria"
+  },
+  {
+   "n": "Piana Crixia",
+   "lat": 44.485,
+   "lon": 8.308,
+   "r": "liguria"
   }
  ],
  "valle-vermenagna": [
+  {
+   "n": "Vernante",
+   "lat": 44.246,
+   "lon": 7.534,
+   "r": "piemonte"
+  },
+  {
+   "n": "Limone Piemonte",
+   "lat": 44.201,
+   "lon": 7.576,
+   "r": "piemonte"
+  },
   {
    "n": "Peveragno",
    "lat": 44.33,
@@ -695,31 +1481,55 @@
    "r": "piemonte"
   },
   {
-   "n": "Limone Piemonte",
-   "lat": 44.201,
-   "lon": 7.576,
-   "r": "piemonte"
-  },
-  {
-   "n": "Vernante",
-   "lat": 44.246,
-   "lon": 7.534,
-   "r": "piemonte"
-  },
-  {
    "n": "Frabosa Soprana",
    "lat": 44.287,
    "lon": 7.807,
    "r": "piemonte"
+  },
+  {
+   "n": "Boves",
+   "lat": 44.33,
+   "lon": 7.552,
+   "r": "piemonte"
+  },
+  {
+   "n": "Borgo San Dalmazzo",
+   "lat": 44.329,
+   "lon": 7.487,
+   "r": "piemonte"
+  },
+  {
+   "n": "Robilante",
+   "lat": 44.294,
+   "lon": 7.511,
+   "r": "piemonte"
+  },
+  {
+   "n": "Roccavione",
+   "lat": 44.314,
+   "lon": 7.481,
+   "r": "piemonte"
+  },
+  {
+   "n": "Chiusa di Pesio",
+   "lat": 44.325,
+   "lon": 7.678,
+   "r": "piemonte"
+  },
+  {
+   "n": "Entracque",
+   "lat": 44.241,
+   "lon": 7.398,
+   "r": "piemonte"
+  },
+  {
+   "n": "Valdieri",
+   "lat": 44.278,
+   "lon": 7.396,
+   "r": "piemonte"
   }
  ],
  "valle-di-viu": [
-  {
-   "n": "Borgone Susa",
-   "lat": 45.123,
-   "lon": 7.241,
-   "r": "piemonte"
-  },
   {
    "n": "Viù",
    "lat": 45.239,
@@ -727,9 +1537,69 @@
    "r": "piemonte"
   },
   {
+   "n": "Borgone Susa",
+   "lat": 45.123,
+   "lon": 7.241,
+   "r": "piemonte"
+  },
+  {
    "n": "Lemie",
    "lat": 45.229,
    "lon": 7.293,
+   "r": "piemonte"
+  },
+  {
+   "n": "Bussoleno",
+   "lat": 45.137,
+   "lon": 7.149,
+   "r": "piemonte"
+  },
+  {
+   "n": "Bruzolo",
+   "lat": 45.143,
+   "lon": 7.194,
+   "r": "piemonte"
+  },
+  {
+   "n": "Usseglio",
+   "lat": 45.233,
+   "lon": 7.217,
+   "r": "piemonte"
+  },
+  {
+   "n": "Chianocco",
+   "lat": 45.149,
+   "lon": 7.169,
+   "r": "piemonte"
+  },
+  {
+   "n": "Condove",
+   "lat": 45.117,
+   "lon": 7.311,
+   "r": "piemonte"
+  },
+  {
+   "n": "Sant'Antonino di Susa",
+   "lat": 45.107,
+   "lon": 7.274,
+   "r": "piemonte"
+  },
+  {
+   "n": "Villar Focchiardo",
+   "lat": 45.11,
+   "lon": 7.227,
+   "r": "piemonte"
+  },
+  {
+   "n": "San Didero",
+   "lat": 45.135,
+   "lon": 7.215,
+   "r": "piemonte"
+  },
+  {
+   "n": "Ala di Stura",
+   "lat": 45.315,
+   "lon": 7.304,
    "r": "piemonte"
   }
  ],
@@ -753,15 +1623,27 @@
    "r": "piemonte"
   },
   {
-   "n": "Isola del Cantone",
-   "lat": 44.646,
-   "lon": 8.956,
-   "r": "liguria"
+   "n": "Grondona",
+   "lat": 44.697,
+   "lon": 8.963,
+   "r": "piemonte"
+  },
+  {
+   "n": "Sardigliano",
+   "lat": 44.754,
+   "lon": 8.908,
+   "r": "piemonte"
   },
   {
    "n": "Bosio",
    "lat": 44.648,
    "lon": 8.792,
+   "r": "piemonte"
+  },
+  {
+   "n": "Carrosio",
+   "lat": 44.659,
+   "lon": 8.832,
    "r": "piemonte"
   },
   {
@@ -777,9 +1659,21 @@
    "r": "piemonte"
   },
   {
-   "n": "Grondona",
-   "lat": 44.697,
-   "lon": 8.963,
+   "n": "Fraconalto",
+   "lat": 44.592,
+   "lon": 8.878,
+   "r": "piemonte"
+  },
+  {
+   "n": "Roccaforte Ligure",
+   "lat": 44.678,
+   "lon": 9.028,
+   "r": "piemonte"
+  },
+  {
+   "n": "Casaleggio Boiro",
+   "lat": 44.634,
+   "lon": 8.732,
    "r": "piemonte"
   }
  ],
@@ -795,6 +1689,66 @@
    "lat": 44.57,
    "lon": 7.36,
    "r": "piemonte"
+  },
+  {
+   "n": "Sanfront",
+   "lat": 44.646,
+   "lon": 7.32,
+   "r": "piemonte"
+  },
+  {
+   "n": "Barge",
+   "lat": 44.725,
+   "lon": 7.323,
+   "r": "piemonte"
+  },
+  {
+   "n": "Rifreddo",
+   "lat": 44.65,
+   "lon": 7.349,
+   "r": "piemonte"
+  },
+  {
+   "n": "Envie",
+   "lat": 44.682,
+   "lon": 7.372,
+   "r": "piemonte"
+  },
+  {
+   "n": "Revello",
+   "lat": 44.655,
+   "lon": 7.389,
+   "r": "piemonte"
+  },
+  {
+   "n": "Gambasca",
+   "lat": 44.629,
+   "lon": 7.347,
+   "r": "piemonte"
+  },
+  {
+   "n": "Martiniana Po",
+   "lat": 44.626,
+   "lon": 7.366,
+   "r": "piemonte"
+  },
+  {
+   "n": "Bagnolo Piemonte",
+   "lat": 44.76,
+   "lon": 7.315,
+   "r": "piemonte"
+  },
+  {
+   "n": "Oncino",
+   "lat": 44.676,
+   "lon": 7.19,
+   "r": "piemonte"
+  },
+  {
+   "n": "Frassino",
+   "lat": 44.571,
+   "lon": 7.276,
+   "r": "piemonte"
   }
  ],
  "val-varenna": [
@@ -802,6 +1756,12 @@
    "n": "Campomorone",
    "lat": 44.507,
    "lon": 8.893,
+   "r": "liguria"
+  },
+  {
+   "n": "Mele",
+   "lat": 44.445,
+   "lon": 8.748,
    "r": "liguria"
   },
   {
@@ -823,9 +1783,9 @@
    "r": "liguria"
   },
   {
-   "n": "Mele",
-   "lat": 44.445,
-   "lon": 8.748,
+   "n": "Tiglieto",
+   "lat": 44.525,
+   "lon": 8.62,
    "r": "liguria"
   },
   {
@@ -835,19 +1795,37 @@
    "r": "liguria"
   },
   {
-   "n": "Tiglieto",
-   "lat": 44.525,
-   "lon": 8.62,
+   "n": "Genova",
+   "lat": 44.411,
+   "lon": 8.933,
+   "r": "liguria"
+  },
+  {
+   "n": "Serra Riccò",
+   "lat": 44.508,
+   "lon": 8.936,
+   "r": "liguria"
+  },
+  {
+   "n": "Ceranesi",
+   "lat": 44.504,
+   "lon": 8.895,
+   "r": "liguria"
+  },
+  {
+   "n": "Arenzano",
+   "lat": 44.402,
+   "lon": 8.682,
+   "r": "liguria"
+  },
+  {
+   "n": "Sant'Olcese",
+   "lat": 44.484,
+   "lon": 8.968,
    "r": "liguria"
   }
  ],
  "val-mastallone": [
-  {
-   "n": "Cesara",
-   "lat": 45.835,
-   "lon": 8.366,
-   "r": "piemonte"
-  },
   {
    "n": "Fobello",
    "lat": 45.89,
@@ -859,13 +1837,73 @@
    "lat": 45.857,
    "lon": 8.236,
    "r": "piemonte"
+  },
+  {
+   "n": "Cesara",
+   "lat": 45.835,
+   "lon": 8.366,
+   "r": "piemonte"
+  },
+  {
+   "n": "Varallo",
+   "lat": 45.814,
+   "lon": 8.256,
+   "r": "piemonte"
+  },
+  {
+   "n": "Cravagliana",
+   "lat": 45.847,
+   "lon": 8.201,
+   "r": "piemonte"
+  },
+  {
+   "n": "Vocca",
+   "lat": 45.831,
+   "lon": 8.188,
+   "r": "piemonte"
+  },
+  {
+   "n": "Rimella",
+   "lat": 45.908,
+   "lon": 8.183,
+   "r": "piemonte"
+  },
+  {
+   "n": "Rossa",
+   "lat": 45.834,
+   "lon": 8.126,
+   "r": "piemonte"
+  },
+  {
+   "n": "Cervatto",
+   "lat": 45.883,
+   "lon": 8.162,
+   "r": "piemonte"
+  },
+  {
+   "n": "Boccioleto",
+   "lat": 45.83,
+   "lon": 8.113,
+   "r": "piemonte"
+  },
+  {
+   "n": "Balmuccia",
+   "lat": 45.818,
+   "lon": 8.138,
+   "r": "piemonte"
+  },
+  {
+   "n": "Scopa",
+   "lat": 45.792,
+   "lon": 8.113,
+   "r": "piemonte"
   }
  ],
  "val-loana": [
   {
-   "n": "Baveno",
-   "lat": 45.909,
-   "lon": 8.505,
+   "n": "Druogno",
+   "lat": 46.135,
+   "lon": 8.432,
    "r": "piemonte"
   },
   {
@@ -881,9 +1919,9 @@
    "r": "piemonte"
   },
   {
-   "n": "Druogno",
-   "lat": 46.135,
-   "lon": 8.432,
+   "n": "Baveno",
+   "lat": 45.909,
+   "lon": 8.505,
    "r": "piemonte"
   },
   {
@@ -897,15 +1935,45 @@
    "lat": 45.975,
    "lon": 8.524,
    "r": "piemonte"
+  },
+  {
+   "n": "Domodossola",
+   "lat": 46.115,
+   "lon": 8.292,
+   "r": "piemonte"
+  },
+  {
+   "n": "Malesco",
+   "lat": 46.127,
+   "lon": 8.5,
+   "r": "piemonte"
+  },
+  {
+   "n": "Santa Maria Maggiore",
+   "lat": 46.135,
+   "lon": 8.467,
+   "r": "piemonte"
+  },
+  {
+   "n": "Verbania",
+   "lat": 45.921,
+   "lon": 8.551,
+   "r": "piemonte"
+  },
+  {
+   "n": "Cannobio",
+   "lat": 46.062,
+   "lon": 8.7,
+   "r": "piemonte"
+  },
+  {
+   "n": "Crevoladossola",
+   "lat": 46.156,
+   "lon": 8.304,
+   "r": "piemonte"
   }
  ],
  "valle-germanasca": [
-  {
-   "n": "Villar Perosa",
-   "lat": 44.92,
-   "lon": 7.249,
-   "r": "piemonte"
-  },
   {
    "n": "Perosa Argentina",
    "lat": 44.958,
@@ -913,9 +1981,9 @@
    "r": "piemonte"
   },
   {
-   "n": "Coazze",
-   "lat": 45.051,
-   "lon": 7.295,
+   "n": "Perrero",
+   "lat": 44.937,
+   "lon": 7.115,
    "r": "piemonte"
   },
   {
@@ -925,9 +1993,21 @@
    "r": "piemonte"
   },
   {
-   "n": "Cantalupa",
-   "lat": 44.94,
-   "lon": 7.333,
+   "n": "Pomaretto",
+   "lat": 44.955,
+   "lon": 7.182,
+   "r": "piemonte"
+  },
+  {
+   "n": "Villar Perosa",
+   "lat": 44.92,
+   "lon": 7.249,
+   "r": "piemonte"
+  },
+  {
+   "n": "Inverso Pinasca",
+   "lat": 44.947,
+   "lon": 7.216,
    "r": "piemonte"
   },
   {
@@ -937,25 +2017,37 @@
    "r": "piemonte"
   },
   {
+   "n": "Prali",
+   "lat": 44.89,
+   "lon": 7.049,
+   "r": "piemonte"
+  },
+  {
+   "n": "Pramollo",
+   "lat": 44.905,
+   "lon": 7.212,
+   "r": "piemonte"
+  },
+  {
    "n": "Porte",
    "lat": 44.888,
    "lon": 7.268,
    "r": "piemonte"
   },
   {
-   "n": "Pomaretto",
-   "lat": 44.955,
-   "lon": 7.182,
+   "n": "Massello",
+   "lat": 44.959,
+   "lon": 7.056,
+   "r": "piemonte"
+  },
+  {
+   "n": "Cantalupa",
+   "lat": 44.94,
+   "lon": 7.333,
    "r": "piemonte"
   }
  ],
  "val-clarea": [
-  {
-   "n": "Oulx",
-   "lat": 45.031,
-   "lon": 6.832,
-   "r": "piemonte"
-  },
   {
    "n": "Chiomonte",
    "lat": 45.119,
@@ -967,43 +2059,73 @@
    "lat": 45.072,
    "lon": 6.884,
    "r": "piemonte"
+  },
+  {
+   "n": "Oulx",
+   "lat": 45.031,
+   "lon": 6.832,
+   "r": "piemonte"
+  },
+  {
+   "n": "Susa",
+   "lat": 45.135,
+   "lon": 7.046,
+   "r": "piemonte"
+  },
+  {
+   "n": "Venaus",
+   "lat": 45.155,
+   "lon": 7.012,
+   "r": "piemonte"
+  },
+  {
+   "n": "Giaglione",
+   "lat": 45.14,
+   "lon": 7.014,
+   "r": "piemonte"
+  },
+  {
+   "n": "Gravere",
+   "lat": 45.124,
+   "lon": 7.021,
+   "r": "piemonte"
+  },
+  {
+   "n": "Novalesa",
+   "lat": 45.188,
+   "lon": 7.015,
+   "r": "piemonte"
+  },
+  {
+   "n": "Mompantero",
+   "lat": 45.14,
+   "lon": 7.058,
+   "r": "piemonte"
+  },
+  {
+   "n": "Meana di Susa",
+   "lat": 45.121,
+   "lon": 7.068,
+   "r": "piemonte"
+  },
+  {
+   "n": "Exilles",
+   "lat": 45.097,
+   "lon": 6.93,
+   "r": "piemonte"
+  },
+  {
+   "n": "Bussoleno",
+   "lat": 45.137,
+   "lon": 7.149,
+   "r": "piemonte"
   }
  ],
  "val-neva": [
   {
-   "n": "Garessio",
-   "lat": 44.197,
-   "lon": 8.03,
-   "r": "piemonte"
-  },
-  {
-   "n": "Ormea",
-   "lat": 44.149,
-   "lon": 7.911,
-   "r": "piemonte"
-  },
-  {
    "n": "Calizzano",
    "lat": 44.235,
    "lon": 8.115,
-   "r": "liguria"
-  },
-  {
-   "n": "Pieve di Teco",
-   "lat": 44.047,
-   "lon": 7.915,
-   "r": "liguria"
-  },
-  {
-   "n": "Priola",
-   "lat": 44.246,
-   "lon": 8.022,
-   "r": "piemonte"
-  },
-  {
-   "n": "Pornassio",
-   "lat": 44.07,
-   "lon": 7.871,
    "r": "liguria"
   },
   {
@@ -1013,9 +2135,63 @@
    "r": "liguria"
   },
   {
-   "n": "Viola",
-   "lat": 44.29,
-   "lon": 7.966,
+   "n": "Castelbianco",
+   "lat": 44.113,
+   "lon": 8.075,
+   "r": "liguria"
+  },
+  {
+   "n": "Pieve di Teco",
+   "lat": 44.047,
+   "lon": 7.915,
+   "r": "liguria"
+  },
+  {
+   "n": "Erli",
+   "lat": 44.137,
+   "lon": 8.105,
+   "r": "liguria"
+  },
+  {
+   "n": "Nasino",
+   "lat": 44.115,
+   "lon": 8.028,
+   "r": "liguria"
+  },
+  {
+   "n": "Castelvecchio di Rocca Barbena",
+   "lat": 44.13,
+   "lon": 8.116,
+   "r": "liguria"
+  },
+  {
+   "n": "Aquila d'Arroscia",
+   "lat": 44.084,
+   "lon": 8.005,
+   "r": "liguria"
+  },
+  {
+   "n": "Pornassio",
+   "lat": 44.07,
+   "lon": 7.871,
+   "r": "liguria"
+  },
+  {
+   "n": "Garessio",
+   "lat": 44.197,
+   "lon": 8.03,
+   "r": "piemonte"
+  },
+  {
+   "n": "Armo",
+   "lat": 44.087,
+   "lon": 7.914,
+   "r": "liguria"
+  },
+  {
+   "n": "Ormea",
+   "lat": 44.149,
+   "lon": 7.911,
    "r": "piemonte"
   }
  ],
@@ -1027,15 +2203,15 @@
    "r": "liguria"
   },
   {
-   "n": "Pornassio",
-   "lat": 44.07,
-   "lon": 7.871,
-   "r": "liguria"
-  },
-  {
    "n": "Triora",
    "lat": 43.994,
    "lon": 7.762,
+   "r": "liguria"
+  },
+  {
+   "n": "Mendatica",
+   "lat": 44.076,
+   "lon": 7.806,
    "r": "liguria"
   },
   {
@@ -1045,9 +2221,9 @@
    "r": "liguria"
   },
   {
-   "n": "Mendatica",
-   "lat": 44.076,
-   "lon": 7.806,
+   "n": "Pornassio",
+   "lat": 44.07,
+   "lon": 7.871,
    "r": "liguria"
   },
   {
@@ -1067,15 +2243,33 @@
    "lat": 43.96,
    "lon": 7.867,
    "r": "liguria"
+  },
+  {
+   "n": "Montalto Ligure",
+   "lat": 43.928,
+   "lon": 7.844,
+   "r": "liguria"
+  },
+  {
+   "n": "Pigna",
+   "lat": 43.933,
+   "lon": 7.663,
+   "r": "liguria"
+  },
+  {
+   "n": "Castel Vittorio",
+   "lat": 43.929,
+   "lon": 7.673,
+   "r": "liguria"
+  },
+  {
+   "n": "Isolabona",
+   "lat": 43.88,
+   "lon": 7.639,
+   "r": "liguria"
   }
  ],
  "vallone-di-san-grato": [
-  {
-   "n": "Lillianes",
-   "lat": 45.633,
-   "lon": 7.845,
-   "r": "valledaosta"
-  },
   {
    "n": "Issime",
    "lat": 45.685,
@@ -1083,9 +2277,69 @@
    "r": "valledaosta"
   },
   {
+   "n": "Lillianes",
+   "lat": 45.633,
+   "lon": 7.845,
+   "r": "valledaosta"
+  },
+  {
    "n": "Bard",
    "lat": 45.608,
    "lon": 7.747,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Fontainemore",
+   "lat": 45.649,
+   "lon": 7.861,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Pont-Saint-Martin",
+   "lat": 45.6,
+   "lon": 7.798,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Donnas",
+   "lat": 45.603,
+   "lon": 7.767,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Arnad",
+   "lat": 45.645,
+   "lon": 7.721,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Gaby",
+   "lat": 45.713,
+   "lon": 7.882,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Challand-Saint-Anselme",
+   "lat": 45.716,
+   "lon": 7.737,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Perloz",
+   "lat": 45.613,
+   "lon": 7.809,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Verrès",
+   "lat": 45.669,
+   "lon": 7.69,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Hône",
+   "lat": 45.612,
+   "lon": 7.736,
    "r": "valledaosta"
   }
  ],
@@ -1097,15 +2351,15 @@
    "r": "valledaosta"
   },
   {
-   "n": "Pontey",
-   "lat": 45.738,
-   "lon": 7.591,
-   "r": "valledaosta"
-  },
-  {
    "n": "Champdepraz",
    "lat": 45.686,
    "lon": 7.658,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Pontey",
+   "lat": 45.738,
+   "lon": 7.591,
    "r": "valledaosta"
   },
   {
@@ -1113,25 +2367,67 @@
    "lat": 45.752,
    "lon": 7.557,
    "r": "valledaosta"
+  },
+  {
+   "n": "Montjovet",
+   "lat": 45.704,
+   "lon": 7.674,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Verrès",
+   "lat": 45.669,
+   "lon": 7.69,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Saint-Vincent",
+   "lat": 45.75,
+   "lon": 7.648,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Issogne",
+   "lat": 45.654,
+   "lon": 7.684,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Chambave",
+   "lat": 45.744,
+   "lon": 7.55,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Champorcher",
+   "lat": 45.624,
+   "lon": 7.621,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Challand-Saint-Victor",
+   "lat": 45.69,
+   "lon": 7.706,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Fénis",
+   "lat": 45.736,
+   "lon": 7.494,
+   "r": "valledaosta"
   }
  ],
  "valle-del-gran-san-bernardo": [
   {
-   "n": "Roisan",
-   "lat": 45.784,
-   "lon": 7.311,
-   "r": "valledaosta"
-  },
-  {
-   "n": "Valpelline",
-   "lat": 45.826,
-   "lon": 7.329,
-   "r": "valledaosta"
-  },
-  {
    "n": "Etroubles",
    "lat": 45.82,
    "lon": 7.233,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Roisan",
+   "lat": 45.784,
+   "lon": 7.311,
    "r": "valledaosta"
   },
   {
@@ -1144,6 +2440,54 @@
    "n": "Allein",
    "lat": 45.813,
    "lon": 7.272,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Valpelline",
+   "lat": 45.826,
+   "lon": 7.329,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Gignod",
+   "lat": 45.778,
+   "lon": 7.296,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Aosta",
+   "lat": 45.738,
+   "lon": 7.32,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Saint-Rhémy-en-Bosses",
+   "lat": 45.823,
+   "lon": 7.182,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Saint-Oyen",
+   "lat": 45.825,
+   "lon": 7.212,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Sarre",
+   "lat": 45.718,
+   "lon": 7.258,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Gressan",
+   "lat": 45.722,
+   "lon": 7.289,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Saint-Pierre",
+   "lat": 45.71,
+   "lon": 7.226,
    "r": "valledaosta"
   }
  ],
@@ -1165,15 +2509,57 @@
    "lat": 45.606,
    "lon": 7.688,
    "r": "valledaosta"
+  },
+  {
+   "n": "Issogne",
+   "lat": 45.654,
+   "lon": 7.684,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Champorcher",
+   "lat": 45.624,
+   "lon": 7.621,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Arnad",
+   "lat": 45.645,
+   "lon": 7.721,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Champdepraz",
+   "lat": 45.686,
+   "lon": 7.658,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Donnas",
+   "lat": 45.603,
+   "lon": 7.767,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Montjovet",
+   "lat": 45.704,
+   "lon": 7.674,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Challand-Saint-Victor",
+   "lat": 45.69,
+   "lon": 7.706,
+   "r": "valledaosta"
+  },
+  {
+   "n": "Bard",
+   "lat": 45.608,
+   "lon": 7.747,
+   "r": "valledaosta"
   }
  ],
  "val-di-magra": [
-  {
-   "n": "Fivizzano",
-   "lat": 44.237,
-   "lon": 10.123,
-   "r": "toscana"
-  },
   {
    "n": "Filattiera",
    "lat": 44.331,
@@ -1184,6 +2570,54 @@
    "n": "Bagnone",
    "lat": 44.315,
    "lon": 9.994,
+   "r": "toscana"
+  },
+  {
+   "n": "Fivizzano",
+   "lat": 44.237,
+   "lon": 10.123,
+   "r": "toscana"
+  },
+  {
+   "n": "Villafranca in Lunigiana",
+   "lat": 44.292,
+   "lon": 9.951,
+   "r": "toscana"
+  },
+  {
+   "n": "Mulazzo",
+   "lat": 44.322,
+   "lon": 9.907,
+   "r": "toscana"
+  },
+  {
+   "n": "Licciana Nardi",
+   "lat": 44.265,
+   "lon": 10.039,
+   "r": "toscana"
+  },
+  {
+   "n": "Tresana",
+   "lat": 44.238,
+   "lon": 9.952,
+   "r": "toscana"
+  },
+  {
+   "n": "Aulla",
+   "lat": 44.209,
+   "lon": 9.968,
+   "r": "toscana"
+  },
+  {
+   "n": "Pontremoli",
+   "lat": 44.377,
+   "lon": 9.883,
+   "r": "toscana"
+  },
+  {
+   "n": "Podenzana",
+   "lat": 44.206,
+   "lon": 9.941,
    "r": "toscana"
   }
  ],
@@ -1199,6 +2633,66 @@
    "lat": 44.452,
    "lon": 9.258,
    "r": "liguria"
+  },
+  {
+   "n": "Cicagna",
+   "lat": 44.409,
+   "lon": 9.236,
+   "r": "liguria"
+  },
+  {
+   "n": "Moconesi",
+   "lat": 44.42,
+   "lon": 9.212,
+   "r": "liguria"
+  },
+  {
+   "n": "Rapallo",
+   "lat": 44.35,
+   "lon": 9.232,
+   "r": "liguria"
+  },
+  {
+   "n": "Uscio",
+   "lat": 44.413,
+   "lon": 9.163,
+   "r": "liguria"
+  },
+  {
+   "n": "Orero",
+   "lat": 44.407,
+   "lon": 9.275,
+   "r": "liguria"
+  },
+  {
+   "n": "Tribogna",
+   "lat": 44.416,
+   "lon": 9.196,
+   "r": "liguria"
+  },
+  {
+   "n": "Lorsica",
+   "lat": 44.432,
+   "lon": 9.274,
+   "r": "liguria"
+  },
+  {
+   "n": "Avegno",
+   "lat": 44.382,
+   "lon": 9.159,
+   "r": "liguria"
+  },
+  {
+   "n": "San Colombano Certenoli",
+   "lat": 44.372,
+   "lon": 9.313,
+   "r": "liguria"
+  },
+  {
+   "n": "Santa Margherita Ligure",
+   "lat": 44.335,
+   "lon": 9.21,
+   "r": "liguria"
   }
  ],
  "val-bisagno": [
@@ -1213,19 +2707,85 @@
    "lat": 44.465,
    "lon": 9.087,
    "r": "liguria"
+  },
+  {
+   "n": "Genova",
+   "lat": 44.411,
+   "lon": 8.933,
+   "r": "liguria"
+  },
+  {
+   "n": "Sant'Olcese",
+   "lat": 44.484,
+   "lon": 8.968,
+   "r": "liguria"
+  },
+  {
+   "n": "Serra Riccò",
+   "lat": 44.508,
+   "lon": 8.936,
+   "r": "liguria"
+  },
+  {
+   "n": "Bogliasco",
+   "lat": 44.378,
+   "lon": 9.07,
+   "r": "liguria"
+  },
+  {
+   "n": "Montoggio",
+   "lat": 44.516,
+   "lon": 9.044,
+   "r": "liguria"
+  },
+  {
+   "n": "Casella",
+   "lat": 44.535,
+   "lon": 8.999,
+   "r": "liguria"
+  },
+  {
+   "n": "Campomorone",
+   "lat": 44.507,
+   "lon": 8.893,
+   "r": "liguria"
+  },
+  {
+   "n": "Ceranesi",
+   "lat": 44.504,
+   "lon": 8.895,
+   "r": "liguria"
+  },
+  {
+   "n": "Pieve Ligure",
+   "lat": 44.375,
+   "lon": 9.087,
+   "r": "liguria"
+  },
+  {
+   "n": "Sori",
+   "lat": 44.373,
+   "lon": 9.104,
+   "r": "liguria"
   }
  ],
  "val-cichero": [
   {
-   "n": "Ne",
-   "lat": 44.344,
-   "lon": 9.398,
-   "r": "liguria"
-  },
-  {
    "n": "Borzonasca",
    "lat": 44.422,
    "lon": 9.387,
+   "r": "liguria"
+  },
+  {
+   "n": "Lorsica",
+   "lat": 44.432,
+   "lon": 9.274,
+   "r": "liguria"
+  },
+  {
+   "n": "Ne",
+   "lat": 44.344,
+   "lon": 9.398,
    "r": "liguria"
   },
   {
@@ -1235,9 +2795,51 @@
    "r": "liguria"
   },
   {
-   "n": "Lorsica",
-   "lat": 44.432,
-   "lon": 9.274,
+   "n": "San Colombano Certenoli",
+   "lat": 44.372,
+   "lon": 9.313,
+   "r": "liguria"
+  },
+  {
+   "n": "Carasco",
+   "lat": 44.351,
+   "lon": 9.344,
+   "r": "liguria"
+  },
+  {
+   "n": "Mezzanego",
+   "lat": 44.384,
+   "lon": 9.377,
+   "r": "liguria"
+  },
+  {
+   "n": "Rapallo",
+   "lat": 44.35,
+   "lon": 9.232,
+   "r": "liguria"
+  },
+  {
+   "n": "Chiavari",
+   "lat": 44.317,
+   "lon": 9.324,
+   "r": "liguria"
+  },
+  {
+   "n": "Cicagna",
+   "lat": 44.409,
+   "lon": 9.236,
+   "r": "liguria"
+  },
+  {
+   "n": "Leivi",
+   "lat": 44.346,
+   "lon": 9.318,
+   "r": "liguria"
+  },
+  {
+   "n": "Orero",
+   "lat": 44.407,
+   "lon": 9.275,
    "r": "liguria"
   }
  ],
@@ -1253,9 +2855,75 @@
    "lat": 44.278,
    "lon": 9.745,
    "r": "liguria"
+  },
+  {
+   "n": "Bolano",
+   "lat": 44.189,
+   "lon": 9.895,
+   "r": "liguria"
+  },
+  {
+   "n": "Follo",
+   "lat": 44.163,
+   "lon": 9.862,
+   "r": "liguria"
+  },
+  {
+   "n": "Beverino",
+   "lat": 44.194,
+   "lon": 9.769,
+   "r": "liguria"
+  },
+  {
+   "n": "Rocchetta di Vara",
+   "lat": 44.251,
+   "lon": 9.757,
+   "r": "liguria"
+  },
+  {
+   "n": "Santo Stefano di Magra",
+   "lat": 44.162,
+   "lon": 9.915,
+   "r": "liguria"
+  },
+  {
+   "n": "Brugnato",
+   "lat": 44.237,
+   "lon": 9.725,
+   "r": "liguria"
+  },
+  {
+   "n": "Vezzano Ligure",
+   "lat": 44.141,
+   "lon": 9.884,
+   "r": "liguria"
+  },
+  {
+   "n": "Borghetto di Vara",
+   "lat": 44.224,
+   "lon": 9.722,
+   "r": "liguria"
+  },
+  {
+   "n": "Riccò del Golfo di Spezia",
+   "lat": 44.156,
+   "lon": 9.763,
+   "r": "liguria"
+  },
+  {
+   "n": "Pignone",
+   "lat": 44.179,
+   "lon": 9.724,
+   "r": "liguria"
   }
  ],
  "val-d-aveto": [
+  {
+   "n": "Rezzoaglio",
+   "lat": 44.526,
+   "lon": 9.387,
+   "r": "liguria"
+  },
   {
    "n": "Borzonasca",
    "lat": 44.422,
@@ -1263,29 +2931,65 @@
    "r": "liguria"
   },
   {
-   "n": "Rezzoaglio",
-   "lat": 44.526,
-   "lon": 9.387,
+   "n": "Santo Stefano d'Aveto",
+   "lat": 44.548,
+   "lon": 9.451,
+   "r": "liguria"
+  },
+  {
+   "n": "Fontanigorda",
+   "lat": 44.547,
+   "lon": 9.305,
+   "r": "liguria"
+  },
+  {
+   "n": "Rovegno",
+   "lat": 44.577,
+   "lon": 9.279,
+   "r": "liguria"
+  },
+  {
+   "n": "Montebruno",
+   "lat": 44.527,
+   "lon": 9.25,
+   "r": "liguria"
+  },
+  {
+   "n": "Favale di Malvaro",
+   "lat": 44.452,
+   "lon": 9.258,
+   "r": "liguria"
+  },
+  {
+   "n": "Lorsica",
+   "lat": 44.432,
+   "lon": 9.274,
+   "r": "liguria"
+  },
+  {
+   "n": "Gorreto",
+   "lat": 44.605,
+   "lon": 9.292,
+   "r": "liguria"
+  },
+  {
+   "n": "Fascia",
+   "lat": 44.564,
+   "lon": 9.236,
+   "r": "liguria"
+  },
+  {
+   "n": "Rondanina",
+   "lat": 44.562,
+   "lon": 9.218,
    "r": "liguria"
   }
  ],
  "val-varatella": [
   {
-   "n": "Noli",
-   "lat": 44.206,
-   "lon": 8.416,
-   "r": "liguria"
-  },
-  {
    "n": "Tovo San Giacomo",
    "lat": 44.177,
    "lon": 8.269,
-   "r": "liguria"
-  },
-  {
-   "n": "Calice Ligure",
-   "lat": 44.205,
-   "lon": 8.294,
    "r": "liguria"
   },
   {
@@ -1295,15 +2999,21 @@
    "r": "liguria"
   },
   {
+   "n": "Balestrino",
+   "lat": 44.125,
+   "lon": 8.175,
+   "r": "liguria"
+  },
+  {
    "n": "Magliolo",
    "lat": 44.192,
    "lon": 8.25,
    "r": "liguria"
   },
   {
-   "n": "Balestrino",
-   "lat": 44.125,
-   "lon": 8.175,
+   "n": "Calice Ligure",
+   "lat": 44.205,
+   "lon": 8.294,
    "r": "liguria"
   },
   {
@@ -1317,15 +3027,39 @@
    "lat": 44.281,
    "lon": 8.201,
    "r": "liguria"
+  },
+  {
+   "n": "Noli",
+   "lat": 44.206,
+   "lon": 8.416,
+   "r": "liguria"
+  },
+  {
+   "n": "Loano",
+   "lat": 44.129,
+   "lon": 8.26,
+   "r": "liguria"
+  },
+  {
+   "n": "Borghetto Santo Spirito",
+   "lat": 44.115,
+   "lon": 8.242,
+   "r": "liguria"
+  },
+  {
+   "n": "Albenga",
+   "lat": 44.049,
+   "lon": 8.213,
+   "r": "liguria"
+  },
+  {
+   "n": "Ceriale",
+   "lat": 44.096,
+   "lon": 8.232,
+   "r": "liguria"
   }
  ],
  "val-roia": [
-  {
-   "n": "Ceriana",
-   "lat": 43.881,
-   "lon": 7.773,
-   "r": "liguria"
-  },
   {
    "n": "Pigna",
    "lat": 43.933,
@@ -1343,13 +3077,67 @@
    "lat": 43.904,
    "lon": 7.718,
    "r": "liguria"
+  },
+  {
+   "n": "Ceriana",
+   "lat": 43.881,
+   "lon": 7.773,
+   "r": "liguria"
+  },
+  {
+   "n": "Ventimiglia",
+   "lat": 43.79,
+   "lon": 7.609,
+   "r": "liguria"
+  },
+  {
+   "n": "Camporosso",
+   "lat": 43.815,
+   "lon": 7.628,
+   "r": "liguria"
+  },
+  {
+   "n": "Dolceacqua",
+   "lat": 43.848,
+   "lon": 7.623,
+   "r": "liguria"
+  },
+  {
+   "n": "Airole",
+   "lat": 43.872,
+   "lon": 7.554,
+   "r": "liguria"
+  },
+  {
+   "n": "Vallecrosia",
+   "lat": 43.793,
+   "lon": 7.644,
+   "r": "liguria"
+  },
+  {
+   "n": "Isolabona",
+   "lat": 43.88,
+   "lon": 7.639,
+   "r": "liguria"
+  },
+  {
+   "n": "Bordighera",
+   "lat": 43.78,
+   "lon": 7.672,
+   "r": "liguria"
+  },
+  {
+   "n": "Apricale",
+   "lat": 43.88,
+   "lon": 7.66,
+   "r": "liguria"
   }
  ],
  "alta-val-d-enza": [
   {
-   "n": "Berceto",
-   "lat": 44.51,
-   "lon": 9.989,
+   "n": "Monchio delle Corti",
+   "lat": 44.412,
+   "lon": 10.123,
    "r": "emilia"
   },
   {
@@ -1359,15 +3147,9 @@
    "r": "emilia"
   },
   {
-   "n": "Sillano Giuncugnano",
-   "lat": 44.225,
-   "lon": 10.302,
-   "r": "toscana"
-  },
-  {
-   "n": "Monchio delle Corti",
-   "lat": 44.412,
-   "lon": 10.123,
+   "n": "Berceto",
+   "lat": 44.51,
+   "lon": 9.989,
    "r": "emilia"
   },
   {
@@ -1375,9 +3157,39 @@
    "lat": 44.297,
    "lon": 10.135,
    "r": "toscana"
+  },
+  {
+   "n": "Sillano Giuncugnano",
+   "lat": 44.225,
+   "lon": 10.302,
+   "r": "toscana"
+  },
+  {
+   "n": "Palanzano",
+   "lat": 44.435,
+   "lon": 10.192,
+   "r": "emilia"
+  },
+  {
+   "n": "Tizzano Val Parma",
+   "lat": 44.521,
+   "lon": 10.199,
+   "r": "emilia"
   }
  ],
  "lunigiana": [
+  {
+   "n": "Podenzana",
+   "lat": 44.206,
+   "lon": 9.941,
+   "r": "toscana"
+  },
+  {
+   "n": "Fosdinovo",
+   "lat": 44.134,
+   "lon": 10.019,
+   "r": "toscana"
+  },
   {
    "n": "Carrara",
    "lat": 44.077,
@@ -1409,21 +3221,33 @@
    "r": "liguria"
   },
   {
-   "n": "Fosdinovo",
-   "lat": 44.134,
-   "lon": 10.019,
-   "r": "toscana"
-  },
-  {
    "n": "Riccò del Golfo di Spezia",
    "lat": 44.156,
    "lon": 9.763,
    "r": "liguria"
   },
   {
-   "n": "Podenzana",
-   "lat": 44.206,
-   "lon": 9.941,
+   "n": "Casola in Lunigiana",
+   "lat": 44.201,
+   "lon": 10.176,
+   "r": "toscana"
+  },
+  {
+   "n": "Aulla",
+   "lat": 44.209,
+   "lon": 9.968,
+   "r": "toscana"
+  },
+  {
+   "n": "Tresana",
+   "lat": 44.238,
+   "lon": 9.952,
+   "r": "toscana"
+  },
+  {
+   "n": "Villafranca in Lunigiana",
+   "lat": 44.292,
+   "lon": 9.951,
    "r": "toscana"
   }
  ],
@@ -1445,6 +3269,24 @@
    "lat": 44.547,
    "lon": 9.305,
    "r": "liguria"
+  },
+  {
+   "n": "Cerignale",
+   "lat": 44.677,
+   "lon": 9.351,
+   "r": "emilia"
+  },
+  {
+   "n": "Zerba",
+   "lat": 44.666,
+   "lon": 9.288,
+   "r": "emilia"
+  },
+  {
+   "n": "Corte Brugnatella",
+   "lat": 44.712,
+   "lon": 9.38,
+   "r": "emilia"
   }
  ],
  "garfagnana": [
@@ -1461,14 +3303,14 @@
    "r": "toscana"
   },
   {
-   "n": "Piazza al Serchio",
-   "lat": 44.183,
-   "lon": 10.3,
+   "n": "Pieve Fosciana",
+   "lat": 44.131,
+   "lon": 10.411,
    "r": "toscana"
   },
   {
-   "n": "Pieve Fosciana",
-   "lat": 44.131,
+   "n": "Castiglione di Garfagnana",
+   "lat": 44.149,
    "lon": 10.411,
    "r": "toscana"
   },
@@ -1479,25 +3321,55 @@
    "r": "toscana"
   },
   {
+   "n": "Villa Collemandina",
+   "lat": 44.16,
+   "lon": 10.398,
+   "r": "toscana"
+  },
+  {
+   "n": "Fosciandora",
+   "lat": 44.115,
+   "lon": 10.455,
+   "r": "toscana"
+  },
+  {
+   "n": "San Romano in Garfagnana",
+   "lat": 44.169,
+   "lon": 10.345,
+   "r": "toscana"
+  },
+  {
+   "n": "Piazza al Serchio",
+   "lat": 44.183,
+   "lon": 10.3,
+   "r": "toscana"
+  },
+  {
+   "n": "Careggine",
+   "lat": 44.121,
+   "lon": 10.324,
+   "r": "toscana"
+  },
+  {
+   "n": "Vagli Sotto",
+   "lat": 44.114,
+   "lon": 10.28,
+   "r": "toscana"
+  },
+  {
    "n": "Minucciano",
    "lat": 44.17,
    "lon": 10.208,
    "r": "toscana"
-  },
-  {
-   "n": "Frassinoro",
-   "lat": 44.295,
-   "lon": 10.573,
-   "r": "emilia"
-  },
-  {
-   "n": "Castiglione di Garfagnana",
-   "lat": 44.149,
-   "lon": 10.411,
-   "r": "toscana"
   }
  ],
  "stretti-di-giaredo": [
+  {
+   "n": "Zeri",
+   "lat": 44.353,
+   "lon": 9.764,
+   "r": "toscana"
+  },
   {
    "n": "Borgo Val di Taro",
    "lat": 44.488,
@@ -1511,9 +3383,51 @@
    "r": "emilia"
   },
   {
-   "n": "Zeri",
-   "lat": 44.353,
-   "lon": 9.764,
+   "n": "Pontremoli",
+   "lat": 44.377,
+   "lon": 9.883,
+   "r": "toscana"
+  },
+  {
+   "n": "Mulazzo",
+   "lat": 44.322,
+   "lon": 9.907,
+   "r": "toscana"
+  },
+  {
+   "n": "Filattiera",
+   "lat": 44.331,
+   "lon": 9.937,
+   "r": "toscana"
+  },
+  {
+   "n": "Villafranca in Lunigiana",
+   "lat": 44.292,
+   "lon": 9.951,
+   "r": "toscana"
+  },
+  {
+   "n": "Bagnone",
+   "lat": 44.315,
+   "lon": 9.994,
+   "r": "toscana"
+  },
+  {
+   "n": "Tresana",
+   "lat": 44.238,
+   "lon": 9.952,
+   "r": "toscana"
+  },
+  {
+   "n": "Licciana Nardi",
+   "lat": 44.265,
+   "lon": 10.039,
+   "r": "toscana"
+  },
+  {
+   "n": "Podenzana",
+   "lat": 44.206,
+   "lon": 9.941,
    "r": "toscana"
   }
  ],
@@ -1537,15 +3451,15 @@
    "r": "toscana"
   },
   {
-   "n": "Rufina",
-   "lat": 43.827,
-   "lon": 11.488,
-   "r": "toscana"
-  },
-  {
    "n": "Dicomano",
    "lat": 43.892,
    "lon": 11.524,
+   "r": "toscana"
+  },
+  {
+   "n": "Rufina",
+   "lat": 43.827,
+   "lon": 11.488,
    "r": "toscana"
   },
   {
@@ -1559,25 +3473,49 @@
    "lat": 44.112,
    "lon": 11.547,
    "r": "toscana"
+  },
+  {
+   "n": "Vaglia",
+   "lat": 43.907,
+   "lon": 11.281,
+   "r": "toscana"
+  },
+  {
+   "n": "Barberino di Mugello",
+   "lat": 44,
+   "lon": 11.239,
+   "r": "toscana"
+  },
+  {
+   "n": "Fiesole",
+   "lat": 43.807,
+   "lon": 11.293,
+   "r": "toscana"
+  },
+  {
+   "n": "Sesto Fiorentino",
+   "lat": 43.832,
+   "lon": 11.198,
+   "r": "toscana"
+  },
+  {
+   "n": "Pontassieve",
+   "lat": 43.776,
+   "lon": 11.44,
+   "r": "toscana"
   }
  ],
  "val-nure": [
   {
-   "n": "Bettola",
-   "lat": 44.776,
-   "lon": 9.605,
-   "r": "emilia"
-  },
-  {
-   "n": "Bardi",
-   "lat": 44.633,
-   "lon": 9.732,
-   "r": "emilia"
-  },
-  {
    "n": "Farini",
    "lat": 44.713,
    "lon": 9.571,
+   "r": "emilia"
+  },
+  {
+   "n": "Bettola",
+   "lat": 44.776,
+   "lon": 9.605,
    "r": "emilia"
   },
   {
@@ -1587,15 +3525,15 @@
    "r": "emilia"
   },
   {
-   "n": "Varsi",
-   "lat": 44.663,
-   "lon": 9.846,
-   "r": "emilia"
-  },
-  {
    "n": "Morfasso",
    "lat": 44.722,
    "lon": 9.703,
+   "r": "emilia"
+  },
+  {
+   "n": "Bardi",
+   "lat": 44.633,
+   "lon": 9.732,
    "r": "emilia"
   },
   {
@@ -1603,19 +3541,55 @@
    "lat": 44.719,
    "lon": 9.794,
    "r": "emilia"
+  },
+  {
+   "n": "Varsi",
+   "lat": 44.663,
+   "lon": 9.846,
+   "r": "emilia"
+  },
+  {
+   "n": "Bobbio",
+   "lat": 44.766,
+   "lon": 9.387,
+   "r": "emilia"
+  },
+  {
+   "n": "Coli",
+   "lat": 44.743,
+   "lon": 9.413,
+   "r": "emilia"
+  },
+  {
+   "n": "Corte Brugnatella",
+   "lat": 44.712,
+   "lon": 9.38,
+   "r": "emilia"
+  },
+  {
+   "n": "Travo",
+   "lat": 44.861,
+   "lon": 9.543,
+   "r": "emilia"
+  },
+  {
+   "n": "Cerignale",
+   "lat": 44.677,
+   "lon": 9.351,
+   "r": "emilia"
   }
  ],
  "val-di-taro": [
   {
-   "n": "Berceto",
-   "lat": 44.51,
-   "lon": 9.989,
-   "r": "emilia"
-  },
-  {
    "n": "Calestano",
    "lat": 44.601,
    "lon": 10.122,
+   "r": "emilia"
+  },
+  {
+   "n": "Terenzo",
+   "lat": 44.61,
+   "lon": 10.088,
    "r": "emilia"
   },
   {
@@ -1631,9 +3605,9 @@
    "r": "emilia"
   },
   {
-   "n": "Terenzo",
-   "lat": 44.61,
-   "lon": 10.088,
+   "n": "Berceto",
+   "lat": 44.51,
+   "lon": 9.989,
    "r": "emilia"
   },
   {
@@ -1641,19 +3615,49 @@
    "lat": 44.568,
    "lon": 9.885,
    "r": "emilia"
+  },
+  {
+   "n": "Fornovo di Taro",
+   "lat": 44.689,
+   "lon": 10.099,
+   "r": "emilia"
+  },
+  {
+   "n": "Medesano",
+   "lat": 44.757,
+   "lon": 10.14,
+   "r": "emilia"
+  },
+  {
+   "n": "Collecchio",
+   "lat": 44.753,
+   "lon": 10.216,
+   "r": "emilia"
+  },
+  {
+   "n": "Felino",
+   "lat": 44.696,
+   "lon": 10.241,
+   "r": "emilia"
+  },
+  {
+   "n": "Noceto",
+   "lat": 44.81,
+   "lon": 10.177,
+   "r": "emilia"
+  },
+  {
+   "n": "Salsomaggiore Terme",
+   "lat": 44.816,
+   "lon": 9.978,
+   "r": "emilia"
   }
  ],
  "romagna-toscana": [
   {
-   "n": "Modigliana",
-   "lat": 44.156,
-   "lon": 11.793,
-   "r": "emilia"
-  },
-  {
-   "n": "Santa Sofia",
-   "lat": 43.947,
-   "lon": 11.908,
+   "n": "Rocca San Casciano",
+   "lat": 44.061,
+   "lon": 11.842,
    "r": "emilia"
   },
   {
@@ -1663,9 +3667,39 @@
    "r": "emilia"
   },
   {
-   "n": "Sarsina",
-   "lat": 43.919,
-   "lon": 12.141,
+   "n": "Galeata",
+   "lat": 43.996,
+   "lon": 11.91,
+   "r": "emilia"
+  },
+  {
+   "n": "Santa Sofia",
+   "lat": 43.947,
+   "lon": 11.908,
+   "r": "emilia"
+  },
+  {
+   "n": "Tredozio",
+   "lat": 44.079,
+   "lon": 11.744,
+   "r": "emilia"
+  },
+  {
+   "n": "Modigliana",
+   "lat": 44.156,
+   "lon": 11.793,
+   "r": "emilia"
+  },
+  {
+   "n": "Portico e San Benedetto",
+   "lat": 44.026,
+   "lon": 11.781,
+   "r": "emilia"
+  },
+  {
+   "n": "Premilcuore",
+   "lat": 43.976,
+   "lon": 11.776,
    "r": "emilia"
   },
   {
@@ -1675,21 +3709,21 @@
    "r": "toscana"
   },
   {
-   "n": "Galeata",
-   "lat": 43.996,
-   "lon": 11.91,
+   "n": "Sarsina",
+   "lat": 43.919,
+   "lon": 12.141,
    "r": "emilia"
   },
   {
-   "n": "Rocca San Casciano",
-   "lat": 44.061,
-   "lon": 11.842,
+   "n": "Predappio",
+   "lat": 44.102,
+   "lon": 11.981,
    "r": "emilia"
   },
   {
-   "n": "Tredozio",
-   "lat": 44.079,
-   "lon": 11.744,
+   "n": "Dovadola",
+   "lat": 44.122,
+   "lon": 11.887,
    "r": "emilia"
   }
  ],
@@ -1701,22 +3735,10 @@
    "r": "marche"
   },
   {
-   "n": "Sarsina",
-   "lat": 43.919,
-   "lon": 12.141,
-   "r": "emilia"
-  },
-  {
-   "n": "Pennabilli",
-   "lat": 43.818,
-   "lon": 12.265,
-   "r": "emilia"
-  },
-  {
-   "n": "Sant'Agata Feltria",
-   "lat": 43.864,
-   "lon": 12.208,
-   "r": "emilia"
+   "n": "Belforte all'Isauro",
+   "lat": 43.717,
+   "lon": 12.376,
+   "r": "marche"
   },
   {
    "n": "Piobbico",
@@ -1725,22 +3747,58 @@
    "r": "marche"
   },
   {
+   "n": "Pennabilli",
+   "lat": 43.818,
+   "lon": 12.265,
+   "r": "emilia"
+  },
+  {
    "n": "Sestino",
    "lat": 43.708,
    "lon": 12.297,
    "r": "toscana"
   },
   {
-   "n": "Belforte all'Isauro",
-   "lat": 43.717,
-   "lon": 12.376,
-   "r": "marche"
+   "n": "Sant'Agata Feltria",
+   "lat": 43.864,
+   "lon": 12.208,
+   "r": "emilia"
+  },
+  {
+   "n": "Sarsina",
+   "lat": 43.919,
+   "lon": 12.141,
+   "r": "emilia"
   },
   {
    "n": "Casteldelci",
    "lat": 43.791,
    "lon": 12.155,
    "r": "emilia"
+  },
+  {
+   "n": "Urbania",
+   "lat": 43.668,
+   "lon": 12.524,
+   "r": "marche"
+  },
+  {
+   "n": "Sassocorvaro Auditore",
+   "lat": 43.81,
+   "lon": 12.54,
+   "r": "marche"
+  },
+  {
+   "n": "Piandimeleto",
+   "lat": 43.724,
+   "lon": 12.415,
+   "r": "marche"
+  },
+  {
+   "n": "Urbino",
+   "lat": 43.725,
+   "lon": 12.637,
+   "r": "marche"
   }
  ],
  "casentino": [
@@ -1749,12 +3807,6 @@
    "lat": 43.694,
    "lon": 11.818,
    "r": "toscana"
-  },
-  {
-   "n": "Bagno di Romagna",
-   "lat": 43.858,
-   "lon": 11.977,
-   "r": "emilia"
   },
   {
    "n": "Castel Focognano",
@@ -1769,10 +3821,10 @@
    "r": "toscana"
   },
   {
-   "n": "Verghereto",
-   "lat": 43.796,
-   "lon": 12.006,
-   "r": "emilia"
+   "n": "Ortignano Raggiolo",
+   "lat": 43.682,
+   "lon": 11.753,
+   "r": "toscana"
   },
   {
    "n": "Talla",
@@ -1781,13 +3833,79 @@
    "r": "toscana"
   },
   {
-   "n": "Ortignano Raggiolo",
-   "lat": 43.682,
-   "lon": 11.753,
+   "n": "Verghereto",
+   "lat": 43.796,
+   "lon": 12.006,
+   "r": "emilia"
+  },
+  {
+   "n": "Bagno di Romagna",
+   "lat": 43.858,
+   "lon": 11.977,
+   "r": "emilia"
+  },
+  {
+   "n": "Poppi",
+   "lat": 43.725,
+   "lon": 11.765,
+   "r": "toscana"
+  },
+  {
+   "n": "Castel San Niccolò",
+   "lat": 43.741,
+   "lon": 11.705,
+   "r": "toscana"
+  },
+  {
+   "n": "Chitignano",
+   "lat": 43.661,
+   "lon": 11.88,
+   "r": "toscana"
+  },
+  {
+   "n": "Pratovecchio Stia",
+   "lat": 43.798,
+   "lon": 11.708,
+   "r": "toscana"
+  },
+  {
+   "n": "Subbiano",
+   "lat": 43.576,
+   "lon": 11.87,
    "r": "toscana"
   }
  ],
  "calvana": [
+  {
+   "n": "Vaiano",
+   "lat": 43.969,
+   "lon": 11.123,
+   "r": "toscana"
+  },
+  {
+   "n": "Barberino di Mugello",
+   "lat": 44,
+   "lon": 11.239,
+   "r": "toscana"
+  },
+  {
+   "n": "Vaglia",
+   "lat": 43.907,
+   "lon": 11.281,
+   "r": "toscana"
+  },
+  {
+   "n": "Vernio",
+   "lat": 44.053,
+   "lon": 11.156,
+   "r": "toscana"
+  },
+  {
+   "n": "Cantagallo",
+   "lat": 44.028,
+   "lon": 11.108,
+   "r": "toscana"
+  },
   {
    "n": "Pistoia",
    "lat": 43.933,
@@ -1801,21 +3919,9 @@
    "r": "toscana"
   },
   {
-   "n": "Barberino di Mugello",
-   "lat": 44,
-   "lon": 11.239,
-   "r": "toscana"
-  },
-  {
-   "n": "Vaiano",
-   "lat": 43.969,
-   "lon": 11.123,
-   "r": "toscana"
-  },
-  {
-   "n": "Vernio",
-   "lat": 44.053,
-   "lon": 11.156,
+   "n": "Sambuca Pistoiese",
+   "lat": 44.104,
+   "lon": 10.999,
    "r": "toscana"
   },
   {
@@ -1825,16 +3931,22 @@
    "r": "emilia"
   },
   {
-   "n": "Vaglia",
-   "lat": 43.907,
-   "lon": 11.281,
-   "r": "toscana"
-  },
-  {
    "n": "Castel di Casio",
    "lat": 44.163,
    "lon": 11.036,
    "r": "emilia"
+  },
+  {
+   "n": "Prato",
+   "lat": 43.881,
+   "lon": 11.097,
+   "r": "toscana"
+  },
+  {
+   "n": "Sesto Fiorentino",
+   "lat": 43.832,
+   "lon": 11.198,
+   "r": "toscana"
   }
  ],
  "val-d-enza": [
@@ -1849,9 +3961,75 @@
    "lat": 44.365,
    "lon": 10.467,
    "r": "emilia"
+  },
+  {
+   "n": "Castelnovo ne' Monti",
+   "lat": 44.437,
+   "lon": 10.403,
+   "r": "emilia"
+  },
+  {
+   "n": "Langhirano",
+   "lat": 44.614,
+   "lon": 10.266,
+   "r": "emilia"
+  },
+  {
+   "n": "Vetto",
+   "lat": 44.484,
+   "lon": 10.339,
+   "r": "emilia"
+  },
+  {
+   "n": "Neviano degli Arduini",
+   "lat": 44.584,
+   "lon": 10.318,
+   "r": "emilia"
+  },
+  {
+   "n": "Casina",
+   "lat": 44.512,
+   "lon": 10.5,
+   "r": "emilia"
+  },
+  {
+   "n": "Traversetolo",
+   "lat": 44.64,
+   "lon": 10.382,
+   "r": "emilia"
+  },
+  {
+   "n": "Canossa",
+   "lat": 44.593,
+   "lon": 10.408,
+   "r": "emilia"
+  },
+  {
+   "n": "Carpineti",
+   "lat": 44.455,
+   "lon": 10.52,
+   "r": "emilia"
+  },
+  {
+   "n": "Tizzano Val Parma",
+   "lat": 44.521,
+   "lon": 10.199,
+   "r": "emilia"
+  },
+  {
+   "n": "Quattro Castella",
+   "lat": 44.636,
+   "lon": 10.473,
+   "r": "emilia"
   }
  ],
  "val-di-luce": [
+  {
+   "n": "Abetone Cutigliano",
+   "lat": 44.1,
+   "lon": 10.756,
+   "r": "toscana"
+  },
   {
    "n": "San Marcello Piteglio",
    "lat": 44.057,
@@ -1859,9 +4037,9 @@
    "r": "toscana"
   },
   {
-   "n": "Abetone Cutigliano",
-   "lat": 44.1,
-   "lon": 10.756,
+   "n": "Fosciandora",
+   "lat": 44.115,
+   "lon": 10.455,
    "r": "toscana"
   },
   {
@@ -1871,31 +4049,55 @@
    "r": "emilia"
   },
   {
-   "n": "Frassinoro",
-   "lat": 44.295,
-   "lon": 10.573,
-   "r": "emilia"
-  },
-  {
    "n": "Fiumalbo",
    "lat": 44.18,
    "lon": 10.647,
    "r": "emilia"
   },
   {
-   "n": "Fosciandora",
-   "lat": 44.115,
-   "lon": 10.455,
+   "n": "Frassinoro",
+   "lat": 44.295,
+   "lon": 10.573,
+   "r": "emilia"
+  },
+  {
+   "n": "Coreglia Antelminelli",
+   "lat": 44.065,
+   "lon": 10.525,
+   "r": "toscana"
+  },
+  {
+   "n": "Barga",
+   "lat": 44.073,
+   "lon": 10.485,
+   "r": "toscana"
+  },
+  {
+   "n": "Bagni di Lucca",
+   "lat": 44.011,
+   "lon": 10.591,
+   "r": "toscana"
+  },
+  {
+   "n": "Castelnuovo di Garfagnana",
+   "lat": 44.11,
+   "lon": 10.412,
+   "r": "toscana"
+  },
+  {
+   "n": "Borgo a Mozzano",
+   "lat": 43.979,
+   "lon": 10.544,
+   "r": "toscana"
+  },
+  {
+   "n": "Gallicano",
+   "lat": 44.06,
+   "lon": 10.436,
    "r": "toscana"
   }
  ],
  "val-d-astico": [
-  {
-   "n": "Piovene Rocchette",
-   "lat": 45.759,
-   "lon": 11.43,
-   "r": "veneto"
-  },
   {
    "n": "Arsiero",
    "lat": 45.804,
@@ -1915,35 +4117,65 @@
    "r": "veneto"
   },
   {
+   "n": "Piovene Rocchette",
+   "lat": 45.759,
+   "lon": 11.43,
+   "r": "veneto"
+  },
+  {
    "n": "Laghi",
    "lat": 45.824,
    "lon": 11.273,
+   "r": "veneto"
+  },
+  {
+   "n": "Valdastico",
+   "lat": 45.883,
+   "lon": 11.363,
+   "r": "veneto"
+  },
+  {
+   "n": "Rotzo",
+   "lat": 45.864,
+   "lon": 11.4,
+   "r": "veneto"
+  },
+  {
+   "n": "Cogollo del Cengio",
+   "lat": 45.786,
+   "lon": 11.421,
+   "r": "veneto"
+  },
+  {
+   "n": "Roana",
+   "lat": 45.869,
+   "lon": 11.478,
+   "r": "veneto"
+  },
+  {
+   "n": "Caltrano",
+   "lat": 45.77,
+   "lon": 11.461,
+   "r": "veneto"
+  },
+  {
+   "n": "Santorso",
+   "lat": 45.738,
+   "lon": 11.389,
+   "r": "veneto"
+  },
+  {
+   "n": "Pedemonte",
+   "lat": 45.909,
+   "lon": 11.306,
    "r": "veneto"
   }
  ],
  "val-gallina": [
   {
-   "n": "Aviano",
-   "lat": 46.067,
-   "lon": 12.588,
-   "r": "friuli"
-  },
-  {
-   "n": "Alpago",
-   "lat": 46.126,
-   "lon": 12.352,
-   "r": "veneto"
-  },
-  {
    "n": "Longarone",
    "lat": 46.267,
    "lon": 12.3,
-   "r": "veneto"
-  },
-  {
-   "n": "Tambre",
-   "lat": 46.129,
-   "lon": 12.423,
    "r": "veneto"
   },
   {
@@ -1959,6 +4191,18 @@
    "r": "veneto"
   },
   {
+   "n": "Alpago",
+   "lat": 46.126,
+   "lon": 12.352,
+   "r": "veneto"
+  },
+  {
+   "n": "Tambre",
+   "lat": 46.129,
+   "lon": 12.423,
+   "r": "veneto"
+  },
+  {
    "n": "Erto e Casso",
    "lat": 46.279,
    "lon": 12.372,
@@ -1969,6 +4213,18 @@
    "lat": 46.191,
    "lon": 12.56,
    "r": "friuli"
+  },
+  {
+   "n": "Aviano",
+   "lat": 46.067,
+   "lon": 12.588,
+   "r": "friuli"
+  },
+  {
+   "n": "Ponte nelle Alpi",
+   "lat": 46.173,
+   "lon": 12.301,
+   "r": "veneto"
   }
  ],
  "comelico": [
@@ -1995,9 +4251,39 @@
    "lat": 46.582,
    "lon": 12.528,
    "r": "veneto"
+  },
+  {
+   "n": "Danta di Cadore",
+   "lat": 46.567,
+   "lon": 12.52,
+   "r": "veneto"
+  },
+  {
+   "n": "Auronzo di Cadore",
+   "lat": 46.55,
+   "lon": 12.445,
+   "r": "veneto"
+  },
+  {
+   "n": "Vigo di Cadore",
+   "lat": 46.5,
+   "lon": 12.471,
+   "r": "veneto"
+  },
+  {
+   "n": "Lorenzago di Cadore",
+   "lat": 46.48,
+   "lon": 12.459,
+   "r": "veneto"
   }
  ],
  "val-canale": [
+  {
+   "n": "Valli del Pasubio",
+   "lat": 45.742,
+   "lon": 11.26,
+   "r": "veneto"
+  },
   {
    "n": "Recoaro Terme",
    "lat": 45.705,
@@ -2005,9 +4291,9 @@
    "r": "veneto"
   },
   {
-   "n": "Valli del Pasubio",
-   "lat": 45.742,
-   "lon": 11.26,
+   "n": "Posina",
+   "lat": 45.79,
+   "lon": 11.261,
    "r": "veneto"
   },
   {
@@ -2017,9 +4303,9 @@
    "r": "trentino"
   },
   {
-   "n": "Posina",
-   "lat": 45.79,
-   "lon": 11.261,
+   "n": "Laghi",
+   "lat": 45.824,
+   "lon": 11.273,
    "r": "veneto"
   }
  ],
@@ -2041,13 +4327,67 @@
    "lat": 45.917,
    "lon": 11.954,
    "r": "veneto"
+  },
+  {
+   "n": "Montebelluna",
+   "lat": 45.776,
+   "lon": 12.045,
+   "r": "veneto"
+  },
+  {
+   "n": "Asolo",
+   "lat": 45.802,
+   "lon": 11.912,
+   "r": "veneto"
+  },
+  {
+   "n": "Caerano di San Marco",
+   "lat": 45.785,
+   "lon": 12.001,
+   "r": "veneto"
+  },
+  {
+   "n": "Pederobba",
+   "lat": 45.861,
+   "lon": 11.986,
+   "r": "veneto"
+  },
+  {
+   "n": "Maser",
+   "lat": 45.807,
+   "lon": 11.972,
+   "r": "veneto"
+  },
+  {
+   "n": "Cornuda",
+   "lat": 45.832,
+   "lon": 12.008,
+   "r": "veneto"
+  },
+  {
+   "n": "Crocetta del Montello",
+   "lat": 45.825,
+   "lon": 12.035,
+   "r": "veneto"
+  },
+  {
+   "n": "Altivole",
+   "lat": 45.754,
+   "lon": 11.956,
+   "r": "veneto"
+  },
+  {
+   "n": "Fonte",
+   "lat": 45.788,
+   "lon": 11.867,
+   "r": "veneto"
   }
  ],
  "valbelluna": [
   {
-   "n": "Follina",
-   "lat": 45.953,
-   "lon": 12.119,
+   "n": "Revine Lago",
+   "lat": 45.992,
+   "lon": 12.232,
    "r": "veneto"
   },
   {
@@ -2057,9 +4397,9 @@
    "r": "veneto"
   },
   {
-   "n": "Revine Lago",
-   "lat": 45.992,
-   "lon": 12.232,
+   "n": "Follina",
+   "lat": 45.953,
+   "lon": 12.119,
    "r": "veneto"
   },
   {
@@ -2067,15 +4407,57 @@
    "lat": 46.068,
    "lon": 12.136,
    "r": "veneto"
+  },
+  {
+   "n": "Belluno",
+   "lat": 46.138,
+   "lon": 12.217,
+   "r": "veneto"
+  },
+  {
+   "n": "Sedico",
+   "lat": 46.111,
+   "lon": 12.097,
+   "r": "veneto"
+  },
+  {
+   "n": "Ponte nelle Alpi",
+   "lat": 46.173,
+   "lon": 12.301,
+   "r": "veneto"
+  },
+  {
+   "n": "Limana",
+   "lat": 46.099,
+   "lon": 12.18,
+   "r": "veneto"
+  },
+  {
+   "n": "Borgo Valbelluna",
+   "lat": 46.027,
+   "lon": 12.106,
+   "r": "veneto"
+  },
+  {
+   "n": "Alpago",
+   "lat": 46.126,
+   "lon": 12.352,
+   "r": "veneto"
+  },
+  {
+   "n": "Vittorio Veneto",
+   "lat": 45.99,
+   "lon": 12.296,
+   "r": "veneto"
+  },
+  {
+   "n": "Santa Giustina",
+   "lat": 46.083,
+   "lon": 12.042,
+   "r": "veneto"
   }
  ],
  "valle-del-boite": [
-  {
-   "n": "Vodo Cadore",
-   "lat": 46.418,
-   "lon": 12.25,
-   "r": "veneto"
-  },
   {
    "n": "Borca di Cadore",
    "lat": 46.438,
@@ -2083,17 +4465,53 @@
    "r": "veneto"
   },
   {
+   "n": "Vodo Cadore",
+   "lat": 46.418,
+   "lon": 12.25,
+   "r": "veneto"
+  },
+  {
    "n": "Selva di Cadore",
    "lat": 46.452,
    "lon": 12.034,
+   "r": "veneto"
+  },
+  {
+   "n": "San Vito di Cadore",
+   "lat": 46.46,
+   "lon": 12.205,
+   "r": "veneto"
+  },
+  {
+   "n": "Cortina d'Ampezzo",
+   "lat": 46.537,
+   "lon": 12.138,
+   "r": "veneto"
+  },
+  {
+   "n": "Valle di Cadore",
+   "lat": 46.417,
+   "lon": 12.328,
+   "r": "veneto"
+  },
+  {
+   "n": "Zoppè di Cadore",
+   "lat": 46.386,
+   "lon": 12.173,
+   "r": "veneto"
+  },
+  {
+   "n": "Cibiana di Cadore",
+   "lat": 46.392,
+   "lon": 12.291,
    "r": "veneto"
   }
  ],
  "val-d-aupa": [
   {
-   "n": "Trasaghis",
-   "lat": 46.282,
-   "lon": 13.075,
+   "n": "Moggio Udinese",
+   "lat": 46.41,
+   "lon": 13.195,
    "r": "friuli"
   },
   {
@@ -2103,9 +4521,63 @@
    "r": "friuli"
   },
   {
-   "n": "Moggio Udinese",
-   "lat": 46.41,
-   "lon": 13.195,
+   "n": "Trasaghis",
+   "lat": 46.282,
+   "lon": 13.075,
+   "r": "friuli"
+  },
+  {
+   "n": "Tolmezzo",
+   "lat": 46.406,
+   "lon": 13.015,
+   "r": "friuli"
+  },
+  {
+   "n": "Resia",
+   "lat": 46.373,
+   "lon": 13.306,
+   "r": "friuli"
+  },
+  {
+   "n": "Resiutta",
+   "lat": 46.393,
+   "lon": 13.22,
+   "r": "friuli"
+  },
+  {
+   "n": "Chiusaforte",
+   "lat": 46.408,
+   "lon": 13.31,
+   "r": "friuli"
+  },
+  {
+   "n": "Amaro",
+   "lat": 46.374,
+   "lon": 13.095,
+   "r": "friuli"
+  },
+  {
+   "n": "Gemona del Friuli",
+   "lat": 46.277,
+   "lon": 13.14,
+   "r": "friuli"
+  },
+  {
+   "n": "Pontebba",
+   "lat": 46.507,
+   "lon": 13.304,
+   "r": "friuli"
+  },
+  {
+   "n": "Paularo",
+   "lat": 46.53,
+   "lon": 13.117,
+   "r": "friuli"
+  },
+  {
+   "n": "Arta Terme",
+   "lat": 46.473,
+   "lon": 13.025,
    "r": "friuli"
   }
  ],
@@ -2117,21 +4589,69 @@
    "r": "friuli"
   },
   {
-   "n": "Frisanco",
-   "lat": 46.213,
-   "lon": 12.724,
-   "r": "friuli"
-  },
-  {
    "n": "Forni di Sotto",
    "lat": 46.394,
    "lon": 12.672,
    "r": "friuli"
   },
   {
+   "n": "Frisanco",
+   "lat": 46.213,
+   "lon": 12.724,
+   "r": "friuli"
+  },
+  {
    "n": "Andreis",
    "lat": 46.202,
    "lon": 12.615,
+   "r": "friuli"
+  },
+  {
+   "n": "Forni di Sopra",
+   "lat": 46.424,
+   "lon": 12.578,
+   "r": "friuli"
+  },
+  {
+   "n": "Maniago",
+   "lat": 46.171,
+   "lon": 12.708,
+   "r": "friuli"
+  },
+  {
+   "n": "Cimolais",
+   "lat": 46.288,
+   "lon": 12.438,
+   "r": "friuli"
+  },
+  {
+   "n": "Montereale Valcellina",
+   "lat": 46.155,
+   "lon": 12.656,
+   "r": "friuli"
+  },
+  {
+   "n": "Ampezzo",
+   "lat": 46.417,
+   "lon": 12.795,
+   "r": "friuli"
+  },
+  {
+   "n": "Sauris",
+   "lat": 46.467,
+   "lon": 12.708,
+   "r": "friuli"
+  },
+  {
+   "n": "Meduno",
+   "lat": 46.217,
+   "lon": 12.787,
+   "r": "friuli"
+  },
+  {
+   "n": "Socchieve",
+   "lat": 46.403,
+   "lon": 12.824,
    "r": "friuli"
   }
  ],
@@ -2147,6 +4667,54 @@
    "lat": 46.507,
    "lon": 13.304,
    "r": "friuli"
+  },
+  {
+   "n": "Treppo Ligosullo",
+   "lat": 46.544,
+   "lon": 13.059,
+   "r": "friuli"
+  },
+  {
+   "n": "Paluzza",
+   "lat": 46.529,
+   "lon": 13.015,
+   "r": "friuli"
+  },
+  {
+   "n": "Arta Terme",
+   "lat": 46.473,
+   "lon": 13.025,
+   "r": "friuli"
+  },
+  {
+   "n": "Sutrio",
+   "lat": 46.512,
+   "lon": 12.99,
+   "r": "friuli"
+  },
+  {
+   "n": "Cercivento",
+   "lat": 46.527,
+   "lon": 12.988,
+   "r": "friuli"
+  },
+  {
+   "n": "Zuglio",
+   "lat": 46.461,
+   "lon": 13.026,
+   "r": "friuli"
+  },
+  {
+   "n": "Ligosullo",
+   "lat": 46.539,
+   "lon": 13.073,
+   "r": "friuli"
+  },
+  {
+   "n": "Treppo Carnico",
+   "lat": 46.533,
+   "lon": 13.042,
+   "r": "friuli"
   }
  ],
  "carnia": [
@@ -2154,30 +4722,6 @@
    "n": "Enemonzo",
    "lat": 46.41,
    "lon": 12.879,
-   "r": "friuli"
-  },
-  {
-   "n": "Verzegnis",
-   "lat": 46.39,
-   "lon": 12.994,
-   "r": "friuli"
-  },
-  {
-   "n": "Vito d'Asio",
-   "lat": 46.233,
-   "lon": 12.959,
-   "r": "friuli"
-  },
-  {
-   "n": "Frisanco",
-   "lat": 46.213,
-   "lon": 12.724,
-   "r": "friuli"
-  },
-  {
-   "n": "Tramonti di Sotto",
-   "lat": 46.285,
-   "lon": 12.796,
    "r": "friuli"
   },
   {
@@ -2190,6 +4734,60 @@
    "n": "Preone",
    "lat": 46.395,
    "lon": 12.868,
+   "r": "friuli"
+  },
+  {
+   "n": "Tramonti di Sotto",
+   "lat": 46.285,
+   "lon": 12.796,
+   "r": "friuli"
+  },
+  {
+   "n": "Verzegnis",
+   "lat": 46.39,
+   "lon": 12.994,
+   "r": "friuli"
+  },
+  {
+   "n": "Frisanco",
+   "lat": 46.213,
+   "lon": 12.724,
+   "r": "friuli"
+  },
+  {
+   "n": "Vito d'Asio",
+   "lat": 46.233,
+   "lon": 12.959,
+   "r": "friuli"
+  },
+  {
+   "n": "Ampezzo",
+   "lat": 46.417,
+   "lon": 12.795,
+   "r": "friuli"
+  },
+  {
+   "n": "Socchieve",
+   "lat": 46.403,
+   "lon": 12.824,
+   "r": "friuli"
+  },
+  {
+   "n": "Villa Santina",
+   "lat": 46.415,
+   "lon": 12.924,
+   "r": "friuli"
+  },
+  {
+   "n": "Ovaro",
+   "lat": 46.484,
+   "lon": 12.865,
+   "r": "friuli"
+  },
+  {
+   "n": "Tolmezzo",
+   "lat": 46.406,
+   "lon": 13.015,
    "r": "friuli"
   }
  ],
@@ -2211,15 +4809,21 @@
    "lat": 46.408,
    "lon": 13.31,
    "r": "friuli"
+  },
+  {
+   "n": "Resia",
+   "lat": 46.373,
+   "lon": 13.306,
+   "r": "friuli"
+  },
+  {
+   "n": "Dogna",
+   "lat": 46.448,
+   "lon": 13.315,
+   "r": "friuli"
   }
  ],
  "val-raccolana": [
-  {
-   "n": "Malborghetto Valbruna",
-   "lat": 46.507,
-   "lon": 13.44,
-   "r": "friuli"
-  },
   {
    "n": "Chiusaforte",
    "lat": 46.408,
@@ -2230,6 +4834,18 @@
    "n": "Dogna",
    "lat": 46.448,
    "lon": 13.315,
+   "r": "friuli"
+  },
+  {
+   "n": "Malborghetto Valbruna",
+   "lat": 46.507,
+   "lon": 13.44,
+   "r": "friuli"
+  },
+  {
+   "n": "Resia",
+   "lat": 46.373,
+   "lon": 13.306,
    "r": "friuli"
   }
  ],
@@ -2245,29 +4861,25 @@
    "lat": 46.408,
    "lon": 13.31,
    "r": "friuli"
-  }
- ],
- "val-pesarina": [
+  },
   {
-   "n": "Prato Carnico",
-   "lat": 46.52,
-   "lon": 12.798,
+   "n": "Resiutta",
+   "lat": 46.393,
+   "lon": 13.22,
    "r": "friuli"
   },
   {
-   "n": "Forni Avoltri",
-   "lat": 46.585,
-   "lon": 12.777,
+   "n": "Moggio Udinese",
+   "lat": 46.41,
+   "lon": 13.195,
    "r": "friuli"
   },
   {
-   "n": "Rigolato",
-   "lat": 46.55,
-   "lon": 12.854,
+   "n": "Dogna",
+   "lat": 46.448,
+   "lon": 13.315,
    "r": "friuli"
-  }
- ],
- "gran-monte": [
+  },
   {
    "n": "Lusevera",
    "lat": 46.265,
@@ -2281,7 +4893,119 @@
    "r": "friuli"
   }
  ],
+ "val-pesarina": [
+  {
+   "n": "Prato Carnico",
+   "lat": 46.52,
+   "lon": 12.798,
+   "r": "friuli"
+  },
+  {
+   "n": "Rigolato",
+   "lat": 46.55,
+   "lon": 12.854,
+   "r": "friuli"
+  },
+  {
+   "n": "Forni Avoltri",
+   "lat": 46.585,
+   "lon": 12.777,
+   "r": "friuli"
+  },
+  {
+   "n": "Ovaro",
+   "lat": 46.484,
+   "lon": 12.865,
+   "r": "friuli"
+  },
+  {
+   "n": "Comeglians",
+   "lat": 46.514,
+   "lon": 12.868,
+   "r": "friuli"
+  },
+  {
+   "n": "Sappada",
+   "lat": 46.566,
+   "lon": 12.68,
+   "r": "friuli"
+  },
+  {
+   "n": "Sauris",
+   "lat": 46.467,
+   "lon": 12.708,
+   "r": "friuli"
+  },
+  {
+   "n": "Ravascletto",
+   "lat": 46.526,
+   "lon": 12.922,
+   "r": "friuli"
+  },
+  {
+   "n": "Ampezzo",
+   "lat": 46.417,
+   "lon": 12.795,
+   "r": "friuli"
+  },
+  {
+   "n": "Raveo",
+   "lat": 46.435,
+   "lon": 12.87,
+   "r": "friuli"
+  }
+ ],
+ "gran-monte": [
+  {
+   "n": "Taipana",
+   "lat": 46.253,
+   "lon": 13.345,
+   "r": "friuli"
+  },
+  {
+   "n": "Lusevera",
+   "lat": 46.265,
+   "lon": 13.26,
+   "r": "friuli"
+  },
+  {
+   "n": "Resia",
+   "lat": 46.373,
+   "lon": 13.306,
+   "r": "friuli"
+  },
+  {
+   "n": "Tarcento",
+   "lat": 46.216,
+   "lon": 13.222,
+   "r": "friuli"
+  },
+  {
+   "n": "Nimis",
+   "lat": 46.2,
+   "lon": 13.265,
+   "r": "friuli"
+  },
+  {
+   "n": "Attimis",
+   "lat": 46.189,
+   "lon": 13.305,
+   "r": "friuli"
+  },
+  {
+   "n": "Montenars",
+   "lat": 46.257,
+   "lon": 13.18,
+   "r": "friuli"
+  }
+ ],
  "valle-del-but": [
+  {
+   "n": "Paluzza",
+   "lat": 46.529,
+   "lon": 13.015,
+   "r": "friuli"
+  },
   {
    "n": "Tolmezzo",
    "lat": 46.406,
@@ -2289,9 +5013,63 @@
    "r": "friuli"
   },
   {
-   "n": "Paluzza",
-   "lat": 46.529,
-   "lon": 13.015,
+   "n": "Sutrio",
+   "lat": 46.512,
+   "lon": 12.99,
+   "r": "friuli"
+  },
+  {
+   "n": "Cercivento",
+   "lat": 46.527,
+   "lon": 12.988,
+   "r": "friuli"
+  },
+  {
+   "n": "Treppo Ligosullo",
+   "lat": 46.544,
+   "lon": 13.059,
+   "r": "friuli"
+  },
+  {
+   "n": "Arta Terme",
+   "lat": 46.473,
+   "lon": 13.025,
+   "r": "friuli"
+  },
+  {
+   "n": "Paularo",
+   "lat": 46.53,
+   "lon": 13.117,
+   "r": "friuli"
+  },
+  {
+   "n": "Ravascletto",
+   "lat": 46.526,
+   "lon": 12.922,
+   "r": "friuli"
+  },
+  {
+   "n": "Zuglio",
+   "lat": 46.461,
+   "lon": 13.026,
+   "r": "friuli"
+  },
+  {
+   "n": "Comeglians",
+   "lat": 46.514,
+   "lon": 12.868,
+   "r": "friuli"
+  },
+  {
+   "n": "Treppo Carnico",
+   "lat": 46.533,
+   "lon": 13.042,
+   "r": "friuli"
+  },
+  {
+   "n": "Ligosullo",
+   "lat": 46.539,
+   "lon": 13.073,
    "r": "friuli"
   }
  ],
@@ -2313,19 +5091,73 @@
    "lat": 46.08,
    "lon": 11.554,
    "r": "trentino"
+  },
+  {
+   "n": "Cinte Tesino",
+   "lat": 46.054,
+   "lon": 11.616,
+   "r": "trentino"
+  },
+  {
+   "n": "Castel Ivano",
+   "lat": 46.068,
+   "lon": 11.521,
+   "r": "trentino"
+  },
+  {
+   "n": "Grigno",
+   "lat": 46.017,
+   "lon": 11.636,
+   "r": "trentino"
+  },
+  {
+   "n": "Ospedaletto",
+   "lat": 46.044,
+   "lon": 11.553,
+   "r": "trentino"
+  },
+  {
+   "n": "Samone",
+   "lat": 46.082,
+   "lon": 11.52,
+   "r": "trentino"
+  },
+  {
+   "n": "Scurelle",
+   "lat": 46.064,
+   "lon": 11.508,
+   "r": "trentino"
+  },
+  {
+   "n": "Canal San Bovo",
+   "lat": 46.156,
+   "lon": 11.731,
+   "r": "trentino"
+  },
+  {
+   "n": "Telve",
+   "lat": 46.071,
+   "lon": 11.479,
+   "r": "trentino"
+  },
+  {
+   "n": "Carzano",
+   "lat": 46.071,
+   "lon": 11.494,
+   "r": "trentino"
   }
  ],
  "val-terragnolo": [
   {
-   "n": "Caldonazzo",
-   "lat": 45.991,
-   "lon": 11.262,
-   "r": "trentino"
-  },
-  {
    "n": "Folgaria",
    "lat": 45.917,
    "lon": 11.17,
+   "r": "trentino"
+  },
+  {
+   "n": "Terragnolo",
+   "lat": 45.879,
+   "lon": 11.153,
    "r": "trentino"
   },
   {
@@ -2335,9 +5167,57 @@
    "r": "trentino"
   },
   {
-   "n": "Terragnolo",
-   "lat": 45.879,
-   "lon": 11.153,
+   "n": "Caldonazzo",
+   "lat": 45.991,
+   "lon": 11.262,
+   "r": "trentino"
+  },
+  {
+   "n": "Rovereto",
+   "lat": 45.886,
+   "lon": 11.045,
+   "r": "trentino"
+  },
+  {
+   "n": "Trambileno",
+   "lat": 45.87,
+   "lon": 11.073,
+   "r": "trentino"
+  },
+  {
+   "n": "Volano",
+   "lat": 45.917,
+   "lon": 11.061,
+   "r": "trentino"
+  },
+  {
+   "n": "Calliano",
+   "lat": 45.934,
+   "lon": 11.094,
+   "r": "trentino"
+  },
+  {
+   "n": "Besenello",
+   "lat": 45.946,
+   "lon": 11.106,
+   "r": "trentino"
+  },
+  {
+   "n": "Nomi",
+   "lat": 45.929,
+   "lon": 11.071,
+   "r": "trentino"
+  },
+  {
+   "n": "Villa Lagarina",
+   "lat": 45.916,
+   "lon": 11.032,
+   "r": "trentino"
+  },
+  {
+   "n": "Pomarolo",
+   "lat": 45.927,
+   "lon": 11.043,
    "r": "trentino"
   }
  ],
@@ -2349,15 +5229,15 @@
    "r": "trentino"
   },
   {
-   "n": "Romeno",
-   "lat": 46.394,
-   "lon": 11.12,
-   "r": "trentino"
-  },
-  {
    "n": "Sanzeno",
    "lat": 46.374,
    "lon": 11.068,
+   "r": "trentino"
+  },
+  {
+   "n": "Romeno",
+   "lat": 46.394,
+   "lon": 11.12,
    "r": "trentino"
   },
   {
@@ -2379,15 +5259,39 @@
    "r": "trentino"
   },
   {
-   "n": "Brez",
-   "lat": 46.431,
-   "lon": 11.107,
+   "n": "Revò",
+   "lat": 46.391,
+   "lon": 11.058,
+   "r": "trentino"
+  },
+  {
+   "n": "Romallo",
+   "lat": 46.398,
+   "lon": 11.068,
    "r": "trentino"
   },
   {
    "n": "Cloz",
    "lat": 46.419,
    "lon": 11.087,
+   "r": "trentino"
+  },
+  {
+   "n": "Brez",
+   "lat": 46.431,
+   "lon": 11.107,
+   "r": "trentino"
+  },
+  {
+   "n": "Fondo",
+   "lat": 46.44,
+   "lon": 11.136,
+   "r": "trentino"
+  },
+  {
+   "n": "Cles",
+   "lat": 46.364,
+   "lon": 11.036,
    "r": "trentino"
   }
  ],
@@ -2396,12 +5300,6 @@
    "n": "Tione di Trento",
    "lat": 46.032,
    "lon": 10.723,
-   "r": "trentino"
-  },
-  {
-   "n": "Sella Giudicarie",
-   "lat": 45.984,
-   "lon": 10.669,
    "r": "trentino"
   },
   {
@@ -2414,6 +5312,60 @@
    "n": "Tre Ville",
    "lat": 46.054,
    "lon": 10.778,
+   "r": "trentino"
+  },
+  {
+   "n": "Sella Giudicarie",
+   "lat": 45.984,
+   "lon": 10.669,
+   "r": "trentino"
+  },
+  {
+   "n": "Borgo Lares",
+   "lat": 46.035,
+   "lon": 10.752,
+   "r": "trentino"
+  },
+  {
+   "n": "Bleggio Superiore",
+   "lat": 46.025,
+   "lon": 10.837,
+   "r": "trentino"
+  },
+  {
+   "n": "Spiazzo",
+   "lat": 46.103,
+   "lon": 10.737,
+   "r": "trentino"
+  },
+  {
+   "n": "Pelugo",
+   "lat": 46.088,
+   "lon": 10.723,
+   "r": "trentino"
+  },
+  {
+   "n": "Fiavè",
+   "lat": 46.005,
+   "lon": 10.842,
+   "r": "trentino"
+  },
+  {
+   "n": "Comano Terme",
+   "lat": 46.032,
+   "lon": 10.869,
+   "r": "trentino"
+  },
+  {
+   "n": "Stenico",
+   "lat": 46.053,
+   "lon": 10.854,
+   "r": "trentino"
+  },
+  {
+   "n": "Strembo",
+   "lat": 46.12,
+   "lon": 10.752,
    "r": "trentino"
   }
  ],
@@ -2435,6 +5387,60 @@
    "lat": 46.005,
    "lon": 11.086,
    "r": "trentino"
+  },
+  {
+   "n": "Cavedine",
+   "lat": 45.994,
+   "lon": 10.971,
+   "r": "trentino"
+  },
+  {
+   "n": "Madruzzo",
+   "lat": 46.026,
+   "lon": 10.984,
+   "r": "trentino"
+  },
+  {
+   "n": "Dro",
+   "lat": 45.963,
+   "lon": 10.912,
+   "r": "trentino"
+  },
+  {
+   "n": "Drena",
+   "lat": 45.971,
+   "lon": 10.945,
+   "r": "trentino"
+  },
+  {
+   "n": "Comano Terme",
+   "lat": 46.032,
+   "lon": 10.869,
+   "r": "trentino"
+  },
+  {
+   "n": "Arco",
+   "lat": 45.919,
+   "lon": 10.886,
+   "r": "trentino"
+  },
+  {
+   "n": "Aldeno",
+   "lat": 45.977,
+   "lon": 11.091,
+   "r": "trentino"
+  },
+  {
+   "n": "Pomarolo",
+   "lat": 45.927,
+   "lon": 11.043,
+   "r": "trentino"
+  },
+  {
+   "n": "Villa Lagarina",
+   "lat": 45.916,
+   "lon": 11.032,
+   "r": "trentino"
   }
  ],
  "monte-di-mezzo": [
@@ -2455,13 +5461,67 @@
    "lat": 46.415,
    "lon": 11.177,
    "r": "trentino"
+  },
+  {
+   "n": "Laives",
+   "lat": 46.426,
+   "lon": 11.338,
+   "r": "altoadige"
+  },
+  {
+   "n": "Caldaro sulla strada del vino",
+   "lat": 46.413,
+   "lon": 11.245,
+   "r": "altoadige"
+  },
+  {
+   "n": "Vadena",
+   "lat": 46.414,
+   "lon": 11.305,
+   "r": "altoadige"
+  },
+  {
+   "n": "Bolzano",
+   "lat": 46.499,
+   "lon": 11.357,
+   "r": "altoadige"
+  },
+  {
+   "n": "Ora",
+   "lat": 46.348,
+   "lon": 11.298,
+   "r": "altoadige"
+  },
+  {
+   "n": "Aldino",
+   "lat": 46.368,
+   "lon": 11.354,
+   "r": "altoadige"
+  },
+  {
+   "n": "Termeno sulla strada del vino",
+   "lat": 46.341,
+   "lon": 11.239,
+   "r": "altoadige"
+  },
+  {
+   "n": "Nova Ponente",
+   "lat": 46.414,
+   "lon": 11.426,
+   "r": "altoadige"
+  },
+  {
+   "n": "Montagna",
+   "lat": 46.331,
+   "lon": 11.303,
+   "r": "altoadige"
   }
  ],
  "val-di-tires": [
   {
-   "n": "Renon",
-   "lat": 46.537,
-   "lon": 11.463,
+   "n": "Nova Levante",
+   "lat": 46.43,
+   "lon": 11.536,
    "r": "altoadige"
   },
   {
@@ -2471,17 +5531,53 @@
    "r": "altoadige"
   },
   {
-   "n": "Nova Levante",
-   "lat": 46.43,
-   "lon": 11.536,
+   "n": "Renon",
+   "lat": 46.537,
+   "lon": 11.463,
+   "r": "altoadige"
+  },
+  {
+   "n": "Tires",
+   "lat": 46.467,
+   "lon": 11.528,
+   "r": "altoadige"
+  },
+  {
+   "n": "Nova Ponente",
+   "lat": 46.414,
+   "lon": 11.426,
+   "r": "altoadige"
+  },
+  {
+   "n": "Cornedo all'Isarco",
+   "lat": 46.494,
+   "lon": 11.393,
+   "r": "altoadige"
+  },
+  {
+   "n": "Castelrotto",
+   "lat": 46.568,
+   "lon": 11.559,
    "r": "altoadige"
   }
  ],
  "val-d-orcia": [
   {
+   "n": "Castiglione d'Orcia",
+   "lat": 43.004,
+   "lon": 11.616,
+   "r": "toscana"
+  },
+  {
    "n": "Abbadia San Salvatore",
    "lat": 42.881,
    "lon": 11.678,
+   "r": "toscana"
+  },
+  {
+   "n": "Seggiano",
+   "lat": 42.928,
+   "lon": 11.557,
    "r": "toscana"
   },
   {
@@ -2491,15 +5587,51 @@
    "r": "toscana"
   },
   {
-   "n": "Castiglione d'Orcia",
-   "lat": 43.004,
-   "lon": 11.616,
+   "n": "Montalcino",
+   "lat": 43.059,
+   "lon": 11.491,
    "r": "toscana"
   },
   {
-   "n": "Seggiano",
-   "lat": 42.928,
-   "lon": 11.557,
+   "n": "Montepulciano",
+   "lat": 43.093,
+   "lon": 11.781,
+   "r": "toscana"
+  },
+  {
+   "n": "San Quirico d'Orcia",
+   "lat": 43.06,
+   "lon": 11.603,
+   "r": "toscana"
+  },
+  {
+   "n": "Buonconvento",
+   "lat": 43.138,
+   "lon": 11.482,
+   "r": "toscana"
+  },
+  {
+   "n": "Asciano",
+   "lat": 43.235,
+   "lon": 11.559,
+   "r": "toscana"
+  },
+  {
+   "n": "Sinalunga",
+   "lat": 43.212,
+   "lon": 11.736,
+   "r": "toscana"
+  },
+  {
+   "n": "Pienza",
+   "lat": 43.076,
+   "lon": 11.68,
+   "r": "toscana"
+  },
+  {
+   "n": "Monteroni d'Arbia",
+   "lat": 43.231,
+   "lon": 11.422,
    "r": "toscana"
   }
  ],
@@ -2517,15 +5649,63 @@
    "r": "toscana"
   },
   {
+   "n": "Marliana",
+   "lat": 43.934,
+   "lon": 10.77,
+   "r": "toscana"
+  },
+  {
    "n": "San Marcello Piteglio",
    "lat": 44.057,
    "lon": 10.793,
    "r": "toscana"
   },
   {
-   "n": "Marliana",
-   "lat": 43.934,
-   "lon": 10.77,
+   "n": "Montecatini-Terme",
+   "lat": 43.884,
+   "lon": 10.773,
+   "r": "toscana"
+  },
+  {
+   "n": "Ponte Buggianese",
+   "lat": 43.843,
+   "lon": 10.747,
+   "r": "toscana"
+  },
+  {
+   "n": "Pieve a Nievole",
+   "lat": 43.879,
+   "lon": 10.795,
+   "r": "toscana"
+  },
+  {
+   "n": "Pescia",
+   "lat": 43.903,
+   "lon": 10.689,
+   "r": "toscana"
+  },
+  {
+   "n": "Buggiano",
+   "lat": 43.88,
+   "lon": 10.728,
+   "r": "toscana"
+  },
+  {
+   "n": "Altopascio",
+   "lat": 43.815,
+   "lon": 10.675,
+   "r": "toscana"
+  },
+  {
+   "n": "Massa e Cozzile",
+   "lat": 43.91,
+   "lon": 10.745,
+   "r": "toscana"
+  },
+  {
+   "n": "Uzzano",
+   "lat": 43.882,
+   "lon": 10.709,
    "r": "toscana"
   }
  ],
@@ -2547,15 +5727,33 @@
    "lat": 43.437,
    "lon": 12.163,
    "r": "umbria"
+  },
+  {
+   "n": "Anghiari",
+   "lat": 43.541,
+   "lon": 12.057,
+   "r": "toscana"
+  },
+  {
+   "n": "Castiglion Fiorentino",
+   "lat": 43.342,
+   "lon": 11.924,
+   "r": "toscana"
+  },
+  {
+   "n": "Monterchi",
+   "lat": 43.486,
+   "lon": 12.112,
+   "r": "toscana"
+  },
+  {
+   "n": "Capolona",
+   "lat": 43.563,
+   "lon": 11.86,
+   "r": "toscana"
   }
  ],
  "colline-metallifere": [
-  {
-   "n": "Massa Marittima",
-   "lat": 43.05,
-   "lon": 10.888,
-   "r": "toscana"
-  },
   {
    "n": "Pomarance",
    "lat": 43.3,
@@ -2569,21 +5767,21 @@
    "r": "toscana"
   },
   {
-   "n": "Montecatini Val di Cecina",
-   "lat": 43.392,
-   "lon": 10.748,
-   "r": "toscana"
-  },
-  {
    "n": "Monterotondo Marittimo",
    "lat": 43.146,
    "lon": 10.856,
    "r": "toscana"
   },
   {
-   "n": "Lajatico",
-   "lat": 43.475,
-   "lon": 10.729,
+   "n": "Monteverdi Marittimo",
+   "lat": 43.177,
+   "lon": 10.715,
+   "r": "toscana"
+  },
+  {
+   "n": "Massa Marittima",
+   "lat": 43.05,
+   "lon": 10.888,
    "r": "toscana"
   },
   {
@@ -2593,9 +5791,39 @@
    "r": "toscana"
   },
   {
+   "n": "Montecatini Val di Cecina",
+   "lat": 43.392,
+   "lon": 10.748,
+   "r": "toscana"
+  },
+  {
    "n": "Casale Marittimo",
    "lat": 43.297,
    "lon": 10.616,
+   "r": "toscana"
+  },
+  {
+   "n": "Sassetta",
+   "lat": 43.128,
+   "lon": 10.644,
+   "r": "toscana"
+  },
+  {
+   "n": "Lajatico",
+   "lat": 43.475,
+   "lon": 10.729,
+   "r": "toscana"
+  },
+  {
+   "n": "Volterra",
+   "lat": 43.402,
+   "lon": 10.859,
+   "r": "toscana"
+  },
+  {
+   "n": "Radicondoli",
+   "lat": 43.261,
+   "lon": 11.041,
    "r": "toscana"
   }
  ],
@@ -2611,6 +5839,54 @@
    "lat": 44.018,
    "lon": 10.176,
    "r": "toscana"
+  },
+  {
+   "n": "Pietrasanta",
+   "lat": 43.96,
+   "lon": 10.228,
+   "r": "toscana"
+  },
+  {
+   "n": "Camaiore",
+   "lat": 43.939,
+   "lon": 10.304,
+   "r": "toscana"
+  },
+  {
+   "n": "Viareggio",
+   "lat": 43.867,
+   "lon": 10.25,
+   "r": "toscana"
+  },
+  {
+   "n": "Forte dei Marmi",
+   "lat": 43.96,
+   "lon": 10.167,
+   "r": "toscana"
+  },
+  {
+   "n": "Massa",
+   "lat": 44.037,
+   "lon": 10.142,
+   "r": "toscana"
+  },
+  {
+   "n": "Stazzema",
+   "lat": 43.997,
+   "lon": 10.296,
+   "r": "toscana"
+  },
+  {
+   "n": "Massarosa",
+   "lat": 43.868,
+   "lon": 10.342,
+   "r": "toscana"
+  },
+  {
+   "n": "Pescaglia",
+   "lat": 43.966,
+   "lon": 10.411,
+   "r": "toscana"
   }
  ],
  "valdarno": [
@@ -2621,27 +5897,9 @@
    "r": "toscana"
   },
   {
-   "n": "Figline e Incisa Valdarno",
-   "lat": 43.629,
-   "lon": 11.445,
-   "r": "toscana"
-  },
-  {
    "n": "San Giovanni Valdarno",
    "lat": 43.567,
    "lon": 11.53,
-   "r": "toscana"
-  },
-  {
-   "n": "Reggello",
-   "lat": 43.683,
-   "lon": 11.536,
-   "r": "toscana"
-  },
-  {
-   "n": "Greve in Chianti",
-   "lat": 43.583,
-   "lon": 11.317,
    "r": "toscana"
   },
   {
@@ -2651,9 +5909,15 @@
    "r": "toscana"
   },
   {
-   "n": "Bucine",
-   "lat": 43.479,
-   "lon": 11.617,
+   "n": "Figline e Incisa Valdarno",
+   "lat": 43.629,
+   "lon": 11.445,
+   "r": "toscana"
+  },
+  {
+   "n": "Cavriglia",
+   "lat": 43.524,
+   "lon": 11.489,
    "r": "toscana"
   },
   {
@@ -2661,21 +5925,45 @@
    "lat": 43.622,
    "lon": 11.558,
    "r": "toscana"
-  }
- ],
- "valtiberina": [
+  },
   {
-   "n": "Pieve Santo Stefano",
-   "lat": 43.668,
-   "lon": 12.042,
+   "n": "Reggello",
+   "lat": 43.683,
+   "lon": 11.536,
    "r": "toscana"
   },
   {
-   "n": "Cantiano",
-   "lat": 43.474,
-   "lon": 12.627,
-   "r": "marche"
+   "n": "Loro Ciuffenna",
+   "lat": 43.593,
+   "lon": 11.632,
+   "r": "toscana"
   },
+  {
+   "n": "Bucine",
+   "lat": 43.479,
+   "lon": 11.617,
+   "r": "toscana"
+  },
+  {
+   "n": "Greve in Chianti",
+   "lat": 43.583,
+   "lon": 11.317,
+   "r": "toscana"
+  },
+  {
+   "n": "Gaiole in Chianti",
+   "lat": 43.469,
+   "lon": 11.433,
+   "r": "toscana"
+  },
+  {
+   "n": "Rignano sull'Arno",
+   "lat": 43.722,
+   "lon": 11.454,
+   "r": "toscana"
+  }
+ ],
+ "valtiberina": [
   {
    "n": "Pietralunga",
    "lat": 43.442,
@@ -2683,10 +5971,10 @@
    "r": "umbria"
   },
   {
-   "n": "Piobbico",
-   "lat": 43.589,
-   "lon": 12.51,
-   "r": "marche"
+   "n": "Pieve Santo Stefano",
+   "lat": 43.668,
+   "lon": 12.042,
+   "r": "toscana"
   },
   {
    "n": "Apecchio",
@@ -2699,6 +5987,54 @@
    "lat": 43.706,
    "lon": 12.186,
    "r": "toscana"
+  },
+  {
+   "n": "Piobbico",
+   "lat": 43.589,
+   "lon": 12.51,
+   "r": "marche"
+  },
+  {
+   "n": "Cantiano",
+   "lat": 43.474,
+   "lon": 12.627,
+   "r": "marche"
+  },
+  {
+   "n": "Città di Castello",
+   "lat": 43.457,
+   "lon": 12.238,
+   "r": "umbria"
+  },
+  {
+   "n": "San Giustino",
+   "lat": 43.549,
+   "lon": 12.177,
+   "r": "umbria"
+  },
+  {
+   "n": "Citerna",
+   "lat": 43.498,
+   "lon": 12.116,
+   "r": "umbria"
+  },
+  {
+   "n": "Monte Santa Maria Tiberina",
+   "lat": 43.437,
+   "lon": 12.163,
+   "r": "umbria"
+  },
+  {
+   "n": "Umbertide",
+   "lat": 43.306,
+   "lon": 12.327,
+   "r": "umbria"
+  },
+  {
+   "n": "Montone",
+   "lat": 43.364,
+   "lon": 12.327,
+   "r": "umbria"
   }
  ],
  "media-valle-del-serchio": [
@@ -2721,15 +6057,45 @@
    "r": "toscana"
   },
   {
+   "n": "Fabbriche di Vergemoli",
+   "lat": 43.997,
+   "lon": 10.428,
+   "r": "toscana"
+  },
+  {
    "n": "Villa Basilica",
    "lat": 43.928,
    "lon": 10.645,
    "r": "toscana"
   },
   {
-   "n": "Fabbriche di Vergemoli",
-   "lat": 43.997,
-   "lon": 10.428,
+   "n": "Barga",
+   "lat": 44.073,
+   "lon": 10.485,
+   "r": "toscana"
+  },
+  {
+   "n": "Gallicano",
+   "lat": 44.06,
+   "lon": 10.436,
+   "r": "toscana"
+  },
+  {
+   "n": "Pescaglia",
+   "lat": 43.966,
+   "lon": 10.411,
+   "r": "toscana"
+  },
+  {
+   "n": "Molazzana",
+   "lat": 44.073,
+   "lon": 10.418,
+   "r": "toscana"
+  },
+  {
+   "n": "Fosciandora",
+   "lat": 44.115,
+   "lon": 10.455,
    "r": "toscana"
   }
  ],
@@ -2759,15 +6125,51 @@
    "r": "toscana"
   },
   {
+   "n": "Castellina in Chianti",
+   "lat": 43.47,
+   "lon": 11.286,
+   "r": "toscana"
+  },
+  {
    "n": "Casole d'Elsa",
    "lat": 43.341,
    "lon": 11.043,
    "r": "toscana"
   },
   {
-   "n": "Castellina in Chianti",
-   "lat": 43.47,
-   "lon": 11.286,
+   "n": "Monteriggioni",
+   "lat": 43.393,
+   "lon": 11.219,
+   "r": "toscana"
+  },
+  {
+   "n": "Certaldo",
+   "lat": 43.548,
+   "lon": 11.041,
+   "r": "toscana"
+  },
+  {
+   "n": "Greve in Chianti",
+   "lat": 43.583,
+   "lon": 11.317,
+   "r": "toscana"
+  },
+  {
+   "n": "Siena",
+   "lat": 43.318,
+   "lon": 11.332,
+   "r": "toscana"
+  },
+  {
+   "n": "Castelfiorentino",
+   "lat": 43.606,
+   "lon": 10.971,
+   "r": "toscana"
+  },
+  {
+   "n": "Montespertoli",
+   "lat": 43.643,
+   "lon": 11.075,
    "r": "toscana"
   }
  ],
@@ -2779,9 +6181,9 @@
    "r": "toscana"
   },
   {
-   "n": "Massarosa",
-   "lat": 43.868,
-   "lon": 10.342,
+   "n": "Stazzema",
+   "lat": 43.997,
+   "lon": 10.296,
    "r": "toscana"
   },
   {
@@ -2791,15 +6193,39 @@
    "r": "toscana"
   },
   {
-   "n": "Stazzema",
-   "lat": 43.997,
-   "lon": 10.296,
+   "n": "Massarosa",
+   "lat": 43.868,
+   "lon": 10.342,
    "r": "toscana"
   },
   {
    "n": "Vagli Sotto",
    "lat": 44.114,
    "lon": 10.28,
+   "r": "toscana"
+  },
+  {
+   "n": "Pietrasanta",
+   "lat": 43.96,
+   "lon": 10.228,
+   "r": "toscana"
+  },
+  {
+   "n": "Seravezza",
+   "lat": 43.995,
+   "lon": 10.228,
+   "r": "toscana"
+  },
+  {
+   "n": "Viareggio",
+   "lat": 43.867,
+   "lon": 10.25,
+   "r": "toscana"
+  },
+  {
+   "n": "Fabbriche di Vergemoli",
+   "lat": 43.997,
+   "lon": 10.428,
    "r": "toscana"
   }
  ],
@@ -2815,9 +6241,21 @@
    "lat": 43.13,
    "lon": 11.016,
    "r": "toscana"
+  },
+  {
+   "n": "Massa Marittima",
+   "lat": 43.05,
+   "lon": 10.888,
+   "r": "toscana"
   }
  ],
  "monte-pisano": [
+  {
+   "n": "Buti",
+   "lat": 43.727,
+   "lon": 10.587,
+   "r": "toscana"
+  },
   {
    "n": "Lucca",
    "lat": 43.844,
@@ -2825,9 +6263,57 @@
    "r": "toscana"
   },
   {
-   "n": "Buti",
-   "lat": 43.727,
-   "lon": 10.587,
+   "n": "Calci",
+   "lat": 43.726,
+   "lon": 10.516,
+   "r": "toscana"
+  },
+  {
+   "n": "Vicopisano",
+   "lat": 43.7,
+   "lon": 10.584,
+   "r": "toscana"
+  },
+  {
+   "n": "Cascina",
+   "lat": 43.677,
+   "lon": 10.549,
+   "r": "toscana"
+  },
+  {
+   "n": "Bientina",
+   "lat": 43.71,
+   "lon": 10.62,
+   "r": "toscana"
+  },
+  {
+   "n": "San Giuliano Terme",
+   "lat": 43.763,
+   "lon": 10.442,
+   "r": "toscana"
+  },
+  {
+   "n": "Calcinaia",
+   "lat": 43.683,
+   "lon": 10.616,
+   "r": "toscana"
+  },
+  {
+   "n": "Capannori",
+   "lat": 43.849,
+   "lon": 10.575,
+   "r": "toscana"
+  },
+  {
+   "n": "Pontedera",
+   "lat": 43.664,
+   "lon": 10.636,
+   "r": "toscana"
+  },
+  {
+   "n": "Porcari",
+   "lat": 43.84,
+   "lon": 10.617,
    "r": "toscana"
   }
  ],
@@ -2845,9 +6331,9 @@
    "r": "toscana"
   },
   {
-   "n": "Montecatini Val di Cecina",
-   "lat": 43.392,
-   "lon": 10.748,
+   "n": "Orciano Pisano",
+   "lat": 43.491,
+   "lon": 10.51,
    "r": "toscana"
   },
   {
@@ -2857,17 +6343,59 @@
    "r": "toscana"
   },
   {
-   "n": "Orciano Pisano",
-   "lat": 43.491,
-   "lon": 10.51,
+   "n": "Montecatini Val di Cecina",
+   "lat": 43.392,
+   "lon": 10.748,
+   "r": "toscana"
+  },
+  {
+   "n": "Rosignano Marittimo",
+   "lat": 43.405,
+   "lon": 10.473,
+   "r": "toscana"
+  },
+  {
+   "n": "Collesalvetti",
+   "lat": 43.589,
+   "lon": 10.476,
+   "r": "toscana"
+  },
+  {
+   "n": "Pisa",
+   "lat": 43.716,
+   "lon": 10.401,
+   "r": "toscana"
+  },
+  {
+   "n": "Cascina",
+   "lat": 43.677,
+   "lon": 10.549,
+   "r": "toscana"
+  },
+  {
+   "n": "Casciana Terme Lari",
+   "lat": 43.566,
+   "lon": 10.594,
+   "r": "toscana"
+  },
+  {
+   "n": "Crespina Lorenzana",
+   "lat": 43.572,
+   "lon": 10.561,
+   "r": "toscana"
+  },
+  {
+   "n": "Fauglia",
+   "lat": 43.567,
+   "lon": 10.516,
    "r": "toscana"
   }
  ],
  "val-di-merse": [
   {
-   "n": "Civitella Paganico",
-   "lat": 42.994,
-   "lon": 11.282,
+   "n": "Monticiano",
+   "lat": 43.139,
+   "lon": 11.18,
    "r": "toscana"
   },
   {
@@ -2877,29 +6405,35 @@
    "r": "toscana"
   },
   {
-   "n": "Monticiano",
-   "lat": 43.139,
-   "lon": 11.18,
+   "n": "Civitella Paganico",
+   "lat": 42.994,
+   "lon": 11.282,
+   "r": "toscana"
+  },
+  {
+   "n": "Sovicille",
+   "lat": 43.28,
+   "lon": 11.228,
+   "r": "toscana"
+  },
+  {
+   "n": "Murlo",
+   "lat": 43.168,
+   "lon": 11.391,
+   "r": "toscana"
+  },
+  {
+   "n": "Radicondoli",
+   "lat": 43.261,
+   "lon": 11.041,
    "r": "toscana"
   }
  ],
  "valnerina": [
   {
-   "n": "Norcia",
-   "lat": 42.792,
-   "lon": 13.093,
-   "r": "umbria"
-  },
-  {
    "n": "Cascia",
    "lat": 42.718,
    "lon": 13.013,
-   "r": "umbria"
-  },
-  {
-   "n": "Monteleone di Spoleto",
-   "lat": 42.651,
-   "lon": 12.952,
    "r": "umbria"
   },
   {
@@ -2909,9 +6443,63 @@
    "r": "umbria"
   },
   {
+   "n": "Monteleone di Spoleto",
+   "lat": 42.651,
+   "lon": 12.952,
+   "r": "umbria"
+  },
+  {
+   "n": "Norcia",
+   "lat": 42.792,
+   "lon": 13.093,
+   "r": "umbria"
+  },
+  {
    "n": "Poggiodomo",
    "lat": 42.712,
    "lon": 12.935,
+   "r": "umbria"
+  },
+  {
+   "n": "Spoleto",
+   "lat": 42.734,
+   "lon": 12.738,
+   "r": "umbria"
+  },
+  {
+   "n": "Terni",
+   "lat": 42.561,
+   "lon": 12.647,
+   "r": "umbria"
+  },
+  {
+   "n": "Campello sul Clitunno",
+   "lat": 42.82,
+   "lon": 12.777,
+   "r": "umbria"
+  },
+  {
+   "n": "Ferentillo",
+   "lat": 42.621,
+   "lon": 12.79,
+   "r": "umbria"
+  },
+  {
+   "n": "Trevi",
+   "lat": 42.877,
+   "lon": 12.748,
+   "r": "umbria"
+  },
+  {
+   "n": "Sant'Anatolia di Narco",
+   "lat": 42.733,
+   "lon": 12.836,
+   "r": "umbria"
+  },
+  {
+   "n": "Arrone",
+   "lat": 42.583,
+   "lon": 12.77,
    "r": "umbria"
   }
  ],
@@ -2923,10 +6511,16 @@
    "r": "umbria"
   },
   {
-   "n": "Castiglione in Teverina",
-   "lat": 42.645,
-   "lon": 12.204,
-   "r": "lazio"
+   "n": "Montecchio",
+   "lat": 42.662,
+   "lon": 12.288,
+   "r": "umbria"
+  },
+  {
+   "n": "Monte Castello di Vibio",
+   "lat": 42.84,
+   "lon": 12.352,
+   "r": "umbria"
   },
   {
    "n": "San Venanzo",
@@ -2935,10 +6529,10 @@
    "r": "umbria"
   },
   {
-   "n": "Montecchio",
-   "lat": 42.662,
-   "lon": 12.288,
-   "r": "umbria"
+   "n": "Castiglione in Teverina",
+   "lat": 42.645,
+   "lon": 12.204,
+   "r": "lazio"
   },
   {
    "n": "Civitella d'Agliano",
@@ -2947,13 +6541,73 @@
    "r": "lazio"
   },
   {
-   "n": "Monte Castello di Vibio",
-   "lat": 42.84,
-   "lon": 12.352,
+   "n": "Todi",
+   "lat": 42.782,
+   "lon": 12.407,
+   "r": "umbria"
+  },
+  {
+   "n": "Amelia",
+   "lat": 42.559,
+   "lon": 12.412,
+   "r": "umbria"
+  },
+  {
+   "n": "Orvieto",
+   "lat": 42.718,
+   "lon": 12.108,
+   "r": "umbria"
+  },
+  {
+   "n": "Montecastrilli",
+   "lat": 42.65,
+   "lon": 12.488,
+   "r": "umbria"
+  },
+  {
+   "n": "Avigliano Umbro",
+   "lat": 42.655,
+   "lon": 12.428,
+   "r": "umbria"
+  },
+  {
+   "n": "Guardea",
+   "lat": 42.624,
+   "lon": 12.297,
    "r": "umbria"
   }
  ],
  "val-di-bove": [
+  {
+   "n": "Ussita",
+   "lat": 42.944,
+   "lon": 13.138,
+   "r": "marche"
+  },
+  {
+   "n": "Visso",
+   "lat": 42.931,
+   "lon": 13.088,
+   "r": "marche"
+  },
+  {
+   "n": "Castelsantangelo sul Nera",
+   "lat": 42.894,
+   "lon": 13.153,
+   "r": "marche"
+  },
+  {
+   "n": "Bolognola",
+   "lat": 42.994,
+   "lon": 13.227,
+   "r": "marche"
+  },
+  {
+   "n": "Fiastra",
+   "lat": 43.037,
+   "lon": 13.156,
+   "r": "marche"
+  },
   {
    "n": "Amandola",
    "lat": 42.98,
@@ -2964,12 +6618,6 @@
    "n": "Pieve Torina",
    "lat": 43.044,
    "lon": 13.05,
-   "r": "marche"
-  },
-  {
-   "n": "Visso",
-   "lat": 42.931,
-   "lon": 13.088,
    "r": "marche"
   },
   {
@@ -2985,31 +6633,25 @@
    "r": "marche"
   },
   {
-   "n": "Fiastra",
-   "lat": 43.037,
-   "lon": 13.156,
-   "r": "marche"
-  },
-  {
    "n": "Sefro",
    "lat": 43.146,
    "lon": 12.949,
    "r": "marche"
   },
   {
-   "n": "Ussita",
-   "lat": 42.944,
-   "lon": 13.138,
+   "n": "Montefortino",
+   "lat": 42.943,
+   "lon": 13.341,
+   "r": "marche"
+  },
+  {
+   "n": "Montemonaco",
+   "lat": 42.899,
+   "lon": 13.327,
    "r": "marche"
   }
  ],
  "monti-sibillini": [
-  {
-   "n": "Acquasanta Terme",
-   "lat": 42.769,
-   "lon": 13.409,
-   "r": "marche"
-  },
   {
    "n": "Arquata del Tronto",
    "lat": 42.773,
@@ -3017,10 +6659,40 @@
    "r": "marche"
   },
   {
+   "n": "Acquasanta Terme",
+   "lat": 42.769,
+   "lon": 13.409,
+   "r": "marche"
+  },
+  {
    "n": "Accumoli",
    "lat": 42.695,
    "lon": 13.248,
    "r": "lazio"
+  },
+  {
+   "n": "Montegallo",
+   "lat": 42.842,
+   "lon": 13.333,
+   "r": "marche"
+  },
+  {
+   "n": "Montemonaco",
+   "lat": 42.899,
+   "lon": 13.327,
+   "r": "marche"
+  },
+  {
+   "n": "Montefortino",
+   "lat": 42.943,
+   "lon": 13.341,
+   "r": "marche"
+  },
+  {
+   "n": "Castelsantangelo sul Nera",
+   "lat": 42.894,
+   "lon": 13.153,
+   "r": "marche"
   }
  ],
  "piana-del-cavaliere": [
@@ -3028,30 +6700,6 @@
    "n": "Arsoli",
    "lat": 42.041,
    "lon": 13.017,
-   "r": "lazio"
-  },
-  {
-   "n": "Oricola",
-   "lat": 42.05,
-   "lon": 13.039,
-   "r": "abruzzo"
-  },
-  {
-   "n": "Rocca di Botte",
-   "lat": 42.026,
-   "lon": 13.068,
-   "r": "abruzzo"
-  },
-  {
-   "n": "Marano Equo",
-   "lat": 41.995,
-   "lon": 13.017,
-   "r": "lazio"
-  },
-  {
-   "n": "Cervara di Roma",
-   "lat": 41.988,
-   "lon": 13.068,
    "r": "lazio"
   },
   {
@@ -3065,25 +6713,67 @@
    "lat": 42.1,
    "lon": 13.007,
    "r": "lazio"
+  },
+  {
+   "n": "Marano Equo",
+   "lat": 41.995,
+   "lon": 13.017,
+   "r": "lazio"
+  },
+  {
+   "n": "Oricola",
+   "lat": 42.05,
+   "lon": 13.039,
+   "r": "abruzzo"
+  },
+  {
+   "n": "Cervara di Roma",
+   "lat": 41.988,
+   "lon": 13.068,
+   "r": "lazio"
+  },
+  {
+   "n": "Rocca di Botte",
+   "lat": 42.026,
+   "lon": 13.068,
+   "r": "abruzzo"
+  },
+  {
+   "n": "Riofreddo",
+   "lat": 42.061,
+   "lon": 12.999,
+   "r": "lazio"
+  },
+  {
+   "n": "Roviano",
+   "lat": 42.026,
+   "lon": 12.995,
+   "r": "lazio"
+  },
+  {
+   "n": "Vallinfreda",
+   "lat": 42.084,
+   "lon": 12.995,
+   "r": "lazio"
+  },
+  {
+   "n": "Camerata Nuova",
+   "lat": 42.018,
+   "lon": 13.108,
+   "r": "lazio"
+  },
+  {
+   "n": "Cineto Romano",
+   "lat": 42.05,
+   "lon": 12.964,
+   "r": "lazio"
   }
  ],
  "monti-prenestini": [
   {
-   "n": "Subiaco",
-   "lat": 41.925,
-   "lon": 13.1,
-   "r": "lazio"
-  },
-  {
    "n": "San Vito Romano",
    "lat": 41.883,
    "lon": 12.983,
-   "r": "lazio"
-  },
-  {
-   "n": "Gerano",
-   "lat": 41.934,
-   "lon": 12.994,
    "r": "lazio"
   },
   {
@@ -3093,9 +6783,21 @@
    "r": "lazio"
   },
   {
+   "n": "Gerano",
+   "lat": 41.934,
+   "lon": 12.994,
+   "r": "lazio"
+  },
+  {
    "n": "Rocca Santo Stefano",
    "lat": 41.911,
    "lon": 13.024,
+   "r": "lazio"
+  },
+  {
+   "n": "Subiaco",
+   "lat": 41.925,
+   "lon": 13.1,
    "r": "lazio"
   },
   {
@@ -3114,6 +6816,30 @@
    "n": "Saracinesco",
    "lat": 42.004,
    "lon": 12.952,
+   "r": "lazio"
+  },
+  {
+   "n": "Palestrina",
+   "lat": 41.839,
+   "lon": 12.889,
+   "r": "lazio"
+  },
+  {
+   "n": "Poli",
+   "lat": 41.887,
+   "lon": 12.893,
+   "r": "lazio"
+  },
+  {
+   "n": "Tivoli",
+   "lat": 41.963,
+   "lon": 12.798,
+   "r": "lazio"
+  },
+  {
+   "n": "Castel Madama",
+   "lat": 41.976,
+   "lon": 12.869,
    "r": "lazio"
   }
  ],
@@ -3135,6 +6861,60 @@
    "lat": 42.386,
    "lon": 12.681,
    "r": "lazio"
+  },
+  {
+   "n": "Rieti",
+   "lat": 42.405,
+   "lon": 12.862,
+   "r": "lazio"
+  },
+  {
+   "n": "Contigliano",
+   "lat": 42.411,
+   "lon": 12.767,
+   "r": "lazio"
+  },
+  {
+   "n": "Cantalice",
+   "lat": 42.468,
+   "lon": 12.904,
+   "r": "lazio"
+  },
+  {
+   "n": "Greccio",
+   "lat": 42.454,
+   "lon": 12.769,
+   "r": "lazio"
+  },
+  {
+   "n": "Poggio Bustone",
+   "lat": 42.502,
+   "lon": 12.886,
+   "r": "lazio"
+  },
+  {
+   "n": "Belmonte in Sabina",
+   "lat": 42.318,
+   "lon": 12.893,
+   "r": "lazio"
+  },
+  {
+   "n": "Rivodutri",
+   "lat": 42.516,
+   "lon": 12.855,
+   "r": "lazio"
+  },
+  {
+   "n": "Colli sul Velino",
+   "lat": 42.499,
+   "lon": 12.78,
+   "r": "lazio"
+  },
+  {
+   "n": "Castel Sant'Angelo",
+   "lat": 42.395,
+   "lon": 13.03,
+   "r": "lazio"
   }
  ],
  "vallonina": [
@@ -3145,15 +6925,15 @@
    "r": "lazio"
   },
   {
-   "n": "Rivodutri",
-   "lat": 42.516,
-   "lon": 12.855,
-   "r": "lazio"
-  },
-  {
    "n": "Posta",
    "lat": 42.523,
    "lon": 13.096,
+   "r": "lazio"
+  },
+  {
+   "n": "Rivodutri",
+   "lat": 42.516,
+   "lon": 12.855,
    "r": "lazio"
   },
   {
@@ -3161,15 +6941,57 @@
    "lat": 42.618,
    "lon": 13.16,
    "r": "lazio"
+  },
+  {
+   "n": "Cantalice",
+   "lat": 42.468,
+   "lon": 12.904,
+   "r": "lazio"
+  },
+  {
+   "n": "Poggio Bustone",
+   "lat": 42.502,
+   "lon": 12.886,
+   "r": "lazio"
+  },
+  {
+   "n": "Rieti",
+   "lat": 42.405,
+   "lon": 12.862,
+   "r": "lazio"
+  },
+  {
+   "n": "Cittaducale",
+   "lat": 42.387,
+   "lon": 12.948,
+   "r": "lazio"
+  },
+  {
+   "n": "Antrodoco",
+   "lat": 42.418,
+   "lon": 13.08,
+   "r": "lazio"
+  },
+  {
+   "n": "Castel Sant'Angelo",
+   "lat": 42.395,
+   "lon": 13.03,
+   "r": "lazio"
+  },
+  {
+   "n": "Borgo Velino",
+   "lat": 42.406,
+   "lon": 13.058,
+   "r": "lazio"
+  },
+  {
+   "n": "Borbona",
+   "lat": 42.512,
+   "lon": 13.133,
+   "r": "lazio"
   }
  ],
  "monti-cantari": [
-  {
-   "n": "Fiuggi",
-   "lat": 41.804,
-   "lon": 13.221,
-   "r": "lazio"
-  },
   {
    "n": "Trevi nel Lazio",
    "lat": 41.862,
@@ -3177,9 +6999,63 @@
    "r": "lazio"
   },
   {
+   "n": "Fiuggi",
+   "lat": 41.804,
+   "lon": 13.221,
+   "r": "lazio"
+  },
+  {
    "n": "Filettino",
    "lat": 41.89,
    "lon": 13.324,
+   "r": "lazio"
+  },
+  {
+   "n": "Guarcino",
+   "lat": 41.8,
+   "lon": 13.314,
+   "r": "lazio"
+  },
+  {
+   "n": "Torre Cajetani",
+   "lat": 41.789,
+   "lon": 13.263,
+   "r": "lazio"
+  },
+  {
+   "n": "Trivigliano",
+   "lat": 41.776,
+   "lon": 13.273,
+   "r": "lazio"
+  },
+  {
+   "n": "Vico nel Lazio",
+   "lat": 41.777,
+   "lon": 13.342,
+   "r": "lazio"
+  },
+  {
+   "n": "Piglio",
+   "lat": 41.83,
+   "lon": 13.146,
+   "r": "lazio"
+  },
+  {
+   "n": "Acuto",
+   "lat": 41.792,
+   "lon": 13.173,
+   "r": "lazio"
+  },
+  {
+   "n": "Vallepietra",
+   "lat": 41.927,
+   "lon": 13.231,
+   "r": "lazio"
+  },
+  {
+   "n": "Jenne",
+   "lat": 41.887,
+   "lon": 13.168,
    "r": "lazio"
   }
  ],
@@ -3194,6 +7070,54 @@
    "n": "Micigliano",
    "lat": 42.451,
    "lon": 13.055,
+   "r": "lazio"
+  },
+  {
+   "n": "Antrodoco",
+   "lat": 42.418,
+   "lon": 13.08,
+   "r": "lazio"
+  },
+  {
+   "n": "Cittaducale",
+   "lat": 42.387,
+   "lon": 12.948,
+   "r": "lazio"
+  },
+  {
+   "n": "Castel Sant'Angelo",
+   "lat": 42.395,
+   "lon": 13.03,
+   "r": "lazio"
+  },
+  {
+   "n": "Poggio Bustone",
+   "lat": 42.502,
+   "lon": 12.886,
+   "r": "lazio"
+  },
+  {
+   "n": "Borgo Velino",
+   "lat": 42.406,
+   "lon": 13.058,
+   "r": "lazio"
+  },
+  {
+   "n": "Leonessa",
+   "lat": 42.561,
+   "lon": 12.964,
+   "r": "lazio"
+  },
+  {
+   "n": "Posta",
+   "lat": 42.523,
+   "lon": 13.096,
+   "r": "lazio"
+  },
+  {
+   "n": "Borbona",
+   "lat": 42.512,
+   "lon": 13.133,
    "r": "lazio"
   }
  ],
@@ -3215,15 +7139,63 @@
    "lat": 42.215,
    "lon": 12.964,
    "r": "lazio"
+  },
+  {
+   "n": "Fara in Sabina",
+   "lat": 42.21,
+   "lon": 12.729,
+   "r": "lazio"
+  },
+  {
+   "n": "Poggio Nativo",
+   "lat": 42.216,
+   "lon": 12.795,
+   "r": "lazio"
+  },
+  {
+   "n": "Scandriglia",
+   "lat": 42.165,
+   "lon": 12.842,
+   "r": "lazio"
+  },
+  {
+   "n": "Monteleone Sabino",
+   "lat": 42.233,
+   "lon": 12.859,
+   "r": "lazio"
+  },
+  {
+   "n": "Nerola",
+   "lat": 42.162,
+   "lon": 12.787,
+   "r": "lazio"
+  },
+  {
+   "n": "Montelibretti",
+   "lat": 42.135,
+   "lon": 12.739,
+   "r": "lazio"
+  },
+  {
+   "n": "Torricella in Sabina",
+   "lat": 42.261,
+   "lon": 12.87,
+   "r": "lazio"
+  },
+  {
+   "n": "Montopoli di Sabina",
+   "lat": 42.245,
+   "lon": 12.692,
+   "r": "lazio"
+  },
+  {
+   "n": "Toffia",
+   "lat": 42.213,
+   "lon": 12.752,
+   "r": "lazio"
   }
  ],
  "monti-lattari": [
-  {
-   "n": "Agerola",
-   "lat": 40.638,
-   "lon": 14.545,
-   "r": "campania"
-  },
   {
    "n": "Pimonte",
    "lat": 40.674,
@@ -3231,13 +7203,79 @@
    "r": "campania"
   },
   {
+   "n": "Agerola",
+   "lat": 40.638,
+   "lon": 14.545,
+   "r": "campania"
+  },
+  {
    "n": "Positano",
    "lat": 40.629,
    "lon": 14.484,
    "r": "campania"
+  },
+  {
+   "n": "Castellammare di Stabia",
+   "lat": 40.695,
+   "lon": 14.48,
+   "r": "campania"
+  },
+  {
+   "n": "Gragnano",
+   "lat": 40.69,
+   "lon": 14.521,
+   "r": "campania"
+  },
+  {
+   "n": "Vico Equense",
+   "lat": 40.664,
+   "lon": 14.425,
+   "r": "campania"
+  },
+  {
+   "n": "Casola di Napoli",
+   "lat": 40.694,
+   "lon": 14.529,
+   "r": "campania"
+  },
+  {
+   "n": "Piano di Sorrento",
+   "lat": 40.634,
+   "lon": 14.413,
+   "r": "campania"
+  },
+  {
+   "n": "Praiano",
+   "lat": 40.611,
+   "lon": 14.533,
+   "r": "campania"
+  },
+  {
+   "n": "Meta",
+   "lat": 40.644,
+   "lon": 14.413,
+   "r": "campania"
+  },
+  {
+   "n": "Lettere",
+   "lat": 40.704,
+   "lon": 14.545,
+   "r": "campania"
+  },
+  {
+   "n": "Santa Maria la Carità",
+   "lat": 40.721,
+   "lon": 14.513,
+   "r": "campania"
   }
  ],
  "cilento": [
+  {
+   "n": "Campora",
+   "lat": 40.305,
+   "lon": 15.293,
+   "r": "campania"
+  },
   {
    "n": "Rofrano",
    "lat": 40.21,
@@ -3245,9 +7283,63 @@
    "r": "campania"
   },
   {
-   "n": "Campora",
-   "lat": 40.305,
-   "lon": 15.293,
+   "n": "Vallo della Lucania",
+   "lat": 40.229,
+   "lon": 15.267,
+   "r": "campania"
+  },
+  {
+   "n": "Roccadaspide",
+   "lat": 40.426,
+   "lon": 15.194,
+   "r": "campania"
+  },
+  {
+   "n": "Capaccio Paestum",
+   "lat": 40.423,
+   "lon": 15.081,
+   "r": "campania"
+  },
+  {
+   "n": "Castel San Lorenzo",
+   "lat": 40.417,
+   "lon": 15.228,
+   "r": "campania"
+  },
+  {
+   "n": "Laurino",
+   "lat": 40.337,
+   "lon": 15.337,
+   "r": "campania"
+  },
+  {
+   "n": "Felitto",
+   "lat": 40.371,
+   "lon": 15.248,
+   "r": "campania"
+  },
+  {
+   "n": "Gioi",
+   "lat": 40.29,
+   "lon": 15.218,
+   "r": "campania"
+  },
+  {
+   "n": "Moio della Civitella",
+   "lat": 40.245,
+   "lon": 15.27,
+   "r": "campania"
+  },
+  {
+   "n": "Salento",
+   "lat": 40.249,
+   "lon": 15.188,
+   "r": "campania"
+  },
+  {
+   "n": "Stio",
+   "lat": 40.311,
+   "lon": 15.255,
    "r": "campania"
   }
  ],
@@ -3259,15 +7351,69 @@
    "r": "campania"
   },
   {
+   "n": "Rotondi",
+   "lat": 41.034,
+   "lon": 14.596,
+   "r": "campania"
+  },
+  {
    "n": "San Martino Valle Caudina",
    "lat": 41.025,
    "lon": 14.665,
    "r": "campania"
   },
   {
-   "n": "Rotondi",
-   "lat": 41.034,
-   "lon": 14.596,
+   "n": "Montesarchio",
+   "lat": 41.064,
+   "lon": 14.641,
+   "r": "campania"
+  },
+  {
+   "n": "Airola",
+   "lat": 41.066,
+   "lon": 14.561,
+   "r": "campania"
+  },
+  {
+   "n": "Paolisi",
+   "lat": 41.037,
+   "lon": 14.579,
+   "r": "campania"
+  },
+  {
+   "n": "Bucciano",
+   "lat": 41.077,
+   "lon": 14.57,
+   "r": "campania"
+  },
+  {
+   "n": "Bonea",
+   "lat": 41.075,
+   "lon": 14.619,
+   "r": "campania"
+  },
+  {
+   "n": "Moiano",
+   "lat": 41.078,
+   "lon": 14.546,
+   "r": "campania"
+  },
+  {
+   "n": "Arpaia",
+   "lat": 41.037,
+   "lon": 14.552,
+   "r": "campania"
+  },
+  {
+   "n": "Forchia",
+   "lat": 41.03,
+   "lon": 14.537,
+   "r": "campania"
+  },
+  {
+   "n": "Sant'Agata de' Goti",
+   "lat": 41.091,
+   "lon": 14.504,
    "r": "campania"
   }
  ],
@@ -3289,6 +7435,60 @@
    "lat": 40.992,
    "lon": 14.73,
    "r": "campania"
+  },
+  {
+   "n": "Avellino",
+   "lat": 40.914,
+   "lon": 14.795,
+   "r": "campania"
+  },
+  {
+   "n": "Ospedaletto d'Alpinolo",
+   "lat": 40.939,
+   "lon": 14.746,
+   "r": "campania"
+  },
+  {
+   "n": "Summonte",
+   "lat": 40.95,
+   "lon": 14.747,
+   "r": "campania"
+  },
+  {
+   "n": "Forino",
+   "lat": 40.862,
+   "lon": 14.737,
+   "r": "campania"
+  },
+  {
+   "n": "Capriglia Irpina",
+   "lat": 40.956,
+   "lon": 14.775,
+   "r": "campania"
+  },
+  {
+   "n": "Contrada",
+   "lat": 40.867,
+   "lon": 14.773,
+   "r": "campania"
+  },
+  {
+   "n": "Atripalda",
+   "lat": 40.918,
+   "lon": 14.837,
+   "r": "campania"
+  },
+  {
+   "n": "Mugnano del Cardinale",
+   "lat": 40.94,
+   "lon": 14.643,
+   "r": "campania"
+  },
+  {
+   "n": "Aiello del Sabato",
+   "lat": 40.889,
+   "lon": 14.82,
+   "r": "campania"
   }
  ],
  "serre-calabresi": [
@@ -3299,27 +7499,9 @@
    "r": "calabria"
   },
   {
-   "n": "Mammola",
-   "lat": 38.362,
-   "lon": 16.241,
-   "r": "calabria"
-  },
-  {
    "n": "Fabrizia",
    "lat": 38.484,
    "lon": 16.303,
-   "r": "calabria"
-  },
-  {
-   "n": "Giffone",
-   "lat": 38.439,
-   "lon": 16.15,
-   "r": "calabria"
-  },
-  {
-   "n": "Polia",
-   "lat": 38.751,
-   "lon": 16.314,
    "r": "calabria"
   },
   {
@@ -3333,15 +7515,57 @@
    "lat": 38.647,
    "lon": 16.296,
    "r": "calabria"
+  },
+  {
+   "n": "Giffone",
+   "lat": 38.439,
+   "lon": 16.15,
+   "r": "calabria"
+  },
+  {
+   "n": "Mammola",
+   "lat": 38.362,
+   "lon": 16.241,
+   "r": "calabria"
+  },
+  {
+   "n": "Polia",
+   "lat": 38.751,
+   "lon": 16.314,
+   "r": "calabria"
+  },
+  {
+   "n": "Nardodipace",
+   "lat": 38.474,
+   "lon": 16.343,
+   "r": "calabria"
+  },
+  {
+   "n": "Spadola",
+   "lat": 38.604,
+   "lon": 16.337,
+   "r": "calabria"
+  },
+  {
+   "n": "Simbario",
+   "lat": 38.611,
+   "lon": 16.338,
+   "r": "calabria"
+  },
+  {
+   "n": "Stilo",
+   "lat": 38.476,
+   "lon": 16.467,
+   "r": "calabria"
+  },
+  {
+   "n": "Brognaturo",
+   "lat": 38.602,
+   "lon": 16.342,
+   "r": "calabria"
   }
  ],
  "sila-greca": [
-  {
-   "n": "San Giovanni in Fiore",
-   "lat": 39.254,
-   "lon": 16.697,
-   "r": "calabria"
-  },
   {
    "n": "Celico",
    "lat": 39.311,
@@ -3353,13 +7577,73 @@
    "lat": 39.163,
    "lon": 16.413,
    "r": "calabria"
+  },
+  {
+   "n": "San Giovanni in Fiore",
+   "lat": 39.254,
+   "lon": 16.697,
+   "r": "calabria"
+  },
+  {
+   "n": "Casali del Manco",
+   "lat": 39.285,
+   "lon": 16.337,
+   "r": "calabria"
+  },
+  {
+   "n": "Spezzano della Sila",
+   "lat": 39.298,
+   "lon": 16.337,
+   "r": "calabria"
+  },
+  {
+   "n": "Aprigliano",
+   "lat": 39.241,
+   "lon": 16.341,
+   "r": "calabria"
+  },
+  {
+   "n": "Pietrafitta",
+   "lat": 39.262,
+   "lon": 16.339,
+   "r": "calabria"
+  },
+  {
+   "n": "Rovito",
+   "lat": 39.31,
+   "lon": 16.323,
+   "r": "calabria"
+  },
+  {
+   "n": "Piane Crati",
+   "lat": 39.235,
+   "lon": 16.323,
+   "r": "calabria"
+  },
+  {
+   "n": "San Pietro in Guarano",
+   "lat": 39.345,
+   "lon": 16.312,
+   "r": "calabria"
+  },
+  {
+   "n": "Figline Vegliaturo",
+   "lat": 39.226,
+   "lon": 16.329,
+   "r": "calabria"
+  },
+  {
+   "n": "Mangone",
+   "lat": 39.204,
+   "lon": 16.333,
+   "r": "calabria"
   }
  ],
  "valle-del-fitalia": [
   {
-   "n": "Maniace",
-   "lat": 37.862,
-   "lon": 14.808,
+   "n": "Longi",
+   "lat": 38.027,
+   "lon": 14.753,
    "r": "sicilia"
   },
   {
@@ -3369,9 +7653,63 @@
    "r": "sicilia"
   },
   {
-   "n": "Longi",
-   "lat": 38.027,
-   "lon": 14.753,
+   "n": "Maniace",
+   "lat": 37.862,
+   "lon": 14.808,
+   "r": "sicilia"
+  },
+  {
+   "n": "Tortorici",
+   "lat": 38.031,
+   "lon": 14.825,
+   "r": "sicilia"
+  },
+  {
+   "n": "Galati Mamertino",
+   "lat": 38.033,
+   "lon": 14.771,
+   "r": "sicilia"
+  },
+  {
+   "n": "Castell'Umberto",
+   "lat": 38.085,
+   "lon": 14.807,
+   "r": "sicilia"
+  },
+  {
+   "n": "Capri Leone",
+   "lat": 38.108,
+   "lon": 14.707,
+   "r": "sicilia"
+  },
+  {
+   "n": "Sant'Agata di Militello",
+   "lat": 38.07,
+   "lon": 14.634,
+   "r": "sicilia"
+  },
+  {
+   "n": "Naso",
+   "lat": 38.122,
+   "lon": 14.788,
+   "r": "sicilia"
+  },
+  {
+   "n": "Torrenova",
+   "lat": 38.091,
+   "lon": 14.677,
+   "r": "sicilia"
+  },
+  {
+   "n": "San Salvatore di Fitalia",
+   "lat": 38.071,
+   "lon": 14.777,
+   "r": "sicilia"
+  },
+  {
+   "n": "San Marco d'Alunzio",
+   "lat": 38.073,
+   "lon": 14.699,
    "r": "sicilia"
   }
  ],
@@ -3383,15 +7721,21 @@
    "r": "sicilia"
   },
   {
+   "n": "San Teodoro",
+   "lat": 37.848,
+   "lon": 14.699,
+   "r": "sicilia"
+  },
+  {
    "n": "Maniace",
    "lat": 37.862,
    "lon": 14.808,
    "r": "sicilia"
   },
   {
-   "n": "San Teodoro",
-   "lat": 37.848,
-   "lon": 14.699,
+   "n": "Capizzi",
+   "lat": 37.849,
+   "lon": 14.478,
    "r": "sicilia"
   }
  ]
