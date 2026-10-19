@@ -39,6 +39,11 @@ const { scriviSitemap } = require('./genera-sitemap.js');
 // il bottone YouTube in fondo, col quiz accanto SOLO nelle regioni che ce l'hanno (18/10/2026):
 // la pagina regione gemella ce l'aveva dall'11/10, queste no
 const { coppiaQuiz } = require('./lib-pagina-funghi.js');
+// ⚠️ ANCHE METEO, COME LE PAGINE REGIONE (20/10/2026, campione sulla Garfagnana): cerca nell'intestazione con le sei
+// porte, la riga Previsioni · Radar · Boschi · Satellite sotto «Apri la mappa di ieri», «Che tempo farà» coi PAESI
+// della zona (non le citta' della regione) e il grafico coi 7 giorni previsti. Il codice nel browser e' lo stesso
+// della regione (lib-meteo-regione.js, con le opzioni di zona): una regola sola, un posto solo.
+const { METEO_CSS, meteoHtml, meteoClient } = require('./lib-meteo-regione.js');
 
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
@@ -75,6 +80,48 @@ for (const [k, v] of Object.entries(POSTI)) {
 function scrivi(dest, testo) {
   fs.mkdirSync(path.dirname(dest), { recursive: true });
   fs.writeFileSync(dest, testo.replace(/\r\n/g, '\n').replace(/\n/g, '\r\n'), 'utf8');
+}
+
+/* ── I PAESI DELLA ZONA, per «Che tempo farà» (20/10/2026) ──
+   Per ogni pluviometro della zona il comune piu' vicino (elenco dei comuni, le zone «z» escluse), senza doppioni,
+   dal piu' abitato; al massimo OTTO: l'API li chiede in parallelo e sopra i 12 sfora le 50 sottorichieste di
+   Cloudflare. Ognuno porta la SUA regione (r): la Garfagnana ha pluviometri anche emiliani. Finiscono in
+   data/paesi-zone.json, che legge /api/previsioni?zona=<slug>. ⚠️ Niente quota: l'elenco non ce l'ha, e MET
+   senza altitude usa il suo terreno (meglio di una quota inventata). */
+const COMUNI = fs.readFileSync(path.join(RADICE, 'data', 'elenco-paesi.txt'), 'utf8').split('\n')
+  .map(r => r.split('|')).filter(p => p.length >= 6 && (p[6] || '').trim() !== 'z')
+  .map(p => ({ n: p[0], lat: +p[1], lon: +p[2], reg: p[4], pop: +p[5] || 0 }));
+const MAX_PAESI = 8;
+// ⚠️ Non bastano i comuni piu' vicini ai pluviometri: la Garfagnana restava senza Castelnuovo, che un pluviometro
+// suo non ce l'ha. Quindi anche i comuni DENTRO l'inviluppo dei pluviometri della zona (con almeno 3 pluviometri).
+function inviluppo(pt) {   // catena monotona di Andrew, punti [x, y]
+  const p = pt.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]), x = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const giu = [], su = [];
+  for (const q of p) { while (giu.length >= 2 && x(giu[giu.length - 2], giu[giu.length - 1], q) <= 0) giu.pop(); giu.push(q); }
+  for (const q of p.reverse()) { while (su.length >= 2 && x(su[su.length - 2], su[su.length - 1], q) <= 0) su.pop(); su.push(q); }
+  return giu.slice(0, -1).concat(su.slice(0, -1));
+}
+function dentro(q, poli) {
+  let d = false;
+  for (let i = 0, j = poli.length - 1; i < poli.length; j = i++) {
+    const a = poli[i], b = poli[j];
+    if ((a[1] > q[1]) !== (b[1] > q[1]) && q[0] < (b[0] - a[0]) * (q[1] - a[1]) / (b[1] - a[1]) + a[0]) d = !d;
+  }
+  return d;
+}
+function paesiDellaZona(z) {
+  const { ids, regDi } = postiDellaZona(POSTI, z), visti = new Map(), k = Math.cos(z.lat * Math.PI / 180), punti = [];
+  for (const id of ids) {
+    const p = ANAG_REG[regDi[id]][id], la = +p[4], lo = +p[5];
+    punti.push([lo * k, la]);
+    let best = null, d0 = Infinity;
+    for (const c of COMUNI) { const d = (c.lat - la) ** 2 + ((c.lon - lo) * k) ** 2; if (d < d0) { d0 = d; best = c; } }
+    if (best) visti.set(best.n + '|' + best.reg, best);
+  }
+  const poli = punti.length >= 3 ? inviluppo(punti) : [];
+  if (poli.length >= 3) for (const c of COMUNI) if (dentro([c.lon * k, c.lat], poli)) visti.set(c.n + '|' + c.reg, c);
+  return [...visti.values()].sort((a, b) => b.pop - a.pop || a.n.localeCompare(b.n, 'it')).slice(0, MAX_PAESI)
+    .map(c => ({ n: c.n, lat: c.lat, lon: c.lon, r: c.reg }));
 }
 
 function pagina(z) {
@@ -179,6 +226,16 @@ ${briciolaJson([['Mappa pluviometrica', `${SITO}/`], [nomeReg, `${SITO}/${casa.k
 .altre-zone{font-size:15px;line-height:1.9;color:#555;}
 .altre-zone a{color:var(--blu);}
 @media(max-width:420px){.tab{font-size:14px;}.tab td,.tab th{padding-left:3px;padding-right:3px;}}
+${METEO_CSS}
+/* i paesi hanno nomi lunghi («Castelnuovo di Garfagnana»): a capo invece dei puntini, colonna un filo piu' larga */
+#meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
+#meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
+/* «Apri la mappa di ieri»: com'era, ma con le scritte piu' grandi (suo, 20/10/2026; una riga anche a 360 px) */
+.ieri-btn{padding:16px 16px 17px 20px;}
+.ieri-btn b{font-size:23px;}
+.ieri-btn small{font-size:17px;}
+.ieri-btn i{width:44px;height:44px;}
+@media(max-width:480px){.ieri-btn b{font-size:20.5px;}.ieri-btn small{font-size:15.5px;}.ieri-btn{padding-left:16px;}}
 </style>
 </head>
 <body>
@@ -194,11 +251,9 @@ ${briciolaJson([['Mappa pluviometrica', `${SITO}/`], [nomeReg, `${SITO}/${casa.k
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="verdetto"></div>
-<a class="banda-prev" href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;m=prev"
-   onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-${zslug}-banda-previsioni'})}catch(e){}">
-  <span class="ic">☀️</span><span><b>Che tempo farà ${esc(z.dove)}</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
+${meteoHtml(casa, `Che tempo farà ${esc(z.dove)}`, 'Sto leggendo le previsioni dei paesi…')}
 
-<h2>La pioggia degli ultimi 30 giorni</h2>
+<h2 id="h-grafico">La pioggia degli ultimi 30 giorni</h2>
 <div id="grafico"></div>
 
 <h2>Ultimi 7 e 30 giorni</h2>
@@ -269,7 +324,7 @@ ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel
 (function(){
   var BASE = /^(localhost|127\\.0\\.0\\.1)$/.test(location.hostname) ? '/data/' : '${RAW}';
   var ZONA = ${JSON.stringify(zslug)}, REGS = ${JSON.stringify(REGS)}, SITO = ${JSON.stringify(SITO)};
-  var PIN = ${JSON.stringify(PIN.replace(/&amp;/g, '&'))};
+  var PIN = ${JSON.stringify(PIN.replace(/&amp;/g, '&'))}, CASA = ${JSON.stringify(casa.k)};
   var MESI = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
   var MESI_L = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
   var GIORNI = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
@@ -330,7 +385,13 @@ ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel
       + '<div class="capo-btns"><a class="ieri-btn" href="' + link(d.ultimo, d.ultimo) + '"'
       + ' onclick="try{gtag(\\'event\\',\\'apri_mappa\\',{da:\\'zona-piogge-' + ZONA + '-ieri-box\\'})}catch(e){}">'
       + '<b>' + (t === 'Ieri' ? 'Apri la mappa di ieri' : 'Mappa di quel giorno') + '</b><i>→</i>'   // «Apri la mappa di quel giorno» andava a capo gia' a 390 px (C15, 19/10/2026)
-      + '<small>la pioggia in tutte le località</small></a></div></div>';
+      + '<small>la pioggia in tutte le località</small></a></div>'
+      // 20/10/2026, come le pagine regione (lib-numeri-regione.js): le altre funzioni della mappa, gia' puntate sulla zona
+      + '<div class="mk-porte">'
+      + [['☀️', 'Previsioni', '&m=prev', 'porta-previsioni'], ['📡', 'Radar', '&radar=ora', 'porta-radar'],
+         ['🌲', 'Boschi', '&boschi=1', 'porta-boschi'], ['🛰', 'Satellite', '&boschi=1&sat=1', 'porta-satellite']].map(function(t){
+          return '<a href="' + SITO + '/?r=' + CASA + t[2] + '&' + PIN + '" onclick="try{gtag(\\'event\\',\\'apri_mappa\\',{da:\\'zona-piogge-' + ZONA + '-' + t[3] + '\\'})}catch(e){}"><span>' + t[0] + '</span>' + t[1] + '</a>';
+        }).join('') + '</div></div>';
   }
 
   function scriviBarre(s, ultimo){
@@ -406,18 +467,30 @@ ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel
     });
 })();
 </script>
+<script>
+(${meteoClient.toString()})(${JSON.stringify(casa.k)}, ${JSON.stringify(nomeReg)}, ${JSON.stringify(SITO)}, ${fs.existsSync(path.join(RADICE, casa.k, 'adesso')) ? 'true' : 'false'}, ${JSON.stringify({
+  ga: 'zona-piogge-' + zslug, area: 'zona=' + zslug, riepilogo: 'riepiloghi/zone/' + zslug + '.json', media: 'media della zona',
+  guasto: 'Le previsioni dei paesi', tutte: 'Mostra tutti i paesi (#)', tocca: 'Tocca un paese per vederlo ora per ora sulla mappa' })});
+</script>
 </body>
 </html>
 `;
 }
 
 if (require.main === module) {
+  // SOLO=garfagnana: una pagina sola, per i campioni (niente sitemap). L'elenco dei paesi si scrive sempre intero.
+  const SOLO = process.env.SOLO;
+  const paesi = {};
+  for (const z of ZONE) if (postiDellaZona(POSTI, z).ids.length) paesi[slug(z.n)] = paesiDellaZona(z);
+  fs.writeFileSync(path.join(RADICE, 'data', 'paesi-zone.json'), JSON.stringify(paesi, null, 1) + '\n', 'utf8');
   let n = 0;
   for (const z of ZONE) {
     if (!postiDellaZona(POSTI, z).ids.length) continue;
+    if (SOLO && slug(z.n) !== SOLO) continue;
     scrivi(path.join(RADICE, 'zone', slug(z.n), 'index.html'), pagina(z));
     n++;
   }
+  if (SOLO) { console.log(`${n} pagina scritta (SOLO=${SOLO}), sitemap non toccata.`); process.exit(0); }
   const tot = scriviSitemap(SITO, RADICE);
   console.log(`${n} pagine «dove ha piovuto» di zona scritte, sitemap.xml con ${tot} indirizzi.`);
 }

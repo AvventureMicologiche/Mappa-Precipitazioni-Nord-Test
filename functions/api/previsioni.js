@@ -23,9 +23,10 @@ export async function onRequestGet({ request, env }) {
   const u = new URL(request.url);
   const cors = intestazioni(request);
   try {
-    const area = u.searchParams.get('capoluoghi');
+    // ?zona=garfagnana: i paesi di una zona piogge (data/paesi-zone.json, lo scrive genera-pagine-zona-piogge.js), 20/10/2026
+    const zona = u.searchParams.get('zona'), area = zona || u.searchParams.get('capoluoghi');
     if (area) {
-      const d = await perArea(area, env, request);
+      const d = await perArea(area, env, request, zona ? '/data/paesi-zone.json' : '/data/capoluoghi.json');
       // ⚠️ (19/10/2026, quinto check, bug 5) nessuna citta' risponde = 502 e niente cache nel browser: prima era un 200
       // tenuto 10 minuti, e la mappa restava su «carico…»; qualcuna sola in errore = 200 ma per 2 minuti, poi si richiede
       const stato = d.errore ? (d.capoluoghi ? 502 : 404) : 200;
@@ -116,17 +117,17 @@ async function perPunto(lat, lon, q, request, conOre, conProb) {
 }
 
 // ── i capoluoghi di un'area, in parallelo (al massimo 12 → sotto i 50 subrequest) ──
-async function perArea(area, env, request) {
-  if (!/^[a-z-]{3,24}$/.test(area)) return { errore: 'area' };
-  const chiave = new Request(`https://cache.previsioni/area?v=${VERSIONE}&d=${oraLocale(new Date().toISOString()).g}&a=${area}`);   // data nella chiave, vedi perPunto
+async function perArea(area, env, request, file) {
+  if (!/^[a-z-]{3,40}$/.test(area)) return { errore: 'area' };   // 40: gli indirizzi delle zone arrivano a 30 lettere
+  const chiave = new Request(`https://cache.previsioni/area?v=${VERSIONE}&d=${oraLocale(new Date().toISOString()).g}&f=${file.slice(6, 8)}&a=${area}`);   // data nella chiave, vedi perPunto; f: una zona e una regione con lo stesso nome non si pestano
   const cache = caches.default;
   const c = await cache.match(chiave); if (c) return c.json();
-  const lista = await (await env.ASSETS.fetch(new URL('/data/capoluoghi.json', request.url))).json();
+  const lista = await (await env.ASSETS.fetch(new URL(file, request.url))).json();
   const citta = lista[area]; if (!citta) return { errore: 'area sconosciuta' };
   // ⚠️ TETTO DI 50 SOTTORICHIESTE per chiamata (Cloudflare): con 12 citta' e la % di Open-Meteo erano 51 e la
   // Svizzera cadeva al primo colpo (7/10). Qui niente %, e una citta' che fallisce resta sola col suo errore.
   const ris = await Promise.all(citta.map(async p => {
-    try { const r = await perPunto(p.lat, p.lon, p.q, request, false, false); return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, ...(p.c ? { c: 1 } : {}), ...(r.dati.errore ? { errore: r.dati.errore } : { giorni: r.dati.giorni, agg: r.dati.agg }) }; }
+    try { const r = await perPunto(p.lat, p.lon, p.q, request, false, false); return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, ...(p.c ? { c: 1 } : {}), ...(p.r ? { r: p.r } : {}), ...(r.dati.errore ? { errore: r.dati.errore } : { giorni: r.dati.giorni, agg: r.dati.agg }) }; }
     catch (e) { return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, errore: String(e && e.message || e) }; }
   }));
   const dati = { area, agg: (ris.find(x => x.agg) || {}).agg || null, capoluoghi: ris, fonte: 'MET Norway (ECMWF)' + (PROB ? ' · % Open-Meteo' : '') };

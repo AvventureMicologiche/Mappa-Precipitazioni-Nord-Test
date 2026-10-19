@@ -84,18 +84,24 @@ header{position:relative;flex-wrap:nowrap;}
 `;
 
 // il blocco «Che tempo farà», scritto nella pagina (niente salti al caricamento); le citta' le riempie il codice
-function meteoHtml(r) {
+// (20/10/2026) le pagine di zona lo chiamano con titolo e attesa loro: «Che tempo farà in Garfagnana», «dei paesi»
+function meteoHtml(r, titolo, attesa) {
   const estera = ESTERE.includes(r.k);
   return `<section class="mk-meteo" id="meteo">
-<h2>Che tempo farà ${r.prep} ${r.nome}</h2>
+<h2>${titolo || `Che tempo farà ${r.prep} ${r.nome}`}</h2>
 ${estera ? '' : `<div class="mk-tuo"><input type="search" autocomplete="off" aria-label="Cerca un paese o una frazione" placeholder="Il tuo paese, anche una frazione"><div class="mk-drop"></div></div>
-`}<div class="mk-citta"><p class="mk-attesa">Sto leggendo le previsioni delle città…</p></div>
+`}<div class="mk-citta"><p class="mk-attesa">${attesa || 'Sto leggendo le previsioni delle città…'}</p></div>
 </section>`;
 }
 
 /* ⚠️ GIRA NEL BROWSER: la pagina la copia con toString() e la chiama coi suoi valori, come numeriRegione.
-   Niente require, niente sintassi che i telefoni vecchi non capiscono. */
-function meteoClient(K, NOME, SITO, ADESSO) {
+   Niente require, niente sintassi che i telefoni vecchi non capiscono.
+   OPZ (20/10/2026, pagine di zona): senza, e' la pagina regione di sempre. Con: ga = prefisso degli eventi,
+   area = la domanda all'API (zona=<slug>), riepilogo = il file del grafico, e i testi «paesi» al posto di «citta'».
+   I paesi arrivano gia' in ordine (per abitanti) e ognuno porta la SUA regione (r): una zona sta su due regioni. */
+function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
+  OPZ = OPZ || {};
+  var GA = OPZ.ga || 'pagina-' + K, AREA = OPZ.area || 'capoluoghi=' + K, RIEP = OPZ.riepilogo || 'riepiloghi/' + K + '.json';
   var API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && location.port !== '8788' ? 'http://127.0.0.1:8788/api/previsioni' : '/api/previsioni';
   var BASE = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? '/data/' : 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
   var GS = ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab'];
@@ -105,7 +111,7 @@ function meteoClient(K, NOME, SITO, ADESSO) {
   function num(n) { return (Math.round(n * 10) / 10).toFixed(1).replace('.', ','); }
   function mm(n) { return n === 0 ? '0' : n < 10 ? num(n) : String(Math.round(n)); }
   function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
-  function ga(da) { try { gtag('event', 'apri_mappa', { da: 'pagina-' + K + '-' + da }); } catch (e) {} }
+  function ga(da) { try { gtag('event', 'apri_mappa', { da: GA + '-' + da }); } catch (e) {} }
   // le icone della mappa (index.html, ICONE)
   var ICONE = [[/clearsky_day|fair_day/, '☀️'], [/clearsky_night|fair_night/, '🌙'], [/partlycloudy_day/, '⛅'], [/partlycloudy_night|^cloudy|fog/, '☁️'],
                [/thunder/, '⛈️'], [/heavyrain|heavysleet/, '🌧️'], [/rain|sleet|drizzle/, '🌦️'], [/snow/, '🌨️']];
@@ -228,27 +234,27 @@ function meteoClient(K, NOME, SITO, ADESSO) {
   function disegnaCitta(j) {
     var box = blocco && blocco.querySelector('.mk-citta'); if (!box) return;
     var cc = (j && j.capoluoghi || []).filter(function (c) { return c.giorni && c.giorni.length >= 3; });
-    if (!cc.length) { box.innerHTML = '<p class="mk-attesa">Le previsioni delle città non rispondono in questo momento: <a href="' + SITO + '/?r=' + K + '&m=prev">aprile sulla mappa</a>.</p>'; return; }
+    if (!cc.length) { box.innerHTML = '<p class="mk-attesa">' + (OPZ.guasto || 'Le previsioni delle città') + ' non rispondono in questo momento: <a href="' + SITO + '/?r=' + K + '&m=prev">aprile sulla mappa</a>.</p>'; return; }
     // prima il capoluogo di regione, poi per abitanti (dall'elenco dei comuni): Prato e Pisa prima di Manciano
     var ab = {}; (ELENCO || []).forEach(function (x) { if (x.reg === K && !x.z) ab[x.q] = x.pop; });
-    cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
+    if (!OPZ.area) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
     var g0 = cc[0].giorni;
     var testa = '<div class="mk-cr mk-cr-t"><span></span>' + [0, 1, 2].map(function (d) { return '<span>' + nomeG(g0[d].g, d) + '</span>'; }).join('') + '</div>';
     var righe = cc.map(function (c, i) {
-      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + K + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + '</b>'
+      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + (c.r || K) + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + '</b>'
         + [0, 1, 2].map(function (d) { var g = c.giorni[d]; return '<span><i>' + icona(g.s) + '</i>' + g.mx + '°'
           + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '') + '</span>'; }).join('') + '</a>';
     }).join('');
     box.innerHTML = '<div class="mk-tab">' + testa + righe + '</div>'
-      + (cc.length > 6 ? '<button class="mk-tutte">Mostra tutte le ' + cc.length + ' città</button>' : '')
-      + '<p class="mk-citta-n">Tocca una città per vederla ora per ora sulla mappa'
+      + (cc.length > 6 ? '<button class="mk-tutte">' + (OPZ.tutte || 'Mostra tutte le # città').replace('#', cc.length) + '</button>' : '')
+      + '<p class="mk-citta-n">' + (OPZ.tocca || 'Tocca una città per vederla ora per ora sulla mappa')
       + (ADESSO ? ' · <a href="' + SITO + '/' + K + '/adesso/" data-adesso="1">dove sta piovendo adesso, col radar →</a>' : '') + '</p>';
     var bt = box.querySelector('.mk-tutte');
     if (bt) bt.addEventListener('click', function () { box.classList.add('mk-aperte'); bt.remove(); });
   }
   if (blocco) blocco.addEventListener('click', function (e) {
     var a = e.target.closest('a[data-da]'); if (a) ga(a.getAttribute('data-da'));
-    if (e.target.closest('a[data-adesso]')) { try { gtag('event', 'apri_adesso', { da: 'pagina-' + K + '-meteo' }); } catch (x) {} }
+    if (e.target.closest('a[data-adesso]')) { try { gtag('event', 'apri_adesso', { da: GA + '-meteo' }); } catch (x) {} }
   });
 
   /* ═══ 4. IL GRAFICO: 30 giorni misurati + 7 previsti (media delle citta') ═══ */
@@ -265,7 +271,7 @@ function meteoClient(K, NOME, SITO, ADESSO) {
     var s = j.serie, n = Math.min(30, s.length), max = 1, i, q;
     for (q = 0; q < n; q++) max = Math.max(max, s[q] || 0);
     F.forEach(function (g) { max = Math.max(max, g.mm); });
-    var ultimo = j.serieDa || (j.periodi['1'] || j.periodi['7']).ultimo;
+    var ultimo = j.serieDa || j.ultimoGiorno || (j.periodi['1'] || j.periodi['7']).ultimo;   // ultimoGiorno: il riepilogo di zona
     var cand = [], lab = {};
     for (var c = 1; c <= n; c++) if (s[c - 1] != null && s[c - 1] >= 1 && s[c - 1] >= max * 0.2) cand.push(c);
     cand.sort(function (a, b) { return s[b - 1] - s[a - 1]; }).forEach(function (c) { if (!lab[c - 1] && !lab[c + 1]) lab[c] = 1; });
@@ -284,12 +290,12 @@ function meteoClient(K, NOME, SITO, ADESSO) {
     });
     box.innerHTML = '<div class="gg">' + barre + '</div><div class="gg-x">' + ax + '</div>'
       + '<p class="gg-leg"><i style="background:var(--blu)"></i>ultimi 7 giorni &nbsp; <i style="background:#b9cbe2"></i>i giorni prima &nbsp; '
-      + '<i class="mk-leg-fut"></i>previsti &nbsp;·&nbsp; media della regione, in mm</p>';
+      + '<i class="mk-leg-fut"></i>previsti &nbsp;·&nbsp; ' + (OPZ.media || 'media della regione') + ', in mm</p>';
     var h = document.getElementById('h-grafico'); if (h) h.textContent = 'La pioggia: gli ultimi 30 giorni e i prossimi 7';
   }
 
-  var citta = fetch(API + '?capoluoghi=' + K).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
-  var riepilogo = fetch(BASE + 'riepiloghi/' + K + '.json').then(function (r) { return r.json(); }).catch(function () { return null; });
+  var citta = fetch(API + '?' + AREA).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
+  var riepilogo = fetch(BASE + RIEP).then(function (r) { return r.json(); }).catch(function () { return null; });
   citta.then(function (j) { return carica().catch(function () {}).then(function () { disegnaCitta(j); }); });
   // il grafico e' gia' cotto nell'HTML, ma la pagina lo RIDISEGNA quando arriva il suo riepilogo:
   // per qualche secondo si ricontrolla e si rimettono i giorni previsti se sono spariti
