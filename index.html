@@ -6663,7 +6663,13 @@ var FRANCIA_ESCLUSE={
   // 21/8 Bormes 33,4, Collobrieres 33,1, Le Luc 24, Cogolin 18,3 -> lei 0;
   // 24/8 12,9-24,4 -> lei 0. Ultimo giorno sopra 1 mm il 4/6. Restano Le Luc
   // a 7,7 km e gli altri tre fra 12 e 14 km.
-  '83075001':true
+  '83075001':true,
+  // Bastia (Haute-Corse), 20033015, 26 m, esclusa il 19/10/2026: MORTA CON UNA DATA.
+  // Misurava (40,8 mm a maggio, 8,2 il 25/8), poi 0,2 mm in 45 giorni mentre la mediana
+  // dei sette vicini entro 25 km ne fa 52,4. Resta Barbaggio a 5,3 km. ⚠️ L'ALTRA Bastia
+  // (20148001, 18,5 km a sud, verso l'aeroporto di Poretta) e' sana e NON va toccata: si
+  // esclude per ID, mai per nome.
+  '20033015':true
 };
 function loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
   var FR_RAW=PILOT_DATA_BASE+(REGIONS[regionKey].dataDir||regionKey);
@@ -7082,7 +7088,15 @@ var MH_ESCLUSE={
   // vicini entro 8 km, 25/8 1,2 contro 35-58, 10/9 4,2 contro 44-62. Agosto
   // al 3%, settembre all'8%. Ne restano 4 entro 10 km (Allerona, Orvieto,
   // Orvieto Scalo, Ponte Adunata; gli ultimi due danno sempre lo stesso numero).
-  umbria:{'42.89595_12.02092':true,'42.79042_12.11868':true},
+  // DOPPIONI, esclusi il 19/10/2026 (quarto check, B7): stessa rete, stesso pluviometro sotto
+  // due nomi o due coordinate, valori IDENTICI al decimo in tutti i 60 giorni guardati.
+  // In mappa erano due pallini nello stesso posto, peso doppio nella heatmap e due righe
+  // nella classifica delle pagine. Si tiene quello piu' ricco di sensori (togliGemelleDiConfine).
+  // S.Gemini 42.60810/12.54280 (291 m): gemella di S.Gemini 42.60889/12.54056 a 200 m, uguale
+  // anche nella temperatura (119,8 mm su 60 giorni tutt'e due). Resta l'altra.
+  // Ponte Adunata 42.72426/12.14214: gemella di Orvieto Scalo a 510 m (150,4 mm tutt'e due),
+  // senza temperatura; Orvieto Scalo ce l'ha e resta.
+  umbria:{'42.89595_12.02092':true,'42.79042_12.11868':true,'42.60810_12.54280':true,'42.72426_12.14214':true},
   // Osini - Punta su Scrau (NU), esclusa il 15/9/2026: MAI una goccia. In
   // archivio dal 19/7, mai un giorno sopra 1 mm; in agosto zero in tutti e 7 i
   // giorni di pioggia dei vicini (3/8 Gairo 39,7; 5/8 Lanusei 34 e Jerzu 27,2;
@@ -7102,13 +7116,27 @@ var MH_ESCLUSE={
   // Mai una goccia dal 20/8 in 47 giorni consegnati, mentre il 21/9 Linguaglossa Etna Nord
   // a 3,5 km ne faceva 20 e Casa Cantoniera 10,4. Trovata dal controllo del 5/10, verificata
   // giorno per giorno: sorda in tutti e tre i giorni bagnati.
-  sicilia:{'37.65500_14.52833':true,'37.69194_12.75222':true,'37.29722_14.07111':true,'37.76556_15.05944':true},
+  // Buturro (TP), 37.74639/12.82722, esclusa il 19/10/2026: QUASI MAI UNA GOCCIA. 4,3 mm in
+  // tre mesi (dal 19/7), settembre zero in 30 giorni, 0,6 mm in 43 giorni contro i 53 della
+  // mediana dei 22 vicini entro 25 km. Il caso di Ponte S.Maria. Entro 10 km restano Villa
+  // Ruggero (8,9 km) e poco piu' in la' Castelvetrano SIAS (11,4).
+  sicilia:{'37.65500_14.52833':true,'37.69194_12.75222':true,'37.29722_14.07111':true,'37.76556_15.05944':true,'37.74639_12.82722':true},
   // Benevento METEO (BN), 41.11500/14.82500, esclusa il 30/9/2026: MORTA CON UNA DATA.
   // Misurava (60,9 mm in agosto, ultima pioggia 9,6 mm il 12/8), poi ZERO in tutto
   // settembre mentre Paduli a 3,9 km ne fa 66 e Benevento a 4,8 km 55. Gragnano (NA),
   // segnalata insieme, NON e' esclusa: e' viva (0,4 mm il 25/9) ma sorda, un decimo di
   // Pimonte a 2 km; per la regola del 21/8 le sorde restano in mappa.
-  campania:{'41.11500_14.82500':true}
+  // Gragnano (NA), 40.68889/14.51444, ESCLUSA il 19/10/2026 su decisione sua: da sorda e'
+  // diventata quasi muta. In tre mesi un solo giorno vero (9,1 mm il 19/9), 10,1 mm in 45
+  // giorni contro i 143,9 della mediana dei 46 vicini entro 25 km (7%). Restano Pimonte a
+  // 2,0 km e Lettere a 2,7.
+  // DOPPIONI, esclusi il 19/10/2026 (quarto check, B7), identici al decimo per 60 giorni:
+  // Giffoni 40.78694/14.91222 (971 m) gemella di Giffoni Valle Piana a 880 m (176,0 mm
+  // tutt'e due): resta Giffoni Valle Piana, che ha la sua pagina di paese. Le due coordinate
+  // danno 250 m di quota diversa e non si sa quale sia quella vera.
+  // Sarno SPM20 40.82944/14.61417 gemella di Sarno a 1,4 km (97,6 mm tutt'e due): resta
+  // Sarno. ⚠️ Sarno CF (40.83528/14.59528) NON e' un doppione: misura numeri suoi e resta.
+  campania:{'41.11500_14.82500':true,'40.68889_14.51444':true,'40.78694_14.91222':true,'40.82944_14.61417':true}
   // ── RIENTRATA il 10/9/2026: Poggio San Vicino (MC, 43.36842_13.07953) ────
   // Esclusa il 21/8/2026 perche' faceva 0,0 mm in 37 giorni. Ha ripreso a
   // misurare quello stesso giorno: 21,8 mm il 21/8, 36,4 il 25/8, 18,0 il
