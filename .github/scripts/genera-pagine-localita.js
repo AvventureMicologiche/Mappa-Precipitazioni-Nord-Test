@@ -63,6 +63,7 @@ const { scriviSitemap } = require('./genera-sitemap.js');
 
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
+const { cartelleDi, cartelleConRete, regioneDati } = require('./lib-posti.js');   // posti con la rete di un'altra regione (bug 17)
 const { escluse, escluso } = require('./lib-escluse.js');
 const ESCLUSE = escluse(path.join(__dirname, '..', '..'));
 
@@ -179,16 +180,16 @@ function pagina(r, posto, slug, sl) {
   // la sezione allora non si scrive proprio, invece di scrivere un numero fragile.
   // 17/10/2026: un pluviometro sospeso (escluso dalla mappa, lib-escluse.js) non ha
   // ritratto d'archivio: sono i millimetri di uno strumento guasto («Cantagallo 165º»).
-  const SOSPESO = escluso(ESCLUSE, REG, posto);
-  const C = clima(r.dirs)[ID];
+  const SOSPESO = escluso(ESCLUSE, regioneDati(REG, posto), posto);
+  const C = clima(cartelleDi(r, POSTI[REG], REGIONI))[ID];
   const RITRATTO = !SOSPESO && buono(C) ? C : null;
   // La classifica ha senso solo fra pluviometri con lo STESSO periodo alle
   // spalle: uno entrato in archivio a meta' avrebbe meno millimetri per un
   // motivo che con la pioggia non c'entra niente.
   let POSTO_IN_CLASSIFICA = 0, QUANTI_CONFRONTABILI = 0;
   if (RITRATTO) {
-    const tuttiC = clima(r.dirs);
-    const pari = POSTI[REG].filter(p => !escluso(ESCLUSE, REG, p)).map(p => tuttiC[p[0]])
+    const tuttiC = clima(cartelleDi(r, POSTI[REG], REGIONI));
+    const pari = POSTI[REG].filter(p => !escluso(ESCLUSE, regioneDati(REG, p), p)).map(p => tuttiC[p[0]])
       .filter(x => x && x.giorni >= RITRATTO.giorni * 0.9 && x.giorni <= RITRATTO.giorni * 1.1)
       .sort((a, b) => b.mm - a.mm);
     if (pari.length >= 10) {
@@ -732,7 +733,10 @@ ${JS_AGGIORNATO}
       var dd = perId[trs[it2].getAttribute('data-id')];
       var cel = trs[it2].querySelector('.mm .v');
       if (!cel) continue;
-      if (!dd || !(dd.mm > 0)) { cel.textContent = '—'; cel.className = 'v zero'; continue; }
+      // «–» solo se il dato manca, lo zero vero e «0 mm» come nelle zone piogge (19/10/2026, quinto check, bug 16):
+      // prima «—» valeva per tutti e due, e la tabella sotto scriveva «0,0 mm»
+      if (!dd || dd.mm == null) { cel.textContent = '–'; cel.className = 'v zero'; continue; }
+      if (!(dd.mm > 0)) { cel.textContent = '0 mm'; cel.className = 'v zero'; continue; }
       cel.textContent = num(dd.mm) + ' mm'; cel.className = 'v';
       var ba = document.createElement('span'); ba.className = 'barra';
       ba.style.width = Math.round(dd.mm / mxv * 100) + '%';
@@ -750,7 +754,7 @@ ${JS_AGGIORNATO}
             + '<span class="com">' + esc(x.sig) + ' · ' + x.q + ' m</span></td>'
             + '<td>' + (qui ? '—' : num(x.d) + ' km') + '</td>'
             + '<td class="mm"><span class="barra" style="width:' + Math.round(x.mm / mxp * 100) + '%"></span>'
-            + '<span class="v">' + num(x.mm) + ' mm</span></td></tr>';
+            + '<span class="v' + (x.mm > 0 ? '' : ' zero') + '">' + (x.mm > 0 ? num(x.mm) : '0') + ' mm</span></td></tr>';   // lo zero e «0 mm» (bug 16)
         }).join('') + '</tbody></table>';
     document.getElementById('notavicini').innerHTML = (pos
       ? 'Questo pluviometro è <b>' + pos + 'º su ' + tutti.length + '</b> fra i posti da bosco della regione. '

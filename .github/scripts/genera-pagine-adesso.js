@@ -28,12 +28,12 @@
 
 const fs = require('fs');
 const path = require('path');
-const { REGIONI, GEN, navAltre, STILE_BASE, STILE_IERI, ESTERE, SITO, GA_ID, CANALE, scrivi } = require('./genera-pagine-regione.js');
+const { REGIONI, GEN, navAltre, STILE_BASE, STILE_IERI, ESTERE, SITO, GA_ID, CANALE, scrivi, stazDi } = require('./genera-pagine-regione.js');
 const { STILE_NUOVO, RILIEVO } = require('./lib-pagina-funghi.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const RADICE = path.resolve(__dirname, '..', '..');
-const VERSIONE_JS = 2;   // si alza quando cambia lib/pagina-adesso.js: il browser riprende il file nuovo
+const VERSIONE_JS = 4;   // si alza quando cambia lib/pagina-adesso.js: il browser riprende il file nuovo
 
 // le regioni: l'anagrafe italiana + l'Abruzzo dopo il Lazio (stesso ordine nord-sud delle altre liste)
 const ABRUZZO = { k:'abruzzo', nome:'Abruzzo', prep:'in', senzaPagina:true };
@@ -195,7 +195,7 @@ function pagina(r) {
 <h2>Quanta pioggia è caduta</h2>
 <p>Il radar dice dove piove adesso. Quanta acqua è caduta davvero lo misurano i pluviometri a terra, millimetro per millimetro: ieri, negli ultimi 7, 20 e 30 giorni.</p>
 <a class="ieri-btn" href="${SITO}/${r.k}/">
-  <b>Dove ha piovuto ieri ${r.prep} ${r.nome}</b><small>I millimetri di ${r.staz} pluviometri, zona per zona</small><i>→</i></a>
+  <b>Dove ha piovuto ieri ${r.prep} ${r.nome}</b><small>I millimetri di ${stazDi(r, RADICE)} pluviometri, zona per zona</small><i>→</i></a>
 `;
   const radarPluvio = r.senzaPagina
     ? `<p>Il radar guarda la pioggia in quota: può vedere gocce che evaporano prima di toccare terra, o perderla dietro le montagne.</p>`

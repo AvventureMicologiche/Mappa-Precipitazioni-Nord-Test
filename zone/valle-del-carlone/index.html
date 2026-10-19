@@ -190,6 +190,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .yt-btn:hover{background:linear-gradient(180deg,#e8323a,#c01820);}
 .yt-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7d0d12,0 4px 8px rgba(160,20,27,.3);}
 
+
 .bric{font-size:14px;color:#666;margin-bottom:6px;}
 .bric a{color:var(--blu);}
 .tab{width:100%;border-collapse:collapse;font-size:15px;margin:8px 0 6px;}
@@ -213,7 +214,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 <main>
 <p class="bric"><a href="https://avventurepluvio-test.pages.dev/">Mappa pluviometrica</a> › <a href="https://avventurepluvio-test.pages.dev/emilia/">Emilia-Romagna</a> › Valle del Carlone</p>
 <h1>Dove ha piovuto in Valle del Carlone</h1>
-<p class="sotto"><b>Pluviometria della Valle del Carlone</b>: i dati dei 3 pluviometri di ARPA Lombardia e ARPAE Emilia-Romagna, ieri e nell'ultimo mese.</p>
+<p class="sotto"><b>Pluviometria della Valle del Carlone</b>: i dati dei 3 pluviometri di ARPA Lombardia, ieri e nell'ultimo mese.</p>
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="verdetto"></div>
@@ -249,7 +250,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 <table class="tab">
 <thead><tr><th>Pluviometro</th><th id="th1">Ieri</th><th>7 giorni</th><th>30 giorni</th></tr></thead>
 <tbody id="righe">
-<tr data-id="5529"><td><a href="https://avventurepluvio-test.pages.dev/funghi/emilia/romagnese/">Romagnese</a><span class="com">PV · 586 m</span></td><td class="mm v1">–</td><td class="mm v7">–</td><td class="mm v30">–</td></tr>
+<tr data-id="5529"><td><a href="https://avventurepluvio-test.pages.dev/funghi/lombardia/romagnese/">Romagnese</a><span class="com">PV · 586 m</span></td><td class="mm v1">–</td><td class="mm v7">–</td><td class="mm v30">–</td></tr>
 <tr data-id="8201"><td><a href="https://avventurepluvio-test.pages.dev/funghi/lombardia/santa-margherita-di-staffora-casanova/">Santa Margherita di Staffora Casanova</a><span class="com">PV · 575 m</span></td><td class="mm v1">–</td><td class="mm v7">–</td><td class="mm v30">–</td></tr>
 <tr data-id="2089"><td><a href="https://avventurepluvio-test.pages.dev/funghi/lombardia/varzi-nivione/">Varzi Nivione</a><span class="com">PV · 500 m</span></td><td class="mm v1">–</td><td class="mm v7">–</td><td class="mm v30">–</td></tr>
 </tbody>
@@ -290,7 +291,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano i 3 pluviometri di ARPA Lombardia e ARPAE Emilia-Romagna che stanno in Valle del Carlone: strumenti a terra,
+<p>I millimetri li misurano i 3 pluviometri di ARPA Lombardia che stanno in Valle del Carlone: strumenti a terra,
 con il loro nome e la loro quota, non stime da modello. I numeri in cima sono la media dei pluviometri della zona, giorno
 per giorno. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando. Nella tabella il trattino
 vuol dire che quel pluviometro in quei giorni non ha pubblicato.</p>
@@ -305,7 +306,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
 </main>
 
 <footer>
-  Dati: ARPA Lombardia e ARPAE Emilia-Romagna ·
+  Dati: ARPA Lombardia ·
   <a href="https://avventurepluvio-test.pages.dev/fonti">tutte le fonti e licenze</a> ·
   <a href="https://avventurepluvio-test.pages.dev/guida/">guida alla mappa</a> ·
   <a href="https://avventuremicologiche.it">Avventure Micologiche</a>
@@ -361,7 +362,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
     if (top.length) {
       dett = 'Dove ha piovuto di più: ' + top.map(function(s){ return '<b>' + esc(s.n) + '</b> ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm'; }).join(', ') + '.';
     } else if (d.top && d.top.length && d.top[0].mm > 0) {
-      dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm a ' + esc(d.top[0].n) + (/\.$/.test(d.top[0].n) ? '' : '.');   /* «T.P.» non prende un altro punto; doppia barra: sta dentro il modello (18/10/2026) */
+      dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm ' + (/^[aA]/.test(d.top[0].n) ? 'ad ' : 'a ') + esc(d.top[0].n) + (/\.$/.test(d.top[0].n) ? '' : '.');   /* «T.P.» non prende un altro punto; doppia barra: sta dentro il modello (18/10/2026) */
     } else {
       dett = 'Giornata asciutta: nessun pluviometro della zona ha misurato pioggia.';
     }

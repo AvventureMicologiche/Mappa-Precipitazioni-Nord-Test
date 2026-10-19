@@ -7,7 +7,7 @@
 <meta name="description" content="Mappa di 277 pluviometri ARPA Piemonte aggiornata ogni mattina. Ieri 100,7 mm a Sambughetto, in 7 giorni 101 mm a Sambughetto.">
 <link rel="canonical" href="https://avventurepluvio-test.pages.dev/piemonte/">
 <meta property="og:title" content="Dove ha piovuto in Piemonte: ieri e negli ultimi giorni">
-<meta property="og:description" content="Riepilogo degli ultimi 7, 20 e 30 giorni con le zone più bagnate, da oltre 250 pluviometri di ARPA Piemonte.">
+<meta property="og:description" content="Riepilogo degli ultimi 7, 20 e 30 giorni con le zone più bagnate, da oltre 270 pluviometri di ARPA Piemonte.">
 <meta property="og:image" content="https://avventurepluvio-test.pages.dev/preview.jpg">
 <meta property="og:url" content="https://avventurepluvio-test.pages.dev/piemonte/">
 <meta property="og:type" content="website">
@@ -267,7 +267,7 @@ header{position:relative;flex-wrap:nowrap;}
 </header>
 <main>
 <h1>Dove ha piovuto in Piemonte</h1>
-<p class="sotto"><b>Pluviometria del Piemonte</b>: i dati di oltre 250 pluviometri di ARPA Piemonte, ieri e nell'ultimo mese, dalle Alpi Marittime al Lago Maggiore.</p>
+<p class="sotto"><b>Pluviometria del Piemonte</b>: i dati di oltre 270 pluviometri di ARPA Piemonte, ieri e nell'ultimo mese, dalle Alpi Marittime al Lago Maggiore.</p>
 
 <!-- ⚠️ 25/9/2026: LO SCHEMA «PRIMA I DATI», lo stesso delle pagine funghi del
      24/9 (deciso da lui guardando Santo Stefano d'Aveto): in cima la risposta
@@ -364,7 +364,7 @@ header{position:relative;flex-wrap:nowrap;}
 
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano <b>oltre 250 pluviometri di ARPA Piemonte</b>, strumenti a terra, non stime da modello.
+<p>I millimetri li misurano <b>oltre 270 pluviometri di ARPA Piemonte</b>, strumenti a terra, non stime da modello.
 I numeri in cima sono la media dei pluviometri della regione, giorno per giorno; sotto, i più bagnati di ogni periodo.
 La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>
 <h2>La pioggia in corso: la diretta radar</h2>
@@ -481,7 +481,7 @@ temperatura, vento e umidità.</p>
   else {
     var t = nomeGiorno(d.ultimo), top = (d.top || []).filter(function (s) { return s.mm >= 1; }).slice(0, 3), dett;
     if (top.length) dett = 'Dove ha piovuto di più: ' + top.map(function (s) { return '<b>' + esc(s.n) + '</b> ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm'; }).join(', ') + '.';
-    else if (d.top && d.top.length && d.top[0].mm > 0) dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm a ' + esc(d.top[0].n) + (/\.$/.test(d.top[0].n) ? '' : '.');   // «T.P.» non prende un altro punto (18/10/2026)
+    else if (d.top && d.top.length && d.top[0].mm > 0) dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm ' + (/^[aA]/.test(d.top[0].n) ? 'ad ' : 'a ') + esc(d.top[0].n) + (/\.$/.test(d.top[0].n) ? '' : '.');   // «T.P.» non prende un altro punto (18/10/2026)
     else dett = 'Giornata asciutta: nessun pluviometro ha misurato pioggia.';
     out.verdetto = '<div class="verdetto">'
       + '<div class="si">' + (t === 'Ieri' ? 'Ieri, ' + lungo(d.ultimo) : t) + '</div>'
@@ -689,7 +689,14 @@ temperatura, vento e umidità.</p>
   var ICONE = [[/clearsky_day|fair_day/, '☀️'], [/clearsky_night|fair_night/, '🌙'], [/partlycloudy_day/, '⛅'], [/partlycloudy_night|^cloudy|fog/, '☁️'],
                [/thunder/, '⛈️'], [/heavyrain|heavysleet/, '🌧️'], [/rain|sleet|drizzle/, '🌦️'], [/snow/, '🌨️']];
   function icona(s) { for (var i = 0; i < ICONE.length; i++) if (ICONE[i][0].test(s || '')) return ICONE[i][1]; return '☁️'; }
-  function nomeG(s, d) { var x = daIso(s); return d === 0 ? 'oggi' : d === 1 ? 'domani' : GS[x.getDay()] + ' ' + x.getDate(); }
+  /* ⚠️ I GIORNI PER DATA, NON PER POSIZIONE (19/10/2026, quinto check, bug 11). Dopo mezzanotte una previsione presa
+     prima (cache) comincia con IERI: la tabella chiamava «oggi» ieri e il grafico metteva ieri due volte, fra i
+     misurati e fra i previsti. I giorni passati si tolgono appena arriva la risposta (daOggi) e i nomi si danno
+     confrontando la data. Stessa regola nella mappa (index.html) e in lib/pagina-adesso.js. */
+  function isoRoma(ms) { return new Date(ms).toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' }); }
+  var OGGI = isoRoma(Date.now()), DOMANI = isoRoma(Date.now() + 864e5);
+  function daOggi(j) { if (j && j.capoluoghi) j.capoluoghi.forEach(function (c) { if (c.giorni) c.giorni = c.giorni.filter(function (x) { return x.g >= OGGI; }); }); return j; }
+  function nomeG(s, d) { var x = daIso(s); return s === OGGI ? 'oggi' : s === DOMANI ? 'domani' : GS[x.getDay()] + ' ' + x.getDate(); }
   function nomeReg(k) { return { valledaosta: "Valle d'Aosta", altoadige: 'Alto Adige', emilia: 'Emilia-Romagna', friuli: 'Friuli' }[k] || (k.charAt(0).toUpperCase() + k.slice(1)); }
   function pl(x) { return '&pl=' + (+x.lat).toFixed(4) + ',' + (+x.lon).toFixed(4) + '&pn=' + encodeURIComponent(x.n) + (x.z ? '&pz=1' : ''); }
   function vai(url, da) { ga(da); setTimeout(function () { location.href = url; }, 120); }
@@ -860,7 +867,7 @@ temperatura, vento e umidità.</p>
     var h = document.getElementById('h-grafico'); if (h) h.textContent = 'La pioggia: gli ultimi 30 giorni e i prossimi 7';
   }
 
-  var citta = fetch(API + '?capoluoghi=' + K).then(function (r) { return r.json(); }).catch(function () { return null; });
+  var citta = fetch(API + '?capoluoghi=' + K).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
   var riepilogo = fetch(BASE + 'riepiloghi/' + K + '.json').then(function (r) { return r.json(); }).catch(function () { return null; });
   citta.then(function (j) { return carica().catch(function () {}).then(function () { disegnaCitta(j); }); });
   // il grafico e' gia' cotto nell'HTML, ma la pagina lo RIDISEGNA quando arriva il suo riepilogo:

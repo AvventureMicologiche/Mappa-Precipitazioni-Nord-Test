@@ -12,7 +12,10 @@
 const UA = 'precipitazioni.avventuremicologiche.it (avventuremicologiche@gmail.com)';
 const PROB = true;
 const TETTO_CACHE = 3600, MIN_CACHE = 600;
-const VERSIONE = 12; // alzare quando cambia la forma della risposta: la cache vecchia non si rilegge (11: simbolo del giorno, 18/10/2026; 12: le tre correzioni del simbolo, 19/10/2026)
+const VERSIONE = 13; // alzare quando cambia la forma della risposta: la cache vecchia non si rilegge (11: simbolo del giorno, 18/10/2026; 12: le tre correzioni del simbolo, 19/10/2026; 13: la % per istante UTC, 19/10/2026)
+// tempi massimi (19/10/2026, quinto check, bug 12): prima nessuno, e una fonte appesa teneva ferma la risposta
+// finche' Cloudflare non chiudeva la funzione. MET oltre 8 s = errore per quel punto; Open-Meteo oltre 4 s = niente %
+const TEMPO_MET_MS = 8000, TEMPO_PROB_MS = 4000;
 const ORIGINI = /^https?:\/\/(precipitazioni\.avventuremicologiche\.it|avventurepluvio(-test)?\.pages\.dev|localhost(:\d+)?|127\.0\.0\.1(:\d+)?)$/;
 const TZ = 'Europe/Rome';
 
@@ -28,7 +31,8 @@ export async function onRequestGet({ request, env }) {
       const stato = d.errore ? (d.capoluoghi ? 502 : 404) : 200;
       return rispondi(d, cors, stato, (d.capoluoghi || []).some(x => x.errore) ? 120 : 1800);
     }
-    if (!u.searchParams.has('lat') || !u.searchParams.has('lon')) return rispondi({ errore: 'lat/lon mancanti' }, cors, 400);
+    // ⚠️ anche VUOTI (19/10/2026, bug 12): «?lat=&lon=» passava come 0,0 e rispondeva col Golfo di Guinea
+    if (!(u.searchParams.get('lat') || '').trim() || !(u.searchParams.get('lon') || '').trim()) return rispondi({ errore: 'lat/lon mancanti' }, cors, 400);
     const lat = +u.searchParams.get('lat'), lon = +u.searchParams.get('lon'), q = u.searchParams.get('q');
     if (!isFinite(lat) || !isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return rispondi({ errore: 'lat/lon non validi' }, cors, 400);
     const r = await perPunto(lat, lon, q == null || q === '' ? null : Math.round(+q), request, true);
@@ -58,33 +62,41 @@ async function perPunto(lat, lon, q, request, conOre, conProb) {
   if (conProb === undefined) conProb = true;
   // cella di ~1 km: la cache vale per chiunque guardi lo stesso posto
   const la = lat.toFixed(2), lo = lon.toFixed(2), qq = q == null ? '' : String(Math.round(q / 10) * 10);
-  const chiave = new Request(`https://cache.previsioni/punto?v=${VERSIONE}&lat=${la}&lon=${lo}&q=${qq}&ore=${conOre ? 1 : 0}&pr=${conProb ? 1 : 0}`);
+  // ⚠️ la DATA italiana nella chiave (19/10/2026, quinto check, bug 11): a mezzanotte la cache di ieri non si usa
+  // piu', se no per fino a un'ora la previsione cominciava con ieri e il sito la chiamava «oggi»
+  const chiave = new Request(`https://cache.previsioni/punto?v=${VERSIONE}&d=${oraLocale(new Date().toISOString()).g}&lat=${la}&lon=${lo}&q=${qq}&ore=${conOre ? 1 : 0}&pr=${conProb ? 1 : 0}`);
   const cache = caches.default;
   const c = await cache.match(chiave);
   if (c) return { dati: await c.json(), maxAge: restante(c) };
 
+  /* ⚠️ LA % SI AGGANCIA PER ISTANTE, IN UTC (19/10/2026, quinto check, bug 12). Prima si chiedeva Open-Meteo in ora
+     italiana e si agganciava per «giorno_ora» locale. Due difetti, misurati sul sito vero a Genova: la fascia di 6 ore
+     delle 20 cercava le ore 24 e 25 e perdeva quelle dopo mezzanotte (23/10 20-02: 9% contro un vero 13%); e
+     Open-Meteo in ora italiana il 25/10 da' 24 ore invece di 25 (non ripete le 02), quindi da li' le sue ore locali
+     slittavano di una rispetto a MET (26/10: 11% e 8% contro 10% e 7%). Ora tutt'e due in UTC e si confrontano gli
+     istanti: le ore di MET sono gia' UTC, e la fascia di 6 ore e' «sei ore da quell'istante». */
   const [met, prob] = await Promise.all([
-    fetch(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${(+la).toFixed(4)}&lon=${(+lo).toFixed(4)}${qq ? '&altitude=' + qq : ''}`, { headers: { 'User-Agent': UA } }),
-    (PROB && conProb) ? fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&hourly=precipitation_probability&timezone=${encodeURIComponent(TZ)}&forecast_days=8`).catch(() => null) : null,
+    fetch(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${(+la).toFixed(4)}&lon=${(+lo).toFixed(4)}${qq ? '&altitude=' + qq : ''}`, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(TEMPO_MET_MS) }),
+    (PROB && conProb) ? fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&hourly=precipitation_probability&timezone=GMT&forecast_days=8`, { signal: AbortSignal.timeout(TEMPO_PROB_MS) }).catch(() => null) : null,
   ]);
   if (!met.ok) return { dati: { errore: 'MET Norway ' + met.status }, maxAge: 0 };
   const d = await met.json();
-  const pr = {}; // 'YYYY-MM-DD_h' → %
-  if (prob && prob.ok) { try { const o = await prob.json(); o.hourly.time.forEach((t, i) => { pr[t.slice(0, 10) + '_' + +t.slice(11, 13)] = o.hourly.precipitation_probability[i]; }); } catch (e) {} }
+  const pr = {}; // istante UTC in ms → %
+  if (prob && prob.ok) { try { const o = await prob.json(); o.hourly.time.forEach((t, i) => { pr[Date.parse(t + 'Z')] = o.hourly.precipitation_probability[i]; }); } catch (e) {} }
 
   const giorni = {}, ore = [];
   for (const t of d.properties.timeseries) {
-    const { g, h } = oraLocale(t.time);
+    const { g, h } = oraLocale(t.time), ms = Date.parse(t.time);   // ms: l'istante, per agganciare la %
     const x = t.data.instant.details, n1 = t.data.next_1_hours, n6 = t.data.next_6_hours;
     const e = giorni[g] || (giorni[g] = { g, mn: 99, mx: -99, mm: 0, righe: [], pc: null });
     e.mn = Math.min(e.mn, x.air_temperature); e.mx = Math.max(e.mx, x.air_temperature);
     const s = ((n1 || n6 || {}).summary || {}).symbol_code || null;
-    if (n1) { e.mm += n1.details.precipitation_amount; if (conOre) ore.push({ g, h, t: x.air_temperature, mm: n1.details.precipitation_amount, s, v: x.wind_speed, vd: x.wind_from_direction, u: x.relative_humidity, pc: pr[g + '_' + h] ?? null }); }
-    else if (n6) { e.mm += n6.details.precipitation_amount; if (conOre) ore.push({ g, h, h6: true, t: x.air_temperature, mm: n6.details.precipitation_amount, s, v: x.wind_speed, vd: x.wind_from_direction, u: x.relative_humidity, pc: maxProb(pr, g, h) }); }
+    if (n1) { e.mm += n1.details.precipitation_amount; if (conOre) ore.push({ g, h, t: x.air_temperature, mm: n1.details.precipitation_amount, s, v: x.wind_speed, vd: x.wind_from_direction, u: x.relative_humidity, pc: pr[ms] ?? null }); }
+    else if (n6) { e.mm += n6.details.precipitation_amount; if (conOre) ore.push({ g, h, h6: true, t: x.air_temperature, mm: n6.details.precipitation_amount, s, v: x.wind_speed, vd: x.wind_from_direction, u: x.relative_humidity, pc: maxProb(pr, ms) }); }
     if (s) e.righe.push({ s, h, n6: !n1 && !!n6, mm: (n1 || n6).details.precipitation_amount || 0 });
     // la % del giorno = il massimo delle sue righe: nelle fasce di 6 h prima si guardavano solo i 4 orari d'inizio e
     // l'intestazione poteva dire meno della tabella (giro dell'8/10: Belluno 8% contro 23%)
-    const p = n1 ? pr[g + '_' + h] : n6 ? maxProb(pr, g, h) : pr[g + '_' + h]; if (p != null) e.pc = Math.max(e.pc ?? 0, p);
+    const p = n6 && !n1 ? maxProb(pr, ms) : pr[ms]; if (p != null) e.pc = Math.max(e.pc ?? 0, p);
   }
   const lista = Object.values(giorni).sort((a, b) => a.g < b.g ? -1 : 1).slice(0, 7).map(e => ({
     g: e.g, mn: Math.round(e.mn), mx: Math.round(e.mx), mm: Math.round(e.mm * 10) / 10, pc: e.pc,
@@ -106,7 +118,7 @@ async function perPunto(lat, lon, q, request, conOre, conProb) {
 // ── i capoluoghi di un'area, in parallelo (al massimo 12 → sotto i 50 subrequest) ──
 async function perArea(area, env, request) {
   if (!/^[a-z-]{3,24}$/.test(area)) return { errore: 'area' };
-  const chiave = new Request(`https://cache.previsioni/area?v=${VERSIONE}&a=${area}`);
+  const chiave = new Request(`https://cache.previsioni/area?v=${VERSIONE}&d=${oraLocale(new Date().toISOString()).g}&a=${area}`);   // data nella chiave, vedi perPunto
   const cache = caches.default;
   const c = await cache.match(chiave); if (c) return c.json();
   const lista = await (await env.ASSETS.fetch(new URL('/data/capoluoghi.json', request.url))).json();
@@ -177,7 +189,8 @@ function scegliSimbolo(righe) {
   return sim.filter(s => grado(s) === fam).sort((a, b) => peso[b] - peso[a] || (a < b ? -1 : 1))[0];
 }
 export { scegliSimbolo };   // per le prove in locale (prova-simbolo.mjs nello scratchpad della scheda 86)
-function maxProb(pr, g, h) { let m = null; for (let k = 0; k < 6; k++) { const p = pr[g + '_' + (h + k)]; if (p != null) m = Math.max(m ?? 0, p); } return m; }
+// la % di una fascia di 6 ore: il massimo delle sei ore da quell'istante, anche oltre mezzanotte (bug 12, 19/10/2026)
+function maxProb(pr, ms) { let m = null; for (let k = 0; k < 6; k++) { const p = pr[ms + k * 3600000]; if (p != null) m = Math.max(m ?? 0, p); } return m; }
 function restante(resp) {
   const m = /max-age=(\d+)/.exec(resp.headers.get('Cache-Control') || ''), d = Date.parse(resp.headers.get('Date') || '');
   if (!m) return MIN_CACHE; const r = +m[1] - (d ? Math.round((Date.now() - d) / 1000) : 0); return Math.max(60, r);

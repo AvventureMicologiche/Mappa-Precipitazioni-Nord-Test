@@ -218,6 +218,8 @@ function riepilogoFresco(radice, k) {
 // «10 ottobre», «1° …» no: le date dei titoli come le scrive la pagina
 const MESI_L = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
 const lungoIso = s => { const p = s.split('-'); return (+p[2]) + ' ' + MESI_L[+p[1] - 1]; };
+// «il 9 ottobre» ma «l'8», «l'11», «l'1» (19/10/2026, quinto check, bug 16): come le pagine funghi dal 17/10
+const ilData = (s, M) => { const g = +s.split('-')[2]; return (g === 1 || g === 8 || g === 11 ? (M ? "L'" : "l'") : (M ? 'Il ' : 'il ')) + lungoIso(s); };
 // «a Terrinca» ma «ad Alberschwende»
 const aDi = n => (/^[aA]/.test(n) ? 'ad ' : 'a ') + n;
 const virgola = n => (Math.round(n * 10) / 10).toFixed(1).replace('.', ',');
@@ -228,7 +230,7 @@ const attr = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace
 // prima, 62 e 158 caratteri, provando forme sempre piu' corte.
 function titoloCotto(r, j, N) {
   const nome = r.nomeTitolo || r.nome, quando = lungoIso(N.ultimo);
-  const qui = N.ieri ? `ieri, ${quando}` : `il ${quando}`;
+  const qui = N.ieri ? `ieri, ${quando}` : ilData(N.ultimo);
   return [`Pluviometria ${nome}: dove ha piovuto ${qui}`, `Pluviometria ${nome}: pioggia di ${N.ieri ? 'ieri, ' : ''}${quando}`]
     .find(t => t.length <= 62) || null;
 }
@@ -269,9 +271,10 @@ function descrMappa(r, j, N, n) {
   const di = /^Provincia/.test(ag) ? 'della ' : /^Centro/.test(ag) ? 'del ' : '';
   const apre = `Mappa di ${n} pluviometri ${di}${ag} aggiornata ogni mattina.`;
   const coda = 'Tocca un paese e vedi il grafico.';
-  if (!N) return [`${apre} Quanto ha piovuto ieri e negli ultimi 7, 20 e 30 giorni. ${coda}`, `${apre} Ieri e ultimi 30 giorni. ${coda}`, apre].find(t => t.length <= 158);
+  // senza numeri freschi non si promette «ieri» (19/10/2026, bug 16): la Slovenia, 34 ore di ritardo, ieri non l'ha mai
+  if (!N) return [`${apre} Quanto ha piovuto negli ultimi 7, 20 e 30 giorni. ${coda}`, `${apre} Ultimi 7 e 30 giorni. ${coda}`, apre].find(t => t.length <= 158);
   const d1 = j.periodi['1'], d7 = j.periodi['7'], t1 = d1 && d1.top && d1.top[0], t7 = d7 && d7.top && d7.top[0];
-  const quando = N.ieri ? 'Ieri' : 'Il ' + lungoIso(N.ultimo);
+  const quando = N.ieri ? 'Ieri' : ilData(N.ultimo, true);
   // il nome SENZA la provincia aggiunta dal riepilogo (`nb`, bug 8 del 19/10/2026): con «(Provincia del verbano
   // cusio os)» due volte la frase arrivava a 226 caratteri e restava solo «Mappa di 277 pluviometri…»
   const uno = !d1 || !d1.giorni ? null : t1 && t1.mm >= 1 ? `${quando} ${virgola(t1.mm)} mm ${aDi(nomeBello(t1.nb || t1.n))}` : `${quando} giornata ${t1 && t1.mm > 0 ? 'quasi ' : ''}asciutta`;
@@ -284,7 +287,7 @@ function descrMappa(r, j, N, n) {
 }
 function descrCotta(r, j, N) {
   const ag = r.agenziaCorta || r.agenzia, d1 = j.periodi['1'], d7 = j.periodi['7'];
-  const quando = (N.ieri ? 'Ieri ' : 'Il ') + lungoIso(N.ultimo);
+  const quando = N.ieri ? 'Ieri ' + lungoIso(N.ultimo) : ilData(N.ultimo, true);
   const t1 = d1 && d1.top && d1.top[0], t7 = d7.top && d7.top[0];
   const primo = !d1 || !d1.giorni ? null
     : t1 && t1.mm >= 1 ? `${quando}: ${virgola(t1.mm)} mm ${aDi(t1.nb || t1.n)}.`
@@ -392,6 +395,7 @@ const ESTERE = ['svizzera', 'austria', 'slovenia'];
 
 function pagina(r, radice){
   const rip = radice && COTTE.includes(r.k) ? riepilogoFresco(radice, r.k) : null;
+  if (radice) r = { ...r, staz: stazDi(r, radice) };   // il numero dei pluviometri dal riepilogo, vedi stazDi
   const N = rip ? numeriRegione(rip, oggiItalia(), r.k, SITO) : null;
   // il valore cotto se c'e', se no quello del guscio
   const cotto = (fn, guscio) => N ? fn() : guscio;
@@ -860,7 +864,19 @@ function mappaInUnFile(radice, rel) {
   console.log(`  ${rel}  mappa del sito: ${REGIONI.length} regioni e ${FUNGHI.length} funghi`);
 }
 
-module.exports = { REGIONI, FUNGHI, GEN, navAltre, briciolaJson, STILE_BASE, STILE_IERI, ESTERE, SITO, GA_ID, CANALE, scrivi };   // GEN: anche per le pagine di zona (18/10/2026)
+/* ⚠️ IL NUMERO DEI PLUVIOMETRI DAL RIEPILOGO (19/10/2026, quinto check, bug 16). Quelli scritti a mano in REGIONI
+   invecchiano (Liguria «quasi 200» con 175, Molise «circa 25» con 28, Lombardia «oltre 250» con 250): si scrive
+   «oltre N», N arrotondato per difetto alla decina (alla cinquina sotto i 100) sotto il piu' basso fra ieri e 7
+   giorni del riepilogo. Senza riepilogo resta quello a mano. La usano anche le pagine «adesso» e quelle funghi. */
+function stazDi(r, radice) {
+  try {
+    const rip = JSON.parse(fs.readFileSync(path.join(radice, 'data', 'riepiloghi', r.k + '.json'), 'utf8'));
+    const n = Math.min(...['1', '7'].map(k => (rip.periodi[k] || {}).stazioni).filter(x => x > 0));
+    if (isFinite(n)) { const p = n >= 100 ? 10 : 5; return n >= 20 ? 'oltre ' + Math.floor((n - 1) / p) * p : String(n); }
+  } catch (e) {}
+  return r.staz;
+}
+module.exports = { REGIONI, FUNGHI, GEN, navAltre, briciolaJson, STILE_BASE, STILE_IERI, ESTERE, SITO, GA_ID, CANALE, scrivi, stazDi };   // GEN: anche per le pagine di zona (18/10/2026)
 
 if (require.main === module) {
   const radice = path.resolve(__dirname, '..', '..');

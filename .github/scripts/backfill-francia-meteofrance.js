@@ -154,7 +154,7 @@ async function main() {
           p: DIP_NOME[dip] || '',
         };
         const slot = perDay[g.dateStr][id] || (perDay[g.dateStr][id] = { sum: 0, n: 0 });
-        slot.sum += parseFloat(rr); slot.n++;
+        slot.sum += Math.max(0, parseFloat(rr)); slot.n++;   // negativo = 0, come il collector (bug 15, 19/10/2026)
       }
     }
     const minStaz = Math.max(15, Math.round(Object.keys(ana).length * 0.4));

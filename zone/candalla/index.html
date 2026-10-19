@@ -201,6 +201,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .quiz-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a06a08,0 4px 8px rgba(150,95,10,.3);}
 @media(max-width:560px){.coppia-btn{grid-template-columns:1fr;}}
 
+
 .bric{font-size:14px;color:#666;margin-bottom:6px;}
 .bric a{color:var(--blu);}
 .tab{width:100%;border-collapse:collapse;font-size:15px;margin:8px 0 6px;}
@@ -382,7 +383,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
     if (top.length) {
       dett = 'Dove ha piovuto di più: ' + top.map(function(s){ return '<b>' + esc(s.n) + '</b> ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm'; }).join(', ') + '.';
     } else if (d.top && d.top.length && d.top[0].mm > 0) {
-      dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm a ' + esc(d.top[0].n) + (/\.$/.test(d.top[0].n) ? '' : '.');   /* «T.P.» non prende un altro punto; doppia barra: sta dentro il modello (18/10/2026) */
+      dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm ' + (/^[aA]/.test(d.top[0].n) ? 'ad ' : 'a ') + esc(d.top[0].n) + (/\.$/.test(d.top[0].n) ? '' : '.');   /* «T.P.» non prende un altro punto; doppia barra: sta dentro il modello (18/10/2026) */
     } else {
       dett = 'Giornata asciutta: nessun pluviometro della zona ha misurato pioggia.';
     }

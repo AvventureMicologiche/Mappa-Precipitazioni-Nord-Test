@@ -110,7 +110,12 @@ function pagina(z) {
     process.exit(1);
   }
   const m = fs.readFileSync(modello, 'utf8');
-  const STILE = m.slice(m.indexOf('<style>') + 7, m.indexOf('</style>'));
+  // ⚠️ SENZA IL BLOCCO DEL METEO (19/10/2026, trovato col bug 16): dal 19/10 la pagina regione ha in coda le regole
+  // della casella di ricerca (lib-meteo-regione.js, METEO_CSS), fatte per la SUA testata con la lente; copiate qui,
+  // sul telefono spostavano «Iscriviti» da destra a meta' testata (x 295 → 202 a 390 px). Si taglia dal suo inizio.
+  let STILE = m.slice(m.indexOf('<style>') + 7, m.indexOf('</style>'));
+  const iMeteo = STILE.indexOf('/* ── IL METEO NELLE PAGINE REGIONE');
+  if (iMeteo >= 0) STILE = STILE.slice(0, iMeteo);
 
   // Le righe della tabella, cotte coi loro link: i nomi e i link li legge
   // Google, i millimetri e l'ordine li mette il javascript.
@@ -310,7 +315,7 @@ ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel
     if (top.length) {
       dett = 'Dove ha piovuto di più: ' + top.map(function(s){ return '<b>' + esc(s.n) + '</b> ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm'; }).join(', ') + '.';
     } else if (d.top && d.top.length && d.top[0].mm > 0) {
-      dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm a ' + esc(d.top[0].n) + (/\\.$/.test(d.top[0].n) ? '' : '.');   /* «T.P.» non prende un altro punto; doppia barra: sta dentro il modello (18/10/2026) */
+      dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm ' + (/^[aA]/.test(d.top[0].n) ? 'ad ' : 'a ') + esc(d.top[0].n) + (/\\.$/.test(d.top[0].n) ? '' : '.');   /* «T.P.» non prende un altro punto; doppia barra: sta dentro il modello (18/10/2026) */
     } else {
       dett = 'Giornata asciutta: nessun pluviometro della zona ha misurato pioggia.';
     }

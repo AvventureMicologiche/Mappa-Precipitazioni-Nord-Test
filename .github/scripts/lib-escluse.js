@@ -24,6 +24,9 @@ const path = require('path');
 const PER_LISTA = {
   LOMB_ESCLUSE: 'lombardia', PIEMONTE_ESCLUSE: 'piemonte', LIGURIA_ESCLUSE: 'liguria',
   EMILIA_ESCLUSE: 'emilia', TOSCANA_ESCLUSE: 'toscana',
+  // ⚠️ PROMEMORIA (19/10/2026, quinto check, bug 18): FRANCIA_ESCLUSE di index.html (Bastia 20033015)
+  // qui NON si legge. Oggi non serve, nessuna pagina usa le stazioni francesi. Se un giorno arrivano,
+  // aggiungerla con la chiave delle cartelle (francia-corsica, francia-provenza…), non 'francia'.
 };
 
 // Il testo fra la graffa di apertura e quella che la chiude.

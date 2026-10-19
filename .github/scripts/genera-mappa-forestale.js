@@ -111,6 +111,8 @@ const COLORE_A_PAROLE = { 'faggete': 'in verde', 'castagneti': 'in arancio', 'qu
 
 const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 const pc = v => String(Math.round(v * 10) / 10).replace('.', ',') + '%';
+const visto = v => Math.round((v || 0) * 10) / 10 > 0;   // un gruppo che pc() scriverebbe «0%» non si nomina (bug 16, 19/10/2026)
+const aAd = n => (/^[aAàÀ]/.test(n) ? 'ad ' : 'a ') + n;   // «ad Albano», non «a Albano» (bug 16, 19/10/2026)
 const prima = t => t.charAt(0).toUpperCase() + t.slice(1);
 // il genitivo di una zona dal suo «dove»: le «in» sono tutte femminili (Val, Valle, Garfagnana, Sabina...)
 const GEN = { 'in': 'della', 'sul': 'del', 'nel': 'del', 'nella': 'della', 'negli': 'degli', 'sui': 'dei', 'nelle': 'delle', 'sulle': 'delle', 'a': 'di' };   // nella e a dal 19/10/2026 (preposizioni delle zone)
@@ -151,10 +153,17 @@ function usi(T, dove, extra) {
   const fungo = (T.castagneti || 0) + (T.faggete || 0) + (T.querceti || 0) + (T['abetaie e peccete'] || 0);
   u.push(['🍄', 'Funghi', `Porcini e compagni stanno sotto castagni, faggi, querce e abeti: ${dove} sono ${artNum('il', Math.round(fungo) + '%')} del bosco. E con la pioggia degli ultimi giorni sai anche se è il momento: ${extra.funghi}.`]);
   if (T.castagneti >= 3) u.push(['🌰', 'Castagne', `I castagneti sono ${artNum('il', pc(T.castagneti))} del bosco.${extra.castagne ? ' Dove ce ne sono di più: ' + extra.castagne + '.' : ''} Prima di raccogliere assicurati che il bosco sia libero: molti castagneti sono proprietà private.`]);
-  if ((T.faggete || 0) + (T.lariceti || 0) >= 5) u.push(['🍂', "Foliage d'autunno", `Il giallo e il rosso di ottobre sono delle faggete (${pc(T.faggete || 0)})${T.lariceti >= 1 ? ` e dei lariceti (${pc(T.lariceti)}), che diventano oro prima di perdere gli aghi` : ''}.${extra.faggete ? ' Faggete: ' + extra.faggete + '.' : ''}`]);
+  // ⚠️ solo i gruppi che ci sono (19/10/2026, bug 16): prima usciva «delle faggete (0%) e dei lariceti (12%)»
+  if ((T.faggete || 0) + (T.lariceti || 0) >= 5) u.push(['🍂', "Foliage d'autunno", `Il giallo e il rosso di ottobre sono ${[
+    visto(T.faggete) ? `delle faggete (${pc(T.faggete)})` : null,
+    T.lariceti >= 1 ? `dei lariceti (${pc(T.lariceti)}), che diventano oro prima di perdere gli aghi` : null,
+  ].filter(Boolean).join(' e ')}.${extra.faggete && visto(T.faggete) ? ' Faggete: ' + extra.faggete + '.' : ''}`]);
   u.push(['🥾', 'Escursioni e sentieri', 'Prima di partire guardi che bosco attraversa il sentiero, a che quota e su quale versante: tocchi un punto sulla mappa e lo apri su Google Maps.']);
   if ((T.lariceti || 0) + (T['abetaie e peccete'] || 0) >= 5) u.push(['🌿', 'Mirtilli', `Crescono sotto lariceti, peccete e faggete d'alta quota: ${dove} larici e abeti sono ${artNum('il', Math.round(T.lariceti + T['abetaie e peccete']) + '%')} del bosco.`]);
-  if (T.querceti >= 10 || T['pioppi, salici, ontani e frassini'] >= 2) u.push(['🟤', 'Tartufi', `Si cercano soprattutto nei querceti (${pc(T.querceti || 0)}) e lungo i fiumi, fra pioppi, salici e ontani (${pc(T['pioppi, salici, ontani e frassini'] || 0)}).`]);
+  if (T.querceti >= 10 || T['pioppi, salici, ontani e frassini'] >= 2) u.push(['🟤', 'Tartufi', `Si cercano soprattutto ${[
+    visto(T.querceti) ? `nei querceti (${pc(T.querceti)})` : null,
+    visto(T['pioppi, salici, ontani e frassini']) ? `lungo i fiumi, fra pioppi, salici e ontani (${pc(T['pioppi, salici, ontani e frassini'])})` : null,
+  ].filter(Boolean).join(' e ')}.`]);   // solo i gruppi che ci sono (bug 16): «nei querceti (0%)» non si scrive
   return '<ul class="usi">\n' + u.map(([i, t, x]) => `<li><span class="ic">${i}</span><div><b>${esc(t)}</b><br>${x}</div></li>`).join('\n') + '\n</ul>';
 }
 
@@ -228,7 +237,7 @@ function paginaRegione(r) {
   const Z = zoneDi(r.k);
   // la didascalia: il nome della zona in cui cade lo scorcio, o il paese se e' presentabile
   const zS = S && Z.find(z => z.posti.some(id => D.paesi[id] && D.paesi[id].n === S.paese));
-  const doveS = zS ? zS.n : (S && pulito(S.paese) ? 'Intorno a ' + S.paese : r.nome + ', da vicino');
+  const doveS = zS ? zS.n : (S && pulito(S.paese) ? 'Intorno ' + aAd(S.paese) : r.nome + ', da vicino');
   const titolo = tit(`Mappa forestale ${r.del}: che bosco c'è, tipo per tipo`, `Mappa forestale ${r.del}: che bosco c'è`, `Mappa forestale ${r.del}`);
   const primi = principali(T, 4, 1).map(([t]) => t).join(', ');
   const descr = des(`La carta forestale ${r.del} in una mappa facile, anche dal telefono: ${primi}. Per funghi, castagne, foliage ed escursioni.`,
@@ -293,7 +302,7 @@ function paginaZona(z) {
                     `La mappa forestale ${DELLA}, paese per paese. Per funghi, castagne, foliage ed escursioni.`);
   const paesi = z.posti.map(id => ({ id, ...D.paesi[id] })).filter(p => p.n).sort((a, b) => a.q - b.q);
   const S = z.scorcio;
-  const doveS = S && pulito(S.paese) ? `${z.n}, intorno a ${S.paese}` : `${z.n}, da vicino`;
+  const doveS = S && pulito(S.paese) ? `${z.n}, intorno ${aAd(S.paese)}` : `${z.n}, da vicino`;
   let h = testa({ titolo, descr, url, img: `${url}scorcio.jpg`,
     briciola: [["Mappa forestale d'Italia", `${SITO}/mappa-forestale/`], [r.nome, `${SITO}/mappa-forestale/${r.k}/`], [z.n]] });
   h += `<p class="nota" style="margin-bottom:6px"><a href="${SITO}/mappa-forestale/" style="color:var(--blu)">‹ Mappa forestale d'Italia</a> <span style="color:#9aa7b8">›</span> <a href="${SITO}/mappa-forestale/${r.k}/" style="color:var(--blu)">${esc(r.nome)}</a> <span style="color:#9aa7b8">›</span> ${esc(z.n)}</p>

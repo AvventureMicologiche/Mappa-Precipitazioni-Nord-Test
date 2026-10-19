@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dove ha piovuto in Val di Magra: ieri e negli ultimi giorni</title>
-<meta name="description" content="Quanta pioggia è caduta in Val di Magra ieri e negli ultimi 7 e 30 giorni, pluviometro per pluviometro. Aggiornato ogni giorno.">
+<meta name="description" content="Quanta pioggia è caduta in Val di Magra ieri e negli ultimi 7 e 30 giorni, pluviometro per pluviometro: 5 pluviometri di SIR Toscana. Aggiornato ogni giorno.">
 <link rel="canonical" href="https://avventurepluvio-test.pages.dev/zone/val-di-magra/">
 <meta property="og:title" content="Dove ha piovuto in Val di Magra: ieri e ultimi giorni">
 <meta property="og:description" content="La pioggia misurata dai pluviometri della Val di Magra: ieri, ultimi 7 e 30 giorni.">
@@ -201,6 +201,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .quiz-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a06a08,0 4px 8px rgba(150,95,10,.3);}
 @media(max-width:560px){.coppia-btn{grid-template-columns:1fr;}}
 
+
 .bric{font-size:14px;color:#666;margin-bottom:6px;}
 .bric a{color:var(--blu);}
 .tab{width:100%;border-collapse:collapse;font-size:15px;margin:8px 0 6px;}
@@ -224,7 +225,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 <main>
 <p class="bric"><a href="https://avventurepluvio-test.pages.dev/">Mappa pluviometrica</a> › <a href="https://avventurepluvio-test.pages.dev/toscana/">Toscana</a> › Val di Magra</p>
 <h1>Dove ha piovuto in Val di Magra</h1>
-<p class="sotto"><b>Pluviometria della Val di Magra</b>: i dati dei 5 pluviometri di ARPA Liguria e SIR Toscana, ieri e nell'ultimo mese.</p>
+<p class="sotto"><b>Pluviometria della Val di Magra</b>: i dati dei 5 pluviometri di SIR Toscana, ieri e nell'ultimo mese.</p>
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="verdetto"></div>
@@ -260,7 +261,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 <table class="tab">
 <thead><tr><th>Pluviometro</th><th id="th1">Ieri</th><th>7 giorni</th><th>30 giorni</th></tr></thead>
 <tbody id="righe">
-<tr data-id="BGNNE"><td><a href="https://avventurepluvio-test.pages.dev/funghi/liguria/bagnone/">Bagnone</a><span class="com">MS · 320 m</span></td><td class="mm v1">–</td><td class="mm v7">–</td><td class="mm v30">–</td></tr>
+<tr data-id="BGNNE"><td><a href="https://avventurepluvio-test.pages.dev/funghi/toscana/bagnone/">Bagnone</a><span class="com">MS · 320 m</span></td><td class="mm v1">–</td><td class="mm v7">–</td><td class="mm v30">–</td></tr>
 <tr data-id="TOS09001130"><td><a href="https://avventurepluvio-test.pages.dev/funghi/toscana/iera/">Iera</a><span class="com">MS · 538 m</span></td><td class="mm v1">–</td><td class="mm v7">–</td><td class="mm v30">–</td></tr>
 <tr data-id="TOS09001200"><td><a href="https://avventurepluvio-test.pages.dev/funghi/toscana/mazzola/">Mazzola</a><span class="com">MS · 460 m</span></td><td class="mm v1">–</td><td class="mm v7">–</td><td class="mm v30">–</td></tr>
 <tr data-id="TOS09001088"><td><a href="https://avventurepluvio-test.pages.dev/funghi/toscana/rocca-sigillina/">Rocca Sigillina</a><span class="com">MS · 484 m</span></td><td class="mm v1">–</td><td class="mm v7">–</td><td class="mm v30">–</td></tr>
@@ -303,7 +304,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano i 5 pluviometri di ARPA Liguria e SIR Toscana che stanno in Val di Magra: strumenti a terra,
+<p>I millimetri li misurano i 5 pluviometri di SIR Toscana che stanno in Val di Magra: strumenti a terra,
 con il loro nome e la loro quota, non stime da modello. I numeri in cima sono la media dei pluviometri della zona, giorno
 per giorno. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando. Nella tabella il trattino
 vuol dire che quel pluviometro in quei giorni non ha pubblicato.</p>
@@ -320,7 +321,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
 </main>
 
 <footer>
-  Dati: ARPA Liguria e SIR Toscana ·
+  Dati: SIR Toscana ·
   <a href="https://avventurepluvio-test.pages.dev/fonti">tutte le fonti e licenze</a> ·
   <a href="https://avventurepluvio-test.pages.dev/guida/">guida alla mappa</a> ·
   <a href="https://avventuremicologiche.it">Avventure Micologiche</a>
@@ -376,7 +377,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
     if (top.length) {
       dett = 'Dove ha piovuto di più: ' + top.map(function(s){ return '<b>' + esc(s.n) + '</b> ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm'; }).join(', ') + '.';
     } else if (d.top && d.top.length && d.top[0].mm > 0) {
-      dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm a ' + esc(d.top[0].n) + (/\.$/.test(d.top[0].n) ? '' : '.');   /* «T.P.» non prende un altro punto; doppia barra: sta dentro il modello (18/10/2026) */
+      dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm ' + (/^[aA]/.test(d.top[0].n) ? 'ad ' : 'a ') + esc(d.top[0].n) + (/\.$/.test(d.top[0].n) ? '' : '.');   /* «T.P.» non prende un altro punto; doppia barra: sta dentro il modello (18/10/2026) */
     } else {
       dett = 'Giornata asciutta: nessun pluviometro della zona ha misurato pioggia.';
     }

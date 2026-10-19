@@ -376,6 +376,7 @@ for (const r of REGIONI) {
 const { slug, bello, postiDellaZona } = require('./lib-nomi.js');
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
+const { cartelleDi, cartelleConRete, regioneDati } = require('./lib-posti.js');   // posti con la rete di un'altra regione (bug 17)
 const USCITA_ZONE = path.join(USCITA, 'zone');
 fs.mkdirSync(USCITA_ZONE, { recursive: true });
 
@@ -390,9 +391,9 @@ function datiRegione(k) {
   const out = { da: r ? ultimoCompleto(r.dirs) : null, mm: [] };
   for (let i = 0; i < FINESTRA; i++) {
     const m = new Map();
-    for (const d of (r ? r.dirs : [])) {
+    for (const { k: kr, dir: d } of cartelleConRete(r, POSTI[k], REGIONI)) {   // anche le reti dei posti «ospiti» (bug 17)
       for (const st of leggi(d, giorni[i]) || []) {
-        if (escluso(ESCLUSE, k, [st.id, st.n])) continue;   // esclusi dalla mappa, vedi sopra
+        if (escluso(ESCLUSE, kr, [st.id, st.n])) continue;   // esclusi dalla mappa, nella lista della LORO rete
         if (st.mm != null && !m.has(st.id)) m.set(st.id, st.mm);
       }
     }

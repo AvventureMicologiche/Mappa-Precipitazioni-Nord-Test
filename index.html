@@ -11407,9 +11407,13 @@ function loadStazioniPallini(rk,cb){
     _pallCache[rk]=out; cb(out);
   }
   dirs.forEach(function(dir,i){
-    var tries=[], now=new Date();
-    for(var g=1;g<=6;g++){ var d=new Date(now.getTime()-g*86400000);
-      tries.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')); }
+    // ⚠️ GIORNI DI CALENDARIO ITALIANI (19/10/2026, quinto check, bug 18): togliendo 24 ore, la sera del
+    // cambio d'ora (25 ore) dalle 23 a mezzanotte «ieri» era ancora oggi, e un telefono con un altro fuso
+    // cercava giorni sbagliati. Si parte dalla data di Roma e si scala di giorni interi.
+    var tries=[], oggiIt={};
+    new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Rome',year:'numeric',month:'numeric',day:'numeric'})
+      .formatToParts(new Date()).forEach(function(p){ oggiIt[p.type]=+p.value; });
+    for(var g=1;g<=6;g++){ tries.push(new Date(Date.UTC(oggiIt.year,oggiIt.month-1,oggiIt.day-g)).toISOString().slice(0,10)); }
     var idx=0;
     (function attempt(){
       if(idx>=tries.length){ pronta(i,[]); return; }
@@ -16563,7 +16567,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
 <script>
 (function(){
   var API=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)&&location.port!=='8788' ? 'http://127.0.0.1:8788/api/previsioni' : '/api/previsioni';
-  var API_V='&v=11';   // si alza quando cambia la funzione o l'elenco dei capoluoghi: la cache del browser non rilegge la risposta vecchia (11: simbolo del giorno, 18/10/2026)
+  var API_V='&v=12';   // si alza quando cambia la funzione o l'elenco dei capoluoghi: la cache del browser non rilegge la risposta vecchia (11: simbolo del giorno, 18/10/2026; 12: simbolo corretto e % per istante, 19/10/2026, quinto check bug 12; anche in lib/pagina-adesso.js)
   var GI=['dom','lun','mar','mer','gio','ven','sab'], GIL=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
   var MESI=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
   var MESIL=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
@@ -16624,9 +16628,17 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
   function nome(k){ return window._nomeRegione?window._nomeRegione(k).replace(/\s*\((FR|CH|AT|SI)\)\s*$/,''):k; }
   function ga(az,extra){ try{ var o=extra||{}; o.azione=az; o.regione=regioni().join(','); gtag('event','previsioni',o); }catch(e){} }
   function giornoData(g){ var d=new Date(g+'T12:00:00'); return d; }
+  /* ⚠️ I GIORNI SI CHIAMANO PER DATA, NON PER POSIZIONE (19/10/2026, quinto check, bug 11). Dopo mezzanotte una
+     previsione presa prima (cache del worker, del browser, o `aree` in memoria con la pagina aperta di notte)
+     comincia con IERI, e il primo tasto diceva «oggi 18 ott» il 19. Ora i giorni passati si tolgono (data italiana)
+     e «oggi»/«domani» si scrivono confrontando la data. Le stesse regole stanno in lib/pagina-adesso.js e in
+     lib-meteo-regione.js. */
+  function isoRoma(ms){ return new Date(ms).toLocaleDateString('sv-SE',{timeZone:'Europe/Rome'}); }
+  function daOggi(gg){ var o=isoRoma(Date.now()); return (gg||[]).filter(function(x){ return x.g>=o; }); }
+  function vecchia(gg){ return !!(gg&&gg.length&&gg[0].g<isoRoma(Date.now())); }   // comincia con un giorno passato: va richiesta
   function chip(e,i,on,meteo){
-    var d=giornoData(e.g);
-    return '<div class="pv-gg'+(on?' on':'')+'" data-i="'+i+'"><small>'+(i===0?'oggi':i===1?'domani':GI[d.getDay()])+'</small>'+d.getDate()+' '+MESI[d.getMonth()]
+    var d=giornoData(e.g), o=isoRoma(Date.now()), dom=isoRoma(Date.now()+864e5);
+    return '<div class="pv-gg'+(on?' on':'')+'" data-i="'+i+'"><small>'+(e.g===o?'oggi':e.g===dom?'domani':GI[d.getDay()])+'</small>'+d.getDate()+' '+MESI[d.getMonth()]
       +(meteo?'<span class="ic">'+icona(e.s)+'</span><span class="tx"><span class="mx">'+e.mx+'°</span> <span class="mn">'+e.mn+'°</span></span>':'')+'</div>';
   }
   function fmtOra(agg){ try{ return new Date(agg).toLocaleTimeString('it-IT',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
@@ -16840,7 +16852,8 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
       tt.textContent='☀️ Previsioni'; fumetto(tel()); el('pv-gg').innerHTML=tel()?''
         :'<div class="avviso pv-inv"><div class="r"><span class="c"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span><span>Cerca un paese nella casella qui sopra</span></div><div class="o"><span></span>oppure<span></span></div><div class="r"><span class="c"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span><span>Clicca una regione sulla mappa</span></div></div>';   /* computer: la variante «C4» scelta da lui l'8/10; il telefono resta com'era */ el('pv-fo').textContent=''; if(gruppo) gruppo.clearLayers(); return; }
     fumetto(false); tt.textContent='☀️ Previsioni · '+rk.map(nome).join(' + ');
-    var mancanti=rk.filter(function(k){ return !aree[k]; });
+    // anche le aree tenute in memoria che cominciano con un giorno passato (pagina aperta di notte, bug 11)
+    var mancanti=rk.filter(function(k){ return !aree[k] || vecchia(primiGiorni(aree[k])); });
     if(mancanti.length) el('pv-fo').textContent='carico…';
     var mio=++inCorso;
     // un'area che arriva solo dal posto cercato, se non risponde, si salta: le regioni scelte invece devono esserci
@@ -16856,9 +16869,10 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
         carica._riprovato=false;
         el('pv-gg').innerHTML='<div class="avviso">Previsioni non disponibili in questo momento, riprova fra poco</div>'; el('pv-fo').textContent=''; });
   }
+  function primiGiorni(a){ if(a&&a.capoluoghi) for(var j=0;j<a.capoluoghi.length;j++) if(a.capoluoghi[j].giorni) return a.capoluoghi[j].giorni; return null; }
   function giorniBase(){
     var rk=zone();
-    for(var i=0;i<rk.length;i++){ var a=aree[rk[i]]; if(a&&a.capoluoghi) for(var j=0;j<a.capoluoghi.length;j++) if(a.capoluoghi[j].giorni) return a.capoluoghi[j].giorni; }
+    for(var i=0;i<rk.length;i++){ var g=daOggi(primiGiorni(aree[rk[i]])); if(g.length) return g; }   // da oggi in poi (bug 11)
     return null;
   }
   function disegna(){
@@ -16934,7 +16948,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     var k=c.lat.toFixed(3)+','+c.lon.toFixed(3);
     var det=el('pv-det'); det.className='vivo';
     var pan0=el('pv-pan'); if(pan0) pan0.classList.remove('con-cenno');
-    if(!punti[k]){
+    if(!punti[k] || vecchia(punti[k].giorni)){   // anche se tenuta in memoria da ieri (bug 11)
       det.innerHTML='<div class="hd"><div class="nm">'+c.n+'<small>carico la previsione…</small></div><button class="x" aria-label="Chiudi">×</button></div>';
       chiedi(API+'?lat='+c.lat.toFixed(4)+'&lon='+c.lon.toFixed(4)+(c.q!=null?'&q='+Math.round(c.q):'')+API_V)
         .then(function(j){ punti[k]=j; if(punto&&punto.lat===c.lat&&punto.lon===c.lon){ renderDet(); disegna(); tieniInVista(); } })
@@ -16953,7 +16967,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
   function renderDet(){
     if(!punto) return;
     var k=punto.lat.toFixed(3)+','+punto.lon.toFixed(3), j=punti[k]; if(!j) return;
-    var gb=j.giorni||[]; if(!gb.length) return;
+    var gb=daOggi(j.giorni); if(!gb.length) return;   // da oggi in poi: gi===0 e' davvero oggi (bug 11)
     var gi=Math.min(giorno,gb.length-1), e=gb[gi], g=e.g, d=giornoData(g);
     var ore=(j.ore||[]).filter(function(o){ return o.g===g; });
     function riga(o){

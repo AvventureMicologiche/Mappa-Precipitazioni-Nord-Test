@@ -388,17 +388,17 @@ nav.altre .io{font-weight:700;color:var(--blu-scuro);}
 <tr data-id="8201"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/lombardia/santa-margherita-di-staffora-casanova/"><b>Santa Margherita di Staffora Casanova</b></a><span class="com">PV · 575 m</span></td>
 <td>6,4 km</td>
 <td class="mm"><span class="v">…</span></td></tr>
+<tr data-id="5547"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/lombardia/valverde/"><b>Valverde</b></a><span class="com">PV · 575 m</span></td>
+<td>8,5 km</td>
+<td class="mm"><span class="v">…</span></td></tr>
+<tr data-id="5529"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/lombardia/romagnese/"><b>Romagnese</b></a><span class="com">PV · 586 m</span></td>
+<td>12,6 km</td>
+<td class="mm"><span class="v">…</span></td></tr>
 <tr data-id="8004"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/lombardia/santa-margherita-di-staffora-passo-del-giova/"><b>Santa Margherita di Staffora Passo del Giovà</b></a><span class="com">PV · 1363 m</span></td>
 <td>14,1 km</td>
 <td class="mm"><span class="v">…</span></td></tr>
 <tr data-id="19295"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/lombardia/carenno-centro-sportivo/"><b>Carenno centro sportivo</b></a><span class="com">LC · 633 m</span></td>
 <td>112,7 km</td>
-<td class="mm"><span class="v">…</span></td></tr>
-<tr data-id="8122"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/lombardia/caslino-d-erba-v-4-novembre/"><b>Caslino d'Erba v. 4 novembre</b></a><span class="com">CO · 427 m</span></td>
-<td>114,4 km</td>
-<td class="mm"><span class="v">…</span></td></tr>
-<tr data-id="2614"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/lombardia/canzo/"><b>Canzo</b></a><span class="com">LC · 1233 m</span></td>
-<td>116,2 km</td>
 <td class="mm"><span class="v">…</span></td></tr>
 </tbody></table>
 
@@ -756,7 +756,10 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
       var dd = perId[trs[it2].getAttribute('data-id')];
       var cel = trs[it2].querySelector('.mm .v');
       if (!cel) continue;
-      if (!dd || !(dd.mm > 0)) { cel.textContent = '—'; cel.className = 'v zero'; continue; }
+      // «–» solo se il dato manca, lo zero vero e «0 mm» come nelle zone piogge (19/10/2026, quinto check, bug 16):
+      // prima «—» valeva per tutti e due, e la tabella sotto scriveva «0,0 mm»
+      if (!dd || dd.mm == null) { cel.textContent = '–'; cel.className = 'v zero'; continue; }
+      if (!(dd.mm > 0)) { cel.textContent = '0 mm'; cel.className = 'v zero'; continue; }
       cel.textContent = num(dd.mm) + ' mm'; cel.className = 'v';
       var ba = document.createElement('span'); ba.className = 'barra';
       ba.style.width = Math.round(dd.mm / mxv * 100) + '%';
@@ -774,7 +777,7 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
             + '<span class="com">' + esc(x.sig) + ' · ' + x.q + ' m</span></td>'
             + '<td>' + (qui ? '—' : num(x.d) + ' km') + '</td>'
             + '<td class="mm"><span class="barra" style="width:' + Math.round(x.mm / mxp * 100) + '%"></span>'
-            + '<span class="v">' + num(x.mm) + ' mm</span></td></tr>';
+            + '<span class="v' + (x.mm > 0 ? '' : ' zero') + '">' + (x.mm > 0 ? num(x.mm) : '0') + ' mm</span></td></tr>';   // lo zero e «0 mm» (bug 16)
         }).join('') + '</tbody></table>';
     document.getElementById('notavicini').innerHTML = (pos
       ? 'Questo pluviometro è <b>' + pos + 'º su ' + tutti.length + '</b> fra i posti da bosco della regione. '

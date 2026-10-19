@@ -382,6 +382,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://avventurepluvio-test.pages.dev/funghi/lombardia/romagnese/</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://avventurepluvio-test.pages.dev/funghi/lombardia/rota-d-imagna/</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
@@ -526,6 +532,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://avventurepluvio-test.pages.dev/funghi/lombardia/valverde/</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://avventurepluvio-test.pages.dev/funghi/lombardia/varzi-nivione/</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
@@ -557,6 +569,12 @@
   </url>
   <url>
     <loc>https://avventurepluvio-test.pages.dev/funghi/piemonte/ala-di-stura/</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://avventurepluvio-test.pages.dev/funghi/piemonte/alto-madonna-del-lago/</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -1258,19 +1276,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://avventurepluvio-test.pages.dev/funghi/liguria/alto-madonna-del-lago/</loc>
-    <lastmod>2026-10-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://avventurepluvio-test.pages.dev/funghi/liguria/amborzasco/</loc>
-    <lastmod>2026-10-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://avventurepluvio-test.pages.dev/funghi/liguria/bagnone/</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -1343,12 +1349,6 @@
   </url>
   <url>
     <loc>https://avventurepluvio-test.pages.dev/funghi/liguria/carro/</loc>
-    <lastmod>2026-10-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://avventurepluvio-test.pages.dev/funghi/liguria/casoni-di-suvero/</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -2224,12 +2224,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://avventurepluvio-test.pages.dev/funghi/emilia/romagnese/</loc>
-    <lastmod>2026-10-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://avventurepluvio-test.pages.dev/funghi/emilia/rullato/</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
@@ -2309,12 +2303,6 @@
   </url>
   <url>
     <loc>https://avventurepluvio-test.pages.dev/funghi/emilia/valdena/</loc>
-    <lastmod>2026-10-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://avventurepluvio-test.pages.dev/funghi/emilia/valverde/</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -3574,6 +3562,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://avventurepluvio-test.pages.dev/funghi/toscana/bagnone/</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://avventurepluvio-test.pages.dev/funghi/toscana/barberino/</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
@@ -3671,6 +3665,12 @@
   </url>
   <url>
     <loc>https://avventurepluvio-test.pages.dev/funghi/toscana/casone-di-profecchia/</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://avventurepluvio-test.pages.dev/funghi/toscana/casoni-di-suvero/</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>

@@ -58,6 +58,7 @@ const { DATI, oggiItalia, giorniIndietro, leggi } = require('./lib-giorni.js');
 const { LOCALITA, bello, slugRegione, idDoppi } = require('./lib-nomi.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
+const { cartelleDi, cartelleConRete, regioneDati } = require('./lib-posti.js');   // posti con la rete di un'altra regione (bug 17)
 // I pluviometri che la mappa esclude perche' misurano male (lib-escluse.js):
 // fuori dai totali e segnati «sospesi» nel file dei giorni (17/10/2026).
 const { escluse, escluso } = require('./lib-escluse.js');
@@ -194,7 +195,8 @@ for (const k of Object.keys(POSTI)) {
   // un workflow rosso che una pagina che mostra numeri di un'altra regione.
   if (!r) { console.error(`⚠️ «${k}» non e' in genera-pagine-regione.js`); process.exit(1); }
 
-  const g = perGiorno(r.dirs, giorni);
+  const DIRS = cartelleDi(r, POSTI[k], REGIONI);   // anche le reti dei posti «ospiti» (bug 17, lib-posti.js)
+  const g = perGiorno(DIRS, giorni);
   // ⚠️ Se i giorni buoni sono troppo pochi NON si scrive: si lascia il file di
   // ieri, e la pagina — vedendolo vecchio — torna a calcolarsi i numeri da se'.
   // Sovrascrivere con una classifica costruita su tre giorni sarebbe il modo
@@ -216,7 +218,7 @@ for (const k of Object.keys(POSTI)) {
     if (fi) { posti[id][5] = fi[0]; posti[id][6] = fi[1]; }
   }
   // Chi non ha preso 30 mm negli ultimi 25 giorni si cerca piu' indietro.
-  const oltre = forteIndietro(r.dirs, oggi, senzaForte);
+  const oltre = forteIndietro(DIRS, oggi, senzaForte);
   for (const id of Object.keys(oltre.trovati)) {
     const tr = oltre.trovati[id];
     posti[id][3] = tr[0];
@@ -229,7 +231,7 @@ for (const k of Object.keys(POSTI)) {
   // E chi la mappa esclude perche' misura male non entra mai (lib-escluse.js).
   const coperti = {}, sospesi = {};
   for (const p of POSTI[k]) {
-    if (escluso(ESCLUSE, k, p)) { sospesi[p[0]] = 1; continue; }
+    if (escluso(ESCLUSE, regioneDati(k, p), p)) { sospesi[p[0]] = 1; continue; }
     if (coperto(g.mm, GIORNI, 1, p[0]) && coperto(g.mm, DA, A, p[0])) coperti[p[0]] = posti[p[0]];
   }
 
@@ -383,7 +385,7 @@ for (const k of Object.keys(POSTI)) {
     const sl = slugRegione(POSTI[k] || []);
     const r = REGIONI.find(x => x.k === k);
     const dove = {};
-    for (const g of recenti.slice().reverse()) for (const d of (r ? r.dirs : []))
+    for (const g of recenti.slice().reverse()) for (const d of cartelleDi(r, POSTI[k], REGIONI))
       for (const s of leggi(d, g) || []) if (s.lat != null && s.lon != null) dove[String(s.id)] = [+s.lat, +s.lon];
     for (const p of (POSTI[k] || [])) {
       indice[p[4].toFixed(4) + ',' + p[5].toFixed(4)] = k + '/' + sl[p[0]];
@@ -462,7 +464,8 @@ for (const k of Object.keys(POSTI)) {
   const testoN = JSON.stringify({
     generato: new Date().toISOString(), oggi,
     finestra: [giorni[DA - 1], giorni[A - 1]],
-    quanti: tenute.length, regioni: Object.keys(POSTI).length - saltati.length,
+    // le regioni DEI POSTI BAGNATI, non quelle elaborate (19/10/2026, bug 16): l'indice scriveva «in 19 regioni» con 18
+    quanti: tenute.length, regioni: new Set(tenute.map(r => r[2])).size,
     primi: tenute.slice(0, 25).map(r => [r[0], r[1], r[2], r[3], uno(r[4])]),
   }) + '\n';
   const destN = path.join(USCITA, 'italia.json');

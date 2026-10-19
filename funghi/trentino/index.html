@@ -766,12 +766,16 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco del Trentino.</p>
     }
 
     var primo = righe[0];
+    /* senza pioggia da nessuna parte (19/10/2026, quinto check, bug 16) il riquadro diceva «Dove ha piovuto di più?
+       Nomeposto, 0,0 mm» (Basilicata): adesso lo dice e basta, come la frase «Nessuna pioggia» delle località */
+    var asciutto = !(primo.mm >= 0.05);
     document.getElementById('testa').innerHTML =
-      '<div class="capo"><div class="et">Dove ha piovuto di più 13-20 giorni fa?</div>'
-      + '<div class="gr">' + esc(primo.n) + ', ' + num(primo.mm) + ' mm</div>'
+      '<div class="capo"><div class="et">' + (asciutto ? 'Nessuna pioggia 13-20 giorni fa' : 'Dove ha piovuto di più 13-20 giorni fa?') + '</div>'
+      + (asciutto ? '<div class="pic">In quegli otto giorni nessun posto da bosco della regione ha preso pioggia.</div>'
+      : '<div class="gr">' + esc(primo.n) + ', ' + num(primo.mm) + ' mm</div>'
       + '<div class="pic">' + luogo(primo) + ' · ' + primo.q + ' m'
       + (primo.forte ? ' · ultima pioggia forte ' + (primo.forte.g===1?'ieri':primo.forte.g+' giorni fa')
-                        + ' (' + num(primo.forte.mm) + ' mm)' : '') + '</div>'
+                        + ' (' + num(primo.forte.mm) + ' mm)' : '') + '</div>')
       + '<div class="capo-btns">'
       + '<a class="capo-btn" href="' + link(primo, daG, aG) + '">Apri mappa · 13-20 gg fa</a>'
       + '<a class="capo-btn" href="' + link(primo, daG, a20) + '">Apri mappa · ultimi 20 gg</a>'

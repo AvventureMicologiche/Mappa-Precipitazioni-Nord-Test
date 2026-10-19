@@ -37,7 +37,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { REGIONI, navAltre, briciolaJson } = require('./genera-pagine-regione.js');
+const { REGIONI, navAltre, briciolaJson, stazDi } = require('./genera-pagine-regione.js');
 const { LOCALITA, bello, slug, slugRegione, postiDellaZona, diEnte } = require('./lib-nomi.js');
 const { rigaStagione } = require('./lib-stagione.js');
 // 24/9/2026: verdetto, barre e finestra comuni con le pagine di zona
@@ -45,6 +45,7 @@ const { STILE_NUOVO, JS_COMUNE, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = 
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
+const { cartelleDi, cartelleConRete, regioneDati } = require('./lib-posti.js');   // posti con la rete di un'altra regione (bug 17)
 // I pluviometri esclusi dalla mappa (lib-escluse.js): cotti nella pagina per il ripiego daiFile (17/10/2026)
 const { escluse, escluso } = require('./lib-escluse.js');
 const ESCLUSE = escluse(path.join(__dirname, '..', '..'));
@@ -423,7 +424,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco ${gen}.</p>
 
 
 <h2 style="margin-top:30px">Tutta la pioggia ${r.prep} ${nome}</h2>
-<p>Questa pagina guarda solo i pluviometri in mezzo al bosco. Per la regione intera, pianura compresa, c'è <a href="${SITO}/${r.k}/">dove ha piovuto ${r.prep} ${nome}</a>: ${r.staz} pluviometri ${diEnte(r.agenzia)}.</p>
+<p>Questa pagina guarda solo i pluviometri in mezzo al bosco. Per la regione intera, pianura compresa, c'è <a href="${SITO}/${r.k}/">dove ha piovuto ${r.prep} ${nome}</a>: ${stazDi(r, RADICE)} pluviometri ${diEnte(r.agenzia)}.</p>
 
 ${navAltre('funghi')}
 </main>
@@ -441,9 +442,9 @@ ${navAltre('funghi')}
         «Reppia (Ne)»: uniforme su diciannove regioni, un'informazione in meno
         qui. Deciso il 2/9/2026. */
   var POSTI = ${JSON.stringify(posti.map(p => [p[0], bello(p[1])].concat(p.slice(2))))};
-  var SOSPESI = ${JSON.stringify(Object.fromEntries(posti.filter(p => escluso(ESCLUSE, r.k, p)).map(p => [p[0], 1])))};
+  var SOSPESI = ${JSON.stringify(Object.fromEntries(posti.filter(p => escluso(ESCLUSE, regioneDati(r.k, p), p)).map(p => [p[0], 1])))};
 
-  var REG = '${r.k}', DIRS = ${JSON.stringify(r.dirs)}, NOME = ${JSON.stringify(nome)};
+  var REG = '${r.k}', DIRS = ${JSON.stringify(cartelleDi(r, posti, REGIONI))}, NOME = ${JSON.stringify(nome)};
   /* In locale i dati si leggono dalla cartella del repo, sul sito dal raw di
      GitHub. Stesso trucco del tag di Google qui sopra: si guarda l'HOSTNAME.
      Serve perche' le prove si fanno con \`node server-locale.js\` sul repo, a
@@ -666,12 +667,16 @@ ${JS_COMUNE}
     }
 
     var primo = righe[0];
+    /* senza pioggia da nessuna parte (19/10/2026, quinto check, bug 16) il riquadro diceva «Dove ha piovuto di più?
+       Nomeposto, 0,0 mm» (Basilicata): adesso lo dice e basta, come la frase «Nessuna pioggia» delle località */
+    var asciutto = !(primo.mm >= 0.05);
     document.getElementById('testa').innerHTML =
-      '<div class="capo"><div class="et">Dove ha piovuto di più 13-20 giorni fa?</div>'
-      + '<div class="gr">' + esc(primo.n) + ', ' + num(primo.mm) + ' mm</div>'
+      '<div class="capo"><div class="et">' + (asciutto ? 'Nessuna pioggia 13-20 giorni fa' : 'Dove ha piovuto di più 13-20 giorni fa?') + '</div>'
+      + (asciutto ? '<div class="pic">In quegli otto giorni nessun posto da bosco della regione ha preso pioggia.</div>'
+      : '<div class="gr">' + esc(primo.n) + ', ' + num(primo.mm) + ' mm</div>'
       + '<div class="pic">' + luogo(primo) + ' · ' + primo.q + ' m'
       + (primo.forte ? ' · ultima pioggia forte ' + (primo.forte.g===1?'ieri':primo.forte.g+' giorni fa')
-                        + ' (' + num(primo.forte.mm) + ' mm)' : '') + '</div>'
+                        + ' (' + num(primo.forte.mm) + ' mm)' : '') + '</div>')
       + '<div class="capo-btns">'
       + '<a class="capo-btn" href="' + link(primo, daG, aG) + '">Apri mappa · 13-20 gg fa</a>'
       + '<a class="capo-btn" href="' + link(primo, daG, a20) + '">Apri mappa · ultimi 20 gg</a>'

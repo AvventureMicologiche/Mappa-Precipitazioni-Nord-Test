@@ -61,6 +61,7 @@ const { STILE_NUOVO, JS_COMUNE, JS_AGGIORNATO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, 
 
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
+const { cartelleDi, cartelleConRete, regioneDati } = require('./lib-posti.js');   // posti con la rete di un'altra regione (bug 17)
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
 const { escluse, escluso } = require('./lib-escluse.js');
 const ESCLUSE = escluse(path.join(__dirname, '..', '..'));
@@ -150,12 +151,12 @@ function pagina(z) {
   const climi = {};
   for (const k of regioni) {
     const r = REGIONI.find(x => x.k === k);
-    if (r) climi[k] = clima(r.dirs);
+    if (r) climi[k] = clima(cartelleDi(r, POSTI[k], REGIONI));
   }
   // 17/10/2026: senza i pluviometri sospesi (esclusi dalla mappa, lib-escluse.js).
   // La Calvana scriveva «il piu' asciutto e' Cantagallo», fermo a zero dal 19/9.
   const perZona = ids
-    .filter(id => !escluso(ESCLUSE, REG_DI[id], POSTI[REG_DI[id]].find(x => x[0] === id) || [id]))
+    .filter(id => { const pp = POSTI[REG_DI[id]].find(x => x[0] === id) || [id]; return !escluso(ESCLUSE, regioneDati(REG_DI[id], pp), pp); })
     .map(id => ({ id, n: bello((POSTI[REG_DI[id]].find(x => x[0] === id) || [])[1] || ''),
                   c: (climi[REG_DI[id]] || {})[id] }))
     .filter(x => buono(x.c));

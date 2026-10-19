@@ -435,8 +435,8 @@ con i suoi 3 pluviometri insieme.</p>
 Il giorno più bagnato è stato l’<b>1 luglio 2026</b>, con
 <b>22,6 mm</b>. Il mese più piovoso,
 fra quelli che abbiamo per intero, è <b>luglio 2026</b> con
-33 mm. Su 93 pluviometri
-da bosco del Piemonte con lo stesso periodo alle spalle, questo è l'<b>80º</b>
+33 mm. Su 94 pluviometri
+da bosco del Piemonte con lo stesso periodo alle spalle, questo è l'<b>81º</b>
 per acqua caduta.</p>
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
@@ -756,7 +756,10 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
       var dd = perId[trs[it2].getAttribute('data-id')];
       var cel = trs[it2].querySelector('.mm .v');
       if (!cel) continue;
-      if (!dd || !(dd.mm > 0)) { cel.textContent = '—'; cel.className = 'v zero'; continue; }
+      // «–» solo se il dato manca, lo zero vero e «0 mm» come nelle zone piogge (19/10/2026, quinto check, bug 16):
+      // prima «—» valeva per tutti e due, e la tabella sotto scriveva «0,0 mm»
+      if (!dd || dd.mm == null) { cel.textContent = '–'; cel.className = 'v zero'; continue; }
+      if (!(dd.mm > 0)) { cel.textContent = '0 mm'; cel.className = 'v zero'; continue; }
       cel.textContent = num(dd.mm) + ' mm'; cel.className = 'v';
       var ba = document.createElement('span'); ba.className = 'barra';
       ba.style.width = Math.round(dd.mm / mxv * 100) + '%';
@@ -774,7 +777,7 @@ OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</
             + '<span class="com">' + esc(x.sig) + ' · ' + x.q + ' m</span></td>'
             + '<td>' + (qui ? '—' : num(x.d) + ' km') + '</td>'
             + '<td class="mm"><span class="barra" style="width:' + Math.round(x.mm / mxp * 100) + '%"></span>'
-            + '<span class="v">' + num(x.mm) + ' mm</span></td></tr>';
+            + '<span class="v' + (x.mm > 0 ? '' : ' zero') + '">' + (x.mm > 0 ? num(x.mm) : '0') + ' mm</span></td></tr>';   // lo zero e «0 mm» (bug 16)
         }).join('') + '</tbody></table>';
     document.getElementById('notavicini').innerHTML = (pos
       ? 'Questo pluviometro è <b>' + pos + 'º su ' + tutti.length + '</b> fra i posti da bosco della regione. '

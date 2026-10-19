@@ -380,7 +380,7 @@ nav.altre a{color:var(--blu);}
 <h2 style="font-size:18px">I pluviometri della zona, dal più bagnato</h2>
 <table class="vic"><thead><tr><th>Località</th><th>13-20 gg fa</th><th>Ultimi 7</th><th class="tagl">Ultimi 25</th></tr></thead>
 <tbody id="tabella">
-<tr data-id="BGNNE"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/liguria/bagnone/"><b>Bagnone</b></a><span class="com">MS · 320 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="BGNNE"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/toscana/bagnone/"><b>Bagnone</b></a><span class="com">MS · 320 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="TOS09001130"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/toscana/iera/"><b>Iera</b></a><span class="com">MS · 538 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="TOS09001200"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/toscana/mazzola/"><b>Mazzola</b></a><span class="com">MS · 460 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="TOS09001088"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/toscana/rocca-sigillina/"><b>Rocca Sigillina</b></a><span class="com">MS · 484 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
@@ -403,7 +403,7 @@ nav.altre a{color:var(--blu);}
 
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano i <b>5 pluviometri</b> di ARPA Liguria e SIR Toscana nelle zone
+<p>I millimetri li misurano i <b>5 pluviometri</b> di SIR Toscana nelle zone
 da bosco della Val di Magra: quota fra 200 e 1600 metri e almeno il 37% di bosco entro 3 km.
 I numeri in cima sono la media dei pluviometri, giorno per giorno. Ogni pluviometro va alla zona più
 vicina, e a una sola. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>
@@ -420,7 +420,7 @@ La giornata più piovosa è stata il <b>21 agosto 2026</b> a Iera,
 con <b>359,5 mm</b>.</p>
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
-<p>Dati di ARPA Liguria e SIR Toscana via il nostro archivio. Il bosco entro 3 km è calcolato su dati
+<p>Dati di SIR Toscana via il nostro archivio. Il bosco entro 3 km è calcolato su dati
 OpenStreetMap, licenza ODbL.</p>
 </div>
 <div class="coppia-btn"><a href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
@@ -444,10 +444,10 @@ OpenStreetMap, licenza ODbL.</p>
 (function(){
   var SITO = "https://avventurepluvio-test.pages.dev", MAPPA = SITO + "/";
   var ZONA = "Val di Magra", DOVE = "in Val di Magra";
-  var REGIONI = ["liguria","toscana"], REGS = "toscana,liguria,emilia";
+  var REGIONI = ["toscana"], REGS = "toscana,liguria,emilia";
   var LAT = 44.2956, LON = 9.95;
   /* [ id, nome, sigla, quota, lat, lon, slug, regione ] */
-  var POSTI = [["BGNNE","Bagnone","MS",320,44.3097,9.9842,"bagnone","liguria"],["TOS09001130","Iera","MS",538,44.333,10.034,"iera","toscana"],["TOS09001200","Mazzola","MS",460,44.211,10.117,"mazzola","toscana"],["TOS09001088","Rocca Sigillina","MS",484,44.366,9.956,"rocca-sigillina","toscana"],["TOS09001180","Turano","MS",500,44.246,10.152,"turano","toscana"]];
+  var POSTI = [["BGNNE","Bagnone","MS",320,44.3097,9.9842,"bagnone","toscana"],["TOS09001130","Iera","MS",538,44.333,10.034,"iera","toscana"],["TOS09001200","Mazzola","MS",460,44.211,10.117,"mazzola","toscana"],["TOS09001088","Rocca Sigillina","MS",484,44.366,9.956,"rocca-sigillina","toscana"],["TOS09001180","Turano","MS",500,44.246,10.152,"turano","toscana"]];
   var LOCALE = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   var BASE = LOCALE ? "/data/"
     : "https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/";

@@ -65,3 +65,14 @@
 # pagina mostrava zero pioggia per un mese. Si manda al piu' vicino con una
 # pagina, Monte Carza, a 2,7 km.
 /funghi/piemonte/cannobio/ /funghi/piemonte/monte-carza/ 301
+
+# CINQUE PAESI NELLA REGIONE GIUSTA — 19/10/2026 (quinto check, bug 17)
+# Stavano sotto la regione della RETE che pubblica il pluviometro, non di quella dove sta il paese: OMIRL pubblica
+# Bagnone e Casoni di Suvero (Massa-Carrara) e Alto (Cuneo), ARPAE pubblica Romagnese e Valverde (Pavia). Briciola
+# ed elenchi dicevano Liguria ed Emilia. Ora stanno nella loro regione e prendono i dati dalla rete con l'ottavo
+# campo di funghi-posti.json (.github/scripts/lib-posti.js).
+/funghi/liguria/bagnone/ /funghi/toscana/bagnone/ 301
+/funghi/liguria/casoni-di-suvero/ /funghi/toscana/casoni-di-suvero/ 301
+/funghi/liguria/alto-madonna-del-lago/ /funghi/piemonte/alto-madonna-del-lago/ 301
+/funghi/emilia/romagnese/ /funghi/lombardia/romagnese/ 301
+/funghi/emilia/valverde/ /funghi/lombardia/valverde/ 301

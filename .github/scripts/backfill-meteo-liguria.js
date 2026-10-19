@@ -70,6 +70,14 @@ function senzaZeriFinti(v) {
   if (noZero.length === v.length || !noZero.length) return v;
   return Math.min(...noZero) > 5 ? noZero : v;
 }
+// lo zero isolato della serie si toglie sempre: copia di quella di collect-liguria.js (bug 10, 19/10/2026)
+function senzaZeriIsolati(punti) {
+  return punti.filter((p, i) => {
+    if (p[1] !== 0) return true;
+    const a = punti[i - 1] && punti[i - 1][1], b = punti[i + 1] && punti[i + 1][1];
+    return !(a != null && b != null && Math.abs(a) >= 1.5 && Math.abs(b) >= 1.5);
+  });
+}
 
 function valoriIn(punti, w, lo, hi) {
   return punti.filter(p => p[0] >= w.start && p[0] < w.end && p[1] != null && p[1] >= lo && p[1] <= hi).map(p => p[1]);
@@ -107,7 +115,7 @@ async function main() {
         //    Vedi il commento lungo in collect-liguria.js: le due copie devono
         //    restare uguali, se no il ripristino rimette gli zeri che il
         //    collector toglie.
-        const mins = senzaZeriFinti(valoriIn(mn.length ? mn : med, w, -45, 50));
+        const mins = senzaZeriFinti(valoriIn(senzaZeriIsolati(mn.length ? mn : med), w, -45, 50));
         const maxs = valoriIn(mx.length ? mx : med, w, -45, 50);
         if (!mins.length || !maxs.length) return;
         (meteo[g][s.shortCode] = meteo[g][s.shortCode] || {}).t =

@@ -110,7 +110,14 @@ function meteoClient(K, NOME, SITO, ADESSO) {
   var ICONE = [[/clearsky_day|fair_day/, '☀️'], [/clearsky_night|fair_night/, '🌙'], [/partlycloudy_day/, '⛅'], [/partlycloudy_night|^cloudy|fog/, '☁️'],
                [/thunder/, '⛈️'], [/heavyrain|heavysleet/, '🌧️'], [/rain|sleet|drizzle/, '🌦️'], [/snow/, '🌨️']];
   function icona(s) { for (var i = 0; i < ICONE.length; i++) if (ICONE[i][0].test(s || '')) return ICONE[i][1]; return '☁️'; }
-  function nomeG(s, d) { var x = daIso(s); return d === 0 ? 'oggi' : d === 1 ? 'domani' : GS[x.getDay()] + ' ' + x.getDate(); }
+  /* ⚠️ I GIORNI PER DATA, NON PER POSIZIONE (19/10/2026, quinto check, bug 11). Dopo mezzanotte una previsione presa
+     prima (cache) comincia con IERI: la tabella chiamava «oggi» ieri e il grafico metteva ieri due volte, fra i
+     misurati e fra i previsti. I giorni passati si tolgono appena arriva la risposta (daOggi) e i nomi si danno
+     confrontando la data. Stessa regola nella mappa (index.html) e in lib/pagina-adesso.js. */
+  function isoRoma(ms) { return new Date(ms).toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' }); }
+  var OGGI = isoRoma(Date.now()), DOMANI = isoRoma(Date.now() + 864e5);
+  function daOggi(j) { if (j && j.capoluoghi) j.capoluoghi.forEach(function (c) { if (c.giorni) c.giorni = c.giorni.filter(function (x) { return x.g >= OGGI; }); }); return j; }
+  function nomeG(s, d) { var x = daIso(s); return s === OGGI ? 'oggi' : s === DOMANI ? 'domani' : GS[x.getDay()] + ' ' + x.getDate(); }
   function nomeReg(k) { return { valledaosta: "Valle d'Aosta", altoadige: 'Alto Adige', emilia: 'Emilia-Romagna', friuli: 'Friuli' }[k] || (k.charAt(0).toUpperCase() + k.slice(1)); }
   function pl(x) { return '&pl=' + (+x.lat).toFixed(4) + ',' + (+x.lon).toFixed(4) + '&pn=' + encodeURIComponent(x.n) + (x.z ? '&pz=1' : ''); }
   function vai(url, da) { ga(da); setTimeout(function () { location.href = url; }, 120); }
@@ -281,7 +288,7 @@ function meteoClient(K, NOME, SITO, ADESSO) {
     var h = document.getElementById('h-grafico'); if (h) h.textContent = 'La pioggia: gli ultimi 30 giorni e i prossimi 7';
   }
 
-  var citta = fetch(API + '?capoluoghi=' + K).then(function (r) { return r.json(); }).catch(function () { return null; });
+  var citta = fetch(API + '?capoluoghi=' + K).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
   var riepilogo = fetch(BASE + 'riepiloghi/' + K + '.json').then(function (r) { return r.json(); }).catch(function () { return null; });
   citta.then(function (j) { return carica().catch(function () {}).then(function () { disegnaCitta(j); }); });
   // il grafico e' gia' cotto nell'HTML, ma la pagina lo RIDISEGNA quando arriva il suo riepilogo:

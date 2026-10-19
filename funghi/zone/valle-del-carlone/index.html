@@ -369,7 +369,7 @@ nav.altre a{color:var(--blu);}
 <h2 style="font-size:18px">I pluviometri della zona, dal più bagnato</h2>
 <table class="vic"><thead><tr><th>Località</th><th>13-20 gg fa</th><th>Ultimi 7</th><th class="tagl">Ultimi 25</th></tr></thead>
 <tbody id="tabella">
-<tr data-id="5529"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/emilia/romagnese/"><b>Romagnese</b></a><span class="com">PV · 586 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
+<tr data-id="5529"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/lombardia/romagnese/"><b>Romagnese</b></a><span class="com">PV · 586 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="8201"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/lombardia/santa-margherita-di-staffora-casanova/"><b>Santa Margherita di Staffora Casanova</b></a><span class="com">PV · 575 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 <tr data-id="2089"><td><a class="loc" href="https://avventurepluvio-test.pages.dev/funghi/lombardia/varzi-nivione/"><b>Varzi Nivione</b></a><span class="com">PV · 500 m</span></td><td class="mm"><span class="v">…</span></td><td class="mm"><span class="v">…</span></td><td class="mm tagl"><span class="v">…</span></td></tr>
 </tbody></table>
@@ -390,7 +390,7 @@ nav.altre a{color:var(--blu);}
 
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano i <b>3 pluviometri</b> di ARPA Lombardia e ARPAE Emilia-Romagna nelle zone
+<p>I millimetri li misurano i <b>3 pluviometri</b> di ARPA Lombardia nelle zone
 da bosco della Valle del Carlone: quota fra 200 e 1600 metri e almeno il 37% di bosco entro 3 km.
 I numeri in cima sono la media dei pluviometri, giorno per giorno. Ogni pluviometro va alla zona più
 vicina, e a una sola. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>
@@ -401,7 +401,7 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
-<p>Dati di ARPA Lombardia e ARPAE Emilia-Romagna via il nostro archivio. Il bosco entro 3 km è calcolato su dati
+<p>Dati di ARPA Lombardia via il nostro archivio. Il bosco entro 3 km è calcolato su dati
 OpenStreetMap, licenza ODbL.</p>
 </div>
 <p style="margin:22px 0 4px;"><a href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
@@ -423,10 +423,10 @@ OpenStreetMap, licenza ODbL.</p>
 (function(){
   var SITO = "https://avventurepluvio-test.pages.dev", MAPPA = SITO + "/";
   var ZONA = "Valle del Carlone", DOVE = "in Valle del Carlone";
-  var REGIONI = ["lombardia","emilia"], REGS = "emilia,lombardia,piemonte";
+  var REGIONI = ["lombardia"], REGS = "emilia,lombardia,piemonte";
   var LAT = 44.74447, LON = 9.35278;
   /* [ id, nome, sigla, quota, lat, lon, slug, regione ] */
-  var POSTI = [["8201","Santa Margherita di Staffora Casanova","PV",575,44.768,9.2391,"santa-margherita-di-staffora-casanova","lombardia"],["2089","Varzi Nivione","PV",500,44.8074,9.1795,"varzi-nivione","lombardia"],["5529","Romagnese","PV",586,44.839,9.3328,"romagnese","emilia"]];
+  var POSTI = [["8201","Santa Margherita di Staffora Casanova","PV",575,44.768,9.2391,"santa-margherita-di-staffora-casanova","lombardia"],["2089","Varzi Nivione","PV",500,44.8074,9.1795,"varzi-nivione","lombardia"],["5529","Romagnese","PV",586,44.839,9.3328,"romagnese","lombardia"]];
   var LOCALE = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   var BASE = LOCALE ? "/data/"
     : "https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/";
