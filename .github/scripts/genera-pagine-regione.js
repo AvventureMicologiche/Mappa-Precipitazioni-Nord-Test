@@ -52,6 +52,7 @@ const { slug, diEnte } = require('./lib-nomi.js');
 const { STILE_NUOVO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = require('./lib-pagina-funghi.js');
 // 11/10/2026: i numeri cotti nella pagina, con la STESSA funzione del browser
 const { numeriRegione } = require('./lib-numeri-regione.js');
+const { METEO_CSS, meteoHtml, meteoClient } = require('./lib-meteo-regione.js');   // la pagina anche meteo (19/10/2026)
 // Le zone, per l'elenco «dove ha piovuto, zona per zona» (13/9/2026): ogni
 // regione rimanda alle pagine piogge delle sue zone, che senza questi link
 // sarebbero orfane.
@@ -464,7 +465,7 @@ function pagina(r, radice){
 ${STILE_BASE}
 ${STILE_NUOVO}
 ${STILE_IERI}
-${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}</style>
+${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}${METEO_CSS}</style>
 </head>
 <body>
 <header>
@@ -482,11 +483,11 @@ ${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}</style>
      le mappe. Le spiegazioni stanno in fondo, in piccolo. -->
 <div id="attesa"${N ? ' style="display:none"></div>' : '>Sto leggendo i pluviometri…</div>'}
 <div id="verdetto">${cotto(() => N.verdetto, '')}</div>
-<a class="banda-prev" href="${SITO}/?r=${r.k}&amp;m=prev"
-   onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-banda-previsioni'})}catch(e){}">
-  <span class="ic">☀️</span><span><b>Che tempo farà ${r.prep} ${r.nome}</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
+<!-- 19/10/2026: al posto della striscia blu «Che tempo farà», il blocco meteo (lib-meteo-regione.js):
+     la casella per il proprio paese, che apre la mappa delle previsioni, e le città principali. -->
+${meteoHtml(r)}
 
-<h2>La pioggia degli ultimi 30 giorni</h2>
+<h2 id="h-grafico">La pioggia degli ultimi 30 giorni</h2>
 <div id="grafico">${cotto(() => N.grafico, '')}</div>
 
 <h2>Dove ha piovuto di più</h2>
@@ -750,6 +751,9 @@ ${navAltre('regione')}
     .then(function(j){ if(j&&fresco(j)) return disegna(j); return calcolaDaiFile(); })
     .catch(function(){ return calcolaDaiFile(); });
 })();
+</script>
+<script>
+(${meteoClient.toString()})(${JSON.stringify(r.k)}, ${JSON.stringify(r.nome)}, ${JSON.stringify(SITO)}, ${fs.existsSync(path.join(__dirname, '..', '..', r.k, 'adesso')) ? 'true' : 'false'});
 </script>
 </body>
 </html>

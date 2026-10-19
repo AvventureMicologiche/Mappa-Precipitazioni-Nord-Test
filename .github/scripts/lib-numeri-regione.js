@@ -77,7 +77,16 @@ function numeriRegione(j, oggi, K, SITO) {
       + '<div class="capo-btns"><a class="ieri-btn" href="' + esc(link(d.ultimo, d.ultimo)) + '"'
       + ' onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'pagina-' + K + '-ieri-box\'})}catch(e){}">'
       + '<b>' + (t === 'Ieri' ? 'Apri la mappa di ieri' : 'Mappa di quel giorno') + '</b><i>→</i>'   // «Apri la mappa di quel giorno» andava a capo gia' a 390 px (C15, 19/10/2026)
-      + '<small>la pioggia in tutte le località</small></a></div></div>';
+      + '<small>la pioggia in tutte le località</small></a></div>'
+      // 19/10/2026 (lib-meteo-regione.js): sotto «Apri la mappa di ieri» le altre funzioni della mappa. Il Radar
+      // porta alla pagina «adesso», che c'e' per le regioni italiane; per le estere apre la diretta radar.
+      + '<div class="mk-porte">'
+      + [['☀️', 'Previsioni', SITO + '/?r=' + K + '&amp;m=prev', 'porta-previsioni'],
+         ['📡', 'Radar', ['svizzera', 'austria', 'slovenia'].indexOf(K) >= 0 ? SITO + '/?r=' + K + '&amp;radar=ora' : SITO + '/' + K + '/adesso/', 'porta-radar'],
+         ['🌲', 'Boschi', SITO + '/?r=' + K + '&amp;boschi=1', 'porta-boschi'],
+         ['🛰', 'Satellite', SITO + '/?r=' + K + '&amp;boschi=1&amp;sat=1', 'porta-satellite']].map(function (t) {
+          return '<a href="' + t[2] + '" onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'pagina-' + K + '-' + t[3] + '\'})}catch(e){}"><span>' + t[0] + '</span>' + t[1] + '</a>';
+        }).join('') + '</div></div>';
   }
 
   // ── Le 30 barre, l'ultimo giorno a destra. Gli ultimi 7 in blu pieno ──
