@@ -102,6 +102,12 @@ function etichette(prov) {
    escludeva: due pagine, due numeri. Vale per le regioni (riepilogo) e per le zone. */
 const COPERTURA_MIN = 0.6;
 
+// A parita' di millimetri: nome in ordine alfabetico, poi id. Un ordine che non dipende
+// dall'ordine in cui arrivano i file (19/10/2026).
+function pariMerito(na, nb, a, b) {
+  return String(na || '').localeCompare(String(nb || ''), 'it') || (a < b ? -1 : a > b ? 1 : 0);
+}
+
 function riepilogo(r, giorni, fuori) {
   const somma = {}, nomi = {}, prov = {}, conDato = {};
   let presenti = 0, primo = null, ultimo = null;
@@ -130,8 +136,12 @@ function riepilogo(r, giorni, fuori) {
   const chiavi = Object.keys(somma).filter(id => conDato[id] >= presenti * COPERTURA_MIN);   // copertura, vedi sopra
   if (!chiavi.length) return null;
   const et = etichette(prov);
-  const media = chiavi.reduce((a, id) => a + somma[id], 0) / chiavi.length;
-  const top = chiavi.sort((a, b) => somma[b] - somma[a]).slice(0, 5)
+  const media = chiavi.slice().sort().reduce((a, id) => a + somma[id], 0) / chiavi.length;   // sempre nello stesso ordine: vedi pariMerito
+  // Pari merito (19/10/2026): si confrontano i millimetri COME SI LEGGONO (al decimo) e poi
+  // il nome e l'id. Ordinando sulla somma grezza, due pluviometri a 12,3 mm si scambiavano
+  // di posto da un giro all'altro (12,299999 contro 12,3 secondo l'ordine dei file): il
+  // «massimo» della scheda cambiava e partiva un commit senza dati nuovi (Liguria, 18/10 09:07).
+  const top = chiavi.sort((a, b) => Math.round(somma[b] * 10) - Math.round(somma[a] * 10) || pariMerito(nomi[a], nomi[b], a, b)).slice(0, 5)
     .map(id => ({ n: et(id, require('./lib-nomi.js').bello(nomi[id])), mm:   // «Colle dell'Agnello», non «COLLE DELL'AGNELLO» (18/10/2026)
       Math.round(somma[id] * 10) / 10 }));
   return {
@@ -379,10 +389,10 @@ for (const z of ZONE) {
     }
     const con = ids.filter(id => valori[id][j] != null);
     if (!con.length) continue;
-    const ord = con.slice().sort((a, b) => valori[b][j] - valori[a][j]);
+    const ord = con.slice().sort((a, b) => valori[b][j] - valori[a][j] || pariMerito(nomeDi[regDi[a] + ':' + a], nomeDi[regDi[b] + ':' + b], a, b));   // pari merito, vedi riepilogo()
     const dentro = [...giorniConDati].sort((a, b) => a - b);
     periodi[String(n)] = {
-      media: uno(con.reduce((t, id) => t + valori[id][j], 0) / con.length),
+      media: uno(con.slice().sort().reduce((t, id) => t + valori[id][j], 0) / con.length),   // stesso ordine a ogni giro (26,75 diventava 26,8 o 26,7)
       stazioni: con.length,
       giorni: dentro.length,
       primo: giorni[dentro[dentro.length - 1]],
