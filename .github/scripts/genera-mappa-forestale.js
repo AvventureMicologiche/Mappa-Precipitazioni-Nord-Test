@@ -34,7 +34,12 @@
  *   node .github/scripts/genera-mappa-forestale.js
  */
 const fs = require('fs');
-const { YT_BTN, stileDelModello } = require('./lib-pagina-funghi.js');
+const { YT_BTN, stileDelModello, QUIZ_CSS, coppiaQuiz } = require('./lib-pagina-funghi.js');
+// 20/10/2026 (scheda 89, mockup approvato): come le altre famiglie, ricerca in testata, «Trova i boschi», «Che tempo
+// farà» col bottone del radar (regioni: le zone dei funghi alla loro quota; zone: i paesi), quiz tartufi accanto a
+// YouTube nelle regioni che lo hanno, ed eventi GA4 apri_mappa su tutti i link alla mappa (prima nessuno: le
+// aperture della mappa da queste pagine non si vedevano, «0» in GA4)
+const { METEO_CSS, meteoHtml, boschiHtml, meteoClient } = require('./lib-meteo-regione.js');
 const path = require('path');
 const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
 const { slug, slugRegione, artNum } = require('./lib-nomi.js');   // artNum: «l'81%», «sull'87%» (18/10/2026)
@@ -60,6 +65,8 @@ const D = JSON.parse(fs.readFileSync(path.join(__dirname, 'mappa-forestale-dati.
 const IND = JSON.parse(fs.readFileSync(path.join(RADICE, 'tessere-boschi', 'italia', 'indice.json'), 'utf8'));
 const COL = Object.fromEntries(IND.gruppi);
 const CANALE = 'https://www.youtube.com/@avventuremicologiche';
+// le zone dei funghi di ogni regione per «Che tempo farà» (data/zone-regioni.json, lo scrive genera-pagine-funghi.js)
+const ZR = JSON.parse(fs.readFileSync(path.join(RADICE, 'data', 'zone-regioni.json'), 'utf8'));
 const ANTEPRIME = 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/';
 
 // Il foglio di stile e' quello delle pagine funghi di zona (lo aveva il mockup approvato)
@@ -208,7 +215,11 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);
 gtag("js",new Date());
 if(/(^|\\.)avventuremicologiche\\.it$/.test(location.hostname))gtag("config","G-9R7MXXS0V4");
 </script>
-<style>${STILE}${STILE_MF}${YT_BTN}</style>
+<style>${STILE}${STILE_MF}${YT_BTN}${QUIZ_CSS}${METEO_CSS}
+#mk-meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
+#mk-meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
+#mk-meteo .mk-cr span em{white-space:nowrap;}
+</style>
 </head>
 <body>
 <header>
@@ -227,9 +238,25 @@ const PIEDE = `</main>
 // «Vieni a trovarci su YouTube» in fondo, come sulle pagine funghi (27/9/2026, sua
 // richiesta: le pagine forestali avevano solo il tasto della testata). Evento GA
 // «forestale-fondo-<pagina>», per contarli a parte.
-const youtube = id => `<p style="margin:22px 0 4px;"><a href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
-   onclick="try{gtag('event','click_youtube',{pulsante:'forestale-fondo-${id}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
-`;
+// 20/10/2026: con k (la regione) il quiz tartufi accanto, come sulle pagine funghi (coppiaQuiz), se la regione ce l'ha
+const youtube = (id, k) => coppiaQuiz(k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
+   onclick="try{gtag('event','click_youtube',{pulsante:'forestale-fondo-${id}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a>`, 'forestale-fondo-' + id) + '\n';
+
+/* Gli script in fondo a ogni pagina (20/10/2026): meteoClient (ricerca in testata, «Trova i boschi», «Che tempo
+   farà» se la pagina ha il blocco) e gli eventi GA4 sui link alla mappa. ⚠️ I link della tabella, della casella e
+   della testata il loro evento lo mandano gia' da meteoClient: qui si saltano, se no si conterebbero due volte. */
+function script(pagina, k, opz) {
+  return `<script>
+(${meteoClient.toString()})(${JSON.stringify(k)}, ${JSON.stringify(DI_REG[k] ? DI_REG[k].nome : 'Italia')}, ${JSON.stringify(SITO)}, ${fs.existsSync(path.join(RADICE, k, 'adesso')) ? 'true' : 'false'}, ${JSON.stringify(Object.assign({ ga: 'forestale-' + pagina, grafico: false, boschi: 'mk-boschi', id: 'mk-meteo' }, opz || {}))});
+document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('a[href]'); if (!a || a.closest('#mk-meteo, header, .mk-drop')) return;
+  if (!/(^|\\/\\/precipitazioni\\.avventuremicologiche\\.it)\\/\\?/.test(a.getAttribute('href'))) return;
+  var pezzo = a.className || (a.closest('.tasti') ? 'tasti' : a.querySelector('img') ? 'immagine' : 'link');
+  try { gtag('event', 'apri_mappa', { da: 'forestale-${pagina}-' + pezzo }); } catch (x) {}
+});
+</script>`;
+}
+const piede = (pagina, k, opz) => PIEDE.replace('</body>', script(pagina, k, opz) + '\n</body>');
 const tit = (...v) => v.find(t => t.length <= 62) || v[v.length - 1];
 const des = (...v) => v.find(t => t.length <= 158) || v[v.length - 1];
 function didascalia(tipi, dove) {
@@ -267,10 +294,12 @@ function paginaRegione(r) {
 <a href="${MAPPA}"><img class="img-f" src="scorcio.jpg" alt="La mappa forestale ${esc(r.del)} da vicino: i boschi colorati per tipo sopra il rilievo, con la nuvoletta di un bosco" width="1200" height="750"></a>
 <p class="nota">${esc(didascalia(tipiDelPunto(S, zS ? zS.tipi : T), doveS))}. Tocchi un bosco e la nuvoletta ti dice che cos'è, a che quota, su quale versante. <a href="${MAPPA}">Apri la mappa</a> per vedere tutta la regione.</p>
 
+${boschiHtml('🌲 Trova i boschi ' + esc(r.inn) + ' e dintorni')}
 <h2>Che boschi ci sono ${esc(r.inn)}</h2>
 <p class="breve">Quanto pesa ogni tipo sul bosco della regione, misurato sulla nostra mappa.</p>
 ${barre(T)}
 
+${meteoHtml({ k: r.k }, ZR[r.k] ? 'Che tempo farà nelle zone dei funghi ' + esc(r.del) : 'Che tempo farà ' + esc(r.inn), ZR[r.k] ? 'Sto leggendo le previsioni delle zone…' : 'Sto leggendo le previsioni delle città…', 'mk-meteo')}
 <h2>A chi serve</h2>
 ${usi(T, esc(r.inn), { funghi, castagne: zoneCon(r.k, 'castagneti', 30), faggete: zoneCon(r.k, 'faggete', 25) })}
 `;
@@ -294,14 +323,15 @@ ${Z.slice().sort((a, b) => a.n.localeCompare(b.n, 'it')).map(z => `<li>${zlink(z
 <h2>Le altre regioni</h2>
 <nav class="altre"><p>${REG.filter(x => x.k !== r.k).map(x => `<a href="${SITO}/mappa-forestale/${x.k}/">${esc(x.nome)}</a>`).join(' · ')}</p></nav>
 
-${youtube(r.k)}
+${youtube(r.k, r.k)}
 <div class="pioggia">
 <h2>E la pioggia? Sulla stessa mappa</h2>
 <p>La mappa forestale sta dentro la nostra <b>mappa pluviometrica</b>: i pluviometri ${esc(r.del)}, con la pioggia vera giorno per giorno. Scegli un periodo e vedi i colori della pioggia, poi con <b>⇆ Confronta con piogge</b> li metti accanto ai boschi.</p>
 ${tastiPioggia(`${SITO}/?r=${r.k}`)}${HA_PIOGGE.has(r.k) ? `<a href="${SITO}/${r.k}/"><img class="img-f" src="${ANTEPRIME}${r.k}.jpg" alt="La pioggia degli ultimi giorni ${esc(r.inn)}, pluviometro per pluviometro" width="1600" height="1000" loading="lazy"></a>
 <p><a href="${SITO}/${r.k}/">Dove ha piovuto ${esc(r.inn)}</a> · ${funghi.replace('>p', '>P')}</p>` : `<p>${funghi.replace('>p', '>P')}</p>`}
 </div>
-` + PIEDE;
+` + piede('regione-' + r.k, r.k, ZR[r.k] ? { area: 'zonedi=' + r.k, guasto: 'Le previsioni delle zone', tutte: 'Mostra tutte le zone (#)',
+    tocca: 'Tocca una zona per vederla ora per ora sulla mappa', sopra: 'Le zone dei funghi, alla quota media dei loro pluviometri' } : {});
   scriviFile(path.join('mappa-forestale', r.k, 'index.html'), h);
 }
 
@@ -326,9 +356,11 @@ function paginaZona(z) {
 <a href="${MAPPA}"><img class="img-f" src="scorcio.jpg" alt="La mappa forestale ${esc(DELLA)} da vicino, con la nuvoletta di un bosco" width="1200" height="750"></a>
 <p class="nota">${esc(didascalia(tipiDelPunto(S, T), doveS))}. <a href="${MAPPA}">Apri la mappa</a> per vedere il resto della zona.</p>
 
+${boschiHtml('🌲 Trova i boschi ' + esc(z.dove) + ' e dintorni')}
 <h2>Che boschi ci sono ${esc(z.dove)}</h2>
 <p class="breve">Il bosco copre ${artNum('il', Math.round(z.bosco) + '%')} del territorio intorno ai pluviometri della zona. Ecco come si divide.</p>
 ${barre(T)}
+${meteoHtml({ k: z.reg }, 'Che tempo farà ' + esc(z.dove), 'Sto leggendo le previsioni dei paesi…', 'mk-meteo')}
 `;
   if (paesi.length) h += `
 <h2>I paesi intorno alla valle</h2>
@@ -349,13 +381,14 @@ ${usi(T, 'qui', { funghi: zfunghi ? `<a href="${SITO}/funghi/zone/${s}/">funghi 
 <nav class="altre"><p>${zoneDi(z.reg).filter(x => x.n !== z.n).sort((a, b) => a.n.localeCompare(b.n, 'it')).map(zlink).join(' · ') || '—'}</p></nav>
 <p><a href="${SITO}/mappa-forestale/${r.k}/">‹ Mappa forestale ${esc(r.del)}</a></p>
 
-${youtube('zona-' + s)}
+${youtube('zona-' + s, z.reg)}
 <div class="pioggia">
 <h2>E la pioggia? Sulla stessa mappa</h2>
 <p>La mappa forestale sta dentro la nostra <b>mappa pluviometrica</b>: ${z.posti.length} pluviometri intorno alla zona, con la pioggia vera giorno per giorno. Con <b>⇆ Confronta con piogge</b> metti accanto boschi e pioggia.</p>
 ${tastiPioggia(`${SITO}/?r=${z.reg}&amp;z=11&amp;c=${z.lat},${z.lon}`)}${HA_PIOGGE.has(z.reg) ? `<a href="${SITO}/zone/${s}/"><img class="img-f" src="${ANTEPRIME}${z.reg}.jpg" alt="La pioggia degli ultimi giorni ${esc(r.inn)}" width="1600" height="1000" loading="lazy"></a>\n` : ''}<p><a href="${SITO}/zone/${s}/">Dove ha piovuto ${esc(z.dove)}</a>${zfunghi ? ` · <a href="${SITO}/funghi/zone/${s}/">Funghi ${esc(z.dove)} oggi</a>` : ''}</p>
 </div>
-` + PIEDE;
+` + piede('zona-' + s, z.reg, { area: 'zona=' + s, guasto: 'Le previsioni dei paesi', tutte: 'Mostra tutti i paesi (#)',
+    tocca: 'Tocca un paese per vederlo ora per ora sulla mappa', sopra: 'I paesi ' + DELLA + ' e dei dintorni' });
   scriviFile(path.join('mappa-forestale', 'zone', s, 'index.html'), h);
 }
 
@@ -444,6 +477,7 @@ ${paragrafiT(B['apertura'], V, 'breve')}
 <a href="${MAPPA}"><img class="img-f" src="scorcio.jpg" alt="${esc(piano('foto, testo nascosto per chi non vede'))}" width="1200" height="750"></a>
 <p class="nota">${tit('didascalia foto')} <a href="${MAPPA}">Apri la mappa</a> e vai dove vuoi.</p>
 
+${boschiHtml('🌲 Trova i boschi vicino a te')}
 <h2>${tit('regioni: titolo')}</h2>
 ${paragrafiT(B['regioni: testo'], V, 'breve')}
 ${perReg.filter(x => x.ha >= 1000).map(x => `<div class="fr"><div class="fr-t"><span class="fr-sw" style="background:${COL[T]}"></span><a href="${SITO}/mappa-forestale/${x.r.k}/"><b>${esc(x.r.nome)}</b></a><span class="fr-v">${n1(Math.round(x.ha / 100) * 100)} ha</span></div>` +
@@ -499,7 +533,7 @@ ${paragrafiT(B['pioggia: testo'], V)}
 ${tastiPioggia(`${SITO}/?${vista}`)}
 <p><a href="${SITO}/funghi/">Piogge per funghi</a> · <a href="${SITO}/guida/">Guida</a></p>
 </div>
-` + PIEDE;
+` + piede('tipo-' + slugT, 'italia', { id: 'mk-niente' });
   // una sezione cancellata nel file di testo non lascia titoli o riquadri vuoti
   h = h.replace(/<h2>\s*<\/h2>\n?/g, '').replace(/<div class="fonte">\s*<\/div>\n?/g, '').replace(/<ul class="usi">\s*<\/ul>\n?/g, '');
   const resti = [...new Set(h.match(/\{\w+\}/g) || [])];
@@ -520,6 +554,7 @@ function paginaItalia() {
 <a href="${MAPPA}"><img class="img-f" src="scorcio.jpg" alt="La mappa forestale da vicino, con la nuvoletta di un bosco" width="1200" height="750"></a>
 <p class="nota">${esc(didascalia(D.regioni.toscana.tipi, 'Toscana, da vicino'))}. <a href="${MAPPA}">Apri la mappa</a> e vai dove vuoi.</p>
 
+${boschiHtml('🌲 Trova i boschi di un paese')}
 <h2>Le carte forestali, regione per regione</h2>
 <p class="breve">Per ogni regione: la carta ufficiale da cui viene il colore, con la sua licenza e il collegamento al geoportale, e i tre boschi più diffusi. Il nome porta alla pagina della regione.</p>
 <div class="schede">
@@ -548,7 +583,7 @@ ${youtube('italia')}
   `<a href="${SITO}/${k}/"><img src="${ANTEPRIME}${k}.jpg" alt="La pioggia degli ultimi giorni in ${n}" width="1600" height="1000" loading="lazy"><span>${n}</span></a>`).join('')}</div>
 <p><a href="${SITO}/funghi/">Piogge per funghi</a> · <a href="${SITO}/guida/">Guida</a></p>
 </div>
-` + PIEDE;
+` + piede('italia', 'italia', { id: 'mk-niente' });
   scriviFile(path.join('mappa-forestale', 'index.html'), h);
 }
 

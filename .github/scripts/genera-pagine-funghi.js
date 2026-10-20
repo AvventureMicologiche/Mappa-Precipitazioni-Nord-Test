@@ -67,7 +67,8 @@ const { METEO_CSS, meteoHtml, boschiHtml, meteoClient } = require('./lib-meteo-r
    Le regioni senza zone (Puglia, Basilicata, Sardegna) hanno le citta', come le pagine regione piogge.
    Finiscono in data/zone-regioni.json, che legge /api/previsioni?zonedi=<regione>. */
 function zoneMeteo(k) {
-  return ZONE.filter(z => z.reg === k).map(z => {
+  // in ordine alfabetico (20/10/2026): la mappa forestale le mostra cosi'; le regioni funghi le riordinano da se' (OPZ.ordine)
+  return ZONE.filter(z => z.reg === k).sort((a, b) => a.n.localeCompare(b.n, 'it')).map(z => {
     const { ids, regDi } = postiDellaZona(POSTI, z);
     const q = ids.map(id => (POSTI[regDi[id]] || []).find(p => String(p[0]) === String(id))).filter(Boolean)
       .map(p => +p[3]).filter(x => x > 0).sort((a, b) => a - b);

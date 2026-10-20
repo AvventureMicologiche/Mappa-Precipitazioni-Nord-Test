@@ -248,6 +248,17 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
   .cit-t{font-size:30px;} .cit-ic{font-size:30px;} .cit-gg{font-size:13.5px;} .cit-vai{font-size:13.5px;padding:4px 11px;}
   #mappa{height:380px;} .reg-lista{grid-template-columns:repeat(2,1fr);}
   .rb-testa{font-size:14.5px;} .rb-testa .quando{font-size:13.5px;}}
+
+/* QUIZ ACCANTO A YOUTUBE: due celle uguali, una sotto l'altra sul telefono */
+.coppia-btn{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 4px;}
+.coppia-btn a{justify-content:center;box-sizing:border-box;min-height:53px;width:100%;}
+.coppia-btn svg{width:26px;flex:none;}
+.quiz-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,#F9C93E,#EDA40C);color:#3d1f04 !important;
+  font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 4px 0 #a06a08,0 9px 18px rgba(150,95,10,.32);transition:transform .08s,box-shadow .08s;}
+.quiz-btn:hover{background:linear-gradient(180deg,#FBD150,#F0AC1A);}
+.quiz-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a06a08,0 4px 8px rgba(150,95,10,.3);}
+@media(max-width:560px){.coppia-btn{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -345,8 +356,10 @@ sposta le macchie di adesso nella direzione in cui si muovono, per i prossimi qu
 <p>Il radar guarda la pioggia in quota: può vedere gocce che evaporano prima di toccare terra, o perderla dietro le montagne.
 I pluviometri la misurano a terra. Per sapere quanta ne è caduta c'è la pagina <a href="https://avventurepluvio-test.pages.dev/liguria/">Dove ha piovuto in Liguria</a>.</p>
 <p><a href="https://avventurepluvio-test.pages.dev/guida/" onclick="try{gtag('event','click_guida',{pulsante:'pagina-liguria-adesso'})}catch(e){}">📖 Guida alla mappa: come si usa, tutte le funzioni</a></p>
-<p style="margin:22px 0 4px;"><a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt-btn"
-   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-liguria-adesso-fondo'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
+<div class="coppia-btn"><a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt-btn"
+   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-liguria-adesso-fondo'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a>
+<a href="https://avventuremicologiche.it/esame-tartufi/liguria/" target="_blank" rel="noopener" class="quiz-btn"
+   onclick="try{gtag('event','click_quiz',{pulsante:'pagina-liguria-adesso-fondo'})}catch(e){}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#7A3A08" d="M7 3h10v2h3v3a4 4 0 0 1-4 4h-.3A5 5 0 0 1 13 14.9V17h3v3H8v-3h3v-2.1A5 5 0 0 1 8.3 12H8a4 4 0 0 1-4-4V5h3zm-1 4v1a2 2 0 0 0 2 2V7zm12 0v3a2 2 0 0 0 2-2V7z"/></svg>Quiz esame tartufi Liguria</a></div>
 </div>
 </main>
 

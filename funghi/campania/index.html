@@ -1204,7 +1204,9 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Campania.</p>
     var h = document.getElementById('h-grafico'); if (h) h.textContent = 'La pioggia: gli ultimi 30 giorni e i prossimi 7';
   }
 
-  var citta = fetch(API + '?' + AREA).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
+  // senza il blocco «Che tempo farà» (mappa forestale: tipi di bosco e Italia, solo la ricerca) le previsioni non si chiedono
+  var citta = !blocco ? Promise.resolve(null)
+    : fetch(API + '?' + AREA).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
   var riepilogo = OPZ.grafico === false ? null : fetch(BASE + RIEP).then(function (r) { return r.json(); }).catch(function () { return null; });
   // l'elenco dei comuni (366 KB) serve solo a ordinare le citta' per abitanti: nelle zone (OPZ.area) i paesi arrivano
   // gia' in ordine, quindi si disegna subito (20/10/2026, sesto check, bug 15)

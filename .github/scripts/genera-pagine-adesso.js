@@ -29,7 +29,7 @@
 const fs = require('fs');
 const path = require('path');
 const { REGIONI, GEN, navAltre, STILE_BASE, STILE_IERI, ESTERE, SITO, GA_ID, CANALE, scrivi, stazDi } = require('./genera-pagine-regione.js');
-const { STILE_NUOVO, RILIEVO } = require('./lib-pagina-funghi.js');
+const { STILE_NUOVO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = require('./lib-pagina-funghi.js');   // quiz accanto a YouTube (20/10/2026)
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const RADICE = path.resolve(__dirname, '..', '..');
@@ -229,7 +229,7 @@ I pluviometri la misurano a terra. Per sapere quanta ne è caduta c'è la pagina
 ${STILE_BASE}
 ${STILE_NUOVO}
 ${STILE_IERI}
-${RILIEVO}${STILE_ADESSO}</style>
+${RILIEVO}${STILE_ADESSO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}</style>
 </head>
 <body>
 <header>
@@ -293,8 +293,8 @@ sposta le macchie di adesso nella direzione in cui si muovono, per i prossimi qu
 <h2>Radar e pluviometri: perché a volte non coincidono</h2>
 ${radarPluvio}
 <p><a href="${SITO}/guida/" onclick="try{gtag('event','click_guida',{pulsante:'pagina-${r.k}-adesso'})}catch(e){}">📖 Guida alla mappa: come si usa, tutte le funzioni</a></p>
-<p style="margin:22px 0 4px;"><a href="${CANALE}" target="_blank" rel="noopener" class="yt-btn"
-   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-${r.k}-adesso-fondo'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
+${coppiaQuiz(r.k, `<a href="${CANALE}" target="_blank" rel="noopener" class="yt-btn"
+   onclick="try{gtag('event','click_youtube',{pulsante:'pagina-${r.k}-adesso-fondo'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a>`, 'pagina-' + r.k + '-adesso-fondo')}
 </div>
 </main>
 
