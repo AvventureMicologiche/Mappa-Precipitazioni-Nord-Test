@@ -163,7 +163,10 @@ function paesiDelPosto(reg, posto) {
   // Nocelle Arvo col solo pluviometro): sotto le 5 righe il cerchio si allarga a 20 km. Regola sua: meglio un
   // paese in piu' che uno in meno (20/10/2026).
   const giro = km => COMUNI.map(c => ({ ...c, d: kmFra(lat, lon, c.lat, c.lon) }))
-    .filter(c => c.d <= km && normNome(c.n) !== io)
+    // ⚠️ e nemmeno il comune che E' il pluviometro con un altro nome (20/10/2026, settimo check, bug 7): «Ferriere Pluvio»
+    // e «Ferriere», «Agerola METEO» e «Agerola». Entro 2 km e col nome dentro quello del pluviometro, a parole intere:
+    // a 3 km si toglievano comuni diversi («Caslino d'Erba» ed Erba). 111 righe doppie su 908 pagine.
+    .filter(c => c.d <= km && normNome(c.n) !== io && !(c.d <= 2 && (' ' + io + ' ').includes(' ' + normNome(c.n) + ' ')))
     .map(c => ({ ...c, w: Math.log(c.pop + 10) * (1 - c.d / (km * 1.15)) * (c.reg === reg ? 1 : 0.6) }))
     .sort((a, b) => b.w - a.w).slice(0, PAESI_MAX - 1);
   let altri = giro(PAESI_KM);

@@ -54,17 +54,19 @@ function lancia(script) {
 }
 
 // Quante pagine sono cambiate davvero, secondo git: `funghi/` (le 948 di paese
-// e le 114 di zona funghi), `zone/` (le 114 zone piogge) e l'elenco dei paesi.
+// e le 114 di zona funghi), `zone/` (le 114 zone piogge) e i due elenchi dei paesi di «Che tempo farà»
+// (data/paesi-zone.json delle zone, data/paesi-localita/ delle pagine paese: settimo check, bug 2, 20/10/2026).
 // ⚠️ Si guarda il PERCORSO dall'inizio: «funghi/zone/» contiene anche «zone/».
 function cambiate() {
-  const out = execFileSync('git', ['status', '--porcelain', '--', 'funghi', 'zone', 'data/paesi-zone.json'],
+  const out = execFileSync('git', ['status', '--porcelain', '--', 'funghi', 'zone', 'data/paesi-zone.json', 'data/paesi-localita'],
     { cwd: RADICE, encoding: 'utf8' });
   const percorsi = out.split('\n').filter(r => r.trim()).map(r => r.slice(3));
   const funghi = percorsi.filter(p => p.startsWith('funghi/'));
   const zone = funghi.filter(p => p.startsWith('funghi/zone/')).length;
   const zonePiogge = percorsi.filter(p => p.startsWith('zone/')).length;
   const paesiZone = percorsi.includes('data/paesi-zone.json');
-  return { tutte: funghi.length + zonePiogge, zone, localita: funghi.length - zone, zonePiogge, paesiZone };
+  const paesiLocalita = percorsi.some(p => p.startsWith('data/paesi-localita/'));
+  return { tutte: funghi.length + zonePiogge, zone, localita: funghi.length - zone, zonePiogge, paesiZone, paesiLocalita };
 }
 
 const oggi = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Rome' }).format(new Date());
@@ -78,11 +80,11 @@ lancia('genera-pagine-zona-piogge.js');
 const c = cambiate();
 console.log('');
 console.log('  pagine cambiate: ' + c.tutte + '  (paese ' + c.localita + ', zona ' + c.zone + ', zona piogge ' + c.zonePiogge + ')'
-  + (c.paesiZone ? '; data/paesi-zone.json cambiato' : ''));
+  + (c.paesiZone ? '; data/paesi-zone.json cambiato' : '') + (c.paesiLocalita ? '; data/paesi-localita/ cambiato' : ''));
 
 if (!c.tutte) {
   console.log('  Nessuna pagina cambiata: date della sitemap invariate.'
-    + (c.paesiZone ? ' Il solo data/paesi-zone.json lo committa il workflow.' : ''));
+    + (c.paesiZone || c.paesiLocalita ? ' Gli elenchi dei paesi li committa il workflow.' : ''));
   process.exit(0);
 }
 

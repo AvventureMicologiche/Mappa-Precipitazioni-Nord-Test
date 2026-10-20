@@ -6193,7 +6193,7 @@ function loadOpenMeteoRegion(stations,pastDate,nowDate,labelPeriodo,cb){
         +'?latitude='+lats+'&longitude='+lons+'&hourly=precipitation&timezone=Europe%2FRome&start_date='+startDate+'&end_date='+dopoFine);
     } else if(pastDate>=limiteForecast){
       urls.push('https://api.open-meteo.com/v1/forecast?latitude='+lats+'&longitude='+lons+'&daily=precipitation_sum&timezone=Europe%2FRome&start_date='+startDate+'&end_date='+endDate);
-    } else if(nowDate<=cutoff){
+    } else if(endDate<=fmtD(cutoff)){   // per GIORNO (20/10/2026, settimo check, bug 4): con nowDate (fine giornata, 23:59) un periodo che finiva proprio a D-6 cadeva nel ramo misto, e la seconda richiesta partiva il giorno dopo la sua fine: «Nessun dato»
       urls.push('https://archive-api.open-meteo.com/v1/archive?latitude='+lats+'&longitude='+lons+'&start_date='+startDate+'&end_date='+endDate+'&daily=precipitation_sum&timezone=Europe%2FRome');
     } else {
       urls.push('https://archive-api.open-meteo.com/v1/archive?latitude='+lats+'&longitude='+lons+'&start_date='+startDate+'&end_date='+fmtD(cutoff)+'&daily=precipitation_sum&timezone=Europe%2FRome');
@@ -10858,7 +10858,7 @@ if(_btnShot){
      `pz=1` dice che il posto e' un'AREA (una zona, non un paese) e si
      inquadra piu' larga. */
   function pinDaLink(qq){
-    var _pl=(qq.get('pl')||'').split(',').map(Number), _pn=qq.get('pn')||'';
+    var _pl=(qq.get('pl')||'').split(',').map(Number), _pn=(qq.get('pn')||'').replace(/[<>"&]/g,'');
     if(!(_pl.length===2 && isFinite(_pl[0]) && isFinite(_pl[1]))) return false;
     _vistaPaese={lat:_pl[0],lon:_pl[1],n:_pn,z:qq.get('pz')==='1'};
     try{ locSegnaposto(_pl[0],_pl[1]); }catch(e){}
@@ -16660,6 +16660,10 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
   var ICONE=[[/clearsky_day|fair_day/,'☀️'],[/clearsky_night|fair_night/,'🌙'],[/partlycloudy_day/,'⛅'],[/partlycloudy_night|^cloudy|fog/,'☁️'],[/thunder/,'⛈️'],[/heavyrain|heavysleet/,'🌧️'],[/rain|sleet|drizzle/,'🌦️'],[/snow/,'🌨️']];
   var acceso=false, giorno=1, aree={}, punti={}, punto=null, gruppo=null, guardia=null, quanti=0, fonteVecchia=null, locCasa=null, inCorso=0, cercato=null, posto=null, pillCasa=null;
   function el(id){ return document.getElementById(id); }
+  /* ⚠️ I NOMI DEI POSTI SI METTONO IN PAGINA COME TESTO (20/10/2026, settimo check, bug 3). Il nome di un link
+     (`pn=`, `n=`) finiva in innerHTML cosi' com'era: un link costruito apposta faceva girare codice sul nostro dominio.
+     I nomi veri (Sant'Anna di Stazzema, Forli', Citta' di Castello) non cambiano. */
+  function escH(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   function map(){ return window._mapDebug; }
   function regioni(){ return window._regioniAttive?window._regioniAttive():[]; }
   function tel(){ return window.innerWidth<=900; }
@@ -16976,7 +16980,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
         var e=(c.giorni||[]).filter(function(x){ return x.g===g; })[0]; if(!e) return;
         var sel=punto&&punto.n===c.n&&Math.abs(punto.lat-c.lat)<0.01;
         var mk=L.marker([c.lat,c.lon],{icon:L.divIcon({className:'pv-ic',iconSize:null,iconAnchor:[0,0],
-          html:'<div class="pv-m'+(sel?' sel':'')+'"><span class="ic">'+icona(e.s)+'</span><span class="nm">'+c.n+'<span class="tx"><span class="mx">'+e.mx+'°</span> <span class="mn">'+e.mn+'°</span></span></span></div>'}),
+          html:'<div class="pv-m'+(sel?' sel':'')+'"><span class="ic">'+icona(e.s)+'</span><span class="nm">'+escH(c.n)+'<span class="tx"><span class="mx">'+e.mx+'°</span> <span class="mn">'+e.mn+'°</span></span></span></div>'}),
           keyboard:false});
         mk.on('click',function(){ cercato=null; apriPunto(c); ga('capoluogo',{posto:c.n}); });
         gruppo.addLayer(mk);
@@ -16989,7 +16993,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
       var eCap=false; gruppo.eachLayer(function(l){ if(l.getLatLng&&Math.abs(l.getLatLng().lat-pp.lat)<0.01&&Math.abs(l.getLatLng().lng-pp.lon)<0.01) eCap=true; });
       if(!eCap&&jj&&jj.giorni){ var ep=jj.giorni.filter(function(x){ return x.g===g; })[0];
         if(ep){ var mp=L.marker([pp.lat,pp.lon],{icon:L.divIcon({className:'pv-ic',iconSize:null,iconAnchor:[0,0],
-          html:'<div class="pv-m sel"><span class="ic">'+icona(ep.s)+'</span><span class="nm">'+pp.n+'<span class="tx"><span class="mx">'+ep.mx+'°</span> <span class="mn">'+ep.mn+'°</span></span></span></div>'}),keyboard:false,zIndexOffset:500});
+          html:'<div class="pv-m sel"><span class="ic">'+icona(ep.s)+'</span><span class="nm">'+escH(pp.n)+'<span class="tx"><span class="mx">'+ep.mx+'°</span> <span class="mn">'+ep.mn+'°</span></span></span></div>'}),keyboard:false,zIndexOffset:500});
           mp.on('click',function(){ apriPunto(pp); ga('posto_riaperto',{posto:pp.n}); });
           gruppo.addLayer(mp); } } });
     el('pv-fo').textContent='ECMWF via MET Norway'+(agg?' · agg. '+fmtOra(agg):'');
@@ -17038,10 +17042,10 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     var det=el('pv-det'); det.className='vivo';
     var pan0=el('pv-pan'); if(pan0) pan0.classList.remove('con-cenno');
     if(!punti[k] || vecchia(punti[k].giorni)){   // anche se tenuta in memoria da ieri (bug 11)
-      det.innerHTML='<div class="hd"><div class="nm">'+c.n+'<small>carico la previsione…</small></div><button class="x" aria-label="Chiudi">×</button></div>';
+      det.innerHTML='<div class="hd"><div class="nm">'+escH(c.n)+'<small>carico la previsione…</small></div><button class="x" aria-label="Chiudi">×</button></div>';
       chiedi(API+'?lat='+c.lat.toFixed(4)+'&lon='+c.lon.toFixed(4)+(c.q!=null?'&q='+Math.round(c.q):'')+API_V)
         .then(function(j){ punti[k]=j; if(punto&&punto.lat===c.lat&&punto.lon===c.lon){ renderDet(); disegna(); tieniInVista(); } })
-        .catch(function(){ det.innerHTML='<div class="hd"><div class="nm">'+c.n+'<small>previsione non disponibile in questo momento</small></div><button class="x" aria-label="Chiudi">×</button></div>'; });
+        .catch(function(){ det.innerHTML='<div class="hd"><div class="nm">'+escH(c.n)+'<small>previsione non disponibile in questo momento</small></div><button class="x" aria-label="Chiudi">×</button></div>'; });
     } else { renderDet(); disegna(); tieniInVista(); }
     if(!silenzio) ga('punto',{posto:c.n});
   }
@@ -17079,7 +17083,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
         fino=' e domani fino alle '+String((ul.h+(ul.h6?6:1))%24).padStart(2,'0');
       }
     }
-    el('pv-det').innerHTML='<div class="hd"><div class="nm">'+punto.n+(punto.q!=null?' <i>· '+punto.q+' m</i>':'')+'<div class="q1">'+(gi===0&&ore.length?'Oggi dalle '+String(ore[0].h).padStart(2,'0')+fino:'Previsione per '+GIL[d.getDay()]+' '+d.getDate()+' '+MESI[d.getMonth()])+'</div>'+'<div class="q2">🌡 '+e.mx+'° / '+e.mn+'° · 💧 '+(e.mm).toLocaleString('it-IT')+' mm'+(e.pc!=null?' · ☔ '+(e.pc>0?'fino '+(/^(8|1$|1[1]$)/.test(String(e.pc))?'all\'':'al ')+e.pc+'%':'0%'):'')+'</div></div><button class="x" aria-label="Chiudi">×</button></div>'
+    el('pv-det').innerHTML='<div class="hd"><div class="nm">'+escH(punto.n)+(punto.q!=null?' <i>· '+punto.q+' m</i>':'')+'<div class="q1">'+(gi===0&&ore.length?'Oggi dalle '+String(ore[0].h).padStart(2,'0')+fino:'Previsione per '+GIL[d.getDay()]+' '+d.getDate()+' '+MESI[d.getMonth()])+'</div>'+'<div class="q2">🌡 '+e.mx+'° / '+e.mn+'° · 💧 '+(e.mm).toLocaleString('it-IT')+' mm'+(e.pc!=null?' · ☔ '+(e.pc>0?'fino '+(/^(8|1$|1[1]$)/.test(String(e.pc))?'all\'':'al ')+e.pc+'%':'0%'):'')+'</div></div><button class="x" aria-label="Chiudi">×</button></div>'
       +'<div class="gg-r">'+gb.map(function(x,i){ return chip(x,i,i===gi,true); }).join('')+'</div>'
       +(righe?'<div class="cols"><span>ora</span><span></span><span>temp.</span><span>pioggia</span><span>prob.</span><span>vento</span></div><div class="rows">'+righe+'</div>'
              :'<div class="vuoto">Per questo giorno c’è solo il riepilogo: le ore arrivano fino a '+(function(){ var u=(j.ore||[]).slice(-1)[0]; if(!u) return 'oggi'; var ud=giornoData(u.g); return GIL[ud.getDay()]+' '+ud.getDate(); })()+'.</div>')

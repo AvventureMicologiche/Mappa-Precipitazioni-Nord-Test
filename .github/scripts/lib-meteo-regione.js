@@ -201,7 +201,7 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
     'Basilicata': 'basilicata', 'Calabria': 'calabria', 'Sicilia': 'sicilia', 'Sardegna': 'sardegna' };
   function frazioni(testo) {
     return fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(testo) + '&count=10&language=it&countryCode=IT')
-      .then(function (r) { return r.json(); }).then(function (j) {
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (j) {   // un 429 non e' «nessun posto» (settimo check, bug 8)
         var visti = {};
         return (j.results || []).map(function (x) {
           var a1 = x.admin1 || '', a2 = x.admin2 || '';
@@ -229,7 +229,10 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
           var visti = {}; righe.forEach(function (x) { visti[x.q + '|' + x.reg] = 1; });
           righe = righe.concat(f.filter(function (x) { return !visti[x.q + '|' + x.reg]; })).slice(0, 7);
           if (righe.length) disegna(); else drop.innerHTML = '<div class="mk-porte-t">Nessun posto con questo nome<small>prova con il nome del comune</small></div>';
-        }).catch(function () {});
+        }).catch(function () {
+          // (settimo check, bug 8) prima restava per sempre «Cerco anche tra le frazioni…»
+          if (mio === giro && sel < 0 && !righe.length) drop.innerHTML = '<div class="mk-porte-t">Le frazioni non rispondono<small>prova con il nome del comune</small></div>';
+        });
       }, 350);
       if (!righe.length) { drop.innerHTML = norm(q).length >= 3 ? '<div class="mk-porte-t">Cerco anche tra le frazioni…</div>' : ''; drop.classList.toggle('on', norm(q).length >= 3); return; }
       disegna();
@@ -355,6 +358,15 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
         + (lab[i] ? '<b>' + mm(v) + '</b>' : '') + '<i style="height:' + (v == null ? 0 : Math.max(2, Math.round(v / max * 86))) + '%"></i></div>';
       ax += '<span>' + ((i === n || i % 5 === 0) ? (g.getDate() + '/' + (g.getMonth() + 1)) : '') + '</span>';
     }
+    /* IL BUCO FRA MISURATI E PREVISTI (20/10/2026, settimo check, bug 6): di notte, fino al giro dei riepiloghi del
+       mattino, l'ultimo giorno misurato e' l'altroieri (in Slovenia sempre, ARSO ha ~34 ore di ritardo) e i previsti
+       partono da oggi: «ieri» spariva senza che si vedesse. Ora c'e' una barra vuota per ogni giorno che manca. */
+    var buco = Math.round((daIso(OGGI) - daIso(ultimo)) / 864e5) - 1;
+    for (var k = 1; k <= Math.min(buco, 3); k++) {
+      var gb = daIso(ultimo); gb.setDate(gb.getDate() + k);
+      barre += '<div class="b" title="' + gb.getDate() + ' ' + MESI[gb.getMonth()] + ': dato non ancora arrivato"><i style="height:0"></i></div>';
+      ax += '<span></span>';
+    }
     F.forEach(function (f, d) {
       var x = daIso(f.g);
       barre += '<div class="b mk-fut' + (d === 0 ? ' mk-oggi' : '') + '" title="' + nomeG(f.g, d) + ', previsti: ' + num(f.mm) + ' mm">'
@@ -375,7 +387,13 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
     .then(function (j) { return 'posti=' + (j.primi || []).slice(0, OPZ.primi).map(function (x) { return x[2] + '/' + x[3] + '/' + x[1]; }).join(','); });
   var citta = !blocco ? Promise.resolve(null)
     : area.then(function (a) { return fetch(API + '?' + a); }).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
-  var riepilogo = OPZ.grafico === false ? null : fetch(BASE + RIEP).then(function (r) { return r.json(); }).catch(function () { return null; });
+  /* ⚠️ SOLO UN RIEPILOGO FRESCO (20/10/2026, settimo check, bug 5): scritto da meno di 36 ore, la stessa regola della
+     pagina. Se e' piu' vecchio la pagina ha gia' disegnato il grafico dai file del giorno, e ridisegnarlo col riepilogo
+     vecchio faceva sparire i giorni nuovi: allora il grafico resta com'e', senza i giorni previsti. */
+  var riepilogo = OPZ.grafico === false ? null : fetch(BASE + RIEP).then(function (r) { return r.json(); }).then(function (j) {
+    var eta = j && j.generato ? Date.now() - Date.parse(j.generato) : -1;
+    return eta >= 0 && eta < 36 * 3600 * 1000 ? j : null;
+  }).catch(function () { return null; });
   // l'elenco dei comuni (366 KB) serve solo a ordinare le citta' per abitanti: nelle zone (OPZ.area) i paesi arrivano
   // gia' in ordine, quindi si disegna subito (20/10/2026, sesto check, bug 15)
   /* OPZ.ordine (20/10/2026, pagine regione funghi): l'id dell'elenco delle zone della pagina. La tabella prende il SUO
@@ -398,7 +416,7 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
     var F = previsti(x[0]), t0 = Date.now();
     (function aspetta() {
       if (document.querySelector('#grafico .gg') && !document.querySelector('#grafico .mk-fut')) grafico(x[1], F);
-      if (Date.now() - t0 < 20000) setTimeout(aspetta, 200);
+      if (Date.now() - t0 < 60000) setTimeout(aspetta, 200);   // 60 s (settimo check, bug 5): su rete lenta il grafico dai file arriva tardi
     })();
   });
 }
