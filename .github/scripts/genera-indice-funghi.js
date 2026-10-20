@@ -44,6 +44,10 @@ const { LOCALITA, slug } = require('./lib-nomi.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 const { rigaStagione } = require('./lib-stagione.js');
 const { stileDelModello } = require('./lib-pagina-funghi.js');
+// 20/10/2026, scheda 90: l'indice come le altre pagine funghi (ricerca in testata, «Che tempo farà» sui venti posti
+// della classifica col bottone del radar, «Trova i boschi», e i due riquadri pioggia | boschi)
+const { METEO_CSS, meteoHtml, boschiHtml, meteoClient } = require('./lib-meteo-regione.js');
+const { STRISCIA_CSS } = require('./lib-striscia.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
@@ -125,6 +129,13 @@ ${STILE}
   .regg{grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:7px;}
   .regg a{padding:9px 10px;} .regg b{font-size:15px;}
 }
+${METEO_CSS}${STRISCIA_CSS}
+#mk-meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
+#mk-meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
+#mk-meteo .mk-cr span em{white-space:nowrap;}
+/* i due riquadri pioggia | boschi sotto «Ecco cosa vedi sulla mappa»: quasi quadrati, l'anteprima della regione copre */
+.mk-str.mk-italia{gap:12px;margin:8px 0 6px;}
+.mk-str.mk-italia a{height:auto;aspect-ratio:1/1.02;background-size:cover;background-position:50% 50%;}
 </style>
 </head>
 <body>
@@ -161,29 +172,28 @@ regioni. Dove ne è caduta di più è dove vale la pena andare a cercare.</p>
 <div id="tabella"></div>
 <p class="nota" id="notaclass"></p>
 
-${/* ⚠️ L'ANTEPRIMA STA QUI, subito sotto la classifica, e non in fondo: era
-     l'unica pagina della famiglia senza NESSUNA immagine, e a leggerla si
-     capiva che il sito ha una mappa solo arrivando in fondo al testo.
-     ⚠️ E' `preview.jpg`, quella che sta gia' nel repo e che i social usano
-     come anteprima: Italia intera coi pluviometri veri. Le 23 anteprime del
-     ramo `anteprime` sono UNA PER REGIONE e qui non servono; una nazionale
-     nuova non si puo' scattare con lo strumento di sempre, perche' la mappa
-     accetta al massimo 3 regioni per volta.
-     ⚠️ LA DIDASCALIA NON DICE CHE E' LA FINESTRA DEI FUNGHI, e non e' una
-     dimenticanza: quello scatto e' a 30 giorni. Dice cosa fa lo strumento
-     («scegli il periodo»), che e' vero sempre, invece di promettere un
-     periodo che l'immagine non mostra. */''}
+${/* 20/10/2026: SUBITO SOTTO LA CLASSIFICA il tempo degli stessi venti posti, nello stesso ordine, ognuno alla quota
+     del suo pluviometro (li sceglie meteoClient con OPZ.primi, l'API con ?posti=); niente giorni previsti nel grafico
+     (impronta etica: niente previsioni di crescita). Poi «Trova i boschi», come nelle altre pagine funghi. */''}
+${meteoHtml({ k: 'italia' }, 'Che tempo farà nei posti più bagnati', 'Sto leggendo le previsioni dei venti posti…', 'mk-meteo')}
+${boschiHtml('🌲 Trova i boschi vicino a te')}
+
+${/* ⚠️ L'ANTEPRIMA STA QUI, sotto la classifica e il meteo, e non in fondo: a leggere la pagina si deve capire
+     subito che il sito ha una mappa.
+     20/10/2026 (suo: «prova con la doppia anteprima come nelle altre pagine»): al posto di «preview.jpg» (ferma al
+     3/8 e a 30 giorni) i due riquadri delle altre pagine funghi, pioggia e boschi, sulla REGIONE DEL PRIMO POSTO
+     della classifica del giorno (sua scelta). Le immagini sono le anteprime che il sito ha gia': la pioggia dei 20
+     giorni rifatta ogni mattina sul ramo «anteprime», i boschi fissi in tessere-boschi/anteprime/. Le mette lo script
+     in fondo quando arriva la classifica; senza, i riquadri restano blu con la scritta e si cliccano lo stesso.
+     ⚠️ Le scritte NON dicono il periodo (suo: «quella è un'immagine generica»). */''}
 <h2 style="margin-top:30px">Ecco cosa vedi sulla mappa</h2>
-<a href="${SITO}/" style="display:block;text-decoration:none;"
-   onclick="try{gtag('event','apri_mappa',{da:'indice-funghi-anteprima'})}catch(e){}">
-  <img src="${SITO}/preview.jpg" width="1200" height="630"
-       alt="La mappa delle precipitazioni in Italia: ogni pallino è un pluviometro"
-       style="width:100%;height:auto;border:1px solid var(--bordo);border-radius:9px;display:block;background:var(--grigio);">
-  <span class="vai-mappa">Apri la mappa delle piogge →</span>
-</a>
-<p class="nota" style="text-align:center;margin-bottom:26px;">Ogni pallino è un pluviometro:
-scegli il periodo e vedi dove è caduta l'acqua, anche fuori dal bosco. Più il colore è acceso,
-più ne è venuta giù.</p>
+<div class="mk-str mk-giallo mk-italia" id="riquadri">
+  <a href="${SITO}/" data-t="pioggia" onclick="try{gtag('event','apri_mappa',{da:'indice-funghi-striscia-pioggia'})}catch(e){}"><span><b>💧 Mappa delle piogge</b><small>scegli il periodo →</small></span></a>
+  <a href="${SITO}/?boschi=1" data-t="boschi" onclick="try{gtag('event','apri_mappa',{da:'indice-funghi-striscia-boschi'})}catch(e){}"><span><b>🌲 Mappa dei boschi</b><small>tipo per tipo →</small></span></a>
+</div>
+<p class="nota" style="text-align:center;margin-bottom:26px;">Qui sopra la regione del primo posto in classifica: a
+sinistra la pioggia degli ultimi 20 giorni misurata dai pluviometri, più il colore è acceso più ne è venuta giù; a
+destra i boschi, colorati tipo per tipo. Sulla mappa scegli il periodo e vai dove vuoi.</p>
 
 <h2 style="margin-top:30px">Scegli la tua regione</h2>
 <p class="nota">Ogni regione ha la sua classifica, tutti i suoi posti da bosco e le sue valli.</p>
@@ -267,6 +277,10 @@ ${/* ⚠️ Qui NON si chiama navAltre: quella scrive due elenchi, regioni e
     : 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/';
   var SITO = ${JSON.stringify(SITO)};
   var QUANTI = 20;
+  // le anteprime dei riquadri: la pioggia sul ramo «anteprime» (si rifa' ogni mattina), i boschi fissi
+  var ANTEPRIME = 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/';
+  var BOSCHI = LOCALE ? '/tessere-boschi/anteprime/'
+    : 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/tessere-boschi/anteprime/';
   var MESI=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
   function gg(d){ var p=String(d).split('-'); return (+p[2])+' '+MESI[(+p[1])-1]; }
   function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
@@ -319,6 +333,15 @@ ${/* ⚠️ Qui NON si chiama navAltre: quella scrive due elenchi, regioni e
       });
       document.getElementById('tabella').innerHTML = h + '</tbody></table>';
 
+      /* i due riquadri sulla regione del primo posto (20/10/2026): le sue anteprime, e i link che la aprono a 20 giorni
+         (pioggia) e coi boschi accesi */
+      var reg = righe[0][2], rq = document.getElementById('riquadri');
+      if (rq && /^[a-z]+$/.test(reg)) {
+        var ap = rq.querySelector('a[data-t="pioggia"]'), ab = rq.querySelector('a[data-t="boschi"]');
+        ap.style.backgroundImage = 'url(' + ANTEPRIME + reg + '-mappa.webp)'; ap.href = SITO + '/?r=' + reg + '&g=20';
+        ab.style.backgroundImage = 'url(' + BOSCHI + reg + '-mappa.webp)'; ab.href = SITO + '/?r=' + reg + '&boschi=1';
+      }
+
       document.getElementById('notaclass').textContent =
         'Su ' + j.quanti + ' posti da bosco che in quegli otto giorni hanno preso acqua, in ' +
         j.regioni + ' regioni. Clicca un posto e vedi la sua pioggia giorno per giorno.';
@@ -327,6 +350,12 @@ ${/* ⚠️ Qui NON si chiama navAltre: quella scrive due elenchi, regioni e
       guasto('La classifica non è disponibile in questo momento: scegli la tua regione qui sotto.');
     });
 }());
+</script>
+<script>
+(${meteoClient.toString()})('italia', 'Italia', ${JSON.stringify(SITO)}, false, ${JSON.stringify({
+  ga: 'indice-funghi', primi: 20, id: 'mk-meteo', grafico: false, boschi: 'mk-boschi',
+  guasto: 'Le previsioni dei venti posti', tutte: 'Mostra tutti i # posti', tocca: 'Tocca un posto per vederlo ora per ora sulla mappa',
+  sopra: 'Gli stessi venti posti della classifica, nello stesso ordine, alla quota del loro pluviometro' })});
 </script>
 </body>
 </html>

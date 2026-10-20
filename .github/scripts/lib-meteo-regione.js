@@ -136,7 +136,9 @@ function boschiHtml(titolo, id) {
    Pagine paese (20/10/2026): area = 'paese=<reg>/<slug>', e il primo «paese» e' il punto del pluviometro (qui: 1),
    che nella tabella porta sotto il nome «al pluviometro».
    Pagine regione funghi (20/10/2026): area = 'zonedi=<reg>', una riga per zona (centro della zona, quota mediana dei
-   suoi pluviometri, scritta sotto il nome col campo sotto), e ordine = l'id dell'elenco delle zone della pagina. */
+   suoi pluviometri, scritta sotto il nome col campo sotto), e ordine = l'id dell'elenco delle zone della pagina.
+   Indice /funghi/ (20/10/2026): primi = quanti posti della classifica del giorno (italia.json) mettere in tabella,
+   ognuno alla quota del suo pluviometro; il bottone del radar si apre sul primo posto dove oggi piove. */
 function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
   OPZ = OPZ || {};
   var GA = OPZ.ga || 'pagina-' + K, AREA = OPZ.area || 'capoluoghi=' + K, RIEP = OPZ.riepilogo || 'riepiloghi/' + K + '.json';
@@ -285,7 +287,7 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
     if (!cc.length) { box.innerHTML = '<p class="mk-attesa">' + (OPZ.guasto || 'Le previsioni delle città') + ' non rispondono in questo momento: <a href="' + SITO + '/?r=' + K + '&m=prev">aprile sulla mappa</a>.</p>'; return; }
     // prima il capoluogo di regione, poi per abitanti (dall'elenco dei comuni): Prato e Pisa prima di Manciano
     var ab = {}; (ELENCO || []).forEach(function (x) { if (x.reg === K && !x.z) ab[x.q] = x.pop; });
-    if (!OPZ.area) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
+    if (!OPZ.area && !OPZ.primi) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
     var g0 = cc[0].giorni;
     var testa = '<div class="mk-cr mk-cr-t"><span></span>' + [0, 1, 2].map(function (d) { return '<span>' + nomeG(g0[d].g, d) + '</span>'; }).join('') + '</div>';
     var righe = cc.map(function (c, i) {
@@ -298,10 +300,14 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
        e non sopra). Si accende (blu pieno, pallino che pulsa) quando nella colonna «oggi» della tabella almeno un posto
        ha 1 mm o piu': si accende solo su un dato vero. Porta al radar sulla mappa centrato sul posto se la pagina ha gia'
        quel link (paesi, zone), se no alla pagina «adesso» della regione. */
-    var piove = cc.some(function (c) { var g = c.giorni[0]; return g && g.g === OGGI && (g.mm || 0) >= 1; });
+    var bagnati = cc.filter(function (c) { var g = c.giorni[0]; return g && g.g === OGGI && (g.mm || 0) >= 1; }), piove = bagnati.length > 0;
     var rmap = document.querySelector('main a[href*="radar=ora"]');
     var rh = rmap ? rmap.getAttribute('href') : ADESSO ? SITO + '/' + K + '/adesso/' : '';
     var h2 = blocco.querySelector('h2'), dove = h2 ? h2.textContent.replace(/^Che tempo farà\s*/, '') : '';
+    /* L'INDICE /funghi/ (OPZ.primi, 20/10/2026) non ha un link al radar ne' una pagina «adesso»: il radar si apre sul
+       primo dei venti posti dove oggi piove (se no sul primo della classifica), e la scritta dice in quanti piove. */
+    if (OPZ.primi && !rmap && cc[0]) { var cp = bagnati[0] || cc[0]; rh = SITO + '/?r=' + (cp.r || K) + '&radar=ora' + pl(cp); rmap = true;
+      if (piove) dove = 'in ' + (bagnati.length === 1 ? 'uno' : bagnati.length) + ' dei ' + cc.length + ' posti'; }
     var radar = !rh ? '' : '<a class="mk-radar' + (piove ? ' piove' : '') + '" href="' + esc(rh) + '"'
       + (rmap ? ' data-da="radar-' + (piove ? 'pioggia' : 'asciutto') + '"' : ' data-adesso="1"') + '>'
       + (piove ? '<span class="mk-pul"></span><span><b>Oggi è prevista pioggia ' + esc(dove) + '</b><small>guardala arrivare col radar piogge</small></span>'
@@ -362,8 +368,13 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
   }
 
   // senza il blocco «Che tempo farà» (mappa forestale: tipi di bosco e Italia, solo la ricerca) le previsioni non si chiedono
+  /* OPZ.primi (20/10/2026, indice /funghi/): i posti della tabella sono quelli della CLASSIFICA DEL GIORNO
+     (data/funghi/italia.json, cambia ogni mattina): prima si legge la classifica, poi si chiedono all'API i suoi primi
+     OPZ.primi posti con ?posti=<reg>/<slug>/<sigla>,... nello stesso ordine. */
+  var area = !OPZ.primi ? Promise.resolve(AREA) : fetch(BASE + 'funghi/italia.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
+    .then(function (j) { return 'posti=' + (j.primi || []).slice(0, OPZ.primi).map(function (x) { return x[2] + '/' + x[3] + '/' + x[1]; }).join(','); });
   var citta = !blocco ? Promise.resolve(null)
-    : fetch(API + '?' + AREA).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
+    : area.then(function (a) { return fetch(API + '?' + a); }).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
   var riepilogo = OPZ.grafico === false ? null : fetch(BASE + RIEP).then(function (r) { return r.json(); }).catch(function () { return null; });
   // l'elenco dei comuni (366 KB) serve solo a ordinare le citta' per abitanti: nelle zone (OPZ.area) i paesi arrivano
   // gia' in ordine, quindi si disegna subito (20/10/2026, sesto check, bug 15)
@@ -380,7 +391,7 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
       disegnaCitta(j);
     })();
   }
-  citta.then(function (j) { if (OPZ.ordine) return inOrdine(j); if (OPZ.area) return disegnaCitta(j); return carica().catch(function () {}).then(function () { disegnaCitta(j); }); });
+  citta.then(function (j) { if (OPZ.ordine) return inOrdine(j); if (OPZ.area || OPZ.primi) return disegnaCitta(j); return carica().catch(function () {}).then(function () { disegnaCitta(j); }); });
   // il grafico e' gia' cotto nell'HTML, ma la pagina lo RIDISEGNA quando arriva il suo riepilogo:
   // per qualche secondo si ricontrolla e si rimettono i giorni previsti se sono spariti
   if (OPZ.grafico !== false) Promise.all([citta, riepilogo]).then(function (x) {

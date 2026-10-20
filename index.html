@@ -3249,7 +3249,25 @@ function drawGrid(){
   }
   heatCtx.imageSmoothingEnabled=true;
   try{heatCtx.imageSmoothingQuality='high';}catch(e){}
-  heatCtx.drawImage(small,0,0,nx,ny,pNW.x,pNW.y,pSE.x-pNW.x,pSE.y-pNW.y);
+  /* ⚠️ A FASCE, PERCHE' LA CARTINA E' IN MERCATORE (20/10/2026, visto da lui: «l'heatmap è spostata verso dx»).
+     Prima qui c'era UN drawImage dall'angolo NW all'angolo SE: la griglia veniva stirata in modo LINEARE in
+     latitudine, mentre in Mercatore un grado verso nord occupa sempre piu' pixel. Su una regione (2-3 gradi) lo
+     scarto e' sotto il pixel; su 10 gradi (Alto Adige + Puglia + Sicilia, o l'Italia intera) al centro i colori
+     finivano ~30 px piu' a nord, e sulla costa tirrenica, che corre in diagonale, sembravano spostati a destra.
+     Ora la griglia si stende a fasce alte al massimo 64 px, ognuna fra i bordi VERI delle sue righe: dentro una
+     fascia Mercatore e' lineare a meno di un decimo di pixel, la sfumatura bilineare resta, e le fasce fuori
+     schermo non si disegnano. I bordi sono arrotondati al pixel: niente sovrapposizioni (col colore semitrasparente
+     una riga doppia si vedrebbe piu' scura) e niente fessure. */
+  var yb=new Array(ny+1);
+  for(var rb=0;rb<=ny;rb++) yb[rb]=map.latLngToContainerPoint(L.latLng(latMax+GR/2-rb*GR,lonMin)).y;
+  for(var r0=0;r0<ny;){
+    var r1=r0+1; while(r1<ny && yb[r1+1]-yb[r0]<=64) r1++;
+    if(yb[r1]>=0 && yb[r0]<=size.y){
+      var dy=Math.round(yb[r0]), dh=Math.round(yb[r1])-dy;
+      if(dh>0) heatCtx.drawImage(small,0,r0,nx,r1-r0,pNW.x,dy,pSE.x-pNW.x,dh);
+    }
+    r0=r1;
+  }
   heatCtx.restore();
   cvs.style.opacity='1';
 }
