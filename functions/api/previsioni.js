@@ -143,10 +143,16 @@ async function perArea(area, env, request, file) {
   const citta = lista[area]; if (!citta) return { errore: 'area sconosciuta' };
   // ⚠️ TETTO DI 50 SOTTORICHIESTE per chiamata (Cloudflare): con 12 citta' e la % di Open-Meteo erano 51 e la
   // Svizzera cadeva al primo colpo (7/10). Qui niente %, e una citta' che fallisce resta sola col suo errore.
-  const ris = await Promise.all(citta.map(async p => {
+  /* ⚠️ A GRUPPI DI 6 (20/10/2026). Una Function di Cloudflare tiene aperte al massimo 6 connessioni alla volta: le
+     altre aspettano in fila, ma il tetto di 8 s di MET (AbortSignal.timeout) parte quando la fetch viene CHIESTA, non
+     quando parte. Con le 21 zone della Toscana (?zonedi=) rispondevano sempre le prime 6 e le altre 15 scadevano in
+     fila; in locale (wrangler) il limite non c'e' e andava. A gruppi, il tempo di ognuna parte quando parte davvero. */
+  const uno = async p => {
     try { const r = await perPunto(p.lat, p.lon, p.q, request, false, false); return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, ...(p.c ? { c: 1 } : {}), ...(p.r ? { r: p.r } : {}), ...(p.qui ? { qui: 1 } : {}), ...(p.s ? { s: p.s } : {}), ...(p.z ? { z: 1 } : {}), ...(p.sotto ? { sotto: p.sotto } : {}), ...(r.dati.errore ? { errore: r.dati.errore } : { giorni: r.dati.giorni, agg: r.dati.agg }) }; }
     catch (e) { return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, errore: String(e && e.message || e) }; }
-  }));
+  };
+  const ris = [];
+  for (let i = 0; i < citta.length; i += 6) ris.push(...await Promise.all(citta.slice(i, i + 6).map(uno)));
   const dati = { area, agg: (ris.find(x => x.agg) || {}).agg || null, capoluoghi: ris, fonte: 'MET Norway (ECMWF)' + (PROB ? ' · % Open-Meteo' : '') };
   if (!ris.some(x => x.giorni)) dati.errore = 'nessuna citta\' risponde';   // MET giu': errore in cima, vedi onRequestGet (bug 5)
   if (!ris.some(x => x.errore)) await cache.put(chiave, new Response(JSON.stringify(dati), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=1800', 'Date': new Date().toUTCString() } }));
