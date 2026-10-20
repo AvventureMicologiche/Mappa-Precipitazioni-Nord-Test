@@ -66,7 +66,8 @@ const giornoFa = n => { const d = new Date(); d.setDate(d.getDate() - n); return
    mappa (scala 0,5 dello scatto a doppia densita'), WebP perche' la pagina la scarica in cima, subito.
    Con BOSCHI=1 si scatta la mappa boschi (?boschi=1) e SOLO la versione pulita: non cambia mai, si lancia a
    mano quando cambiano le tessere, e i file vanno in tessere-boschi/anteprime/. */
-async function scattaPulita(page, k) {
+async function scattaPulita(page, k, nome, meta) {
+  nome = nome || 'mappa';
   await page.addStyleTag({ content: 'body *{visibility:hidden !important} #map .leaflet-map-pane, #map .leaflet-map-pane *{visibility:visible !important}' });
   await new Promise(r => setTimeout(r, 500));
   const g = await page.evaluate(() => {
@@ -79,12 +80,29 @@ async function scattaPulita(page, k) {
              reg: b ? { n: +b.getNorth().toFixed(4), s: +b.getSouth().toFixed(4), w: +b.getWest().toFixed(4), e: +b.getEast().toFixed(4) } : null };
   });
   if (!g || !g.w) throw new Error('mappa pulita: niente _mapDebug o #map');
-  await page.screenshot({ path: path.join(OUT_DIR, k + '-mappa.webp'), type: 'webp', quality: 72,
+  await page.screenshot({ path: path.join(OUT_DIR, k + '-' + nome + '.webp'), type: 'webp', quality: 72,
     clip: { x: g.x, y: g.y, width: g.w, height: g.h, scale: 0.5 } });
-  fs.writeFileSync(path.join(OUT_DIR, k + '-mappa.json'), JSON.stringify({ z: g.z, x0: g.x0, y0: g.y0, w: g.w, h: g.h, reg: g.reg,
-    tipo: process.env.BOSCHI ? 'boschi' : 'pioggia', da: process.env.BOSCHI ? null : iso(giornoFa(GIORNI)), a: process.env.BOSCHI ? null : iso(giornoFa(1)),
-    generato: new Date().toISOString() }) + '\n');
-  return Math.round(fs.statSync(path.join(OUT_DIR, k + '-mappa.webp')).size / 1024);
+  fs.writeFileSync(path.join(OUT_DIR, k + '-' + nome + '.json'), JSON.stringify(Object.assign({ z: g.z, x0: g.x0, y0: g.y0, w: g.w, h: g.h, reg: g.reg,
+    tipo: process.env.BOSCHI ? 'boschi' : 'pioggia', da: process.env.BOSCHI ? null : iso(giornoFa(GIORNI)), a: process.env.BOSCHI ? null : iso(giornoFa(1)) },
+    meta || {}, { generato: new Date().toISOString() })) + '\n');
+  return Math.round(fs.statSync(path.join(OUT_DIR, k + '-' + nome + '.webp')).size / 1024);
+}
+
+/* LA PIOGGIA DI IERI, pulita (20/10/2026): per la striscia in cima alle pagine PIOGGE (regioni e zone), che parlano
+   di ieri e non dei 20 giorni. <k>-ieri.webp + <k>-ieri.json, stesso formato della mappa pulita. */
+async function scattaIeri(browser, k) {
+  const page = await browser.newPage();
+  await page.setViewport({ width: W, height: H, deviceScaleFactor: 2 });
+  await page.evaluateOnNewDocument(() => { try { localStorage.setItem('novitaVista', '2099'); } catch (e) {} });
+  const ieri = iso(giornoFa(1));
+  try {
+    await page.goto(SITO + '?r=' + k + '&da=' + ieri + '&a=' + ieri, { waitUntil: 'networkidle2', timeout: 120000 });
+    await page.waitForFunction(() => { const s = document.getElementById('tp-status'); return s && s.textContent.indexOf('✅') === 0; }, { timeout: 180000, polling: 500 });
+    await new Promise(r => setTimeout(r, 3000));
+    return ', ieri ' + await scattaPulita(page, k, 'ieri', { tipo: 'ieri', da: ieri, a: ieri }) + ' KB';
+  } catch (e) {
+    return ', ieri FALLITA (' + e.message.slice(0, 60) + ')';
+  } finally { await page.close(); }
 }
 
 async function scattaBoschi(browser, k) {
@@ -141,6 +159,7 @@ async function scatta(browser, k) {
     // la mappa pulita per la striscia: se fallisce, l'anteprima di sempre resta buona
     let pulita = '';
     try { pulita = ', pulita ' + await scattaPulita(page, k) + ' KB'; } catch (e) { pulita = ', pulita FALLITA (' + e.message.slice(0, 60) + ')'; }
+    pulita += await scattaIeri(browser, k);
     console.log('  ' + k.padEnd(13) + ' ok, ' + kb + ' KB' + pulita + ', max ' + (stat.max || '?') + ' mm' +
                 (errori.length ? '  [' + errori.length + ' errori di pagina]' : ''));
     return true;

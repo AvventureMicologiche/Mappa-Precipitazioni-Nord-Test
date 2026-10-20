@@ -45,6 +45,7 @@ const { coppiaQuiz } = require('./lib-pagina-funghi.js');
 // della zona (non le citta' della regione) e il grafico coi 7 giorni previsti. Il codice nel browser e' lo stesso
 // della regione (lib-meteo-regione.js, con le opzioni di zona): una regola sola, un posto solo.
 const { METEO_CSS, meteoHtml, meteoClient } = require('./lib-meteo-regione.js');
+const { STRISCIA_CSS, strisciaScript } = require('./lib-striscia.js');   // la mappa di ieri nel bottone in cima (20/10/2026)
 
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
@@ -240,7 +241,7 @@ ${briciolaJson([['Mappa pluviometrica', `${SITO}/`], [nomeReg, `${SITO}/${casa.k
 .altre-zone{font-size:15px;line-height:1.9;color:#555;}
 .altre-zone a{color:var(--blu);}
 @media(max-width:420px){.tab{font-size:14px;}.tab td,.tab th{padding-left:3px;padding-right:3px;}}
-${METEO_CSS}
+${METEO_CSS}${STRISCIA_CSS}
 /* i paesi hanno nomi lunghi («Castelnuovo di Garfagnana»): a capo invece dei puntini, colonna un filo piu' larga */
 #meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
 #meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
@@ -481,6 +482,7 @@ ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel
   guasto: 'Le previsioni dei paesi', tutte: 'Mostra tutti i paesi (#)', tocca: 'Tocca un paese per vederlo ora per ora sulla mappa',
   sopra: 'I paesi ' + di + ' e dei dintorni' })});
 </script>
+${strisciaScript({ reg: casa.k, tipo: 'zona', lat: z.lat, lon: z.lon, ieri: true, modo: 'bottone', ga: 'zona-piogge-' + zslug })}
 </body>
 </html>
 `;

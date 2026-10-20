@@ -281,6 +281,15 @@ nav.altre a{color:var(--blu);}
 @media(max-width:420px){.mk-str a span{left:6px;bottom:6px;right:6px;padding:5px 6px;font-size:12.5px;}
   .mk-str a span b,.mk-str a span small{white-space:normal;} .mk-str a span small{font-size:11px;}}
 @media(max-width:370px){.mk-str a span{font-size:12px;padding:5px;} .mk-str a span small{font-size:10.5px;}}
+/* pagine piogge: un riquadro solo, piu' alto; nel modo «bottone» la scritta e' quella grande del bottone di ieri */
+.mk-str.mk-ieri a{height:140px;} @media(min-width:700px){.mk-str.mk-ieri a{height:185px;}}
+.mk-str.mk-grande a span{left:10px;bottom:10px;right:auto;padding:9px 13px;border-radius:10px;}
+.mk-str.mk-grande a span b{font-size:19px;} .mk-str.mk-grande a span small{font-size:14px;}
+@media(max-width:420px){.mk-str.mk-grande a span b{font-size:17px;white-space:nowrap;} .mk-str.mk-grande a span small{font-size:13px;white-space:nowrap;}}
+/* il bottone sulla mappa colorato (20/10/2026, suo: «il bottone magari rosso o giallo?»): giallo del quiz, rosso di YouTube */
+.mk-str.mk-giallo a span{background:linear-gradient(180deg,rgba(249,201,62,.85),rgba(237,164,12,.85));color:#3d1f04;box-shadow:0 3px 0 rgba(160,106,8,.85),0 6px 14px rgba(0,0,0,.3);}   /* all'85% (suo: «giallo ma semitrasparente?»): la mappa si intravede, resta un bottone */
+.mk-str.mk-rosso a span{background:linear-gradient(180deg,#ec3b33,#c9221b);color:#fff;box-shadow:0 3px 0 #8f1410,0 6px 14px rgba(0,0,0,.35);}
+.mk-str.mk-giallo a span small,.mk-str.mk-rosso a span small{opacity:.92;}
 
 /* ── IL METEO NELLE PAGINE REGIONE (lib-meteo-regione.js, 19/10/2026) ── */
 header{position:relative;flex-wrap:nowrap;}
@@ -1285,8 +1294,9 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
   }
   function carica(tipo, base) {
     if (geo[tipo]) return geo[tipo];
-    geo[tipo] = fetch(base + OPZ.reg + '-mappa.json').then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (j) { return { j: j, url: base + OPZ.reg + '-mappa.webp' + (j.generato ? '?v=' + encodeURIComponent(j.generato.slice(0, 13)) : '') }; })
+    var f = OPZ.reg + (tipo === 'ieri' ? '-ieri' : '-mappa');
+    geo[tipo] = fetch(base + f + '.json').then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (j) { return { j: j, url: base + f + '.webp' + (j.generato ? '?v=' + encodeURIComponent(j.generato.slice(0, 13)) : '') }; })
       .catch(function () { return null; });
     return geo[tipo];
   }
@@ -1294,8 +1304,26 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Toscana.</p>
   function metti() {
     var btns = document.querySelector('#verdetto .capo-btns'); if (!btns || btns.getAttribute('data-str')) return;
     var vecchio = btns.querySelector('a'); if (!vecchio || btns.querySelectorAll('a').length !== 1) return;
+    // il colore delle etichette: giallo all'85% per tutte (20/10/2026, sua scelta sul confronto con il blu scuro)
+    var COL = ' mk-' + (OPZ.colore || 'giallo');
+    var d = document.createElement('div'); d.className = 'mk-str' + COL;
+    /* PAGINE PIOGGE (OPZ.ieri, 20/10/2026, suo: «in alto solo la mappa piogge»): un riquadro solo, la pioggia di IERI
+       (<reg>-ieri.webp), largo quanto la scheda. modo 'sopra': la mappa sopra il bottone «Apri la mappa di ieri», che
+       resta; modo 'bottone': il bottone stesso diventa la mappa, con la sua scritta sopra l'immagine. */
+    if (OPZ.ieri) {
+      var tit = vecchio.querySelector('b'), sot = vecchio.querySelector('small');
+      d.className = 'mk-str mk-ieri' + (OPZ.modo === 'sopra' ? '' : ' mk-grande') + COL;
+      d.innerHTML = '<a href="' + vecchio.getAttribute('href') + '" data-t="ieri" class="mk-uno"><span>' + (OPZ.modo === 'sopra'
+        ? '<b>💧 Guarda la pioggia di ieri</b><small>località per località →</small>'
+        : '<b>' + (tit ? tit.textContent : 'Apri la mappa di ieri') + ' →</b><small>' + (sot ? sot.textContent : '') + '</small>') + '</span></a>';
+      btns.setAttribute('data-str', '1');
+      if (OPZ.modo === 'sopra') btns.parentNode.insertBefore(d, btns); else btns.parentNode.replaceChild(d, btns);
+      var a1 = d.querySelector('a');
+      a1.addEventListener('click', function () { ga('ieri'); });
+      carica('ieri', PIOGGIA).then(function (g) { if (g) { a1._g = g; ritaglia(a1, g); } });
+      return;
+    }
     var b = document.querySelector('main a[href*="boschi=1"]:not([href*="sat=1"])');
-    var d = document.createElement('div'); d.className = 'mk-str';
     // le scritte (20/10/2026, suo: «scriviamo qualcosa in più che incentivi il click»): una riga corta che invita
     // e una piccola sotto; tre alternative messe a confronto in localhost, questa e' la 1
     d.innerHTML = '<a href="' + vecchio.getAttribute('href') + '" data-t="pioggia"' + (b ? '' : ' class="mk-uno"') + '><span><b>💧 Guarda la pioggia</b><small>ultimi 20 giorni →</small></span></a>'

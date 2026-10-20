@@ -53,6 +53,9 @@ const { STILE_NUOVO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = require('./
 // 11/10/2026: i numeri cotti nella pagina, con la STESSA funzione del browser
 const { numeriRegione } = require('./lib-numeri-regione.js');
 const { METEO_CSS, meteoHtml, meteoClient } = require('./lib-meteo-regione.js');   // la pagina anche meteo (19/10/2026)
+// 20/10/2026 (lib-striscia.js, sua scelta B): il bottone «Apri la mappa di ieri» diventa la mappa della pioggia di
+// IERI (<regione>-ieri.webp, dal giro delle anteprime), con la sua scritta su un'etichetta gialla all'85%
+const { STRISCIA_CSS, strisciaScript } = require('./lib-striscia.js');
 // «Apri la mappa di ieri» con le scritte piu' grandi (suo, 20/10/2026), una riga anche a 360 px. Solo qui e non in
 // STILE_IERI, che usano anche le pagine «adesso» con testi diversi. Sta PRIMA di METEO_CSS perche' le zone piogge
 // copiano il foglio della regione di casa tagliandolo all'inizio del blocco meteo: cosi' lo ereditano.
@@ -483,7 +486,7 @@ function pagina(r, radice){
 ${STILE_BASE}
 ${STILE_NUOVO}
 ${STILE_IERI}
-${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}${IERI_GRANDE}${METEO_CSS}</style>
+${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}${IERI_GRANDE}${METEO_CSS}${STRISCIA_CSS}</style>
 </head>
 <body>
 <header>
@@ -773,6 +776,7 @@ ${navAltre('regione')}
 <script>
 (${meteoClient.toString()})(${JSON.stringify(r.k)}, ${JSON.stringify(r.nome)}, ${JSON.stringify(SITO)}, ${fs.existsSync(path.join(__dirname, '..', '..', r.k, 'adesso')) ? 'true' : 'false'});
 </script>
+${strisciaScript({ reg: r.k, tipo: 'regione', ieri: true, modo: 'bottone', ga: 'pagina-' + r.k })}
 </body>
 </html>
 `;
