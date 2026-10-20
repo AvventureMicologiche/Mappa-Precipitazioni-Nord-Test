@@ -48,6 +48,7 @@ const { perLink } = require('./lib-vicine.js');
 const { rigaStagione } = require('./lib-stagione.js');
 const { haBoschi, cartaBreve, cartaDi, fonteDa } = require('./lib-boschi.js');
 const { METEO_CSS, meteoHtml, boschiHtml, meteoClient } = require('./lib-meteo-regione.js');   // 20/10/2026, come le zone funghi
+const { STRISCIA_CSS, strisciaScript } = require('./lib-striscia.js');   // la mappa nella scheda in cima (20/10/2026)
 // Il ritratto del pluviometro, cotto dentro la pagina il giorno che si
 // genera: totale dell'archivio, giorni di pioggia, giorno piu' bagnato,
 // mese piu' piovoso. Il perche' sta in cima a lib-clima.js.
@@ -372,7 +373,7 @@ ${RILIEVO}${QUIZ_REGIONI[REG] ? QUIZ_CSS : ''}${METEO_CSS}
 #mk-meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
 #mk-meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
 #mk-meteo .mk-cr span em{white-space:nowrap;}
-</style>
+${STRISCIA_CSS}</style>
 </head>
 <body>
 
@@ -877,6 +878,7 @@ ${JS_AGGIORNATO}
   guasto: 'Le previsioni dei paesi', tutte: 'Mostra tutti i paesi (#)', tocca: 'Tocca un paese per vederlo ora per ora sulla mappa',
   sopra: 'Il pluviometro' + (quota > 0 ? ' (' + quota + ' m)' : '') + ' e i paesi intorno' })});
 </script>
+${strisciaScript({ reg: REG, tipo: 'punto', lat: +lat, lon: +lon, ga: 'localita-' + REG })}
 </body>
 </html>
 `;

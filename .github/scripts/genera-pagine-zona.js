@@ -53,6 +53,7 @@ const { rigaStagione } = require('./lib-stagione.js');
 const { perLink } = require('./lib-vicine.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 const { haBoschi, cartaBreve, cartaDi, fonteDa } = require('./lib-boschi.js');
+const { STRISCIA_CSS, strisciaScript } = require('./lib-striscia.js');   // la mappa nella scheda in cima (20/10/2026)
 // Il ritratto dell'archivio, cotto dentro la pagina: il perche' sta in cima
 // a lib-clima.js. Qui e' di zona, cioe' la media dei suoi pluviometri.
 const { clima, buono, dataBella, meseBello, migliaia, virgola, artGiorno, aNome } = require('./lib-clima.js');
@@ -241,7 +242,7 @@ nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;fon
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
-${RILIEVO}${QUIZ_REGIONI[casa.k] ? QUIZ_CSS : ''}${METEO_CSS}
+${RILIEVO}${QUIZ_REGIONI[casa.k] ? QUIZ_CSS : ''}${METEO_CSS}${STRISCIA_CSS}
 #mk-meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
 #mk-meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
 </style>
@@ -494,6 +495,7 @@ ${JS_AGGIORNATO}
   guasto: 'Le previsioni dei paesi', tutte: 'Mostra tutti i paesi (#)', tocca: 'Tocca un paese per vederlo ora per ora sulla mappa',
   sopra: 'I paesi ' + diZona(z.dove) + ' e dei dintorni' })});
 </script>
+${strisciaScript({ reg: casa.k, tipo: 'zona', lat: z.lat, lon: z.lon, ga: 'zona-' + zslug })}
 </body>
 </html>
 `;
@@ -507,8 +509,8 @@ if (require.main === module) {
     const html = pagina(z);
     // ⚠️ SI CONTROLLA CHE LO SCRIPT DELLA PAGINA GIRI, prima di scriverla:
     // qui i nomi sono 114 e ci sono «Val d'Aveto», «Alta Val d'Enza».
-    const i = html.lastIndexOf('<script>'), j = html.lastIndexOf('</script>');
-    try { new Function(html.slice(i + 8, j)); }
+    // dal 19-20/10/2026 gli script in fondo sono tre (pagina, meteo, striscia): si provano tutti quelli senza src
+    try { for (const s of html.match(/<script>[\s\S]*?<\/script>/g) || []) new Function(s.slice(8, -9)); }
     catch (e) {
       console.error(`⚠️ ${z.n}: lo script della pagina non gira — ${e.message}`);
       process.exit(1);

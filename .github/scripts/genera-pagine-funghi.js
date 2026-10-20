@@ -56,6 +56,25 @@ const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json')
 const RADICE = path.resolve(__dirname, '..', '..');
 const SITO = 'https://avventurepluvio-test.pages.dev';
 const { haBoschi, cartaBreve, cartaDi, fonteNota } = require('./lib-boschi.js');
+const { STRISCIA_CSS, strisciaScript } = require('./lib-striscia.js');   // la mappa nella scheda in cima (20/10/2026)
+const { METEO_CSS, meteoHtml, boschiHtml, meteoClient } = require('./lib-meteo-regione.js');   // «Che tempo farà» (20/10/2026)
+
+/* ── «CHE TEMPO FARÀ NELLE ZONE DEI FUNGHI» (20/10/2026, scheda 89, dal mockup approvato sulla Toscana) ──
+   Al posto della striscia blu: una riga per ogni zona dei funghi della regione, con la previsione al CENTRO della
+   zona e alla QUOTA MEDIANA dei suoi pluviometri (scritta sotto il nome, «a 1040 m»), nell'ordine dell'elenco
+   «Le zone dove andare» della pagina (dalla piu' bagnata 13-20 giorni fa). Scartato il «paese principale» della
+   zona: usciva Bolano (Liguria) per la Lunigiana, Livorno per le Colline Livornesi, Arezzo per l'Alpe di Poti.
+   Le regioni senza zone (Puglia, Basilicata, Sardegna) hanno le citta', come le pagine regione piogge.
+   Finiscono in data/zone-regioni.json, che legge /api/previsioni?zonedi=<regione>. */
+function zoneMeteo(k) {
+  return ZONE.filter(z => z.reg === k).map(z => {
+    const { ids, regDi } = postiDellaZona(POSTI, z);
+    const q = ids.map(id => (POSTI[regDi[id]] || []).find(p => String(p[0]) === String(id))).filter(Boolean)
+      .map(p => +p[3]).filter(x => x > 0).sort((a, b) => a - b);
+    const med = q.length ? Math.round(q[Math.floor(q.length / 2)] / 10) * 10 : 0;
+    return { n: z.n, s: slug(z.n), lat: z.lat, lon: z.lon, ...(med ? { q: med, sotto: 'a ' + med + ' m' } : {}), r: k, z: 1 };
+  });
+}
 
 // Solo la lingua: «della Liguria», «delle Marche». Nell'anagrafe delle pagine
 // regione c'e' la preposizione semplice (prep), che basta per «in Liguria» ma
@@ -275,7 +294,11 @@ nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2p
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
 ${STILE_NUOVO}
-${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}</style>
+${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}${STRISCIA_CSS}${METEO_CSS}
+#mk-meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
+#mk-meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
+#mk-meteo .mk-cr span em{white-space:nowrap;}
+</style>
 </head>
 <body>
 <header>
@@ -305,9 +328,9 @@ ${rigaStagione()}
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="guasto"></div>
 <div id="verdetto"></div>
-<a class="banda-prev" href="${SITO}/?r=${r.k}&amp;m=prev"
-   onclick="try{gtag('event','apri_mappa',{da:'funghi-${r.k}-banda-previsioni'})}catch(e){}">
-  <span class="ic">☀️</span><span><b>Che tempo farà ${r.prep} ${nome}</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
+${haBoschi(r.k) ? boschiHtml('🌲 Trova i boschi ' + r.prep + ' ' + nome) : ''}
+${meteoHtml(r, ZONE.some(z => z.reg === r.k) ? 'Che tempo farà nelle zone dei funghi ' + gen : 'Che tempo farà ' + r.prep + ' ' + nome,
+  ZONE.some(z => z.reg === r.k) ? 'Sto leggendo le previsioni delle zone…' : 'Sto leggendo le previsioni delle città…', 'mk-meteo')}
 
 <h2>Le piogge degli ultimi 25 giorni ${r.prep} ${nome}</h2>
 <div id="grafico"></div>
@@ -754,12 +777,25 @@ ${JS_COMUNE}
   }
 }());
 </script>
+<script>
+(${meteoClient.toString()})(${JSON.stringify(r.k)}, ${JSON.stringify(nome)}, ${JSON.stringify(SITO)}, ${fs.existsSync(path.join(RADICE, r.k, 'adesso')) ? 'true' : 'false'}, ${JSON.stringify(ZONE.some(z => z.reg === r.k) ? {
+  ga: 'funghi-' + r.k, area: 'zonedi=' + r.k, id: 'mk-meteo', grafico: false, boschi: haBoschi(r.k) ? 'mk-boschi' : '', ordine: 'zone-dove',
+  guasto: 'Le previsioni delle zone', tutte: 'Mostra tutte le zone (#)', tocca: 'Tocca una zona per vederla ora per ora sulla mappa',
+  sopra: 'Dalla zona più bagnata 13-20 giorni fa, alla quota media dei suoi pluviometri' }
+  : { ga: 'funghi-' + r.k, id: 'mk-meteo', grafico: false, boschi: haBoschi(r.k) ? 'mk-boschi' : '' })});
+</script>
+${strisciaScript({ reg: r.k, tipo: 'regione', ga: 'funghi-' + r.k })}
 </body>
 </html>`;
 }
 
 if (require.main === module) {
   let scritte = 0;
+  // le zone di «Che tempo farà», tutte le regioni (vedi zoneMeteo)
+  const zr = {};
+  for (const k of Object.keys(POSTI)) { const l = zoneMeteo(k); if (l.length) zr[k] = l; }
+  fs.writeFileSync(path.join(RADICE, 'data', 'zone-regioni.json'),
+    '{\n' + Object.keys(zr).map(k => JSON.stringify(k) + ':' + JSON.stringify(zr[k])).join(',\n') + '\n}\n', 'utf8');
   for (const k of Object.keys(POSTI)) {
     const r = REGIONI.find(x => x.k === k);
     if (!r) { console.error(`⚠️ «${k}» non e' in genera-pagine-regione.js`); process.exit(1); }
@@ -772,8 +808,8 @@ if (require.main === module) {
     // bianca ferma su «Sto leggendo i pluviometri». Un guscio che non gira e'
     // peggio di un guscio che manca, perche' sembra pubblicato. Un nome nuovo
     // con un apostrofo lo rifarebbe: adesso il generatore si ferma invece.
-    const i = html.lastIndexOf('<script>'), j = html.lastIndexOf('</script>');
-    try { new Function(html.slice(i + 8, j)); }
+    // dal 20/10/2026 in fondo c'e' anche lo script della striscia: si provano tutti quelli senza src
+    try { for (const s of html.match(/<script>[\s\S]*?<\/script>/g) || []) new Function(s.slice(8, -9)); }
     catch (e) {
       console.error(`⚠️ ${k}: lo script della pagina non gira — ${e.message}`);
       process.exit(1);

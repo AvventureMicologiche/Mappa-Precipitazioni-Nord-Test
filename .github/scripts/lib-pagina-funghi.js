@@ -375,7 +375,10 @@ function stileDelModello(html) {
   // (via anche l'a capo che il generatore delle zone mette prima del blocco: senza, le 138 pagine avevano una riga
   // vuota in piu' rispetto a quelle di prima del 350b25dc)
   if (iMeteo >= 0) { s = s.slice(0, iMeteo); if (/\r?\n\r?\n$/.test(s)) s = s.replace(/\r?\n$/, ''); }
-  return s.split(RILIEVO).join('').split(YT_BTN).join('').split(QUIZ_CSS).join('');
+  // 20/10/2026: anche il CSS della striscia (lib-striscia.js), che le pagine funghi regione hanno da oggi: chi copia
+  // il foglio lo rimette da se' se lo usa (paesi, zone), e la mappa forestale e l'indice non se lo portano dietro
+  const { STRISCIA_CSS } = require('./lib-striscia.js');
+  return s.split(RILIEVO).join('').split(YT_BTN).join('').split(QUIZ_CSS).join('').split(STRISCIA_CSS).join('');
 }
 
 module.exports = { STILE_NUOVO, JS_COMUNE, JS_AGGIORNATO, RILIEVO, YT_BTN, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz, stileDelModello };

@@ -28,9 +28,13 @@ export async function onRequestGet({ request, env }) {
     // scrive genera-pagine-localita.js); il primo e' il punto del pluviometro con la sua quota (20/10/2026)
     const paese = /^([a-z]{4,12})\/([a-z0-9-]{2,80})$/.exec(u.searchParams.get('paese') || '');
     if (u.searchParams.has('paese') && !paese) return rispondi({ errore: 'paese' }, cors, 404);
-    const zona = u.searchParams.get('zona'), area = paese ? paese[2] : zona || u.searchParams.get('capoluoghi');
+    // ?zonedi=toscana: le zone dei funghi di una regione, una riga per zona (data/zone-regioni.json, lo scrive
+    // genera-pagine-funghi.js), per le pagine regione funghi (20/10/2026)
+    const zona = u.searchParams.get('zona'), zonedi = u.searchParams.get('zonedi');
+    const area = paese ? paese[2] : zona || zonedi || u.searchParams.get('capoluoghi');
     if (area) {
-      const d = await perArea(area, env, request, paese ? '/data/paesi-localita/' + paese[1] + '.json' : zona ? '/data/paesi-zone.json' : '/data/capoluoghi.json');
+      const d = await perArea(area, env, request, paese ? '/data/paesi-localita/' + paese[1] + '.json' : zona ? '/data/paesi-zone.json'
+        : zonedi ? '/data/zone-regioni.json' : '/data/capoluoghi.json');
       // ⚠️ (19/10/2026, quinto check, bug 5) nessuna citta' risponde = 502 e niente cache nel browser: prima era un 200
       // tenuto 10 minuti, e la mappa restava su «carico…»; qualcuna sola in errore = 200 ma per 2 minuti, poi si richiede
       const stato = d.errore ? (d.capoluoghi ? 502 : 404) : 200;
@@ -140,7 +144,7 @@ async function perArea(area, env, request, file) {
   // ⚠️ TETTO DI 50 SOTTORICHIESTE per chiamata (Cloudflare): con 12 citta' e la % di Open-Meteo erano 51 e la
   // Svizzera cadeva al primo colpo (7/10). Qui niente %, e una citta' che fallisce resta sola col suo errore.
   const ris = await Promise.all(citta.map(async p => {
-    try { const r = await perPunto(p.lat, p.lon, p.q, request, false, false); return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, ...(p.c ? { c: 1 } : {}), ...(p.r ? { r: p.r } : {}), ...(p.qui ? { qui: 1 } : {}), ...(r.dati.errore ? { errore: r.dati.errore } : { giorni: r.dati.giorni, agg: r.dati.agg }) }; }
+    try { const r = await perPunto(p.lat, p.lon, p.q, request, false, false); return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, ...(p.c ? { c: 1 } : {}), ...(p.r ? { r: p.r } : {}), ...(p.qui ? { qui: 1 } : {}), ...(p.s ? { s: p.s } : {}), ...(p.z ? { z: 1 } : {}), ...(p.sotto ? { sotto: p.sotto } : {}), ...(r.dati.errore ? { errore: r.dati.errore } : { giorni: r.dati.giorni, agg: r.dati.agg }) }; }
     catch (e) { return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, errore: String(e && e.message || e) }; }
   }));
   const dati = { area, agg: (ris.find(x => x.agg) || {}).agg || null, capoluoghi: ris, fonte: 'MET Norway (ECMWF)' + (PROB ? ' · % Open-Meteo' : '') };

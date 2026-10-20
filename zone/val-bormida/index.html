@@ -283,6 +283,19 @@ header{position:relative;flex-wrap:nowrap;}
 @media(max-width:400px){.mk-boschi .mk-tuo input::placeholder{font-size:15px;}}   /* la frase sta intera anche a 360 px */
 .mk-boschi .mk-tuo input{border-color:#2f6b3d;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%232f6b3d' stroke-width='2.6' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5 21 21'/%3E%3C/svg%3E");}
 .mk-citta-n a{color:#1b3f6e;font-weight:700;}
+/* il bottone del radar sotto la tabella (20/10/2026): bianco, e blu pieno col pallino che pulsa se oggi piove */
+.mk-radar{display:flex;align-items:center;gap:11px;margin:12px 0 2px;padding:11px 14px;border-radius:12px;text-decoration:none;
+  border:2px solid #1f6fd1;background:#fff;color:#123b6e;}
+.mk-radar .mk-ic{font-size:24px;line-height:1;flex:none;}
+.mk-radar b{display:block;font-size:16px;line-height:1.2;}
+.mk-radar small{display:block;font-size:13.5px;font-weight:600;color:#1f6fd1;margin-top:2px;}
+.mk-radar .mk-fr{margin-left:auto;font-size:21px;font-weight:700;flex:none;}
+.mk-radar.piove{background:linear-gradient(135deg,#1f6fd1,#3f8fe8);color:#fff;box-shadow:0 3px 10px rgba(31,111,209,.3);}
+.mk-radar.piove small{color:#fff;opacity:.92;}
+.mk-radar .mk-pul{position:relative;width:12px;height:12px;flex:none;margin:0 2px 0 4px;}
+.mk-radar .mk-pul:before,.mk-radar .mk-pul:after{content:'';position:absolute;inset:0;border-radius:50%;background:#fff;}
+.mk-radar .mk-pul:after{animation:mkPul 1.6s ease-out infinite;}
+@keyframes mkPul{0%{transform:scale(1);opacity:.8}100%{transform:scale(2.8);opacity:0}}
 @media(max-width:400px){.mk-cr{font-size:14px;padding:8px 9px;}.mk-cr span i{font-size:17px;}}
 .gg .b.mk-fut i{background:repeating-linear-gradient(135deg,#7fb2ec 0 5px,#a9cdf5 5px 10px);border-radius:3px 3px 0 0;}
 .gg .b.mk-fut b{color:#2f6db5;}
@@ -722,14 +735,27 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
     var g0 = cc[0].giorni;
     var testa = '<div class="mk-cr mk-cr-t"><span></span>' + [0, 1, 2].map(function (d) { return '<span>' + nomeG(g0[d].g, d) + '</span>'; }).join('') + '</div>';
     var righe = cc.map(function (c, i) {
-      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + (c.r || K) + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : '') + '</b>'
+      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + (c.r || K) + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : c.sotto ? '<small>' + esc(c.sotto) + '</small>' : '') + '</b>'
         + [0, 1, 2].map(function (d) { var g = c.giorni[d]; return '<span><i>' + icona(g.s) + '</i>' + g.mx + '°'
           + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '') + '</span>'; }).join('') + '</a>';
     }).join('');
+    /* IL BOTTONE DEL RADAR (20/10/2026, suo: «il bottone dove sta piovendo adesso col radar è un po' nascosto»).
+       Prima era una riga piccola in coda a «Tocca una città...»: ora e' un bottone sotto la tabella (sua scelta, sotto
+       e non sopra). Si accende (blu pieno, pallino che pulsa) quando nella colonna «oggi» della tabella almeno un posto
+       ha 1 mm o piu': si accende solo su un dato vero. Porta al radar sulla mappa centrato sul posto se la pagina ha gia'
+       quel link (paesi, zone), se no alla pagina «adesso» della regione. */
+    var piove = cc.some(function (c) { var g = c.giorni[0]; return g && g.g === OGGI && (g.mm || 0) >= 1; });
+    var rmap = document.querySelector('main a[href*="radar=ora"]');
+    var rh = rmap ? rmap.getAttribute('href') : ADESSO ? SITO + '/' + K + '/adesso/' : '';
+    var h2 = blocco.querySelector('h2'), dove = h2 ? h2.textContent.replace(/^Che tempo farà\s*/, '') : '';
+    var radar = !rh ? '' : '<a class="mk-radar' + (piove ? ' piove' : '') + '" href="' + esc(rh) + '"'
+      + (rmap ? ' data-da="radar-' + (piove ? 'pioggia' : 'asciutto') + '"' : ' data-adesso="1"') + '>'
+      + (piove ? '<span class="mk-pul"></span><span><b>Oggi è prevista pioggia ' + esc(dove) + '</b><small>guardala arrivare col radar piogge</small></span>'
+               : '<span class="mk-ic">📡</span><span><b>Dove sta piovendo adesso</b><small>guarda il radar piogge</small></span>')
+      + '<span class="mk-fr">→</span></a>';
     box.innerHTML = (OPZ.sopra ? '<p class="mk-sopra">' + esc(OPZ.sopra) + '</p>' : '') + '<div class="mk-tab">' + testa + righe + '</div>'
       + (cc.length > 6 ? '<button class="mk-tutte">' + (OPZ.tutte || 'Mostra tutte le # città').replace('#', cc.length) + '</button>' : '')
-      + '<p class="mk-citta-n">' + (OPZ.tocca || 'Tocca una città per vederla ora per ora sulla mappa')
-      + (ADESSO ? ' · <a href="' + SITO + '/' + K + '/adesso/" data-adesso="1">dove sta piovendo adesso, col radar →</a>' : '') + '</p>';
+      + '<p class="mk-citta-n">' + (OPZ.tocca || 'Tocca una città per vederla ora per ora sulla mappa') + '</p>' + radar;
     var bt = box.querySelector('.mk-tutte');
     if (bt) bt.addEventListener('click', function () { box.classList.add('mk-aperte'); bt.remove(); });
   }
@@ -785,7 +811,20 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
   var riepilogo = OPZ.grafico === false ? null : fetch(BASE + RIEP).then(function (r) { return r.json(); }).catch(function () { return null; });
   // l'elenco dei comuni (366 KB) serve solo a ordinare le citta' per abitanti: nelle zone (OPZ.area) i paesi arrivano
   // gia' in ordine, quindi si disegna subito (20/10/2026, sesto check, bug 15)
-  citta.then(function (j) { if (OPZ.area) return disegnaCitta(j); return carica().catch(function () {}).then(function () { disegnaCitta(j); }); });
+  /* OPZ.ordine (20/10/2026, pagine regione funghi): l'id dell'elenco delle zone della pagina. La tabella prende il SUO
+     ordine (dalla zona piu' bagnata 13-20 giorni fa), che la pagina fa quando arrivano i millimetri: si aspetta quello
+     (la prima .zmm scritta), al massimo 10 secondi, poi si disegna comunque. Ogni zona porta il suo slug (s). */
+  function inOrdine(j) {
+    var t0 = Date.now();
+    (function guarda() {
+      var l = document.getElementById(OPZ.ordine), z = l && l.querySelector('.zmm');
+      if (!(z && z.textContent) && Date.now() - t0 < 10000) { setTimeout(guarda, 200); return; }
+      var ord = [].map.call(l ? l.querySelectorAll('a') : [], function (a) { return (a.getAttribute('href').match(/zone\/([^/]+)/) || [])[1]; });
+      if (j && j.capoluoghi) j.capoluoghi.sort(function (a, b) { var i = ord.indexOf(a.s), k = ord.indexOf(b.s); return (i < 0 ? 999 : i) - (k < 0 ? 999 : k); });
+      disegnaCitta(j);
+    })();
+  }
+  citta.then(function (j) { if (OPZ.ordine) return inOrdine(j); if (OPZ.area) return disegnaCitta(j); return carica().catch(function () {}).then(function () { disegnaCitta(j); }); });
   // il grafico e' gia' cotto nell'HTML, ma la pagina lo RIDISEGNA quando arriva il suo riepilogo:
   // per qualche secondo si ricontrolla e si rimettono i giorni previsti se sono spariti
   if (OPZ.grafico !== false) Promise.all([citta, riepilogo]).then(function (x) {

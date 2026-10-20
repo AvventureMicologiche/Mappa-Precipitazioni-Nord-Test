@@ -58,6 +58,51 @@ const p2 = n => String(n).padStart(2, '0');
 const iso = d => d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
 const giornoFa = n => { const d = new Date(); d.setDate(d.getDate() - n); return d; };
 
+/* ── LA MAPPA PULITA, per la striscia in cima alle pagine funghi (20/10/2026, scheda 89) ──
+   Oltre all'anteprima di sempre (la pagina intera, coi pannelli), la sola mappa senza niente sopra:
+   <k>-mappa.webp + <k>-mappa.json. Il JSON dice dove sta l'immagine nel mondo (zoom e pixel dell'angolo
+   in alto a sinistra, proiezione di Leaflet), cosi' ogni pagina ne ritaglia il pezzo attorno al SUO punto
+   (lib-striscia.js): una immagine per regione invece di 908 scatti al giorno. 1 pixel = 1 pixel CSS della
+   mappa (scala 0,5 dello scatto a doppia densita'), WebP perche' la pagina la scarica in cima, subito.
+   Con BOSCHI=1 si scatta la mappa boschi (?boschi=1) e SOLO la versione pulita: non cambia mai, si lancia a
+   mano quando cambiano le tessere, e i file vanno in tessere-boschi/anteprime/. */
+async function scattaPulita(page, k) {
+  await page.addStyleTag({ content: 'body *{visibility:hidden !important} #map .leaflet-map-pane, #map .leaflet-map-pane *{visibility:visible !important}' });
+  await new Promise(r => setTimeout(r, 500));
+  const g = await page.evaluate(() => {
+    const mp = window._mapDebug, el = document.getElementById('map');
+    if (!mp || !el) return null;
+    const r = el.getBoundingClientRect(), pb = mp.getPixelBounds();
+    let b = null;   // il confine della regione: i layer senza riempimento
+    mp.eachLayer(l => { if (l.options && l.options.fill === false && l.getBounds) { const x = l.getBounds(); if (x.isValid()) b = b ? b.extend(x) : L.latLngBounds(x.getSouthWest(), x.getNorthEast()); } });
+    return { x: r.left, y: r.top, w: Math.round(r.width), h: Math.round(r.height), z: mp.getZoom(), x0: Math.round(pb.min.x), y0: Math.round(pb.min.y),
+             reg: b ? { n: +b.getNorth().toFixed(4), s: +b.getSouth().toFixed(4), w: +b.getWest().toFixed(4), e: +b.getEast().toFixed(4) } : null };
+  });
+  if (!g || !g.w) throw new Error('mappa pulita: niente _mapDebug o #map');
+  await page.screenshot({ path: path.join(OUT_DIR, k + '-mappa.webp'), type: 'webp', quality: 72,
+    clip: { x: g.x, y: g.y, width: g.w, height: g.h, scale: 0.5 } });
+  fs.writeFileSync(path.join(OUT_DIR, k + '-mappa.json'), JSON.stringify({ z: g.z, x0: g.x0, y0: g.y0, w: g.w, h: g.h, reg: g.reg,
+    tipo: process.env.BOSCHI ? 'boschi' : 'pioggia', da: process.env.BOSCHI ? null : iso(giornoFa(GIORNI)), a: process.env.BOSCHI ? null : iso(giornoFa(1)),
+    generato: new Date().toISOString() }) + '\n');
+  return Math.round(fs.statSync(path.join(OUT_DIR, k + '-mappa.webp')).size / 1024);
+}
+
+async function scattaBoschi(browser, k) {
+  const page = await browser.newPage();
+  await page.setViewport({ width: W, height: H, deviceScaleFactor: 2 });
+  await page.evaluateOnNewDocument(() => { try { localStorage.setItem('novitaVista', '2099'); } catch (e) {} });
+  try {
+    await page.goto(SITO + '?r=' + k + '&boschi=1', { waitUntil: 'networkidle2', timeout: 120000 });
+    await new Promise(r => setTimeout(r, 8000));   // le tessere dei boschi arrivano dopo la mappa
+    const kb = await scattaPulita(page, k);
+    console.log('  ' + k.padEnd(13) + ' boschi ok, ' + kb + ' KB');
+    return true;
+  } catch (e) {
+    console.warn('  ' + k.padEnd(13) + ' FALLITA: ' + e.message.slice(0, 90));
+    return false;
+  } finally { await page.close(); }
+}
+
 async function scatta(browser, k) {
   const url = SITO + '?r=' + k + '&da=' + iso(giornoFa(GIORNI)) + '&a=' + iso(giornoFa(1));
   const page = await browser.newPage();
@@ -93,7 +138,10 @@ async function scatta(browser, k) {
        path.join(OUT_DIR, k + '.jpg')]);
     fs.unlinkSync(png);
     const kb = Math.round(fs.statSync(path.join(OUT_DIR, k + '.jpg')).size / 1024);
-    console.log('  ' + k.padEnd(13) + ' ok, ' + kb + ' KB, max ' + (stat.max || '?') + ' mm' +
+    // la mappa pulita per la striscia: se fallisce, l'anteprima di sempre resta buona
+    let pulita = '';
+    try { pulita = ', pulita ' + await scattaPulita(page, k) + ' KB'; } catch (e) { pulita = ', pulita FALLITA (' + e.message.slice(0, 60) + ')'; }
+    console.log('  ' + k.padEnd(13) + ' ok, ' + kb + ' KB' + pulita + ', max ' + (stat.max || '?') + ' mm' +
                 (errori.length ? '  [' + errori.length + ' errori di pagina]' : ''));
     return true;
   } catch (e) {
@@ -116,7 +164,7 @@ async function scatta(browser, k) {
   if (process.env.CHROME) opts.executablePath = process.env.CHROME;
   const browser = await puppeteer.launch(opts);
   let fatte = 0;
-  for (const k of lista) { if (await scatta(browser, k)) fatte++; }
+  for (const k of lista) { if (await (process.env.BOSCHI ? scattaBoschi : scatta)(browser, k)) fatte++; }
   await browser.close();
 
   console.log('\n' + fatte + ' su ' + lista.length + ' generate in ' + OUT_DIR);
