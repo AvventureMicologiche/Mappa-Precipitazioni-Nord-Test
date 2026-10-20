@@ -42,6 +42,14 @@ const SOGLIA_MM  = 1;      // sotto, le coincidenze sono normali
 const COPPIE     = 2;      // quante coppie di giorni guardare all'indietro
 
 const fmt = d => d.toISOString().slice(0, 10);
+/* ⚠️ LE ORE DI PIOGGIA FANNO DA TESTIMONE (20/10/2026). Le reti con la serie oraria scrivono anche
+   i: [ore bagnate, punta oraria] (lib-intensita.js). Una pioggia TRASCINATA e' una copia e copia anche
+   quelle; due giorni veri con lo stesso totale hanno ore e punta diverse. Se tutti e due i giorni hanno
+   `i` e non coincide, la coppia non conta. Nato dal falso allarme francia-bfc 17-18/10/2026: 5 stazioni
+   con lo stesso totale (Novillard 15,7 in 13 ore e poi in 17), confermate al decimo dall'archivio orario
+   ufficiale di Meteo-France; quattro su cinque misurano a scatti di 1 mm, dove coincidere e' facile.
+   Toscana, Alto Adige e Trentino (le reti dei bug #17-#19) `i` non ce l'hanno: li' il controllo e' quello di prima. */
+const oreDiverse = (p, s) => Array.isArray(p.i) && Array.isArray(s.i) && (p.i[0] !== s.i[0] || Math.abs((+p.i[1] || 0) - (+s.i[1] || 0)) >= 0.05);
 const eStima = j => !!j && typeof j.source === 'string' && /open-meteo/i.test(j.source);
 
 function leggi(regione, giorno) {
@@ -68,9 +76,13 @@ for (const r of regioni) {
     const a = leggi(r, giorni[i - 1]), b = leggi(r, giorni[i]);
     if (!a || !b) continue;
     const chiave = s => s.id != null ? String(s.id) : s.n;
-    const prima = new Map(a.stations.map(s => [chiave(s), +s.mm || 0]));
+    const prima = new Map(a.stations.map(s => [chiave(s), s]));
     const bagnate = b.stations.filter(s => (+s.mm || 0) > 0);
-    const identiche = bagnate.filter(s => prima.has(chiave(s)) && (+s.mm || 0) >= SOGLIA_MM && Math.abs(prima.get(chiave(s)) - (+s.mm || 0)) < 0.05);
+    const identiche = bagnate.filter(s => {
+      const p = prima.get(chiave(s));
+      if (!p || (+s.mm || 0) < SOGLIA_MM || Math.abs((+p.mm || 0) - (+s.mm || 0)) >= 0.05) return false;
+      return !oreDiverse(p, s);
+    });
     const mm = identiche.reduce((t, s) => t + (+s.mm || 0), 0);
     if (identiche.length) console.log(`${r.padEnd(20)} ${giorni[i - 1]} -> ${giorni[i]}: ${identiche.length} identiche su ${bagnate.length} bagnate, ${mm.toFixed(1)} mm`);
     if (identiche.length >= MIN_STAZ || mm >= MIN_MM) {

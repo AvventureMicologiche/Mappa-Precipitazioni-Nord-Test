@@ -6258,7 +6258,12 @@ var PIEMONTE_ESCLUSE={
   // 11,0 km. Quella condizione serve a non accusare i fondovalle, e in mezzo
   // alle risaie non c'entra: e' una scelta fatta a ragion veduta, non
   // l'applicazione automatica della regola.
-  'VERCELLI':true              // 12,1 mm nei 30 giorni consegnati su 45, il 13,8% della mediana dei vicini (88,0)
+  'VERCELLI':true,             // 12,1 mm nei 30 giorni consegnati su 45, il 13,8% della mediana dei vicini (88,0)
+  // ── 20/10/2026: segnalata dal controllo del lunedi', e la scarta la stessa ARPA: nella banca
+  // dati ufficiale il totale del giorno e' VUOTO con classe A0 (non valido) il 9-10/9 e dal 6 al
+  // 9/10, mentre Trana fa fino a 42 mm e Rivoli 81. Le briciole che leggiamo (0,2-0,8 mm) sono
+  // tempo reale non validato. Il 19/10 1,6 mm in riga coi vicini: se l'ARPA torna a validarla, rientra.
+  'AVIGLIANA':true             // 3,6 mm nei 40 giorni consegnati su 45, il 6,9% della mediana dei vicini (52)
 };
 
 function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
@@ -6759,7 +6764,12 @@ var FRANCIA_ESCLUSE={
   // dei sette vicini entro 25 km ne fa 52,4. Resta Barbaggio a 5,3 km. ⚠️ L'ALTRA Bastia
   // (20148001, 18,5 km a sud, verso l'aeroporto di Poretta) e' sana e NON va toccata: si
   // esclude per ID, mai per nome.
-  '20033015':true
+  '20033015':true,
+  // Cagnano (Haute-Corse, Cap Corse), 20046002, 278 m, esclusa il 20/10/2026: verificata
+  // sull'archivio orario ufficiale Meteo-France, 1,0 mm in sei settimane (punta 0,2) mentre
+  // Cap Sagro ne fa 177 e Barbaggio 53; il 7/10 i vicini 18-97 mm, lei 0. Il controllo del
+  // lunedi' non l'aveva presa: trovata guardando i vicini di Bastia.
+  '20046002':true
 };
 function loadFranciaRegion(regionKey,pastDate,nowDate,labelPeriodo,cb){
   var FR_RAW=PILOT_DATA_BASE+(REGIONS[regionKey].dataDir||regionKey);
