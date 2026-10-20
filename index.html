@@ -15849,6 +15849,11 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
 })();
 </script>
 <!-- ═══ FINESTRA «NOVITÀ» ALLA PRIMA APERTURA (30/9/2026, sua richiesta; rifatta due volte la stessa notte) ═══
+     ⚠️ 20/10/2026 (VERSIONE 2026-10-20): UNA pagina sola, il quiz tartufi con le 4 regioni nuove. Immagine fissa
+     (pg.img, novita/quiz-regioni.jpg, scelta della regione dal sito del quiz) e bottone arancione «Gioca al quiz →»
+     (pg.vai) che apre il quiz in una scheda nuova e chiude la finestra (GA azione=quiz).
+     SCADE: si apre da sola solo fino a NV_FINO compreso (una settimana dalla pubblicazione, suo), poi sparisce
+     senza deploy; ?novita=1 la mostra sempre.
      ⚠️ RIFATTA IL 4/10/2026 (VERSIONE 2026-10-04): DUE pagine, temperature di ieri e satellite, filmati
      corti con una freccia sul tasto e uno zoom che parte dallo schermo intero (registra-temperature.js
      nel banco di lavoro). Le quattro pagine del 30/9 qui sotto sono la storia.
@@ -15873,6 +15878,16 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
 #nv-film{position:relative;background:#0b1a2b;flex:0 1 auto;min-height:0;aspect-ratio:640/860;max-height:calc(100dvh - 20px - 215px);overflow:hidden;cursor:pointer;line-height:0}
 #nv-film video{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 100%;background:#0b1a2b}   /* taglia gli ultimi 8 px in alto: l'orlo chiaro della barra delle regioni */
 #nv-film video.via{display:none}
+#nv-film img{display:block;width:100%;height:100%;object-fit:contain;object-position:50% 0;background:linear-gradient(#2a1d14,#2e2118)}
+#nv-film img.via{display:none}
+#nv-gioca{display:none;background:#e8891c;color:#fff;border:1px solid #e8891c;border-radius:12px;font-weight:800;font-size:16px;line-height:1;padding:14px 8px;text-decoration:none;box-shadow:0 4px 0 #a85d0c;white-space:nowrap}
+#nv-gioca:hover{background:#f0952a}
+#nv-gioca.pulsa{animation:nvPulsaA 1.3s ease-in-out infinite}
+@keyframes nvPulsaA{0%,100%{box-shadow:0 4px 0 #a85d0c,0 0 0 0 rgba(232,137,28,.6)}50%{box-shadow:0 4px 0 #a85d0c,0 0 0 9px rgba(232,137,28,0)}}
+#nv-avanti.sec{background:#eef3fb;color:#1b3f6e;border:1px solid #c9d6ea;font-weight:700;font-size:15px;min-width:0;padding:14px 8px}
+#nv-piede.coppia #nv-avanti,#nv-piede.coppia #nv-gioca{flex:1 1 0;box-sizing:border-box;height:48px;display:flex;align-items:center;justify-content:center;text-align:center}
+#nv-piede.coppia #nv-punti{display:none}
+#nv-avanti.sec:hover{background:#dfe8f6}
 #nv-alto{padding:12px 14px 0;display:flex;align-items:center;gap:10px;flex:none}
 #nv-tag{background:#e12b2b;color:#fff;font-size:16px;font-weight:800;letter-spacing:.09em;border-radius:8px;padding:6px 12px;line-height:1.2;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 #nv-conta{margin-left:auto;font-size:14px;color:#6a7a8c;font-weight:700;white-space:nowrap}
@@ -15896,11 +15911,14 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
 #nv-avanti.pulsa{animation:nvPulsa 1.3s ease-in-out infinite}
 @keyframes nvPulsa{0%,100%{box-shadow:0 0 0 0 rgba(27,63,110,.55)}50%{box-shadow:0 0 0 9px rgba(27,63,110,0)}}
 @media(max-width:900px){ #nv-box{max-width:none} #nv-tit{font-size:24px} #nv-dida{font-size:18.5px} }
+@media(prefers-reduced-motion:reduce){ #nv-gioca.pulsa{animation:none} }
 @media(max-height:660px){ #nv-tit{font-size:21px} #nv-dida{min-height:2.4em} #nv-dida span{font-size:17px;padding:7px 12px} #nv-avanti{padding:12px 16px;font-size:15px;min-width:130px} #nv-dietro{padding:12px 12px;font-size:14px} #nv-testo{padding-top:4px;padding-bottom:6px} #nv-film{max-height:calc(100dvh - 20px - 190px)} }
 </style>
 <script>
 (function(){
-  var VERSIONE='2026-10-07', CHIAVE='novitaVista';
+  var VERSIONE='2026-10-20', CHIAVE='novitaVista';   // 20/10: la pagina del quiz tartufi, una sola
+  var NV_FINO='2026-10-27';   // ultimo giorno in cui si apre da sola (suo: «una settimana e poi sparisce»); ?novita=1 la mostra sempre
+  function oggiQui(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }   // data del telefono, non UTC
   /* 5/10/2026: i filmati (4-5 MB l'uno) li serve GitHub, non Netlify. In cinque giorni di ottobre
      la finestra ha scaricato 10-15 GB dal sito: a 20 crediti il GB era il grosso dei 600 crediti di banda. */
   var NV_MEDIA=/avventuremicologiche\.it$/.test(location.hostname) ? 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/' : '/';   // test e locale: dal sito stesso (su raw arrivano col push)
@@ -15911,8 +15929,12 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   var SEQ=[];
   // d = didascalie: [secondo, testo]; il secondo viene dai marchi della registrazione (build-novita.py)
   var PAGINE=[
-    {t:'Previsioni meteo', f:'novita/previsioni', d:[[0, "Da ora, in alto: Previsioni"], [3.85, "Il tempo su città e paesi, 7 giorni"], [6.49, "Scegli il giorno"], [8.68, "Tocca un posto: ore, gradi, pioggia e probabilità"]]},
-    {t:'Satellite', f:'novita/satellite-corto', d:[[0, "Dalla Mappa boschi, clicca qui"], [3.65, "Satellite coi boschi evidenziati"], [7.31, "O solo satellite"]]}   // 7/10 (suo): esce la pagina delle temperature, il satellite resta
+    /* 20/10/2026 (suo): una pagina sola sul quiz, «ora anche le nuove regioni, hai provato a giocare?».
+       Escono previsioni e satellite (si possono rimettere: i filmati restano in novita/).
+       img = immagine fissa al posto del filmato; vai = bottone verso fuori, in una scheda nuova. */
+    {t:'Hai già provato il quiz dei tartufi?', img:'novita/quiz-regioni.jpg',
+     d:[[0, "Ora anche Lombardia, Piemonte, Emilia-Romagna e Liguria"]],
+     vai:{testo:'Gioca al quiz →', url:'https://avventuremicologiche.it/esame-tartufi/'}}
   ];
   var AVANZA_DOPO=1200;   // ms fermi sull'ultimo fotogramma prima di passare da soli alla pagina dopo
   var avanzaT=null;
@@ -15938,11 +15960,15 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
       +'<div id="nv-alto"><span id="nv-tag">NOVITÀ</span><span id="nv-conta"></span><button id="nv-x" type="button" aria-label="Chiudi">×</button></div>'
       +'<div id="nv-testo"><h2 id="nv-tit"></h2><p id="nv-dida"></p></div>'
       +'<div id="nv-film"></div>'
-      +'<div id="nv-piede"><span id="nv-punti"></span><button id="nv-dietro" type="button">← Indietro</button><button id="nv-avanti" type="button"></button></div></div>';
+      +'<div id="nv-piede"><span id="nv-punti"></span><button id="nv-dietro" type="button">← Indietro</button><button id="nv-avanti" type="button"></button><a id="nv-gioca" target="_blank" rel="noopener"></a></div></div>';
     document.body.appendChild(velo);
     elTit=document.getElementById('nv-tit'); elDida=document.getElementById('nv-dida'); elConta=document.getElementById('nv-conta');
     elPunti=document.getElementById('nv-punti'); elAvanti=document.getElementById('nv-avanti'); elDietro=document.getElementById('nv-dietro'); elFilm=document.getElementById('nv-film');
     PAGINE.forEach(function(pg,i){
+      if(pg.img){   // pagina con immagine fissa: niente play, niente fine filmato
+        var im=document.createElement('img'); im.src=pg.img; im.alt=pg.t; im.className='via'; im.decoding='async';
+        elFilm.insertBefore(im,elFilm.firstChild); vids.push(im); elPunti.appendChild(document.createElement('i')); return;
+      }
       var v=document.createElement('video');
       v.muted=true; v.playsInline=true; v.setAttribute('playsinline',''); v.setAttribute('muted','');
       v.preload='none'; v.poster=pg.f+'.jpg'; v.setAttribute('aria-label',pg.t); v.className='via';
@@ -15958,7 +15984,8 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     document.getElementById('nv-x').addEventListener('click',function(e){ e.stopPropagation(); chiudi('chiusa'); });
     elAvanti.addEventListener('click',avanti);
     elDietro.addEventListener('click',indietro);
-    elFilm.addEventListener('click',function(){ riparti(); });   // un tocco sul filmato: da capo
+    elFilm.addEventListener('click',function(){ if(PAGINE[idx].vai){ window.open(PAGINE[idx].vai.url,'_blank','noopener'); chiudi('quiz'); } else riparti(); });   // un tocco sul filmato: da capo; sull'immagine del quiz: il quiz
+    document.getElementById('nv-gioca').addEventListener('click',function(){ chiudi('quiz'); });   // il link apre la scheda nuova da solo
     velo.addEventListener('click',function(e){ if(e.target===velo) chiudi('chiusa'); });
   }
   function didascalia(t){
@@ -15966,7 +15993,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     for(var k=0;k<d.length;k++) if(t>=d[k][0]) s=d[k][1];
     if(elDida.textContent!==s){ elDida.textContent=''; var sp=document.createElement('span'); sp.textContent=s; elDida.appendChild(sp); elDida.style.animation='none'; void elDida.offsetWidth; elDida.style.animation=''; }
   }
-  function riparti(){ var v=vids[idx]; clearTimeout(avanzaT); elAvanti.classList.remove('pulsa'); try{ v.currentTime=0; }catch(e){} var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); didascalia(0); }
+  function riparti(){ var v=vids[idx]; clearTimeout(avanzaT); elAvanti.classList.remove('pulsa'); if(!v.play){ didascalia(0); return; } try{ v.currentTime=0; }catch(e){} var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); didascalia(0); }
   function pos(){ return SEQ.indexOf(idx); }
   function mostra(i){
     idx=i; var pg=PAGINE[i], q=pos();
@@ -15976,6 +16003,10 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     elAvanti.textContent= q<SEQ.length-1 ? 'Continua →' : 'Vai alla mappa';
     elAvanti.classList.remove('pulsa');
     if(q>0) elDietro.removeAttribute('disabled'); else elDietro.setAttribute('disabled','');
+    var g=document.getElementById('nv-gioca');
+    var piede=document.getElementById('nv-piede');
+    if(pg.vai){ g.textContent=pg.vai.testo; g.href=pg.vai.url; g.style.display='flex'; g.classList.add('pulsa'); elAvanti.classList.add('sec'); elDietro.style.display= q>0 ? '' : 'none'; piede.classList.toggle('coppia', q===0); }
+    else { g.style.display='none'; g.classList.remove('pulsa'); elAvanti.classList.remove('sec'); elDietro.style.display=''; piede.classList.remove('coppia'); }
     vids.forEach(function(v,k){
       if(k===i){ v.classList.remove('via'); if(!v.getAttribute('src')){ v.src=NV_MEDIA+pg.f+'.mp4'; v.load(); } riparti(); }
       else { v.classList.add('via'); try{ v.pause(); }catch(e){} }
@@ -15994,6 +16025,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   function pronta(){ var sp=document.getElementById('map-spinner'); return !!window._mapDebug && (!sp || getComputedStyle(sp).display==='none'); }
   function avvia(){
     if(vietata()) return;
+    if(!forzata() && oggiQui()>NV_FINO) return;   // passata la settimana sparisce da sola, senza deploy
     try{ if(window.top!==window) return; }catch(e){}
     var pagina=location.pathname; if(!(pagina==='/'||/\/index\.html$/.test(pagina))) return;
     if(forzata()) SEQ=PAGINE.map(function(p,i){ return i; });
