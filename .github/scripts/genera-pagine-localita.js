@@ -144,8 +144,11 @@ function pagina(r, posto, slug, sl) {
   const [ID, nomePosto, sigla, quota, lat, lon, bosco] = posto;
   const REG = r.k;
   const NOME = r.nomeTitolo || r.nome;
-  const AGENZIA = r.agenzia;
-  const CORTA = r.agenziaCorta || r.agenzia.replace(/\s*\(.*\)$/, '');
+  // ⚠️ L'ENTE E' QUELLO DELLA RETE, non della regione del paese (20/10/2026, sesto check, bug 3):
+  // Bagnone sta in Toscana ma il suo pluviometro e' di OMIRL (ottavo campo, lib-posti.js).
+  const RD = REGIONI.find(x => x.k === regioneDati(REG, posto)) || r;
+  const AGENZIA = RD.agenzia;
+  const CORTA = RD.agenziaCorta || RD.agenzia.replace(/\s*\(.*\)$/, '');
   const GEN = GENITIVO[REG];
   const DOVE = aPosto(nomePosto);
   const SIGLA_T = OMONIMI.has(nomePosto) && sigla ? ' (' + sigla + ')' : '';   // vedi OMONIMI
@@ -849,7 +852,9 @@ if (require.main === module) {
 
     const sl = slugRegione(POSTI[k], m => console.log(`  ⚠️ ${m}`));
     for (const p of POSTI[k]) {
-      const posto = [p[0], bello(p[1]), p[2], p[3], p[4], p[5], p[6]];
+      // ⚠️ L'OTTAVO CAMPO SI PORTA DIETRO (20/10/2026, sesto check, bug 3): e' la regione della rete (lib-posti.js),
+      // e senza regioneDati() dentro pagina() rispondeva sempre la regione del paese: Bagnone «di SIR Toscana».
+      const posto = [p[0], bello(p[1]), p[2], p[3], p[4], p[5], p[6]].concat(p.length > 7 ? [p[7]] : []);
       const html = pagina(r, posto, sl[p[0]], sl);
 
       // ⚠️ SI CONTROLLA CHE LO SCRIPT DELLA PAGINA GIRI, prima di scriverla.

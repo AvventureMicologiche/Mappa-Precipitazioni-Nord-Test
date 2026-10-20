@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pluviometria Basilicata: mappa di 62 pluviometri, 30 giorni</title>
-<meta name="description" content="Mappa di 62 pluviometri MeteoHub aggiornata ogni mattina. Ieri giornata quasi asciutta, in 7 giorni 37 mm a Lavello. Tocca un paese e vedi il grafico.">
+<meta name="description" content="Mappa di 62 pluviometri MeteoHub aggiornata ogni mattina. Ieri giornata quasi asciutta, in 7 giorni 8,2 mm a M.te Vulture. Tocca un paese e vedi il grafico.">
 <link rel="canonical" href="https://avventurepluvio-test.pages.dev/basilicata/">
 <meta property="og:title" content="Dove ha piovuto in Basilicata: ieri e negli ultimi giorni">
 <meta property="og:description" content="Riepilogo degli ultimi 7, 20 e 30 giorni con le zone più bagnate, da oltre 60 pluviometri di MeteoHub.">
@@ -257,6 +257,11 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-tutte{display:block;width:100%;margin:10px 0 0;padding:10px;border:1px solid #c5d4e6;border-radius:10px;background:#fff;color:#1b3f6e;font:700 15px system-ui,sans-serif;cursor:pointer;}
 .mk-citta-n{font-size:13.5px;color:#5f738c;margin:10px 0 0;}
 .mk-sopra{font-size:14.5px;color:#4a6180;margin:2px 0 8px;font-weight:600;}
+.mk-boschi{background:#eef6ef;border:1px solid #cfe3d2;border-radius:14px;padding:4px 16px 16px;margin:18px 0 6px;}
+.mk-boschi h2{margin-top:14px;color:#1d4a2a;}
+.mk-boschi-p{font-size:15px;color:#3d5a45;margin:2px 0 10px;}
+@media(max-width:400px){.mk-boschi .mk-tuo input::placeholder{font-size:15px;}}   /* la frase sta intera anche a 360 px */
+.mk-boschi .mk-tuo input{border-color:#2f6b3d;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%232f6b3d' stroke-width='2.6' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5 21 21'/%3E%3C/svg%3E");}
 .mk-citta-n a{color:#1b3f6e;font-weight:700;}
 @media(max-width:400px){.mk-cr{font-size:14px;padding:8px 9px;}.mk-cr span i{font-size:17px;}}
 .gg .b.mk-fut i{background:repeating-linear-gradient(135deg,#7fb2ec 0 5px,#a9cdf5 5px 10px);border-radius:3px 3px 0 0;}
@@ -281,7 +286,7 @@ header{position:relative;flex-wrap:nowrap;}
      alla domanda del titolo, cioe' IERI, poi le barre, poi i periodi, le zone,
      le mappe. Le spiegazioni stanno in fondo, in piccolo. -->
 <div id="attesa" style="display:none"></div>
-<div id="verdetto"><div class="verdetto"><div class="si">Ieri, 18 ottobre</div><div class="gr"><small style="margin:0 .3em 0 0">meno di</small>0,1 mm<small>di media</small></div><div class="top">Giornata quasi asciutta: il massimo è stato 0,2 mm a T. Atella - P.te SS381.</div><div class="dett">Media di 62 pluviometri.</div><div class="capo-btns"><a class="ieri-btn" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-18&amp;a=2026-10-18&amp;s=p" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-ieri-box'})}catch(e){}"><b>Apri la mappa di ieri</b><i>→</i><small>la pioggia in tutte le località</small></a></div><div class="mk-porte"><a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;m=prev" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-previsioni'})}catch(e){}"><span>☀️</span>Previsioni</a><a href="https://avventurepluvio-test.pages.dev/basilicata/adesso/" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-radar'})}catch(e){}"><span>📡</span>Radar</a><a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;boschi=1" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-boschi'})}catch(e){}"><span>🌲</span>Boschi</a><a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;boschi=1&amp;sat=1" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-satellite'})}catch(e){}"><span>🛰</span>Satellite</a></div></div></div>
+<div id="verdetto"><div class="verdetto"><div class="si">Ieri, 19 ottobre</div><div class="gr"><small style="margin:0 .3em 0 0">meno di</small>0,1 mm<small>di media</small></div><div class="top">Giornata quasi asciutta: il massimo è stato 0,2 mm a Melfi.</div><div class="dett">Media di 62 pluviometri.</div><div class="capo-btns"><a class="ieri-btn" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-19&amp;a=2026-10-19&amp;s=p" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-ieri-box'})}catch(e){}"><b>Apri la mappa di ieri</b><i>→</i><small>la pioggia in tutte le località</small></a></div><div class="mk-porte"><a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;m=prev" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-previsioni'})}catch(e){}"><span>☀️</span>Previsioni</a><a href="https://avventurepluvio-test.pages.dev/basilicata/adesso/" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-radar'})}catch(e){}"><span>📡</span>Radar</a><a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;boschi=1" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-boschi'})}catch(e){}"><span>🌲</span>Boschi</a><a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;boschi=1&amp;sat=1" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-satellite'})}catch(e){}"><span>🛰</span>Satellite</a></div></div></div>
 <!-- 19/10/2026: al posto della striscia blu «Che tempo farà», il blocco meteo (lib-meteo-regione.js):
      la casella per il proprio paese, che apre la mappa delle previsioni, e le città principali. -->
 <section class="mk-meteo" id="meteo">
@@ -291,50 +296,50 @@ header{position:relative;flex-wrap:nowrap;}
 </section>
 
 <h2 id="h-grafico">La pioggia degli ultimi 30 giorni</h2>
-<div id="grafico"><div class="gg"><div class="b" title="19 settembre: 1,4 mm"><i style="height:8%"></i></div><div class="b" title="20 settembre: 2,1 mm"><i style="height:11%"></i></div><div class="b" title="21 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="22 settembre: 0,5 mm"><i style="height:3%"></i></div><div class="b" title="23 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="24 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="25 settembre: 8,3 mm"><b>8,3</b><i style="height:45%"></i></div><div class="b" title="26 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="27 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="28 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="29 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="30 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="1 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="2 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="3 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="4 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="5 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="6 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="7 ottobre: 0,2 mm"><i style="height:2%"></i></div><div class="b" title="8 ottobre: 7,3 mm"><b>7,3</b><i style="height:40%"></i></div><div class="b" title="9 ottobre: 11,0 mm"><i style="height:60%"></i></div><div class="b" title="10 ottobre: 15,8 mm"><b>16</b><i style="height:86%"></i></div><div class="b" title="11 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b dentro" title="12 ottobre: 11,8 mm"><b>12</b><i style="height:64%"></i></div><div class="b dentro" title="13 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b dentro" title="14 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="15 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b dentro" title="16 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="17 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="18 ottobre: 0,0 mm"><i style="height:2%"></i></div></div><div class="gg-x"><span>19/9</span><span></span><span></span><span></span><span></span><span>24/9</span><span></span><span></span><span></span><span></span><span>29/9</span><span></span><span></span><span></span><span></span><span>4/10</span><span></span><span></span><span></span><span></span><span>9/10</span><span></span><span></span><span></span><span></span><span>14/10</span><span></span><span></span><span></span><span>18/10</span></div><p class="gg-leg"><i style="background:var(--blu)"></i>ultimi 7 giorni &nbsp; <i style="background:#b9cbe2"></i>i giorni prima &nbsp;·&nbsp; media dei pluviometri della regione, in mm</p></div>
+<div id="grafico"><div class="gg"><div class="b" title="20 settembre: 2,1 mm"><i style="height:11%"></i></div><div class="b" title="21 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="22 settembre: 0,5 mm"><i style="height:3%"></i></div><div class="b" title="23 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="24 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="25 settembre: 8,3 mm"><b>8,3</b><i style="height:45%"></i></div><div class="b" title="26 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="27 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="28 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="29 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="30 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="1 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="2 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="3 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="4 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="5 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="6 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="7 ottobre: 0,2 mm"><i style="height:2%"></i></div><div class="b" title="8 ottobre: 7,3 mm"><b>7,3</b><i style="height:40%"></i></div><div class="b" title="9 ottobre: 11,0 mm"><i style="height:60%"></i></div><div class="b" title="10 ottobre: 15,8 mm"><b>16</b><i style="height:86%"></i></div><div class="b" title="11 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b" title="12 ottobre: 11,8 mm"><b>12</b><i style="height:64%"></i></div><div class="b dentro" title="13 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b dentro" title="14 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="15 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b dentro" title="16 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="17 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="18 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="19 ottobre: 0,0 mm"><i style="height:2%"></i></div></div><div class="gg-x"><span>20/9</span><span></span><span></span><span></span><span></span><span>25/9</span><span></span><span></span><span></span><span></span><span>30/9</span><span></span><span></span><span></span><span></span><span>5/10</span><span></span><span></span><span></span><span></span><span>10/10</span><span></span><span></span><span></span><span></span><span>15/10</span><span></span><span></span><span></span><span>19/10</span></div><p class="gg-leg"><i style="background:var(--blu)"></i>ultimi 7 giorni &nbsp; <i style="background:#b9cbe2"></i>i giorni prima &nbsp;·&nbsp; media dei pluviometri della regione, in mm</p></div>
 
 <h2>Dove ha piovuto di più</h2>
 <div class="griglia">
   <div class="card">
     <h3>Ultimi 7 giorni</h3>
-    <div class="numerone" id="rip7-media">12 mm <small>di media</small></div>
-    <div id="rip7-top"><ol class="top-staz"><li>Lavello — 37,2 mm</li><li>Lagopesole — 33,3 mm</li><li>Lagonegro — 30,8 mm</li><li>M.te Vulture — 24,2 mm</li><li>Palazzo S.Gervasio — 24,0 mm</li></ol></div>
-    <p class="nota" id="rip7-date">Dal 12 al 18 ottobre.</p>
+    <div class="numerone" id="rip7-media">0,3 mm <small>di media</small></div>
+    <div id="rip7-top"><ol class="top-staz"><li>M.te Vulture — 8,2 mm</li><li>Palazzo S.Gervasio — 1,6 mm</li><li>Bradano Ponte Colonna — 0,8 mm</li><li>Irsina — 0,8 mm</li><li>Grassano — 0,6 mm</li></ol></div>
+    <p class="nota" id="rip7-date">Dal 13 al 19 ottobre.</p>
     <!-- ⚠️ L'indirizzo scritto qui deve GIA' portare alla regione (23/8/2026):
          lo script in fondo lo riscrive con le date esatte, ma solo dopo che i
          dati sono arrivati. Il parametro g sono i giorni: la mappa li fa date. -->
-    <a class="vai" id="cta7" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-12&amp;a=2026-10-18&amp;s=p"
+    <a class="vai" id="cta7" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-13&amp;a=2026-10-19&amp;s=p"
        onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-7gg'})}catch(e){}">Apri la mappa →</a>
   </div>
   <div class="card">
     <h3>Ultimi 20 giorni</h3>
     <div class="numerone" id="rip20-media">46 mm <small>di media</small></div>
     <div id="rip20-top"><ol class="top-staz"><li>Lagonegro — 122,9 mm</li><li>Castelsaraceno — 79,2 mm</li><li>Rotonda — 78,5 mm</li><li>Castrocucco — 78,0 mm</li><li>Grumento-Ponte La Marmora — 71,0 mm</li></ol></div>
-    <p class="nota" id="rip20-date">Dal 29 settembre al 18 ottobre.</p>
-    <a class="vai" id="cta20" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-09-29&amp;a=2026-10-18&amp;s=p"
+    <p class="nota" id="rip20-date">Dal 30 settembre al 19 ottobre.</p>
+    <a class="vai" id="cta20" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-09-30&amp;a=2026-10-19&amp;s=p"
        onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-20gg'})}catch(e){}">Apri la mappa →</a>
   </div>
   <div class="card" id="card30">
     <h3>Ultimo mese</h3>
-    <div class="numerone" id="rip30-media">56 mm <small>di media</small></div>
-    <div id="rip30-top"><ol class="top-staz"><li>Lagonegro — 148,2 mm</li><li>Tramutola — 94,1 mm</li><li>Abriola a Sellata Pierfaone — 91,4 mm</li><li>Rotonda — 90,7 mm</li><li>Castrocucco — 90,0 mm</li></ol></div>
-    <p class="nota" id="rip30-date">Dal 19 settembre al 18 ottobre.</p>
-    <a class="vai" id="cta30" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-09-19&amp;a=2026-10-18&amp;s=p"
+    <div class="numerone" id="rip30-media">55 mm <small>di media</small></div>
+    <div id="rip30-top"><ol class="top-staz"><li>Lagonegro — 148,2 mm</li><li>Tramutola — 94,1 mm</li><li>Abriola a Sellata Pierfaone — 91,4 mm</li><li>Rotonda — 90,5 mm</li><li>Castrocucco — 89,8 mm</li></ol></div>
+    <p class="nota" id="rip30-date">Dal 20 settembre al 19 ottobre.</p>
+    <a class="vai" id="cta30" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-09-20&amp;a=2026-10-19&amp;s=p"
        onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-30gg'})}catch(e){}">Apri la mappa →</a>
   </div>
 </div>
 
 <h2>Mappa pluviometrica della Basilicata: guardala in dettaglio</h2>
 <div class="tasti">
-  <a class="forte" id="t1" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-18&amp;a=2026-10-18&amp;s=p"
+  <a class="forte" id="t1" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-19&amp;a=2026-10-19&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-1gg'})}catch(e){}">Ieri</a>
-  <a id="t7" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-12&amp;a=2026-10-18&amp;s=p"
+  <a id="t7" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-13&amp;a=2026-10-19&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-7gg'})}catch(e){}">Ultimi 7 gg</a>
-  <a id="t15" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-04&amp;a=2026-10-18&amp;s=p"
+  <a id="t15" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-05&amp;a=2026-10-19&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-15gg'})}catch(e){}">Ultimi 15 gg</a>
-  <a id="t20" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-09-29&amp;a=2026-10-18&amp;s=p"
+  <a id="t20" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-09-30&amp;a=2026-10-19&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-20gg'})}catch(e){}">Ultimi 20 gg</a>
-  <a id="t30" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-09-19&amp;a=2026-10-18&amp;s=p"
+  <a id="t30" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-09-20&amp;a=2026-10-19&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-30gg'})}catch(e){}">Ultimi 30 gg</a>
   <a href="https://avventurepluvio-test.pages.dev/basilicata/adesso/"
      onclick="try{gtag('event','apri_adesso',{da:'pagina-basilicata-tasto'})}catch(e){}">📡 Radar adesso</a>
@@ -342,7 +347,7 @@ header{position:relative;flex-wrap:nowrap;}
      onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">La pioggia degli ultimi 20 giorni in Basilicata, pluviometro per pluviometro.</p>
-<a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-09-29&amp;a=2026-10-18&amp;s=p" id="lnk-img" style="display:block;text-decoration:none;"
+<a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-09-30&amp;a=2026-10-19&amp;s=p" id="lnk-img" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-anteprima'})}catch(e){}">
   <img class="img-mappa" src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/basilicata.jpg" alt="La mappa delle piogge in Basilicata: le zone più bagnate, stazione per stazione"
        width="1600" height="1000" loading="lazy"></a>
@@ -688,7 +693,9 @@ temperatura, vento e umidità.</p>
      misurati e fra i previsti. I giorni passati si tolgono appena arriva la risposta (daOggi) e i nomi si danno
      confrontando la data. Stessa regola nella mappa (index.html) e in lib/pagina-adesso.js. */
   function isoRoma(ms) { return new Date(ms).toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' }); }
-  var OGGI = isoRoma(Date.now()), DOMANI = isoRoma(Date.now() + 864e5);
+  // ⚠️ DOMANI = OGGI + un giorno di CALENDARIO (20/10/2026, sesto check, bug 7): «adesso + 24 ore» sbagliava al cambio
+  // d'ora (25/10/2026 fra 00 e 01 dava ancora il 25, 27/3/2027 fra 23 e 24 dava il 29). Mezzogiorno UTC: nessun fuso lo sposta.
+  var OGGI = isoRoma(Date.now()), DOMANI = (function (p) { return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] + 1, 12)).toISOString().slice(0, 10); })(OGGI.split('-'));
   function daOggi(j) { if (j && j.capoluoghi) j.capoluoghi.forEach(function (c) { if (c.giorni) c.giorni = c.giorni.filter(function (x) { return x.g >= OGGI; }); }); return j; }
   function nomeG(s, d) { var x = daIso(s); return s === OGGI ? 'oggi' : s === DOMANI ? 'domani' : GS[x.getDay()] + ' ' + x.getDate(); }
   function nomeReg(k) { return { valledaosta: "Valle d'Aosta", altoadige: 'Alto Adige', emilia: 'Emilia-Romagna', friuli: 'Friuli' }[k] || (k.charAt(0).toUpperCase() + k.slice(1)); }
@@ -696,16 +703,21 @@ temperatura, vento e umidità.</p>
   function vai(url, da) { ga(da); setTimeout(function () { location.href = url; }, 120); }
 
   /* ── l'elenco dei comuni e le frazioni ── */
-  var ELENCO = null;
+  var ELENCO = null, IN_ARRIVO = null;
   function norm(t) { return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/['’.-]/g, ' ').replace(/\s+/g, ' ').trim(); }
+  /* ⚠️ (20/10/2026, sesto check, bug 14) un 503 non e' un elenco: prima il testo dell'errore diventava ELENCO=[] e la
+     casella restava muta per tutta la visita. Come lib/pagina-adesso.js: errore se !r.ok, UNA promessa in volo (due
+     chiamate ravvicinate non scaricano due volte i 366 KB) e dimenticata sull'errore, cosi' si ritenta alla prossima. */
   function carica() {
     if (ELENCO) return Promise.resolve(ELENCO);
-    return fetch('/data/elenco-paesi.txt').then(function (r) { return r.text(); }).then(function (t) {
-      ELENCO = [];
+    if (!IN_ARRIVO) IN_ARRIVO = fetch('/data/elenco-paesi.txt').then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) {
+      var a = [];
       t.split('\n').forEach(function (r) { var p = r.split('|'); if (p.length < 6) return;
-        ELENCO.push({ n: p[0], lat: +p[1], lon: +p[2], sg: p[3], reg: p[4], pop: +p[5] || 0, z: (p[6] || '').trim() === 'z', q: norm(p[0]) }); });
-      return ELENCO;
-    });
+        a.push({ n: p[0], lat: +p[1], lon: +p[2], sg: p[3], reg: p[4], pop: +p[5] || 0, z: (p[6] || '').trim() === 'z', q: norm(p[0]) }); });
+      ELENCO = a; IN_ARRIVO = null;
+      return a;
+    }).catch(function (e) { IN_ARRIVO = null; throw e; });
+    return IN_ARRIVO;
   }
   function cerca(q) {
     q = norm(q); if (q.length < 2 || !ELENCO) return [];
@@ -754,8 +766,9 @@ temperatura, vento e umidità.</p>
       if (!righe.length) { drop.innerHTML = norm(q).length >= 3 ? '<div class="mk-porte-t">Cerco anche tra le frazioni…</div>' : ''; drop.classList.toggle('on', norm(q).length >= 3); return; }
       disegna();
     }
-    inp.addEventListener('focus', function () { carica(); });
-    inp.addEventListener('input', function () { carica().then(function () { mostra(inp.value); }); });
+    // senza elenco (errore) si cerca lo stesso: restano le frazioni del geocoder, e la prossima lettera ritenta l'elenco
+    inp.addEventListener('focus', function () { carica().catch(function () {}); });
+    inp.addEventListener('input', function () { carica().catch(function () {}).then(function () { mostra(inp.value); }); });
     inp.addEventListener('keydown', function (e) {
       var rs = drop.querySelectorAll('.mk-r');
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!rs.length) return; sel = (sel + (e.key === 'ArrowDown' ? 1 : -1) + rs.length) % rs.length; for (var i = 0; i < rs.length; i++) rs[i].classList.toggle('sel', i === sel); }
@@ -795,9 +808,11 @@ temperatura, vento e umidità.</p>
   }
 
   /* ═══ 3. «CHE TEMPO FARÀ»: la casella e le citta' ═══ */
-  var blocco = document.getElementById('meteo');
+  var blocco = document.getElementById(OPZ.id || 'meteo');
   var tuo = blocco && blocco.querySelector('.mk-tuo input');
   if (tuo) casella(tuo, blocco.querySelector('.mk-tuo .mk-drop'), function (x) { tuo.blur(); vai(SITO + '/?r=' + x.reg + '&m=prev' + pl(x), 'cerca-meteo'); });
+  var bosco = OPZ.boschi && document.getElementById(OPZ.boschi), bin = bosco && bosco.querySelector('.mk-tuo input');
+  if (bin) casella(bin, bosco.querySelector('.mk-tuo .mk-drop'), function (x) { bin.blur(); vai(SITO + '/?r=' + x.reg + '&boschi=1' + pl(x), 'cerca-boschi'); });
   function disegnaCitta(j) {
     var box = blocco && blocco.querySelector('.mk-citta'); if (!box) return;
     var cc = (j && j.capoluoghi || []).filter(function (c) { return c.giorni && c.giorni.length >= 3; });
@@ -825,13 +840,19 @@ temperatura, vento e umidità.</p>
   });
 
   /* ═══ 4. IL GRAFICO: 30 giorni misurati + 7 previsti (media delle citta') ═══ */
+  // la media per DATA, non per posizione (20/10/2026, sesto check): una citta' con un giorno in meno in testa non
+  // sposta piu' le altre, e la data non si prende piu' dalla prima citta'
   function previsti(j) {
-    var cc = (j && j.capoluoghi || []).filter(function (c) { return c.giorni && c.giorni.length; }), out = [];
-    for (var d = 0; d < 7 && cc.length; d++) {
-      var t = 0, n = 0; cc.forEach(function (c) { var g = c.giorni[d]; if (g) { t += g.mm || 0; n++; } });
-      if (!n) break; out.push({ g: cc[0].giorni[d].g, mm: t / n });
-    }
-    return out;
+    var somma = {}, quante = {}, date = [];
+    (j && j.capoluoghi || []).forEach(function (c) {
+      (c.giorni || []).forEach(function (g) {
+        if (!g || !g.g || g.g < OGGI) return;
+        if (somma[g.g] === undefined) { somma[g.g] = 0; quante[g.g] = 0; date.push(g.g); }
+        somma[g.g] += g.mm || 0; quante[g.g]++;
+      });
+    });
+    date.sort();
+    return date.slice(0, 7).map(function (d) { return { g: d, mm: somma[d] / quante[d] }; });
   }
   function grafico(j, F) {
     var box = document.getElementById('grafico'); if (!box || !j || !j.serie || !F.length) return;
@@ -862,11 +883,13 @@ temperatura, vento e umidità.</p>
   }
 
   var citta = fetch(API + '?' + AREA).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
-  var riepilogo = fetch(BASE + RIEP).then(function (r) { return r.json(); }).catch(function () { return null; });
-  citta.then(function (j) { return carica().catch(function () {}).then(function () { disegnaCitta(j); }); });
+  var riepilogo = OPZ.grafico === false ? null : fetch(BASE + RIEP).then(function (r) { return r.json(); }).catch(function () { return null; });
+  // l'elenco dei comuni (366 KB) serve solo a ordinare le citta' per abitanti: nelle zone (OPZ.area) i paesi arrivano
+  // gia' in ordine, quindi si disegna subito (20/10/2026, sesto check, bug 15)
+  citta.then(function (j) { if (OPZ.area) return disegnaCitta(j); return carica().catch(function () {}).then(function () { disegnaCitta(j); }); });
   // il grafico e' gia' cotto nell'HTML, ma la pagina lo RIDISEGNA quando arriva il suo riepilogo:
   // per qualche secondo si ricontrolla e si rimettono i giorni previsti se sono spariti
-  Promise.all([citta, riepilogo]).then(function (x) {
+  if (OPZ.grafico !== false) Promise.all([citta, riepilogo]).then(function (x) {
     var F = previsti(x[0]), t0 = Date.now();
     (function aspetta() {
       if (document.querySelector('#grafico .gg') && !document.querySelector('#grafico .mk-fut')) grafico(x[1], F);

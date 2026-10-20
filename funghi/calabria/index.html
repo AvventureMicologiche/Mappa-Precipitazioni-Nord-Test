@@ -395,6 +395,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Calabria.</p>
   var SOSPESI = {};
 
   var REG = 'calabria', DIRS = ["meteohub-calabria"], NOME = "Calabria";
+  var PROPRIE = ["meteohub-calabria"];   /* le cartelle di casa: solo loro fanno «buono» un giorno (bug 4, 20/10/2026) */
   /* In locale i dati si leggono dalla cartella del repo, sul sito dal raw di
      GitHub. Stesso trucco del tag di Google qui sopra: si guarda l'HOSTNAME.
      Serve perche' le prove si fanno con `node server-locale.js` sul repo, a
@@ -616,7 +617,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Calabria.</p>
         POSTI.forEach(function(p){
           var v = j.posti[p[0]];
           if (!v) return;        // posto aggiunto dopo l'ultimo giro: si salta
-          righe.push({ id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5],
+          righe.push({ id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5], rete:p[7],
             mm:v[0], mm7:v[1], mm25:v[2], forte: v[3] ? { g:v[3], mm:v[4] } : null });
         });
         if (righe.length) { mostra(righe, j.oggi); return; }
@@ -646,17 +647,22 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Calabria.</p>
           .then(function(r){ return r.ok ? r.json() : null; })
           .catch(function(){ return null; });
       })).then(function(parti){
-        var m = null;
-        parti.forEach(function(j){
+        var m = null, casa = false;
+        parti.forEach(function(j, i){
           if (!j || !j.stations || !j.stations.length) return;
           if (!m) m = {};
+          if (PROPRIE.indexOf(DIRS[i]) >= 0) casa = true;
           j.stations.forEach(function(s){ if (s.mm != null) m[s.id] = (m[s.id] || 0) + s.mm; });
         });
-        return { n:n, m:m };
+        return { n:n, m:m, casa:casa };
       });
     })).then(function(res){
+      /* ⚠️ GEMELLO DI perGiorno in genera-funghi.js (20/10/2026, sesto check, bug 4): i mm si prendono da tutte
+         le cartelle, ma un giorno conta per il minimo di 5 solo se c'e' una cartella DI CASA. Con le sole reti
+         dei posti ospiti (data/liguria per la Toscana) un SIR fermo passava per buono con 2 posti su 169. */
       var buoni = res.filter(function(x){ return x.m; });
-      if (buoni.length < 5) { guasto(buoni.length); return; }
+      var diCasa = buoni.filter(function(x){ return x.casa; }).length;
+      if (diCasa < 5) { guasto(diCasa); return; }
 
       var perGiorno = {};
       buoni.forEach(function(x){ perGiorno[x.n] = x.m; });
@@ -677,7 +683,7 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Calabria.</p>
         for (var n = da; n >= a; n--) if (perGiorno[n]) { d++; if (perGiorno[n][id] != null) c++; }
         return d > 0 && c >= d * 0.6; }
       mostra(POSTI.filter(function(p){ return !SOSPESI[p[0]] && coperto(p[0], GIORNI, 1) && coperto(p[0], 20, 13); }).map(function(p){
-        return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5],
+        return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5], rete:p[7],
           mm:somma(20,13,p[0]), mm7:somma(7,1,p[0]), mm25:somma(GIORNI,1,p[0]),
           forte:ultimaForte(p[0]) };
       }), iso(meno(0)));
@@ -747,8 +753,10 @@ pluviometri vicini. Sono i pluviometri in mezzo al bosco della Calabria.</p>
     var maxMm = Math.max.apply(null, righe.map(function(r){ return Math.max(r.mm, r.mm7, r.mm25); }).concat([1]));
 
     var daG = menoDaI(oggiISO,20), aG = menoDaI(oggiISO,13), a20 = menoDaI(oggiISO,1);
+    /* un posto con la rete di un'altra regione (ottavo campo, lib-posti.js) apre anche quella: Casoni di Suvero
+       e' un pluviometro OMIRL, e con la sola Toscana accesa la mappa non lo disegnava (20/10/2026, bug 10) */
     function link(r, dal, al){
-      return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al + '&s=p'
+      return MAPPA + '?r=' + REG + (r && r.rete && r.rete !== REG ? ',' + r.rete : '') + '&da=' + dal + '&a=' + al + '&s=p'
         + (r ? '&z=11&c=' + r.lat.toFixed(4) + ',' + r.lon.toFixed(4) : '');
     }
     function luogo(r){ return r.sig ? esc(r.sig) : ''; }

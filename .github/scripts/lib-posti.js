@@ -28,5 +28,15 @@ function cartelleConRete(r, posti, REGIONI) {
 function cartelleDi(r, posti, REGIONI) { return cartelleConRete(r, posti, REGIONI).map(c => c.dir); }
 // la regione delle esclusioni di un posto: quella della sua rete
 function regioneDati(k, p) { return (p && p[7]) || k; }
+// L'ENTE (20/10/2026, sesto check, bug 3): le regioni delle RETI di un elenco di posti, coppie [k, posto], senza
+// doppioni: prima le reti dei posti «di casa» (senza ottavo campo) nell'ordine d'arrivo, poi quelle degli ospiti.
+// Serve a scrivere «i pluviometri di SIR Toscana e ARPA Liguria» sulle pagine che contengono un posto ospite:
+// l'ente e' della rete, non del paese. Senza ospiti da' le regioni dei posti nell'ordine di prima.
+function retiDei(coppie) {
+  const out = [];
+  for (const [k, p] of coppie) if (!(p && p[7]) && !out.includes(k)) out.push(k);
+  for (const [k, p] of coppie) { const r = regioneDati(k, p); if (!out.includes(r)) out.push(r); }
+  return out;
+}
 
-module.exports = { cartelleDi, cartelleConRete, regioneDati };
+module.exports = { cartelleDi, cartelleConRete, regioneDati, retiDei };

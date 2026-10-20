@@ -35,6 +35,7 @@ const path = require('path');
 const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
 const { bello, slug, slugRegione, elenco, diZona, postiDellaZona, diEnte } = require('./lib-nomi.js');
 const { perLink } = require('./lib-vicine.js');
+const { retiDei } = require('./lib-posti.js');   // l'ente dei posti con la rete di un'altra regione (20/10/2026)
 const { scriviSitemap } = require('./genera-sitemap.js');
 // il bottone YouTube in fondo, col quiz accanto SOLO nelle regioni che ce l'hanno (18/10/2026):
 // la pagina regione gemella ce l'aveva dall'11/10, queste no
@@ -141,7 +142,10 @@ function pagina(z) {
   const regioni = [...new Set(ids.map(id => REG_DI[id]))];
   const casa = REGIONI.find(x => x.k === z.reg) || REGIONI.find(x => x.k === regioni[0]);
   const nomeReg = casa.nomeTitolo || casa.nome;
-  const agenzie = [...new Set(regioni.map(k => {
+  // ⚠️ L'ENTE E' QUELLO DELLE RETI (20/10/2026, sesto check, bug 3): Bagnone sta in Toscana ma il pluviometro e'
+  // di OMIRL (ottavo campo, retiDei in lib-posti.js). Stessa regola della zona funghi.
+  const reti = retiDei(ids.map(id => [REG_DI[id], ANAG(id)]));
+  const agenzie = [...new Set(reti.map(k => {
     const r = REGIONI.find(x => x.k === k);
     return r ? (r.agenziaCorta || r.agenzia.replace(/\s*\(.*\)$/, '')) : null;
   }).filter(Boolean))];

@@ -358,7 +358,16 @@ const coppiaQuiz = (k, ytA, pulsante) => QUIZ_REGIONI[k]
    poi li aggiungevano di nuovo, e rigenerando il blocco usciva DOPPIO (visto il 17/10
    sulle 911 pagine di paese). Qui si tolgono: chi li vuole li aggiunge da se'. */
 function stileDelModello(html) {
-  const s = html.slice(html.indexOf('<style>') + 7, html.indexOf('</style>'));
+  let s = html.slice(html.indexOf('<style>') + 7, html.indexOf('</style>'));
+  // ⚠️ SENZA IL BLOCCO DEL METEO (20/10/2026, sesto check, bug 9): dal 350b25dc le zone funghi hanno in coda le
+  // regole di lib-meteo-regione.js (METEO_CSS) e dopo quelle `#mk-meteo .mk-cr...`, che servono solo alle zone.
+  // La mappa forestale prende lo stile da funghi/zone/garfagnana e se le portava dietro: +6 KB su 138 pagine e il
+  // tasto YouTube spostato. Si taglia dall'inizio del blocco, come genera-pagine-zona-piogge.js. Le pagine funghi
+  // regione (il modello di paesi, zone e indice) il blocco non ce l'hanno: per loro non cambia niente.
+  const iMeteo = s.indexOf('/* ── IL METEO NELLE PAGINE REGIONE');
+  // (via anche l'a capo che il generatore delle zone mette prima del blocco: senza, le 138 pagine avevano una riga
+  // vuota in piu' rispetto a quelle di prima del 350b25dc)
+  if (iMeteo >= 0) { s = s.slice(0, iMeteo); if (/\r?\n\r?\n$/.test(s)) s = s.replace(/\r?\n$/, ''); }
   return s.split(RILIEVO).join('').split(YT_BTN).join('').split(QUIZ_CSS).join('');
 }
 

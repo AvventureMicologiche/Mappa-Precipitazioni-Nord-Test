@@ -58,10 +58,14 @@ const { haBoschi, cartaBreve, cartaDi, fonteDa } = require('./lib-boschi.js');
 const { clima, buono, dataBella, meseBello, migliaia, virgola, artGiorno, aNome } = require('./lib-clima.js');
 // 24/9/2026: grafica e codice di pagina comuni con le pagine di regione
 const { STILE_NUOVO, JS_COMUNE, JS_AGGIORNATO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz, stileDelModello } = require('./lib-pagina-funghi.js');
+// ⚠️ CAMPIONE 20/10/2026 (Garfagnana, solo in locale): come le zone piogge, piu' «Trova i boschi» (sua idea). Stesso
+// codice nel browser (lib-meteo-regione.js) con le opzioni dei funghi: blocco meteo con un altro id (#meteo qui e' il
+// grafico delle temperature) e NIENTE giorni previsti nel grafico dei funghi (regola: niente previsioni di crescita).
+const { METEO_CSS, meteoHtml, boschiHtml, meteoClient } = require('./lib-meteo-regione.js');
 
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
-const { cartelleDi, cartelleConRete, regioneDati } = require('./lib-posti.js');   // posti con la rete di un'altra regione (bug 17)
+const { cartelleDi, cartelleConRete, regioneDati, retiDei } = require('./lib-posti.js');   // posti con la rete di un'altra regione (bug 17)
 const ZONE = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-zone.json'), 'utf8'));
 const { escluse, escluso } = require('./lib-escluse.js');
 const ESCLUSE = escluse(path.join(__dirname, '..', '..'));
@@ -100,7 +104,10 @@ function pagina(z) {
   // pluviometri dall'altra parte (la Garfagnana ne ha di Emilia e Liguria).
   // Stesso criterio della ricerca per localita' del sito, vedi lib-vicine.
   const REGS = perLink(casa.k, z.lat, z.lon);
-  const agenzie = [...new Set(regioni.map(k => {
+  // ⚠️ L'ENTE E' QUELLO DELLE RETI, non delle regioni dei paesi (20/10/2026, sesto check, bug 3): in Val di
+  // Magra Bagnone sta in Toscana ma il pluviometro e' di OMIRL (ottavo campo, retiDei in lib-posti.js).
+  const reti = retiDei(ids.map(id => [REG_DI[id], POSTI[REG_DI[id]].find(x => x[0] === id)]));
+  const agenzie = [...new Set(reti.map(k => {
     const r = REGIONI.find(x => x.k === k);
     return r ? (r.agenziaCorta || r.agenzia.replace(/\s*\(.*\)$/, '')) : null;
   }).filter(Boolean))];
@@ -234,7 +241,10 @@ nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;fon
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
-${RILIEVO}${QUIZ_REGIONI[casa.k] ? QUIZ_CSS : ''}</style>
+${RILIEVO}${QUIZ_REGIONI[casa.k] ? QUIZ_CSS : ''}${METEO_CSS}
+#mk-meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
+#mk-meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
+</style>
 </head>
 <body>
 
@@ -254,9 +264,8 @@ ${rigaStagione()}
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="guasto"></div>
 <div id="verdetto"></div>
-<a class="banda-prev" href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;m=prev"
-   onclick="try{gtag('event','apri_mappa',{da:'zona-${zslug}-banda-previsioni'})}catch(e){}">
-  <span class="ic">☀️</span><span><b>Che tempo farà ${esc(z.dove)}</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
+${haBoschi(casa.k) ? boschiHtml('🌲 Trova i boschi ' + esc(z.dove) + ' e dintorni') : ''}
+${meteoHtml(casa, `Che tempo farà ${esc(z.dove)}`, 'Sto leggendo le previsioni dei paesi…', 'mk-meteo')}
 
 <h2>Le piogge degli ultimi 25 giorni</h2>
 <div id="grafico"></div>
@@ -479,6 +488,12 @@ ${JS_AGGIORNATO}
   }
 }());
 </script>
+<script>
+(${meteoClient.toString()})(${JSON.stringify(casa.k)}, ${JSON.stringify(nomeReg)}, ${JSON.stringify(SITO)}, ${fs.existsSync(path.join(RADICE, casa.k, 'adesso')) ? 'true' : 'false'}, ${JSON.stringify({
+  ga: 'zona-' + zslug, area: 'zona=' + zslug, id: 'mk-meteo', grafico: false, boschi: haBoschi(casa.k) ? 'mk-boschi' : '',
+  guasto: 'Le previsioni dei paesi', tutte: 'Mostra tutti i paesi (#)', tocca: 'Tocca un paese per vederlo ora per ora sulla mappa',
+  sopra: 'I paesi ' + diZona(z.dove) + ' e dei dintorni' })});
+</script>
 </body>
 </html>
 `;
@@ -486,7 +501,9 @@ ${JS_AGGIORNATO}
 
 if (require.main === module) {
   let scritte = 0;
+  const SOLO = process.env.SOLO;   // SOLO=garfagnana: una pagina sola, per i campioni (niente sitemap)
   for (const z of ZONE) {
+    if (SOLO && slug(z.n) !== SOLO) continue;
     const html = pagina(z);
     // ⚠️ SI CONTROLLA CHE LO SCRIPT DELLA PAGINA GIRI, prima di scriverla:
     // qui i nomi sono 114 e ci sono «Val d'Aveto», «Alta Val d'Enza».
@@ -501,6 +518,7 @@ if (require.main === module) {
     fs.writeFileSync(path.join(dir, 'index.html'), html, 'utf8');
     scritte++;
   }
+  if (SOLO) { console.log(`${scritte} pagina scritta (SOLO=${SOLO}), sitemap non toccata.`); process.exit(0); }
   const voci = scriviSitemap(SITO, RADICE);
   console.log(`${scritte} pagine di zona scritte, sitemap.xml con ${voci} indirizzi.`);
 }

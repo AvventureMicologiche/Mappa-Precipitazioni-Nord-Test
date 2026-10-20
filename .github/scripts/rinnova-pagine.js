@@ -10,12 +10,10 @@
  * invecchia e' l'UTILITA': con un anno di archivio in piu' il ritratto dice
  * molto di piu', e «il giorno piu' bagnato di tutto l'archivio» va rifatto.
  *
- * ⚠️ QUESTO GIRO COSTA UN DEPLOY NETLIFY, ~15 crediti su un piano da 1.000.
- * Le pagine stanno nella radice del repo, quindi NON sono nella regola ignore
- * di `netlify.toml` come `data/` e `.github/`. Per questo gira **quattro volte
- * l'anno e non ogni notte**: 60 crediti l'anno, che e' il 6% del piano.
- * Cuocere invece i millimetri di ieri vorrebbe dire un deploy al giorno, cioe'
- * 450 crediti al mese: e' il motivo per cui quelli restano nel javascript.
+ * ⚠️ IL PUSH NON PUBBLICA NIENTE (dal 7/10/2026 il sito e' su Cloudflare Pages):
+ * le pagine nuove vanno online solo con `node cloudflare-pages\pubblica-pages.js`
+ * lanciato a mano dal PC, e pubblicare si chiede. Per questo gira **quattro
+ * volte l'anno e non ogni notte**, e i millimetri di ieri restano nel javascript.
  *
  * ⚠️ NON TOCCA LE 23 PAGINE REGIONE NE' LE 19 FUNGHI. Quelle il ritratto non
  * ce l'hanno: rigenerarle non cambierebbe un byte, e la loro data in
@@ -23,11 +21,18 @@
  * (`genera-pagine-funghi.js` viene comunque lanciato, perche' le pagine di
  * paese e di zona leggono il foglio di stile da li'.)
  *
+ * ⚠️ LE ZONE PIOGGE (20/10/2026, sesto check): `genera-pagine-zona-piogge.js` e'
+ * l'UNICO che scrive `data/paesi-zone.json`, l'elenco dei paesi che
+ * /api/previsioni?zona= legge per «Che tempo farà»: senza questo giro restava
+ * fermo all'ultima volta che qualcuno l'aveva lanciato a mano. Prende lo stile
+ * dalla pagina REGIONE gia' nel checkout (qui non si rigenera), quindi l'ordine
+ * rispetto alle altre famiglie e' libero; si lancia per ultimo.
+ *
  * COSA FA, nell'ordine:
- *   1. rigenera funghi → localita' → zone;
- *   2. se `funghi/` non e' cambiato, si ferma e non committa niente;
- *   3. se e' cambiato, scrive la data di oggi in `pagine-lastmod.json` per le
- *      due famiglie toccate e rifa' la sitemap;
+ *   1. rigenera funghi → localita' → zone funghi → zone piogge (+ paesi-zone.json);
+ *   2. se `funghi/` e `zone/` non sono cambiati, si ferma senza toccare le date;
+ *   3. se sono cambiati, scrive la data di oggi in `pagine-lastmod.json` per le
+ *      famiglie toccate e rifa' la sitemap;
  *   4. lascia al workflow il commit e il push.
  *
  * Uso: `node .github/scripts/rinnova-pagine.js` — con `DRY_RUN=1` guarda e
@@ -48,14 +53,18 @@ function lancia(script) {
   execFileSync(process.execPath, [path.join(QUI, script)], { cwd: RADICE, stdio: 'inherit' });
 }
 
-// Quante pagine sono cambiate davvero, secondo git. Si guarda SOLO `funghi/`:
-// e' li' che stanno le 948 di paese e le 114 di zona.
+// Quante pagine sono cambiate davvero, secondo git: `funghi/` (le 948 di paese
+// e le 114 di zona funghi), `zone/` (le 114 zone piogge) e l'elenco dei paesi.
+// ⚠️ Si guarda il PERCORSO dall'inizio: «funghi/zone/» contiene anche «zone/».
 function cambiate() {
-  const out = execFileSync('git', ['status', '--porcelain', '--', 'funghi'],
+  const out = execFileSync('git', ['status', '--porcelain', '--', 'funghi', 'zone', 'data/paesi-zone.json'],
     { cwd: RADICE, encoding: 'utf8' });
-  const righe = out.split('\n').filter(r => r.trim());
-  const zone = righe.filter(r => r.includes('funghi/zone/')).length;
-  return { tutte: righe.length, zone, localita: righe.length - zone };
+  const percorsi = out.split('\n').filter(r => r.trim()).map(r => r.slice(3));
+  const funghi = percorsi.filter(p => p.startsWith('funghi/'));
+  const zone = funghi.filter(p => p.startsWith('funghi/zone/')).length;
+  const zonePiogge = percorsi.filter(p => p.startsWith('zone/')).length;
+  const paesiZone = percorsi.includes('data/paesi-zone.json');
+  return { tutte: funghi.length + zonePiogge, zone, localita: funghi.length - zone, zonePiogge, paesiZone };
 }
 
 const oggi = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Rome' }).format(new Date());
@@ -64,13 +73,16 @@ console.log('Rinnovo delle pagine di paese e di zona — ' + oggi);
 lancia('genera-pagine-funghi.js');
 lancia('genera-pagine-localita.js');
 lancia('genera-pagine-zona.js');
+lancia('genera-pagine-zona-piogge.js');
 
 const c = cambiate();
 console.log('');
-console.log('  pagine cambiate: ' + c.tutte + '  (paese ' + c.localita + ', zona ' + c.zone + ')');
+console.log('  pagine cambiate: ' + c.tutte + '  (paese ' + c.localita + ', zona ' + c.zone + ', zona piogge ' + c.zonePiogge + ')'
+  + (c.paesiZone ? '; data/paesi-zone.json cambiato' : ''));
 
 if (!c.tutte) {
-  console.log('  Niente da pubblicare: nessun deploy, nessun credito speso.');
+  console.log('  Nessuna pagina cambiata: date della sitemap invariate.'
+    + (c.paesiZone ? ' Il solo data/paesi-zone.json lo committa il workflow.' : ''));
   process.exit(0);
 }
 
@@ -80,16 +92,17 @@ const dati = JSON.parse(fs.readFileSync(LASTMOD, 'utf8'));
 // fiducia sulle prossime.
 if (c.localita) dati.localita = oggi;
 if (c.zone) dati.zone = oggi;
+if (c.zonePiogge) dati.zonePiogge = oggi;
 
 if (DRY) {
-  console.log('  DRY_RUN: le date resterebbero ' + JSON.stringify({ localita: dati.localita, zone: dati.zone }));
+  console.log('  DRY_RUN: le date resterebbero ' + JSON.stringify({ localita: dati.localita, zone: dati.zone, zonePiogge: dati.zonePiogge }));
   process.exit(0);
 }
 
 fs.writeFileSync(LASTMOD, JSON.stringify(dati, null, 2) + '\n', 'utf8');
-console.log('  date aggiornate: paese ' + dati.localita + ', zona ' + dati.zone);
+console.log('  date aggiornate: paese ' + dati.localita + ', zona ' + dati.zone + ', zona piogge ' + dati.zonePiogge);
 
 // La sitemap si rifa' DOPO aver scritto le date, se no resta con le vecchie.
 lancia('genera-pagine-zona.js');
 console.log('');
-console.log('  ⚠️ Questo giro fa partire un deploy Netlify: ~15 crediti.');
+console.log('  ⚠️ Il push non pubblica: online solo con pubblica-pages.js lanciato a mano (gratis, ma si chiede).');

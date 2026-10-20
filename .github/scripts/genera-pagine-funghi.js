@@ -38,14 +38,14 @@
 const fs = require('fs');
 const path = require('path');
 const { REGIONI, navAltre, briciolaJson, stazDi } = require('./genera-pagine-regione.js');
-const { LOCALITA, bello, slug, slugRegione, postiDellaZona, diEnte } = require('./lib-nomi.js');
+const { LOCALITA, bello, slug, slugRegione, postiDellaZona, diEnte, elenco } = require('./lib-nomi.js');
 const { rigaStagione } = require('./lib-stagione.js');
 // 24/9/2026: verdetto, barre e finestra comuni con le pagine di zona
 const { STILE_NUOVO, JS_COMUNE, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = require('./lib-pagina-funghi.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
-const { cartelleDi, cartelleConRete, regioneDati } = require('./lib-posti.js');   // posti con la rete di un'altra regione (bug 17)
+const { cartelleDi, cartelleConRete, regioneDati, retiDei } = require('./lib-posti.js');   // posti con la rete di un'altra regione (bug 17)
 // I pluviometri esclusi dalla mappa (lib-escluse.js): cotti nella pagina per il ripiego daiFile (17/10/2026)
 const { escluse, escluso } = require('./lib-escluse.js');
 const ESCLUSE = escluse(path.join(__dirname, '..', '..'));
@@ -88,7 +88,11 @@ function pagina(r, posti) {
   // La forma corta: se l'anagrafe non ne ha una, si toglie la parentesi finale
   // («ARPA Liguria (OMIRL)» → «ARPA Liguria»). Cosi' non si tocca l'anagrafe
   // condivisa, che e' anche quella delle pagine regione gia' in produzione.
-  const corta = r.agenziaCorta || r.agenzia.replace(/\s*\(.*\)$/, "");
+  // ⚠️ GLI ENTI SONO QUELLI DELLE RETI DEI POSTI (20/10/2026, sesto check, bug 3): in Toscana Bagnone e Casoni di
+  // Suvero sono pluviometri OMIRL (ottavo campo, retiDei in lib-posti.js): «di SIR Toscana e ARPA Liguria».
+  const RETI = retiDei(posti.map(p => [r.k, p])).map(k => REGIONI.find(x => x.k === k) || r);
+  const corta = elenco([...new Set(RETI.map(x => x.agenziaCorta || x.agenzia.replace(/\s*\(.*\)$/, "")))]);
+  const lunga = elenco([...new Set(RETI.map(x => x.agenzia))]);
   const gen = GENITIVO[r.k];
   // ⚠️ 13/9/2026: LA DOMANDA E' «DOVE ANDARE A FUNGHI». Search Console, 28
   // giorni: questa pagina in un mese e' comparsa su Google UNA volta, mentre le
@@ -400,7 +404,7 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 <a href="${SITO}/${r.k}/">dove ha piovuto ${r.prep} ${nome}</a>.</p>
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
-<p>Dati ${diEnte(r.agenzia)} via il nostro archivio. Il bosco è calcolato su dati OpenStreetMap, licenza ODbL.
+<p>Dati ${diEnte(lunga)} via il nostro archivio. Il bosco è calcolato su dati OpenStreetMap, licenza ODbL.
 La provincia viene dai confini provinciali ISTAT.</p>
 </div>
 ${/* Il bottone YouTube in fondo (12/10/2026): qui prima non c'era, ora c'e' in tutte,
@@ -445,6 +449,7 @@ ${navAltre('funghi')}
   var SOSPESI = ${JSON.stringify(Object.fromEntries(posti.filter(p => escluso(ESCLUSE, regioneDati(r.k, p), p)).map(p => [p[0], 1])))};
 
   var REG = '${r.k}', DIRS = ${JSON.stringify(cartelleDi(r, posti, REGIONI))}, NOME = ${JSON.stringify(nome)};
+  var PROPRIE = ${JSON.stringify(r.dirs)};   /* le cartelle di casa: solo loro fanno «buono» un giorno (bug 4, 20/10/2026) */
   /* In locale i dati si leggono dalla cartella del repo, sul sito dal raw di
      GitHub. Stesso trucco del tag di Google qui sopra: si guarda l'HOSTNAME.
      Serve perche' le prove si fanno con \`node server-locale.js\` sul repo, a
@@ -521,7 +526,7 @@ ${JS_COMUNE}
         POSTI.forEach(function(p){
           var v = j.posti[p[0]];
           if (!v) return;        // posto aggiunto dopo l'ultimo giro: si salta
-          righe.push({ id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5],
+          righe.push({ id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5], rete:p[7],
             mm:v[0], mm7:v[1], mm25:v[2], forte: v[3] ? { g:v[3], mm:v[4] } : null });
         });
         if (righe.length) { mostra(righe, j.oggi); return; }
@@ -551,17 +556,22 @@ ${JS_COMUNE}
           .then(function(r){ return r.ok ? r.json() : null; })
           .catch(function(){ return null; });
       })).then(function(parti){
-        var m = null;
-        parti.forEach(function(j){
+        var m = null, casa = false;
+        parti.forEach(function(j, i){
           if (!j || !j.stations || !j.stations.length) return;
           if (!m) m = {};
+          if (PROPRIE.indexOf(DIRS[i]) >= 0) casa = true;
           j.stations.forEach(function(s){ if (s.mm != null) m[s.id] = (m[s.id] || 0) + s.mm; });
         });
-        return { n:n, m:m };
+        return { n:n, m:m, casa:casa };
       });
     })).then(function(res){
+      /* ⚠️ GEMELLO DI perGiorno in genera-funghi.js (20/10/2026, sesto check, bug 4): i mm si prendono da tutte
+         le cartelle, ma un giorno conta per il minimo di 5 solo se c'e' una cartella DI CASA. Con le sole reti
+         dei posti ospiti (data/liguria per la Toscana) un SIR fermo passava per buono con 2 posti su 169. */
       var buoni = res.filter(function(x){ return x.m; });
-      if (buoni.length < 5) { guasto(buoni.length); return; }
+      var diCasa = buoni.filter(function(x){ return x.casa; }).length;
+      if (diCasa < 5) { guasto(diCasa); return; }
 
       var perGiorno = {};
       buoni.forEach(function(x){ perGiorno[x.n] = x.m; });
@@ -582,7 +592,7 @@ ${JS_COMUNE}
         for (var n = da; n >= a; n--) if (perGiorno[n]) { d++; if (perGiorno[n][id] != null) c++; }
         return d > 0 && c >= d * 0.6; }
       mostra(POSTI.filter(function(p){ return !SOSPESI[p[0]] && coperto(p[0], GIORNI, 1) && coperto(p[0], 20, 13); }).map(function(p){
-        return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5],
+        return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5], rete:p[7],
           mm:somma(20,13,p[0]), mm7:somma(7,1,p[0]), mm25:somma(GIORNI,1,p[0]),
           forte:ultimaForte(p[0]) };
       }), iso(meno(0)));
@@ -652,8 +662,10 @@ ${JS_COMUNE}
     var maxMm = Math.max.apply(null, righe.map(function(r){ return Math.max(r.mm, r.mm7, r.mm25); }).concat([1]));
 
     var daG = menoDaI(oggiISO,20), aG = menoDaI(oggiISO,13), a20 = menoDaI(oggiISO,1);
+    /* un posto con la rete di un'altra regione (ottavo campo, lib-posti.js) apre anche quella: Casoni di Suvero
+       e' un pluviometro OMIRL, e con la sola Toscana accesa la mappa non lo disegnava (20/10/2026, bug 10) */
     function link(r, dal, al){
-      return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al + '&s=p'
+      return MAPPA + '?r=' + REG + (r && r.rete && r.rete !== REG ? ',' + r.rete : '') + '&da=' + dal + '&a=' + al + '&s=p'
         + (r ? '&z=11&c=' + r.lat.toFixed(4) + ',' + r.lon.toFixed(4) : '');
     }
     function luogo(r){ return r.sig ? esc(r.sig) : ''; }

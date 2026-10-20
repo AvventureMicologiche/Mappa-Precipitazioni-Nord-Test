@@ -85,17 +85,22 @@ const MINIMO = 5;                   // sotto questi giorni buoni non si scrive
 // dove 1 e' ieri. Le cartelle di una regione si sommano per id — che dopo il
 // filtro delle gemelle e' univoco — perche' l'Alto Adige e il Friuli hanno
 // pluviometri che una sola delle due fonti pubblica.
-function perGiorno(dirs, giorni) {
+// ⚠️ UN GIORNO E' «PRESENTE» SOLO SE C'E' UNA CARTELLA DI CASA (20/10/2026, sesto check, bug 4): `dirs` comprende
+// anche le reti dei posti ospiti (data/liguria per la Toscana), e contando quelle un SIR fermo dava toscana.json
+// «fresco» con i soli 2 posti OMIRL su 169. `proprie` = r.dirs: contano per presenti/primo/ultimo e per MINIMO;
+// i dati si leggono sempre da tutte. ⚠️ GEMELLA del ripiego dentro genera-pagine-funghi.js (diCasa).
+function perGiorno(dirs, giorni, proprie) {
   const out = {}, outT = {}, outW = {}, outI = {};
   let presenti = 0, primo = null, ultimo = null;
   giorni.forEach((g, i) => {
     const n = i + 1;
     const m = {}, mt = {}, mw = {}, mi = {};
-    let qualcosa = false;
+    let qualcosa = false, diCasa = false;
     for (const dir of dirs) {
       const staz = leggi(dir, g);
       if (!staz) continue;
       qualcosa = true;
+      if (!proprie || proprie.includes(dir)) diCasa = true;
       for (const s of staz) {
         if (s.mm != null) m[s.id] = (m[s.id] || 0) + s.mm;
         // ⚠️ t e w si prendono COSI' COME SONO, non si sommano: la pioggia di
@@ -110,6 +115,7 @@ function perGiorno(dirs, giorni) {
     }
     if (!qualcosa) return;
     out[n] = m; outT[n] = mt; outW[n] = mw; outI[n] = mi;
+    if (!diCasa) return;            // solo gli ospiti: i loro mm restano, ma il giorno non conta
     presenti++;
     if (!ultimo) ultimo = g;        // giorni e' ordinato dal piu' recente
     primo = g;
@@ -196,7 +202,7 @@ for (const k of Object.keys(POSTI)) {
   if (!r) { console.error(`⚠️ «${k}» non e' in genera-pagine-regione.js`); process.exit(1); }
 
   const DIRS = cartelleDi(r, POSTI[k], REGIONI);   // anche le reti dei posti «ospiti» (bug 17, lib-posti.js)
-  const g = perGiorno(DIRS, giorni);
+  const g = perGiorno(DIRS, giorni, r.dirs);
   // ⚠️ Se i giorni buoni sono troppo pochi NON si scrive: si lascia il file di
   // ieri, e la pagina — vedendolo vecchio — torna a calcolarsi i numeri da se'.
   // Sovrascrivere con una classifica costruita su tre giorni sarebbe il modo

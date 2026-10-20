@@ -37,12 +37,26 @@ const fs = require('fs');
 const { YT_BTN, stileDelModello } = require('./lib-pagina-funghi.js');
 const path = require('path');
 const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
-const { slug, artNum } = require('./lib-nomi.js');   // artNum: «l'81%», «sull'87%» (18/10/2026)
+const { slug, slugRegione, artNum } = require('./lib-nomi.js');   // artNum: «l'81%», «sull'87%» (18/10/2026)
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const SITO = 'https://avventurepluvio-test.pages.dev';
 const RADICE = path.join(__dirname, '..', '..');
 const D = JSON.parse(fs.readFileSync(path.join(__dirname, 'mappa-forestale-dati.json'), 'utf8'));
+// ⚠️ LA REGIONE E LO SLUG DEI PAESI SI PRENDONO DA funghi-posti.json (20/10/2026, sesto check, bug 8): il file dei
+// dati e' fermo a prima del 19/10, quando Bagnone, Casoni di Suvero, Alto, Romagnese e Valverde stavano sotto la
+// regione della rete, e i link andavano su /funghi/liguria/bagnone/ (301). Gli id non sono unici fra regioni: se
+// l'id sta in piu' regioni vale quella del file, se e' fra quelle; se il posto non c'e' restano i valori del file.
+{
+  const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
+  const regDi = {}, slugDi = {};
+  for (const [k, v] of Object.entries(POSTI)) { slugDi[k] = slugRegione(v); for (const p of v) (regDi[p[0]] = regDi[p[0]] || []).push(k); }
+  for (const [id, p] of Object.entries(D.paesi)) {
+    const regs = regDi[id] || [];
+    const reg = regs.length === 1 ? regs[0] : (regs.includes(p.reg) ? p.reg : null);
+    if (reg && slugDi[reg][id]) { p.reg = reg; p.slug = slugDi[reg][id]; }
+  }
+}
 const IND = JSON.parse(fs.readFileSync(path.join(RADICE, 'tessere-boschi', 'italia', 'indice.json'), 'utf8'));
 const COL = Object.fromEntries(IND.gruppi);
 const CANALE = 'https://www.youtube.com/@avventuremicologiche';

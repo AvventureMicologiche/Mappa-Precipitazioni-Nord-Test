@@ -265,6 +265,11 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-tutte{display:block;width:100%;margin:10px 0 0;padding:10px;border:1px solid #c5d4e6;border-radius:10px;background:#fff;color:#1b3f6e;font:700 15px system-ui,sans-serif;cursor:pointer;}
 .mk-citta-n{font-size:13.5px;color:#5f738c;margin:10px 0 0;}
 .mk-sopra{font-size:14.5px;color:#4a6180;margin:2px 0 8px;font-weight:600;}
+.mk-boschi{background:#eef6ef;border:1px solid #cfe3d2;border-radius:14px;padding:4px 16px 16px;margin:18px 0 6px;}
+.mk-boschi h2{margin-top:14px;color:#1d4a2a;}
+.mk-boschi-p{font-size:15px;color:#3d5a45;margin:2px 0 10px;}
+@media(max-width:400px){.mk-boschi .mk-tuo input::placeholder{font-size:15px;}}   /* la frase sta intera anche a 360 px */
+.mk-boschi .mk-tuo input{border-color:#2f6b3d;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%232f6b3d' stroke-width='2.6' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5 21 21'/%3E%3C/svg%3E");}
 .mk-citta-n a{color:#1b3f6e;font-weight:700;}
 @media(max-width:400px){.mk-cr{font-size:14px;padding:8px 9px;}.mk-cr span i{font-size:17px;}}
 .gg .b.mk-fut i{background:repeating-linear-gradient(135deg,#7fb2ec 0 5px,#a9cdf5 5px 10px);border-radius:3px 3px 0 0;}
@@ -556,7 +561,9 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
      misurati e fra i previsti. I giorni passati si tolgono appena arriva la risposta (daOggi) e i nomi si danno
      confrontando la data. Stessa regola nella mappa (index.html) e in lib/pagina-adesso.js. */
   function isoRoma(ms) { return new Date(ms).toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' }); }
-  var OGGI = isoRoma(Date.now()), DOMANI = isoRoma(Date.now() + 864e5);
+  // ⚠️ DOMANI = OGGI + un giorno di CALENDARIO (20/10/2026, sesto check, bug 7): «adesso + 24 ore» sbagliava al cambio
+  // d'ora (25/10/2026 fra 00 e 01 dava ancora il 25, 27/3/2027 fra 23 e 24 dava il 29). Mezzogiorno UTC: nessun fuso lo sposta.
+  var OGGI = isoRoma(Date.now()), DOMANI = (function (p) { return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] + 1, 12)).toISOString().slice(0, 10); })(OGGI.split('-'));
   function daOggi(j) { if (j && j.capoluoghi) j.capoluoghi.forEach(function (c) { if (c.giorni) c.giorni = c.giorni.filter(function (x) { return x.g >= OGGI; }); }); return j; }
   function nomeG(s, d) { var x = daIso(s); return s === OGGI ? 'oggi' : s === DOMANI ? 'domani' : GS[x.getDay()] + ' ' + x.getDate(); }
   function nomeReg(k) { return { valledaosta: "Valle d'Aosta", altoadige: 'Alto Adige', emilia: 'Emilia-Romagna', friuli: 'Friuli' }[k] || (k.charAt(0).toUpperCase() + k.slice(1)); }
@@ -564,16 +571,21 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
   function vai(url, da) { ga(da); setTimeout(function () { location.href = url; }, 120); }
 
   /* ── l'elenco dei comuni e le frazioni ── */
-  var ELENCO = null;
+  var ELENCO = null, IN_ARRIVO = null;
   function norm(t) { return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/['’.-]/g, ' ').replace(/\s+/g, ' ').trim(); }
+  /* ⚠️ (20/10/2026, sesto check, bug 14) un 503 non e' un elenco: prima il testo dell'errore diventava ELENCO=[] e la
+     casella restava muta per tutta la visita. Come lib/pagina-adesso.js: errore se !r.ok, UNA promessa in volo (due
+     chiamate ravvicinate non scaricano due volte i 366 KB) e dimenticata sull'errore, cosi' si ritenta alla prossima. */
   function carica() {
     if (ELENCO) return Promise.resolve(ELENCO);
-    return fetch('/data/elenco-paesi.txt').then(function (r) { return r.text(); }).then(function (t) {
-      ELENCO = [];
+    if (!IN_ARRIVO) IN_ARRIVO = fetch('/data/elenco-paesi.txt').then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) {
+      var a = [];
       t.split('\n').forEach(function (r) { var p = r.split('|'); if (p.length < 6) return;
-        ELENCO.push({ n: p[0], lat: +p[1], lon: +p[2], sg: p[3], reg: p[4], pop: +p[5] || 0, z: (p[6] || '').trim() === 'z', q: norm(p[0]) }); });
-      return ELENCO;
-    });
+        a.push({ n: p[0], lat: +p[1], lon: +p[2], sg: p[3], reg: p[4], pop: +p[5] || 0, z: (p[6] || '').trim() === 'z', q: norm(p[0]) }); });
+      ELENCO = a; IN_ARRIVO = null;
+      return a;
+    }).catch(function (e) { IN_ARRIVO = null; throw e; });
+    return IN_ARRIVO;
   }
   function cerca(q) {
     q = norm(q); if (q.length < 2 || !ELENCO) return [];
@@ -622,8 +634,9 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
       if (!righe.length) { drop.innerHTML = norm(q).length >= 3 ? '<div class="mk-porte-t">Cerco anche tra le frazioni…</div>' : ''; drop.classList.toggle('on', norm(q).length >= 3); return; }
       disegna();
     }
-    inp.addEventListener('focus', function () { carica(); });
-    inp.addEventListener('input', function () { carica().then(function () { mostra(inp.value); }); });
+    // senza elenco (errore) si cerca lo stesso: restano le frazioni del geocoder, e la prossima lettera ritenta l'elenco
+    inp.addEventListener('focus', function () { carica().catch(function () {}); });
+    inp.addEventListener('input', function () { carica().catch(function () {}).then(function () { mostra(inp.value); }); });
     inp.addEventListener('keydown', function (e) {
       var rs = drop.querySelectorAll('.mk-r');
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!rs.length) return; sel = (sel + (e.key === 'ArrowDown' ? 1 : -1) + rs.length) % rs.length; for (var i = 0; i < rs.length; i++) rs[i].classList.toggle('sel', i === sel); }
@@ -663,9 +676,11 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
   }
 
   /* ═══ 3. «CHE TEMPO FARÀ»: la casella e le citta' ═══ */
-  var blocco = document.getElementById('meteo');
+  var blocco = document.getElementById(OPZ.id || 'meteo');
   var tuo = blocco && blocco.querySelector('.mk-tuo input');
   if (tuo) casella(tuo, blocco.querySelector('.mk-tuo .mk-drop'), function (x) { tuo.blur(); vai(SITO + '/?r=' + x.reg + '&m=prev' + pl(x), 'cerca-meteo'); });
+  var bosco = OPZ.boschi && document.getElementById(OPZ.boschi), bin = bosco && bosco.querySelector('.mk-tuo input');
+  if (bin) casella(bin, bosco.querySelector('.mk-tuo .mk-drop'), function (x) { bin.blur(); vai(SITO + '/?r=' + x.reg + '&boschi=1' + pl(x), 'cerca-boschi'); });
   function disegnaCitta(j) {
     var box = blocco && blocco.querySelector('.mk-citta'); if (!box) return;
     var cc = (j && j.capoluoghi || []).filter(function (c) { return c.giorni && c.giorni.length >= 3; });
@@ -693,13 +708,19 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
   });
 
   /* ═══ 4. IL GRAFICO: 30 giorni misurati + 7 previsti (media delle citta') ═══ */
+  // la media per DATA, non per posizione (20/10/2026, sesto check): una citta' con un giorno in meno in testa non
+  // sposta piu' le altre, e la data non si prende piu' dalla prima citta'
   function previsti(j) {
-    var cc = (j && j.capoluoghi || []).filter(function (c) { return c.giorni && c.giorni.length; }), out = [];
-    for (var d = 0; d < 7 && cc.length; d++) {
-      var t = 0, n = 0; cc.forEach(function (c) { var g = c.giorni[d]; if (g) { t += g.mm || 0; n++; } });
-      if (!n) break; out.push({ g: cc[0].giorni[d].g, mm: t / n });
-    }
-    return out;
+    var somma = {}, quante = {}, date = [];
+    (j && j.capoluoghi || []).forEach(function (c) {
+      (c.giorni || []).forEach(function (g) {
+        if (!g || !g.g || g.g < OGGI) return;
+        if (somma[g.g] === undefined) { somma[g.g] = 0; quante[g.g] = 0; date.push(g.g); }
+        somma[g.g] += g.mm || 0; quante[g.g]++;
+      });
+    });
+    date.sort();
+    return date.slice(0, 7).map(function (d) { return { g: d, mm: somma[d] / quante[d] }; });
   }
   function grafico(j, F) {
     var box = document.getElementById('grafico'); if (!box || !j || !j.serie || !F.length) return;
@@ -730,11 +751,13 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
   }
 
   var citta = fetch(API + '?' + AREA).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
-  var riepilogo = fetch(BASE + RIEP).then(function (r) { return r.json(); }).catch(function () { return null; });
-  citta.then(function (j) { return carica().catch(function () {}).then(function () { disegnaCitta(j); }); });
+  var riepilogo = OPZ.grafico === false ? null : fetch(BASE + RIEP).then(function (r) { return r.json(); }).catch(function () { return null; });
+  // l'elenco dei comuni (366 KB) serve solo a ordinare le citta' per abitanti: nelle zone (OPZ.area) i paesi arrivano
+  // gia' in ordine, quindi si disegna subito (20/10/2026, sesto check, bug 15)
+  citta.then(function (j) { if (OPZ.area) return disegnaCitta(j); return carica().catch(function () {}).then(function () { disegnaCitta(j); }); });
   // il grafico e' gia' cotto nell'HTML, ma la pagina lo RIDISEGNA quando arriva il suo riepilogo:
   // per qualche secondo si ricontrolla e si rimettono i giorni previsti se sono spariti
-  Promise.all([citta, riepilogo]).then(function (x) {
+  if (OPZ.grafico !== false) Promise.all([citta, riepilogo]).then(function (x) {
     var F = previsti(x[0]), t0 = Date.now();
     (function aspetta() {
       if (document.querySelector('#grafico .gg') && !document.querySelector('#grafico .mk-fut')) grafico(x[1], F);

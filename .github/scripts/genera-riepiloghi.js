@@ -89,8 +89,13 @@ function etichette(prov) {
     if (!mostra || !prov[id]) return nome;
     // ⚠️ anche «PROVINCIA DEL/DELLA/DELL'» (19/10/2026, quinto check, bug 8): il Verbano-Cusio-Ossola usciva
     // «Sambughetto (Provincia del verbano cusio os)»; la maiuscola va anche dopo il trattino
-    let p = String(prov[id]).replace(/^PROVINCIA\s+(DI|DEL|DELLA|DELL')\s*/i, '');
-    if (p === p.toUpperCase() && p.length > 4) p = p.toLowerCase().replace(/(^|-)([a-zà-ü])/g, (m, a, c) => a + c.toUpperCase());
+    // ⚠️ 20/10/2026, sesto check, bug 17: le alternative dalla piu' lunga (con «DEL» prima di «DELLA», «PROVINCIA
+    // DELLA X» diventava «LA X»); maiuscola su ogni parola, anche dopo trattino e apostrofo; soglia > 3 («ASTI»
+    // restava maiuscolo, le sigle di due e tre lettere come «BG» e «FVG» restano); «PROVINCIA DI F» (Moncenisio
+    // Lago, in Francia) non dice niente: niente parentesi.
+    let p = String(prov[id]).replace(/^PROVINCIA\s+(DELLA|DELL'|DEL|DI)\s*/i, '').trim();
+    if (p.length < 2) return nome;
+    if (p === p.toUpperCase() && p.length > 3) p = p.toLowerCase().replace(/(^|[\s'’-])([a-zà-ü])/g, (m, a, c) => a + c.toUpperCase());
     return nome + ' (' + p + ')';
   };
 }
