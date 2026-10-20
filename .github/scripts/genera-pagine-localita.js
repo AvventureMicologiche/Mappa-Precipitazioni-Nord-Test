@@ -47,6 +47,7 @@ const { LOCALITA, bello, slug: slugDaNome, slugRegione } = require('./lib-nomi.j
 const { perLink } = require('./lib-vicine.js');
 const { rigaStagione } = require('./lib-stagione.js');
 const { haBoschi, cartaBreve, cartaDi, fonteDa } = require('./lib-boschi.js');
+const { METEO_CSS, meteoHtml, boschiHtml, meteoClient } = require('./lib-meteo-regione.js');   // 20/10/2026, come le zone funghi
 // Il ritratto del pluviometro, cotto dentro la pagina il giorno che si
 // genera: totale dell'archivio, giorni di pioggia, giorno piu' bagnato,
 // mese piu' piovoso. Il perche' sta in cima a lib-clima.js.
@@ -139,6 +140,36 @@ const OMONIMI = (() => { const visti = {}, doppi = new Set();
   for (const k of Object.keys(POSTI)) for (const p of POSTI[k]) { const n = bello(p[1]);
     if (visti[n] && visti[n] !== k) doppi.add(n); visti[n] = visti[n] || k; }
   return doppi; })();
+
+/* ── «CHE TEMPO FARÀ» SULLE PAGINE PAESE (20/10/2026, scheda 89, dal mockup approvato su Sassello) ──
+   Come le zone funghi: cerca in testata, «Trova i boschi», e al posto della striscia blu la tabella dei paesi.
+   La PRIMA RIGA e' il punto del pluviometro alla SUA quota («al pluviometro»): al Mottarone (1.399 m) fa 8°
+   dove Omegna ne fa 15, ed e' il dato che il fungaiolo non trova altrove. Poi fino a 7 comuni entro 12 km,
+   ordinati per log(abitanti) x vicinanza, quelli di un'altra regione pesano 0,6 (regola delle zone). Il comune
+   con lo stesso nome del posto non si ripete: e' gia' la prima riga.
+   ⚠️ UN FILE PER REGIONE, data/paesi-localita/<reg>.json, e non uno solo: la Function lo legge e lo analizza a
+   ogni richiesta fuori cache, e 900 pagine in un file sarebbero ~600 KB contro il tetto dei 10 ms di CPU.
+   Lo legge /api/previsioni?paese=<reg>/<slug>. */
+const COMUNI = fs.readFileSync(path.join(RADICE, 'data', 'elenco-paesi.txt'), 'utf8').split('\n')
+  .map(r => r.split('|')).filter(p => p.length >= 6 && (p[6] || '').trim() !== 'z')
+  .map(p => ({ n: p[0], lat: +p[1], lon: +p[2], reg: p[4], pop: +p[5] || 0 }));
+const PAESI_KM = 12, PAESI_MAX = 8;
+const normNome = t => String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]+/g, ' ').trim();
+function paesiDelPosto(reg, posto) {
+  const [, nome, , quota, lat, lon] = posto;
+  const io = normNome(nome);
+  // ⚠️ entro 12 km in montagna i comuni possono mancare (Sila, alto Appennino: 51 pagine su 908 sotto le 4 righe,
+  // Nocelle Arvo col solo pluviometro): sotto le 5 righe il cerchio si allarga a 20 km. Regola sua: meglio un
+  // paese in piu' che uno in meno (20/10/2026).
+  const giro = km => COMUNI.map(c => ({ ...c, d: kmFra(lat, lon, c.lat, c.lon) }))
+    .filter(c => c.d <= km && normNome(c.n) !== io)
+    .map(c => ({ ...c, w: Math.log(c.pop + 10) * (1 - c.d / (km * 1.15)) * (c.reg === reg ? 1 : 0.6) }))
+    .sort((a, b) => b.w - a.w).slice(0, PAESI_MAX - 1);
+  let altri = giro(PAESI_KM);
+  if (altri.length < 4) altri = giro(20);
+  return [{ n: nome, lat: +lat, lon: +lon, ...(quota > 0 ? { q: +quota } : {}), r: reg, qui: 1 }]
+    .concat(altri.map(c => ({ n: c.n, lat: c.lat, lon: c.lon, r: c.reg })));
+}
 
 function pagina(r, posto, slug, sl) {
   const [ID, nomePosto, sigla, quota, lat, lon, bosco] = posto;
@@ -337,7 +368,11 @@ nav.altre .io{font-weight:700;color:var(--blu-scuro);}
 .noioso h2{font-size:17px;color:#445;margin:20px 0 6px;}
 .noioso p{margin-bottom:8px;}
 .noioso a{color:var(--blu);}
-${RILIEVO}${QUIZ_REGIONI[REG] ? QUIZ_CSS : ''}</style>
+${RILIEVO}${QUIZ_REGIONI[REG] ? QUIZ_CSS : ''}${METEO_CSS}
+#mk-meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
+#mk-meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
+#mk-meteo .mk-cr span em{white-space:nowrap;}
+</style>
 </head>
 <body>
 
@@ -361,9 +396,8 @@ ${rigaStagione()}
 <div id="attesa">Sto leggendo il pluviometro…</div>
 <div id="guasto"></div>
 <div id="verdetto"></div>
-<a class="banda-prev" href="${SITO}/?r=${REG}&amp;${PIN}&amp;m=prev"
-   onclick="try{gtag('event','apri_mappa',{da:'localita-${REG}-banda-previsioni'})}catch(e){}">
-  <span class="ic">☀️</span><span><b>Che tempo farà ${esc(DOVE)}</b><span>Previsioni per i prossimi 7 giorni</span></span><span class="fr">→</span></a>
+${haBoschi(REG) ? boschiHtml('🌲 Trova i boschi ' + esc(DOVE) + ' e dintorni') : ''}
+${meteoHtml(r, `Che tempo farà ${esc(DOVE)}`, 'Sto leggendo le previsioni dei paesi…', 'mk-meteo')}
 
 <h2>Le piogge degli ultimi 25 giorni</h2>
 <div id="grafico"></div>
@@ -837,21 +871,37 @@ ${JS_AGGIORNATO}
   }
 }());
 </script>
+<script>
+(${meteoClient.toString()})(${JSON.stringify(REG)}, ${JSON.stringify(NOME)}, ${JSON.stringify(SITO)}, ${fs.existsSync(path.join(RADICE, REG, 'adesso')) ? 'true' : 'false'}, ${JSON.stringify({
+  ga: 'localita-' + REG, area: 'paese=' + REG + '/' + slug, id: 'mk-meteo', grafico: false, boschi: haBoschi(REG) ? 'mk-boschi' : '',
+  guasto: 'Le previsioni dei paesi', tutte: 'Mostra tutti i paesi (#)', tocca: 'Tocca un paese per vederlo ora per ora sulla mappa',
+  sopra: 'Il pluviometro' + (quota > 0 ? ' (' + quota + ' m)' : '') + ' e i paesi intorno' })});
+</script>
 </body>
 </html>
 `;
 }
 
 if (require.main === module) {
+  // SOLO=liguria/sassello: una pagina sola, per i campioni (niente sitemap), come le zone (20/10/2026)
+  const SOLO = process.env.SOLO || '';
   let scritte = 0;
   for (const k of LOCALITA) {
+    if (SOLO && SOLO.split('/')[0] !== k) continue;
     const r = REGIONI.find(x => x.k === k);
     if (!r) { console.error(`⚠️ «${k}» non e' in genera-pagine-regione.js`); process.exit(1); }
     if (!POSTI[k]) { console.error(`⚠️ «${k}» non e' in funghi-posti.json`); process.exit(1); }
     if (!GENITIVO[k]) { console.error(`⚠️ manca il genitivo di «${k}»`); process.exit(1); }
 
     const sl = slugRegione(POSTI[k], m => console.log(`  ⚠️ ${m}`));
+    // i paesi di «Che tempo farà», tutta la regione anche con SOLO (come paesi-zone.json): vedi paesiDelPosto
+    const paesi = {};
+    for (const p of POSTI[k]) paesi[sl[p[0]]] = paesiDelPosto(k, [p[0], bello(p[1]), p[2], p[3], p[4], p[5]]);
+    fs.mkdirSync(path.join(RADICE, 'data', 'paesi-localita'), { recursive: true });
+    fs.writeFileSync(path.join(RADICE, 'data', 'paesi-localita', k + '.json'),
+      '{\n' + Object.keys(paesi).sort().map(s => JSON.stringify(s) + ':' + JSON.stringify(paesi[s])).join(',\n') + '\n}\n', 'utf8');
     for (const p of POSTI[k]) {
+      if (SOLO && SOLO !== k + '/' + sl[p[0]]) continue;
       // ⚠️ L'OTTAVO CAMPO SI PORTA DIETRO (20/10/2026, sesto check, bug 3): e' la regione della rete (lib-posti.js),
       // e senza regioneDati() dentro pagina() rispondeva sempre la regione del paese: Bagnone «di SIR Toscana».
       const posto = [p[0], bello(p[1]), p[2], p[3], p[4], p[5], p[6]].concat(p.length > 7 ? [p[7]] : []);
@@ -862,8 +912,8 @@ if (require.main === module) {
       // dritto dentro una stringa a virgolette singole, script morto, pagina
       // bianca. Qui il rischio e' molto piu' alto, perche' i nomi dei posti sono
       // centododici e non uno: «Sant'Olcese», «Cà de Massa», «Urbe - Vara Sup.».
-      const i = html.lastIndexOf('<script>'), j = html.lastIndexOf('</script>');
-      try { new Function(html.slice(i + 8, j)); }
+      // dal 20/10/2026 gli script in fondo sono DUE (la pagina e «Che tempo farà»): si provano tutti quelli senza src
+      try { for (const s of html.match(/<script>[\s\S]*?<\/script>/g) || []) new Function(s.slice(8, -9)); }
       catch (e) {
         console.error(`⚠️ ${k}/${sl[p[0]]}: lo script della pagina non gira — ${e.message}`);
         process.exit(1);
@@ -876,6 +926,7 @@ if (require.main === module) {
     }
     console.log(`  /funghi/${k}/  ${POSTI[k].length} posti`);
   }
+  if (SOLO) { console.log(`${scritte} pagina scritta (SOLO=${SOLO}), sitemap non toccata.`); process.exit(scritte ? 0 : 1); }
   const voci = scriviSitemap(SITO, RADICE);
   console.log(`\n${scritte} pagine scritte, sitemap.xml con ${voci} indirizzi.`);
 }

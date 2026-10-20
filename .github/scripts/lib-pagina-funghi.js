@@ -330,7 +330,14 @@ const RILIEVO = `/* BOTTONI IN RILIEVO (lib-pagina-funghi.js) */
    pagine che si rigenerano lo prendono da sole. Le pagine funghi che NON si
    rigenerano l'hanno avuto con uno script d'inserimento (banco, 12/10). */
 const QUIZ = 'https://avventuremicologiche.it/esame-tartufi/';
-const QUIZ_REGIONI = { toscana: 'Toscana', lazio: 'Lazio', marche: 'Marche', campania: 'Campania' };
+// 20/10/2026: le quattro regioni «di preparazione» del quiz (in prod dal 18/10). ⚠️ L'indirizzo del quiz non e'
+// sempre la chiave del sito: l'Emilia qui e' «emilia», nel quiz «emilia-romagna» (QUIZ_SLUG).
+const QUIZ_REGIONI = { toscana: 'Toscana', lazio: 'Lazio', marche: 'Marche', campania: 'Campania',
+  lombardia: 'Lombardia', piemonte: 'Piemonte', liguria: 'Liguria', emilia: 'Emilia-Romagna' };
+const QUIZ_SLUG = { emilia: 'emilia-romagna' };
+// «Quiz esame tartufi Emilia-Romagna» nella colonna da 357 px della pagina regione andava su due righe (80 px contro
+// 53 del bottone YouTube accanto): la forma corta e' quella che usa il titolo del quiz stesso (20/10/2026)
+const QUIZ_ETICHETTA = { emilia: 'Quiz tartufi Emilia-Romagna' };
 const QUIZ_CSS = `
 /* QUIZ ACCANTO A YOUTUBE: due celle uguali, una sotto l'altra sul telefono */
 .coppia-btn{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 4px;}
@@ -348,8 +355,8 @@ const COPPA_SVG = '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="
 // `pulsante` e' il valore dell'evento GA click_quiz, come quello di click_youtube.
 const coppiaQuiz = (k, ytA, pulsante) => QUIZ_REGIONI[k]
   ? `<div class="coppia-btn">${ytA}
-<a href="${QUIZ}${k}/" target="_blank" rel="noopener" class="quiz-btn"
-   onclick="try{gtag('event','click_quiz',{pulsante:'${pulsante}'})}catch(e){}">${COPPA_SVG}Quiz esame tartufi ${QUIZ_REGIONI[k]}</a></div>`
+<a href="${QUIZ}${QUIZ_SLUG[k] || k}/" target="_blank" rel="noopener" class="quiz-btn"
+   onclick="try{gtag('event','click_quiz',{pulsante:'${pulsante}'})}catch(e){}">${COPPA_SVG}${QUIZ_ETICHETTA[k] || 'Quiz esame tartufi ' + QUIZ_REGIONI[k]}</a></div>`
   : `<p style="margin:22px 0 4px;">${ytA}</p>`;
 
 /* Lo stile di una pagina gia' fatta, da usare come base per un'altra (17/10/2026).

@@ -190,6 +190,17 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .yt-btn:hover{background:linear-gradient(180deg,#e8323a,#c01820);}
 .yt-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7d0d12,0 4px 8px rgba(160,20,27,.3);}
 
+/* QUIZ ACCANTO A YOUTUBE: due celle uguali, una sotto l'altra sul telefono */
+.coppia-btn{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 4px;}
+.coppia-btn a{justify-content:center;box-sizing:border-box;min-height:53px;width:100%;}
+.coppia-btn svg{width:26px;flex:none;}
+.quiz-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,#F9C93E,#EDA40C);color:#3d1f04 !important;
+  font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 4px 0 #a06a08,0 9px 18px rgba(150,95,10,.32);transition:transform .08s,box-shadow .08s;}
+.quiz-btn:hover{background:linear-gradient(180deg,#FBD150,#F0AC1A);}
+.quiz-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a06a08,0 4px 8px rgba(150,95,10,.3);}
+@media(max-width:560px){.coppia-btn{grid-template-columns:1fr;}}
+
 .ieri-btn{padding:16px 16px 17px 20px;}
 .ieri-btn b{font-size:23px;}
 .ieri-btn small{font-size:17px;}
@@ -255,6 +266,7 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-cr{display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;align-items:center;gap:4px;padding:8px 12px;border-bottom:1px solid #eef2f7;text-decoration:none;color:#10263f;font-size:15px;}
 .mk-cr:hover{background:#f3f7fc;}
 .mk-cr b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mk-cr b small{display:block;font-weight:500;font-size:12px;color:#5f738c;}   /* «al pluviometro», pagine paese (20/10/2026) */
 .mk-cr span{display:flex;align-items:center;gap:3px;font-weight:600;flex-wrap:wrap;}
 .mk-cr span i{font-style:normal;font-size:19px;}
 .mk-cr span em{font-style:normal;font-size:12px;color:#1f6fd1;font-weight:700;width:100%;padding-left:24px;margin-top:-3px;}
@@ -390,8 +402,10 @@ vuol dire che quel pluviometro in quei giorni non ha pubblicato.</p>
    onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-alta-val-d-enza-radar-testo'})}catch(e){}">diretta radar</a>:
 dove sta piovendo in questo momento, le ultime due ore e i quaranta minuti seguenti. Il radar misura dal cielo, a 2 km
 di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
-<p style="margin:22px 0 4px;"><a href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
-   onclick="try{gtag('event','click_youtube',{pulsante:'zona-piogge-alta-val-d-enza-fondo'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a></p>
+<div class="coppia-btn"><a href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
+   onclick="try{gtag('event','click_youtube',{pulsante:'zona-piogge-alta-val-d-enza-fondo'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a>
+<a href="https://avventuremicologiche.it/esame-tartufi/emilia-romagna/" target="_blank" rel="noopener" class="quiz-btn"
+   onclick="try{gtag('event','click_quiz',{pulsante:'zona-piogge-alta-val-d-enza-fondo'})}catch(e){}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#7A3A08" d="M7 3h10v2h3v3a4 4 0 0 1-4 4h-.3A5 5 0 0 1 13 14.9V17h3v3H8v-3h3v-2.1A5 5 0 0 1 8.3 12H8a4 4 0 0 1-4-4V5h3zm-1 4v1a2 2 0 0 0 2 2V7zm12 0v3a2 2 0 0 0 2-2V7z"/></svg>Quiz tartufi Emilia-Romagna</a></div>
 </div>
 </main>
 
@@ -702,7 +716,7 @@ di risoluzione; i millimetri di questa pagina sono quelli misurati a terra.</p>
     var g0 = cc[0].giorni;
     var testa = '<div class="mk-cr mk-cr-t"><span></span>' + [0, 1, 2].map(function (d) { return '<span>' + nomeG(g0[d].g, d) + '</span>'; }).join('') + '</div>';
     var righe = cc.map(function (c, i) {
-      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + (c.r || K) + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + '</b>'
+      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + (c.r || K) + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : '') + '</b>'
         + [0, 1, 2].map(function (d) { var g = c.giorni[d]; return '<span><i>' + icona(g.s) + '</i>' + g.mx + '°'
           + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '') + '</span>'; }).join('') + '</a>';
     }).join('');

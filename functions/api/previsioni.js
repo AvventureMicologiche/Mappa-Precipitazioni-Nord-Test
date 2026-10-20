@@ -24,9 +24,13 @@ export async function onRequestGet({ request, env }) {
   const cors = intestazioni(request);
   try {
     // ?zona=garfagnana: i paesi di una zona piogge (data/paesi-zone.json, lo scrive genera-pagine-zona-piogge.js), 20/10/2026
-    const zona = u.searchParams.get('zona'), area = zona || u.searchParams.get('capoluoghi');
+    // ?paese=liguria/sassello: le pagine paese dei funghi, un file per regione (data/paesi-localita/<reg>.json, lo
+    // scrive genera-pagine-localita.js); il primo e' il punto del pluviometro con la sua quota (20/10/2026)
+    const paese = /^([a-z]{4,12})\/([a-z0-9-]{2,80})$/.exec(u.searchParams.get('paese') || '');
+    if (u.searchParams.has('paese') && !paese) return rispondi({ errore: 'paese' }, cors, 404);
+    const zona = u.searchParams.get('zona'), area = paese ? paese[2] : zona || u.searchParams.get('capoluoghi');
     if (area) {
-      const d = await perArea(area, env, request, zona ? '/data/paesi-zone.json' : '/data/capoluoghi.json');
+      const d = await perArea(area, env, request, paese ? '/data/paesi-localita/' + paese[1] + '.json' : zona ? '/data/paesi-zone.json' : '/data/capoluoghi.json');
       // ⚠️ (19/10/2026, quinto check, bug 5) nessuna citta' risponde = 502 e niente cache nel browser: prima era un 200
       // tenuto 10 minuti, e la mappa restava su «carico…»; qualcuna sola in errore = 200 ma per 2 minuti, poi si richiede
       const stato = d.errore ? (d.capoluoghi ? 502 : 404) : 200;
@@ -121,16 +125,22 @@ async function perPunto(lat, lon, q, request, conOre, conProb) {
 
 // ── i capoluoghi di un'area, in parallelo (al massimo 12 → sotto i 50 subrequest) ──
 async function perArea(area, env, request, file) {
-  if (!/^[a-z-]{3,40}$/.test(area)) return { errore: 'area' };   // 40: gli indirizzi delle zone arrivano a 30 lettere
-  const chiave = new Request(`https://cache.previsioni/area?v=${VERSIONE}&d=${oraLocale(new Date().toISOString()).g}&f=${file.slice(6, 8)}&a=${area}`);   // data nella chiave, vedi perPunto; f: una zona e una regione con lo stesso nome non si pestano
+  // 40: gli indirizzi delle zone arrivano a 30 lettere; le pagine paese hanno anche cifre («...-laghetto-verde-1») e piu' lettere
+  const paese = file.indexOf('/data/paesi-localita/') === 0;
+  if (!(paese ? /^[a-z0-9-]{2,80}$/ : /^[a-z-]{3,40}$/).test(area)) return { errore: 'area' };
+  // data nella chiave, vedi perPunto; f = il FILE intero (20/10/2026): prima erano le sue due prime lettere, e
+  // paesi-zone e paesi-localita davano «pa» tutti e due, cosi' una zona e un paese con lo stesso nome si pestavano
+  const chiave = new Request(`https://cache.previsioni/area?v=${VERSIONE}&d=${oraLocale(new Date().toISOString()).g}&f=${file.slice(6, -5)}&a=${area}`);
   const cache = caches.default;
   const c = await cache.match(chiave); if (c) return c.json();
-  const lista = await (await env.ASSETS.fetch(new URL(file, request.url))).json();
+  const fr = await env.ASSETS.fetch(new URL(file, request.url));
+  if (!fr.ok) return { errore: 'area sconosciuta' };
+  const lista = await fr.json();
   const citta = lista[area]; if (!citta) return { errore: 'area sconosciuta' };
   // ⚠️ TETTO DI 50 SOTTORICHIESTE per chiamata (Cloudflare): con 12 citta' e la % di Open-Meteo erano 51 e la
   // Svizzera cadeva al primo colpo (7/10). Qui niente %, e una citta' che fallisce resta sola col suo errore.
   const ris = await Promise.all(citta.map(async p => {
-    try { const r = await perPunto(p.lat, p.lon, p.q, request, false, false); return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, ...(p.c ? { c: 1 } : {}), ...(p.r ? { r: p.r } : {}), ...(r.dati.errore ? { errore: r.dati.errore } : { giorni: r.dati.giorni, agg: r.dati.agg }) }; }
+    try { const r = await perPunto(p.lat, p.lon, p.q, request, false, false); return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, ...(p.c ? { c: 1 } : {}), ...(p.r ? { r: p.r } : {}), ...(p.qui ? { qui: 1 } : {}), ...(r.dati.errore ? { errore: r.dati.errore } : { giorni: r.dati.giorni, agg: r.dati.agg }) }; }
     catch (e) { return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, errore: String(e && e.message || e) }; }
   }));
   const dati = { area, agg: (ris.find(x => x.agg) || {}).agg || null, capoluoghi: ris, fonte: 'MET Norway (ECMWF)' + (PROB ? ' · % Open-Meteo' : '') };

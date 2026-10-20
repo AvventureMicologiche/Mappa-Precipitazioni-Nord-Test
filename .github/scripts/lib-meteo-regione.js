@@ -65,6 +65,7 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-cr{display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;align-items:center;gap:4px;padding:8px 12px;border-bottom:1px solid #eef2f7;text-decoration:none;color:#10263f;font-size:15px;}
 .mk-cr:hover{background:#f3f7fc;}
 .mk-cr b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mk-cr b small{display:block;font-weight:500;font-size:12px;color:#5f738c;}   /* «al pluviometro», pagine paese (20/10/2026) */
 .mk-cr span{display:flex;align-items:center;gap:3px;font-weight:600;flex-wrap:wrap;}
 .mk-cr span i{font-style:normal;font-size:19px;}
 .mk-cr span em{font-style:normal;font-size:12px;color:#1f6fd1;font-weight:700;width:100%;padding-left:24px;margin-top:-3px;}
@@ -118,7 +119,9 @@ function boschiHtml(titolo, id) {
    Pagine funghi (20/10/2026): id = l'id del blocco «Che tempo farà» (li' #meteo e' gia' il grafico delle temperature),
    grafico: false = niente giorni previsti nel grafico (regola: niente previsioni di crescita), boschi = l'id del
    blocco «Trova i boschi» (boschiHtml).
-   I paesi arrivano gia' in ordine (per abitanti) e ognuno porta la SUA regione (r): una zona sta su due regioni. */
+   I paesi arrivano gia' in ordine (per abitanti) e ognuno porta la SUA regione (r): una zona sta su due regioni.
+   Pagine paese (20/10/2026): area = 'paese=<reg>/<slug>', e il primo «paese» e' il punto del pluviometro (qui: 1),
+   che nella tabella porta sotto il nome «al pluviometro». */
 function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
   OPZ = OPZ || {};
   var GA = OPZ.ga || 'pagina-' + K, AREA = OPZ.area || 'capoluoghi=' + K, RIEP = OPZ.riepilogo || 'riepiloghi/' + K + '.json';
@@ -271,7 +274,7 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
     var g0 = cc[0].giorni;
     var testa = '<div class="mk-cr mk-cr-t"><span></span>' + [0, 1, 2].map(function (d) { return '<span>' + nomeG(g0[d].g, d) + '</span>'; }).join('') + '</div>';
     var righe = cc.map(function (c, i) {
-      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + (c.r || K) + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + '</b>'
+      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + (c.r || K) + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : '') + '</b>'
         + [0, 1, 2].map(function (d) { var g = c.giorni[d]; return '<span><i>' + icona(g.s) + '</i>' + g.mx + '°'
           + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '') + '</span>'; }).join('') + '</a>';
     }).join('');
