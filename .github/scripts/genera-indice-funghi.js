@@ -135,7 +135,7 @@ ${METEO_CSS}${STRISCIA_CSS}
 #mk-meteo .mk-cr span em{white-space:nowrap;}
 /* i due riquadri pioggia | boschi sotto «Ecco cosa vedi sulla mappa»: quasi quadrati, l'anteprima della regione copre */
 .mk-str.mk-italia{gap:12px;margin:8px 0 6px;}
-.mk-str.mk-italia a{height:auto;aspect-ratio:1/1.02;background-size:cover;background-position:50% 50%;}
+.mk-str.mk-italia a{height:auto;min-height:150px;aspect-ratio:1/1.02;background-size:cover;background-position:50% 50%;}
 </style>
 </head>
 <body>
@@ -279,6 +279,31 @@ ${/* ⚠️ Qui NON si chiama navAltre: quella scrive due elenchi, regioni e
   var QUANTI = 20;
   // le anteprime dei riquadri: la pioggia sul ramo «anteprime» (si rifa' ogni mattina), i boschi fissi
   var ANTEPRIME = 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/';
+  /* IL RITAGLIO DELLA REGIONE (21/10/2026, ottavo check, bug 3): centrato sull'immagine tagliava la regione (della Liguria
+     se ne vedeva il 69%). Si legge il JSON accanto all'immagine (zoom e pixel dell'angolo, come in lib-striscia.js) e la
+     regione intera sta nel riquadro, al centro. La data del JSON va nell'indirizzo: il browser non tiene quella di ieri. */
+  function riquadro(a, base, reg){
+    fetch(base + reg + '-mappa.json').then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
+      var img = base + reg + '-mappa.webp' + (j.generato ? '?v=' + encodeURIComponent(j.generato.slice(0, 13)) : '');
+      function pr(lat, lon){ var sz = 256 * Math.pow(2, j.z), sy = Math.sin(lat * Math.PI / 180);
+        return [(lon + 180) / 360 * sz, (0.5 - Math.log((1 + sy) / (1 - sy)) / (4 * Math.PI)) * sz]; }
+      function metti(){
+        var tw = a.clientWidth, th = a.clientHeight; if (!tw || !th) { setTimeout(metti, 200); return; }
+        var k, cx, cy;
+        if (j.reg) { var nw = pr(j.reg.n, j.reg.w), se = pr(j.reg.s, j.reg.e);
+          k = Math.min(tw / Math.max(1, se[0] - nw[0]), th / Math.max(1, se[1] - nw[1])) * 0.94;
+          cx = (nw[0] + se[0]) / 2 - j.x0; cy = (nw[1] + se[1]) / 2 - j.y0; }
+        else { k = tw / j.w; cx = j.w / 2; cy = j.h / 2; }
+        k = Math.max(k, tw / j.w, th / j.h);   // l'immagine copre sempre il riquadro
+        var bw = j.w * k, bh = j.h * k;
+        var x = Math.min(0, Math.max(tw - bw, tw / 2 - cx * k)), y = Math.min(0, Math.max(th - bh, th / 2 - cy * k));
+        a.style.backgroundImage = 'url(' + img + ')';
+        a.style.backgroundSize = bw.toFixed(1) + 'px ' + bh.toFixed(1) + 'px';
+        a.style.backgroundPosition = x.toFixed(1) + 'px ' + y.toFixed(1) + 'px';
+      }
+      metti(); window.addEventListener('resize', metti);
+    }).catch(function(){});   // senza JSON il riquadro resta blu con la scritta, e si clicca lo stesso
+  }
   var BOSCHI = LOCALE ? '/tessere-boschi/anteprime/'
     : 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/tessere-boschi/anteprime/';
   var MESI=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
@@ -291,8 +316,13 @@ ${/* ⚠️ Qui NON si chiama navAltre: quella scrive due elenchi, regioni e
     document.getElementById('tabella').innerHTML = '';
   }
 
-  fetch(BASE + 'funghi/italia.json', {cache:'no-store'})
-    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+  /* LA CLASSIFICA UNA VOLTA SOLA (21/10/2026, ottavo check, bug 11): la usa anche «Che tempo farà» (meteoClient,
+     OPZ.primi) da window._italia, cosi' le due tabelle hanno sempre gli stessi posti nello stesso ordine. Se GitHub
+     non risponde (429) si ripiega sulla copia del sito, ferma all'ultima pubblicazione. */
+  function leggi(u, o){ return fetch(u, o).then(function(r){ if(!r.ok) throw 0; return r.json(); }); }
+  window._italia = leggi(BASE + 'funghi/italia.json', {cache:'no-store'})
+    .catch(function(){ return leggi('/data/funghi/italia.json'); });
+  window._italia
     .then(function(j){
       var righe = (j.primi || []).slice(0, QUANTI);
       if (!righe.length) return guasto('La classifica non è disponibile in questo momento: ' +
@@ -338,8 +368,8 @@ ${/* ⚠️ Qui NON si chiama navAltre: quella scrive due elenchi, regioni e
       var reg = righe[0][2], rq = document.getElementById('riquadri');
       if (rq && /^[a-z]+$/.test(reg)) {
         var ap = rq.querySelector('a[data-t="pioggia"]'), ab = rq.querySelector('a[data-t="boschi"]');
-        ap.style.backgroundImage = 'url(' + ANTEPRIME + reg + '-mappa.webp)'; ap.href = SITO + '/?r=' + reg + '&g=20';
-        ab.style.backgroundImage = 'url(' + BOSCHI + reg + '-mappa.webp)'; ab.href = SITO + '/?r=' + reg + '&boschi=1';
+        ap.href = SITO + '/?r=' + reg + '&g=20'; ab.href = SITO + '/?r=' + reg + '&boschi=1';
+        riquadro(ap, ANTEPRIME, reg); riquadro(ab, BOSCHI, reg);
       }
 
       document.getElementById('notaclass').textContent =

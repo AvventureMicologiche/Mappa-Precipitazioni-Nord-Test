@@ -10,10 +10,11 @@
  * invecchia e' l'UTILITA': con un anno di archivio in piu' il ritratto dice
  * molto di piu', e «il giorno piu' bagnato di tutto l'archivio» va rifatto.
  *
- * ⚠️ IL PUSH NON PUBBLICA NIENTE (dal 7/10/2026 il sito e' su Cloudflare Pages):
- * le pagine nuove vanno online solo con `node cloudflare-pages\pubblica-pages.js`
- * lanciato a mano dal PC, e pubblicare si chiede. Per questo gira **quattro
- * volte l'anno e non ogni notte**, e i millimetri di ieri restano nel javascript.
+ * ⚠️ IL PUSH NON PUBBLICA DA SOLO (dal 7/10/2026 il sito e' su Cloudflare Pages):
+ * le pagine nuove vanno online col giro pagine-regione.yml del mattino dopo, che
+ * pubblica tutto main (ottavo check, punto C, 21/10/2026), o subito con
+ * `node cloudflare-pages\pubblica-pages.js` lanciato a mano dal PC. Gira
+ * **quattro volte l'anno e non ogni notte**, e i millimetri di ieri restano nel javascript.
  *
  * ⚠️ NON TOCCA LE 23 PAGINE REGIONE NE' LE 19 FUNGHI. Quelle il ritratto non
  * ce l'hanno: rigenerarle non cambierebbe un byte, e la loro data in
@@ -107,4 +108,4 @@ console.log('  date aggiornate: paese ' + dati.localita + ', zona ' + dati.zone 
 // La sitemap si rifa' DOPO aver scritto le date, se no resta con le vecchie.
 lancia('genera-pagine-zona.js');
 console.log('');
-console.log('  ⚠️ Il push non pubblica: online solo con pubblica-pages.js lanciato a mano (gratis, ma si chiede).');
+console.log('  ⚠️ Il push non pubblica: online col giro pagine-regione del mattino dopo, o subito con pubblica-pages.js a mano.');

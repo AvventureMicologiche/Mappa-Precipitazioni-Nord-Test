@@ -580,7 +580,7 @@ header{position:relative;flex-wrap:nowrap;}
   function casella(inp, drop, scelto) {
     var righe = [], sel = -1, giro = 0, attesa = null;
     function disegna() {
-      drop.innerHTML = righe.map(function (x, i) { return '<div class="mk-r" data-i="' + i + '"><span>' + esc(x.n) + '</span><small>' + (x.fraz ? x.fraz : (x.z ? 'zona · ' : (x.sg ? x.sg + ' · ' : '')) + nomeReg(x.reg)) + '</small></div>'; }).join('');
+      drop.innerHTML = righe.map(function (x, i) { return '<div class="mk-r" data-i="' + i + '"><span>' + esc(x.n) + '</span><small>' + (x.fraz ? esc(x.fraz) : (x.z ? 'zona · ' : (x.sg ? esc(x.sg) + ' · ' : '')) + nomeReg(x.reg)) + '</small></div>'; }).join('');
       drop.classList.add('on');
     }
     function mostra(q) {
@@ -650,7 +650,20 @@ header{position:relative;flex-wrap:nowrap;}
   function disegnaCitta(j) {
     var box = blocco && blocco.querySelector('.mk-citta'); if (!box) return;
     var cc = (j && j.capoluoghi || []).filter(function (c) { return c.giorni && c.giorni.length >= 3; });
-    if (!cc.length) { box.innerHTML = '<p class="mk-attesa">' + (OPZ.guasto || 'Le previsioni delle città') + ' non rispondono in questo momento: <a href="' + SITO + '/?r=' + K + '&m=prev">aprile sulla mappa</a>.</p>'; return; }
+    if (!cc.length) {
+      /* (21/10/2026, ottavo check, bug 5) il link porta la regione VERA (sull'indice «italia» non esiste: la mappa restava
+         vuota) e il posto della pagina se c'e'; «guardale» e non «aprile», che si leggeva come il mese.
+         (bug 4) il bottone del radar resta anche senza previsioni: e' proprio quando serve. */
+      var rg = OPZ.primi ? PRIMO : K, lp = document.querySelector('main a[href*="pl="]');
+      var pq = lp ? (lp.getAttribute('href').match(/[?&](pl=[^&]+&pn=[^&]+(?:&pz=1)?)/) || [])[1] : '';
+      var mp = SITO + '/?' + (rg ? 'r=' + rg + '&' : '') + 'm=prev' + (pq ? '&' + pq : '');
+      var rl = document.querySelector('main a[href*="radar=ora"]');
+      var rr = rl ? rl.getAttribute('href') : ADESSO ? SITO + '/' + K + '/adesso/' : OPZ.primi && PRIMO ? SITO + '/?r=' + PRIMO + '&radar=ora' : '';
+      box.innerHTML = '<p class="mk-attesa">' + (OPZ.guasto || 'Le previsioni delle città') + ' non rispondono in questo momento: <a href="' + esc(mp) + '">guardale sulla mappa</a>.</p>'
+        + (rr ? '<a class="mk-radar" href="' + esc(rr) + '"' + (rl || OPZ.primi ? ' data-da="radar-guasto"' : ' data-adesso="1"') + '>'
+          + '<span class="mk-ic">📡</span><span><b>Dove sta piovendo adesso</b><small>guarda il radar piogge</small></span><span class="mk-fr">→</span></a>' : '');
+      return;
+    }
     // prima il capoluogo di regione, poi per abitanti (dall'elenco dei comuni): Prato e Pisa prima di Manciano
     var ab = {}; (ELENCO || []).forEach(function (x) { if (x.reg === K && !x.z) ab[x.q] = x.pop; });
     if (!OPZ.area && !OPZ.primi) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
@@ -707,10 +720,15 @@ header{position:relative;flex-wrap:nowrap;}
   }
   function grafico(j, F) {
     var box = document.getElementById('grafico'); if (!box || !j || !j.serie || !F.length) return;
+    var ultimo = j.serieDa || j.ultimoGiorno || (j.periodi['1'] || j.periodi['7']).ultimo;   // ultimoGiorno: il riepilogo di zona
+    /* (21/10/2026, ottavo check, bug 7) fra l'ultimo giorno misurato e oggi una barra vuota per OGNI giorno che manca
+       (prima al massimo 3). Se ne mancano piu' di 7 la fonte e' ferma: i previsti non si attaccano, il grafico resta
+       quello della pagina. */
+    var buco = Math.round((daIso(OGGI) - daIso(ultimo)) / 864e5) - 1;
+    if (buco > 7) return;
     var s = j.serie, n = Math.min(30, s.length), max = 1, i, q;
     for (q = 0; q < n; q++) max = Math.max(max, s[q] || 0);
     F.forEach(function (g) { max = Math.max(max, g.mm); });
-    var ultimo = j.serieDa || j.ultimoGiorno || (j.periodi['1'] || j.periodi['7']).ultimo;   // ultimoGiorno: il riepilogo di zona
     var cand = [], lab = {};
     for (var c = 1; c <= n; c++) if (s[c - 1] != null && s[c - 1] >= 1 && s[c - 1] >= max * 0.2) cand.push(c);
     cand.sort(function (a, b) { return s[b - 1] - s[a - 1]; }).forEach(function (c) { if (!lab[c - 1] && !lab[c + 1]) lab[c] = 1; });
@@ -724,8 +742,7 @@ header{position:relative;flex-wrap:nowrap;}
     /* IL BUCO FRA MISURATI E PREVISTI (20/10/2026, settimo check, bug 6): di notte, fino al giro dei riepiloghi del
        mattino, l'ultimo giorno misurato e' l'altroieri (in Slovenia sempre, ARSO ha ~34 ore di ritardo) e i previsti
        partono da oggi: «ieri» spariva senza che si vedesse. Ora c'e' una barra vuota per ogni giorno che manca. */
-    var buco = Math.round((daIso(OGGI) - daIso(ultimo)) / 864e5) - 1;
-    for (var k = 1; k <= Math.min(buco, 3); k++) {
+    for (var k = 1; k <= buco; k++) {
       var gb = daIso(ultimo); gb.setDate(gb.getDate() + k);
       barre += '<div class="b" title="' + gb.getDate() + ' ' + MESI[gb.getMonth()] + ': dato non ancora arrivato"><i style="height:0"></i></div>';
       ax += '<span></span>';
@@ -746,13 +763,18 @@ header{position:relative;flex-wrap:nowrap;}
   /* OPZ.primi (20/10/2026, indice /funghi/): i posti della tabella sono quelli della CLASSIFICA DEL GIORNO
      (data/funghi/italia.json, cambia ogni mattina): prima si legge la classifica, poi si chiedono all'API i suoi primi
      OPZ.primi posti con ?posti=<reg>/<slug>/<sigla>,... nello stesso ordine. */
-  var area = !OPZ.primi ? Promise.resolve(AREA) : fetch(BASE + 'funghi/italia.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
-    .then(function (j) { return 'posti=' + (j.primi || []).slice(0, OPZ.primi).map(function (x) { return x[2] + '/' + x[3] + '/' + x[1]; }).join(','); });
+  /* (21/10/2026, ottavo check, bug 11) la classifica la scarica UNA volta la pagina (window._italia, con la riserva sulla
+     copia del sito): due download separati potevano dare due classifiche diverse a cavallo della rigenerazione. */
+  var PRIMO = '';
+  var area = !OPZ.primi ? Promise.resolve(AREA) : (window._italia || fetch(BASE + 'funghi/italia.json', { cache: 'no-store' }).then(function (r) { return r.json(); }))
+    .then(function (j) { PRIMO = (j.primi && j.primi[0] && j.primi[0][2]) || '';
+      return 'posti=' + (j.primi || []).slice(0, OPZ.primi).map(function (x) { return x[2] + '/' + x[3] + '/' + x[1]; }).join(','); });
   var citta = !blocco ? Promise.resolve(null)
     : area.then(function (a) { return fetch(API + '?' + a); }).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
   /* ⚠️ SOLO UN RIEPILOGO FRESCO (20/10/2026, settimo check, bug 5): scritto da meno di 36 ore, la stessa regola della
-     pagina. Se e' piu' vecchio la pagina ha gia' disegnato il grafico dai file del giorno, e ridisegnarlo col riepilogo
-     vecchio faceva sparire i giorni nuovi: allora il grafico resta com'e', senza i giorni previsti. */
+     pagina. Se e' piu' vecchio la pagina regione ha gia' disegnato il grafico dai file del giorno, e ridisegnarlo col
+     riepilogo vecchio faceva sparire i giorni nuovi: allora il grafico resta com'e', senza i giorni previsti. Le zone
+     piogge un ripiego dai file non ce l'hanno: li' resta il grafico del riepilogo vecchio, sempre senza previsti. */
   var riepilogo = OPZ.grafico === false ? null : fetch(BASE + RIEP).then(function (r) { return r.json(); }).then(function (j) {
     var eta = j && j.generato ? Date.now() - Date.parse(j.generato) : -1;
     return eta >= 0 && eta < 36 * 3600 * 1000 ? j : null;

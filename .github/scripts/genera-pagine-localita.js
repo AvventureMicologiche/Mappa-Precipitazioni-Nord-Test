@@ -156,6 +156,12 @@ const COMUNI = fs.readFileSync(path.join(RADICE, 'data', 'elenco-paesi.txt'), 'u
   .map(p => ({ n: p[0], lat: +p[1], lon: +p[2], reg: p[4], pop: +p[5] || 0 }));
 const PAESI_KM = 12, PAESI_MAX = 8;
 const normNome = t => String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]+/g, ' ').trim();
+// il comune che E' il pluviometro con un altro nome, entro 2 km (settimo check bug 7, ottavo check bug 6)
+function doppione(io, cn, d) {
+  if (d > 2) return false;
+  if ((' ' + io + ' ').includes(' ' + cn + ' ') && !(' ' + io + ' ').includes(' val ' + cn + ' ')) return true;
+  return cn.startsWith(io + ' ');
+}
 function paesiDelPosto(reg, posto) {
   const [, nome, , quota, lat, lon] = posto;
   const io = normNome(nome);
@@ -166,7 +172,10 @@ function paesiDelPosto(reg, posto) {
     // ⚠️ e nemmeno il comune che E' il pluviometro con un altro nome (20/10/2026, settimo check, bug 7): «Ferriere Pluvio»
     // e «Ferriere», «Agerola METEO» e «Agerola». Entro 2 km e col nome dentro quello del pluviometro, a parole intere:
     // a 3 km si toglievano comuni diversi («Caslino d'Erba» ed Erba). 111 righe doppie su 908 pagine.
-    .filter(c => c.d <= km && normNome(c.n) !== io && !(c.d <= 2 && (' ' + io + ' ').includes(' ' + normNome(c.n) + ' ')))
+    // ⚠️ (21/10/2026, ottavo check, bug 6) anche nel verso opposto: il pluviometro col nome corto e il comune col nome
+    // lungo («Ortignano» e «Ortignano Raggiolo», «Perarolo» e «Perarolo di Cadore»). E un comune che nel nome del
+    // pluviometro sta dopo «Val» e' il nome di una valle, non il paese: «San Nazzaro Val Cavargna C5» e Cavargna restano.
+    .filter(c => c.d <= km && normNome(c.n) !== io && !doppione(io, normNome(c.n), c.d))
     .map(c => ({ ...c, w: Math.log(c.pop + 10) * (1 - c.d / (km * 1.15)) * (c.reg === reg ? 1 : 0.6) }))
     .sort((a, b) => b.w - a.w).slice(0, PAESI_MAX - 1);
   let altri = giro(PAESI_KM);

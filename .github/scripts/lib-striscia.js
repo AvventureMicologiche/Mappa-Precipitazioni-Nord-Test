@@ -111,9 +111,17 @@ function strisciaMappa(OPZ) {
       if (OPZ.modo === 'sopra') btns.parentNode.insertBefore(d, btns); else btns.parentNode.replaceChild(d, btns);
       var a1 = d.querySelector('a');
       a1.addEventListener('click', function () { ga('ieri'); });
-      carica('ieri', PIOGGIA).then(function (g) { if (g) { a1._g = g; ritaglia(a1, g); } });
+      /* ⚠️ L'IMMAGINE DEVE ESSERE DEL GIORNO DEL BOTTONE (21/10/2026, ottavo check, bug 2): se lo scatto di ieri fallisce
+         (o GitHub salta il giro) sul ramo resta quella dell'altroieri, che usciva sotto «Ieri» senza nessun avviso.
+         Se la data del JSON non e' quella del link (da=) l'immagine non si mette: il riquadro resta blu con la scritta,
+         come quando manca. */
+      var daL = (vecchio.getAttribute('href').match(/[?&]da=(\d{4}-\d\d-\d\d)/) || [])[1];
+      carica('ieri', PIOGGIA).then(function (g) { if (g && (!daL || !g.j.da || g.j.da === daL)) { a1._g = g; ritaglia(a1, g); } });
       return;
     }
+    // (21/10/2026, ottavo check, bug 9) solo il bottone NORMALE diventa la striscia: «Vedi i vicini sulla mappa» (pluviometro
+    // sospeso, millimetri sbagliati) resta com'e', se no sopra la pagina che lo dice invitava a «guardare la pioggia»
+    if (vecchio.textContent.replace(/\s+/g, ' ').trim() !== 'Vedi sulla mappa') return;
     var b = document.querySelector('main a[href*="boschi=1"]:not([href*="sat=1"])');
     // le scritte (20/10/2026, suo: «scriviamo qualcosa in più che incentivi il click»): una riga corta che invita
     // e una piccola sotto; tre alternative messe a confronto in localhost, questa e' la 1

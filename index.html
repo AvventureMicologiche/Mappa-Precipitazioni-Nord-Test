@@ -3264,7 +3264,17 @@ function drawGrid(){
     var r1=r0+1; while(r1<ny && yb[r1+1]-yb[r0]<=64) r1++;
     if(yb[r1]>=0 && yb[r0]<=size.y){
       var dy=Math.round(yb[r0]), dh=Math.round(yb[r1])-dy;
-      if(dh>0) heatCtx.drawImage(small,0,r0,nx,r1-r0,pNW.x,dy,pSE.x-pNW.x,dh);
+      /* ⚠️ UNA RIGA IN PIU' SOPRA E SOTTO, RITAGLIATA (21/10/2026). Ritagliando la sorgente alle sole righe della
+         fascia, Safari (iPhone compreso) non sfuma oltre il bordo del ritaglio: a ogni giuntura c'era un gradino e
+         ad alto zoom la heatmap era a strisce orizzontali piatte. Chrome invece legge anche oltre e non si vedeva.
+         Provato su Safari vero (Mac di GitHub, ramo prova-safari): strisce col disegno di prima, sfumato con questo;
+         su Chrome identico riga per riga. Il ritaglio sta dentro il save() esterno del confine e si somma a quello. */
+      if(dh>0){
+        var s0=Math.max(r0-1,0), s1=Math.min(r1+1,ny);
+        heatCtx.save(); heatCtx.beginPath(); heatCtx.rect(pNW.x,dy,pSE.x-pNW.x,dh); heatCtx.clip();
+        heatCtx.drawImage(small,0,s0,nx,s1-s0,pNW.x,yb[s0],pSE.x-pNW.x,yb[s1]-yb[s0]);
+        heatCtx.restore();
+      }
     }
     r0=r1;
   }
@@ -8355,6 +8365,13 @@ function locChiudi() {
   document.getElementById('loc-input').setAttribute('aria-expanded', 'false');
 }
 
+/* (21/10/2026, ottavo check, bug 14) coordinate di un link: due numeri VERI (un pezzo vuoto, «pl=,», valeva 0 e la mappa
+   andava nel Golfo di Guinea) e dentro l'area della mappa (Italia, Svizzera, Austria, Francia, Slovenia). */
+window._puntoBuono=function(t){ var p=String(t||'').split(','); if(p.length!==2||!p[0].trim()||!p[1].trim()) return false;
+  var la=+p[0], lo=+p[1]; return isFinite(la)&&isFinite(lo)&&la>=30&&la<=55&&lo>=-10&&lo<=25; };
+// ⚠️ (21/10/2026, ottavo check, bug 15) i nomi delle frazioni arrivano dal geocoder di Open-Meteo, cioe' da fuori:
+// in pagina vanno come testo, anche in «Cercate di recente»
+function locEsc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function locDisegna(res, testo, intestazione, nota) {
   var d = document.getElementById('loc-drop');
   _locRighe = res.righe; _locSel = -1;
@@ -8373,8 +8390,8 @@ function locDisegna(res, testo, intestazione, nota) {
     // caratteri, li sostituisce
     var d = locDove(p, locVarianti(q)), pos = d.pos;
     var nome = pos >= 0
-      ? p.n.slice(0, pos) + '<b>' + p.n.slice(pos, pos + d.len) + '</b>' + p.n.slice(pos + d.len)
-      : p.n;
+      ? locEsc(p.n.slice(0, pos)) + '<b>' + locEsc(p.n.slice(pos, pos + d.len)) + '</b>' + locEsc(p.n.slice(pos + d.len))
+      : locEsc(p.n);
     var reg = (typeof REGIONS !== 'undefined' && REGIONS[p.reg] && REGIONS[p.reg].name) || p.reg;
     return '<div class="loc-riga" role="option" data-i="' + i + '">' +
              '<span class="loc-nome">' + nome + '</span>' +
@@ -8384,7 +8401,7 @@ function locDisegna(res, testo, intestazione, nota) {
                // Italia: fuori, il geocoder lascia la popolazione vuota su un
                // sacco di paesi vivissimi, e Zermatt sarebbe uscita «ex comune».
                (p.frazione ? '<span class="loc-ex">frazione</span>' : ((p.pop || p.estero) ? '' : '<span class="loc-ex">ex comune</span>'))) +
-             '<span class="loc-dove">' + (p.sg ? p.sg + ' · ' : '') + reg + '</span>' +
+             '<span class="loc-dove">' + (p.sg ? locEsc(p.sg) + ' · ' : '') + locEsc(reg) + '</span>' +
            '</div>';
   }).join('');
   if (res.totale > res.righe.length)
@@ -10859,7 +10876,7 @@ if(_btnShot){
      inquadra piu' larga. */
   function pinDaLink(qq){
     var _pl=(qq.get('pl')||'').split(',').map(Number), _pn=(qq.get('pn')||'').replace(/[<>"&]/g,'');
-    if(!(_pl.length===2 && isFinite(_pl[0]) && isFinite(_pl[1]))) return false;
+    if(!window._puntoBuono(qq.get('pl'))) return false;   // (21/10/2026, ottavo check, bug 14) «pl=,» valeva 0,0: il Golfo di Guinea
     _vistaPaese={lat:_pl[0],lon:_pl[1],n:_pn,z:qq.get('pz')==='1'};
     try{ locSegnaposto(_pl[0],_pl[1]); }catch(e){}
     var _li=document.getElementById('loc-input');
@@ -11508,8 +11525,7 @@ function loadMeteoHubStations(regionKey,cb){
     fetch(RAW+'/'+tries[idx]+'.json').then(function(r){return r.ok?r.json():Promise.reject();})
       .then(function(data){ var escl=MH_ESCLUSE[regionKey]||{};
                              var st=(data.stations||[]).filter(function(s){return !escl[s.id];})
-                                     .map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'',
-                                                              w:s.w,u:s.u,t:s.t};});  // i sensori servono a selectUniformRicche
+                                     .map(function(s){return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||''};});  // i sensori servono a selectUniformRicche
                              meteohubStationsCache[regionKey]=st; cb(st); })
       .catch(function(){ idx++; attempt(); });
   })();
@@ -16803,7 +16819,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
         var giri=0, att=setInterval(function(){
           if(regioni().length || giri>75){ clearInterval(att); if(regioni().length){ entra(true); var l=(q.get('l')||q.get('pl')||'').split(',').map(Number);   // pl/pn: i link delle pagine
             // il paese del link (pl/pn) lo legge gia' entra() dal sito; qui resta solo chi non l'ha messo (l/n)
-            if(!posto&&l.length===2&&isFinite(l[0])&&isFinite(l[1])) tieniPosto({n:q.get('n')||q.get('pn')||'Località cercata',lat:l[0],lon:l[1],q:null},true); zittoStoria=false; } }
+            if(!posto&&window._puntoBuono(q.get('l')||q.get('pl'))) tieniPosto({n:q.get('n')||q.get('pn')||'Località cercata',lat:l[0],lon:l[1],q:null},true); zittoStoria=false; } }
           giri++;
         },200);
       }

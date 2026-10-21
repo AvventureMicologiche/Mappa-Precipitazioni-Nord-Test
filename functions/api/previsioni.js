@@ -207,10 +207,20 @@ async function perPosti(testo, env, request) {
 // ⚠️ UN formattatore solo, creato una volta: crearlo a ogni ora della previsione costava decine di ms di CPU
 // e la funzione cadeva col limite dei 10 ms (errore 1102, Corsica a cache fredda, 7/10/2026).
 const FMT = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hour12: false });
+/* ⚠️ E UNA CONVERSIONE SOLA PER ORA (21/10/2026, ottavo check, punto A). Nelle chiamate a gruppi (21 zone della
+   Toscana, 20 posti dell'indice) le ore di MET sono le stesse per tutti i punti, ma si convertivano punto per punto:
+   ~1.800 formatToParts, 6-7 ms dei 10 di CPU del piano gratuito. Ora si ricordano per stringa (~85 diverse a
+   chiamata); il tetto evita che la memoria cresca fra una richiesta e l'altra nello stesso isolato. */
+const ORE = new Map();
 function oraLocale(iso) {
+  let o = ORE.get(iso);
+  if (o) return o;
   const p = FMT.formatToParts(new Date(iso));
   const v = {}; for (const x of p) v[x.type] = x.value;
-  return { g: `${v.year}-${v.month}-${v.day}`, h: +v.hour % 24 };
+  o = { g: `${v.year}-${v.month}-${v.day}`, h: +v.hour % 24 };
+  if (ORE.size > 5000) ORE.clear();
+  ORE.set(iso, o);
+  return o;
 }
 /* ⚠️ IL SIMBOLO DEL GIORNO (18/10/2026). Fino a oggi si contavano «a voti» le righe con ora 6-18, una
    riga un voto. Nei primi due giorni MET da' una riga ogni ora e va bene; dal terzo da' righe orarie solo

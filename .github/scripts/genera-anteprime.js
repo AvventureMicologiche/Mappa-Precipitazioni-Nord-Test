@@ -68,6 +68,18 @@ const giornoFa = n => { const d = new Date(); d.setDate(d.getDate() - n); return
    mano quando cambiano le tessere, e i file vanno in tessere-boschi/anteprime/. */
 async function scattaPulita(page, k, nome, meta) {
   nome = nome || 'mappa';
+  /* ⚠️ LA REGIONE INTERA DENTRO L'IMMAGINE (21/10/2026, ottavo check, bug 1). Lo scatto prendeva l'inquadratura del sito
+     da computer, piu' stretta del «tutto visibile»: in Lombardia, Umbria, Molise, Puglia, Sicilia e Basilicata il confine
+     usciva dall'immagine (Lombardia: nord a -45 px, sud a 973 su 918) e nelle pagine paese il segnaposto finiva fuori
+     dal riquadro o sotto l'etichetta. Ora prima dello scatto la mappa inquadra il confine con un margine, e si aspetta
+     che cartina, tessere e colori si ridisegnino. */
+  await page.evaluate(() => {
+    const mp = window._mapDebug; let b = null;
+    mp.eachLayer(l => { if (l.options && l.options.fill === false && l.getBounds) { const x = l.getBounds(); if (x.isValid()) b = b ? b.extend(x) : L.latLngBounds(x.getSouthWest(), x.getNorthEast()); } });
+    if (b) mp.fitBounds(b, { padding: [20, 20], animate: false });
+  });
+  await page.waitForNetworkIdle({ idleTime: 1200, timeout: 30000 }).catch(() => {});
+  await new Promise(r => setTimeout(r, process.env.BOSCHI ? 4000 : 2500));
   await page.addStyleTag({ content: 'body *{visibility:hidden !important} #map .leaflet-map-pane, #map .leaflet-map-pane *{visibility:visible !important}' });
   await new Promise(r => setTimeout(r, 500));
   const g = await page.evaluate(() => {
@@ -80,8 +92,12 @@ async function scattaPulita(page, k, nome, meta) {
              reg: b ? { n: +b.getNorth().toFixed(4), s: +b.getSouth().toFixed(4), w: +b.getWest().toFixed(4), e: +b.getEast().toFixed(4) } : null };
   });
   if (!g || !g.w) throw new Error('mappa pulita: niente _mapDebug o #map');
-  await page.screenshot({ path: path.join(OUT_DIR, k + '-' + nome + '.webp'), type: 'webp', quality: 72,
-    clip: { x: g.x, y: g.y, width: g.w, height: g.h, scale: 0.5 } });
+  await page.screenshot({ path: path.join(OUT_DIR, k + '-' + nome + '.webp'), type: 'webp', quality: process.env.BOSCHI ? 50 : 72,
+    clip: { x: g.x, y: g.y, width: g.w, height: g.h, scale: process.env.BOSCHI ? 0.375 : 0.5 } });
+  /* ⚠️ I BOSCHI A 1.200 PX E QUALITA' 50 (21/10/2026, ottavo check, bug 12): a 1.600 px pesavano fino a 457 KB (Lombardia)
+     per un riquadro di 146-400 px, e abbassando solo la qualita' le regioni alpine (rilievo pieno di dettagli) restavano
+     sopra i 250. Il JSON tiene le misure in pixel della MAPPA (w, h): la pagina stende l'immagine con quelle
+     (background-size), quindi un file con meno pixel si vede alla stessa grandezza, solo un filo meno nitido. */
   fs.writeFileSync(path.join(OUT_DIR, k + '-' + nome + '.json'), JSON.stringify(Object.assign({ z: g.z, x0: g.x0, y0: g.y0, w: g.w, h: g.h, reg: g.reg,
     tipo: process.env.BOSCHI ? 'boschi' : 'pioggia', da: process.env.BOSCHI ? null : iso(giornoFa(GIORNI)), a: process.env.BOSCHI ? null : iso(giornoFa(1)) },
     meta || {}, { generato: new Date().toISOString() })) + '\n');
@@ -160,6 +176,9 @@ async function scatta(browser, k) {
     let pulita = '';
     try { pulita = ', pulita ' + await scattaPulita(page, k) + ' KB'; } catch (e) { pulita = ', pulita FALLITA (' + e.message.slice(0, 60) + ')'; }
     pulita += await scattaIeri(browser, k);
+    // (21/10/2026, ottavo check, bug 2) uno scatto pulito o «di ieri» fallito lascia sul ramo l'immagine vecchia: si
+    // segnala nel registro del giro come avviso di GitHub, cosi' si vede senza aprire il registro intero
+    if (/FALLITA/.test(pulita)) console.log('::warning::anteprime ' + k + ':' + pulita);
     console.log('  ' + k.padEnd(13) + ' ok, ' + kb + ' KB' + pulita + ', max ' + (stat.max || '?') + ' mm' +
                 (errori.length ? '  [' + errori.length + ' errori di pagina]' : ''));
     return true;
