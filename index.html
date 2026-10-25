@@ -12926,8 +12926,9 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
        la coppia resta leggibile, «Scegli date | Radar pioggia».
        ⚠️ Il nome sta in DUE posti, qui e nel ripristino di `esci()`:
        cambiarne uno solo lascia il tasto col nome vecchio dopo la prima
-       uscita dal radar. */
-    b.className='tp-custom-btn rd-btn'; b.id='btn-radar'; b.innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar pioggia';
+       uscita dal radar.
+       \u00ABpioggia\u00BB sta in .rd-lunga: sul tablet, nella riga a tre, sparisce (25/10/2026, vedi #btn-sat-riga). */
+    b.className='tp-custom-btn rd-btn'; b.id='btn-radar'; b.innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar<span class="rd-lunga"> pioggia</span>';
     riga.appendChild(b);
     b.addEventListener('click',function(){ acceso?esci():entra(); });
     // ⚠️ Il tasto «Indietro» della legenda chiama hideLegendMobile(), che in
@@ -13071,7 +13072,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
     if(!acceso) return;
     acceso=false; sorveglia(false); pulisci(); ultimoBuono=null; window._radarModo=null; window._radarVistaLink=null;
     document.body.classList.remove('modo-radar');
-    el('btn-radar').innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar pioggia';
+    el('btn-radar').innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar<span class="rd-lunga"> pioggia</span>';
     heat(true); pallini(true);
     /* ⚠️ USCENDO SI TORNA ALL'INQUADRATURA STANDARD DELLA REGIONE, non alla
        vista che c'era prima di entrare (cambiato il 31/8/2026 su sua
@@ -14011,8 +14012,10 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   var VUOTA='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
   /* ⚠️ «MAPPA BOSCHI» E NON «MAPPA FORESTALE»: misurato a 360 px, il nome
      lungo andava a capo e la coppia di tasti saliva da 55 a 77 px (lo
-     stesso tetto di 13 caratteri trovato col radar il 5/9). */
-  var ETICHETTA='<span class="rd-ic">🌲</span> Mappa boschi';
+     stesso tetto di 13 caratteri trovato col radar il 5/9).
+     Sul tablet, nella riga a tre, «Mappa» sparisce e «boschi» prende la maiuscola (25/10/2026, vedi #btn-sat-riga):
+     il testo resta «Mappa boschi» per chi lo legge con textContent. */
+  var ETICHETTA='<span class="rd-ic">🌲</span> <span class="rd-lunga">Mappa </span><span class="rd-cap">boschi</span>';
 
   function map(){ return window._mapDebug; }
   function el(id){ return document.getElementById(id); }
@@ -16159,6 +16162,22 @@ body.modo-radar #time-panel .rd-coppia.con-sat > #btn-sat-riga,body.modo-boschi 
 @media(min-width:901px){#time-panel .rd-coppia.con-sat > .tp-custom-btn{font-size:12.5px !important}}
 @media(max-width:900px){#time-panel .rd-coppia.con-sat > .tp-custom-btn{font-size:13px !important}}
 @media(max-width:380px){#time-panel .rd-coppia.con-sat > .tp-custom-btn{font-size:12px !important;letter-spacing:-.3px}}
+/* TABLET, fra 601 e 900 px (25/10/2026): li' il pannello e' largo 320, in un terzo di riga ci stanno 92 px e
+   «🌧️ Radar pioggia» ne vuole 112: le colonne si allargavano sul testo e «Satellite» usciva di 13 px a destra.
+   Le etichette diventano «Radar» e «Boschi» e le tre colonne restano uguali qualunque sia il testo. Solo con la riga
+   a tre: nel radar e nei boschi le colonne sono due e i nomi interi ci stanno. */
+@media(min-width:601px) and (max-width:900px){
+  body:not(.modo-radar):not(.modo-boschi) #time-panel .rd-coppia.con-sat{grid-template-columns:repeat(3,minmax(0,1fr))}
+  body:not(.modo-radar):not(.modo-boschi) #time-panel .rd-coppia.con-sat .rd-lunga{display:none}
+  body:not(.modo-radar):not(.modo-boschi) #time-panel .rd-coppia.con-sat .rd-cap{text-transform:capitalize}
+  /* «Piogge per funghi (range 13-20 gg fa)»: «fa» andava a capo da solo e il tasto passava da 41 a 62 px. A 14 px
+     (quello che voleva gia' la regola del tablet, scavalcata da quella dei 900) con la parentesi a 12 sta su una
+     riga con 17 px d'aria */
+  #time-panel #btn-funghi{font-size:14px !important}
+  #time-panel #btn-funghi > span{font-size:12px !important}
+}
+/* la parentesi non si spezza mai: se un giorno non ci sta va a capo intera, e «fa» non resta piu' da solo */
+#btn-funghi > span{white-space:nowrap}
 /* al computer l'icona prende il posto della vetrina (sua idea, 13/10): quando c'e' l'icona la vetrina se ne va,
    e l'icona sta sempre sotto la ricerca, senza saltare quando si accende */
 @media(min-width:901px){body.tq-vis #channel-logo{display:none !important}}

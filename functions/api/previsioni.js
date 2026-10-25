@@ -42,8 +42,9 @@ export async function onRequestGet({ request, env }) {
     const zona = u.searchParams.get('zona'), zonedi = u.searchParams.get('zonedi');
     const area = paese ? paese[2] : zona || zonedi || u.searchParams.get('capoluoghi');
     if (area) {
+      // &pr=1 con ?zona=: anche la % di ogni paese (le pagine «Previsioni meteo <zona>», 25/10/2026); le altre no
       const d = await perArea(area, env, request, paese ? '/data/paesi-localita/' + paese[1] + '.json' : zona ? '/data/paesi-zone.json'
-        : zonedi ? '/data/zone-regioni.json' : '/data/capoluoghi.json');
+        : zonedi ? '/data/zone-regioni.json' : '/data/capoluoghi.json', !!zona && !paese && u.searchParams.get('pr') === '1');
       // ⚠️ (19/10/2026, quinto check, bug 5) nessuna citta' risponde = 502 e niente cache nel browser: prima era un 200
       // tenuto 10 minuti, e la mappa restava su «carico…»; qualcuna sola in errore = 200 ma per 2 minuti, poi si richiede
       const stato = d.errore ? (d.capoluoghi ? 502 : 404) : 200;
@@ -84,7 +85,8 @@ function rispondi(dati, h, status = 200, maxAge = 0) {
    chiamata e la Cache API conta: un punto a freddo costava 3 (match, MET, put), e con 20 posti dopo il dodicesimo
    arrivava «Too many subrequests» (misurato online con 20 posti mai chiesti: 12 su 20). Era lo stesso tetto che a
    freddo lasciava senza previsioni le ultime zone della Toscana (21 zone, 64 sottorichieste). Cosi' un punto ne costa 1. */
-async function perPunto(lat, lon, q, request, conOre, conProb, senzaCache) {
+// prDato: la % gia' chiesta per tutto il gruppo (probDi), istante UTC in ms → %
+async function perPunto(lat, lon, q, request, conOre, conProb, senzaCache, prDato) {
   if (conProb === undefined) conProb = true;
   // cella di ~1 km: la cache vale per chiunque guardi lo stesso posto
   const la = lat.toFixed(2), lo = lon.toFixed(2), qq = q == null ? '' : String(Math.round(q / 10) * 10);
@@ -107,7 +109,7 @@ async function perPunto(lat, lon, q, request, conOre, conProb, senzaCache) {
   ]);
   if (!met.ok) return { dati: { errore: 'MET Norway ' + met.status }, maxAge: 0 };
   const d = await met.json();
-  const pr = {}; // istante UTC in ms → %
+  const pr = prDato || {}; // istante UTC in ms → %
   if (prob && prob.ok) { try { const o = await prob.json(); o.hourly.time.forEach((t, i) => { pr[Date.parse(t + 'Z')] = o.hourly.precipitation_probability[i]; }); } catch (e) {} }
 
   const giorni = {}, ore = [];
@@ -142,13 +144,13 @@ async function perPunto(lat, lon, q, request, conOre, conProb, senzaCache) {
 }
 
 // ── i capoluoghi di un'area, in parallelo (al massimo 12 → sotto i 50 subrequest) ──
-async function perArea(area, env, request, file) {
+async function perArea(area, env, request, file, conProb) {
   // 40: gli indirizzi delle zone arrivano a 30 lettere; le pagine paese hanno anche cifre («...-laghetto-verde-1») e piu' lettere
   const paese = file.indexOf('/data/paesi-localita/') === 0;
   if (!(paese ? /^[a-z0-9-]{2,80}$/ : /^[a-z-]{3,40}$/).test(area)) return { errore: 'area' };
   // data nella chiave, vedi perPunto; f = il FILE intero (20/10/2026): prima erano le sue due prime lettere, e
   // paesi-zone e paesi-localita davano «pa» tutti e due, cosi' una zona e un paese con lo stesso nome si pestavano
-  const chiave = new Request(`https://cache.previsioni/area?v=${VERSIONE}&d=${oraLocale(new Date().toISOString()).g}&f=${file.slice(6, -5)}&a=${area}`);
+  const chiave = new Request(`https://cache.previsioni/area?v=${VERSIONE}&d=${oraLocale(new Date().toISOString()).g}&f=${file.slice(6, -5)}&a=${area}${conProb ? '&pr=1' : ''}`);
   const cache = caches.default;
   const c = await cache.match(chiave); if (c) return c.json();
   const fr = await env.ASSETS.fetch(new URL(file, request.url));
@@ -156,25 +158,42 @@ async function perArea(area, env, request, file) {
   const lista = await fr.json();
   const citta = lista[area]; if (!citta) return { errore: 'area sconosciuta' };
   // ⚠️ TETTO DI 50 SOTTORICHIESTE per chiamata (Cloudflare): con 12 citta' e la % di Open-Meteo erano 51 e la
-  // Svizzera cadeva al primo colpo (7/10). Qui niente %, e una citta' che fallisce resta sola col suo errore.
+  // Svizzera cadeva al primo colpo (7/10). Qui niente % punto per punto (con &pr=1 una richiesta sola per tutti, probDi),
+  // e una citta' che fallisce resta sola col suo errore.
   /* ⚠️ A GRUPPI DI 6 (20/10/2026). Una Function di Cloudflare tiene aperte al massimo 6 connessioni alla volta: le
      altre aspettano in fila, ma il tetto di 8 s di MET (AbortSignal.timeout) parte quando la fetch viene CHIESTA, non
      quando parte. Con le 21 zone della Toscana (?zonedi=) rispondevano sempre le prime 6 e le altre 15 scadevano in
      fila; in locale (wrangler) il limite non c'e' e andava. A gruppi, il tempo di ognuna parte quando parte davvero. */
-  return previsioniDi(citta, area, request, cache, chiave);
+  return previsioniDi(citta, area, request, cache, chiave, conProb);
+}
+
+// la % di tanti punti con UNA richiesta a Open-Meteo: latitudini e longitudini separate da virgole, risponde con un
+// elenco nello stesso ordine (25/10/2026, pagine meteo delle zone). Cosi' 12 paesi costano 1 sottorichiesta e 1
+// connessione invece di 12, sotto i due tetti scritti in perArea. null se Open-Meteo non risponde: si va senza %.
+async function probDi(punti) {
+  try {
+    const la = punti.map(p => (+p.lat).toFixed(2)).join(','), lo = punti.map(p => (+p.lon).toFixed(2)).join(',');
+    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&hourly=precipitation_probability&timezone=GMT&forecast_days=8`, { signal: AbortSignal.timeout(TEMPO_PROB_MS) });
+    if (!r.ok) return null;
+    const j = await r.json(), l = Array.isArray(j) ? j : [j];
+    if (l.length !== punti.length) return null;
+    return l.map(o => { const pr = {}; o.hourly.time.forEach((t, i) => { pr[Date.parse(t + 'Z')] = o.hourly.precipitation_probability[i]; }); return pr; });
+  } catch (e) { return null; }
 }
 
 // le previsioni di un elenco di punti, a gruppi di 6, con la stessa cache delle aree (perArea e perPosti)
-async function previsioniDi(citta, area, request, cache, chiave) {
-  const uno = async p => {
-    try { const r = await perPunto(p.lat, p.lon, p.q, request, false, false, true); return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, ...(p.c ? { c: 1 } : {}), ...(p.r ? { r: p.r } : {}), ...(p.qui ? { qui: 1 } : {}), ...(p.s ? { s: p.s } : {}), ...(p.z ? { z: 1 } : {}), ...(p.sotto ? { sotto: p.sotto } : {}), ...(r.dati.errore ? { errore: r.dati.errore } : { giorni: r.dati.giorni, agg: r.dati.agg }) }; }
+async function previsioniDi(citta, area, request, cache, chiave, conProb) {
+  const prob = conProb && PROB ? await probDi(citta) : null;
+  const uno = async (p, i) => {
+    try { const r = await perPunto(p.lat, p.lon, p.q, request, false, false, true, prob ? prob[i] : null); return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, ...(p.c ? { c: 1 } : {}), ...(p.r ? { r: p.r } : {}), ...(p.qui ? { qui: 1 } : {}), ...(p.s ? { s: p.s } : {}), ...(p.z ? { z: 1 } : {}), ...(p.sotto ? { sotto: p.sotto } : {}), ...(r.dati.errore ? { errore: r.dati.errore } : { giorni: r.dati.giorni, agg: r.dati.agg }) }; }
     catch (e) { return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, errore: String(e && e.message || e) }; }
   };
   const ris = [];
-  for (let i = 0; i < citta.length; i += 6) ris.push(...await Promise.all(citta.slice(i, i + 6).map(uno)));
+  for (let i = 0; i < citta.length; i += 6) ris.push(...await Promise.all(citta.slice(i, i + 6).map((p, k) => uno(p, i + k))));
   const dati = { area, agg: (ris.find(x => x.agg) || {}).agg || null, capoluoghi: ris, fonte: 'MET Norway (ECMWF)' + (PROB ? ' · % Open-Meteo' : '') };
   if (!ris.some(x => x.giorni)) dati.errore = 'nessuna citta\' risponde';   // MET giu': errore in cima, vedi onRequestGet (bug 5)
-  if (!ris.some(x => x.errore)) await cache.put(chiave, new Response(JSON.stringify(dati), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=1800', 'Date': new Date().toUTCString() } }));
+  // chiesta la % e Open-Meteo non ha risposto: in cache solo 2 minuti, come per il punto singolo
+  if (!ris.some(x => x.errore)) await cache.put(chiave, new Response(JSON.stringify(dati), { headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${conProb && !prob ? 120 : 1800}`, 'Date': new Date().toUTCString() } }));
   return dati;
 }
 
