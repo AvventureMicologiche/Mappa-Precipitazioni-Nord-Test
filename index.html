@@ -13759,7 +13759,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
      serve «immutable» per un anno. A ogni rigenerazione delle tessere:
      push forzato di la', poi QUI il codice nuovo (`git rev-parse HEAD`
      nel repo delle tessere). Le vecchie copie spariscono da sole. */
-  var TESSERE_COMMIT='90a532e7a3f95e6cde1fc4fd0ee6fc658ffb2f6d';   // ramo boschi-di-fiume, con le quote z5-11 del filtro di altitudine (27/9/2026)
+  var TESSERE_COMMIT='e19f7b19852573d067391c5e46b62bf65473b2db';   // main: le cerrete in bordeaux, dodicesimo colore (25/10/2026; rilievo e quote identici a prima)
   var TESSERE='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@'+TESSERE_COMMIT+'/';
   var BASE=TESSERE+'boschi/', OPACITA=0.7, satRetino=0.30;   /* 30%: standard scelto da lui il 13/10/2026 (prima 35% dal 29/9, e 55%) */   // satRetino: la manopola del retino sopra la foto satellitare
   var RILIEVO=TESSERE+'rilievo/', TERRENO=TESSERE+'terreno/', Z_TERRENO=12;
@@ -14130,14 +14130,18 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   }
 
   /* Ordine della legenda a tre colonne (26/9/2026): le voci medie nella terza
-     colonna, che e' la piu' larga; le due LUNGHE («carpino nero...» e «pioppi,
-     salici...») su due colonne, una riga ciascuna, in fondo. Un gruppo nuovo che
-     qui non c'e' finisce fra le ultime: indice.json resta l'unica fonte dei gruppi. */
-  var BO_ORDINE=['faggete','castagneti','conifere non precisate','querceti','lariceti','abetaie e peccete',
-                 'robinieti','pinete','altri boschi','pioppi, salici, ontani e frassini','carpino, orniello e aceri'];
-  // ⚠️ Quattro righe: «pioppi...» su due colonne e il carpino accanto, nella terza.
-  // Per questo il carpino ha perso «nero» (sua scelta, 26/9): 132 px, la colonna ne ha ~139 a 360.
-  var BO_LUNGHE=['pioppi, salici, ontani e frassini'];
+     colonna, che e' la piu' larga. Un gruppo nuovo che qui non c'e' finisce fra
+     le ultime: indice.json resta l'unica fonte dei gruppi. */
+  /* ⚠️ DODICI VOCI IN QUATTRO RIGHE (25/10/2026, con le cerrete; sua scelta fra «una riga in piu'» e
+     «stessa altezza»). Le cerrete accanto ai querceti; le voci lunghe tutte nella terza colonna, la larga
+     (conifere, abetaie, carpino, pioppi), e «altri boschi» passa nelle strette. «pioppi, salici, ontani e
+     frassini» in legenda e' corto (BO_CORTI): per intero non sta in una colonna. Il nome intero resta nella
+     nuvoletta del tocco e nelle pagine (i frassini sono il 4% di quel colore in Toscana, gli ontani l'11%).
+     Misurato a 360, 393, tablet, 1536x702 e 1440x900: niente tagliato, pannello alto come con undici voci. */
+  var BO_ORDINE=['faggete','castagneti','conifere non precisate','querceti','cerrete','abetaie e peccete',
+                 'lariceti','pinete','carpino, orniello e aceri','robinieti','altri boschi','pioppi, salici, ontani e frassini'];
+  var BO_LUNGHE=[];   // nessuna su due colonne (con undici voci lo era «pioppi...», 26/9)
+  var BO_CORTI={'pioppi, salici, ontani e frassini':'pioppi, salici e ontani'};
   function ordinaLegenda(gr){
     var pos=function(g){ var i=BO_ORDINE.indexOf(g[0]); return i<0 ? BO_ORDINE.length-1.5 : i; };
     return gr.slice().sort(function(a,b){ return pos(a)-pos(b); });
@@ -14166,7 +14170,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
       // «solo satellite» in un tocco: il retino va a 0 e torna dov'era (29/9, suo)
       +'<span class="bo-az bo-az-nascondi" id="bo-nascondi" role="button">'+(satRetino>0?'Nascondi boschi':'Mostra boschi')+'</span></div>'
       +'<div class="bo-griglia">'+ordinaLegenda(indice.gruppi).map(function(g){
-        return '<div class="bo-riga'+(BO_LUNGHE.indexOf(g[0])>=0?' lunga':'')+'"><span class="bo-sw" style="background:'+g[1]+';opacity:'+OPACITA+'"></span>'+g[0]+'</div>';
+        return '<div class="bo-riga'+(BO_LUNGHE.indexOf(g[0])>=0?' lunga':'')+'"'+(BO_CORTI[g[0]]?' title="'+g[0]+'"':'')+'><span class="bo-sw" style="background:'+g[1]+';opacity:'+OPACITA+'"></span>'+(BO_CORTI[g[0]]||g[0])+'</div>';
       }).join('')+'</div>'
       +'<div class="bq"><div class="bq-tit"><span>\u26f0 <span id="bq-lab">Filtra per altitudine</span> <em id="bq-val"></em></span><small id="bq-perc"></small></div>'
       +'<div class="bq-area" id="bq-area"><div class="bq-ist" id="bq-ist"></div>'
