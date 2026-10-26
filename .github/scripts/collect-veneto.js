@@ -7,10 +7,20 @@ const https = require('https');
 const zlib  = require('zlib');
 const fs    = require('fs');
 const path  = require('path');
+const { creaDir, segnaDir, direzione } = require('./lib-direzione.js');
 
 const DATA_DIR  = path.join(__dirname, '..', '..', 'data', 'veneto');
 const MAX_DAYS  = 730;
 const BASE_URL  = 'https://meteo.arpa.veneto.it/meteo/dati_meteo/xml';
+// ⚠️ CERTIFICATO DI ARPA VENETO (2/10/2026). Dal 30/9 il loro server presenta il
+// certificato nuovo (Actalis «Organization Validated» 2025) insieme all'intermedio
+// SBAGLIATO («Domain Validated»): i browser rimediano scaricandosi quello giusto,
+// Node no, e dal 1/10 alle 12:52 ogni giro falliva con «unable to verify the first
+// certificate». Qui si aggiungono l'intermedio giusto e la radice Actalis 2025 con
+// firma incrociata (actalis-ov-2025.pem, scade nel 2030/2035). La verifica resta
+// ACCESA: non si spegne mai il controllo, si completa la catena. Se ARPA sistema il
+// server non cambia niente.
+const CA = [...require('tls').rootCertificates, fs.readFileSync(path.join(__dirname, 'actalis-ov-2025.pem'), 'utf8')];
 
 function getItalyOffset(date) {
   // Calcola offset italiano basato sul calendario (non getTimezoneOffset che è 0 su server UTC)
@@ -33,7 +43,9 @@ function getTargetDate() {
 
 function fetchURL(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, {
+    // timeout nelle opzioni (26/10/2026): senza, finche' la connessione non e' aperta vale il tetto di 5 s dell'agente di Node e i 30 s qui sotto scattano dopo 5
+    https.get(url, { timeout: 30000,
+      ca: CA,
       headers: { 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'User-Agent': 'Mozilla/5.0' }
     }, (res) => {
       let chunks = [];
@@ -49,7 +61,8 @@ function fetchURL(url) {
         else if (enc === 'deflate') zlib.inflate(buf, decompress);
         else zlib.gunzip(buf, decompress);
       });
-    }).on('error', reject);
+    }).on('error', reject)
+      .setTimeout(30000, function () { this.destroy(new Error('nessuna risposta in 30 s')); });
   });
 }
 
@@ -102,11 +115,19 @@ function totalePrecGiorno(sens, prefix) {
 const MIN_ORE_METEO = 20;
 function estraiMeteoVen(xml, prefix) {
   const out = {};
+  // Direzione del vento (2/10/2026): sensore DVENTO, gradi, stessi istanti di
+  // VVENTO. Si accoppiano per ISTANTE e si pesano sulla velocita'.
+  const velIst = {}, dirIst = {};
   const sReg = /<SENSORE>([\s\S]*?)<\/SENSORE>/g;
   let sm;
   while ((sm = sReg.exec(xml)) !== null) {
     const sens = sm[1];
     const type = getTag(sens, 'TYPE');
+    if (type === 'DVENTO') {
+      const r = /<DATI ISTANTE="(\d{12})"><VM>([\d.]+)<\/VM><\/DATI>/g; let x;
+      while ((x = r.exec(sens)) !== null) if (x[1].startsWith(prefix)) dirIst[x[1]] = parseFloat(x[2]);
+      continue;
+    }
     if (type !== 'TEMP' && type !== 'VVENTO' && type !== 'UMID') continue;   // UMID: umidita' relativa a 2m, % (dal 18/8/2026)
     const dReg = /<DATI ISTANTE="(\d{12})"><VM>(-?[\d.]+)<\/VM><\/DATI>/g;
     let dm;
@@ -120,6 +141,7 @@ function estraiMeteoVen(xml, prefix) {
       if (type === 'UMID' && (v < 0 || v > 100)) continue;
       vals.push(v);
       ore.add(dm[1].slice(8, 10));
+      if (type === 'VVENTO') velIst[dm[1]] = v;
     }
     if (ore.size < MIN_ORE_METEO) continue;
     if (type === 'TEMP')
@@ -141,6 +163,10 @@ function estraiMeteoVen(xml, prefix) {
       if (h) out.wh = parseInt(h[1], 10);
     }
   }
+  const dir = creaDir();
+  for (const ist of Object.keys(velIst)) segnaDir(dir, ist.slice(8, 10), dirIst[ist] !== undefined ? dirIst[ist] : null, velIst[ist]);
+  const wd = direzione(dir);
+  if (wd !== null && out.w) out.wd = wd;
   return out;
 }
 

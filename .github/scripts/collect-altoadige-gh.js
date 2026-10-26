@@ -24,6 +24,7 @@
 const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
+const { tieniMeteo } = require('./lib-tieni-meteo.js');
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'altoadige');
 const API_URL  = 'https://static-meteo.provincia.bz.it/stations-data/website/valley.json';
@@ -44,7 +45,8 @@ function fmtDate(d) {
 
 function fetchJSON(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, {
+    // timeout nelle opzioni (26/10/2026): senza, finche' la connessione non e' aperta vale il tetto di 5 s dell'agente di Node e i 30 s qui sotto scattano dopo 5
+    https.get(url, { timeout: 30000,
       headers: {
         'Accept': 'application/json,*/*',
         'User-Agent': 'Mozilla/5.0 (compatible; MappaPluvio/1.0)'
@@ -59,7 +61,8 @@ function fetchJSON(url) {
           catch(e) { reject(new Error('JSON parse error: ' + e.message)); }
         }
       });
-    }).on('error', reject);
+    }).on('error', reject)
+      .setTimeout(30000, function () { this.destroy(new Error('nessuna risposta in 30 s')); });
   });
 }
 
@@ -269,6 +272,9 @@ async function main() {
         existing.stations.forEach(s => {
           if (!newIds.has(s.id) && s.mm > 0) finalStations.push(s);
         });
+        // ⚠️ (19/10/2026, quinto check, bug 6) il record nuovo ha solo la pioggia: senza questa riga t/w/u del
+        // giorno sparivano fino a che raccogliMeteo, qui sotto, non riusciva a rimetterli (lib-tieni-meteo.js)
+        tieniMeteo(finalStations, existing.stations);
         console.log('  Merge MAX con file esistente applicato');
       }
     } catch(e) {

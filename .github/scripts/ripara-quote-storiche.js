@@ -33,7 +33,7 @@
  * in modo diverso. Era il difetto che peggiorava tutto: scrivere «0 m slm»
  * su un pluviometro di montagna e' peggio che non scrivere niente.
  *
- * uso: node .github/scripts/ripara-quote-storiche.js [piemonte|terreno|tutto] [--prova]
+ * uso: node .github/scripts/ripara-quote-storiche.js [piemonte|terreno|zeri|tutto] [--prova]
  *      --prova   dice cosa farebbe senza scrivere niente
  */
 
@@ -138,6 +138,33 @@ if (MODO === 'terreno' || MODO === 'tutto') {
   const reti = JSON.parse(fs.readFileSync(f, 'utf8')).reti || {};
   console.log(`\nQuota dal terreno (~): ${Object.values(reti).reduce((a, r) => a + Object.keys(r).length, 0)} stazioni note`);
   for (const rete of RETI_TERRENO) somma(riempi(rete, reti[rete] || {}, true));
+}
+
+// ── GLI ZERI DICHIARATI IN COLLINA (modo `zeri`, 14/10/2026) ─────────────────
+// Il SIR Toscana dichiara 0 m per Bulera (PI) e Ponte Orgia (SI), che per il
+// terreno stanno a 183 e 184 m. Qui si tocca SOLO uno 0 dichiarato con il terreno
+// sopra i 20 m (la stessa regola di correggiZeri in lib-quota-terreno.js): le
+// stazioni sul mare restano a 0, e la quota dichiarata non si tocca mai.
+if (MODO === 'zeri' || MODO === 'tutto') {
+  const SOGLIA = require('./lib-quota-terreno.js').SOGLIA_ZERO;
+  const reti = JSON.parse(fs.readFileSync(path.join(RADICE, 'quote-terreno.json'), 'utf8')).reti || {};
+  for (const rete of ['toscana']) {
+    const quote = reti[rete] || {};
+    let toccati = 0, messe = 0;
+    const files = fileDi(rete);
+    for (const f of files) {
+      const { d, st } = leggi(f);
+      let cambiato = false;
+      for (const s of st) {
+        if (s.q !== 0 || s.qt) continue;
+        const q = quote[s.id];
+        if (typeof q === 'number' && q > SOGLIA) { s.q = Math.round(q); s.qt = 1; messe++; cambiato = true; }
+      }
+      if (cambiato) { toccati++; if (!PROVA) fs.writeFileSync(f, JSON.stringify(d)); }
+    }
+    console.log(`\n${rete.padEnd(22)} file toccati ${String(toccati).padStart(3)}/${String(files.length).padStart(3)}  zeri corretti ${messe}`);
+    somma({ toccati, messe, ignote: 0 });
+  }
 }
 
 console.log(`\ntotale: ${tot.toccati} file toccati, ${tot.messe} quote messe, ${tot.ignote} restate ignote`);

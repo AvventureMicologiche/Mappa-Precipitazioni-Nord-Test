@@ -28,7 +28,13 @@
        non costa niente, non perche' si sia visto che aiuta. -->
   <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
 
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <!-- Icona del sito, 26/10/2026 (scelta da lui nella scheda GA4 4: la G4 variante 2, goccia sfumata e fungo arancio
+       su fondo cielo). Le altre pagine non hanno righe di icona e ricadono su /favicon.ico. File e mockup nel banco,
+       icona-sito-g4\ e mockup-icona-sito\. -->
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/icona.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
   <!-- ⚠️ CANONICO (23/8/2026). Ogni link condiviso e' questa stessa pagina con
        i parametri dello stato (?r=…&da=…&a=…): per Google erano PAGINE DIVERSE
        e uguali fra loro, e Search Console ha mandato l'avviso «pagina duplicata
@@ -66,15 +72,18 @@
        con una HEAD prima di spostare), quindi l'anteprima non cambia aspetto:
        cambia solo chi la serve. Il ?v= resta com'era — il dominio nuovo è
        comunque un URL nuovo per la cache dei social. -->
-  <meta property="og:image" content="https://avventurepluvio-test.netlify.app/preview.jpg?v=20260803">
+  <!-- 20/10/2026 (suo): ANTEPRIMA NUOVA, a sinistra la pioggia degli ultimi 90 giorni e a destra i boschi, Italia intera
+       (attrezzi nel banco di lavoro: mockup-indice-funghi\scatta-anteprima-social.js e componi-anteprima.js). ?v= nuovo:
+       i social tengono l'anteprima in memoria per indirizzo. -->
+  <meta property="og:image" content="https://avventurepluvio-test.pages.dev/preview.jpg?v=20261020">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:type" content="image/jpeg">
-  <meta property="og:image:alt" content="Mappa delle precipitazioni degli ultimi 30 giorni in tutta Italia">
+  <meta property="og:image:alt" content="L'Italia due volte: a sinistra la pioggia degli ultimi 90 giorni misurata dai pluviometri, a destra i boschi colorati per tipo">
   <meta property="og:url" content="https://precipitazioni.avventuremicologiche.it/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://avventurepluvio-test.netlify.app/preview.jpg?v=20260803">
+  <meta name="twitter:image" content="https://avventurepluvio-test.pages.dev/preview.jpg?v=20261020">
   <meta name="theme-color" content="#1b3f6e">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -5009,146 +5018,16 @@ function cacheInit(){
 cacheInit();
 
 // ═══════════════════════════════════════════════════════════════
-// DATA SOURCE: OPEN-METEO
+// ETICHETTA DEL PERIODO
 // ═══════════════════════════════════════════════════════════════
-// Open-Meteo API: gratuita, no CORS, dati orari reali (ERA5/GFS)
-// Endpoint: https://archive-api.open-meteo.com/v1/archive per dati storici
-//           https://api.open-meteo.com/v1/forecast per dati recenti (<7gg)
-
-function fmtDate(d){
-  var p=function(n){return String(n).padStart(2,'0');};
-  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
-}
-
-function loadOpenMeteo(stations,pastDate,nowDate,labelPeriodo,badgePrefix){
-  var msRange=nowDate.getTime()-pastDate.getTime();
-  var days7=7*24*3600000;
-  // Open-Meteo: usa /forecast per ultimi 7 giorni, /archive per storici
-  var useArchive=msRange>days7;
-
-  // Raggruppa stazioni in batch da 10 (limit API)
-  var BATCH=100;
-  var batches=[];
-  for(var i=0;i<stations.length;i+=BATCH){
-    batches.push(stations.slice(i,i+BATCH));
-  }
-
-  var results={};
-  var pending=batches.length;
-
-  function onBatchDone(){
-    pending--;
-    if(pending>0) return;
-    // Assembla output
-    var out=stations.map(function(s){
-      return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,p:s.p,mm:results[s.n]||0};
-    });
-    var fonte=badgePrefix?badgePrefix+' · Open-Meteo':'🌍 Open-Meteo live';
-    render(out,fonte,labelPeriodo);
-  }
-
-  batches.forEach(function(batch){
-    var lats=batch.map(function(s){return s.lat;}).join(',');
-    var lons=batch.map(function(s){return s.lon;}).join(',');
-    var startDate=fmtDate(pastDate);
-    var endDate=fmtDate(nowDate);
-    var days=Math.ceil(msRange/(24*3600000));
-    var isHourly=msRange<2*24*3600000; // periodi < 2 giorni → usa dati orari
-    var cutoff=new Date(new Date().getTime()-6*24*3600000);
-    var urls=[];
-
-    if(isHourly){
-      // Per ore: usa hourly precipitation con past_days=2
-      // così prendiamo le ultime 48h e filtriamo per ora esatta
-      urls.push('https://api.open-meteo.com/v1/forecast'
-        +'?latitude='+lats+'&longitude='+lons
-        +'&hourly=precipitation&timezone=Europe%2FRome'
-        +'&past_days=3&forecast_days=0');
-    } else if(days<=92){
-      urls.push('https://api.open-meteo.com/v1/forecast'
-        +'?latitude='+lats+'&longitude='+lons
-        +'&daily=precipitation_sum&timezone=Europe%2FRome'
-        +'&past_days='+days+'&forecast_days=0');
-    } else if(nowDate<=cutoff){
-      urls.push('https://archive-api.open-meteo.com/v1/archive'
-        +'?latitude='+lats+'&longitude='+lons
-        +'&start_date='+startDate+'&end_date='+endDate
-        +'&daily=precipitation_sum&timezone=Europe%2FRome');
-    } else {
-      urls.push('https://archive-api.open-meteo.com/v1/archive'
-        +'?latitude='+lats+'&longitude='+lons
-        +'&start_date='+startDate+'&end_date='+fmtDate(cutoff)
-        +'&daily=precipitation_sum&timezone=Europe%2FRome');
-      urls.push('https://api.open-meteo.com/v1/forecast'
-        +'?latitude='+lats+'&longitude='+lons
-        +'&daily=precipitation_sum&timezone=Europe%2FRome'
-        +'&past_days=6&forecast_days=0');
-    }
-
-    var pastMs=pastDate.getTime();
-    var nowMs=nowDate.getTime();
-
-    function processOM(data,acc){
-      var arr=Array.isArray(data)?data:[data];
-      arr.forEach(function(loc,i){
-        var st=batch[i]; if(!st) return;
-        if(isHourly){
-          // Open-Meteo restituisce "2026-04-29T06:00" in ora locale Europe/Rome
-          // JavaScript Date() in ora locale:
-          // new Date(2026,3,29,6,0) = 29 apr ore 6:00 ora locale
-          var hourly=loc.hourly; if(!hourly||!hourly.time) return;
-          var total=0;
-          // Converti pastDate/nowDate in stringa locale "YYYY-MM-DDTHH:MM"
-          function toLocalISO(d){
-            var p=function(n){return String(n).padStart(2,'0');};
-            return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())
-              +'T'+p(d.getHours())+':'+p(d.getMinutes());
-          }
-          // Aggiungi 1h di margine per coprire sfasamenti di timezone
-          var pastWithMargin=new Date(pastDate.getTime()-3600000);
-          var nowWithMargin=new Date(nowDate.getTime()+3600000);
-          var pastStr=toLocalISO(pastWithMargin);
-          var nowStr=toLocalISO(nowWithMargin);
-          for(var j=0;j<hourly.time.length;j++){
-            var tStr=hourly.time[j].substring(0,16); // "2026-04-29T06:00"
-            if(tStr>=pastStr&&tStr<=nowStr){
-              var v=parseFloat(hourly.precipitation[j]);
-              if(!isNaN(v)&&v>0) total+=v;
-            }
-          }
-          acc[st.n]=(acc[st.n]||0)+total;
-        } else {
-          // Dati giornalieri: filtra per data stringa
-          var daily=loc.daily; if(!daily||!daily.time) return;
-          for(var j=0;j<daily.time.length;j++){
-            if(daily.time[j]>=startDate&&daily.time[j]<=endDate){
-              var v=parseFloat(daily.precipitation_sum[j]);
-              if(!isNaN(v)&&v>0) acc[st.n]=(acc[st.n]||0)+v;
-            }
-          }
-        }
-      });
-    }
-    var acc={};
-    urls.reduce(function(chain,url){
-      return chain
-        .then(function(){return fetch(url);})
-        .then(function(r){if(!r.ok)throw new Error('OM '+r.status);return r.json();})
-        .then(function(data){processOM(data,acc);});
-    },Promise.resolve())
-    .then(function(){
-      batch.forEach(function(s){
-        var t=acc[s.n]||0;
-        results[s.n]=Math.round(t*10)/10;
-      });
-      onBatchDone();
-    })
-    .catch(function(e){
-      console.warn('Open-Meteo error:',e.message);
-      batch.forEach(function(s){results[s.n]=0;});
-      onBatchDone();
-    });
-  });
+// ⚠️ L'ANNO SOLO QUANDO SERVE (25/10/2026). L'etichetta del periodo («01 set → 30 set») finisce anche nella
+// striscia blu della foto condivisa: senza anno, dal 1° gennaio un periodo di dicembre sembrerebbe dell'anno
+// nuovo. Se una delle due date non e' dell'anno in corso, l'anno va su tutte e due. Qui stava loadOpenMeteo,
+// codice morto che non chiamava nessuno e che, se Open-Meteo non rispondeva, scriveva 0 mm.
+function periodoBreve(a,b){
+  var o={day:'2-digit',month:'short'}, y=new Date().getFullYear();
+  if(a.getFullYear()!==y||b.getFullYear()!==y) o.year='numeric';
+  return a.toLocaleDateString('it-IT',o)+' → '+b.toLocaleDateString('it-IT',o);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -5420,8 +5299,7 @@ function loadData(pastDate,nowDate,labelPeriodo){
   }
   if(fmtISOLocal(pastDate)<_ini.data){
     pastDate=new Date(_ini.data+'T00:00:00');
-    var _dI=function(dd){return dd.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});};
-    labelPeriodo=_dI(pastDate)+' → '+_dI(nowDate);
+    labelPeriodo=periodoBreve(pastDate,nowDate);
   }
   /* Una nuova analisi e' una nuova inquadratura anche per chi e' arrivato da un link (18/10/2026).
      `_vistaDaLink` protegge la PRIMA vista del link (il ramo dei link la rialza subito dopo questa
@@ -6267,7 +6145,7 @@ var PIEMONTE_ESCLUSE={
   // Le prime due sono le piu' sicure che abbiamo: l'archivio reale parte dal
   // 3/5/2026 e permette un solo confronto all'indietro, e quel confronto dice
   // che erano sane fino a poco fa.
-  'FINIERE':true,              // 13,0 mm, il 24% di VAL CLAREA che sta a 2,6 km. Nei 45 giorni precedenti era al 91%: e' crollata.
+  // FINIERE (esclusa il 21/8: 13,0 mm, il 24% di VAL CLAREA a 2,6 km) e' RIENTRATA il 26/10/2026, vedi in fondo.
   // ── Tre rientrate il 4/10/2026, giorno per giorno dal 20/8 contro i quattro
   // vicini, sui giorni con almeno 5 mm di mediana (come la Toscana, vedi
   // TOSCANA_ESCLUSE): MEUGLIANO 10 giorni su 10 in riga dal 20/7, 120% dei
@@ -6286,12 +6164,25 @@ var PIEMONTE_ESCLUSE={
   // 11,0 km. Quella condizione serve a non accusare i fondovalle, e in mezzo
   // alle risaie non c'entra: e' una scelta fatta a ragion veduta, non
   // l'applicazione automatica della regola.
-  'VERCELLI':true,             // 12,1 mm nei 30 giorni consegnati su 45, il 13,8% della mediana dei vicini (88,0)
+  // VERCELLI (esclusa il 7/9: 12,1 mm in 30 giorni, il 13,8% dei vicini) e' RIENTRATA il 26/10/2026, vedi in fondo.
   // ── 20/10/2026: segnalata dal controllo del lunedi', e la scarta la stessa ARPA: nella banca
   // dati ufficiale il totale del giorno e' VUOTO con classe A0 (non valido) il 9-10/9 e dal 6 al
   // 9/10, mentre Trana fa fino a 42 mm e Rivoli 81. Le briciole che leggiamo (0,2-0,8 mm) sono
   // tempo reale non validato. Il 19/10 1,6 mm in riga coi vicini: se l'ARPA torna a validarla, rientra.
-  'AVIGLIANA':true             // 3,6 mm nei 40 giorni consegnati su 45, il 6,9% della mediana dei vicini (52)
+  // AVIGLIANA (3,6 mm in 40 giorni, il 6,9% dei vicini) e' RIENTRATA il 26/10/2026, vedi sotto.
+  // ── 26/10/2026: ricontrollo di tutta la lista, giorno per giorno sugli ultimi 70 giorni contro
+  // i cinque vicini piu' prossimi (giorni con almeno 5 mm di mediana) e contro la banca dati ARPA.
+  // RIENTRANO: AVIGLIANA, che l'ARPA valida di nuovo dal 10/10 (classe AZ/AY), in riga il 20/10
+  // (30,4 contro 37) e il 21/10 (36,8 contro 42); FINIERE, in riga 5 giorni su 5 dal 10/9,
+  // settembre 87% e ottobre 93% dei vicini; VERCELLI, in riga 4 su 4 dal 18/9, ottobre 113%.
+  // Restano fuori MONTE MALANOTTE (vedi la sua nota) e CEPPO MORELLI, che non consegna.
+  // ── 26/10/2026: segnalata dal controllo del lunedi', e la scarta la stessa ARPA: nella banca
+  // dati ufficiale la pioggia e' VUOTA con classe A0 dal 7 al 23/10, mentre noi abbiamo lo zero
+  // del tempo reale l'8 e il 9/10 (Bobbio Pellice 53,5 e 29,2 mm, Pian Giasset 52,8 e 22,2), e
+  // dal 12 al 23/10 non consegna. Non era neve: la minima quei giorni era sopra lo zero. In
+  // estate era in riga (21 giorni bagnati su 24). Dal 24/10 l'ARPA la valida di nuovo: rientra
+  // quando l'8-9/10 escono dai periodi lunghi (30 giorni: dopo l'8/11).
+  'COLLE BARANT':true          // 5,6 mm nei 33 giorni consegnati su 45, il 6,0% della mediana dei vicini (93)
 };
 
 function loadARPAPiemonteRegion(pastDate,nowDate,labelPeriodo,cb){
@@ -7273,7 +7164,21 @@ var MH_ESCLUSE={
   // danno 250 m di quota diversa e non si sa quale sia quella vera.
   // Sarno SPM20 40.82944/14.61417 gemella di Sarno a 1,4 km (97,6 mm tutt'e due): resta
   // Sarno. ⚠️ Sarno CF (40.83528/14.59528) NON e' un doppione: misura numeri suoi e resta.
-  campania:{'41.11500_14.82500':true,'40.68889_14.51444':true,'40.78694_14.91222':true,'40.82944_14.61417':true}
+  campania:{'41.11500_14.82500':true,'40.68889_14.51444':true,'40.78694_14.91222':true,'40.82944_14.61417':true},
+  // S.Severo (FG), 41.68583/15.39267, esclusa il 26/10/2026: MUTA. Non fa 1 mm dal 17/8, e in
+  // ottobre zero in tutti i 7 giorni di pioggia dei vicini (9/10 Torremaggiore 14,2, Lucera 16;
+  // 21/10 Torremaggiore e Bari Ufficio Idrografico 13). Restano Torremaggiore a 8,6 km e Bari
+  // Ufficio Idrografico a 13,3.
+  // Carlantino (FG), 41.58400/14.95717, esclusa il 26/10/2026: un imbuto che si intasa piano,
+  // come Vercelli. Luglio 62% della mediana dei vicini, agosto 9%, ottobre zero in tutti e 5 i
+  // giorni bagnati (9/10 Celenza Valfortore, a 4,0 km, 23,1 mm). Restano Celenza Valfortore e
+  // Casalnuovo Monterotaro (9,5 km), e in Molise Tappino a Gambatesa e Gambatesa.
+  // Ricontrollo di tutta la lista lo stesso giorno, giorno per giorno sugli ultimi 70: restano
+  // fuori tutte. Da riguardare alle prossime piogge Riesi_DRPC (in riga il 10/10, 61,5 mm contro
+  // 55,8 di Riesi SIAS a 2,9 km, ma e' l'unico giorno bagnato da quando misura di nuovo) e
+  // Gragnano (in riga il 21-22/10, sorda dall'8 al 12/10). I quattro doppioni sono ancora
+  // identici al decimo (35-36 giorni su 35-36).
+  puglia:{'41.68583_15.39267':true,'41.58400_14.95717':true}
   // ── RIENTRATA il 10/9/2026: Poggio San Vicino (MC, 43.36842_13.07953) ────
   // Esclusa il 21/8/2026 perche' faceva 0,0 mm in 37 giorni. Ha ripreso a
   // misurare quello stesso giorno: 21,8 mm il 21/8, 36,4 il 25/8, 18,0 il
@@ -8136,8 +8041,12 @@ var GEO_FRANCIA = {
   11071621: 'francia-normandia', 11071623: 'francia-occitania',
   2985244:  'francia-provenza'
 };
+/* ⚠️ DAL 25/10/2026 I POSTI LI DA' /api/cerca, NON PIU' OPEN-METEO (il suo piano gratuito vieta i siti con
+   pubblicita'): stessi nomi (GeoNames), stessa forma della risposta, file in luoghi/ fatti da genera-luoghi.js. */
+var CERCA_API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && location.port !== '8788'
+  ? 'http://127.0.0.1:8788/api/cerca' : '/api/cerca';
 function locDaGeocoder(testo) {
-  return fetch('https://geocoding-api.open-meteo.com/v1/search?name=' +
+  return fetch(CERCA_API + '?name=' +
                encodeURIComponent(testo) + '&count=10&language=it')
     .then(function (r) { return r.json(); })
     .then(function (j) {
@@ -10138,8 +10047,7 @@ document.getElementById('cd-apply').addEventListener('click',function(){
   document.getElementById('custom-box').style.display='none';
   var pastDate=new Date(from+'T00:00:00');
   var nowDate=new Date(to+'T23:59:59');
-  var d=function(dd){return dd.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});};
-  var label=d(pastDate)+' → '+d(nowDate);
+  var label=periodoBreve(pastDate,nowDate);
   setActiveBtn(document.getElementById('btn-custom'));
   loadData(pastDate,nowDate,label);
 });
@@ -11032,12 +10940,11 @@ if(_btnShot){
   try{gtag('event',_sq==='i'?'open_shared_image':(_sq==='p'?'open_from_page':'open_shared_map'),{regioni:keys.join(',')})}catch(e){}
   var pastDate=new Date(da+'T00:00:00');
   var nowDate=new Date(a+'T23:59:59');
-  var dfmt=function(dd){return dd.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});};
   // Se il range del link coincide ancora con un preset del ricevente (aperto
   // lo stesso giorno: "30 giorni", "Ieri", ...) si accendono bottone ed
   // etichetta come nel flusso normale; altrimenti si mostrano le date
   // esplicite (il link congela le date assolute di proposito).
-  var label=dfmt(pastDate)+' → '+dfmt(nowDate), btnMatch=null;
+  var label=periodoBreve(pastDate,nowDate), btnMatch=null;
   if(a===ieriStr){
     if(da===a){ label='Ieri'; btnMatch=document.querySelector('.tp-btn[data-type="ieri"]'); }
     else{
@@ -15890,11 +15797,16 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
 })();
 </script>
 <!-- ═══ FINESTRA «NOVITÀ» ALLA PRIMA APERTURA (30/9/2026, sua richiesta; rifatta due volte la stessa notte) ═══
+     ⚠️ 25/10/2026: UNA pagina, le CERRETE dentro un «grazie» che porta a YouTube (sua idea: «grazie, siamo in continua
+     crescita e siete tantissimi... se non sei iscritto sostienici su YouTube»). Filmato = l'inizio del film della home
+     (verticale, accelerato fino ai boschi sull'Italia intera) piu' lo zoom rifatto con le tessere nuove, MASSIMO 10
+     secondi (suo: «se no la gente skippa»). Bottone ROSSO «▶ Iscriviti su YouTube» (pg.vai con yt:true) in coppia
+     con «Vai alla mappa». Il quiz del 20/10 e' uscito.
      ⚠️ 20/10/2026 (VERSIONE 2026-10-20): UNA pagina sola, il quiz tartufi con le 4 regioni nuove. Immagine fissa
      (pg.img, novita/quiz-regioni.jpg, scelta della regione dal sito del quiz) e bottone arancione «Gioca al quiz →»
      (pg.vai) che apre il quiz in una scheda nuova e chiude la finestra (GA azione=quiz).
-     SCADE: si apre da sola solo fino a NV_FINO compreso (una settimana dalla pubblicazione, suo), poi sparisce
-     senza deploy; ?novita=1 la mostra sempre.
+     SCADE: si apre da sola solo fino a NV_FINO, poi sparisce senza deploy; ?novita=1 la mostra sempre. Dal 26/10/2026
+     NV_FINO ha anche l'ORA ('2026-11-01T21:00', domenica alle 21, suo), confrontata con l'ora del telefono.
      ⚠️ RIFATTA IL 4/10/2026 (VERSIONE 2026-10-04): DUE pagine, temperature di ieri e satellite, filmati
      corti con una freccia sul tasto e uno zoom che parte dallo schermo intero (registra-temperature.js
      nel banco di lavoro). Le quattro pagine del 30/9 qui sotto sono la storia.
@@ -15917,16 +15829,33 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   display:flex;flex-direction:column;box-shadow:0 14px 44px rgba(0,0,0,.45);color:#1b3f6e;overflow:hidden}
 /* il riquadro del filmato ha la misura del filmato (640x868) gia' prima che arrivi: niente righe vuote sopra o sotto */
 #nv-film{position:relative;background:#0b1a2b;flex:0 1 auto;min-height:0;aspect-ratio:640/860;max-height:calc(100dvh - 20px - 215px);overflow:hidden;cursor:pointer;line-height:0}
-#nv-film video{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 100%;background:#0b1a2b}   /* taglia gli ultimi 8 px in alto: l'orlo chiaro della barra delle regioni */
+/* INTERO, non ritagliato (26/10/2026, suo: «l'Italia del nord è in parte coperta»): sugli schermi bassi (PC al 125%,
+   1536x702) il riquadro si accorcia e diventa quasi quadrato, e «cover» ancorato in basso tagliava 142 px in alto al
+   filmato verticale. Le fasce ai lati sono nere come il fondo del filmato. (Prima: cover + 50% 100%, per togliere
+   l'orlo di 8 px dei filmati del 30/9, che non ci sono piu'.) */
+#nv-film video{display:block;width:100%;height:100%;object-fit:contain;object-position:50% 50%;background:#000}
 #nv-film video.via{display:none}
 #nv-film img{display:block;width:100%;height:100%;object-fit:contain;object-position:50% 0;background:linear-gradient(#2a1d14,#2e2118)}
 #nv-film img.via{display:none}
 #nv-gioca{display:none;background:#e8891c;color:#fff;border:1px solid #e8891c;border-radius:12px;font-weight:800;font-size:16px;line-height:1;padding:14px 8px;text-decoration:none;box-shadow:0 4px 0 #a85d0c;white-space:nowrap}
 #nv-gioca:hover{background:#f0952a}
 #nv-gioca.pulsa{animation:nvPulsaA 1.3s ease-in-out infinite}
+/* il bottone di YouTube (25/10/2026): lo stesso rosso del bottone in fondo alle pagine */
+#nv-gioca.yt{background:linear-gradient(180deg,#e0262e,#b8141b);border-color:#b8141b;box-shadow:0 4px 0 #7d0d12}
+#nv-gioca.yt:hover{background:linear-gradient(180deg,#e8323a,#c01820)}
+#nv-gioca.yt.pulsa{animation:nvPulsaY 1.3s ease-in-out infinite}
+@keyframes nvPulsaY{0%,100%{box-shadow:0 4px 0 #7d0d12,0 0 0 0 rgba(224,38,46,.6)}50%{box-shadow:0 4px 0 #7d0d12,0 0 0 9px rgba(224,38,46,0)}}
 @keyframes nvPulsaA{0%,100%{box-shadow:0 4px 0 #a85d0c,0 0 0 0 rgba(232,137,28,.6)}50%{box-shadow:0 4px 0 #a85d0c,0 0 0 9px rgba(232,137,28,0)}}
 #nv-avanti.sec{background:#eef3fb;color:#1b3f6e;border:1px solid #c9d6ea;font-weight:700;font-size:15px;min-width:0;padding:14px 8px}
-#nv-piede.coppia #nv-avanti,#nv-piede.coppia #nv-gioca{flex:1 1 0;box-sizing:border-box;height:48px;display:flex;align-items:center;justify-content:center;text-align:center}
+#nv-piede.coppia #nv-avanti,#nv-piede.coppia #nv-gioca{flex:1 1 0;min-width:0;white-space:nowrap;box-sizing:border-box;height:48px;display:flex;align-items:center;justify-content:center;text-align:center}
+/* CELLE UGUALI ANCHE SUL TELEFONO (26/10/2026, suo: a 360 px «Vai alla mappa» andava a capo). «▶ Iscriviti su YouTube»
+   non va a capo e vuole 190 px: sotto i 440 px si prendeva 192 px e lasciava a «Vai alla mappa» 110 (143 a 393 px).
+   Li' il bottone dice «Iscriviti» col logo di YouTube dei bottoni delle pagine (rettangolo bianco, triangolo rosso). */
+#nv-gioca .nv-corto{display:none;align-items:center;gap:8px}
+#nv-gioca .nv-corto svg{width:26px;height:18px;flex:none}
+#nv-gioca .nv-corto svg rect{fill:#fff}
+#nv-gioca .nv-corto svg polygon{fill:#e12b2b}
+@media(max-width:440px){ #nv-gioca .nv-lungo{display:none} #nv-gioca .nv-corto{display:inline-flex} }
 #nv-piede.coppia #nv-punti{display:none}
 #nv-avanti.sec:hover{background:#dfe8f6}
 #nv-alto{padding:12px 14px 0;display:flex;align-items:center;gap:10px;flex:none}
@@ -15952,14 +15881,15 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
 #nv-avanti.pulsa{animation:nvPulsa 1.3s ease-in-out infinite}
 @keyframes nvPulsa{0%,100%{box-shadow:0 0 0 0 rgba(27,63,110,.55)}50%{box-shadow:0 0 0 9px rgba(27,63,110,0)}}
 @media(max-width:900px){ #nv-box{max-width:none} #nv-tit{font-size:24px} #nv-dida{font-size:18.5px} }
-@media(prefers-reduced-motion:reduce){ #nv-gioca.pulsa{animation:none} }
+@media(prefers-reduced-motion:reduce){ #nv-gioca.pulsa,#nv-gioca.yt.pulsa{animation:none} }
 @media(max-height:660px){ #nv-tit{font-size:21px} #nv-dida{min-height:2.4em} #nv-dida span{font-size:17px;padding:7px 12px} #nv-avanti{padding:12px 16px;font-size:15px;min-width:130px} #nv-dietro{padding:12px 12px;font-size:14px} #nv-testo{padding-top:4px;padding-bottom:6px} #nv-film{max-height:calc(100dvh - 20px - 190px)} }
 </style>
 <script>
 (function(){
-  var VERSIONE='2026-10-20', CHIAVE='novitaVista';   // 20/10: la pagina del quiz tartufi, una sola
-  var NV_FINO='2026-10-27';   // ultimo giorno in cui si apre da sola (suo: «una settimana e poi sparisce»); ?novita=1 la mostra sempre
-  function oggiQui(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }   // data del telefono, non UTC
+  var VERSIONE='2026-10-26', CHIAVE='novitaVista';   // 26/10: le cerrete e il grazie con YouTube (prima, 20/10: il quiz tartufi)
+  var NV_FINO='2026-11-01T21:00';   // si apre da sola fino a domenica 1/11 alle 21 (suo, 26/10/2026); ?novita=1 la mostra sempre
+  function oraQui(){ var d=new Date(), z=function(n){ return ('0'+n).slice(-2); };   // ora del telefono, non UTC
+    return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+'T'+z(d.getHours())+':'+z(d.getMinutes()); }
   /* 5/10/2026: i filmati (4-5 MB l'uno) li serve GitHub, non Netlify. In cinque giorni di ottobre
      la finestra ha scaricato 10-15 GB dal sito: a 20 crediti il GB era il grosso dei 600 crediti di banda. */
   var NV_MEDIA=/avventuremicologiche\.it$/.test(location.hostname) ? 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/' : '/';   // test e locale: dal sito stesso (su raw arrivano col push)
@@ -15973,9 +15903,11 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     /* 20/10/2026 (suo): una pagina sola sul quiz, «ora anche le nuove regioni, hai provato a giocare?».
        Escono previsioni e satellite (si possono rimettere: i filmati restano in novita/).
        img = immagine fissa al posto del filmato; vai = bottone verso fuori, in una scheda nuova. */
-    {t:'Hai già provato il quiz dei tartufi?', img:'novita/quiz-regioni.jpg',
-     d:[[0, "Ora anche Lombardia, Piemonte, Emilia-Romagna e Liguria"]],
-     vai:{testo:'Gioca al quiz →', url:'https://avventuremicologiche.it/esame-tartufi/'}}
+    /* 25/10/2026 (suo): le cerrete dentro un grazie, e la spinta a iscriversi. Il quiz del 20/10 e' uscito (l'immagine
+       resta in novita/). vai.yt = bottone rosso di YouTube; vai.ga = l'azione dell'evento novita_finestra. */
+    {t:'Mappa dei boschi: arrivano le cerrete', f:'novita/cerrete',
+     d:[[0, 'Siete tantissimi. Grazie!'], [4.0, 'Novità: le cerrete hanno un colore loro'], [8.4, 'Ti è utile? Sostienici su YouTube']],   // 4,0 = compaiono i boschi, 8,4 = il fermo finale (monta-cerrete.py)
+     vai:{testo:'▶ Iscriviti su YouTube', corto:'Iscriviti', url:'https://www.youtube.com/@avventuremicologiche?sub_confirmation=1', yt:true, ga:'youtube'}}
   ];
   var AVANZA_DOPO=1200;   // ms fermi sull'ultimo fotogramma prima di passare da soli alla pagina dopo
   var avanzaT=null;
@@ -16025,8 +15957,10 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     document.getElementById('nv-x').addEventListener('click',function(e){ e.stopPropagation(); chiudi('chiusa'); });
     elAvanti.addEventListener('click',avanti);
     elDietro.addEventListener('click',indietro);
-    elFilm.addEventListener('click',function(){ if(PAGINE[idx].vai){ window.open(PAGINE[idx].vai.url,'_blank','noopener'); chiudi('quiz'); } else riparti(); });   // un tocco sul filmato: da capo; sull'immagine del quiz: il quiz
-    document.getElementById('nv-gioca').addEventListener('click',function(){ chiudi('quiz'); });   // il link apre la scheda nuova da solo
+    // un tocco sul filmato: da capo; sull'IMMAGINE di una pagina con vai (il quiz): il suo indirizzo
+    elFilm.addEventListener('click',function(){ var pg=PAGINE[idx]; if(pg.vai&&pg.img){ window.open(pg.vai.url,'_blank','noopener'); chiudi(pg.vai.ga||'quiz'); } else riparti(); });
+    document.getElementById('nv-gioca').addEventListener('click',function(){   // il link apre la scheda nuova da solo
+      var v=PAGINE[idx].vai||{}; if(v.yt){ try{ gtag('event','click_youtube',{pulsante:'novita'}); }catch(e){} } chiudi(v.ga||'quiz'); });
     velo.addEventListener('click',function(e){ if(e.target===velo) chiudi('chiusa'); });
   }
   function didascalia(t){
@@ -16046,7 +15980,14 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     if(q>0) elDietro.removeAttribute('disabled'); else elDietro.setAttribute('disabled','');
     var g=document.getElementById('nv-gioca');
     var piede=document.getElementById('nv-piede');
-    if(pg.vai){ g.textContent=pg.vai.testo; g.href=pg.vai.url; g.style.display='flex'; g.classList.add('pulsa'); elAvanti.classList.add('sec'); elDietro.style.display= q>0 ? '' : 'none'; piede.classList.toggle('coppia', q===0); }
+    if(pg.vai){ g.textContent=pg.vai.testo;
+      if(pg.vai.corto){   // sotto i 440 px la scritta corta (col logo di YouTube se e' il canale): vedi #nv-gioca .nv-corto
+        g.textContent=''; var lu=document.createElement('span'), co=document.createElement('span'), ct=document.createElement('span');
+        lu.className='nv-lungo'; lu.textContent=pg.vai.testo; co.className='nv-corto'; ct.textContent=pg.vai.corto;
+        if(pg.vai.yt) co.innerHTML='<svg viewBox="0 0 42 30" aria-hidden="true"><rect width="42" height="30" rx="6"/><polygon points="16,7 16,23 31,15"/></svg>';
+        co.appendChild(ct); g.appendChild(lu); g.appendChild(co);
+      }
+      g.href=pg.vai.url; g.style.display='flex'; g.classList.add('pulsa'); g.classList.toggle('yt',!!pg.vai.yt); elAvanti.classList.add('sec'); elDietro.style.display= q>0 ? '' : 'none'; piede.classList.toggle('coppia', q===0); }
     else { g.style.display='none'; g.classList.remove('pulsa'); elAvanti.classList.remove('sec'); elDietro.style.display=''; piede.classList.remove('coppia'); }
     vids.forEach(function(v,k){
       if(k===i){ v.classList.remove('via'); if(!v.getAttribute('src')){ v.src=NV_MEDIA+pg.f+'.mp4'; v.load(); } riparti(); }
@@ -16066,7 +16007,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   function pronta(){ var sp=document.getElementById('map-spinner'); return !!window._mapDebug && (!sp || getComputedStyle(sp).display==='none'); }
   function avvia(){
     if(vietata()) return;
-    if(!forzata() && oggiQui()>NV_FINO) return;   // passata la settimana sparisce da sola, senza deploy
+    if(!forzata() && oraQui()>=NV_FINO) return;   // passata la scadenza sparisce da sola, senza deploy
     try{ if(window.top!==window) return; }catch(e){}
     var pagina=location.pathname; if(!(pagina==='/'||/\/index\.html$/.test(pagina))) return;
     if(forzata()) SEQ=PAGINE.map(function(p,i){ return i; });
@@ -16109,11 +16050,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
 #tq-btn.vis{display:flex}
 #tq-btn.p-riga{position:relative;top:auto;right:auto;bottom:auto;height:auto;padding:0 7px;justify-content:center;box-shadow:none;border-style:solid;font-size:11.5px;white-space:nowrap;flex-direction:column;gap:1px}
 .rd-coppia.con-tq{grid-template-columns:1fr auto 1fr}
-/* «new» sulle temperature E sulla Mappa boschi (3/10, suo); il 7/10 quello dei boschi e' passato alle Previsioni, questo resta */
-#tq-btn.p-riga::after{content:'new';position:absolute;top:-6px;right:-4px;background:#e12b2b;color:#fff;font-size:8.5px;font-weight:700;
-  letter-spacing:.3px;padding:1px 4px;border-radius:6px;line-height:1.35;pointer-events:none;animation:newPulsa 1.6s ease-in-out infinite}
-#tq-btn.p-riga.on::after{display:none}
-@media (prefers-reduced-motion:reduce){#tq-btn.p-riga::after{animation:none}}
+/* «new» sulle temperature: messo il 3/10, TOLTO il 22/10/2026 (suo), qui e sull'icona in mappa */
 body.modo-radar .rd-coppia.con-tq,body.modo-boschi .rd-coppia.con-tq{grid-template-columns:1fr 1fr}
 /* sul telefono tre tasti nella riga: «Radar pioggia» e «Mappa boschi» andavano a capo (36→54 px a 360):
    un filo piu' piccoli e stretti, e il termometro sopra la data per prendere meno larghezza */
@@ -16147,11 +16084,7 @@ body.tq-on #loc-input.loc-chiama,body.tq-on #geo-btn.loc-chiama{animation:none !
   border:2px solid rgba(0,0,0,.22);box-shadow:0 1px 5px rgba(0,0,0,.25);font:700 9.5px/1 system-ui,-apple-system,'Segoe UI',sans-serif;color:#1b3f6e}
 #tq-btn.p-mappa svg{width:19px;height:19px}
 #tq-btn.p-mappa.on{background:#1f6fd1;border-color:#1f6fd1;color:#fff}
-/* il «new» resta anche sull'icona (13/10/2026, suo: «lascia il new su temp e satellite»); sparisce con le temperature accese */
-#tq-btn.p-mappa::after{content:'new';position:absolute;top:-7px;right:-6px;background:#e12b2b;color:#fff;font-size:8.5px;font-weight:700;
-  letter-spacing:.3px;padding:1px 4px;border-radius:6px;line-height:1.35;pointer-events:none;animation:newPulsa 1.6s ease-in-out infinite}
-#tq-btn.p-mappa.on::after{display:none}
-@media (prefers-reduced-motion:reduce){#tq-btn.p-mappa::after{animation:none}}
+/* il «new» dell'icona (13/10) e' stato tolto il 22/10/2026 (suo), insieme a quello della riga */
 /* la riga dello storico: Radar pioggia | Mappa boschi | Satellite, tre tasti uguali (13/10/2026, sua scelta «3») */
 .rd-coppia.con-sat{grid-template-columns:1fr 1fr 1fr}
 body.modo-radar .rd-coppia.con-sat,body.modo-boschi .rd-coppia.con-sat{grid-template-columns:1fr 1fr}

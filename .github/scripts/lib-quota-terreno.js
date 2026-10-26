@@ -30,19 +30,21 @@
  *
  * ⚠️ UN GUASTO QUI NON DEVE MAI TOCCARE LA PIOGGIA. Tetto di 15 secondi, una
  * sola prova, e al primo fallimento la libreria si spegne per il resto del giro
- * (MeteoHub chiama per 11 reti e piu' giorni: con Open-Meteo giu' sarebbero
+ * (MeteoHub chiama per 11 reti e piu' giorni: con la fonte giu' sarebbero
  * minuti di attese). Se fallisce la quota resta `null`, cioe' «—», come prima.
  *
- * Prova a mano: TERRENO_SPENTO=1 finge Open-Meteo irraggiungibile.
+ * ⚠️ DAL 25/10/2026 LA FONTE SONO LE TESSERE TERRARIUM (lib-terrarium.js), non
+ * piu' Open-Meteo Elevation: il suo piano gratuito vieta i siti con pubblicita'.
+ *
+ * Prova a mano: TERRENO_SPENTO=1 finge la fonte irraggiungibile.
  */
 
 const fs    = require('fs');
 const path  = require('path');
-const https = require('https');
+const { quoteTerrarium } = require('./lib-terrarium.js');
 
 const FILE_NOTE = path.join(__dirname, '..', '..', 'data', 'quote-terreno.json');
 const TETTO_MS = 15000;
-const LOTTO = 50;           // Open-Meteo conta le richieste a peso: lotti piccoli (vedi quote-terreno.js)
 const SOGLIA_ZERO = 20;     // sopra questi metri uno 0 dichiarato non e' «sul mare»
 
 let note = null;                // id -> metri, da quote-terreno.json
@@ -68,27 +70,6 @@ function quotaNota(id) {
   return typeof q === 'number' && isFinite(q) ? Math.max(0, Math.round(q)) : null;
 }
 
-function chiediLotto(punti) {
-  const url = 'https://api.open-meteo.com/v1/elevation?latitude=' +
-    punti.map(p => p.lat).join(',') + '&longitude=' + punti.map(p => p.lon).join(',');
-  return new Promise((ok, ko) => {
-    const req = https.get(url, { headers: { 'User-Agent': 'mappa-pluviometrica/1.0' } }, r => {
-      if (r.statusCode !== 200) { r.resume(); return ko(new Error('HTTP ' + r.statusCode)); }
-      let b = '';
-      r.on('data', c => b += c);
-      r.on('end', () => {
-        try {
-          const e = JSON.parse(b).elevation;
-          if (!Array.isArray(e) || e.length !== punti.length) throw new Error('risposta inattesa');
-          ok(e);
-        } catch (err) { ko(err); }
-      });
-    });
-    req.setTimeout(TETTO_MS, () => req.destroy(new Error('nessuna risposta in ' + TETTO_MS / 1000 + ' s')));
-    req.on('error', ko);
-  });
-}
-
 /** Chiede il terreno per i punti che nessuno conosce ancora. Non lancia mai. */
 async function chiediTerreno(punti) {
   const daFare = [];
@@ -101,14 +82,9 @@ async function chiediTerreno(punti) {
   }
   if (!daFare.length) return;
   if (spenta) { console.warn(`  Warn quota dal terreno: spenta, ${daFare.length} stazioni restano senza`); return; }
-  const inizio = Date.now();
   try {
-    for (let i = 0; i < daFare.length; i += LOTTO) {
-      if (Date.now() - inizio > TETTO_MS) throw new Error('tetto di ' + TETTO_MS / 1000 + ' s superato');
-      const lotto = daFare.slice(i, i + LOTTO);
-      const q = await chiediLotto(lotto);
-      lotto.forEach((p, k) => { if (typeof q[k] === 'number' && isFinite(q[k])) chieste.set(p.id, q[k]); });
-    }
+    const q = await quoteTerrarium(daFare, TETTO_MS);
+    daFare.forEach((p, k) => { if (typeof q[k] === 'number' && isFinite(q[k])) chieste.set(p.id, q[k]); });
     console.log(`  quota dal terreno chiesta per ${daFare.length} stazioni: ` +
       daFare.map(p => `${p.n || p.id} ${quotaNota(p.id)} m`).slice(0, 8).join(', '));
   } catch (e) {

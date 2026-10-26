@@ -21,10 +21,15 @@ const GIORNI   = parseInt(process.env.GIORNI || '45', 10);
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+// App token di Socrata (secret SOCRATA_APP_TOKEN, app «MappaPluvio» sul profilo avventuremicologiche di
+// dati.lombardia.it, creata il 13/10/2026): alza i limiti che da anonimi davano i 429. Senza, si va come prima.
+const INTESTAZIONI = Object.assign({ 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0 (compatible; MappaPluvio/1.0)' },
+  process.env.SOCRATA_APP_TOKEN ? { 'X-App-Token': process.env.SOCRATA_APP_TOKEN } : {});
+
 function getJSON(pathQ, retries = 3) {
   return new Promise((resolve, reject) => {
     const attempt = n => {
-      https.get({ host: HOST, path: pathQ, headers: { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0 (compatible; MappaPluvio/1.0)' } }, res => {
+      https.get({ host: HOST, path: pathQ, headers: INTESTAZIONI }, res => {
         let data = '';
         res.on('data', c => data += c);
         res.on('end', () => {
@@ -74,7 +79,9 @@ async function meteoDay(dateStr, tempByStaz, windByStaz) {
     const oreMax = perSens[id]['3'] || [];   // il MASSIMO: la raffica
     if (ore.length < MIN_ORE) return;
     if (tempSens[id]) {
-      const mins = ore.map(o => parseFloat(o.mn)).filter(v => v >= -45 && v <= 50);
+      // falsi zeri: stessa regola di collect-lombardia.js (3/10/2026), le due devono restare uguali
+      const mins = ore.filter(o => !(parseFloat(o.mn) === 0 && parseFloat(o.med) > 3))
+        .map(o => parseFloat(o.mn)).filter(v => v >= -45 && v <= 50);
       const maxs = ore.map(o => parseFloat(o.mx)).filter(v => v >= -45 && v <= 50);
       if (mins.length >= MIN_ORE && maxs.length) {
         const st = tempSens[id];

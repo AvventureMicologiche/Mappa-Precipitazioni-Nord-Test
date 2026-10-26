@@ -30,7 +30,8 @@ function fmtDate(d) {
 
 function fetchJSON(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, {
+    // timeout nelle opzioni (26/10/2026): senza, finche' la connessione non e' aperta vale il tetto di 5 s dell'agente di Node e i 30 s qui sotto scattano dopo 5
+    https.get(url, { timeout: 30000,
       headers: {
         'Accept': 'application/json,*/*',
         'User-Agent': 'Mozilla/5.0 (compatible; MappaPluvio/1.0)'
@@ -45,17 +46,20 @@ function fetchJSON(url) {
           catch(e) { reject(new Error('JSON parse error: ' + e.message)); }
         }
       });
-    }).on('error', reject);
+    }).on('error', reject)
+      .setTimeout(30000, function () { this.destroy(new Error('nessuna risposta in 30 s')); });
   });
 }
 
 function fetchText(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, { headers: { 'Accept': '*/*', 'User-Agent': 'Mozilla/5.0 (compatible; MappaPluvio/1.0)' } }, res => {
+    // timeout nelle opzioni (26/10/2026): senza, finche' la connessione non e' aperta vale il tetto di 5 s dell'agente di Node e i 30 s qui sotto scattano dopo 5
+    https.get(url, { timeout: 30000, headers: { 'Accept': '*/*', 'User-Agent': 'Mozilla/5.0 (compatible; MappaPluvio/1.0)' } }, res => {
       let data = '';
       res.on('data', c => data += c);
       res.on('end', () => res.statusCode === 200 ? resolve(data) : reject(new Error(`HTTP ${res.statusCode}`)));
-    }).on('error', reject);
+    }).on('error', reject)
+      .setTimeout(30000, function () { this.destroy(new Error('nessuna risposta in 30 s')); });
   });
 }
 
@@ -74,7 +78,17 @@ function fetchText(url) {
 // quarti d'ora su 96, sotto la soglia di attenzione. Tutto dentro un try:
 // un guasto qui non tocca la pioggia.
 const LAST_URL = 'https://dati.meteotrentino.it/service.asmx/getLastDataOfMeteoStation?codice=';
+const { creaDir, segnaDir, direzione } = require('./lib-direzione.js');
+const { tieniMeteo } = require('./lib-tieni-meteo.js');
 const MIN_ORE_METEO = 20;
+// ⚠️ (19/10/2026, quinto check, bug 6) il file di ieri si riscrive DA CAPO a ogni giro con pioggia e temperatura, e
+// u/w/wd li rimette solo dopo arricchisciMeteoIeri, una chiamata per stazione: se quella cadeva (tutta o per una
+// stazione) il file restava senza, e l'ultimo giro che tocca un giorno decideva per sempre. Prima di scrivere si
+// riprendono dal file dello stesso giorno i campi che mancano (lib-tieni-meteo.js); i valori freschi vincono sempre.
+function tieniDalFile(file, stations) {
+  try { if (!fs.existsSync(file)) return; const n = tieniMeteo(stations, JSON.parse(fs.readFileSync(file, 'utf8')).stations);
+    if (n) console.log(`  t/w/u/wd ripresi dal file per ${n} stazioni`); } catch (e) {}
+}
 function serieGiorno(xml, blocco, tagVal, giorno) {
   const m = xml.match(new RegExp('<' + blocco + '>([\\s\\S]*?)</' + blocco + '>'));
   if (!m) return [];
@@ -88,7 +102,7 @@ function serieGiorno(xml, blocco, tagVal, giorno) {
     const g = loc.getUTCFullYear() + '-' + String(loc.getUTCMonth() + 1).padStart(2, '0') + '-' + String(loc.getUTCDate()).padStart(2, '0');
     if (g !== giorno) continue;
     const v = parseFloat(r[2]);
-    if (!isNaN(v)) out.push({ hh: loc.getUTCHours(), v });
+    if (!isNaN(v)) out.push({ hh: loc.getUTCHours(), v, t: r[1] });
   }
   return out;
 }
@@ -110,6 +124,14 @@ async function arricchisciMeteoIeri(giorno, file) {
           s.w = [Math.round(ws.reduce((a, r) => a + r.v, 0) / ws.length * 3.6 * 10) / 10,
                  gu.length ? Math.round(Math.max(...gu.map(r => r.v)) * 3.6 * 10) / 10 : null];
           conW++;
+          // Direzione del vento (2/10/2026): `direction_value` nella stessa wind_list,
+          // gradi; si accoppia con la velocita' per marca temporale.
+          const dd = {};
+          serieGiorno(xml, 'wind_list', 'direction_value', giorno).forEach(r => { dd[r.t] = r.v; });
+          const dir = creaDir();
+          ws.forEach(r => segnaDir(dir, r.hh, dd[r.t] !== undefined ? dd[r.t] : null, r.v));
+          const wd = direzione(dir);
+          if (wd !== null) s.wd = wd;
         }
       } catch (e) { /* stazione singola: pioggia intatta */ }
     }));
@@ -209,6 +231,7 @@ async function main() {
   } else {
 
   const outFile = path.join(DATA_DIR, `${dateStr}.json`);
+  tieniDalFile(outFile, stations);
   fs.writeFileSync(outFile, JSON.stringify({
     date:      dateStr,
     collected: new Date().toISOString(),
@@ -241,6 +264,7 @@ async function main() {
         }).filter(Boolean);
         if (_yStations.length >= 10) {
           const _yFile = path.join(DATA_DIR, `${_yDate}.json`);
+          tieniDalFile(_yFile, _yStations);
           fs.writeFileSync(_yFile, JSON.stringify({ date: _yDate, collected: new Date().toISOString(), source: 'meteotrentino', count: _yStations.length, stations: _yStations }));
           console.log(`Aggiornato ieri: ${_yFile} (${_yStations.length} stazioni)`);
         }

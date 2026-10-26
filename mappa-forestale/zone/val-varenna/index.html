@@ -305,7 +305,8 @@ ul.paesi .quota{flex:none;width:64px;text-align:right;font-weight:800;color:var(
 .griglia span{position:absolute;left:8px;bottom:8px;background:rgba(15,45,77,.85);color:#fff;font-size:13px;font-weight:700;border-radius:6px;padding:2px 8px;}
 .pioggia{border-top:1px solid var(--bordo);margin-top:26px;padding-top:6px;}
 /* BOTTONE YOUTUBE (lib-pagina-funghi.js) */
-.yt-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
+/* A TUTTA RIGA come i bottoni che aprono la mappa (25/10/2026, suo: «fallo largo come quelli che aprono le mappe») */
+.yt-btn{display:flex;justify-content:center;width:100%;box-sizing:border-box;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
   font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 4px 0 #7d0d12,0 9px 18px rgba(160,20,27,.32);transition:transform .08s,box-shadow .08s;}
 .yt-btn svg{width:26px;height:18px;flex:none;}
@@ -314,7 +315,8 @@ ul.paesi .quota{flex:none;width:64px;text-align:right;font-weight:800;color:var(
 .yt-btn:hover{background:linear-gradient(180deg,#e8323a,#c01820);}
 .yt-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7d0d12,0 4px 8px rgba(160,20,27,.3);}
 
-/* QUIZ ACCANTO A YOUTUBE: due celle uguali, una sotto l'altra sul telefono */
+/* QUIZ ACCANTO A YOUTUBE: due celle uguali, una sotto l'altra sul telefono (25/10/2026, suo: «dove c'e' il quiz lascia
+   com'e'», solo YouTube da solo va a tutta riga) */
 .coppia-btn{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 4px;}
 .coppia-btn a{justify-content:center;box-sizing:border-box;min-height:53px;width:100%;}
 .coppia-btn svg{width:26px;flex:none;}
@@ -374,6 +376,8 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-cr span{display:flex;align-items:center;gap:3px;font-weight:600;flex-wrap:wrap;}
 .mk-cr span i{font-style:normal;font-size:19px;}
 .mk-cr span em{font-style:normal;font-size:12px;color:#1f6fd1;font-weight:700;width:100%;padding-left:24px;margin-top:-3px;}
+/* la % di pioggia (25/10/2026): la GOCCIA come nelle pagine meteo, i tre toni della mappa (sotto il 10% grigia, dal 60% rossa) */
+.mk-cr span em.mk-pc{margin-top:0;}.mk-cr span em.mk-pc.z{color:#9aa3ad;font-weight:500;}.mk-cr span em.mk-pc.alta{color:#c21f1f;}
 .mk-cr-t{background:#eef4fb;font-size:13px;color:#4a6180;padding:6px 12px;}
 .mk-cr-t span{font-weight:700;}
 .mk-dopo{display:none;}
@@ -434,7 +438,7 @@ header{position:relative;flex-wrap:nowrap;}
 <h2>Che boschi ci sono in Val Varenna</h2>
 <p class="breve">Il bosco copre l'82% del territorio intorno ai pluviometri della zona. Ecco come si divide.</p>
 <div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#d95f02"></span><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/castagneti/"><b>castagneti</b></a><span class="fr-v">37,7%</span></div><div class="fr-b"><i style="width:100%;background:#d95f02"></i></div><div class="fr-s">castagno e selve da frutto</div></div>
-<div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#e6ab02"></span><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/querceti/"><b>querceti</b></a><span class="fr-v">28%</span></div><div class="fr-b"><i style="width:74%;background:#e6ab02"></i></div><div class="fr-s">roverella, rovere, farnia, cerro, leccio, sughera e i querco-carpineti</div></div>
+<div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#e6ab02"></span><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/querceti/"><b>querceti</b></a><span class="fr-v">27,9%</span></div><div class="fr-b"><i style="width:74%;background:#e6ab02"></i></div><div class="fr-s">roverella, rovere, farnia, cerro, leccio, sughera e i querco-carpineti</div></div>
 <div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#1b9e77"></span><b>faggete</b><span class="fr-v">10,6%</span></div><div class="fr-b"><i style="width:28%;background:#1b9e77"></i></div><div class="fr-s">boschi di faggio, dalla media montagna in su</div></div>
 <div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#e7298a"></span><b>pinete</b><span class="fr-v">5%</span></div><div class="fr-b"><i style="width:13%;background:#e7298a"></i></div><div class="fr-s">pino silvestre, nero, marittimo, domestico e d'Aleppo</div></div>
 <div class="fr"><div class="fr-t"><span class="fr-sw" style="background:#2e9bd6"></span><b>carpino, orniello e aceri</b><span class="fr-v">3,2%</span></div><div class="fr-b"><i style="width:8%;background:#2e9bd6"></i></div><div class="fr-s">carpino nero e orniello, sui versanti asciutti</div></div>
@@ -453,7 +457,7 @@ header{position:relative;flex-wrap:nowrap;}
 <li><span class="quota">289 m</span><div><a href="https://avventurepluvio-test.pages.dev/funghi/liguria/rossiglione/"><b>Rossiglione</b></a><br><span class="pc"><span class="fr-sw" style="background:#d95f02"></span>castagneti <span class="pc">69%</span> · <span class="fr-sw" style="background:#e6ab02"></span>querceti <span class="pc">8%</span> · <span class="fr-sw" style="background:#e7298a"></span>pinete <span class="pc">8%</span></span></div></li>
 <li><span class="quota">300 m</span><div><a href="https://avventurepluvio-test.pages.dev/funghi/liguria/isoverde/"><b>Isoverde</b></a><br><span class="pc"><span class="fr-sw" style="background:#e6ab02"></span>querceti <span class="pc">33%</span> · <span class="fr-sw" style="background:#d95f02"></span>castagneti <span class="pc">16%</span> · <span class="fr-sw" style="background:#2e9bd6"></span>carpino, orniello e aceri <span class="pc">16%</span></span></div></li>
 <li><span class="quota">338 m</span><div><a href="https://avventurepluvio-test.pages.dev/funghi/liguria/campo-ligure/"><b>Campo Ligure</b></a><br><span class="pc"><span class="fr-sw" style="background:#d95f02"></span>castagneti <span class="pc">70%</span> · <span class="fr-sw" style="background:#e6ab02"></span>querceti <span class="pc">9%</span> · <span class="fr-sw" style="background:#2e9bd6"></span>carpino, orniello e aceri <span class="pc">5%</span></span></div></li>
-<li><span class="quota">590 m</span><div><a href="https://avventurepluvio-test.pages.dev/funghi/liguria/passo-del-turchino/"><b>Passo del Turchino</b></a><br><span class="pc"><span class="fr-sw" style="background:#d95f02"></span>castagneti <span class="pc">72%</span> · <span class="fr-sw" style="background:#e6ab02"></span>querceti <span class="pc">7%</span></span></div></li>
+<li><span class="quota">590 m</span><div><a href="https://avventurepluvio-test.pages.dev/funghi/liguria/passo-del-turchino/"><b>Passo del Turchino</b></a><br><span class="pc"><span class="fr-sw" style="background:#d95f02"></span>castagneti <span class="pc">72%</span> · <span class="fr-sw" style="background:#e6ab02"></span>querceti <span class="pc">6%</span></span></div></li>
 <li><span class="quota">773 m</span><div><a href="https://avventurepluvio-test.pages.dev/funghi/piemonte/ponzone-bric-berton/"><b>Ponzone Bric Berton</b></a><br><span class="pc"><span class="fr-sw" style="background:#e6ab02"></span>querceti <span class="pc">46%</span> · <span class="fr-sw" style="background:#d95f02"></span>castagneti <span class="pc">20%</span> · <span class="fr-sw" style="background:#e7298a"></span>pinete <span class="pc">20%</span></span></div></li>
 <li><span class="quota">780 m</span><div><a href="https://avventurepluvio-test.pages.dev/funghi/piemonte/capanne-marcarolo/"><b>Capanne Marcarolo</b></a><br><span class="pc"><span class="fr-sw" style="background:#e6ab02"></span>querceti <span class="pc">60%</span> · <span class="fr-sw" style="background:#d95f02"></span>castagneti <span class="pc">12%</span> · <span class="fr-sw" style="background:#1b9e77"></span>faggete <span class="pc">7%</span></span></div></li>
 <li><span class="quota">810 m</span><div><a href="https://avventurepluvio-test.pages.dev/funghi/liguria/urbe-vara-sup/"><b>Urbe - Vara Sup.</b></a><br><span class="pc"><span class="fr-sw" style="background:#1b9e77"></span>faggete <span class="pc">39%</span> · <span class="fr-sw" style="background:#e6ab02"></span>querceti <span class="pc">34%</span> · <span class="fr-sw" style="background:#d95f02"></span>castagneti <span class="pc">22%</span></span></div></li>
@@ -467,7 +471,7 @@ header{position:relative;flex-wrap:nowrap;}
 <li><span class="ic">🌰</span><div><b>Castagne</b><br>I castagneti sono il 37,7% del bosco. Prima di raccogliere assicurati che il bosco sia libero: molti castagneti sono proprietà private.</div></li>
 <li><span class="ic">🍂</span><div><b>Foliage d'autunno</b><br>Il giallo e il rosso di ottobre sono delle faggete (10,6%).</div></li>
 <li><span class="ic">🥾</span><div><b>Escursioni e sentieri</b><br>Prima di partire guardi che bosco attraversa il sentiero, a che quota e su quale versante: tocchi un punto sulla mappa e lo apri su Google Maps.</div></li>
-<li><span class="ic">🟤</span><div><b>Tartufi</b><br>Si cercano soprattutto nei querceti (28%) e lungo i fiumi, fra pioppi, salici e ontani (0,3%).</div></li>
+<li><span class="ic">🟤</span><div><b>Tartufi</b><br>Si cercano soprattutto nei querceti (27,9%) e lungo i fiumi, fra pioppi, salici e ontani (0,3%).</div></li>
 </ul>
 
 <h2>Da dove viene la carta</h2>
@@ -554,7 +558,8 @@ header{position:relative;flex-wrap:nowrap;}
     'Marche': 'marche', 'Lazio': 'lazio', 'Abruzzo': 'abruzzo', 'Molise': 'molise', 'Campania': 'campania', 'Puglia': 'puglia',
     'Basilicata': 'basilicata', 'Calabria': 'calabria', 'Sicilia': 'sicilia', 'Sardegna': 'sardegna' };
   function frazioni(testo) {
-    return fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(testo) + '&count=10&language=it&countryCode=IT')
+    // dal 25/10/2026 /api/cerca (GeoNames servito dal sito) al posto di Open-Meteo, stessa forma della risposta
+    return fetch(API.replace('/api/previsioni', '/api/cerca') + '?name=' + encodeURIComponent(testo) + '&count=10&language=it&countryCode=IT')
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (j) {   // un 429 non e' «nessun posto» (settimo check, bug 8)
         var visti = {};
         return (j.results || []).map(function (x) {
@@ -659,11 +664,14 @@ header{position:relative;flex-wrap:nowrap;}
     var ab = {}; (ELENCO || []).forEach(function (x) { if (x.reg === K && !x.z) ab[x.q] = x.pop; });
     if (!OPZ.area && !OPZ.primi) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
     var g0 = cc[0].giorni;
+    var conPc = cc.some(function (c) { return c.giorni.slice(0, 3).some(function (g) { return g.pc != null; }); });   // Open-Meteo giu': niente righe vuote
     var testa = '<div class="mk-cr mk-cr-t"><span></span>' + [0, 1, 2].map(function (d) { return '<span>' + nomeG(g0[d].g, d) + '</span>'; }).join('') + '</div>';
     var righe = cc.map(function (c, i) {
       return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + (c.r || K) + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : c.sotto ? '<small>' + esc(c.sotto) + '</small>' : '') + '</b>'
         + [0, 1, 2].map(function (d) { var g = c.giorni[d]; return '<span><i>' + icona(g.s) + '</i>' + g.mx + '°'
-          + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '') + '</span>'; }).join('') + '</a>';
+          + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '')
+          // la % di pioggia del giorno, la piu' alta delle sue ore (la Function con &pr=1, 25/10/2026)
+          + (conPc ? '<em class="mk-pc' + (g.pc == null ? '' : g.pc < 10 ? ' z' : g.pc >= 60 ? ' alta' : '') + '">' + (g.pc == null ? '' : '💧 ' + g.pc + '%') + '</em>' : '') + '</span>'; }).join('') + '</a>';
     }).join('');
     /* IL BOTTONE DEL RADAR (20/10/2026, suo: «il bottone dove sta piovendo adesso col radar è un po' nascosto»).
        Prima era una riga piccola in coda a «Tocca una città...»: ora e' un bottone sotto la tabella (sua scelta, sotto
@@ -683,9 +691,12 @@ header{position:relative;flex-wrap:nowrap;}
       + (piove ? '<span class="mk-pul"></span><span><b>Oggi è prevista pioggia ' + esc(dove) + '</b><small>guardala arrivare col radar piogge</small></span>'
                : '<span class="mk-ic">📡</span><span><b>Dove sta piovendo adesso</b><small>guarda il radar piogge</small></span>')
       + '<span class="mk-fr">→</span></a>';
-    box.innerHTML = (OPZ.sopra ? '<p class="mk-sopra">' + esc(OPZ.sopra) + '</p>' : '') + '<div class="mk-tab">' + testa + righe + '</div>'
+    // La frase del pluviometro solo se la sua riga c'e' (25/10/2026): se le previsioni non rispondono per quel punto
+    // la riga manca, e «Il pluviometro (1399 m) e i paesi intorno» annunciava una riga che non c'era.
+    var sopra = OPZ.sopraSenzaQui && !cc.some(function (c) { return c.qui; }) ? OPZ.sopraSenzaQui : OPZ.sopra;
+    box.innerHTML = (sopra ? '<p class="mk-sopra">' + esc(sopra) + '</p>' : '') + '<div class="mk-tab">' + testa + righe + '</div>'
       + (cc.length > 6 ? '<button class="mk-tutte">' + (OPZ.tutte || 'Mostra tutte le # città').replace('#', cc.length) + '</button>' : '')
-      + '<p class="mk-citta-n">' + (OPZ.tocca || 'Tocca una città per vederla ora per ora sulla mappa') + '</p>' + radar;
+      + '<p class="mk-citta-n">' + (OPZ.tocca || 'Tocca una città per vederla ora per ora sulla mappa') + (conPc ? '. 💧 è la probabilità di pioggia' : '') + '</p>' + radar;
     var bt = box.querySelector('.mk-tutte');
     if (bt) bt.addEventListener('click', function () { box.classList.add('mk-aperte'); bt.remove(); });
   }
@@ -761,7 +772,7 @@ header{position:relative;flex-wrap:nowrap;}
     .then(function (j) { PRIMO = (j.primi && j.primi[0] && j.primi[0][2]) || '';
       return 'posti=' + (j.primi || []).slice(0, OPZ.primi).map(function (x) { return x[2] + '/' + x[3] + '/' + x[1]; }).join(','); });
   var citta = !blocco ? Promise.resolve(null)
-    : area.then(function (a) { return fetch(API + '?' + a); }).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
+    : area.then(function (a) { return fetch(API + '?' + a + '&pr=1'); }).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11); &pr=1 la % (25/10/2026)
   /* ⚠️ SOLO UN RIEPILOGO FRESCO (20/10/2026, settimo check, bug 5): scritto da meno di 36 ore, la stessa regola della
      pagina. Se e' piu' vecchio la pagina regione ha gia' disegnato il grafico dai file del giorno, e ridisegnarlo col
      riepilogo vecchio faceva sparire i giorni nuovi: allora il grafico resta com'e', senza i giorni previsti. Le zone

@@ -36,6 +36,8 @@ const path  = require('path');
 
 const HOST     = 'presidi2.regione.vda.it';
 const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'valledaosta-cf');
+const { creaDir, segnaDir, direzione } = require('./lib-direzione.js');
+const { tieniMeteo } = require('./lib-tieni-meteo.js');
 const PRID_PIOGGIA = 93;
 const GIORNI_FINESTRA = 7;   // ieri + auto-riparazione della settimana
 // Temperatura e vento (11/8/2026 — grafici stazione): stessa piattaforma,
@@ -47,6 +49,7 @@ const GIORNI_FINESTRA = 7;   // ieri + auto-riparazione della settimana
 // t in [-45,50] °C, vento <60 m/s. Tutta la parte meteo sta in try.
 const PRID_TEMP  = 1;
 const PRID_VENTO = 10;
+const PRID_DIR   = 11;   // Direzione Vento Vett., gradi (2/10/2026) → wd
 const PRID_UMID  = 2;    // Umidita' relativa (%), medie orarie (dal 18/8/2026) → u:[min,max]
 const MIN_ORE_METEO = 20;
 
@@ -186,7 +189,8 @@ async function main() {
       try {
         const rh = await post('/str_dataview_get_allparams_data', sess, { id: st.id, aggr: 'hh', from, to });
         const perDay = {}; // dStr → {temps:[], venti:[]}
-        for (const prid of [PRID_TEMP, PRID_VENTO, PRID_UMID]) {
+        const velTs = {}, dirTs = {};   // direzione: si accoppia per marca oraria con la velocita'
+        for (const prid of [PRID_TEMP, PRID_VENTO, PRID_UMID, PRID_DIR]) {
           const p = (rh.data || []).find(x => x.parameter_id === prid);
           if (!p || !Array.isArray(p.station_param_values)) continue;
           for (const [ts, val] of p.station_param_values) {
@@ -195,7 +199,8 @@ async function main() {
             if (!targetSet.has(dStr)) continue;
             const acc = perDay[dStr] = perDay[dStr] || { temps: [], venti: [], umid: [] };
             if (prid === PRID_TEMP && val >= -45 && val <= 50) acc.temps.push(val);
-            if (prid === PRID_VENTO && val >= 0 && val < 60) acc.venti.push(val);
+            if (prid === PRID_VENTO && val >= 0 && val < 60) { acc.venti.push(val); (velTs[dStr] = velTs[dStr] || {})[ts] = val; }
+            if (prid === PRID_DIR && val >= 0 && val <= 360) (dirTs[dStr] = dirTs[dStr] || {})[ts] = val;
             if (prid === PRID_UMID && val >= 0 && val <= 100) acc.umid.push(val);
           }
         }
@@ -207,6 +212,12 @@ async function main() {
             m.w = [Math.round(a.venti.reduce((x, v) => x + v, 0) / a.venti.length * 3.6 * 10) / 10, null];
           if (a.umid.length >= MIN_ORE_METEO)
             m.u = [Math.round(Math.min(...a.umid)), Math.round(Math.max(...a.umid))];
+          if (m.w) {
+            const dir = creaDir();
+            for (const ts of Object.keys(velTs[dStr] || {})) segnaDir(dir, ts, (dirTs[dStr] || {})[ts] !== undefined ? dirTs[dStr][ts] : null, velTs[dStr][ts]);
+            const wd = direzione(dir);
+            if (wd !== null) m.wd = wd;
+          }
           if (m.t || m.w || m.u) meteoByDay[dStr][`cf_vda_${st.id}`] = m;
         });
       } catch (e) { /* meteo di una stazione fallito: pioggia intatta */ }
@@ -228,6 +239,11 @@ async function main() {
     const stations = dayMap[dStr];
     if (stations.length < 10) { console.warn(`  ${dStr}: solo ${stations.length} stazioni, salto`); continue; }
     const outFile = path.join(DATA_DIR, `${dStr}.json`);
+    // ⚠️ (19/10/2026, quinto check, bug 6) ogni giorno della finestra si riscrive a ogni giro, e il meteo di una
+    // stazione arriva da una seconda chiamata che, se cade, la lascia senza t/w/u/wd: decideva l'ultima chiamata
+    // andata male. I campi che mancano a questo giro si riprendono dal file dello stesso giorno.
+    try { if (fs.existsSync(outFile)) { const n = tieniMeteo(stations, JSON.parse(fs.readFileSync(outFile, 'utf8')).stations);
+      if (n) console.log(`  ${dStr}: t/w/u/wd ripresi dal file per ${n} stazioni`); } } catch (e) {}
     fs.writeFileSync(outFile, JSON.stringify({
       date: dStr, collected: new Date().toISOString(),
       source: 'cf-valledaosta', count: stations.length, stations

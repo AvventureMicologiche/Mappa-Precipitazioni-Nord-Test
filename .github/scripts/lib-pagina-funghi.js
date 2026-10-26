@@ -283,7 +283,8 @@ const JS_AGGIORNATO = aggiornato.toString()
    nel bottone si rovescia: rettangolo bianco, triangolo rosso. Sta anche da
    solo (YT_BTN) per le pagine della mappa forestale, che RILIEVO non lo hanno. */
 const YT_BTN = `/* BOTTONE YOUTUBE (lib-pagina-funghi.js) */
-.yt-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
+/* A TUTTA RIGA come i bottoni che aprono la mappa (25/10/2026, suo: «fallo largo come quelli che aprono le mappe») */
+.yt-btn{display:flex;justify-content:center;width:100%;box-sizing:border-box;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
   font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 4px 0 #7d0d12,0 9px 18px rgba(160,20,27,.32);transition:transform .08s,box-shadow .08s;}
 .yt-btn svg{width:26px;height:18px;flex:none;}
@@ -339,7 +340,8 @@ const QUIZ_SLUG = { emilia: 'emilia-romagna' };
 // 53 del bottone YouTube accanto): la forma corta e' quella che usa il titolo del quiz stesso (20/10/2026)
 const QUIZ_ETICHETTA = { emilia: 'Quiz tartufi Emilia-Romagna' };
 const QUIZ_CSS = `
-/* QUIZ ACCANTO A YOUTUBE: due celle uguali, una sotto l'altra sul telefono */
+/* QUIZ ACCANTO A YOUTUBE: due celle uguali, una sotto l'altra sul telefono (25/10/2026, suo: «dove c'e' il quiz lascia
+   com'e'», solo YouTube da solo va a tutta riga) */
 .coppia-btn{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 4px;}
 .coppia-btn a{justify-content:center;box-sizing:border-box;min-height:53px;width:100%;}
 .coppia-btn svg{width:26px;flex:none;}

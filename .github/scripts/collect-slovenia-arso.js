@@ -76,6 +76,7 @@
 
 const fs = require('fs');
 const { creaOre, segna, intensita } = require('./lib-intensita.js');
+const { creaDir, segnaDir, direzione } = require('./lib-direzione.js');
 const path = require('path');
 
 const BASE = 'https://meteo.arso.gov.si/webmet/archive';
@@ -83,6 +84,7 @@ const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'slovenia');
 const RETENTION = 730;          // regola 1b del CLAUDE.md
 const MIN_MEZZORE = 40;         // su 48
 const GIORNI_INDIETRO = Number(process.env.GIORNI_INDIETRO || 8);
+const RIPARA_GIORNI = Number(process.env.RIPARA_GIORNI || 30);   // oltre D-8 solo i giorni mancanti o stimati (26/10/2026)
 const DATA_OVERRIDE = process.env.DATA_OVERRIDE || '';
 const PAUSA_MS = Number(process.env.PAUSA_MS || 250);
 // SOLO_PIOGGIA=1 chiede il solo parametro 26. Serve al backfill lungo: chiedendo
@@ -138,7 +140,7 @@ async function anagrafe() {
  * Ritorna { idStazione: { minutiDal1800: {mm,tmin,tmax,ff,fx,umin,umax} } }.
  */
 async function scaricaCoppia(ids, d1, d2) {
-  const vars = SOLO_PIOGGIA ? '26' : '26,16,17,21,24,19,20';
+  const vars = SOLO_PIOGGIA ? '26' : '26,16,17,21,24,19,20,23';   // 23 = direzione del vento, media vettoriale ARSO (2/10/2026)
   const url = `${BASE}/data.xml?lang=si&vars=${vars}&group=halfhourlyData0`
             + `&type=halfhourly&id=${ids.join(',')}&d1=${d1}&d2=${d2}`;
   const txt = await chiedi(url);
@@ -147,7 +149,7 @@ async function scaricaCoppia(ids, d1, d2) {
   const perPid = {};
   for (const m of txt.matchAll(/(p\d+):\{\s*pid:"(\d+)"/g)) perPid[m[2]] = m[1];
   const campo = { mm: perPid['26'], tmin: perPid['16'], tmax: perPid['17'], ff: perPid['21'], fx: perPid['24'],
-                  umin: perPid['19'], umax: perPid['20'] };
+                  umin: perPid['19'], umax: perPid['20'], dd: perPid['23'] };
 
   // ogni stazione e un blocco `_<id>:{ _<minuti>:{...}, ... }`: si taglia il
   // testo sugli inizi di blocco, cosi non serve una regex ricorsiva
@@ -187,6 +189,7 @@ function giornoItaliano(serie, giorno) {
   let mm = 0, nMm = 0, tmin = null, tmax = null, ff = 0, nFf = 0, fx = null;
   let umin = null, umax = null, nU = 0;
   const secchielli = creaOre();   // intensita' (12/9/2026)
+  const dir = creaDir();          // direzione del vento (2/10/2026), pesata su ff
   for (const [k, r] of Object.entries(serie)) {
     const eUTC = E1800 + (+k - 60) * 60000;
     if (eUTC <= inizio || eUTC > fine) continue;
@@ -196,6 +199,7 @@ function giornoItaliano(serie, giorno) {
     if (r.tmin != null) tmin = tmin == null ? r.tmin : Math.min(tmin, r.tmin);
     if (r.tmax != null) tmax = tmax == null ? r.tmax : Math.max(tmax, r.tmax);
     if (r.ff != null) { ff += r.ff; nFf++; }
+    if (r.dd != null && r.ff != null && r.ff >= 0) segnaDir(dir, Math.floor((eUTC - 1) / 3600000), r.dd, r.ff);
     if (r.fx != null) fx = fx == null ? r.fx : Math.max(fx, r.fx);
     if (r.umin != null && r.umax != null && r.umin >= 0 && r.umax <= 100) {
       umin = umin == null ? r.umin : Math.min(umin, r.umin);
@@ -210,6 +214,8 @@ function giornoItaliano(serie, giorno) {
   if (nU >= 120 && umin != null) rec.u = [Math.round(umin), Math.round(umax)];   // 120 intervalli da 10' = 20 ore
   const inte = intensita(secchielli);
   if (inte) rec.i = inte;
+  const wd = direzione(dir);
+  if (wd !== null) rec.wd = wd;
   return rec;
 }
 
@@ -235,6 +241,16 @@ async function main() {
     const oggi = new Date();
     for (let i = 2; i <= GIORNI_INDIETRO; i++) {     // si parte da D-2: D-1 non e mai completo
       const d = new Date(oggi); d.setUTCDate(d.getUTCDate() - i); giorni.push(iso(d));
+    }
+    // Oltre D-8, fino a D-30, solo i giorni che mancano o sono STIMATI (26/10/2026): l'archivio ARSO risponde su
+    // qualunque intervallo, quindi un guasto lungo si ripara da solo al ritorno. Allarga la finestra delle chiamate
+    // solo quando serve davvero.
+    for (let i = GIORNI_INDIETRO + 1; i <= RIPARA_GIORNI; i++) {
+      const d = new Date(oggi); d.setUTCDate(d.getUTCDate() - i); const g = iso(d);
+      const f = path.join(DATA_DIR, `${g}.json`);
+      let ripara = !fs.existsSync(f);
+      if (!ripara) { try { ripara = /open-meteo/.test(JSON.parse(fs.readFileSync(f, 'utf8')).source || ''); } catch (e) { ripara = true; } }
+      if (ripara) { console.log(`  Auto-riparazione: ${g} mancante o stimato`); giorni.push(g); }
     }
   }
   giorni.sort();

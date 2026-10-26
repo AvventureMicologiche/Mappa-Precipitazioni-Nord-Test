@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Icona del sito, 26/10/2026: la G4 variante 2 (goccia e fungo grande davanti, col filo chiaro). Disegno originale, quadrato 64. -->
+  <defs>
+    <linearGradient id="cielo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3f7ff"/><stop offset="1" stop-color="#b3e5ff"/></linearGradient>
+    <linearGradient id="goccia" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fe0ff"/><stop offset=".55" stop-color="#2f74e8"/><stop offset="1" stop-color="#7a4fe0"/></linearGradient>
+    <linearGradient id="arancio" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a3d"/><stop offset="1" stop-color="#f0521f"/></linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#cielo)"/>
+  <path d="M26 5 C26 5 8 26 8 36 A18 18 0 0 0 44 36 C44 26 26 5 26 5 Z" fill="url(#goccia)"/>
+  <g stroke="#e9f8ff" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M35 44 H48 L47 59 Q41.5 62 36 59 Z" fill="#ffc94d"/>
+    <path d="M22 45 C22 25 61 25 61 45 Q41.5 49.5 22 45 Z" fill="url(#arancio)"/>
+  </g>
+</svg>

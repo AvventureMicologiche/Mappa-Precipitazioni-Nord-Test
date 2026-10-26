@@ -121,6 +121,8 @@ const HA_PIOGGE = new Set(REGIONI.map(r => r.k));                       // /<reg
 const SPIEGA = {
   'castagneti': 'castagno e selve da frutto', 'faggete': 'boschi di faggio, dalla media montagna in su',
   'querceti': 'roverella, rovere, farnia, cerro, leccio, sughera e i querco-carpineti', 'robinieti': 'boschi di robinia, in collina e in pianura',
+  // le cerrete dal 25/10/2026: dove ci sono, il cerro non sta piu' nei querceti (spiega())
+  'cerrete': 'boschi di cerro, in collina e in media montagna',
   'lariceti': 'larice, e larice con cembro, in alta quota', 'abetaie e peccete': 'abete bianco e abete rosso',
   'pioppi, salici, ontani e frassini': 'i boschi lungo fiumi e torrenti', 'pinete': "pino silvestre, nero, marittimo, domestico e d'Aleppo",
   'carpino, orniello e aceri': 'carpino nero e orniello, sui versanti asciutti', 'conifere non precisate': 'conifere di cui la carta non dice la specie',
@@ -128,7 +130,11 @@ const SPIEGA = {
 };
 const COLORE_A_PAROLE = { 'faggete': 'in verde', 'castagneti': 'in arancio', 'querceti': 'in ocra', 'abetaie e peccete': 'in blu',
   'lariceti': 'in giallo', 'pinete': 'in fucsia', 'robinieti': 'in verde chiaro', 'conifere non precisate': 'in viola',
-  'carpino, orniello e aceri': 'in azzurro', 'pioppi, salici, ontani e frassini': 'in rosa', 'altri boschi': 'in grigio' };
+  'carpino, orniello e aceri': 'in azzurro', 'pioppi, salici, ontani e frassini': 'in rosa', 'altri boschi': 'in grigio',
+  'cerrete': 'in bordeaux' };
+// i querceti dicono «cerro» solo dove la carta non lo separa (25/10/2026): in Veneto, Friuli, Trentino, Puglia... il
+// cerro sta ancora li' dentro, nelle 14 regioni con le cerrete no
+const spiega = (t, tipi) => t === 'querceti' && visto(tipi.cerrete) ? 'roverella, rovere, farnia, leccio, sughera e i querco-carpineti' : SPIEGA[t];
 
 const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 const pc = v => String(Math.round(v * 10) / 10).replace('.', ',') + '%';
@@ -159,11 +165,16 @@ function zoneCon(k, t, soglia) {
 
 // i tre tipi che hanno una pagina loro (28/9/2026): nelle barre il nome e' un link
 const PAGINA_TIPO = new Set(['castagneti', 'querceti', 'abetaie e peccete']);
+// le cerrete non hanno una pagina loro: stanno nella pagina «Querceti e cerrete» (25/10/2026, sua scelta), che resta
+// all'indirizzo /mappa-forestale/querceti/ (Google la conosce gia')
+const PAGINA_DI = t => t === 'cerrete' ? 'querceti' : (PAGINA_TIPO.has(t) ? t : null);
+const MEMBRI_DI = T => T === 'querceti' ? ['querceti', 'cerrete'] : [T];
+const NOME_PAGINA = T => T === 'querceti' ? 'querceti e cerrete' : T;
 function barre(tipi) {
   const mx = Math.max(...Object.values(tipi));
   return ordina(tipi).filter(([, v]) => v >= 0.5).map(([t, v]) =>
-    `<div class="fr"><div class="fr-t"><span class="fr-sw" style="background:${COL[t]}"></span>${PAGINA_TIPO.has(t) ? `<a href="${SITO}/mappa-forestale/${t.replace(/ /g, '-')}/"><b>${esc(t)}</b></a>` : `<b>${esc(t)}</b>`}<span class="fr-v">${pc(v)}</span></div>` +
-    `<div class="fr-b"><i style="width:${Math.round(v / mx * 100)}%;background:${COL[t]}"></i></div><div class="fr-s">${esc(SPIEGA[t])}</div></div>`).join('\n');
+    `<div class="fr"><div class="fr-t"><span class="fr-sw" style="background:${COL[t]}"></span>${PAGINA_DI(t) ? `<a href="${SITO}/mappa-forestale/${PAGINA_DI(t).replace(/ /g, '-')}/"><b>${esc(t)}</b></a>` : `<b>${esc(t)}</b>`}<span class="fr-v">${pc(v)}</span></div>` +
+    `<div class="fr-b"><i style="width:${Math.round(v / mx * 100)}%;background:${COL[t]}"></i></div><div class="fr-s">${esc(spiega(t, tipi))}</div></div>`).join('\n');
 }
 const tipiInLinea = (tipi, n = 3) => principali(tipi, n).map(([t, v]) =>
   `<span class="fr-sw" style="background:${COL[t]}"></span>${esc(t)} <span class="pc">${Math.round(v)}%</span>`).join(' · ');
@@ -171,7 +182,9 @@ const tipiInLinea = (tipi, n = 3) => principali(tipi, n).map(([t, v]) =>
 // «A chi serve»: ogni voce c'e' solo se in quel posto ha senso
 function usi(T, dove, extra) {
   const u = [];
-  const fungo = (T.castagneti || 0) + (T.faggete || 0) + (T.querceti || 0) + (T['abetaie e peccete'] || 0);
+  // le cerrete sono querce: contano con i querceti (25/10/2026), per i funghi e per i tartufi
+  const querce = (T.querceti || 0) + (T.cerrete || 0);
+  const fungo = (T.castagneti || 0) + (T.faggete || 0) + querce + (T['abetaie e peccete'] || 0);
   u.push(['🍄', 'Funghi', `Porcini e compagni stanno sotto castagni, faggi, querce e abeti: ${dove} sono ${artNum('il', Math.round(fungo) + '%')} del bosco. E con la pioggia degli ultimi giorni sai anche se è il momento: ${extra.funghi}.`]);
   if (T.castagneti >= 3) u.push(['🌰', 'Castagne', `I castagneti sono ${artNum('il', pc(T.castagneti))} del bosco.${extra.castagne ? ' Dove ce ne sono di più: ' + extra.castagne + '.' : ''} Prima di raccogliere assicurati che il bosco sia libero: molti castagneti sono proprietà private.`]);
   // ⚠️ solo i gruppi che ci sono (19/10/2026, bug 16): prima usciva «delle faggete (0%) e dei lariceti (12%)»
@@ -181,8 +194,8 @@ function usi(T, dove, extra) {
   ].filter(Boolean).join(' e ')}.${extra.faggete && visto(T.faggete) ? ' Faggete: ' + extra.faggete + '.' : ''}`]);
   u.push(['🥾', 'Escursioni e sentieri', 'Prima di partire guardi che bosco attraversa il sentiero, a che quota e su quale versante: tocchi un punto sulla mappa e lo apri su Google Maps.']);
   if ((T.lariceti || 0) + (T['abetaie e peccete'] || 0) >= 5) u.push(['🌿', 'Mirtilli', `Crescono sotto lariceti, peccete e faggete d'alta quota: ${dove} larici e abeti sono ${artNum('il', Math.round(T.lariceti + T['abetaie e peccete']) + '%')} del bosco.`]);
-  if (T.querceti >= 10 || T['pioppi, salici, ontani e frassini'] >= 2) u.push(['🟤', 'Tartufi', `Si cercano soprattutto ${[
-    visto(T.querceti) ? `nei querceti (${pc(T.querceti)})` : null,
+  if (querce >= 10 || T['pioppi, salici, ontani e frassini'] >= 2) u.push(['🟤', 'Tartufi', `Si cercano soprattutto ${[
+    visto(querce) ? `${visto(T.cerrete) ? 'fra querce e cerri' : 'nei querceti'} (${pc(querce)})` : null,
     visto(T['pioppi, salici, ontani e frassini']) ? `lungo i fiumi, fra pioppi, salici e ontani (${pc(T['pioppi, salici, ontani e frassini'])})` : null,
   ].filter(Boolean).join(' e ')}.`]);   // solo i gruppi che ci sono (bug 16): «nei querceti (0%)» non si scrive
   return '<ul class="usi">\n' + u.map(([i, t, x]) => `<li><span class="ic">${i}</span><div><b>${esc(t)}</b><br>${x}</div></li>`).join('\n') + '\n</ul>';
@@ -289,7 +302,7 @@ function paginaRegione(r) {
     briciola: [["Mappa forestale d'Italia", `${SITO}/mappa-forestale/`], [r.nome]] });
   h += `<p class="nota" style="margin-bottom:6px"><a href="${SITO}/mappa-forestale/" style="color:var(--blu)">‹ Mappa forestale d'Italia</a> <span style="color:#9aa7b8">›</span> ${esc(r.nome)}</p>
 <h1>${esc(titolo)}</h1>
-<p class="breve" style="margin-top:-2px">La carta forestale ${esc(r.del)} in una mappa sola, anche dal telefono: undici colori sopra il rilievo, e tocchi un punto per sapere che bosco è, a che quota e su quale versante. Per chi va a funghi, a castagne, a vedere il foliage o a camminare.</p>
+<p class="breve" style="margin-top:-2px">La carta forestale ${esc(r.del)} in una mappa sola, anche dal telefono: dodici colori sopra il rilievo, e tocchi un punto per sapere che bosco è, a che quota e su quale versante. Per chi va a funghi, a castagne, a vedere il foliage o a camminare.</p>
 <a class="cta" href="${MAPPA}">🌲 Apri la mappa forestale ${esc(r.del)}</a>
 <a href="${MAPPA}"><img class="img-f" src="scorcio.jpg" alt="La mappa forestale ${esc(r.del)} da vicino: i boschi colorati per tipo sopra il rilievo, con la nuvoletta di un bosco" width="1200" height="750"></a>
 <p class="nota">${esc(didascalia(tipiDelPunto(S, zS ? zS.tipi : T), doveS))}. Tocchi un bosco e la nuvoletta ti dice che cos'è, a che quota, su quale versante. <a href="${MAPPA}">Apri la mappa</a> per vedere tutta la regione.</p>
@@ -318,7 +331,7 @@ ${Z.slice().sort((a, b) => a.n.localeCompare(b.n, 'it')).map(z => `<li>${zlink(z
 
 <h2>Da dove viene la carta</h2>
 <div class="fonte"><b>${esc(F.fonte)}</b><br>Licenza ${esc(F.licenza)} · <a href="${esc(F.link)}" target="_blank" rel="noopener">scheda ufficiale</a><br>
-<span style="color:#5b6878;font-size:14px">I tipi forestali della carta sono raggruppati negli undici colori della nostra legenda; il rilievo viene da TINITALY (INGV).</span></div>
+<span style="color:#5b6878;font-size:14px">I tipi forestali della carta sono raggruppati nei dodici colori della nostra legenda; il rilievo viene da TINITALY (INGV).</span></div>
 
 <h2>Le altre regioni</h2>
 <nav class="altre"><p>${REG.filter(x => x.k !== r.k).map(x => `<a href="${SITO}/mappa-forestale/${x.k}/">${esc(x.nome)}</a>`).join(' · ')}</p></nav>
@@ -426,8 +439,15 @@ function paginaTipo(T) {
   const slugT = slugTipo(T);
   const B = leggiTesti(path.join(__dirname, 'testi-tipi-bosco', `testi-${slugT}.txt`));
   const imp = Object.fromEntries(righeT(B['impostazioni']).map(r => { const [k, ...v] = r.split(':'); return [k.trim(), v.join(':').trim()]; }));
-  const RR = TP.tipi[T];
-  const perReg = REG.map(r => ({ r, ha: RR[r.k] ? RR[r.k].ha : 0, pc: D.regioni[r.k].tipi[T] || 0 })).filter(x => x.ha > 0).sort((a, b) => b.ha - a.ha);
+  // la pagina dei querceti somma querceti e cerrete (MEMBRI_DI): ettari, fasce di quota e percentuali
+  const MEMBRI = MEMBRI_DI(T), NT = NOME_PAGINA(T);
+  const somma = tipi => MEMBRI.reduce((s, m) => s + ((tipi || {})[m] || 0), 0);
+  const RR = {};
+  for (const m of MEMBRI) for (const [k, v] of Object.entries(TP.tipi[m] || {})) {
+    const x = RR[k] || (RR[k] = { ha: 0, q100: new Array(v.q100.length).fill(0), per: {} });
+    x.ha += v.ha; x.per[m] = v.ha; v.q100.forEach((q, i) => x.q100[i] += q);
+  }
+  const perReg = REG.map(r => ({ r, ha: RR[r.k] ? RR[r.k].ha : 0, pc: somma(D.regioni[r.k].tipi), per: RR[r.k] ? RR[r.k].per : {} })).filter(x => x.ha > 0).sort((a, b) => b.ha - a.ha);
   const tot = perReg.reduce((s, x) => s + x.ha, 0);
   const boscoTot = REG.reduce((s, r) => s + (TP.tot_bosco[r.k] || 0), 0);
   const NB = Object.values(RR)[0].q100.length, isto = new Array(NB).fill(0);
@@ -448,7 +468,7 @@ function paginaTipo(T) {
   const ultima = Math.min(NB - 1, isto.reduce((u, v, i) => v / totQ > 0.002 ? i : u, 0) + 1);
   function profilo() {
     const W = 640, H = 150, n = ultima + 1, bw = (W - 2) / n, mx = Math.max(...isto.slice(0, n));
-    let s = `<svg viewBox="0 0 ${W} ${H + 30}" width="100%" role="img" aria-label="Quanti ettari di ${esc(T)} a ogni altitudine, a fasce di 100 metri" style="display:block;margin:10px 0 2px">`;
+    let s = `<svg viewBox="0 0 ${W} ${H + 30}" width="100%" role="img" aria-label="Quanti ettari di ${esc(NT)} a ogni altitudine, a fasce di 100 metri" style="display:block;margin:10px 0 2px">`;
     for (let i = 0; i < n; i++) {
       const h = isto[i] / mx * (H - 8), on = i * 100 >= fascia[0] && i * 100 < fascia[1];
       s += `<rect x="${(1 + i * bw).toFixed(1)}" y="${(H - h).toFixed(1)}" width="${(bw - 2).toFixed(1)}" height="${h.toFixed(1)}" rx="2" fill="${on ? COL[T] : '#c9d2cc'}" opacity="${on ? 0.85 : 1}"/>`;
@@ -457,9 +477,9 @@ function paginaTipo(T) {
     for (let q = 0; q <= n * 100; q += passo) s += `<text x="${(1 + q / 100 * bw).toFixed(1)}" y="${H + 22}" font-size="17" fill="#5b6878" text-anchor="${q === 0 ? 'start' : (q + passo / 2 > n * 100 ? 'end' : 'middle')}">${n1(q)} m</text>`;
     return s + '</svg>';
   }
-  const zone = D.zone.filter(z => !ESCLUSE.has(z.n) && DI_REG[z.reg] && (z.tipi[T] || 0) >= 20).sort((a, b) => b.tipi[T] - a.tipi[T]).slice(0, +(imp.valli || 10));
-  const paesi = Object.values(D.paesi).filter(p => p.tipi && p.bosco >= 50 && (p.tipi[T] || 0) >= 70 && p.q)
-    .sort((a, b) => (b.tipi[T] * b.bosco) - (a.tipi[T] * a.bosco)).slice(0, +(imp.paesi || 12)).sort((a, b) => a.q - b.q);
+  const zone = D.zone.filter(z => !ESCLUSE.has(z.n) && DI_REG[z.reg] && somma(z.tipi) >= 20).sort((a, b) => somma(b.tipi) - somma(a.tipi)).slice(0, +(imp.valli || 10));
+  const paesi = Object.values(D.paesi).filter(p => p.tipi && p.bosco >= 50 && somma(p.tipi) >= 70 && p.q)
+    .sort((a, b) => (somma(b.tipi) * b.bosco) - (somma(a.tipi) * a.bosco)).slice(0, +(imp.paesi || 12)).sort((a, b) => a.q - b.q);
   const url = `${SITO}/mappa-forestale/${slugT}/`;
   const vista = `r=${imp.regione}&amp;z=${imp.zoom}&amp;c=${imp.centro}`;
   const MAPPA = `${SITO}/?${vista}&amp;boschi=1`;
@@ -467,8 +487,8 @@ function paginaTipo(T) {
   const piano = k => (B[k] || '').replace(/\{(\w+)\}/g, (x, c) => (c in V ? V[c] : x)).replace(/\*/g, '');
 
   let h = testa({ titolo: piano('titolo'), descr: piano('descrizione'), url, img: `${url}scorcio.jpg`,
-    briciola: [["Mappa forestale d'Italia", `${SITO}/mappa-forestale/`], [prima(T)]] });
-  h += `<p class="nota" style="margin-bottom:6px"><a href="${SITO}/mappa-forestale/" style="color:var(--blu)">‹ Mappa forestale d'Italia</a> <span style="color:#9aa7b8">›</span> ${esc(prima(T))}</p>
+    briciola: [["Mappa forestale d'Italia", `${SITO}/mappa-forestale/`], [prima(NT)]] });
+  h += `<p class="nota" style="margin-bottom:6px"><a href="${SITO}/mappa-forestale/" style="color:var(--blu)">‹ Mappa forestale d'Italia</a> <span style="color:#9aa7b8">›</span> ${esc(prima(NT))}</p>
 <h1>${tit('titolo grande')}</h1>
 ${paragrafiT(B['apertura'], V, 'breve')}
 <style>.numeri b{white-space:nowrap;font-size:clamp(16px,5.2vw,24px)}</style>
@@ -480,8 +500,8 @@ ${paragrafiT(B['apertura'], V, 'breve')}
 ${boschiHtml('🌲 Trova i boschi vicino a te')}
 <h2>${tit('regioni: titolo')}</h2>
 ${paragrafiT(B['regioni: testo'], V, 'breve')}
-${perReg.filter(x => x.ha >= 1000).map(x => `<div class="fr"><div class="fr-t"><span class="fr-sw" style="background:${COL[T]}"></span><a href="${SITO}/mappa-forestale/${x.r.k}/"><b>${esc(x.r.nome)}</b></a><span class="fr-v">${n1(Math.round(x.ha / 100) * 100)} ha</span></div>` +
-  `<div class="fr-b"><i style="width:${Math.round(x.ha / perReg[0].ha * 100)}%;background:${COL[T]}"></i></div><div class="fr-s">${artNum('il', pc(x.pc))} del bosco ${esc(x.r.del)}</div></div>`).join('\n')}
+${perReg.filter(x => x.ha >= 1000).map(x => `<div class="fr"><div class="fr-t">${MEMBRI.filter(m => x.per[m]).map(m => `<span class="fr-sw" style="background:${COL[m]}"></span>`).join('')}<a href="${SITO}/mappa-forestale/${x.r.k}/"><b>${esc(x.r.nome)}</b></a><span class="fr-v">${n1(Math.round(x.ha / 100) * 100)} ha</span></div>` +
+  `<div class="fr-b" style="display:flex">${MEMBRI.filter(m => x.per[m]).map(m => `<i style="width:${(x.per[m] / perReg[0].ha * 100).toFixed(1)}%;background:${COL[m]};border-radius:0"></i>`).join('')}</div><div class="fr-s">${artNum('il', pc(x.pc))} del bosco ${esc(x.r.del)}</div></div>`).join('\n')}
 
 <h2>${tit('altitudine: titolo')}</h2>
 ${paragrafiT(B['altitudine: testo'], V, 'breve')}
@@ -504,14 +524,14 @@ ${paragrafiT(B['funghi: dopo'], V)}
 <h2>${tit('valli: titolo')}</h2>
 ${paragrafiT(B['valli: testo'], V, 'breve')}
 <ul class="dove">
-${zone.map(z => `<li>${zlink(z).replace(/>([^<]+)<\/a>$/, '><b>$1</b></a>')} <span class="pc">· ${esc(DI_REG[z.reg].nome)}</span><br><span class="fr-sw" style="background:${COL[T]}"></span>${esc(T)} <b>${Math.round(z.tipi[T])}%</b> del bosco <span class="pc">· bosco ${artNum('sul', Math.round(z.bosco) + '%')} del territorio</span></li>`).join('\n')}
+${zone.map(z => `<li>${zlink(z).replace(/>([^<]+)<\/a>$/, '><b>$1</b></a>')} <span class="pc">· ${esc(DI_REG[z.reg].nome)}</span><br><span class="fr-sw" style="background:${COL[T]}"></span>${esc(NT)} <b>${Math.round(somma(z.tipi))}%</b> del bosco <span class="pc">· bosco ${artNum('sul', Math.round(z.bosco) + '%')} del territorio</span></li>`).join('\n')}
 </ul>
 `;
   if (paesi.length) h += `
 <h2>${tit('paesi: titolo')}</h2>
 ${paragrafiT(B['paesi: testo'], V, 'breve')}
 <ul class="paesi">
-${paesi.map(p => `<li><span class="quota">${p.q} m</span><div><a href="${SITO}/funghi/${p.reg}/${p.slug}/"><b>${esc(p.n)}</b></a> <span class="pc">· ${esc(DI_REG[p.reg] ? DI_REG[p.reg].nome : p.reg)}</span><br><span class="pc"><span class="fr-sw" style="background:${COL[T]}"></span>${esc(T)} ${Math.round(p.tipi[T])}% del bosco intorno</span></div></li>`).join('\n')}
+${paesi.map(p => `<li><span class="quota">${p.q} m</span><div><a href="${SITO}/funghi/${p.reg}/${p.slug}/"><b>${esc(p.n)}</b></a> <span class="pc">· ${esc(DI_REG[p.reg] ? DI_REG[p.reg].nome : p.reg)}</span><br><span class="pc"><span class="fr-sw" style="background:${COL[T]}"></span>${esc(NT)} ${Math.round(somma(p.tipi))}% del bosco intorno</span></div></li>`).join('\n')}
 </ul>
 `;
   h += `
@@ -524,7 +544,7 @@ ${righeT(B['a chi serve: elenco']).filter(r => r.includes('|')).map(r => { const
 </ul>
 
 <h2>${tit('altri boschi: titolo')}</h2>
-<nav class="altre"><p>${TIPI_PAGINA.filter(t => t !== T).map(t => `<span class="fr-sw" style="background:${COL[t]}"></span><a href="${SITO}/mappa-forestale/${slugTipo(t)}/">${esc(prima(t))}</a>`).join(' · ')} · <a href="${SITO}/mappa-forestale/">Tutti i boschi, regione per regione</a></p></nav>
+<nav class="altre"><p>${TIPI_PAGINA.filter(t => t !== T).map(t => `<span class="fr-sw" style="background:${COL[t]}"></span><a href="${SITO}/mappa-forestale/${slugTipo(t)}/">${esc(prima(NOME_PAGINA(t)))}</a>`).join(' · ')} · <a href="${SITO}/mappa-forestale/">Tutti i boschi, regione per regione</a></p></nav>
 
 ${youtube('tipo-' + slugT)}
 <div class="pioggia">
@@ -548,7 +568,7 @@ function paginaItalia() {
   const descr = 'Le carte forestali di tutte le regioni italiane in una mappa: faggete, castagneti, querceti, pinete e lariceti. Per funghi, castagne, foliage ed escursioni.';
   let h = testa({ titolo, descr, url, img: `${url}scorcio.jpg`, briciola: [["Mappa forestale d'Italia"]] });
   h += `<h1>${esc(titolo)}</h1>
-<p class="breve" style="margin-top:-2px">Ogni regione pubblica la sua carta forestale, ognuna sul suo geoportale e con le sue sigle. Qui sono <b>tutte insieme, in una mappa sola</b>: undici colori sopra il rilievo, anche dal telefono. Tocchi un punto e sai che bosco è, a che quota e su quale versante.</p>
+<p class="breve" style="margin-top:-2px">Ogni regione pubblica la sua carta forestale, ognuna sul suo geoportale e con le sue sigle. Qui sono <b>tutte insieme, in una mappa sola</b>: dodici colori sopra il rilievo, anche dal telefono. Tocchi un punto e sai che bosco è, a che quota e su quale versante.</p>
 <div class="numeri"><div><b>${REG.length}</b>regioni e province</div><div><b>11</b>tipi di bosco</div><div><b>10 m</b>il rilievo</div></div>
 <a class="cta" href="${MAPPA}">🌲 Apri la mappa forestale d'Italia</a>
 <a href="${MAPPA}"><img class="img-f" src="scorcio.jpg" alt="La mappa forestale da vicino, con la nuvoletta di un bosco" width="1200" height="750"></a>
@@ -566,7 +586,7 @@ ${REG.map(r => { const f = IND.regioni[r.k]; return `<div class="scheda"><div cl
 <h2>Che boschi ci sono in Italia</h2>
 <p class="breve">Quanto pesa ogni tipo sul bosco italiano, misurato sulla nostra mappa.</p>
 ${barre(I)}
-<p>Tre boschi hanno una pagina loro, con dove sono, a che altitudine e i loro funghi: ${TIPI_PAGINA.map(t => `<a href="${SITO}/mappa-forestale/${slugTipo(t)}/">${esc(t)}</a>`).join(', ')}.</p>
+<p>Tre boschi hanno una pagina loro, con dove sono, a che altitudine e i loro funghi: ${TIPI_PAGINA.map(t => `<a href="${SITO}/mappa-forestale/${slugTipo(t)}/">${esc(NOME_PAGINA(t))}</a>`).join(', ')}.</p>
 
 <h2>A chi serve</h2>
 ${usi(I, 'in Italia', { funghi: `<a href="${SITO}/funghi/">piogge per funghi</a>` })}

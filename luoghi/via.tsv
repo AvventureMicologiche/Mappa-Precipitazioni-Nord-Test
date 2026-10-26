@@ -1,0 +1,353 @@
+via	1	13448491	Via	42.4891	2.0402	FR	Occitania	11071623	Pirenei Orientali	0	PPL	1482
+via	1	8958457	Via	45.8618	11.3407	IT	Veneto	3164604	Vicenza	75	PPL	1043
+via (case)	1	8969449	Via (Case)	45.0282	7.3371	IT	Piemonte	3170831	Torino	30	PPL	523
+via 4 novembre barzon	1	8961133	Via 4 Novembre Barzon	45.3312	12.0770	IT	Veneto	3164604	Venezia	57	PPL	0
+via a colombi	1	8973059	Via A. Colombi	45.4657	9.6261	IT	Lombardia	3174618	Bergamo	24	PPL	101
+via aeroporto	1	8959843	Via Aeroporto	41.0678	14.0702	IT	Campania	3181042	Caserta	65	PPL	9
+via al ticino	1	8984068	Via al Ticino	45.6642	8.6742	IT	Lombardia	3174618	Varese	5	PPLL	183
+via alla francesca	1	8976577	Via alla Francesca	45.6078	9.7272	IT	Lombardia	3174618	Bergamo	19	PPL	179
+via antonio gramsci	1	8982527	Via Antonio Gramsci	45.7886	8.8371	IT	Lombardia	3174618	Varese	10	PPLL	345
+via appia est	1	8960833	Via Appia Est	41.0417	14.5622	IT	Campania	3181042	Benevento	59	PPL	267
+via appia km 180,600	1	8981285	Via Appia Km 180,600	41.1983	14.0236	IT	Campania	3181042	Caserta	13	PPL	78
+via appia ovest	1	9031148	Via Appia Ovest	41.0361	14.5327	IT	Campania	3181042	Benevento	48	PPL	218
+via appia ss 7 km 640	1	8985481	Via Appia Ss.7 Km 640	40.5326	17.1696	IT	Puglia	3169778	Taranto	0	PPLL	29
+via aquileia	1	8976040	Via Aquileia	45.8560	13.4276	IT	Friuli Venezia Giulia	3176525	Gorizia	20	PPL	13
+via ardoneghe i	1	9034219	Via Ardoneghe I	45.3212	11.9825	IT	Veneto	3164604	Padova	17	PPL	6
+via ardoneghe iii	1	8965803	Via Ardoneghe III	45.3193	11.9883	IT	Veneto	3164604	Padova	39	PPL	6
+via arese	1	9031194	Via Arese	45.5446	9.0714	IT	Lombardia	3174618	Milano	45	PPL	158
+via arno	1	8983457	Via Arno	40.9178	14.5467	IT	Campania	3181042	Napoli	8	PPLL	60
+via aslago	1	8962819	Via Aslago	46.6988	11.1507	IT	Trentino-Alto Adige	3165244	Bolzano	49	PPL	760
+via bacchi	1	9032074	Via Bacchi	45.5542	11.2420	IT	Veneto	3164604	Verona	21	PPL	562
+via baciabove	1	8970937	Via Baciabove	42.1565	12.6625	IT	Lazio	3174976	Rieti	28	PPL	35
+via banna	1	8971082	Via Banna	45.2669	7.5305	IT	Piemonte	3170831	Torino	27	PPL	422
+via bergamo	1	8966448	Via Bergamo	45.5433	9.6008	IT	Lombardia	3174618	Bergamo	37	PPL	134
+via beviera	1	8956707	Via Beviera	44.7731	10.6980	IT	Emilia-Romagna	3177401	Reggio Emilia	94	PPL	29
+via borgo	1	8973284	Via Borgo	44.5798	10.8185	IT	Emilia-Romagna	3177401	Modena	24	PPL	86
+via boves	1	8980774	Via Boves	45.4723	7.9066	IT	Piemonte	3170831	Torino	13	PPL	237
+via brandizzo	1	9031271	Via Brandizzo	45.1904	7.8107	IT	Piemonte	3170831	Torino	41	PPL	201
+via brescia	1	8969044	Via Brescia	45.3605	10.3388	IT	Lombardia	3174618	Brescia	31	PPL	71
+via brianza	1	8966039	Via Brianza	45.7586	9.2326	IT	Lombardia	3174618	Como	38	PPL	321
+via brozzolo	1	8952194	Via Brozzolo	41.9617	12.3691	IT	Lazio	3174976	Roma	251	PPL	87
+via brusnengo buronzo	1	8959433	Via Brusnengo-Buronzo	45.5353	8.3061	IT	Piemonte	3170831	Vercelli	67	PPL	226
+via busa	1	8981003	Via Busa	45.5145	11.2522	IT	Veneto	3164604	Verona	13	PPL	263
+via cabalini	1	8980358	Via Cabalini	45.5447	11.2308	IT	Veneto	3164604	Verona	14	PPL	289
+via cade	1	9032589	Via Cadè	45.1674	10.8750	IT	Lombardia	3174618	Mantova	15	PPL	23
+via caduti sul lavoro	1	8959885	Via Caduti sul Lavoro	45.0324	7.3553	IT	Piemonte	3170831	Torino	64	PPL	486
+via campagna	1	8975995	Via Campagna	45.8208	12.4096	IT	Veneto	3164604	Treviso	20	PPL	23
+via cannine	1	9034115	Via Cannine	41.6025	14.0544	IT	Molise	3173222	Isernia	21	PPL	479
+via canonica	1	9033872	Via Canonica	44.0599	12.4204	IT	Emilia-Romagna	3177401	Rimini	32	PPL	42
+via cantone	1	8973946	Via Cantone	44.6209	10.7948	IT	Emilia-Romagna	3177401	Modena	23	PPL	63
+via caprarelle	1	8967074	Via Caprarelle	40.9101	14.4186	IT	Campania	3181042	Napoli	36	PPL	43
+via carducci	1	8972871	Via Carducci	40.3280	18.0818	IT	Puglia	3169778	Lecce	25	PPL	34
+via carlesse	1	8953862	Via Carlesse	45.6364	11.5397	IT	Veneto	3164604	Vicenza	160	PPL	52
+via carlo gavazzi	1	8984075	Via Carlo Gavazzi	45.4837	8.8437	IT	Lombardia	3174618	Milano	5	PPLL	146
+via carlottina	1	8967585	Via Carlottina	45.6776	8.4480	IT	Piemonte	3170831	Novara	34	PPL	305
+via casa chiodi	1	8963343	Via Casa Chiodi	45.0335	9.1395	IT	Lombardia	3174618	Pavia	47	PPL	79
+via cascinino	1	8973100	Via Cascinino	45.2105	8.8802	IT	Lombardia	3174618	Pavia	24	PPL	93
+via case sparse	1	8967769	Via Case Sparse	45.8580	13.2852	IT	Friuli Venezia Giulia	3176525	Udine	34	PPL	8
+via case sparse	1	8976243	Via Case Sparse	41.6605	13.0969	IT	Lazio	3174976	Roma	20	PPL	697
+via casilina	1	8977012	Via Casilina	41.3722	14.0237	IT	Campania	3181042	Caserta	19	PPL	212
+via cassano	1	8963604	Via Cassano	45.5642	9.5206	IT	Lombardia	3174618	Milano	46	PPL	156
+via cava	1	8970187	Via Cava	45.3867	10.7585	IT	Veneto	3164604	Verona	29	PPL	129
+via cavalier bassano squintani	1	8985635	Via Cavalier Bassano Squintani	45.1424	9.7965	IT	Lombardia	3174618	Lodi	0	PPLL	52
+via cavallasco	1	9033889	Via Cavallasco	45.5841	9.5154	IT	Lombardia	3174618	Milano	30	PPL	169
+via cesare battisti	1	8969152	Via Cesare Battisti	45.9811	12.2307	IT	Veneto	3164604	Treviso	31	PPL	269
+via chivasso textron	1	8984444	Via Chivasso-Textron	45.2160	7.8028	IT	Piemonte	3170831	Torino	3	PPLL	205
+via cividale	1	8974565	Via Cividale	45.8965	13.2775	IT	Friuli Venezia Giulia	3176525	Udine	22	PPL	23
+via cividina	1	8982999	Via Cividina	46.1007	13.2591	IT	Friuli Venezia Giulia	3176525	Udine	9	PPLL	124
+via colle nord	1	8978261	Via Colle Nord	45.9238	12.2402	IT	Veneto	3164604	Treviso	17	PPL	245
+via collematteo	1	8977128	Via Collematteo	41.6000	14.0553	IT	Molise	3173222	Isernia	19	PPL	518
+via colombo	1	8981951	Via Colombo	44.9284	7.2937	IT	Piemonte	3170831	Torino	11	PPL	651
+via coronella	1	9035359	Via Coronella	44.8090	11.5645	IT	Emilia-Romagna	3177401	Ferrara	162	PPL	9
+via corte centrale	1	9033049	Via Corte Centrale	44.7437	12.0651	IT	Emilia-Romagna	3177401	Ferrara	4	PPL	-2
+via cresole	1	8975190	Via Cresole	45.5983	11.5556	IT	Veneto	3164604	Vicenza	21	PPL	41
+via cuneo	1	8968531	Via Cuneo	45.7629	9.0241	IT	Lombardia	3174618	Como	32	PPL	318
+via cupa	1	8951558	Via Cupa	44.3613	12.0579	IT	Emilia-Romagna	3177401	Ravenna	305	PPL	9
+via d annunzio	1	8977322	Via d'Annunzio	45.6927	8.7496	IT	Lombardia	3174618	Varese	18	PPL	283
+via de amicis	1	8974522	Via de Amicis	45.6309	12.2919	IT	Veneto	3164604	Treviso	22	PPL	8
+via degli apostoli	1	8952681	Via degli Apostoli	45.7849	10.0414	IT	Lombardia	3174618	Bergamo	222	PPL	449
+via degli artigiani	1	8965046	Via degli Artigiani	45.7632	9.2228	IT	Lombardia	3174618	Como	41	PPL	298
+via degli olmi	1	8959836	Via degli Olmi	41.8013	12.8538	IT	Lazio	3174976	Roma	65	PPL	363
+via degli uccelletti	1	8959528	Via degli Uccelletti	42.1753	12.2921	IT	Lazio	3174976	Viterbo	67	PPL	329
+via dei campi	1	8976102	Via dei Campi	44.5900	10.8777	IT	Emilia-Romagna	3177401	Modena	20	PPL	64
+via dei locchi	1	8967865	Via dei Locchi	43.3156	11.8835	IT	Toscana	3165361	Arezzo	34	PPL	256
+via dei romani	1	8961664	Via dei Romani	44.6853	7.4806	IT	Piemonte	3170831	Cuneo	54	PPL	283
+via del casone	1	8977614	Via del Casone	44.5956	10.8152	IT	Emilia-Romagna	3177401	Modena	18	PPL	67
+via del duca	1	8969811	Via del Duca	43.2287	11.8152	IT	Toscana	3165361	Arezzo	30	PPL	248
+via del filo	1	8958382	Via del Filo	43.2822	11.8264	IT	Toscana	3165361	Arezzo	76	PPL	247
+via del mare	1	8981826	Via del Mare	41.6643	12.4877	IT	Lazio	3174976	Roma	12	PPL	89
+via del pero	1	8980097	Via del Pero	45.4801	7.9160	IT	Piemonte	3170831	Torino	14	PPL	239
+via del pino	1	8952544	Via del Pino	43.6431	10.6220	IT	Toscana	3165361	Pisa	229	PPL	15
+via dell albero	1	8985189	Via dell'Albero	45.8589	11.7207	IT	Veneto	3164604	Vicenza	0	PPLL	1249
+via dell industria	1	8984331	Via dell'Industria	45.8804	13.3502	IT	Friuli Venezia Giulia	3176525	Udine	4	PPLL	20
+via dell industria	1	9032517	Via dell'Industria	45.7243	11.6509	IT	Veneto	3164604	Vicenza	16	PPL	85
+via dell oro	1	9031123	Via dell'Oro	41.8409	12.8503	IT	Lazio	3174976	Roma	49	PPL	357
+via della battaglia	1	8967342	Via della Battaglia	45.8706	13.1548	IT	Friuli Venezia Giulia	3176525	Udine	35	PPL	11
+via della carica	1	8968164	Via della Carica	45.4856	10.8014	IT	Veneto	3164604	Verona	33	PPL	211
+via della pace	1	8951003	Via della Pace	41.5153	13.1280	IT	Lazio	3174976	Latina	374	PPL	221
+via della stazione	1	8964843	Via della Stazione	44.3105	9.9790	IT	Toscana	3165361	Massa-Carrara	42	PPL	214
+via della villa alta	1	8970683	Via della Villa Alta	46.2218	11.2884	IT	Trentino-Alto Adige	3165244	Trento	28	PPL	953
+via delle parti	1	8962178	Via delle Parti	43.0756	12.1006	IT	Umbria	3165048	Perugia	52	PPL	259
+via delle selve	1	8977045	Via delle Selve	42.0671	13.3464	IT	Abruzzo	3183560	dell’Aquila	19	PPL	698
+via di mezzo	1	8954332	Via di Mezzo	45.0325	11.3213	IT	Veneto	3164604	Rovigo	141	PPL	8
+via di mezzo di sopra	1	3164439	Via di Mezzo di Sopra	45.2833	11.9333	IT	Veneto	3164604	Padova	0	PPL	1
+via doberdo	1	8975063	Via Doberdò	45.7931	8.9071	IT	Lombardia	3174618	Varese	21	PPL	390
+via don gnocchi	1	8965050	Via Don Gnocchi	45.4723	9.4208	IT	Lombardia	3174618	Milano	41	PPL	107
+via don minzoni	1	8960213	Via Don Minzoni	44.3292	7.4975	IT	Piemonte	3170831	Cuneo	62	PPL	613
+via don minzoni	1	8978854	Via Don Minzoni	45.4746	9.6297	IT	Lombardia	3174618	Bergamo	16	PPL	104
+via don monza	1	8964975	Via Don Monza	45.7872	9.2932	IT	Lombardia	3174618	Lecco	42	PPL	272
+via don settimio vallorani	1	8965858	Via Don Settimio Vallorani	42.9020	13.3378	IT	Marche	3174004	Ascoli Piceno	39	PPL	937
+via dovrero	1	8980935	Via Dovrero	45.4864	9.6330	IT	Lombardia	3174618	Bergamo	13	PPL	105
+via duno	1	8962793	Via Duno	45.7817	8.8603	IT	Lombardia	3174618	Varese	49	PPL	385
+via f turati	1	8961912	Via F. Turati	45.6311	11.5298	IT	Veneto	3164604	Vicenza	53	PPL	50
+via fausto coppi	1	8950008	Via Fausto Coppi	41.2102	14.5277	IT	Campania	3181042	Benevento	634	PPL	50
+via felegheti	1	8984343	Via Felegheti	44.5389	10.6571	IT	Emilia-Romagna	3177401	Reggio Emilia	4	PPLL	180
+via fermi marconi	1	8984773	Via Fermi-Marconi	45.1732	9.5862	IT	Lombardia	3174618	Lodi	2	PPLL	64
+via fiano	1	9032794	Via Fiano	45.2148	7.5012	IT	Piemonte	3170831	Torino	12	PPL	436
+via fiume	1	8977341	Via Fiume	45.5280	8.9762	IT	Lombardia	3174618	Milano	18	PPL	165
+via foscolo	1	8962544	Via Foscolo	45.7200	9.0328	IT	Lombardia	3174618	Como	50	PPL	318
+via fravita	1	8959105	Via Fravita	40.4928	15.0560	IT	Campania	3181042	Salerno	70	PPL	39
+via g de ruggiero	1	8952360	Via G.De Ruggiero	40.9050	14.4238	IT	Campania	3181042	Napoli	240	PPL	50
+via g di vittorio	1	8985280	Via G. di Vittorio	43.5948	12.9269	IT	Marche	3174004	Pesaro e Urbino	0	PPLL	182
+via gabbio	1	8985630	Via Gabbio	46.0480	9.4230	IT	Lombardia	3174618	Lecco	0	PPLL	774
+via gagarin	1	8973049	Via Gagarin	45.4989	8.9775	IT	Lombardia	3174618	Milano	24	PPL	149
+via gallarate	1	8984828	Via Gallarate	45.7657	8.8141	IT	Lombardia	3174618	Varese	1	PPLL	334
+via gargna	1	8968131	Via Gargnà	45.7208	10.4219	IT	Lombardia	3174618	Brescia	33	PPL	329
+via gargola	1	8985253	Via Gargola	44.5374	10.6117	IT	Emilia-Romagna	3177401	Reggio Emilia	0	PPLL	238
+via ghinella	1	8981130	Via Ghinella	44.7911	11.1139	IT	Emilia-Romagna	3177401	Modena	13	PPL	18
+via giardini	1	8968838	Via Giardini	41.1050	14.1988	IT	Campania	3181042	Caserta	32	PPL	22
+via gregorcic	1	8981653	Via Gregorcic	45.9115	13.5843	IT	Friuli Venezia Giulia	3176525	Gorizia	12	PPL	52
+via guizza	1	9034185	Via Guizza	45.9097	12.2568	IT	Veneto	3164604	Treviso	18	PPL	209
+via hertz	1	8980065	Via Hertz	41.6050	14.2624	IT	Molise	3173222	Isernia	15	PPL	540
+via i maggio	1	8975958	Via I Maggio	45.9126	11.2989	IT	Veneto	3164604	Vicenza	20	PPL	466
+via i maggio	1	8985282	Via I Maggio	43.5752	13.0550	IT	Marche	3174004	Ancona	0	PPLL	99
+via i maggio mediana dell industria	1	8983619	Via I Maggio Mediana dell'Industria	45.3112	10.8312	IT	Veneto	3164604	Verona	7	PPLL	44
+via iadanza	1	9033953	Via Iadanza	41.2813	14.7310	IT	Campania	3181042	Benevento	27	PPL	501
+via iadanza i	1	9033899	Via Iadanza I	41.2795	14.7302	IT	Campania	3181042	Benevento	30	PPL	500
+via idrovora	1	8964606	Via Idrovora	40.5582	14.9131	IT	Campania	3181042	Salerno	43	PPL	0
+via industria ii	1	8967145	Via Industria II	45.7839	9.3137	IT	Lombardia	3174618	Lecco	36	PPL	263
+via iscalonga	1	8957130	Via Iscalonga	41.1401	14.9238	IT	Campania	3181042	Benevento	89	PPL	160
+via iv novembre	1	8974536	Via Iv Novembre	45.9250	12.2608	IT	Veneto	3164604	Treviso	22	PPL	100
+via iv novembre	1	8977010	Via Iv Novembre	41.1586	14.4328	IT	Campania	3181042	Caserta	19	PPL	47
+via john fitzgerald kennedy	1	8961954	Via John Fitzgerald Kennedy	43.1269	13.2634	IT	Marche	3174004	Macerata	53	PPL	319
+via kennedy	1	8981527	Via Kennedy	45.6347	9.6207	IT	Lombardia	3174618	Bergamo	12	PPL	189
+via larga	1	3179852	Via Larga	44.6725	11.0690	IT	Emilia-Romagna	3177401	Modena	821	PPL	25
+via larga	1	8964004	Via Larga	43.0086	12.1688	IT	Umbria	3165048	Perugia	45	PPL	240
+via larga	1	8969734	Via Larga	44.4359	11.6549	IT	Emilia-Romagna	3177401	Bologna	30	PPL	36
+via latina	1	8961785	Via Latina	41.5030	13.6610	IT	Lazio	3174976	Frosinone	54	PPL	114
+via latina	1	9033277	Via Latina	41.7402	12.9445	IT	Lazio	3174976	Roma	82	PPL	241
+via latina iv km	1	8949745	Via Latina Iv Km	41.7351	12.9616	IT	Lazio	3174976	Roma	755	PPL	233
+via leini	1	9033019	Via Leini	45.1914	7.7512	IT	Piemonte	3170831	Torino	5	PPL	234
+via leopardi	1	8966440	Via Leopardi	45.4945	8.9173	IT	Lombardia	3174618	Milano	37	PPL	150
+via lippia	1	8949136	Via Lippia	43.0861	12.4811	IT	Umbria	3165048	Perugia	1521	PPL	216
+via loda	1	8968239	Via Loda	44.5738	11.0385	IT	Emilia-Romagna	3177401	Modena	33	PPL	46
+via lodi	1	8983597	Via Lodi	45.4736	9.5562	IT	Lombardia	3174618	Bergamo	7	PPLL	102
+via loreto e carraiola	1	8977704	Via Loreto e Carraiola	43.8906	10.9292	IT	Toscana	3165361	Pistoia	18	PPL	47
+via lunga	1	8962621	Via Lunga	45.2036	11.5716	IT	Veneto	3164604	Padova	50	PPL	8
+via m pasubio santi	1	8967651	Via M.Pasubio-Santi	45.4780	10.2591	IT	Lombardia	3174618	Brescia	34	PPL	118
+via madonna degli angeli	1	8977780	Via Madonna degli Angeli	41.9406	13.0455	IT	Lazio	3174976	Roma	18	PPL	456
+via malignan	1	8985609	Via Malignan	45.9003	12.7285	IT	Friuli Venezia Giulia	3176525	Pordenone	0	PPLL	15
+via manzoni	1	8968529	Via Manzoni	45.6825	8.9780	IT	Lombardia	3174618	Como	32	PPL	267
+via marcazzan	1	9032593	Via Marcazzan	45.5323	11.2184	IT	Veneto	3164604	Verona	15	PPL	350
+via marcolini	1	8962304	Via Marcolini	46.0027	10.3454	IT	Lombardia	3174618	Brescia	51	PPL	342
+via marconi	1	8983847	Via Marconi	45.6181	9.6455	IT	Lombardia	3174618	Bergamo	6	PPLL	180
+via marittima	1	8958046	Via Marittima	41.5313	13.2553	IT	Lazio	3174976	Latina	79	PPL	182
+via marzaglia	1	9032763	Via Marzaglia	44.6178	10.7946	IT	Emilia-Romagna	3177401	Modena	13	PPL	67
+via mascagni	1	8985438	Via Mascagni	42.4871	14.1095	IT	Abruzzo	3183560	Pescara	0	PPLL	22
+via matteotti	1	8953185	Via Matteotti	45.6690	12.3482	IT	Veneto	3164604	Treviso	203	PPL	11
+via matteotti	1	8970632	Via Matteotti	45.4601	10.3128	IT	Lombardia	3174618	Brescia	28	PPL	123
+via milano	1	8973684	Via Milano	45.6818	9.0569	IT	Lombardia	3174618	Como	23	PPL	264
+via miralbello bivio	1	9032886	Via Miralbello Bivio	43.6201	12.9653	IT	Marche	3174004	Pesaro e Urbino	11	PPL	147
+via molise	1	8961693	Via Molise	45.5592	9.8615	IT	Lombardia	3174618	Brescia	54	PPL	150
+via montale	1	8978153	Via Montale	45.0748	10.3973	IT	Lombardia	3174618	Cremona	17	PPL	25
+via montalfoglio	1	8972687	Via Montalfoglio	43.6048	12.9261	IT	Marche	3174004	Pesaro e Urbino	25	PPL	299
+via monte pogliano	1	8964295	Via Monte Pogliano	42.1892	12.3126	IT	Lazio	3174976	Viterbo	44	PPL	254
+via montebello	1	8966036	Via Montebello	45.6916	8.6871	IT	Lombardia	3174618	Varese	38	PPL	252
+via monti lessini	1	13645966	Via Monti Lessini	45.4348	11.0421	IT	Veneto	3164604	Verona	0	PPLA2	47
+via motta visconti	1	9031289	Via Motta Visconti	45.3055	9.0110	IT	Lombardia	3174618	Pavia	40	PPL	100
+via mulini	1	9031934	Via Mulini	45.8195	8.9301	IT	Lombardia	3174618	Como	23	PPL	340
+via napoli hotel holiday	1	8951974	Via Napoli Hotel Holiday	41.4436	15.5021	IT	Puglia	3169778	Foggia	269	PPL	95
+via nazionale	1	8955702	Via Nazionale	40.9581	14.7691	IT	Campania	3181042	Avellino	109	PPL	511
+via nazionale	1	8970434	Via Nazionale	41.2047	14.4039	IT	Campania	3181042	Caserta	29	PPL	88
+via nazionale	1	8979731	Via Nazionale	45.8287	13.1690	IT	Friuli Venezia Giulia	3176525	Udine	15	PPL	6
+via nazionale	1	8979915	Via Nazionale	43.4819	11.6955	IT	Toscana	3165361	Arezzo	15	PPL	261
+via nazionale borgata ravotti	1	8971127	Via Nazionale Borgata Ravotti	44.1840	7.9893	IT	Piemonte	3170831	Cuneo	27	PPL	621
+via nova	1	8971664	Via Nova	44.8566	7.3853	IT	Piemonte	3170831	Torino	26	PPL	315
+via nuova	1	8958027	Via Nuova	44.4762	11.6800	IT	Emilia-Romagna	3177401	Bologna	79	PPL	18
+via ostiano	1	8979599	Via Ostiano	45.1736	10.0873	IT	Lombardia	3174618	Cremona	15	PPL	45
+via paglieri	1	8965341	Via Paglieri	44.8700	7.4053	IT	Piemonte	3170831	Torino	40	PPL	304
+via parini	1	8983587	Via Parini	45.8165	8.9438	IT	Lombardia	3174618	Como	7	PPLL	400
+via pascoli	1	8968640	Via Pascoli	45.6954	12.4196	IT	Veneto	3164604	Treviso	32	PPL	8
+via passons	1	9032249	Via Passons	46.0906	13.1936	IT	Friuli Venezia Giulia	3176525	Udine	19	PPL	118
+via pastrengo	1	9036132	Via Pastrengo	45.4762	10.8291	IT	Veneto	3164604	Verona	975	PPL	143
+via pegnati	1	8977463	Via Pegnati	45.5115	11.2530	IT	Veneto	3164604	Verona	18	PPL	255
+via per borgomanero	1	9031815	Via per Borgomanero	45.6948	8.4276	IT	Piemonte	3170831	Novara	25	PPL	334
+via per crova	1	9031814	Via Per Crova	45.3240	8.2513	IT	Piemonte	3170831	Vercelli	25	PPL	156
+via per monteperpoli	1	8958730	Via Per Monteperpoli	44.0850	10.4263	IT	Toscana	3165361	Lucca	73	PPL	453
+via per rogorotto	1	9032307	Via Per Rogorotto	45.4825	8.9651	IT	Lombardia	3174618	Milano	18	PPL	144
+via peraci bonaccorsi	1	9033262	Via Peraci Bonaccorsi	37.5930	15.1028	IT	Sicilia	2523119	Catania	85	PPL	364
+via peschiere	1	8975984	Via Peschiere	45.6323	12.2738	IT	Veneto	3164604	Treviso	20	PPL	10
+via piana	1	8961070	Via Piana	44.7985	8.0875	IT	Piemonte	3170831	Cuneo	57	PPL	257
+via piana	1	8965240	Via Piana	41.7515	13.6402	IT	Lazio	3174976	Frosinone	41	PPL	449
+via piana	1	8976244	Via Piana	42.0917	12.9131	IT	Lazio	3174976	Roma	20	PPL	622
+via pinerolo	1	8972269	Via Pinerolo	44.8751	7.3929	IT	Piemonte	3170831	Torino	25	PPL	316
+via pontebbana	1	8985228	Via Pontebbana	46.2032	13.1886	IT	Friuli Venezia Giulia	3176525	Udine	0	PPLL	194
+via pordenone	1	8983751	Via Pordenone	46.0137	12.6506	IT	Friuli Venezia Giulia	3176525	Pordenone	7	PPLL	95
+via porri	1	8979585	Via Porri	45.0294	9.2373	IT	Lombardia	3174618	Pavia	15	PPL	289
+via pratale di bottegone	1	8979156	Via Pratale di Bottegone	44.0059	10.9156	IT	Toscana	3165361	Pistoia	16	PPL	511
+via prato nuovo	1	8975507	Via Prato Nuovo	42.1901	12.3111	IT	Lazio	3174976	Viterbo	21	PPL	258
+via primavera	1	8974299	Via Primavera	45.0413	8.0434	IT	Piemonte	3170831	Asti	22	PPL	251
+via provinciale	1	8953277	Via Provinciale	39.1610	17.0152	IT	Calabria	2525468	Crotone	200	PPL	45
+via provinciale	1	8980247	Via Provinciale	45.9407	8.7725	IT	Lombardia	3174618	Varese	14	PPL	237
+via purgatorio	1	8958528	Via Purgatorio	38.2305	15.7378	IT	Calabria	2525468	Reggio Calabria	75	PPL	630
+via repubblica	1	8968723	Via Repubblica	44.5392	11.0373	IT	Emilia-Romagna	3177401	Modena	32	PPL	67
+via rezzo	1	8964156	Via Rezzo	45.8292	9.8525	IT	Lombardia	3174618	Bergamo	44	PPL	723
+via rivarossa	1	8956068	Via Rivarossa	45.2214	7.7696	IT	Piemonte	3170831	Torino	103	PPL	211
+via roma basella	1	9034213	Via Roma-Basella	45.6212	9.7299	IT	Lombardia	3174618	Bergamo	17	PPL	190
+via romana	1	8951440	Via Romana	44.1753	9.8702	IT	Liguria	3174725	La Spezia	318	PPL	28
+via romana	1	8976162	Via Romana	43.8623	10.7020	IT	Toscana	3165361	Pistoia	20	PPL	24
+via romualdo	1	8963257	Via Romualdo	40.9320	17.2913	IT	Puglia	3169778	Bari	48	PPL	51
+via roncaglia	1	8965164	Via Roncaglia	43.6123	12.9549	IT	Marche	3174004	Pesaro e Urbino	41	PPL	166
+via s candida ortali	1	8955298	Via S.Candida Ortali	40.8711	14.8487	IT	Campania	3181042	Avellino	117	PPL	381
+via s giovanni	1	8950225	Via S. Giovanni	41.2134	14.5113	IT	Campania	3181042	Benevento	553	PPL	67
+via s vincenzo	1	8953152	Via S. Vincenzo	43.5121	13.3905	IT	Marche	3174004	Ancona	204	PPL	214
+via salata	1	8972644	Via Salata	44.4061	10.8970	IT	Emilia-Romagna	3177401	Modena	25	PPL	480
+via san floreano	1	8970271	Via San Floreano	45.9283	13.2739	IT	Friuli Venezia Giulia	3176525	Udine	29	PPL	34
+via san francesco	1	8977825	Via San Francesco	40.8477	15.0453	IT	Campania	3181042	Avellino	18	PPL	502
+via san grato	1	8968454	Via San Grato	45.0778	7.8311	IT	Piemonte	3170831	Torino	32	PPL	360
+via san mauro	1	3167984	Via San Mauro	44.3707	11.8181	IT	Emilia-Romagna	3177401	Ravenna	28	PPL	23
+via san simeone	1	8965100	Via San Simeone	45.6626	11.5000	IT	Veneto	3164604	Vicenza	41	PPL	79
+via sant antonio	1	8974619	Via Sant'Antonio	44.5538	10.8850	IT	Emilia-Romagna	3177401	Modena	22	PPL	94
+via santo stefano	1	8984484	Via Santo Stefano	44.5162	7.7237	IT	Piemonte	3170831	Cuneo	3	PPLL	376
+via scaglia	1	8979643	Via Scaglia	45.5431	11.2106	IT	Veneto	3164604	Verona	15	PPL	565
+via serio i	1	9034214	Via Serio I	45.6374	9.6941	IT	Lombardia	3174618	Bergamo	17	PPL	206
+via serio ii	1	8970630	Via Serio II	45.6379	9.6969	IT	Lombardia	3174618	Bergamo	28	PPL	208
+via sicilia	1	8963697	Via Sicilia	43.4728	13.5475	IT	Marche	3174004	Ancona	46	PPL	97
+via soella scaldaferro	1	9034360	Via Soella-Scaldaferro	45.6619	11.6612	IT	Veneto	3164604	Vicenza	12	PPL	59
+via stazione	1	8976026	Via Stazione	46.4486	13.3180	IT	Friuli Venezia Giulia	3176525	Udine	20	PPL	431
+via stratta	1	8983405	Via Stratta	43.5461	12.5956	IT	Marche	3174004	Pesaro e Urbino	8	PPLL	545
+via sumpiazzo	1	8980077	Via Sumpiazzo	45.9380	9.2811	IT	Lombardia	3174618	Lecco	15	PPL	304
+via suore	1	8967809	Via Suore	44.3473	11.6513	IT	Emilia-Romagna	3177401	Bologna	34	PPL	167
+via tanaro	1	8983223	Via Tanaro	44.7443	8.0843	IT	Piemonte	3170831	Cuneo	8	PPLL	150
+via tempa delle craste	1	8965925	Via Tempa delle Craste	40.5614	14.9300	IT	Campania	3181042	Salerno	39	PPL	13
+via tenuta	1	8952746	Via Tenuta	44.0142	12.4315	IT	Emilia-Romagna	3177401	Rimini	220	PPL	77
+via tiel	1	8973877	Via Tiel	45.7723	13.4029	IT	Friuli Venezia Giulia	3176525	Udine	23	PPL	0
+via torino	1	8959879	Via Torino	45.5828	8.2662	IT	Piemonte	3170831	Biella	65	PPL	262
+via torino i	1	9034460	Via Torino I	45.1736	7.7651	IT	Piemonte	3170831	Torino	4	PPL	219
+via torino ii	1	8961657	Via Torino II	45.1861	7.7707	IT	Piemonte	3170831	Torino	54	PPL	220
+via trento	1	8966113	Via Trento	45.9434	12.3865	IT	Veneto	3164604	Treviso	38	PPL	65
+via trento	1	8976562	Via Trento	45.5516	9.0903	IT	Lombardia	3174618	Milano	19	PPL	161
+via trezzo	1	8964431	Via Trezzo	45.5877	9.5227	IT	Lombardia	3174618	Milano	43	PPL	169
+via triflisco	1	9031909	Via Triflisco	41.1499	14.2425	IT	Campania	3181042	Caserta	24	PPL	49
+via vallette	1	8977926	Via Vallette	43.9335	12.6848	IT	Emilia-Romagna	3177401	Rimini	18	PPL	44
+via vecchia	1	8964683	Via Vecchia	44.8417	7.5358	IT	Piemonte	3170831	Torino	42	PPL	251
+via verde	1	8984557	Via Verde	44.5810	11.2455	IT	Emilia-Romagna	3177401	Bologna	3	PPLL	24
+via villanova	1	8959313	Via Villanova	45.6364	11.5345	IT	Veneto	3164604	Vicenza	68	PPL	52
+via villapia	1	8968533	Via Villapia	45.5246	8.9158	IT	Lombardia	3174618	Milano	32	PPL	168
+via villarella	1	8951244	Via Villarella	41.0998	14.2368	IT	Campania	3181042	Caserta	343	PPL	33
+via vische	1	9033614	Via Vische	45.3368	7.8936	IT	Piemonte	3170831	Torino	53	PPL	237
+via volta	1	8977262	Via Volta	44.7541	8.3471	IT	Piemonte	3170831	Asti	18	PPL	146
+via vomano	1	9035626	Via Vomano	42.6354	13.9058	IT	Abruzzo	3183560	Teramo	210	PPL	97
+via zamicheli al cengio	1	8979644	Via Zamicheli al Cengio	45.5174	11.2629	IT	Veneto	3164604	Verona	15	PPL	310
+via zappelle	1	8957383	Via Zappelle	40.8738	14.8483	IT	Campania	3181042	Avellino	86	PPL	361
+viabon	1	2969454	Viabon	48.2167	1.7051	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	261	PPL	137
+viacava	1	8968705	Viacava	44.4598	10.4740	IT	Emilia-Romagna	3177401	Reggio Emilia	32	PPL	640
+viacce	1	8966986	Viacce	43.3654	12.7973	IT	Marche	3174004	Ancona	36	PPL	491
+viadacqua	1	8971265	Viadacqua	46.7184	11.2506	IT	Trentino-Alto Adige	3165244	Bolzano	27	PPL	1552
+viadana	1	3164440	Viadana	44.9355	10.5190	IT	Lombardia	3174618	Mantova	20013	PPLA3	26
+viadana	1	8949307	Viadana	45.3719	10.3363	IT	Lombardia	3174618	Brescia	1157	PPL	76
+viadanica	1	6534525	Viadanica	45.6847	9.9615	IT	Lombardia	3174618	Bergamo	816	PPLA3	336
+viadena	0	3164440	Viadana	44.9355	10.5190	IT	Lombardia	3174618	Mantova	20013	PPLA3	26
+viagenti	1	2969452	Viagenti	41.4909	9.0551	FR	Corsica	3023519	Corsica del Sud	0	PPL	82
+viagerosa	1	8956126	Viagerosa	44.7632	8.5258	IT	Piemonte	3170831	Alessandria	102	PPL	133
+viagrande	1	2522777	Viagrande	37.6103	15.0979	IT	Sicilia	2523119	Catania	6880	PPLA3	410
+viagranni	0	2522777	Viagrande	37.6103	15.0979	IT	Sicilia	2523119	Catania	6880	PPLA3	410
+viaiano soprano	1	8964696	Viaiano Soprano	44.5377	7.9103	IT	Piemonte	3170831	Cuneo	42	PPL	239
+viaio	1	8956719	Viaio	43.5683	12.0642	IT	Toscana	3165361	Arezzo	94	PPL	329
+viais	1	12305900	Viais	47.1194	-1.5377	FR	Paesi della Loira	2988289	Loira Atlantica	0	PPL	17
+vial	1	2969450	Vial	45.7100	3.9417	FR	Alvernia-Rodano-Alpi	11071625	Loira	0	PPL	717
+vial	1	8952432	Vial	45.8207	11.8851	IT	Veneto	3164604	Treviso	235	PPL	177
+viala du pas de jaux	1	2969448	Viala-du-Pas-de-Jaux	43.9566	3.0545	FR	Occitania	11071623	Aveyron	79	PPL	804
+viala du tarn	1	2969447	Viala-du-Tarn	44.0721	2.8770	FR	Occitania	11071623	Aveyron	549	PPL	536
+vialard	1	12322368	Vialard	45.1321	2.3870	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	786
+vialard	1	2969443	Vialard	45.2168	3.6172	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	757
+vialard	1	2969444	Vialard	45.1021	3.1851	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	1055
+vialard	1	2969445	Vialard	45.0327	1.2397	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	221
+vialaret	1	2969442	Vialaret	44.9144	4.2197	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	0	PPL	1222
+vialars	1	12309998	Vialars	44.3570	1.9004	FR	Occitania	11071623	Lot	0	PPL	398
+vialas	1	2969441	Vialas	44.3339	3.8957	FR	Occitania	11071623	Lozère	515	PPL	625
+vialba	1	12022956	Vialba	45.5152	9.1309	IT	Lombardia	3174618	Milano	0	PPLX	140
+viale	1	2969440	Viale	45.5290	1.1252	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	371
+viale	1	6535526	Viale	45.0001	8.0499	IT	Piemonte	3170831	Asti	225	PPLA3	261
+viale	1	8956236	Viale	43.0109	12.4027	IT	Umbria	3165048	Perugia	101	PPL	168
+viale benedetto croce	1	8971715	Viale Benedetto Croce	44.9086	8.0973	IT	Piemonte	3170831	Asti	26	PPL	151
+viale europa	1	8961773	Viale Europa	42.6998	12.0785	IT	Umbria	3165048	Terni	54	PPL	445
+viale europa	1	8985637	Viale Europa	45.1701	9.5996	IT	Lombardia	3174618	Lodi	0	PPLL	66
+viale fratelli cervi	1	8953794	Viale Fratelli Cervi	45.1653	9.2182	IT	Lombardia	3174618	Pavia	163	PPL	65
+viale industria	1	8982078	Viale Industria	45.1204	9.4337	IT	Lombardia	3174618	Pavia	11	PPL	50
+viale monza	1	12022833	Viale Monza	45.5120	9.2260	IT	Lombardia	3174618	Milano	0	PPLX	133
+viale stazione	1	8977203	Viale Stazione	45.2339	8.4261	IT	Piemonte	3170831	Vercelli	18	PPL	123
+viale varese	1	8958787	Viale Varese	45.8623	8.9092	IT	Lombardia	3174618	Varese	72	PPL	428
+vialelles	1	12316607	Vialelles	43.7255	2.4525	FR	Occitania	11071623	Tarn	0	PPL	600
+vialene	1	2969439	Vialene	44.6139	2.2483	FR	Occitania	11071623	Aveyron	0	PPL	195
+vialer	1	2969438	Vialer	43.5023	-0.1731	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	193	PPL	195
+vialette	1	2969437	Vialette	45.1207	3.8637	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	822
+vialettes	1	12322238	Vialettes	44.9341	3.8105	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	1068
+vialfre	1	6535824	Vialfrè	45.3808	7.8182	IT	Piemonte	3170831	Torino	224	PPLA3	470
+viali	1	12023187	Viali di Circonvallazione	43.7750	11.2575	IT	Toscana	3165361	Firenze	0	PPLX	62
+viali	1	8961234	Viali	45.8760	12.8764	IT	Friuli Venezia Giulia	3176525	Pordenone	57	PPL	17
+viali	1	8974474	Viali	45.5254	11.2218	IT	Veneto	3164604	Verona	22	PPL	430
+viali di circonvallazione	1	12023187	Viali di Circonvallazione	43.7750	11.2575	IT	Toscana	3165361	Firenze	0	PPLX	62
+vialleix	1	2969435	Vialleix	46.0838	3.0773	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	393
+viallevaleix	1	12320979	Viallevaleix	45.3689	1.4970	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	351
+vialone	1	8969551	Vialone	45.2254	9.2405	IT	Lombardia	3174618	Pavia	30	PPL	79
+vialot	1	2969434	Vialot	45.0942	1.1571	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	129
+vials	1	2969432	Vials	45.3664	4.8099	FR	Alvernia-Rodano-Alpi	11071625	Isère	0	PPL	167
+viam	1	2969431	Viam	45.6089	1.8840	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	142	PPL	674
+viamaggio	1	3164437	Viamaggio	43.6917	12.1333	IT	Toscana	3165361	Arezzo	2	PPL	891
+viammeville	1	2969430	Viammeville	49.9905	1.6545	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	0	PPL	113
+vian a	0	3182634	Avigliana	45.0798	7.3965	IT	Piemonte	3170831	Torino	9099	PPLA3	383
+viana	0	2969284	Vienne	45.5257	4.8748	FR	Alvernia-Rodano-Alpi	11071625	Isère	32293	PPLA3	175
+viana	0	2969427	Vianne	44.1972	0.3206	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Lot-et-Garonne	1280	PPL	41
+viana	1	3164435	Viana	45.7333	9.7333	IT	Lombardia	3174618	Bergamo	0	PPL	291
+viancino	1	8967168	Viancino	45.3262	8.2317	IT	Piemonte	3170831	Vercelli	35	PPL	164
+viane	1	2969429	Viane	43.7368	2.5838	FR	Occitania	11071623	Tarn	661	PPL	507
+vianges	1	2969428	Vianges	47.1596	4.3269	FR	Borgogna-Franca Contea	11071619	Cote d'Or	63	PPL	421
+viani	1	8950410	Viani	44.4767	7.5075	IT	Piemonte	3170831	Cuneo	497	PPL	491
+vianino	1	8957750	Vianino	44.6837	9.9336	IT	Emilia-Romagna	3177401	Parma	82	PPL	306
+vianne	1	2969427	Vianne	44.1972	0.3206	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Lot-et-Garonne	1280	PPL	41
+viano	1	2658139	Viano	46.2533	10.1394	CH	Cantone dei Grigioni	2660522	Region Bernina	0	PPL	1275
+viano	1	3164434	Viano	44.5452	10.6243	IT	Emilia-Romagna	3177401	Reggio Emilia	1117	PPLA3	275
+viano	1	8958982	Viano	42.2489	14.2528	IT	Abruzzo	3183560	Chieti	71	PPL	374
+viano	1	8960141	Viano	44.1621	10.1005	IT	Toscana	3165361	Massa-Carrara	63	PPL	497
+viano	1	8966583	Viano	43.7364	12.3776	IT	Marche	3174004	Pesaro e Urbino	37	PPL	476
+viano	1	8971210	Viano	45.3621	9.0928	IT	Lombardia	3174618	Milano	27	PPL	104
+vianoce	1	8966788	Vianoce	44.7892	8.2221	IT	Piemonte	3170831	Asti	36	PPL	239
+vianone	1	8978714	Vianone	45.3452	8.1299	IT	Piemonte	3170831	Vercelli	16	PPL	191
+vianova	1	8981782	Vianova	44.0963	10.3186	IT	Toscana	3165361	Lucca	12	PPL	1100
+viapres le grand	1	2969425	Viâpres-le-Grand	48.5658	4.0216	FR	Gran Este	11071622	Aube	0	PPL	86
+viapres le petit	1	2969424	Viâpres-le-Petit	48.5633	4.0427	FR	Gran Este	11071622	Aube	108	PPL	83
+viarago	1	7870590	Viarago	46.0805	11.2634	IT	Trentino-Alto Adige	3165244	Trento	498	PPLX	678
+viaredzhio	0	3164433	Viareggio	43.8669	10.2502	IT	Toscana	3165361	Lucca	62169	PPLA3	2
+viareggio	1	3164433	Viareggio	43.8669	10.2502	IT	Toscana	3165361	Lucca	62169	PPLA3	2
+viareggiu	0	3164433	Viareggio	43.8669	10.2502	IT	Toscana	3165361	Lucca	62169	PPLA3	2
+viarigi	1	6534862	Viarigi	44.9806	8.3571	IT	Piemonte	3170831	Asti	476	PPLA3	252
+viarm	0	2969423	Viarmes	49.1308	2.3707	FR	Île-de-France	3012874	Val-d'Oise	4961	PPL	49
+viarman	1	8976431	Viarman	44.9263	7.4076	IT	Piemonte	3170831	Torino	19	PPL	292
+viarmes	1	2969423	Viarmes	49.1308	2.3707	FR	Île-de-France	3012874	Val-d'Oise	4961	PPL	49
+viaro	1	8658820	Viaro	42.3085	13.2866	IT	Abruzzo	3183560	dell’Aquila	20	PPL	805
+viarolo	1	3164432	Viarolo	44.8734	10.2528	IT	Emilia-Romagna	3177401	Parma	417	PPL	42
+viarose	1	12312662	Viarose	44.1376	1.0939	FR	Occitania	11071623	Tarn-et-Garonne	0	PPL	152
+viarouge	1	2969422	Viarougé	44.2417	2.8449	FR	Occitania	11071623	Aveyron	0	PPL	972
+vias	1	2969421	Vias	43.3120	3.4185	FR	Occitania	11071623	Hérault	4906	PPL	11
+viaso	1	3219218	Viaso	46.4067	12.8479	IT	Friuli Venezia Giulia	3176525	Udine	67	PPL	527
+viassa	1	8963823	Viassa	44.8434	7.3542	IT	Piemonte	3170831	Torino	45	PPL	329
+viastels	1	12318036	Viastels	44.1027	3.0667	FR	Occitania	11071623	Aveyron	0	PPL	419
+viaules	0	2968005	Violès	44.1618	4.9548	FR	Provenza-Alpi-Costa Azzurra	2985244	Vaucluse	1657	PPL	99
+viaux	1	2969418	Viaux	44.8238	5.2705	FR	Alvernia-Rodano-Alpi	11071625	Drôme	0	PPL	514
+viaverde	1	3164431	Viaverde	45.5964	11.1062	IT	Veneto	3164604	Verona	35	PPL	1020
+viazac	1	2969416	Viazac	44.6731	1.8224	FR	Occitania	11071623	Lot	0	PPL	343
+viazza	1	8975264	Viazza	45.0682	11.5875	IT	Veneto	3164604	Rovigo	21	PPL	6
+viazzano	1	8952356	Viazzano	44.6867	10.0477	IT	Emilia-Romagna	3177401	Parma	240	PPL	181
+viazzi	1	8968497	Viazzi	44.5938	8.4133	IT	Piemonte	3170831	Alessandria	32	PPL	214
+viazzone	1	8978916	Viazzone	44.9968	10.6457	IT	Lombardia	3174618	Mantova	16	PPL	20

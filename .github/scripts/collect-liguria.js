@@ -20,7 +20,22 @@ const { creaOre, segna, intensita } = require('./lib-intensita.js');
 
 const DATA_DIR  = path.join(__dirname, '..', '..', 'data', 'liguria');
 const MAX_DAYS  = 730;
-const OMIRL_BASE = 'https://omirl.regione.liguria.it/Omirl/rest';
+// ⚠️ DUE STRADE PER OMIRL, LA SCEGLIE OGNI GIRO (23/10/2026). Dalla sera del 22/10 OMIRL non risponde piu' ai
+// runner di GitHub (timeout gia' sulla lista stazioni), mentre dal PC e da Cloudflare risponde in 0,3 s. Il workflow
+// passa OMIRL_TRAMITE (il worker omirl-tramite, copia in .github/cloudflare/omirl-tramite.js) e OMIRL_CHIAVE
+// (secret): il worker gira la richiesta a OMIRL tale e quale. La lista stazioni si chiede PRIMA DIRETTA, e solo se
+// non risponde dal tramite (`scegliStrada`): il giorno che OMIRL sblocca GitHub si torna diretti da soli, e il
+// worker resta di riserva. Senza le due variabili, cioe' dal PC, si va solo diretti.
+// OMIRL_DIRETTO serve solo alle prove: un indirizzo che non risponde finge il blocco.
+const OMIRL_DIRETTO = (process.env.OMIRL_DIRETTO || 'https://omirl.regione.liguria.it').replace(/\/$/, '') + '/Omirl/rest';
+const OMIRL_TRAMITE = (process.env.OMIRL_TRAMITE || '').replace(/\/$/, '');
+const OMIRL_CHIAVE  = process.env.OMIRL_CHIAVE || '';
+var OMIRL_BASE = OMIRL_DIRETTO;   // lo cambia scegliStrada
+// Richieste insieme per gruppo (23/10/2026): erano 10, con ~550 grafici a giro e sette giri al giorno. Se il
+// blocco di OMIRL e' per il carico, non ci si ricasca: meno colpi alla volta, stesse pause fra un gruppo e l'altro.
+const PARALLELE = 3;
+const { creaDir, segnaDir, direzione, daSettore } = require('./lib-direzione.js');
+const { tieniMeteo } = require('./lib-tieni-meteo.js');
 
 function getItalyOffset(date) {
   const year = date.getUTCFullYear();
@@ -39,10 +54,18 @@ function getItalyDate(offsetDays) {
 
 function fetchJSON(url) {
   return new Promise((resolve, reject) => {
+    const headers = { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0' };
+    const tramite = OMIRL_TRAMITE && url.indexOf(OMIRL_TRAMITE) === 0;
+    if (tramite) headers['X-Chiave'] = OMIRL_CHIAVE;
     const req = https.get(url, {
-      headers: { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0' },
+      headers: headers,
       timeout: 15000
     }, (res) => {
+      // 403/404 = il worker ci rifiuta (chiave sbagliata), 504 = OMIRL non risponde nemmeno a lui:
+      // si dice chiaro invece di finire in un «JSON parse error»
+      if (tramite && (res.statusCode === 403 || res.statusCode === 404 || res.statusCode >= 500)) {
+        res.resume(); reject(new Error('tramite Cloudflare: HTTP ' + res.statusCode)); return;
+      }
       let data = '';
       res.on('data', c => data += c);
       res.on('end', () => {
@@ -53,6 +76,22 @@ function fetchJSON(url) {
     req.on('error', reject);
     req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
   });
+}
+
+/** Chiede la lista stazioni diretta e, se non risponde, dal tramite; il resto del giro va dalla strada vincente. */
+async function scegliStrada() {
+  try {
+    var lista = await fetchJSON(OMIRL_DIRETTO + '/stations/Pluvio');
+    console.log('  Strada: diretta');
+    return lista;
+  } catch (e) {
+    if (!OMIRL_TRAMITE) throw e;
+    console.log('  Diretta non risponde (' + e.message + '), provo dal tramite Cloudflare');
+  }
+  OMIRL_BASE = OMIRL_TRAMITE + '/Omirl/rest';
+  var listaT = await fetchJSON(OMIRL_BASE + '/stations/Pluvio');
+  console.log('  Strada: tramite Cloudflare');
+  return listaT;
 }
 
 async function fetchWithRetry(url, retries) {
@@ -107,6 +146,20 @@ function senzaZeriFinti(v) {
   if (noZero.length === v.length || !noZero.length) return v;
   return Math.min.apply(null, noZero) > 5 ? noZero : v;
 }
+/* ⚠️ E LO ZERO ISOLATO SI TOGLIE SEMPRE (19/10/2026, quinto check, bug 10). La regola qui sopra vale solo con le
+   notti miti: OMIRL scrive ogni giorno alle 02:00 in punto uno 0 esatto su un gruppo di stazioni (81 in 15 giorni,
+   Rovegno 10,2 → 0 → 9,9), e quando la minima vera scende sotto i 5 °C lo zero restava e diventava la minima:
+   Cabanne 0 / 19,8 il 5/10 (vera 4,5), 13 e 14/10, S. Stefano d'Aveto il 13/10. Qui si guarda la SERIE: uno 0 esatto
+   con la lettura prima e quella dopo entrambe presenti e lontane almeno 1,5 °C dallo zero non e' una temperatura
+   (in 15 minuti non si scende di quattro gradi e si risale). Uno zero vero di una notte di gelo ha intorno 0,4 o
+   -0,3 e resta. Gli zeri attaccati ai buchi della serie li tiene d'occhio la regola di sopra. */
+function senzaZeriIsolati(punti) {
+  return punti.filter(function(p, i) {
+    if (p[1] !== 0) return true;
+    var a = punti[i - 1] && punti[i - 1][1], b = punti[i + 1] && punti[i + 1][1];
+    return !(a != null && b != null && Math.abs(a) >= 1.5 && Math.abs(b) >= 1.5);
+  });
+}
 
 /** Aggiunge t/w ai record del giorno (byId: shortCode → record del file). */
 async function aggiungiMeteoLiguria(byId, dayStartMs, dayEndMs) {
@@ -116,17 +169,17 @@ async function aggiungiMeteoLiguria(byId, dayStartMs, dayEndMs) {
   var codsT = termo.map(function(s) { return s.shortCode; }).filter(function(c) { return byId[c]; });
   var codsV = vento.map(function(s) { return s.shortCode; }).filter(function(c) { return byId[c]; });
   var codsU = igro.map(function(s) { return s.shortCode; }).filter(function(c) { return byId[c]; });
-  var conT = 0, conW = 0, conU = 0;
+  var conT = 0, conW = 0, conU = 0, conD = 0;
 
-  for (var i = 0; i < codsT.length; i += 10) {
-    var batch = codsT.slice(i, i + 10);
+  for (var i = 0; i < codsT.length; i += PARALLELE) {
+    var batch = codsT.slice(i, i + PARALLELE);
     var res = await Promise.all(batch.map(function(code) {
       return fetchWithRetry(OMIRL_BASE + '/charts/' + code + '/Termo').then(function(ch) {
         var ds = ch.dataSeries || [];
         // serie 0 = media 30', 1 = minima, 2 = massima
         var med = (ds[0] && ds[0].data) || [], mn = (ds[1] && ds[1].data) || [], mx = (ds[2] && ds[2].data) || [];
         if (oreCoperte(med, dayStartMs, dayEndMs) < MIN_ORE_METEO) return null;
-        var mins = senzaZeriFinti(valoriIn(mn.length ? mn : med, dayStartMs, dayEndMs, -45, 50));
+        var mins = senzaZeriFinti(valoriIn(senzaZeriIsolati(mn.length ? mn : med), dayStartMs, dayEndMs, -45, 50));
         var maxs = valoriIn(mx.length ? mx : med, dayStartMs, dayEndMs, -45, 50);
         if (!mins.length || !maxs.length) return null;
         return { code: code, t: [Math.round(Math.min.apply(null, mins) * 10) / 10,
@@ -137,8 +190,8 @@ async function aggiungiMeteoLiguria(byId, dayStartMs, dayEndMs) {
     await new Promise(function(r) { setTimeout(r, 400); });
   }
 
-  for (var j = 0; j < codsV.length; j += 10) {
-    var batchV = codsV.slice(j, j + 10);
+  for (var j = 0; j < codsV.length; j += PARALLELE) {
+    var batchV = codsV.slice(j, j + PARALLELE);
     var resV = await Promise.all(batchV.map(function(code) {
       return fetchWithRetry(OMIRL_BASE + '/charts/' + code + '/Vento').then(function(ch) {
         var ds = ch.dataSeries || [];
@@ -149,16 +202,35 @@ async function aggiungiMeteoLiguria(byId, dayStartMs, dayEndMs) {
         if (!vv.length) return null;
         var rr = valoriIn(raf, dayStartMs, dayEndMs, 0, 324);
         var media = vv.reduce(function(a, v) { return a + v; }, 0) / vv.length;
-        return { code: code, w: [Math.round(media * 10) / 10,
+        // Direzione del vento (2/10/2026): la serie «Wind Direction» dello stesso chart,
+        // cercata per NOME (l'ordine delle serie non e' garantito) e accoppiata alla
+        // velocita' per marca temporale. Accetta gradi o sigle di settore (N, NNE...).
+        // ⚠️ Scritta il 2/10 con OMIRL irraggiungibile dal PC di lavoro: verificata solo
+        // al primo giro su GitHub. Se la serie non c'e', semplicemente niente wd.
+        var wd = null;
+        try {
+          var sd = ds.filter(function(x) { return /dir/i.test(x.name || ''); })[0];
+          if (sd && Array.isArray(sd.data)) {
+            var perTs = {};
+            sd.data.forEach(function(p) { if (p && p[1] != null) perTs[p[0]] = daSettore(p[1]); });
+            var acc = creaDir();
+            vel.forEach(function(p) {
+              if (!(p[0] >= dayStartMs && p[0] < dayEndMs) || p[1] == null || p[1] < 0 || p[1] > 216) return;
+              segnaDir(acc, Math.floor((p[0] - dayStartMs) / 3600000), perTs[p[0]] != null ? perTs[p[0]] : null, p[1]);
+            });
+            wd = direzione(acc);
+          }
+        } catch (e) { wd = null; }
+        return { code: code, wd: wd, w: [Math.round(media * 10) / 10,
                                  rr.length ? Math.round(Math.max.apply(null, rr) * 10) / 10 : null] };
       }).catch(function() { return null; });
     }));
-    resV.forEach(function(r) { if (r) { byId[r.code].w = r.w; conW++; } });
+    resV.forEach(function(r) { if (r) { byId[r.code].w = r.w; conW++; if (r.wd !== null && r.wd !== undefined) { byId[r.code].wd = r.wd; conD++; } } });
     await new Promise(function(r) { setTimeout(r, 400); });
   }
   // Umidità relativa: /charts/{code}/Igro, UNA serie («Umidità Relativa») ogni 30', in %.
-  for (var k = 0; k < codsU.length; k += 10) {
-    var batchU = codsU.slice(k, k + 10);
+  for (var k = 0; k < codsU.length; k += PARALLELE) {
+    var batchU = codsU.slice(k, k + PARALLELE);
     var resU = await Promise.all(batchU.map(function(code) {
       return fetchWithRetry(OMIRL_BASE + '/charts/' + code + '/Igro').then(function(ch) {
         var ds = ch.dataSeries || [];
@@ -172,7 +244,7 @@ async function aggiungiMeteoLiguria(byId, dayStartMs, dayEndMs) {
     resU.forEach(function(r) { if (r) { byId[r.code].u = r.u; conU++; } });
     await new Promise(function(r) { setTimeout(r, 400); });
   }
-  console.log('  Meteo t/w/u: ' + conT + ' stazioni con temperatura, ' + conW + ' col vento, ' + conU + ' con umidità');
+  console.log('  Meteo t/w/u: ' + conT + ' stazioni con temperatura, ' + conW + ' col vento (' + conD + ' con la direzione), ' + conU + ' con umidità');
 }
 
 async function main() {
@@ -183,7 +255,7 @@ async function main() {
 
   // Step 1: lista stazioni
   console.log('Scarico lista stazioni...');
-  var rawStations = await fetchJSON(OMIRL_BASE + '/stations/Pluvio');
+  var rawStations = await scegliStrada();
   var stations = rawStations.filter(function(s) {
     return s.lat && s.lon && s.name && s.shortCode &&
       s.lat >= 43.7 && s.lat <= 44.8 && s.lon >= 7.4 && s.lon <= 10.3;
@@ -191,21 +263,24 @@ async function main() {
   console.log('  Stazioni in Liguria: ' + stations.length);
 
   // Step 2: calcola boundaries giorno target in UTC
-  var offset = getItalyOffset(new Date());
-  var dayStart = new Date(yesterdayDate + 'T00:00:00Z');
-  dayStart.setUTCHours(dayStart.getUTCHours() - offset);
-  var dayEnd = new Date(dayStart.getTime() + 24 * 3600000);
+  // ⚠️ IL FUSO E' QUELLO DEL GIORNO RACCOLTO, non di adesso (18/10/2026). Prima si
+  // prendeva getItalyOffset(new Date()): domenica 25/10, gia' in ora solare, il giro
+  // che rilegge sabato 24 lo avrebbe spostato di un'ora. E la fine e' la mezzanotte
+  // del giorno dopo, non «inizio + 24 ore»: al cambio d'ora il giorno dura 23 o 25 ore.
+  var fin = require('./lib-giorno-italiano.js').finestraGiorno(yesterdayDate);
+  var dayStart = new Date(fin.start);
+  var dayEnd = new Date(fin.end);
   var dayStartMs = dayStart.getTime();
   var dayEndMs = dayEnd.getTime();
   console.log('  Finestra UTC: ' + dayStart.toISOString() + ' -> ' + dayEnd.toISOString());
 
-  // Step 3: fetch charts per ogni stazione (batch di 10)
+  // Step 3: fetch charts per ogni stazione (a gruppi di PARALLELE)
   console.log('  Scarico dati orari per ogni stazione...');
   var ok = 0, fail = 0, withRain = 0;
   var output = [];
 
-  for (var i = 0; i < stations.length; i += 10) {
-    var batch = stations.slice(i, i + 10);
+  for (var i = 0; i < stations.length; i += PARALLELE) {
+    var batch = stations.slice(i, i + PARALLELE);
     var promises = batch.map(function(s) {
       var url = OMIRL_BASE + '/charts/' + s.shortCode + '/Pluvio';
       return fetchWithRetry(url).then(function(chart) {
@@ -264,7 +339,7 @@ async function main() {
       }
     });
     // Pausa tra batch
-    if (i + 10 < stations.length) {
+    if (i + PARALLELE < stations.length) {
       await new Promise(function(r) { setTimeout(r, 500); });
     }
   }
@@ -286,8 +361,8 @@ async function main() {
   // Step 4: salva
   var outFile = path.join(DATA_DIR, yesterdayDate + '.json');
 
-  // ⚠️ SI FONDE COL FILE GIA' SCRITTO. Questo collector gira SEI volte al
-  // giorno (ogni 4 ore) e riscrive il file da zero. Da quando le stazioni
+  // ⚠️ SI FONDE COL FILE GIA' SCRITTO. Questo collector gira piu' volte al
+  // giorno (dal 23/10/2026 due cron e la sveglia delle 4:30; prima sei) e riscrive il file da zero. Da quando le stazioni
   // assenti si saltano invece di valere zero, senza questo passaggio una
   // stazione che a QUESTO giro non risponde perderebbe il valore che un giro
   // precedente aveva gia' raccolto — si sarebbe tappato un buco aprendone un
@@ -298,6 +373,11 @@ async function main() {
   if (fs.existsSync(outFile)) {
     try {
       var vecchio = JSON.parse(fs.readFileSync(outFile, 'utf8'));
+      // ⚠️ E PER LE PRESENTI SI TENGONO t/w/u/wd che a questo giro mancano (19/10/2026, quinto check, bug 6):
+      // se cadevano gli elenchi OMIRL (/stations/Termo, Vento, Igro) saltava tutta la parte meteo, e se cadeva
+      // il grafico di una stazione perdeva i campi lei; il file si riscriveva con la sola pioggia
+      var ripresi = tieniMeteo(output, vecchio.stations || []);
+      if (ripresi) console.log('  t/w/u/wd mancanti a questo giro, ripresi dal file per ' + ripresi + ' stazioni');
       var presenti = {};
       output.forEach(function(s) { presenti[s.id] = true; });
       (vecchio.stations || []).forEach(function(s) {

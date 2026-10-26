@@ -1,0 +1,1063 @@
+au	1	11591889	Au	48.4106	14.5100	AT	Alta Austria	2769848	Politischer Bezirk Freistadt	120	PPL	637
+au	1	11592954	Au	47.8150	13.4054	AT	Alta Austria	2769848	Politischer Bezirk Vöcklabruck	0	PPL	485
+au	1	11592955	Au	47.7349	13.4587	AT	Alta Austria	2769848	Politischer Bezirk Gmunden	357	PPLX	558
+au	1	11609328	Au	48.0350	13.7624	AT	Alta Austria	2769848	Politischer Bezirk Vöcklabruck	196	PPL	377
+au	1	11610778	Au	48.2141	13.3351	AT	Alta Austria	2769848	Politischer Bezirk Braunau am Inn	89	PPL	412
+au	1	11610780	Au	48.1938	13.1082	AT	Alta Austria	2769848	Politischer Bezirk Braunau am Inn	18	PPL	394
+au	1	11611863	Au	48.2232	13.8580	AT	Alta Austria	2769848	Politischer Bezirk Grieskirchen	88	PPL	322
+au	1	11612194	Au	48.4294	13.8847	AT	Alta Austria	2769848	Politischer Bezirk Eferding	4	PPL	507
+au	1	11612323	Au	48.0144	13.0045	AT	Stato di Salisburgo	2766823	Politischer Bezirk Salzburg-Umgebung	22	PPL	456
+au	1	11668730	Au	48.0378	13.8329	AT	Alta Austria	2769848	Politischer Bezirk Gmunden	40	PPL	404
+au	1	11668773	Au	48.3342	14.4682	AT	Alta Austria	2769848	Politischer Bezirk Urfahr-Umgebung	59	PPL	289
+au	1	11668791	Au	48.2691	13.6988	AT	Alta Austria	2769848	Politischer Bezirk Grieskirchen	25	PPL	404
+au	1	11669226	Au	48.3650	13.8194	AT	Alta Austria	2769848	Politischer Bezirk Grieskirchen	36	PPL	365
+au	1	11670456	Au	48.2097	13.9311	AT	Alta Austria	2769848	Distretto di Wels-Land	16	PPL	305
+au	1	11679968	Au	47.4206	8.1585	CH	Canton Argovia	2661876	Distretto di Brugg	0	PPL	351
+au	1	11694272	Au	48.1531	15.2614	AT	Bassa Austria	2770542	Politischer Bezirk Melk	29	PPLX	236
+au	1	11695241	Au	48.1735	14.6314	AT	Bassa Austria	2770542	Distretto di Amstetten	3	PPL	232
+au	1	11695642	Au	47.5570	13.3401	AT	Stato di Salisburgo	2766823	Politischer Bezirk Hallein	517	PPL	665
+au	1	11919673	Au	48.0419	13.9128	AT	Alta Austria	2769848	Distretto di Wels-Land	313	PPL	370
+au	1	11919677	Au	48.2129	14.7825	AT	Alta Austria	2769848	Politischer Bezirk Perg	291	PPL	241
+au	1	2605085	Au	47.6167	13.8167	AT	Stiria	2764581	Politischer Bezirk Liezen	0	PPL	705
+au	1	2606047	Au	47.2833	13.2167	AT	Stato di Salisburgo	2766823	Politischer Bezirk Sankt Johann im Pongau	0	PPL	845
+au	1	2661689	Au	47.4309	9.6345	CH	Canton San Gallo	2658821	Wahlkreis Rheintal	6673	PPL	403
+au	1	2661690	Au	47.3984	8.8554	CH	Cantone di Zurigo	2657895	Bezirk Pfäffikon	44	PPL	593
+au	1	2661691	Au	47.2418	8.6441	CH	Cantone di Zurigo	2657895	Distretto di Horgen	4844	PPLL	478
+au	1	2782245	Au	48.5667	16.3833	AT	Bassa Austria	2770542	Politischer Bezirk Korneuburg	99	PPL	361
+au	1	2782246	Au	48.4588	13.6269	AT	Alta Austria	2769848	Politischer Bezirk Schärding	58	PPL	556
+au	1	2782247	Au	48.2742	14.1536	AT	Alta Austria	2769848	Politischer Bezirk Linz-Land	148	PPL	284
+au	1	2782249	Au	48.1667	14.7833	AT	Bassa Austria	2770542	Distretto di Amstetten	0	PPL	227
+au	1	2782250	Au	48.0000	14.7333	AT	Bassa Austria	2770542	Distretto di Amstetten	0	PPLX	343
+au	1	2782251	Au	47.9333	13.0167	AT	Stato di Salisburgo	2766823	Politischer Bezirk Salzburg-Umgebung	275	PPL	699
+au	1	2782252	Au	47.8843	14.2615	AT	Alta Austria	2769848	Politischer Bezirk Kirchdorf an der Krems	0	PPL	439
+au	1	2782253	Au	47.8051	13.4646	AT	Alta Austria	2769848	Politischer Bezirk Vöcklabruck	309	PPL	500
+au	1	2782254	Au	47.7000	13.0667	AT	Stato di Salisburgo	2766823	Politischer Bezirk Hallein	1334	PPL	608
+au	1	2782255	Au	47.6000	13.6333	AT	Alta Austria	2769848	Politischer Bezirk Gmunden	372	PPL	1061
+au	1	2782256	Au	47.6000	12.7167	AT	Stato di Salisburgo	2766823	Politischer Bezirk Zell am See	180	PPL	655
+au	1	2782257	Au	47.5667	15.3333	AT	Stiria	2764581	Politischer Bezirk Bruck-Mürzzuschlag	0	PPL	841
+au	1	2782258	Au	47.4167	13.8333	AT	Stiria	2764581	Politischer Bezirk Liezen	0	PPL	695
+au	1	2782259	Au	47.3218	9.9807	AT	Vorarlberg	2762300	Politischer Bezirk Bregenz	1070	PPLA3	819
+au	1	2782260	Au	47.3167	9.6000	AT	Vorarlberg	2762300	Politischer Bezirk Feldkirch	0	PPL	421
+au	1	2782261	Au	47.2333	12.0333	AT	Tirolo	2763586	Politischer Bezirk Schwaz	0	PPL	1596
+au	1	2782262	Au	47.2167	10.8833	AT	Tirolo	2763586	Politischer Bezirk Imst	0	PPL	1110
+au	1	2782263	Au	47.1333	15.3167	AT	Stiria	2764581	Politischer Bezirk Graz-Umgebung	0	PPL	398
+au	1	2782264	Au	47.1000	10.9500	AT	Tirolo	2763586	Politischer Bezirk Imst	0	PPL	1149
+au	1	2782265	Au	46.7500	15.7667	AT	Stiria	2764581	Politischer Bezirk Südoststeiermark	0	PPL	261
+au	1	3321893	Au	48.3367	14.0961	AT	Alta Austria	2769848	Politischer Bezirk Urfahr-Umgebung	74	PPL	259
+au	1	3323972	Au	47.3667	12.5833	AT	Stato di Salisburgo	2766823	Politischer Bezirk Zell am See	0	PPL	1398
+au	1	3333769	Au	47.5208	9.8661	AT	Vorarlberg	2762300	Politischer Bezirk Bregenz	0	PPLL	535
+au	1	6291327	Au	47.4213	8.5719	CH	Cantone di Zurigo	2657895	Distretto di Bülach	426	PPL	425
+au	1	6291364	Au	47.5263	8.5790	CH	Cantone di Zurigo	2657895	Distretto di Bülach	137	PPL	390
+au	1	6292229	Au	47.2983	8.7641	CH	Cantone di Zurigo	2657895	Distretto di Hinwil	14	PPLL	469
+au	1	6292572	Au	47.2616	8.9353	CH	Cantone di Zurigo	2657895	Distretto di Hinwil	55	PPL	600
+au	1	6295654	Au	47.2005	8.6347	CH	Cantone di Zurigo	2657895	Distretto di Horgen	6	PPL	684
+au	1	6295655	Au	47.1775	8.6600	CH	Cantone di Zurigo	2657895	Distretto di Horgen	43	PPL	736
+au	1	7669445	Au	47.3984	8.9542	CH	Canton Turgovia	2658372	Distretto di Münchwilen	0	PPL	691
+au	1	7670057	Au	47.4139	8.4163	CH	Cantone di Zurigo	2657895	Distretto di Dietikon	0	PPL	386
+au / hinter ruti	1	6293100	Au / Hinter-Rüti	47.2376	8.6402	CH	Cantone di Zurigo	2657895	Distretto di Horgen	54	PPLX	562
+au / mittel dorf	1	6293098	Au / Mittel-Dorf	47.2430	8.6459	CH	Cantone di Zurigo	2657895	Distretto di Horgen	2562	PPLX	460
+au / ober ort/gwad	1	6293099	Au / Ober-Ort/Gwad	47.2394	8.6574	CH	Cantone di Zurigo	2657895	Distretto di Horgen	979	PPLX	412
+au / unter dorf	1	6293097	Au / Unter-Dorf	47.2473	8.6327	CH	Cantone di Zurigo	2657895	Distretto di Horgen	1249	PPLX	442
+au am anzbach	1	11611881	Au am Anzbach	48.2013	15.9217	AT	Bassa Austria	2770542	Politischer Bezirk Sankt Pölten	726	PPL	255
+au am kracking	1	2782243	Au am Kracking	48.2140	16.0531	AT	Bassa Austria	2770542	Politischer Bezirk Sankt Pölten	0	PPL	295
+au am leithaberge	1	2782242	Au am Leithaberge	47.9230	16.5579	AT	Bassa Austria	2770542	Politischer Bezirk Bruck an der Leitha	934	PPLA3	211
+au an der donau	1	2782248	Au an der Donau	48.2288	14.5832	AT	Alta Austria	2769848	Politischer Bezirk Perg	900	PPL	237
+au an der traun	1	2782241	Au an der Traun	48.1802	14.1125	AT	Alta Austria	2769848	Distretto di Wels-Land	1864	PPL	295
+au bei brandstatt	1	11669179	Au bei Brandstatt	48.3368	14.0119	AT	Alta Austria	2769848	Politischer Bezirk Eferding	60	PPL	263
+au bei der traun	1	11610902	Au bei der Traun	48.1242	13.9631	AT	Alta Austria	2769848	Distretto di Wels-Land	167	PPL	326
+au bei ed	1	11611745	Au bei Ed	48.3967	13.7140	AT	Alta Austria	2769848	Politischer Bezirk Grieskirchen	29	PPL	445
+au bei gaishorn am see	1	2782237	Au bei Gaishorn am See	47.4895	14.5274	AT	Stiria	2764581	Politischer Bezirk Liezen	373	PPL	713
+au bei hohen steg	1	11609947	Au bei hohen Steg	48.3255	14.0264	AT	Alta Austria	2769848	Politischer Bezirk Eferding	60	PPL	262
+au bei natternbach	1	11609792	Au bei Natternbach	48.3868	13.7489	AT	Alta Austria	2769848	Politischer Bezirk Grieskirchen	11	PPL	424
+au bei sirfling	1	11610927	Au bei Sirfling	48.1352	13.9066	AT	Alta Austria	2769848	Distretto di Wels-Land	16	PPL	354
+au bei turnau	1	11919918	Au bei Turnau	47.5662	15.3147	AT	Stiria	2764581	Politischer Bezirk Bruck-Mürzzuschlag	162	PPL	762
+au chalet	1	11492963	Au Chalet	46.5940	6.6876	CH	Canton Vaud	2658182	distretto del Gros-de-Vaud	0	PPL	820
+au dela de l eau	1	12309185	Au-Delà de l'Eau	45.9607	4.6484	FR	Alvernia-Rodano-Alpi	11071625	Rodano	0	PPL	254
+au devant	1	12314082	Au Devant	46.2400	4.1989	FR	Borgogna-Franca Contea	11071619	Saona e Loira	0	PPL	379
+au paysan	1	12316423	Au Paysan	44.3981	-0.3600	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	0	PPL	68
+au pont du neuf fosse	1	12572235	Au Pont du Neuf Fossé	48.8361	4.9154	FR	Gran Este	11071622	Marna	0	PPLH	135
+au rond	1	12312277	Au Rond	49.0487	-1.5725	FR	Normandia	11071621	Manica	0	PPL	32
+au sandre	0	3004811	Le Cendre	45.7224	3.1871	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	5072	PPL	346
+au saulou	1	12320583	Au Saulou	44.4984	0.9715	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Lot-et-Garonne	0	PPL	109
+au sg	0	2661689	Au	47.4309	9.6345	CH	Canton San Gallo	2658821	Wahlkreis Rheintal	6673	PPL	403
+au vessieux	1	11488689	Au Vessieux	46.6193	7.0880	CH	Canton Friburgo	2660717	Gruyère District	0	PPL	713
+au zh	0	2661691	Au	47.2418	8.6441	CH	Cantone di Zurigo	2657895	Distretto di Horgen	4844	PPLL	478
+aubach	1	11609507	Aubach	48.0834	13.4631	AT	Alta Austria	2769848	Politischer Bezirk Vöcklabruck	25	PPL	559
+aubach	1	11611683	Aubach	48.1713	13.6518	AT	Alta Austria	2769848	Politischer Bezirk Grieskirchen	54	PPL	499
+aubachberg	1	11669020	Aubachberg	48.2081	13.4632	AT	Alta Austria	2769848	Politischer Bezirk Ried im Innkreis	186	PPL	453
+aubagnac	1	3036435	Aubagnac	45.2775	3.5082	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	653
+aubagnan	1	3036434	Aubagnan	43.6679	-0.4896	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Landes	254	PPL	135
+aubagne	1	3036433	Aubagne	43.2928	5.5707	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	44844	PPL	120
+aubagne en provence	0	3036433	Aubagne	43.2928	5.5707	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	44844	PPL	120
+aubaine	1	3036431	Aubaine	47.1384	4.7215	FR	Borgogna-Franca Contea	11071619	Cote d'Or	60	PPL	438
+aubais	1	3036430	Aubais	43.7552	4.1473	FR	Occitania	11071623	Gard	2165	PPL	69
+aubance	0	2978065	Saint-Melaine-sur-Aubance	47.3702	-0.4952	FR	Paesi della Loira	2988289	Maine e Loira	2052	PPL	39
+aubanha	0	3036433	Aubagne	43.2928	5.5707	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	44844	PPL	120
+aubarede	1	3036428	Aubarède	43.2719	0.2378	FR	Occitania	11071623	Alti Pirenei	230	PPL	221
+aubaret	1	3036427	Aubaret	45.4631	2.7385	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	1070
+aubarine	1	12320782	Aubarine	44.2291	4.2835	FR	Occitania	11071623	Gard	0	PPL	131
+aubarne	1	12320707	Aubarne	43.9438	4.3323	FR	Occitania	11071623	Gard	0	PPL	89
+aubas	1	3036426	Aubas	45.0820	1.1908	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	520	PPL	82
+aubazat	1	3036424	Aubazat	45.1392	3.4378	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	178	PPL	522
+aubazine	1	3036423	Aubazine	45.1750	1.6731	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	751	PPL	335
+aube	0	3036380	Aube-sur-Rîle	48.7392	0.5516	FR	Normandia	11071621	Orne	1628	PPL	245
+aube	1	3036422	Aube	49.0272	6.3380	FR	Gran Este	11071622	Mosella	207	PPL	228
+aube	1	6620150	Aube	48.7395	0.5471	FR	Normandia	11071621	Orne	0	PPL	233
+aube sur rile	1	3036380	Aube-sur-Rîle	48.7392	0.5516	FR	Normandia	11071621	Orne	1628	PPL	245
+aubecourt	1	12317692	Aubécourt	48.9957	6.4294	FR	Gran Este	11071622	Mosella	0	PPL	232
+aubeguimont	1	3036419	Aubéguimont	49.8079	1.6712	FR	Normandia	11071621	Senna marittima	0	PPL	206
+aubeira	0	3036364	Aubière	45.7508	3.1108	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	11054	PPL	382
+aubenas	1	3036418	Aubenas	44.6198	4.3903	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	13134	PPL	320
+aubenas les alpes	1	3036417	Aubenas-les-Alpes	43.9307	5.6808	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	66	PPL	589
+aubenasson	1	3036416	Aubenasson	44.6833	5.1500	FR	Alvernia-Rodano-Alpi	11071625	Drôme	34	PPL	342
+aubencheul au bac	1	3036415	Aubencheul-au-Bac	50.2566	3.1580	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	516	PPL	43
+aubencheul aux bois	1	3036414	Aubencheul-aux-Bois	50.0283	3.2672	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	275	PPL	132
+aubenton	1	3036413	Aubenton	49.8371	4.2045	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	652	PPL	183
+aubepierre	1	12069960	Aubepierre	46.3360	1.5078	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	0	PPLH	338
+aubepierre	1	12541464	Aubepierre	48.6311	2.8883	FR	Île-de-France	3012874	Senna e Marna	0	PPL	111
+aubepierre ozouer le repos	1	3036412	Aubepierre-Ozouer-le-Repos	48.6333	2.8833	FR	Île-de-France	3012874	Senna e Marna	949	PPL	111
+aubepierre sur aube	1	3036410	Aubepierre-sur-Aube	47.9149	4.9351	FR	Gran Este	11071622	Alta Marna	213	PPL	268
+auberat	1	3036408	Auberat	45.1957	3.4446	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	706
+auberbosc	1	3036407	Auberbosc	49.6386	0.5817	FR	Normandia	11071621	Senna marittima	0	PPL	132
+auberchicourt	1	3036406	Auberchicourt	50.3333	3.2333	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	4659	PPL	31
+aubercourt	1	3036405	Aubercourt	49.8270	2.5483	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	43	PPL	46
+aubercy	1	3036404	Aubercy	48.9933	5.0450	FR	Gran Este	11071622	Mosa	0	PPL	164
+auberg	1	2608397	Auberg	46.8000	15.9500	AT	Stiria	2764581	Politischer Bezirk Südoststeiermark	0	PPL	297
+auberg	1	2782235	Auberg	48.5445	14.0523	AT	Alta Austria	2769848	Politischer Bezirk Rohrbach	84	PPL	592
+auberg	1	3322895	Auberg	47.8581	13.0647	AT	Stato di Salisburgo	2766823	Politischer Bezirk Salzburg-Umgebung	0	PPL	480
+auberg	1	3324903	Auberg	47.4067	13.8644	AT	Stiria	2764581	Politischer Bezirk Liezen	0	PPL	1105
+aubergenville	1	3036402	Aubergenville	48.9600	1.8547	FR	Île-de-France	3012874	Yvelines	11934	PPL	46
+auberive	1	3036398	Aubérive	49.2000	4.4167	FR	Gran Este	11071622	Marna	184	PPL	115
+auberive	1	3036401	Auberive	47.7865	5.0617	FR	Gran Este	11071622	Alta Marna	202	PPL	344
+auberives	0	3036399	Auberives-sur-Varèze	45.4208	4.8191	FR	Alvernia-Rodano-Alpi	11071625	Isère	1393	PPL	240
+auberives en royans	1	3036400	Auberives-en-Royans	45.0642	5.3006	FR	Alvernia-Rodano-Alpi	11071625	Isère	355	PPL	194
+auberives sur vareze	1	3036399	Auberives-sur-Varèze	45.4208	4.8191	FR	Alvernia-Rodano-Alpi	11071625	Isère	1393	PPL	240
+aubermesnil aux erables	1	3036396	Aubermesnil-aux-Érables	49.8333	1.5667	FR	Normandia	11071621	Senna marittima	0	PPL	131
+aubermesnil beaumais	1	3036395	Aubermesnil-Beaumais	49.8438	1.1168	FR	Normandia	11071621	Senna marittima	425	PPL	118
+auberoques	1	12317863	Auberoques	44.3437	3.0988	FR	Occitania	11071623	Aveyron	0	PPL	737
+aubers	1	3036394	Aubers	50.5954	2.8267	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	1634	PPL	29
+aubertans	1	3036393	Aubertans	47.4526	6.1635	FR	Borgogna-Franca Contea	11071619	Alta Saona	394	PPL	250
+aubertin	1	3036392	Aubertin	43.2737	-0.4839	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	629	PPL	257
+auberville	1	3036390	Auberville	49.8891	1.2798	FR	Normandia	11071621	Senna marittima	0	PPL	44
+auberville	1	3036391	Auberville	49.3062	-0.0269	FR	Normandia	11071621	Calvados	229	PPL	131
+auberville la campagne	1	3036389	Auberville-la-Campagne	49.5331	0.5997	FR	Normandia	11071621	Senna marittima	578	PPL	147
+auberville la manuel	1	3036388	Auberville-la-Manuel	49.8281	0.5890	FR	Normandia	11071621	Senna marittima	104	PPL	78
+auberville la renault	1	3036387	Auberville-la-Renault	49.6811	0.3643	FR	Normandia	11071621	Senna marittima	356	PPL	111
+aubervilles	0	3036386	Aubervilliers	48.9167	2.3833	FR	Île-de-France	3012874	Senna-Saint-Denis	70914	PPL	38
+aubervilliers	1	3036386	Aubervilliers	48.9167	2.3833	FR	Île-de-France	3012874	Senna-Saint-Denis	70914	PPL	38
+aubespeyre	1	3036382	Aubespeyre	44.7567	3.6605	FR	Occitania	11071623	Lozère	0	PPL	1210
+aubespeyre	1	3036383	Aubespeyre	44.6852	2.4655	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	731
+aubessagne	1	3036381	Aubessagne	44.7535	6.0129	FR	Provenza-Alpi-Costa Azzurra	2985244	Alte Alpi	0	PPL	934
+aubeterre	1	12318966	Aubeterre	46.9961	3.2159	FR	Borgogna-Franca Contea	11071619	Nièvre	0	PPL	201
+aubeterre	1	12321944	Aubeterre	46.2092	3.2694	FR	Alvernia-Rodano-Alpi	11071625	Allier	0	PPL	265
+aubeterre	1	3036379	Aubeterre	48.4300	4.1216	FR	Gran Este	11071622	Aube	169	PPL	121
+aubeterre sur dronne	1	3036378	Aubeterre-sur-Dronne	45.2714	0.1700	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	373	PPL	76
+aubevideyre	1	3036373	Aubevideyre	45.2023	3.2248	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	843
+aubeville	1	3036372	Aubeville	45.5000	-0.0167	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	144	PPL	76
+aubevoie	0	3036371	Aubevoye	49.1710	1.3354	FR	Normandia	11071621	Eure	4030	PPL	17
+aubevoye	1	3036371	Aubevoye	49.1710	1.3354	FR	Normandia	11071621	Eure	4030	PPL	17
+aubia e espessas	0	3036365	Aubie	45.0193	-0.4064	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	1043	PPL	48
+aubiac	1	12309844	Aubiac	45.0064	1.6480	FR	Occitania	11071623	Lot	0	PPL	133
+aubiac	1	3036368	Aubiac	44.8047	1.8635	FR	Occitania	11071623	Lot	0	PPL	456
+aubiac	1	3036369	Aubiac	44.4833	-0.2500	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	283	PPL	88
+aubiac	1	3036370	Aubiac	44.1414	0.5611	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Lot-et-Garonne	955	PPL	110
+aubiat	1	3036366	Aubiat	45.9778	3.1676	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	360
+aubiat	1	3036367	Aubiat	45.4656	3.3415	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	510
+aubie	1	3036365	Aubie	45.0193	-0.4064	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	1043	PPL	48
+aubie et espessas	0	3036365	Aubie	45.0193	-0.4064	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	1043	PPL	48
+aubiera	0	3036364	Aubière	45.7508	3.1108	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	11054	PPL	382
+aubiere	1	3036364	Aubière	45.7508	3.1108	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	11054	PPL	382
+aubiers	0	2989852	Nueil-les-Aubiers	46.9333	-0.5833	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	5195	PPL	108
+aubiet	1	3036363	Aubiet	43.6461	0.7839	FR	Occitania	11071623	Gers	1046	PPL	185
+aubigeyres	1	3036362	Aubigeyres	44.6716	3.3082	FR	Occitania	11071623	Lozère	0	PPL	1062
+aubignac	1	12317807	Aubignac	44.4291	2.2329	FR	Occitania	11071623	Aveyron	0	PPL	467
+aubignac	1	3036360	Aubignac	45.2394	3.6790	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	1017
+aubignac	1	3036361	Aubignac	44.1268	3.9153	FR	Occitania	11071623	Gard	0	PPL	232
+aubignan	1	3036359	Aubignan	44.0997	5.0253	FR	Provenza-Alpi-Costa Azzurra	2985244	Vaucluse	4336	PPL	74
+aubignas	1	3036358	Aubignas	44.5883	4.6340	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	354	PPL	342
+aubignat	1	12323834	Aubignat	45.5346	3.7224	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	546
+aubignat	1	3036356	Aubignat	45.5249	3.0833	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	818
+aubignat	1	3036357	Aubignat	45.3735	3.0590	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	1137
+aubigne	0	3036352	Aubigné-Racan	47.6910	0.2673	FR	Paesi della Loira	2988289	Sarthe	2211	PPL	59
+aubigne	1	3036353	Aubigné	48.2944	-1.6353	FR	Bretagna	3030293	Ille-et-Vilaine	260	PPL	83
+aubigne	1	3036355	Aubigné	46.0562	-0.1421	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	220	PPL	114
+aubigne racan	1	3036352	Aubigné-Racan	47.6910	0.2673	FR	Paesi della Loira	2988289	Sarthe	2211	PPL	59
+aubigne sur layon	1	3036354	Aubigné-sur-Layon	47.2124	-0.4618	FR	Paesi della Loira	2988289	Maine e Loira	353	PPL	60
+aubigneux	1	12308706	Aubigneux	45.6802	3.9623	FR	Alvernia-Rodano-Alpi	11071625	Loira	0	PPL	835
+aubigney	1	3036351	Aubigney	47.3280	5.5385	FR	Borgogna-Franca Contea	11071619	Alta Saona	0	PPL	201
+aubignosc	1	3036349	Aubignosc	44.1296	5.9686	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	556	PPL	487
+aubigny	0	3036326	Aubigny-sur-Nère	47.4882	2.4390	FR	Centro-Valle della Loira	3027939	Cher	5984	PPL	186
+aubigny	0	3036335	Aubigny-au-Bac	50.2637	3.1645	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	1041	PPL	45
+aubigny	1	12128593	Aubigny	47.1099	1.1650	FR	Centro-Valle della Loira	3027939	Indre e Loira	0	PPL	120
+aubigny	1	12321355	Aubigny	47.1482	1.6834	FR	Centro-Valle della Loira	3027939	Indre	0	PPL	130
+aubigny	1	3036339	Aubigny	49.9018	2.4819	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	544	PPL	39
+aubigny	1	3036340	Aubigny	49.1801	1.5885	FR	Normandia	11071621	Eure	0	PPL	104
+aubigny	1	3036341	Aubigny	48.9182	-0.2119	FR	Normandia	11071621	Calvados	335	PPL	152
+aubigny	1	3036342	Aubigny	48.5969	2.6861	FR	Île-de-France	3012874	Senna e Marna	0	PPL	92
+aubigny	1	3036343	Aubigny	48.5296	4.2495	FR	Gran Este	11071622	Aube	146	PPL	93
+aubigny	1	3036344	Aubigny	47.5981	3.4247	FR	Borgogna-Franca Contea	11071619	Yonne	0	PPL	262
+aubigny	1	3036345	Aubigny	47.2006	3.4365	FR	Borgogna-Franca Contea	11071619	Nièvre	0	PPL	281
+aubigny	1	3036346	Aubigny	46.7411	-0.1192	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	188	PPL	152
+aubigny	1	3036347	Aubigny	46.6821	3.1660	FR	Alvernia-Rodano-Alpi	11071625	Allier	192	PPL	216
+aubigny	1	3036348	Aubigny	46.5981	-1.4541	FR	Paesi della Loira	2988289	Vandea	2508	PPL	65
+aubigny au bac	1	3036335	Aubigny-au-Bac	50.2637	3.1645	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	1041	PPL	45
+aubigny aux kaisnes	1	3036334	Aubigny-aux-Kaisnes	49.7736	3.1177	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	272	PPL	87
+aubigny en artois	1	3036338	Aubigny-en-Artois	50.3500	2.5833	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	1412	PPL	93
+aubigny en laonnois	1	3036333	Aubigny-en-Laonnois	49.4974	3.7923	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	114	PPL	128
+aubigny en plaine	1	3036332	Aubigny-en-Plaine	47.1315	5.1766	FR	Borgogna-Franca Contea	11071619	Cote d'Or	333	PPL	190
+aubigny la ronce	1	3036331	Aubigny-la-Ronce	46.9870	4.6105	FR	Borgogna-Franca Contea	11071619	Cote d'Or	146	PPL	489
+aubigny le chetif	1	3036330	Aubigny-le-Chétif	46.9085	3.5438	FR	Borgogna-Franca Contea	11071619	Nièvre	0	PPL	280
+aubigny les pothees	1	3036329	Aubigny-les-Pothées	49.7766	4.4364	FR	Gran Este	11071622	Ardenne	315	PPL	192
+aubigny les sombernon	1	3036328	Aubigny-lès-Sombernon	47.3043	4.6431	FR	Borgogna-Franca Contea	11071619	Cote d'Or	124	PPL	405
+aubigny sur badin	1	3036327	Aubigny-sur-Badin	47.6617	5.2805	FR	Gran Este	11071622	Alta Marna	0	PPL	318
+aubigny sur nere	1	3036326	Aubigny-sur-Nère	47.4882	2.4390	FR	Centro-Valle della Loira	3027939	Cher	5984	PPL	186
+aubigny ville	0	3036326	Aubigny-sur-Nère	47.4882	2.4390	FR	Centro-Valle della Loira	3027939	Cher	5984	PPL	186
+aubilly	1	3036325	Aubilly	49.2131	3.8581	FR	Gran Este	11071622	Marna	53	PPL	131
+aubin	1	3036322	Aubin	48.5097	2.3592	FR	Île-de-France	3012874	Essonne	0	PPL	66
+aubin	1	3036323	Aubin	44.5281	2.2444	FR	Occitania	11071623	Aveyron	4735	PPL	247
+aubin	1	3036324	Aubin	43.4402	-0.4146	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	221	PPL	193
+aubin la fontaine	0	3037396	Anzin-Saint-Aubin	50.3131	2.7473	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	2586	PPL	77
+aubin la pierre	0	2981568	Saint-Aubin-des-Ormeaux	46.9919	-1.0432	FR	Paesi della Loira	2988289	Vandea	1232	PPL	133
+aubin rousseau	0	2981592	Saint-Aubin-d'Arquenay	49.2631	-0.2897	FR	Normandia	11071621	Calvados	1118	PPL	32
+aubin saint vaast	1	3036318	Aubin-Saint-Vaast	50.3950	1.9729	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	774	PPL	23
+aubin sur orne	0	2981592	Saint-Aubin-d'Arquenay	49.2631	-0.2897	FR	Normandia	11071621	Calvados	1118	PPL	32
+aubinges	1	3036319	Aubinges	47.2224	2.5822	FR	Centro-Valle della Loira	3027939	Cher	331	PPL	201
+aubinh	0	3036323	Aubin	44.5281	2.2444	FR	Occitania	11071623	Aveyron	4735	PPL	247
+aubinhan	0	3036359	Aubignan	44.0997	5.0253	FR	Provenza-Alpi-Costa Azzurra	2985244	Vaucluse	4336	PPL	74
+aubise	1	12312571	Aubise	42.8768	-0.5751	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	0	PPL	1102
+aubisse	1	12277279	Aubisse	45.4199	1.2436	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	347
+auboncourt vauzelles	1	3036316	Auboncourt-Vauzelles	49.5517	4.4932	FR	Gran Este	11071622	Ardenne	83	PPL	103
+aubonne	1	12318411	Aubonne	46.3015	6.2808	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	0	PPL	435
+aubonne	1	2661687	Aubonne	46.4951	6.3915	CH	Canton Vaud	2658182	Distretto di Morges	2703	PPL	512
+aubonne	1	3036315	Aubonne	47.0363	6.3274	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	259	PPL	674
+aubonne i vaud	0	2661687	Aubonne	46.4951	6.3915	CH	Canton Vaud	2658182	Distretto di Morges	2703	PPL	512
+aubonne vd	0	2661687	Aubonne	46.4951	6.3915	CH	Canton Vaud	2658182	Distretto di Morges	2703	PPL	512
+auboranges	1	8533378	Auboranges	46.5846	6.8045	CH	Canton Friburgo	2660717	Glâne District	0	PPL	675
+aubord	1	3036314	Aubord	43.7570	4.3130	FR	Occitania	11071623	Gard	2089	PPL	28
+auborn	0	3036314	Aubord	43.7570	4.3130	FR	Occitania	11071623	Gard	2089	PPL	28
+auboue	1	12322599	Auboué	46.9229	-0.1447	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	0	PPL	68
+auboue	1	3036313	Auboué	49.2120	5.9766	FR	Gran Este	11071622	Meurthe e Mosella	2890	PPL	181
+aubous	1	3036312	Aubous	43.5749	-0.1329	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	58	PPL	251
+aubrac	1	3036311	Aubrac	44.6215	2.9841	FR	Occitania	11071623	Aveyron	0	PPL	1320
+aubray	1	3036306	Aubray	48.4089	1.9798	FR	Île-de-France	3012874	Essonne	0	PPL	150
+aubree	1	3036305	Aubrée	44.4208	6.5377	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	0	PPL	1492
+aubres	1	3036304	Aubres	44.3760	5.1695	FR	Alvernia-Rodano-Alpi	11071625	Drôme	370	PPL	287
+aubreville	1	3036303	Aubréville	49.1444	5.0823	FR	Gran Este	11071622	Mosa	386	PPL	182
+aubrives	1	3036302	Aubrives	50.1025	4.7631	FR	Gran Este	11071622	Ardenne	945	PPL	109
+aubrometz	1	3036301	Aubrometz	50.3050	2.1773	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	142	PPL	50
+aubry du hainaut	1	3036300	Aubry-du-Hainaut	50.3667	3.4667	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	1480	PPL	40
+aubry en exmes	1	3036299	Aubry-en-Exmes	48.7967	0.0737	FR	Normandia	11071621	Orne	250	PPL	104
+aubry le panthou	1	3036298	Aubry-le-Panthou	48.8533	0.2391	FR	Normandia	11071621	Orne	94	PPL	169
+aubuga	0	3004935	Le Bugue	44.9185	0.9271	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	2928	PPL	64
+aubure	1	3036297	Aubure	48.1976	7.2216	FR	Gran Este	11071622	Alto Reno	424	PPL	799
+aubussargues	1	3036296	Aubussargues	44.0071	4.3253	FR	Occitania	11071623	Gard	260	PPL	132
+aubusson	1	3036294	Aubusson	48.7837	-0.5515	FR	Normandia	11071621	Orne	347	PPL	250
+aubusson	1	3036295	Aubusson	45.9549	2.1672	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	4907	PPLA3	430
+aubusson d auvergne	1	3036291	Aubusson-d'Auvergne	45.7553	3.6182	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	430
+aubvillers	1	3036290	Aubvillers	49.7137	2.4820	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	99	PPL	105
+auby	1	3036289	Auby	50.4146	3.0540	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	7836	PPL	27
+auby lez douai	0	3036289	Auby	50.4146	3.0540	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	7836	PPL	27
+aucaleuc	1	3036288	Aucaleuc	48.4560	-2.1297	FR	Bretagna	3030293	Côtes-d'Armor	863	PPL	99
+aucamville	1	3036286	Aucamville	43.8032	1.2148	FR	Occitania	11071623	Tarn-et-Garonne	846	PPL	146
+aucamville	1	3036287	Aucamville	43.6705	1.4277	FR	Occitania	11071623	Alta Garonna	6202	PPL	134
+aucard	1	12313039	Aucard	47.3100	-2.2236	FR	Paesi della Loira	2988289	Loira Atlantica	0	PPL	1
+aucazein	1	3036285	Aucazein	42.9356	0.9745	FR	Occitania	11071623	Ariège	61	PPL	553
+aucelon	1	3036284	Aucelon	44.6244	5.3448	FR	Alvernia-Rodano-Alpi	11071625	Drôme	43	PPL	720
+aucey la plaine	1	3036282	Aucey-la-Plaine	48.5272	-1.4787	FR	Normandia	11071621	Manica	373	PPL	27
+auch	1	3036281	Auch	43.6456	0.5886	FR	Occitania	11071623	Gers	24494	PPLA2	134
+auchan	1	8985479	Auchan	40.4610	17.2994	IT	Puglia	3169778	Taranto	0	PPLL	10
+auchebie	1	3036279	Auchebie	45.4000	2.2000	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	584
+auchel	1	3036278	Auchel	50.5035	2.4735	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	11419	PPL	99
+auchere	1	3036277	Auchère	45.3883	2.0355	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	590
+auchez	0	3036278	Auchel	50.5035	2.4735	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	11419	PPL	99
+auchonvillers	1	3036275	Auchonvillers	50.0811	2.6306	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	150	PPL	148
+auchy	0	3036270	Auchy-les-Mines	50.5135	2.7828	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	4534	PPL	26
+auchy	0	3036271	Auchy-lès-Hesdin	50.4011	2.1014	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	1804	PPL	34
+auchy au bois	1	3036274	Auchy-au-Bois	50.5540	2.3717	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	397	PPL	89
+auchy en bray	1	3036273	Auchy-en-Bray	49.4832	1.7790	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	0	PPL	153
+auchy la montagne	1	3036272	Auchy-la-Montagne	49.5747	2.1185	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	458	PPL	175
+auchy les hesdin	1	3036271	Auchy-lès-Hesdin	50.4011	2.1014	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	1804	PPL	34
+auchy les mines	1	3036270	Auchy-les-Mines	50.5135	2.7828	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	4534	PPL	26
+auchy lez orchies	1	3036269	Auchy-lez-Orchies	50.4833	3.2000	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	0	PPL	39
+aucon	1	3036268	Auçon	44.7333	5.3833	FR	Alvernia-Rodano-Alpi	11071625	Drôme	0	PPL	493
+auconville	1	11917241	Auconville	49.0642	5.9786	FR	Gran Este	11071622		0	PPL	268
+aucun	1	3036267	Aucun	42.9736	-0.1928	FR	Occitania	11071623	Alti Pirenei	219	PPL	870
+audaux	1	3036266	Audaux	43.3584	-0.7921	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	364	PPL	111
+auddes	1	11218052	Auddes	46.1543	7.2441	CH	Canton Vallese	2658205	Martigny District	0	PPL	1097
+audebeau	1	12316066	Audebeau	45.0380	-0.1109	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	0	PPL	20
+audejos	1	3036262	Audéjos	43.4323	-0.6087	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	0	PPL	139
+audelange	1	3036261	Audelange	47.1346	5.5860	FR	Borgogna-Franca Contea	11071619	Giura	217	PPL	216
+audeloncourt	1	3036260	Audeloncourt	48.1105	5.5223	FR	Gran Este	11071622	Alta Marna	96	PPL	336
+audembert	1	3036259	Audembert	50.8607	1.6933	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	364	PPL	61
+audencourt	1	3036258	Audencourt	50.1183	3.4392	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	0	PPL	135
+audenfort	1	3036257	Audenfort	50.7829	1.9701	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	0	PPL	51
+audenge	1	3036256	Audenge	44.6837	-1.0134	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	5522	PPL	5
+audenino	1	8967555	Audenino	45.6411	8.1106	IT	Piemonte	3170831	Biella	35	PPL	744
+audenja	0	3036256	Audenge	44.6837	-1.0134	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	5522	PPL	5
+auderville	1	3036255	Auderville	49.7118	-1.9310	FR	Normandia	11071621	Manica	293	PPL	57
+audes	1	3036253	Audes	46.8229	3.0629	FR	Borgogna-Franca Contea	11071619	Nièvre	0	PPL	181
+audes	1	3036254	Audes	46.4578	2.5582	FR	Alvernia-Rodano-Alpi	11071625	Allier	460	PPL	261
+audeux	1	3036251	Audeux	47.2610	5.8713	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	343	PPL	253
+audeville	1	3036250	Audeville	48.2789	2.2383	FR	Centro-Valle della Loira	3027939	Loiret	170	PPL	125
+audiere	1	12321399	Audière	46.9977	1.3814	FR	Centro-Valle della Loira	3027939	Indre	0	PPL	162
+audierne	1	3036247	Audierne	48.0164	-4.5384	FR	Bretagna	3030293	Finistère	2601	PPL	12
+audigers	1	3036245	Audigers	48.4193	2.3923	FR	Île-de-France	3012874	Essonne	0	PPL	65
+audignicourt	1	3036244	Audignicourt	49.4788	3.1340	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	97	PPL	75
+audignies	1	3036243	Audignies	50.2857	3.8140	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	271	PPL	143
+audignon	1	3036242	Audignon	43.7222	-0.6046	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Landes	355	PPL	52
+audigny	1	3036241	Audigny	49.8697	3.6468	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	228	PPL	147
+audinac les bains	1	7644834	Audinac-Les-Bains	43.0131	1.1767	FR	Occitania	11071623	Ariège	0	PPL	479
+audincourt	1	3036240	Audincourt	47.4833	6.8534	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	15577	PPL	334
+audincthun	1	3036239	Audincthun	50.5833	2.1333	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	591	PPL	98
+audinghen	1	3036238	Audinghen	50.8518	1.6129	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	556	PPL	62
+audisque	0	2980283	Saint-Étienne-au-Mont	50.6779	1.6308	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	5078	PPL	13
+auditore	1	3182689	Auditore	43.8212	12.5716	IT	Marche	3174004	Pesaro e Urbino	181	PPLA3	373
+audon	1	3036237	Audon	43.8001	-0.8219	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Landes	334	PPL	47
+audorf	1	2782232	Audorf	48.3385	14.0579	AT	Alta Austria	2769848	Politischer Bezirk Urfahr-Umgebung	180	PPL	263
+audorf	1	2782233	Audorf	48.2181	14.2793	AT	Alta Austria	2769848	Politischer Bezirk Linz-Land	1064	PPLX	265
+audorf	1	2782234	Audorf	48.1219	15.8969	AT	Bassa Austria	2770542	Politischer Bezirk Sankt Pölten	47	PPL	317
+audorfl	1	3219791	Audörfl	46.9844	15.4964	AT	Stiria	2764581	Politischer Bezirk Graz-Umgebung	0	PPL	325
+audos	0	2989742	Odos	43.1957	0.0574	FR	Occitania	11071623	Alti Pirenei	3451	PPL	343
+audouville la hubert	1	3036236	Audouville-la-Hubert	49.4205	-1.2182	FR	Normandia	11071621	Manica	71	PPL	1
+audrehem	1	3036235	Audrehem	50.7810	1.9898	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	364	PPL	66
+audressein	1	3036234	Audressein	42.9288	1.0233	FR	Occitania	11071623	Ariège	112	PPL	510
+audresselles	1	3036233	Audresselles	50.8248	1.5942	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	692	PPL	13
+audriere	1	3036232	Audrière	45.1989	5.0226	FR	Alvernia-Rodano-Alpi	11071625	Drôme	0	PPL	431
+audrieu	1	3036231	Audrieu	49.2085	-0.5943	FR	Normandia	11071621	Calvados	825	PPL	70
+audrix	1	3036230	Audrix	44.8807	0.9472	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	248	PPL	219
+audruicq	1	3036229	Audruicq	50.8779	2.0798	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	4680	PPL	7
+audun	0	3036226	Audun-le-Tiche	49.4722	5.9555	FR	Gran Este	11071622	Mosella	5935	PPL	307
+audun	0	3036227	Audun-le-Roman	49.3698	5.8955	FR	Gran Este	11071622	Meurthe e Mosella	2122	PPL	364
+audun le roman	1	3036227	Audun-le-Roman	49.3698	5.8955	FR	Gran Este	11071622	Meurthe e Mosella	2122	PPL	364
+audun le tiche	1	3036226	Audun-le-Tiche	49.4722	5.9555	FR	Gran Este	11071622	Mosella	5935	PPL	307
+auduni	1	8953159	Auduni	41.3137	14.4304	IT	Campania	3181042	Caserta	204	PPL	257
+audviller	1	12317689	Audviller	48.9745	6.9525	FR	Gran Este	11071622	Mosella	0	PPL	220
+audy	1	12320859	Audy	45.5349	2.1441	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	667
+aue	1	2782228	Aue	47.6587	15.9034	AT	Bassa Austria	2770542	Politischer Bezirk Neunkirchen	268	PPL	507
+aue	1	2782229	Aue	47.4333	12.2000	AT	Tirolo	2763586	Politischer Bezirk Kitzbühel	0	PPL	732
+aue	1	2782230	Aue	47.2167	15.6000	AT	Stiria	2764581	Politischer Bezirk Weiz	0	PPL	532
+auedt	1	2782226	Auedt	48.4167	14.3167	AT	Alta Austria	2769848	Politischer Bezirk Urfahr-Umgebung	37	PPL	823
+auee	1	6293569	Auee	47.2806	8.7123	CH	Cantone di Zurigo	2657895	Distretto di Meilen	10	PPL	505
+auegg	1	2607635	Auegg	46.9333	15.6000	AT	Stiria	2764581	Politischer Bezirk Südoststeiermark	0	PPL	312
+auen	0	3038562	Ahun	46.0858	2.0449	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	1583	PPL	453
+auen	1	11576885	Auen	47.5795	8.5857	CH	Cantone di Zurigo	2657895	Distretto di Andelfingen	0	PPLL	345
+auen	1	11584480	Auen	47.3826	9.3580	CH	Canton Appenzello Interno	2661741	Appenzell Inner Rhodes	0	PPLL	712
+auen	1	2782224	Auen	46.8833	14.8167	AT	Carinzia	2774686	Politischer Bezirk Wolfsberg	843	PPL	652
+auen	1	2782225	Auen	46.6167	14.0833	AT	Carinzia	2774686	Politischer Bezirk Klagenfurt Land	302	PPLX	437
+auen	1	3319517	Auen	47.1600	11.7368	AT	Tirolo	2763586	Politischer Bezirk Schwaz	0	PPL	1256
+auen	1	3324724	Auen	47.0489	14.1575	AT	Carinzia	2774686	Politischer Bezirk Sankt Veit an der Glan	9	PPLL	1147
+auen	1	3333805	Auen	47.5128	9.9742	AT	Vorarlberg	2762300	Politischer Bezirk Bregenz	0	PPL	795
+auen	1	3335267	Auen	47.2000	15.5667	AT	Stiria	2764581	Politischer Bezirk Weiz	219	PPL	503
+auen	1	6956545	Auen	46.5996	13.8439	AT	Carinzia	2774686	Villaco	6563	PPLX	492
+auenheim	1	3036225	Auenheim	48.8151	8.0066	FR	Gran Este	11071622	Basso Reno	0	PPL	117
+auenhofen	1	11790337	Auenhofen	47.5569	9.3080	CH	Canton Turgovia	2658372	Distretto di Arbon	0	PPL	442
+auenstein	1	2661685	Auenstein	47.4170	8.1396	CH	Canton Argovia	2661876	Distretto di Brugg	0	PPL	367
+auer	0	3171993	Ora	46.3469	11.2975	IT	Trentino-Alto Adige	3165244	Bolzano	3198	PPLA3	242
+auer bei bozen	0	3171993	Ora	46.3469	11.2975	IT	Trentino-Alto Adige	3165244	Bolzano	3198	PPLA3	242
+auerbach	1	2782218	Auerbach	48.5671	13.9240	AT	Alta Austria	2769848	Politischer Bezirk Rohrbach	30	PPL	570
+auerbach	1	2782219	Auerbach	48.4804	14.4262	AT	Alta Austria	2769848	Politischer Bezirk Freistadt	155	PPL	691
+auerbach	1	2782220	Auerbach	48.0642	13.1088	AT	Alta Austria	2769848	Politischer Bezirk Braunau am Inn	142	PPL	489
+auerbach	1	2782221	Auerbach	47.4481	15.9631	AT	Stiria	2764581	Politischer Bezirk Hartberg-Fürstenfeld	129	PPL	795
+auerberg	1	2782215	Auerberg	47.2333	15.7833	AT	Stiria	2764581	Politischer Bezirk Hartberg-Fürstenfeld	0	PPL	630
+auerding	1	11609668	Auerding	48.1609	13.4513	AT	Alta Austria	2769848	Politischer Bezirk Ried im Innkreis	29	PPL	520
+auerhutten	1	11612271	Auerhütten	47.6903	16.2834	AT	Bassa Austria	2770542	Politischer Bezirk Wiener Neustadt	0	PPL	556
+auerling	1	2782211	Auerling	47.1500	14.6667	AT	Stiria	2764581	Politischer Bezirk Murtal	129	PPL	844
+auern	1	2782207	Auern	48.1387	15.6952	AT	Bassa Austria	2770542	Politischer Bezirk Sankt Pölten	98	PPL	309
+auern	1	2782208	Auern	47.9782	14.1183	AT	Alta Austria	2769848	Politischer Bezirk Kirchdorf an der Krems	354	PPL	376
+auersbach	1	2782205	Auersbach	47.5920	15.6990	AT	Stiria	2764581	Politischer Bezirk Bruck-Mürzzuschlag	138	PPL	800
+auersbach	1	2782206	Auersbach	47.0167	15.8667	AT	Stiria	2764581	Politischer Bezirk Südoststeiermark	370	PPLA3	378
+auersberg	1	2608064	Auersberg	46.9667	15.8833	AT	Stiria	2764581	Politischer Bezirk Südoststeiermark	0	PPL	283
+auersthal	1	2782204	Auersthal	48.3737	16.6360	AT	Bassa Austria	2770542	Politischer Bezirk Gänserndorf	1932	PPLA3	181
+aueua	1	8981431	Aueua	44.7562	7.9471	IT	Piemonte	3170831	Cuneo	12	PPL	288
+auf arten	1	11584423	Auf Arten	47.3898	7.7677	CH	Canton Basilea Campagna	2661603	Distretto di Waldenburg	0	PPLL	658
+auf dem buhl	1	6291555	Auf dem Bühl	47.4949	8.4906	CH	Cantone di Zurigo	2657895	Distretto di Dielsdorf	11	PPLL	416
+auf dem stock	1	2661684	Auf dem Stock	46.7167	8.2333	CH	Canton Berna	2661551	Interlaken-Oberhasli District	0	PPL	1290
+auf der buechlen	1	6292290	Auf der Büechlen	47.2788	8.7637	CH	Cantone di Zurigo	2657895	Distretto di Hinwil	4	PPLL	511
+auf der gey	1	11488000	Auf der Gey	46.6194	8.0133	CH	Canton Berna	2661551	Interlaken-Oberhasli District	0	PPL	1021
+auf der hohe	1	2661683	Auf der Hohe	46.9167	9.4000	CH	Canton San Gallo	2658821	Wahlkreis Sarganserland	0	PPL	1342
+auf der leiten	1	2604587	Auf der Leiten	47.5667	14.2500	AT	Stiria	2764581	Politischer Bezirk Liezen	0	PPL	649
+aufalle, trou d	1	11075773	Aufalle, Trou d'	46.2204	7.1179	CH	Canton Vaud	2658182	distretto di Aigle	0	PASS	2501
+auffach	1	2782192	Auffach	47.4000	12.0333	AT	Tirolo	2763586	Politischer Bezirk Kufstein	992	PPL	968
+auffains	1	3036224	Auffains	48.1958	1.6401	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	0	PPL	139
+auffang	1	11694170	Auffang	48.1198	13.1682	AT	Alta Austria	2769848	Politischer Bezirk Braunau am Inn	291	PPL	477
+auffargis	1	3036223	Auffargis	48.7005	1.8870	FR	Île-de-France	3012874	Yvelines	1983	PPL	157
+auffay	1	3036221	Auffay	49.7254	0.6870	FR	Normandia	11071621	Senna marittima	0	PPL	121
+auffay	1	3036222	Auffay	49.7188	1.0991	FR	Normandia	11071621	Senna marittima	1826	PPL	94
+auffenberg	1	2782191	Auffenberg	47.1667	15.9333	AT	Stiria	2764581	Politischer Bezirk Hartberg-Fürstenfeld	0	PPL	422
+aufferville	1	3036219	Aufferville	48.3092	1.3695	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	0	PPL	158
+aufferville	1	3036220	Aufferville	48.2151	2.6097	FR	Île-de-France	3012874	Senna e Marna	488	PPL	110
+auffreville brasseuil	1	3036218	Auffreville-Brasseuil	48.9541	1.7100	FR	Île-de-France	3012874	Yvelines	602	PPL	37
+aufham	1	2782190	Aufham	47.9037	13.5277	AT	Alta Austria	2769848	Politischer Bezirk Vöcklabruck	100	PPL	482
+aufhausen	1	2782189	Aufhausen	47.2972	12.7618	AT	Stato di Salisburgo	2766823	Politischer Bezirk Zell am See	580	PPL	840
+aufhausern	1	11571275	Aufhäusern	47.5930	9.1337	CH	Canton Turgovia	2658372	Distretto di Kreuzlingen	0	PPLL	560
+auflance	1	3036217	Auflance	49.6173	5.2886	FR	Gran Este	11071622	Ardenne	89	PPL	191
+aug	1	11593889	Aug	46.7170	15.2808	AT	Stiria	2764581	Politischer Bezirk Deutschlandsberg	144	PPL	338
+aug	1	11609463	Aug	47.9912	13.1198	AT	Stato di Salisburgo	2766823	Politischer Bezirk Salzburg-Umgebung	0	PPL	517
+aug	1	11669937	Aug	48.0349	13.2123	AT	Alta Austria	2769848	Politischer Bezirk Braunau am Inn	32	PPL	489
+aug	1	2782186	Aug	48.5167	13.6333	AT	Alta Austria	2769848	Politischer Bezirk Schärding	34	PPL	628
+aug	1	2782187	Aug	46.8833	15.5333	AT	Stiria	2764581	Politischer Bezirk Leibnitz	0	PPL	292
+aug	1	2782188	Aug	46.8500	15.7833	AT	Stiria	2764581	Politischer Bezirk Südoststeiermark	93	PPL	328
+auga	1	3036216	Auga	43.4771	-0.3817	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	146	PPL	198
+augan	1	3036215	Augan	47.9191	-2.2795	FR	Bretagna	3030293	Morbihan	1374	PPL	85
+augarten	1	11789564	Augarten	47.5469	7.7656	CH	Canton Argovia	2661876	Distretto di Rheinfelden	0	PPLX	281
+augassen	1	11862269	Augassen	48.1856	13.7325	AT	Alta Austria	2769848	Politischer Bezirk Grieskirchen	49	PPL	425
+augberg	1	2607807	Augberg	46.8500	15.8000	AT	Stiria	2764581	Politischer Bezirk Südoststeiermark	0	PPL	326
+auge	1	11789738	Auge	46.8085	7.1678	CH	Canton Friburgo	2660717	distretto della Sarine	0	PPLX	595
+auge	1	3036211	Auge	49.8593	4.2726	FR	Gran Este	11071622	Ardenne	0	PPL	236
+auge	1	3036212	Augé	46.4396	-0.2877	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	817	PPL	85
+auge	1	3036213	Auge	46.2421	2.3234	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	110	PPL	407
+auge	1	7729941	Auge	45.8506	-0.0974	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	0	PPLX	97
+auge saint medard	1	3036214	Auge-Saint-Médard	45.8505	-0.0955	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	326	PPL	99
+augea	1	3036209	Augea	46.5526	5.4087	FR	Borgogna-Franca Contea	11071619	Giura	286	PPL	259
+augeac	1	3036208	Augeac	44.9953	3.7837	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	967
+augendobl	1	11609188	Augendobl	48.2678	13.6309	AT	Alta Austria	2769848	Politischer Bezirk Schärding	33	PPL	402
+augental	1	11669096	Augental	48.3029	13.5467	AT	Alta Austria	2769848	Politischer Bezirk Ried im Innkreis	27	PPL	433
+auger saint vincent	1	3036198	Auger-Saint-Vincent	49.2191	2.8096	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	458	PPL	89
+augerans	1	3036207	Augerans	47.0204	5.5773	FR	Borgogna-Franca Contea	11071619	Giura	146	PPL	222
+augere	1	12320969	Augère	45.3693	1.9787	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	602
+augere	1	3036205	Augère	48.1450	3.5266	FR	Borgogna-Franca Contea	11071619	Yonne	0	PPL	215
+augere	1	3036206	Augère	46.4606	2.4086	FR	Alvernia-Rodano-Alpi	11071625	Allier	0	PPL	388
+augeres	1	12323314	Augères	45.9191	1.8034	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	0	PPL	520
+augeres	1	3036202	Augères	46.0885	1.7305	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	149	PPL	452
+augeres	1	3036203	Augères	45.4333	2.2667	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	629
+augerolle	1	3036201	Augerolle	45.9000	1.8500	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	0	PPL	666
+augerolles	1	3036199	Augerolles	45.7227	3.6169	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	931	PPL	549
+augerolles	1	3036200	Augerolles	45.6000	2.5833	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	810
+augers en brie	1	3036197	Augers-en-Brie	48.6798	3.3563	FR	Île-de-France	3012874	Senna e Marna	285	PPL	144
+augerville la riviere	1	3036196	Augerville-la-Rivière	48.2514	2.4372	FR	Centro-Valle della Loira	3027939	Loiret	224	PPL	83
+auges	1	3036195	Augès	44.0438	5.9100	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	145	PPL	757
+auget	1	3036194	Auget	46.3981	0.4999	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Vienne	0	PPL	128
+augeu	0	2989708	Ogeu-les-Bains	43.1472	-0.5046	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	1112	PPL	319
+augeville	1	3036192	Augeville	49.6347	1.2004	FR	Normandia	11071621	Senna marittima	0	PPL	167
+augeville	1	3036193	Augeville	48.3623	5.3113	FR	Gran Este	11071622	Alta Marna	0	PPL	322
+auggenthal	1	2782185	Auggenthal	48.7000	16.0667	AT	Bassa Austria	2770542	Politischer Bezirk Hollabrunn	302	PPL	205
+augicourt	1	3036191	Augicourt	47.7737	5.8973	FR	Borgogna-Franca Contea	11071619	Alta Saona	144	PPL	245
+augignac	1	3036190	Augignac	45.5915	0.7005	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	833	PPL	277
+augio	1	2661682	Augio	46.3658	9.1278	CH	Cantone dei Grigioni	2660522	Region Moesa	0	PPL	1033
+augirein	1	3036189	Augirein	42.9313	0.9175	FR	Occitania	11071623	Ariège	77	PPL	637
+augisey	1	3036188	Augisey	46.5530	5.4930	FR	Borgogna-Franca Contea	11071619	Giura	214	PPL	487
+augmontel	1	12954619	Augmontel	43.5465	2.3461	FR	Occitania	11071623	Tarn	0	PPL	320
+augnat	1	3036187	Augnat	45.4116	3.1821	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	149	PPL	598
+augnax	1	3036186	Augnax	43.7230	0.7746	FR	Occitania	11071623	Gers	58	PPL	200
+augne	1	3036185	Augne	45.7839	1.7046	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	128	PPL	554
+augny	1	3036184	Augny	49.0611	6.1182	FR	Gran Este	11071622	Mosella	2615	PPL	194
+augon	1	12315744	Augon	47.7066	-1.9330	FR	Bretagna	3030293	Ille-et-Vilaine	0	PPL	36
+augonville	1	3036183	Augonville	48.2306	1.4145	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	0	PPL	135
+augoules	1	12322300	Augoules	45.3157	2.6016	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	822
+augraben	1	3335237	Augraben	47.2000	15.4000	AT	Stiria	2764581	Politischer Bezirk Graz-Umgebung	0	PPL	552
+augrain	1	3036182	Augrain	47.5037	-1.5951	FR	Paesi della Loira	2988289	Loira Atlantica	0	PPL	24
+augreilh	1	12305825	Augreilh	43.7520	-0.6051	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Landes	0	PPL	59
+augsdorf	1	2782182	Augsdorf	46.6000	14.0667	AT	Carinzia	2774686	Politischer Bezirk Villach Land	486	PPL	538
+augst	1	2661681	Augst	47.5356	7.7147	CH	Canton Basilea Campagna	2661603	Distretto di Liestal	908	PPL	269
+augstbord	1	8029793	Augstbord	46.2088	7.7533	CH	Canton Vallese	2658205	Distretto di Visp	0	PASS	2894
+augstbordpass	1	2661680	Augstbordpass	46.2087	7.7532	CH	Canton Vallese	2658205	distretto di Leuk	0	PASS	2892
+augstebruch	1	11844925	Äugstebruch	46.7784	7.4085	CH	Canton Berna	2661551		0	PPLX	859
+augstisried	1	7670058	Äugstisried	47.2580	9.4974	CH	Canton San Gallo	2658821	Circondario di Werdenberg	0	PPL	452
+auguaise	1	3036180	Auguaise	48.7013	0.5539	FR	Normandia	11071621	Orne	122	PPL	274
+auguette	1	3213153	Auguette	43.3835	5.0023	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	0	PPL	15
+augusta	1	2525646	Augusta	37.2407	15.2212	IT	Sicilia	2523119	Siracusa	30723	PPLA3	15
+augusta	1	8956487	Augusta	45.4508	11.9230	IT	Veneto	3164604	Padova	97	PPL	8
+augusta	1	8972039	Augusta	44.9094	12.0340	IT	Emilia-Romagna	3177401	Ferrara	26	PPL	-5
+augusta auscorum	0	3036281	Auch	43.6456	0.5886	FR	Occitania	11071623	Gers	24494	PPLA2	134
+augusta praetoria	0	3182997	Aosta	45.7376	7.3172	IT	Valle d'Aosta	3164857	Aosta	35261	PPLA	583
+augusta raurica	0	2660204	Kaiseraugst	47.5397	7.7260	CH	Canton Argovia	2661876	Distretto di Rheinfelden	3600	PPL	268
+augusta taurinorum	0	3165524	Torino	45.0705	7.6868	IT	Piemonte	3170831	Torino	847287	PPLA	239
+augusta turonum	0	2972191	Tours	47.3948	0.7040	FR	Centro-Valle della Loira	3027939	Indre e Loira	141621	PPLA2	52
+auguste raynaud	1	13580302	Auguste Raynaud	43.7142	7.2587	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	6592	PPLX	54
+augustodunum	0	3035883	Autun	46.9510	4.2987	FR	Borgogna-Franca Contea	11071619	Saona e Loira	18283	PPLA3	325
+augustonemetum	0	3024635	Clermont-Ferrand	45.7797	3.0868	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	147865	PPLA2	406
+augustoritum	0	2998286	Limoges	45.8336	1.2476	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	141176	PPLA2	309
+augusuta	0	2525646	Augusta	37.2407	15.2212	IT	Sicilia	2523119	Siracusa	30723	PPLA3	15
+augwil	1	6291277	Augwil	47.4750	8.5972	CH	Cantone di Zurigo	2657895	Distretto di Bülach	450	PPL	563
+augy	1	3036177	Augy	49.3390	3.5141	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	0	PPL	69
+augy	1	3036178	Augy	47.7664	3.6105	FR	Borgogna-Franca Contea	11071619	Yonne	1182	PPL	100
+augy sur aubois	1	3036175	Augy-sur-Aubois	46.7845	2.8447	FR	Centro-Valle della Loira	3027939	Cher	292	PPL	213
+auhausel	1	2782176	Auhäusel	47.5167	12.2833	AT	Tirolo	2763586	Politischer Bezirk Kufstein	0	PPL	852
+auhauseln	1	11695603	Auhäuseln	48.1758	13.7146	AT	Alta Austria	2769848	Politischer Bezirk Grieskirchen	20	PPL	444
+auhof	1	11609944	Auhof	48.3192	14.0387	AT	Alta Austria	2769848	Politischer Bezirk Eferding	17	PPL	263
+auhof	1	11668717	Auhof	48.2838	15.1927	AT	Bassa Austria	2770542	Politischer Bezirk Melk	7	PPL	655
+auhof	1	2782172	Auhof	48.2059	16.2283	AT	Stato di Vienna	2761367	Wien Stadt	0	PPLX	220
+auhof	1	2782173	Auhof	48.2387	14.6649	AT	Alta Austria	2769848	Politischer Bezirk Perg	132	PPL	251
+auholz	1	11668731	Auholz	48.0369	13.8282	AT	Alta Austria	2769848	Politischer Bezirk Gmunden	5	PPL	397
+auhub	1	11609284	Auhub	48.1752	13.8977	AT	Alta Austria	2769848	Distretto di Wels-Land	8	PPL	346
+auing	1	11609173	Auing	48.2721	13.7175	AT	Alta Austria	2769848	Politischer Bezirk Grieskirchen	107	PPL	391
+auja	1	7669446	Äuja	46.8623	9.9047	CH	Cantone dei Grigioni	2660522	Region Prättigau / Davos	0	PPL	1207
+aujac	1	3036173	Aujac	45.8446	-0.3961	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente-Maritime	344	PPL	24
+aujac	1	3036174	Aujac	44.3494	4.0145	FR	Occitania	11071623	Gard	183	PPL	512
+aujan mournede	1	3036172	Aujan-Mournède	43.3822	0.5025	FR	Occitania	11071623	Gers	111	PPL	259
+aujargues	1	3036171	Aujargues	43.7901	4.1224	FR	Occitania	11071623	Gard	784	PPL	84
+aujeurres	1	3036170	Aujeurres	47.7407	5.1832	FR	Gran Este	11071622	Alta Marna	93	PPL	453
+aujols	1	3036169	Aujols	44.4082	1.5490	FR	Occitania	11071623	Lot	273	PPL	229
+aukar scharte	1	2782169	Aukar Scharte	47.1500	12.0333	AT	Tirolo	2763586	Politischer Bezirk Schwaz	0	PASS	2316
+aulacum	0	3164949	Valdaora	46.7603	12.0295	IT	Trentino-Alto Adige	3165244	Bolzano	1668	PPLA3	1052
+aulages	1	3036165	Aulages	49.7451	1.4124	FR	Normandia	11071621	Senna marittima	0	PPL	72
+aulagnier grand	1	3036164	Aulagnier Grand	45.0288	4.2536	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	1101
+aulaines	1	3036163	Aulaines	48.1793	0.4401	FR	Paesi della Loira	2988289	Sarthe	0	PPL	109
+aulan	1	3036162	Aulan	44.2224	5.4282	FR	Alvernia-Rodano-Alpi	11071625	Drôme	5	PPL	783
+aulanais	1	3036161	Aulanais	45.1793	4.2075	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	851
+auland	1	2782167	Auland	47.3167	11.2000	AT	Tirolo	2763586	Politischer Bezirk Innsbruck Land	0	PPL	1191
+aulanys	1	3036160	Aulanys	45.1643	4.3095	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	912
+aulas	1	3036159	Aulas	44.0005	3.5864	FR	Occitania	11071623	Gard	449	PPL	342
+auleiten	1	11669024	Auleiten	48.1905	13.4945	AT	Alta Austria	2769848	Politischer Bezirk Ried im Innkreis	162	PPL	470
+auletta	1	3182687	Auletta	40.5612	15.4231	IT	Campania	3181042	Salerno	1567	PPLA3	281
+aulhat	1	3036158	Aulhat	45.5733	3.3121	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	315	PPL	425
+auliac	1	3036157	Auliac	45.1473	3.0416	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	1054
+aulig	1	11576877	Aulig	47.5799	8.8386	CH	Canton Turgovia	2658372	Distretto di Frauenfeld	0	PPLL	390
+aulla	1	3182686	Aulla	44.2063	9.9785	IT	Toscana	3165361	Massa-Carrara	4321	PPLA3	64
+aullena	1	3036156	Aullena	41.7720	9.0815	FR	Corsica	3023519	Corsica del Sud	192	PPL	869
+aullene	1	3036156	Aullena	41.7720	9.0815	FR	Corsica	3023519	Corsica del Sud	192	PPL	869
+aulnac	0	3036154	Aulnat	45.7993	3.1674	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	4662	PPL	324
+aulnat	1	3036154	Aulnat	45.7993	3.1674	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	4662	PPL	324
+aulnat	1	3036155	Aulnat	45.5333	2.6167	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	808
+aulnay	0	3036142	Aulnay-sur-Mauldre	48.9295	1.8411	FR	Île-de-France	3012874	Yvelines	1160	PPL	29
+aulnay	0	3036145	Aulnay-sous-Bois	48.9381	2.4940	FR	Île-de-France	3012874	Senna-Saint-Denis	80615	PPL	45
+aulnay	1	3036150	Aulnay	48.7357	3.5131	FR	Gran Este	11071622	Marna	0	PPL	153
+aulnay	1	3036151	Aulnay	48.4716	4.4049	FR	Gran Este	11071622	Aube	118	PPL	105
+aulnay	1	3036152	Aulnay	46.9059	0.0922	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Vienne	143	PPL	76
+aulnay	1	3036153	Aulnay	46.0209	-0.3468	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente-Maritime	1620	PPL	58
+aulnay aux planches	1	3036148	Aulnay-aux-Planches	48.8200	3.9617	FR	Gran Este	11071622	Marna	0	PPL	142
+aulnay de saintonge	0	3036153	Aulnay	46.0209	-0.3468	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente-Maritime	1620	PPL	58
+aulnay l aitre	1	3036147	Aulnay-l'Aître	48.8230	4.5607	FR	Gran Este	11071622	Marna	0	PPL	100
+aulnay la riviere	1	3036146	Aulnay-la-Rivière	48.1905	2.3675	FR	Centro-Valle della Loira	3027939	Loiret	529	PPL	93
+aulnay sous bois	1	3036145	Aulnay-sous-Bois	48.9381	2.4940	FR	Île-de-France	3012874	Senna-Saint-Denis	80615	PPL	45
+aulnay sur iton	1	3036144	Aulnay-sur-Iton	48.9960	1.0594	FR	Normandia	11071621	Eure	603	PPL	81
+aulnay sur marne	1	3036143	Aulnay-sur-Marne	49.0071	4.2041	FR	Gran Este	11071622	Marna	217	PPL	78
+aulnay sur mauldre	1	3036142	Aulnay-sur-Mauldre	48.9295	1.8411	FR	Île-de-France	3012874	Yvelines	1160	PPL	29
+aulnizeux	1	3036140	Aulnizeux	48.8289	3.9332	FR	Gran Este	11071622	Marna	0	PPL	145
+aulnois	0	3036137	Aulnois-sous-Laon	49.6143	3.6055	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	1320	PPL	68
+aulnois	1	3036139	Aulnois	48.2568	5.7847	FR	Gran Este	11071622	Vosgi	132	PPL	337
+aulnois en perthois	1	3036138	Aulnois-en-Perthois	48.6345	5.1291	FR	Gran Este	11071622	Mosa	428	PPL	271
+aulnois sous laon	1	3036137	Aulnois-sous-Laon	49.6143	3.6055	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	1320	PPL	68
+aulnois sous vertuzey	1	3036136	Aulnois-sous-Vertuzey	48.7463	5.6756	FR	Gran Este	11071622	Mosa	0	PPL	252
+aulnois sur seille	1	3036135	Aulnois-sur-Seille	48.8678	6.3154	FR	Gran Este	11071622	Mosella	255	PPL	200
+aulnoy	1	3036134	Aulnoy	48.8410	3.0967	FR	Île-de-France	3012874	Senna e Marna	400	PPL	132
+aulnoy lez valenciennes	1	3036133	Aulnoy-lez-Valenciennes	50.3333	3.5333	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	8172	PPL	37
+aulnoy sur aube	1	3036131	Aulnoy-sur-Aube	47.8331	5.0329	FR	Gran Este	11071622	Alta Marna	60	PPL	368
+aulnoye	0	3036132	Aulnoye-Aymeries	50.2014	3.8384	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	9242	PPL	149
+aulnoye aymeries	1	3036132	Aulnoye-Aymeries	50.2014	3.8384	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	9242	PPL	149
+aulon	1	3036127	Aulon	46.0823	1.6902	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	184	PPL	455
+aulon	1	3036128	Aulon	43.1910	0.8196	FR	Occitania	11071623	Alta Garonna	395	PPL	336
+aulon	1	3036129	Aulon	42.8513	0.2960	FR	Occitania	11071623	Alti Pirenei	86	PPL	1235
+auloron	0	2989569	Oloron-Sainte-Marie	43.1944	-0.6107	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	12611	PPLA3	221
+auloron e senta maria	0	2989569	Oloron-Sainte-Marie	43.1944	-0.6107	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	12611	PPLA3	221
+aulos	1	3036126	Aulos	42.7922	1.6752	FR	Occitania	11071623	Ariège	62	PPL	525
+aulpi	1	3182685	Aulpi	41.2739	13.9073	IT	Campania	3181042	Caserta	59	PPL	175
+aulraule	1	3036123	Aulraule	44.8333	4.5833	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	0	PPL	403
+ault	1	3036122	Ault	50.1040	1.4500	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	1914	PPL	37
+aulus les bains	1	3036121	Aulus-les-Bains	42.7909	1.3374	FR	Occitania	11071623	Ariège	201	PPL	748
+aulx les cromary	1	3036120	Aulx-lès-Cromary	47.3734	6.1112	FR	Borgogna-Franca Contea	11071619	Alta Saona	139	PPL	226
+aumage	1	3036119	Aumage	44.2432	5.5108	FR	Alvernia-Rodano-Alpi	11071625	Drôme	0	PPL	899
+aumagne	1	3036118	Aumagne	45.8746	-0.4036	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente-Maritime	655	PPL	36
+aumale	1	3036117	Aumale	49.7698	1.7559	FR	Normandia	11071621	Senna marittima	2705	PPL	118
+aumare	1	3036115	Aumare	49.2743	1.3162	FR	Normandia	11071621	Eure	0	PPL	141
+aumatre	1	3036114	Aumâtre	49.9197	1.7732	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	199	PPL	138
+aumelas	1	6619383	Aumelas	43.6030	3.5977	FR	Occitania	11071623	Hérault	0	PPL	180
+aumenancourt le petit	1	3036111	Auménancourt-le-Petit	49.3763	4.0596	FR	Gran Este	11071622	Marna	703	PPL	65
+aumerval	1	3036110	Aumerval	50.5070	2.4031	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	197	PPL	121
+aumes	1	3036109	Aumes	43.4662	3.4633	FR	Occitania	11071623	Hérault	350	PPL	53
+aumessas	1	3036108	Aumessas	43.9911	3.5036	FR	Occitania	11071623	Gard	0	PPL	456
+aumetz	1	3036107	Aumetz	49.4179	5.9442	FR	Gran Este	11071622	Mosella	2293	PPL	382
+aumeville lestre	1	3036106	Aumeville-Lestre	49.5400	-1.3216	FR	Normandia	11071621	Manica	143	PPL	17
+aumont	0	3036097	Aumont-Aubrac	44.7224	3.2839	FR	Occitania	11071623	Lozère	1106	PPL	1050
+aumont	1	12321186	Aumont	45.1201	1.9495	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	330
+aumont	1	2661676	Aumont	46.7989	6.8503	CH	Canton Friburgo	2660717	distretto della Broye	418	PPL	594
+aumont	1	3036100	Aumont	49.8843	1.9274	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	119	PPL	122
+aumont	1	3036102	Aumont	46.9108	5.6333	FR	Borgogna-Franca Contea	11071619	Giura	420	PPL	241
+aumont	1	3036103	Aumont	45.5555	0.7269	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	231
+aumont	1	3036104	Aumont	45.4333	2.1833	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	651
+aumont aubrac	1	3036097	Aumont-Aubrac	44.7224	3.2839	FR	Occitania	11071623	Lozère	1106	PPL	1050
+aumont en halatte	1	3036101	Aumont-en-Halatte	49.2333	2.5500	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	528	PPL	123
+aumontzey	1	3036096	Aumontzey	48.1667	6.7757	FR	Gran Este	11071622	Vosgi	446	PPL	470
+aumoy	1	3036095	Aumoy	48.5526	1.1197	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	0	PPL	225
+aumstettn	0	2782555	Amstetten	48.1229	14.8721	AT	Bassa Austria	2770542	Distretto di Amstetten	15559	PPLA3	277
+aumuhl	1	2782166	Aumühl	47.4833	15.4167	AT	Stiria	2764581	Politischer Bezirk Bruck-Mürzzuschlag	0	PPL	618
+aumuhle	1	11609843	Aumühle	48.2696	13.9876	AT	Alta Austria	2769848	Politischer Bezirk Eferding	56	PPL	277
+aumuli	1	10130951	Aumüli	46.9793	8.4136	CH	Canton Nidvaldo	2659471	Nidwalden	0	PPL	434
+aumuli	1	6290629	Aumüli	47.3025	8.4846	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	21	PPL	576
+aumur	1	3036094	Aumur	47.0588	5.3476	FR	Borgogna-Franca Contea	11071619	Giura	359	PPL	188
+aun	0	3038562	Ahun	46.0858	2.0449	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	1583	PPL	453
+auna di sopra	1	3182684	Auna di Sopra	46.5610	11.4119	IT	Trentino-Alto Adige	3165244	Bolzano	224	PPL	1300
+auna di sotto	1	3182683	Auna di Sotto	46.5117	11.4413	IT	Trentino-Alto Adige	3165244	Bolzano	602	PPL	909
+aunac	1	3036092	Aunac	45.9174	0.2415	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	311	PPL	73
+aunac	1	3036093	Aunac	44.5842	2.8357	FR	Occitania	11071623	Aveyron	0	PPL	867
+aunainville	1	3036089	Aunainville	48.4179	1.8069	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	0	PPL	155
+aunas	1	12322136	Aunas	45.1819	3.9562	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	835
+aunat	1	3036088	Aunat	42.7937	2.0956	FR	Occitania	11071623	Aude	55	PPL	940
+aunave	1	3036087	Aunave	44.8329	4.5127	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	0	PPL	614
+aunay	0	3036081	Aunay-sur-Odon	49.0201	-0.6324	FR	Normandia	11071621	Calvados	3038	PPL	121
+aunay	0	3036083	Aunay-sous-Auneau	48.4414	1.8109	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	1378	PPL	135
+aunay	1	12307391	Aunay	47.8535	1.7053	FR	Centro-Valle della Loira	3027939	Loiret	0	PPL	99
+aunay	1	12309401	Aunay	49.3105	-0.6886	FR	Normandia	11071621	Calvados	0	PPL	44
+aunay	1	12310344	Aunay	47.7112	1.5007	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	0	PPL	94
+aunay en bazois	1	3036085	Aunay-en-Bazois	47.1167	3.7000	FR	Borgogna-Franca Contea	11071619	Nièvre	292	PPL	263
+aunay les bois	1	3036084	Aunay-les-Bois	48.5403	0.2857	FR	Normandia	11071621	Orne	145	PPL	177
+aunay sous auneau	1	3036083	Aunay-sous-Auneau	48.4414	1.8109	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	1378	PPL	135
+aunay sous crecy	1	3036082	Aunay-sous-Crécy	48.6696	1.3029	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	666	PPL	114
+aunay sur odon	1	3036081	Aunay-sur-Odon	49.0201	-0.6324	FR	Normandia	11071621	Calvados	3038	PPL	121
+aune	1	8954884	Aune	46.0696	11.8215	IT	Veneto	3164604	Belluno	126	PPL	887
+auneau	1	3036079	Auneau	48.4636	1.7726	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	4007	PPL	145
+aunede	1	3218769	Aunede	46.4328	12.2931	IT	Veneto	3164604	Belluno	0	PPL	1339
+auneuil	1	3036074	Auneuil	49.3703	1.9971	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	2891	PPL	126
+auneux	1	12310160	Auneux	48.1095	1.8005	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	0	PPL	119
+auniac	1	12170893	Auniac	44.7870	1.3983	FR	Occitania	11071623		0	PPL	179
+aunig	1	3323240	Aunig	46.4847	14.1881	AT	Carinzia	2774686	Politischer Bezirk Klagenfurt Land	0	PPLL	980
+auno	0	3036133	Aulnoy-lez-Valenciennes	50.3333	3.5333	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	8172	PPL	37
+aunou le faucon	1	3036071	Aunou-le-Faucon	48.7301	0.0395	FR	Normandia	11071621	Orne	257	PPL	165
+aunou sur orne	1	3036070	Aunou-sur-Orne	48.6115	0.2312	FR	Normandia	11071621	Orne	263	PPL	203
+aunsfoein	0	2782480	Ansfelden	48.2097	14.2900	AT	Alta Austria	2769848	Politischer Bezirk Linz-Land	18251	PPL	278
+aunsfoin	0	2782480	Ansfelden	48.2097	14.2900	AT	Alta Austria	2769848	Politischer Bezirk Linz-Land	18251	PPL	278
+aupa	1	3219034	Aupa	46.5056	13.2553	IT	Friuli Venezia Giulia	3176525	Udine	37	PPL	903
+aupeda	0	2989484	Oppède le Vieux	43.8284	5.1613	FR	Provenza-Alpi-Costa Azzurra	2985244	Vaucluse	1314	PPL	242
+aupillac	1	12316712	Aupillac	43.5011	2.3047	FR	Occitania	11071623	Tarn	0	PPL	312
+aupinhac	1	12322201	Aupinhac	45.0589	4.0202	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	831
+aupointen	1	11695273	Aupointen	47.9791	13.8034	AT	Alta Austria	2769848	Politischer Bezirk Gmunden	83	PPL	433
+aupont	1	12314001	Aupont	46.5459	3.8045	FR	Borgogna-Franca Contea	11071619	Saona e Loira	0	PPL	265
+auppegard	1	3036068	Auppegard	49.8294	1.0278	FR	Normandia	11071621	Senna marittima	649	PPL	101
+aups	1	3036067	Aups	43.6284	6.2248	FR	Provenza-Alpi-Costa Azzurra	2985244	Varo	2113	PPL	505
+aupx	1	3036066	Aupx	44.4667	6.0000	FR	Provenza-Alpi-Costa Azzurra	2985244	Alte Alpi	0	PPL	711
+auquainville	1	3036065	Auquainville	49.0585	0.2405	FR	Normandia	11071621	Calvados	271	PPL	153
+auquefer	1	3036064	Auquefer	47.6325	-2.1050	FR	Bretagna	3030293	Morbihan	0	PPL	21
+auquemesnil	1	3036063	Auquemesnil	49.9460	1.3328	FR	Normandia	11071621	Senna marittima	252	PPL	132
+aurach	1	2770344	Aurach	47.4122	12.4273	AT	Tirolo	2763586	Politischer Bezirk Kitzbühel	1130	PPL	809
+aurach am hongar	1	2782163	Aurach am Hongar	47.9518	13.6729	AT	Alta Austria	2769848	Politischer Bezirk Vöcklabruck	422	PPLA3	492
+aurach bei kitzbuehel	0	2770344	Aurach	47.4122	12.4273	AT	Tirolo	2763586	Politischer Bezirk Kitzbühel	1130	PPL	809
+aurach bei kitzbuhel	0	2770344	Aurach	47.4122	12.4273	AT	Tirolo	2763586	Politischer Bezirk Kitzbühel	1130	PPL	809
+aurachkirchen	1	2782161	Aurachkirchen	47.9704	13.7451	AT	Alta Austria	2769848	Politischer Bezirk Gmunden	119	PPL	452
+aurade	1	3036062	Auradé	43.5663	1.0578	FR	Occitania	11071623	Gers	526	PPL	189
+auradou	1	3036061	Auradou	44.3348	0.8102	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Lot-et-Garonne	293	PPL	87
+auragne	1	3036060	Auragne	43.3901	1.5078	FR	Occitania	11071623	Alta Garonna	351	PPL	246
+aurano	1	6535380	Aurano	46.0004	8.5882	IT	Piemonte	3170831	Verbano-Cusio-Ossola	89	PPLA3	683
+aurano	1	8959999	Aurano	42.3185	12.6148	IT	Lazio	3174976	Rieti	64	PPL	219
+auratsberg	1	2782160	Auratsberg	48.2208	15.1341	AT	Bassa Austria	2770542	Politischer Bezirk Melk	247	PPL	355
+aurava	1	3220322	Aurava	46.0356	12.8836	IT	Friuli Venezia Giulia	3176525	Pordenone	322	PPL	79
+auray	1	3036059	Auray	47.6669	-2.9842	FR	Bretagna	3030293	Morbihan	12269	PPL	35
+aure	1	3036057	Aure	49.2739	4.6368	FR	Gran Este	11071622	Ardenne	65	PPL	126
+aurea vallis	0	3038384	Airvault	46.8270	-0.1379	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	3221	PPL	104
+aurec	0	3036054	Aurec-sur-Loire	45.3691	4.2016	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	5226	PPL	450
+aurec de leir	0	3036054	Aurec-sur-Loire	45.3691	4.2016	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	5226	PPL	450
+aurec sur loire	1	3036054	Aurec-sur-Loire	45.3691	4.2016	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	5226	PPL	450
+aureil	1	3036053	Aureil	45.8059	1.3918	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	816	PPL	389
+aureilhan	1	3036051	Aureilhan	44.2179	-1.1966	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Landes	703	PPL	16
+aureilhan	1	3036052	Aureilhan	43.2437	0.0959	FR	Occitania	11071623	Alti Pirenei	7859	PPL	309
+aureillac	1	3036049	Aureillac	44.0007	4.3567	FR	Occitania	11071623	Gard	0	PPL	143
+aureille	1	3036048	Aureille	43.7082	4.9473	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	1435	PPL	138
+aurel	1	3036045	Aurel	44.6948	5.2989	FR	Alvernia-Rodano-Alpi	11071625	Drôme	217	PPL	425
+aurel	1	3036046	Aurel	44.1298	5.4276	FR	Provenza-Alpi-Costa Azzurra	2985244	Vaucluse	182	PPL	796
+aurelha	0	3036048	Aureille	43.7082	4.9473	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	1435	PPL	138
+aurelia	1	3182681	Aurelia	42.1391	11.7871	IT	Lazio	3174976	Roma	1248	PPL	61
+aurelia sud	1	8974021	Aurelia Sud	43.8424	10.2800	IT	Toscana	3165361	Lucca	23	PPL	1
+aureliacum	0	3036016	Aurillac	44.9254	2.4398	FR	Alvernia-Rodano-Alpi	11071625	Cantal	34724	PPLA2	625
+aureliana	1	8973637	Aureliana	44.7100	8.7357	IT	Piemonte	3170831	Alessandria	23	PPL	211
+aurelianum	0	2989317	Orléans	47.9025	1.9041	FR	Centro-Valle della Loira	3027939	Loiret	116344	PPLA	115
+aurelio	1	7521548	Aurelio	41.8954	12.4135	IT	Lazio	3174976	Roma	0	PPLX	0
+aurelle verlac	1	3036043	Aurelle-Verlac	44.5333	2.9833	FR	Occitania	11071623	Aveyron	221	PPL	919
+auremo di sopra	1	3200067	Auremo di Sopra	45.6536	14.0513	SI	Municipality of Divača	3239051		100	PPL	367
+auremo di sotto	1	3201769	Auremo di Sotto	45.6599	14.0355	SI	Municipality of Divača	3239051		114	PPL	420
+aurenja	0	2989460	Orange	44.1381	4.8102	FR	Provenza-Alpi-Costa Azzurra	2985244	Vaucluse	30530	PPL	48
+aurenque	1	12323368	Aurenque	43.8916	0.6620	FR	Occitania	11071623	Gers	0	PPL	88
+aurens	1	12323352	Aurens	43.9567	0.4707	FR	Occitania	11071623	Gers	0	PPL	168
+aurensan	1	3036041	Aurensan	43.6182	-0.2042	FR	Occitania	11071623	Gers	0	PPL	121
+aurensan	1	3036042	Aurensan	43.3065	0.0862	FR	Occitania	11071623	Alti Pirenei	688	PPL	262
+aurent	1	3036040	Aurent	44.0438	6.7157	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	0	PPL	1192
+auressio	1	2661675	Auressio	46.2009	8.6851	CH	Canton Ticino	2658370	Distretto di Locarno	0	PPL	617
+aureville	1	12312050	Auréville	49.4022	-1.5342	FR	Normandia	11071621	Manica	0	PPL	38
+aureville	1	3036039	Aureville	43.4815	1.4524	FR	Occitania	11071623	Alta Garonna	611	PPL	201
+auri grande	1	3182678	Auri Grande	45.6833	7.1333	IT	Valle d'Aosta	3164857	Aosta	0	PPL	1311
+auriac	0	3036027	Auriac-sur-Vendinelle	43.5238	1.8266	FR	Occitania	11071623	Alta Garonna	1082	PPL	193
+auriac	1	3036033	Auriac	45.2039	2.1480	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	222	PPL	604
+auriac	1	3036034	Auriac	44.9334	3.1172	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	881
+auriac	1	3036035	Auriac	44.7047	2.8028	FR	Occitania	11071623	Aveyron	0	PPL	905
+auriac	1	3036036	Auriac	43.4554	-0.3160	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	224	PPL	240
+auriac	1	3036037	Auriac	42.9316	2.4924	FR	Occitania	11071623	Aude	38	PPL	548
+auriac de bourzac	1	3036032	Auriac-de-Bourzac	45.3736	0.2600	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	264	PPL	90
+auriac du perigord	1	3036031	Auriac-du-Périgord	45.1063	1.1364	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	403	PPL	132
+auriac l eglise	1	3036029	Auriac-l'Église	45.2646	3.1269	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	627
+auriac lagast	1	3036030	Auriac-Lagast	44.1465	2.5808	FR	Occitania	11071623	Aveyron	293	PPL	703
+auriac sur dropt	1	3036028	Auriac-sur-Dropt	44.6487	0.2456	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Lot-et-Garonne	193	PPL	51
+auriac sur vendinelle	1	3036027	Auriac-sur-Vendinelle	43.5238	1.8266	FR	Occitania	11071623	Alta Garonna	1082	PPL	193
+auriat	1	3036026	Auriat	45.8736	1.6444	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	116	PPL	460
+auribail	1	3036025	Auribail	43.3521	1.3819	FR	Occitania	11071623	Alta Garonna	183	PPL	284
+auribeau	0	3036022	Auribeau-sur-Siagne	43.6006	6.9099	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	2736	PPL	84
+auribeau	1	3036023	Auribeau	44.2000	6.1667	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	0	PPL	1138
+auribeau	1	3036024	Auribeau	43.8362	5.4587	FR	Provenza-Alpi-Costa Azzurra	2985244	Vaucluse	63	PPL	600
+auribeau sur siagne	1	3036022	Auribeau-sur-Siagne	43.6006	6.9099	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	2736	PPL	84
+auribeu	0	3036022	Auribeau-sur-Siagne	43.6006	6.9099	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	2736	PPL	84
+auribeu de sianha	0	3036022	Auribeau-sur-Siagne	43.6006	6.9099	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	2736	PPL	84
+auricarro	1	8949966	Auricarro	41.0421	16.6837	IT	Puglia	3169778	Bari	652	PPL	177
+aurice	1	3036021	Aurice	43.8143	-0.6044	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Landes	683	PPL	74
+auriebat	1	3036020	Auriébat	43.4950	0.0880	FR	Occitania	11071623	Alti Pirenei	293	PPL	259
+aurieres	1	3036019	Aurières	45.6834	2.9060	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	292	PPL	1000
+aurigeno	1	2661674	Aurigeno	46.2301	8.7152	CH	Canton Ticino	2658370	Distretto di Vallemaggia	417	PPL	331
+aurighi	1	3182680	Aurighi	43.9500	7.8167	IT	Liguria	3174725	Imperia	0	PPL	710
+aurignac	1	3036017	Aurignac	44.2925	1.0225	FR	Occitania	11071623	Tarn-et-Garonne	0	PPL	181
+aurignac	1	3036018	Aurignac	43.2172	0.8817	FR	Occitania	11071623	Alta Garonna	1209	PPL	395
+aurigo	1	3182679	Aurigo	43.9828	7.9234	IT	Liguria	3174725	Imperia	267	PPLA3	431
+aurillac	1	3036016	Aurillac	44.9254	2.4398	FR	Alvernia-Rodano-Alpi	11071625	Cantal	34724	PPLA2	625
+aurillac sur garonne	0	2977540	Saint-Pierre-d'Aurillac	44.5718	-0.1919	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	1312	PPL	18
+aurimont	1	3036014	Aurimont	43.5728	0.8211	FR	Occitania	11071623	Gers	132	PPL	163
+aurin	1	12308283	Aurin	45.6559	1.0507	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	0	PPL	413
+aurin	1	3036013	Aurin	43.5379	1.6838	FR	Occitania	11071623	Alta Garonna	249	PPL	231
+aurinhac	0	3036018	Aurignac	43.2172	0.8817	FR	Occitania	11071623	Alta Garonna	1209	PPL	395
+auriol	1	12309845	Auriol	45.0039	1.6567	FR	Occitania	11071623	Lot	0	PPL	141
+auriol	1	3036012	Auriol	43.3716	5.6341	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	9872	PPL	232
+auriolles	1	3036009	Auriolles	44.7417	0.0499	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	129	PPL	92
+auriolles	1	3036010	Auriolles	44.4361	4.3182	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	0	PPL	117
+aurions idernes	1	3036008	Aurions-Idernes	43.5380	-0.1385	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	127	PPL	213
+auriou	0	3036012	Auriol	43.3716	5.6341	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	9872	PPL	232
+auriples	1	3036007	Auriples	44.6500	4.9667	FR	Alvernia-Rodano-Alpi	11071625	Drôme	221	PPL	336
+auris	1	3036006	Auris	45.0459	6.0865	FR	Alvernia-Rodano-Alpi	11071625	Isère	232	PPL	1287
+aurisina	1	3182674	Duino-Aurisina	45.7497	13.6735	IT	Friuli Venezia Giulia	3176525	Trieste	2202	PPLA3	144
+aurisina cave	1	3217259	Aurisina Cave	45.7540	13.6593	IT	Friuli Venezia Giulia	3176525	Trieste	0	PPLA3	132
+aurisina stazione	1	11189018	Aurisina Stazione	45.7537	13.6874	IT	Friuli Venezia Giulia	3176525	Trieste	0	PPLH	166
+aurogna	1	8952717	Aurogna	46.1715	9.3554	IT	Lombardia	3174618	Como	220	PPLA3	391
+aurol cmjunster	0	2782159	Aurolzmünster	48.2483	13.4553	AT	Alta Austria	2769848	Politischer Bezirk Ried im Innkreis	1137	PPL	405
+aurolzmunster	1	2782159	Aurolzmünster	48.2483	13.4553	AT	Alta Austria	2769848	Politischer Bezirk Ried im Innkreis	1137	PPL	405
+auron	1	3036005	Auron	44.2285	6.9301	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	0	PPL	1636
+aurona, bocchetta d	1	11074205	Aurona, Bocchetta d’	46.2586	8.0820	IT	Piemonte	3170831	Verbano-Cusio-Ossola	0	PASS	2770
+aurona, forca d	1	11074884	Aurona, Forca d’	46.2755	8.1019	IT				0	PASS	2685
+aurons	1	3036003	Aurons	43.6651	5.1575	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	541	PPL	238
+auronzo	1	3182671	Auronzo di Cadore	46.5592	12.4246	IT	Veneto	3164604	Belluno	3347	PPLA3	866
+auronzo di cadore	1	3182671	Auronzo di Cadore	46.5592	12.4246	IT	Veneto	3164604	Belluno	3347	PPLA3	866
+aurora	1	11288660	Aurora	45.0807	7.6873	IT	Piemonte	3170831	Torino	20001	PPLX	231
+aurora	1	8951944	Aurora	45.6820	9.3753	IT	Lombardia	3174618	Lecco	272	PPL	256
+aurora	1	8959217	Aurora	43.2951	13.7064	IT	Marche	3174004	Macerata	69	PPL	14
+auros	1	3036002	Auros	44.4954	-0.1456	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	717	PPL	105
+aurouer	1	12322020	Aurouer	46.0378	3.7559	FR	Alvernia-Rodano-Alpi	11071625	Allier	0	PPL	652
+aurouer	1	3036000	Aurouër	46.6870	3.2995	FR	Alvernia-Rodano-Alpi	11071625	Allier	0	PPL	245
+auroux	0	3036097	Aumont-Aubrac	44.7224	3.2839	FR	Occitania	11071623	Lozère	1106	PPL	1050
+auroux	1	3035999	Auroux	44.7529	3.7270	FR	Occitania	11071623	Lozère	404	PPL	988
+aurouze	1	3035998	Aurouze	45.2394	3.1441	FR	Alvernia-Rodano-Alpi	11071625	Cantal	209	PPL	576
+aurra	0	3182686	Aulla	44.2063	9.9785	IT	Toscana	3165361	Massa-Carrara	4321	PPLA3	64
+ausa corno	1	3343557	Áusa-Corno	45.7581	13.2381	IT	Friuli Venezia Giulia	3176525	Udine	0	PPL	-3
+auscello	1	8965192	Auscello	43.8339	10.7530	IT	Toscana	3165361	Pistoia	41	PPL	17
+auschule	1	2606048	Auschule	47.2833	13.2167	AT	Stato di Salisburgo	2766823	Politischer Bezirk Sankt Johann im Pongau	0	PPLL	845
+ausen sir si	0	3037390	Aouste-sur-Sye	44.7181	5.0542	FR	Alvernia-Rodano-Alpi	11071625	Drôme	2145	PPL	222
+aush	0	3036281	Auch	43.6456	0.5886	FR	Occitania	11071623	Gers	24494	PPLA2	134
+ausiat	1	3035995	Ausiat	45.9636	1.5057	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	0	PPL	386
+auski	0	3036281	Auch	43.6456	0.5886	FR	Occitania	11071623	Gers	24494	PPLA2	134
+auslikon	1	6294026	Auslikon	47.3443	8.8065	CH	Cantone di Zurigo	2657895	Bezirk Pfäffikon	331	PPL	560
+ausonia	1	3182665	Ausonia	41.3581	13.7498	IT	Lazio	3174976	Frosinone	932	PPLA3	178
+aussac	1	6619384	Aussac	43.8652	2.0404	FR	Occitania	11071623	Tarn	0	PPL	208
+aussac vadalle	1	3035994	Aussac-Vadalle	45.8167	0.2000	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	402	PPL	155
+ausseing	1	3035993	Ausseing	43.1523	1.0177	FR	Occitania	11071623	Alta Garonna	69	PPL	454
+ausser dorf	0	6290655	Wettswil / Ausser-Dorf	47.3320	8.4773	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	1438	PPLX	575
+ausser schwand	1	11465689	Ausser Schwand	46.5020	7.5707	CH	Canton Berna	2661551	Circondario amministrativo di Frutigen-Niedersimmental	0	PPL	1330
+ausseraigen	1	2782157	Ausseraigen	47.5833	16.0667	AT	Bassa Austria	2770542	Politischer Bezirk Neunkirchen	0	PPL	754
+ausserberg	1	6619354	Ausserberg	46.3139	7.8530	CH	Canton Vallese	2658205	Distretto di Raron	0	PPL	960
+ausserbinn	1	2661673	Ausserbinn	46.3828	8.1473	CH	Canton Vallese	2658205	distretto di Goms	47	PPL	1308
+ausserblack	1	11584659	Ausserblack	47.1630	8.6229	CH	Canton di Zugo	2657907	Cantone di Zugo	0	PPLL	852
+ausserbraz	1	2782156	Ausserbraz	47.1487	9.9007	AT	Vorarlberg	2762300	Politischer Bezirk Bludenz	1005	PPL	718
+ausserbuhl	1	11584679	Ausserbühl	47.1626	8.9980	CH	Canton Glarona	2660593	Glarona	0	PPLL	425
+ausserchratzereberg	1	11835697	Ausserchratzereberg	46.9281	8.0525	CH	Canton Lucerna	2659810		0	PPLX	1290
+aussere altmatt	1	2661671	Äussere Altmatt	47.1319	8.6962	CH	Canton Svitto	2658664	Distretto di Svitto	0	PPL	918
+aussere gelenkscharte	1	7627856	Äussere Gelenkscharte	46.9769	11.8426	IT	Trentino-Alto Adige	3165244	Bolzano	0	PASS	2677
+aussere rietwies	1	6292812	Äussere Rietwies	47.2395	8.6274	CH	Cantone di Zurigo	2657895	Distretto di Horgen	10	PPLL	523
+ausseregg	1	2782151	Ausseregg	47.3775	15.7282	AT	Stiria	2764581	Politischer Bezirk Weiz	0	PPL	813
+ausserer schwarzenberg	1	11591715	Äusserer Schwarzenberg	47.2523	8.1389	CH	Canton Argovia	2661876	Bezirk Kulm	0	PPLL	621
+ausserfeld	0	6293364	Männedorf / Ausserfeld	47.2464	8.7061	CH	Cantone di Zurigo	2657895	Distretto di Meilen	1175	PPLX	409
+ausserfeld	1	11584781	Ausserfeld	47.1596	8.3936	CH	Canton Argovia	2661876	Distretto di Muri	0	PPLL	420
+ausserfeld	1	6290592	Ausserfeld	47.2372	8.4989	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	5	PPLL	591
+ausserferrera	1	2661670	Ausserferrera	46.5567	9.4396	CH	Cantone dei Grigioni	2660522	Region Viamala	35	PPL	1309
+ausserfurt	1	11612317	Ausserfürt	48.0299	12.9557	AT	Stato di Salisburgo	2766823	Politischer Bezirk Salzburg-Umgebung	24	PPL	435
+aussergampabing	1	2782139	Aussergampabing	47.0000	9.9500	AT	Vorarlberg	2762300	Politischer Bezirk Bludenz	0	PPL	1256
+ausserglas	1	2661669	Ausserglas	46.6770	9.3448	CH	Cantone dei Grigioni	2660522	Region Viamala	0	PPL	1851
+aussergosten	1	2782138	Aussergosten	46.9833	10.0167	AT	Vorarlberg	2762300	Politischer Bezirk Bludenz	0	PPL	1228
+aussergrat	1	11591439	Aussergrat	46.9147	7.8870	CH	Canton Lucerna	2659810	Entlebuch District	0	PPLL	1034
+aussergrindlen	1	11835671	Aussergrindlen	46.9501	7.8211	CH	Canton Berna	2661551		0	PPLX	890
+aussergritzenmoos	1	11587217	Aussergritzenmoos	47.1162	8.2211	CH	Canton Lucerna	2659810	Sursee District	0	PPLL	548
+aussergufer	1	2782136	Aussergufer	47.1000	10.6667	AT	Tirolo	2763586	Distretto di Landeck	0	PPL	960
+ausserhalbach	1	2782135	Ausserhalbach	48.0228	15.7228	AT	Bassa Austria	2770542	Politischer Bezirk Lilienfeld	0	PPL	410
+ausserholligen	1	2661668	Ausserholligen	46.0833	7.4000	CH	Canton Vallese	2658205	Hérens District	0	PPLX	2196
+ausserhorgersteig	1	2782134	Ausserhörgersteig	48.0392	13.4755	AT	Alta Austria	2769848	Politischer Bezirk Vöcklabruck	0	PPL	577
+ausserjebing	1	2782133	Ausserjebing	48.2638	13.6295	AT	Alta Austria	2769848	Politischer Bezirk Schärding	0	PPL	398
+ausserkasten	1	2782132	Ausserkasten	48.1636	15.7652	AT	Bassa Austria	2770542	Politischer Bezirk Sankt Pölten	0	PPL	268
+ausserlamm	1	11591418	Ausserlamm	46.9153	8.0127	CH	Canton Lucerna	2659810	Entlebuch District	0	PPLL	846
+aussermanzing	1	2782129	Aussermanzing	48.1459	15.9084	AT	Bassa Austria	2770542	Politischer Bezirk Sankt Pölten	0	PPL	275
+ausserpuhret	1	2782128	Ausserpühret	48.0224	13.8388	AT	Alta Austria	2769848	Politischer Bezirk Gmunden	0	PPL	439
+ausserra	0	3035843	Auxerre	47.7996	3.5703	FR	Borgogna-Franca Contea	11071619	Yonne	41516	PPLA2	120
+ausserraah	1	2782127	Ausserraah	48.0197	13.8707	AT	Alta Austria	2769848	Politischer Bezirk Gmunden	0	PPL	430
+ausserriefa	1	11493089	Ausserriefa	46.6190	9.1933	CH	Cantone dei Grigioni	2660522	Region Surselva	0	PPLX	1582
+ausserroid	1	2782126	Ausserroid	47.9812	13.2911	AT	Stato di Salisburgo	2766823	Politischer Bezirk Salzburg-Umgebung	0	PPL	555
+ausserschonenwald	1	11835670	Ausserschönenwald	46.8329	7.8318	CH	Canton Berna	2661551		0	PPLX	1007
+ausserschwandegg	1	11584620	Ausserschwandegg	47.1644	8.6119	CH	Canton di Zugo	2657907	Cantone di Zugo	0	PPLL	847
+ausserschwende	1	2782124	Ausserschwende	47.3678	10.1881	AT	Vorarlberg	2762300	Politischer Bezirk Bregenz	0	PPLX	1067
+aussersiggam	1	2782123	Aussersiggam	47.0237	9.9733	AT	Vorarlberg	2762300	Politischer Bezirk Bludenz	0	PPL	908
+aussersihl	0	2661666	Zürich (Kreis 4) / Aussersihl	47.3775	8.5213	CH	Cantone di Zurigo	2657895	Cantone di Zurigo	27273	PPLX	416
+ausserst	1	2782122	Äusserst	46.7167	12.5500	AT	Tirolo	2763586	Politischer Bezirk Lienz	0	PPL	1510
+aussertreffling	1	2782120	Aussertreffling	48.3333	14.3500	AT	Alta Austria	2769848	Politischer Bezirk Urfahr-Umgebung	819	PPL	369
+ausservals	1	2782119	Ausservals	47.0622	11.5018	AT	Tirolo	2763586	Politischer Bezirk Innsbruck Land	0	PPL	1134
+ausserwald	1	2782117	Ausserwald	47.1333	10.0333	AT	Vorarlberg	2762300	Politischer Bezirk Bludenz	0	PPL	1088
+ausserweerberg	1	2782116	Ausserweerberg	47.3077	11.6852	AT	Tirolo	2763586	Politischer Bezirk Schwaz	0	PPL	886
+ausserweg	1	2782115	Ausserweg	47.1333	11.4833	AT	Tirolo	2763586	Politischer Bezirk Innsbruck Land	951	PPL	1699
+ausserwellberg	1	11587119	Ausserwellberg	47.1190	8.0237	CH	Canton Lucerna	2659810	Willisau District	0	PPLL	660
+ausserwiler	1	6291362	Ausserwiler	47.5365	8.5682	CH	Cantone di Zurigo	2657895	Distretto di Bülach	5	PPLL	398
+aussevielle	1	3035992	Aussevielle	43.3552	-0.4816	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	519	PPL	140
+aussi ch catiau	0	3035838	Auxi-le-Château	50.2310	2.1159	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	2969	PPL	32
+aussillon	1	3035991	Aussillon	43.4990	2.3631	FR	Occitania	11071623	Tarn	7309	PPL	257
+aussinange	1	3035990	Aussinange	45.2667	2.2000	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	528
+aussois	1	3035989	Aussois	45.2285	6.7421	FR	Alvernia-Rodano-Alpi	11071625	Savoia	686	PPL	1477
+ausson	1	3035987	Ausson	43.0825	0.5946	FR	Occitania	11071623	Alta Garonna	614	PPL	414
+aussonce	1	3035986	Aussonce	49.3498	4.3232	FR	Gran Este	11071622	Ardenne	155	PPL	103
+aussonne	1	3035985	Aussonne	43.6839	1.3193	FR	Occitania	11071623	Alta Garonna	4749	PPL	148
+aussos	1	3035983	Aussos	43.3751	0.6527	FR	Occitania	11071623	Gers	80	PPL	341
+aussun	0	2989108	Ossun	43.1839	-0.0266	FR	Occitania	11071623	Alti Pirenei	2267	PPL	367
+aussun de tarba	0	2989108	Ossun	43.1839	-0.0266	FR	Occitania	11071623	Alti Pirenei	2267	PPL	367
+aussurucq	1	3035980	Aussurucq	43.1493	-0.9340	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	274	PPL	214
+aust sjur si	0	3037390	Aouste-sur-Sye	44.7181	5.0542	FR	Alvernia-Rodano-Alpi	11071625	Drôme	2145	PPL	222
+austa	0	2525646	Augusta	37.2407	15.2212	IT	Sicilia	2523119	Siracusa	30723	PPLA3	15
+austerlitz	1	6545265	Austerlitz	48.8327	2.3679	FR	Île-de-France	3012874	Parigi	0	PPLX	42
+austis	1	3182663	Austis	40.0712	9.0888	IT	Sardegna	2523228	Nuoro	837	PPLA3	737
+austrasia (eastern part of the frankish kingdom)	1	12110506	Austrasia (Eastern Part of the Frankish Kingdom)	49.1609	6.0879	FR	Gran Este	11071622	Mosella	0	PPLH	282
+austrie la montagne	0	2978760	Saint-Lizier	43.0018	1.1374	FR	Occitania	11071623	Ariège	1698	PPL	432
+auswarts	1	2607724	Auswärts	46.8833	15.7667	AT	Stiria	2764581	Politischer Bezirk Südoststeiermark	0	PPLL	429
+auswil	1	11790569	Auswil	47.1363	7.8323	CH	Canton Berna	2661551	Oberaargau	0	PPLA3	670
+autafond	1	8533401	Autafond	46.8129	7.0768	CH	Canton Friburgo	2660717	distretto della Sarine	0	PPL	661
+autafort	0	3013769	Hautefort	45.2591	1.1484	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	1244	PPL	206
+autagne	1	3182662	Autagne	44.9813	6.8304	IT	Piemonte	3170831	Torino	0	PPL	1893
+autainville	1	3035978	Autainville	47.8818	1.4166	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	331	PPL	128
+autanne	1	3035977	Autanne	44.3064	5.3261	FR	Alvernia-Rodano-Alpi	11071625	Drôme	0	PPL	674
+autavaux	1	7670059	Autavaux	46.8666	6.8782	CH	Canton Friburgo	2660717	distretto della Broye	0	PPL	475
+autechaux	1	3035972	Autechaux	47.3781	6.3840	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	281	PPL	434
+autechaux roide	1	3035971	Autechaux-Roide	47.3920	6.8142	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	575	PPL	487
+autelhan	0	2999296	Le Taillan-Médoc	44.9043	-0.6700	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	8505	PPL	17
+autendorf	1	2782110	Autendorf	48.8667	15.6000	AT	Bassa Austria	2770542	Politischer Bezirk Horn	40	PPL	428
+autengrub	1	2782109	Autengrub	48.5469	13.9787	AT	Alta Austria	2769848	Politischer Bezirk Rohrbach	13	PPL	639
+auteri cacciatori	1	8955347	Auteri-Cacciatori	41.3152	14.4033	IT	Campania	3181042	Caserta	116	PPL	177
+auterive	1	3035968	Auterive	43.8603	0.9670	FR	Occitania	11071623	Tarn-et-Garonne	54	PPL	113
+auterive	1	3035969	Auterive	43.5831	0.6139	FR	Occitania	11071623	Gers	518	PPL	155
+auterive	1	3035970	Auterive	43.3508	1.4746	FR	Occitania	11071623	Alta Garonna	7369	PPL	181
+auteroche	1	3035967	Auteroche	45.3000	2.4833	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	839
+auterrive	1	3035966	Auterrive	43.4666	-0.9990	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	153	PPL	31
+autet	1	3035965	Autet	47.5428	5.6948	FR	Borgogna-Franca Contea	11071619	Alta Saona	257	PPL	200
+auteuil	1	3035963	Auteuil	49.3422	2.0873	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	559	PPL	142
+auteuil	1	3035964	Auteuil	48.8410	1.8175	FR	Île-de-France	3012874	Yvelines	911	PPL	116
+auteuil	1	6545275	Auteuil	48.8469	2.2637	FR	Île-de-France	3012874	Parigi	0	PPLX	51
+autevielle	1	3035961	Autevielle	43.3910	-0.9709	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	130	PPL	62
+authal	1	2601882	Authal	47.3639	14.3972	AT	Stiria	2764581	Politischer Bezirk Murtal	0	PPL	1176
+authal	1	2782108	Authal	47.0500	15.5500	AT	Stiria	2764581	Politischer Bezirk Graz-Umgebung	0	PPL	410
+authal	1	3324793	Authal	47.1756	14.7417	AT	Stiria	2764581	Politischer Bezirk Murtal	0	PPL	657
+authe	1	3035960	Authe	49.4588	4.8792	FR	Gran Este	11071622	Ardenne	94	PPL	175
+authenay	1	3035959	Authenay	48.8598	1.0469	FR	Normandia	11071621	Eure	310	PPL	149
+autheuil	1	3035957	Autheuil	48.5720	0.6706	FR	Normandia	11071621	Orne	127	PPL	229
+autheuil	1	3035958	Autheuil	48.0076	1.2913	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	229	PPL	132
+autheuil authouillet	1	3035956	Autheuil-Authouillet	49.1000	1.2833	FR	Normandia	11071621	Eure	808	PPL	65
+autheuil en valois	1	3035955	Autheuil-en-Valois	49.1721	3.0611	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	245	PPL	101
+autheux	1	3035954	Autheux	50.1420	2.2307	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	109	PPL	140
+authevernes	1	3035953	Authevernes	49.2181	1.6392	FR	Normandia	11071621	Eure	378	PPL	132
+authezat	1	3035952	Authezat	45.6315	3.1847	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	518	PPL	387
+authie	1	3035950	Authie	50.1198	2.4906	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	258	PPL	92
+authie	1	3035951	Authie	49.2062	-0.4319	FR	Normandia	11071621	Calvados	1034	PPL	66
+authieule	1	3035947	Authieule	50.1415	2.3710	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	338	PPL	61
+authieux ratieville	1	3035946	Authieux-Ratiéville	49.6067	1.1548	FR	Normandia	11071621	Senna marittima	348	PPL	148
+authieux sur le port des sans culottes	0	3002067	Les Authieux-sur-le-Port-Saint-Ouen	49.3410	1.1346	FR	Normandia	11071621	Senna marittima	1203	PPL	83
+authiou	1	3035943	Authiou	47.2715	3.4164	FR	Borgogna-Franca Contea	11071619	Nièvre	33	PPL	318
+authoison	1	3035942	Authoison	47.4881	6.1481	FR	Borgogna-Franca Contea	11071619	Alta Saona	221	PPL	265
+authon	0	3035938	Authon-du-Perche	48.1962	0.8919	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	1268	PPL	240
+authon	1	3035939	Authon	47.6448	0.8960	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	724	PPL	126
+authon	1	3035941	Authon	44.2385	6.1267	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	36	PPL	1141
+authon du perche	1	3035938	Authon-du-Perche	48.1962	0.8919	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	1268	PPL	240
+authon ebeon	1	3035940	Authon-Ébéon	45.8333	-0.4167	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente-Maritime	435	PPL	21
+authon la plaine	1	3035937	Authon-la-Plaine	48.4502	1.9575	FR	Île-de-France	3012874	Essonne	325	PPL	150
+authou	1	3035936	Authou	49.2296	0.6937	FR	Normandia	11071621	Eure	337	PPL	52
+authouillet	1	3035935	Authouillet	49.0882	1.2895	FR	Normandia	11071621	Eure	0	PPL	38
+authuille	1	3035934	Authuille	50.0431	2.6683	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	170	PPL	77
+authume	1	3035933	Authume	47.1274	5.5019	FR	Borgogna-Franca Contea	11071619	Giura	800	PPL	251
+authumes	1	3035932	Authumes	46.8901	5.3021	FR	Borgogna-Franca Contea	11071619	Saona e Loira	200	PPL	202
+authun	1	12317723	Authun	44.6920	2.7160	FR	Occitania	11071623	Aveyron	0	PPL	816
+autichamp	1	3035931	Autichamp	44.6838	4.9655	FR	Alvernia-Rodano-Alpi	11071625	Drôme	129	PPL	357
+autignac	1	3035930	Autignac	43.4992	3.1693	FR	Occitania	11071623	Hérault	830	PPL	163
+autigny	1	2661665	Autigny	46.7366	7.0200	CH	Canton Friburgo	2660717	distretto della Sarine	640	PPL	687
+autigny	1	3035929	Autigny	49.7953	0.8577	FR	Normandia	11071621	Senna marittima	233	PPL	99
+autigny la tour	1	3035928	Autigny-la-Tour	48.3993	5.7591	FR	Gran Este	11071622	Vosgi	156	PPL	296
+autigny le grand	1	3035927	Autigny-le-Grand	48.4733	5.1360	FR	Gran Este	11071622	Alta Marna	205	PPL	176
+autigny le petit	1	3035926	Autigny-le-Petit	48.4836	5.1388	FR	Gran Este	11071622	Alta Marna	54	PPL	215
+autingues	1	3035925	Autingues	50.8400	1.9737	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	264	PPL	29
+autmannsdorf	1	11612120	Autmannsdorf	48.0699	12.9707	AT	Alta Austria	2769848	Politischer Bezirk Braunau am Inn	59	PPL	451
+autmont daubrac	0	3036097	Aumont-Aubrac	44.7224	3.2839	FR	Occitania	11071623	Lozère	1106	PPL	1050
+autoire	1	3035922	Autoire	44.8544	1.8212	FR	Occitania	11071623	Lot	335	PPL	184
+auton	1	12317083	Auton	47.0650	0.0490	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Vienne	0	PPL	48
+autoporto	1	8961086	Autoporto	45.7362	7.3678	IT	Valle d'Aosta	3164857	Aosta	57	PPL	545
+autoreille	1	3035920	Autoreille	47.3690	5.8101	FR	Borgogna-Franca Contea	11071619	Alta Saona	272	PPL	275
+autostrada	1	8973866	Autostrada	45.2830	11.7977	IT	Veneto	3164604	Padova	23	PPL	4
+autostrada	1	8982603	Autostrada	45.7483	12.7134	IT	Veneto	3164604	Venezia	10	PPLL	3
+autostrada del sole	1	8963225	Autostrada del Sole	41.4963	13.6791	IT	Lazio	3174976	Frosinone	48	PPL	118
+autotrasportatori	1	8980502	Autotrasportatori	44.8120	10.8808	IT	Emilia-Romagna	3177401	Modena	14	PPL	24
+autouillet	1	3035919	Autouillet	48.8481	1.8037	FR	Île-de-France	3012874	Yvelines	447	PPL	127
+autrac	1	3035918	Autrac	45.3299	3.1325	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	76	PPL	811
+autrage	1	13444452	Autrage	47.5926	6.9725	FR	Borgogna-Franca Contea	11071619	Territorio di Belfort	0	PPL	337
+autranges	1	3035917	Autranges	45.2833	2.2000	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	541
+autrans	1	3035916	Autrans	45.1760	5.5427	FR	Alvernia-Rodano-Alpi	11071625	Isère	1756	PPL	1046
+autreche	1	3035915	Autrèche	47.5254	0.9954	FR	Centro-Valle della Loira	3027939	Indre e Loira	418	PPL	101
+autrechene	1	3019813	Autrechêne	47.5833	6.9667	FR	Borgogna-Franca Contea	11071619	Territorio di Belfort	0	PPL	331
+autreches	1	3035914	Autrêches	49.4445	3.1249	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	703	PPL	83
+autrecourt	1	3035913	Autrecourt	49.7535	1.3795	FR	Normandia	11071621	Senna marittima	0	PPL	86
+autrecourt et pourron	1	3035911	Autrecourt-et-Pourron	49.6126	5.0306	FR	Gran Este	11071622	Ardenne	346	PPL	164
+autrecourt sur aire	1	3035910	Autrécourt-sur-Aire	49.0333	5.1333	FR	Gran Este	11071622	Mosa	112	PPL	226
+autremencourt	1	3035909	Autremencourt	49.7041	3.7868	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	163	PPL	100
+autrepierre	1	3035908	Autrepierre	48.6113	6.8020	FR	Gran Este	11071622	Meurthe e Mosella	0	PPL	278
+autreppes	1	3035907	Autreppes	49.9042	3.8557	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	142	PPL	133
+autretot	1	3035906	Autretot	49.6511	0.7306	FR	Normandia	11071621	Senna marittima	640	PPL	147
+autreville	1	3035904	Autreville	49.5849	3.2407	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	777	PPL	67
+autreville	1	3035905	Autreville	48.4834	5.8493	FR	Gran Este	11071622	Vosgi	124	PPL	311
+autreville saint lambert	1	3035903	Autréville-Saint-Lambert	49.5616	5.1275	FR	Gran Este	11071622	Mosa	46	PPL	182
+autreville sur la renne	1	3035902	Autreville-sur-la-Renne	48.1168	4.9787	FR	Gran Este	11071622	Alta Marna	462	PPL	245
+autreville sur moselle	1	3035901	Autreville-sur-Moselle	48.8228	6.1157	FR	Gran Este	11071622	Meurthe e Mosella	257	PPL	197
+autrey	1	3035899	Autrey	48.5308	6.1303	FR	Gran Este	11071622	Meurthe e Mosella	158	PPL	281
+autrey	1	3035900	Autrey	48.2964	6.6891	FR	Gran Este	11071622	Vosgi	339	PPL	324
+autrey le vay	1	3035895	Autrey-le-Vay	47.5382	6.4026	FR	Borgogna-Franca Contea	11071619	Alta Saona	73	PPL	267
+autrey les cerre	1	3035897	Autrey-lès-Cerre	47.6085	6.3483	FR	Borgogna-Franca Contea	11071619	Alta Saona	157	PPL	364
+autrey les gray	1	3035896	Autrey-lès-Gray	47.4854	5.4910	FR	Borgogna-Franca Contea	11071619	Alta Saona	470	PPL	213
+autricourt	1	3035894	Autricourt	47.9977	4.6200	FR	Borgogna-Franca Contea	11071619	Cote d'Or	138	PPL	202
+autroche	1	3035893	Autroche	48.0790	1.8604	FR	Centro-Valle della Loira	3027939	Loiret	0	PPL	119
+autruche	1	3035892	Autruche	49.4540	4.9001	FR	Gran Este	11071622	Ardenne	46	PPL	174
+autruy sur juine	1	3035891	Autruy-sur-Juine	48.2764	2.1011	FR	Centro-Valle della Loira	3027939	Loiret	857	PPL	115
+autry	0	3035886	Autry-le-Châtel	47.5989	2.6020	FR	Centro-Valle della Loira	3027939	Loiret	1093	PPL	188
+autry	1	3035889	Autry	49.2683	4.8343	FR	Gran Este	11071622	Ardenne	126	PPL	132
+autry	1	3035890	Autry	47.1985	2.0527	FR	Centro-Valle della Loira	3027939	Cher	0	PPL	123
+autry issards	1	3035887	Autry-Issards	46.5487	3.1357	FR	Alvernia-Rodano-Alpi	11071625	Allier	323	PPL	259
+autry le chatel	1	3035886	Autry-le-Châtel	47.5989	2.6020	FR	Centro-Valle della Loira	3027939	Loiret	1093	PPL	188
+autun	1	3035883	Autun	46.9510	4.2987	FR	Borgogna-Franca Contea	11071619	Saona e Loira	18283	PPLA3	325
+auture	1	8971660	Auture	45.1880	7.6880	IT	Piemonte	3170831	Torino	26	PPL	264
+autvilar	0	3035859	Auvillar	44.0695	0.8996	FR	Occitania	11071623	Tarn-et-Garonne	1019	PPL	116
+auty	1	3035880	Auty	44.1905	1.4676	FR	Occitania	11071623	Tarn-et-Garonne	133	PPL	217
+autzing	1	11610393	Autzing	48.3589	13.6029	AT	Alta Austria	2769848	Politischer Bezirk Schärding	11	PPL	355
+auvare	1	3035879	Auvare	43.9882	6.9085	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	46	PPL	1096
+auve	1	3035878	Auve	49.0335	4.6966	FR	Gran Este	11071622	Marna	304	PPL	160
+auvergne	1	12321562	Auvergne	46.5547	1.5425	FR	Centro-Valle della Loira	3027939	Indre	0	PPL	124
+auvergny	1	3035873	Auvergny	48.8823	0.7290	FR	Normandia	11071621	Eure	416	PPL	163
+auvernaux	1	3035872	Auvernaux	48.5282	2.4938	FR	Île-de-France	3012874	Essonne	273	PPL	75
+auvernier	1	2661664	Auvernier	46.9755	6.8790	CH	Cantone Neuchâtel	2659495	Distretto di Boudry	1555	PPL	434
+auvers	0	3035864	Auvers-sur-Oise	49.0716	2.1698	FR	Île-de-France	3012874	Val-d'Oise	6972	PPL	31
+auvers	0	3035866	Auvers-Saint-Georges	48.4928	2.2205	FR	Île-de-France	3012874	Essonne	1116	PPL	66
+auvers	0	3035867	Auvers-le-Hamon	47.9018	-0.3519	FR	Paesi della Loira	2988289	Sarthe	1445	PPL	58
+auvers	1	3035869	Auvers	49.2992	-1.3211	FR	Normandia	11071621	Manica	594	PPL	16
+auvers	1	3035870	Auvers	48.3755	2.4805	FR	Île-de-France	3012874	Senna e Marna	0	PPL	67
+auvers	1	3035871	Auvers	44.9960	3.4022	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	71	PPL	1190
+auvers l union	0	3035867	Auvers-le-Hamon	47.9018	-0.3519	FR	Paesi della Loira	2988289	Sarthe	1445	PPL	58
+auvers le hamon	1	3035867	Auvers-le-Hamon	47.9018	-0.3519	FR	Paesi della Loira	2988289	Sarthe	1445	PPL	58
+auvers saint georges	1	3035866	Auvers-Saint-Georges	48.4928	2.2205	FR	Île-de-France	3012874	Essonne	1116	PPL	66
+auvers sous montfaucon	1	3035865	Auvers-sous-Montfaucon	48.0065	-0.0709	FR	Paesi della Loira	2988289	Sarthe	195	PPL	67
+auvers sur oise	1	3035864	Auvers-sur-Oise	49.0716	2.1698	FR	Île-de-France	3012874	Val-d'Oise	6972	PPL	31
+auverse	1	3035868	Auverse	47.5182	0.0530	FR	Paesi della Loira	2988289	Maine e Loira	411	PPL	85
+auvet et la chapelotte	1	3035863	Auvet-et-la-Chapelotte	47.5084	5.5168	FR	Borgogna-Franca Contea	11071619	Alta Saona	268	PPL	216
+auvezines	1	12316716	Auvezines	43.5040	1.9480	FR	Occitania	11071623	Tarn	0	PPL	211
+auvignac	1	12313676	Auvignac	45.6326	-0.5283	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente-Maritime	0	PPL	14
+auvillar	1	3035859	Auvillar	44.0695	0.8996	FR	Occitania	11071623	Tarn-et-Garonne	1019	PPL	116
+auvillars	1	3035858	Auvillars	49.1974	0.0661	FR	Normandia	11071621	Calvados	187	PPL	57
+auvillars sur saone	1	3035857	Auvillars-sur-Saône	47.0628	5.1029	FR	Borgogna-Franca Contea	11071619	Cote d'Or	223	PPL	208
+auvillers les forges	1	3035856	Auvillers-les-Forges	49.8636	4.3586	FR	Gran Este	11071622	Ardenne	823	PPL	286
+auvilliers	1	3035854	Auvilliers	49.7598	1.5777	FR	Normandia	11071621	Senna marittima	108	PPL	221
+auvilliers	1	3035855	Auvilliers	48.2643	1.4955	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	0	PPL	149
+auvilliers en gatinais	1	3035853	Auvilliers-en-Gâtinais	47.9631	2.4997	FR	Centro-Valle della Loira	3027939	Loiret	342	PPL	115
+auvreau	1	12314031	Auvreau	46.3150	4.4671	FR	Borgogna-Franca Contea	11071619	Saona e Loira	0	PPL	471
+auw	1	2661663	Auw	47.2108	8.3658	CH	Canton Argovia	2661876	Distretto di Muri	1610	PPL	485
+auweg	1	3323180	Auweg	47.9967	12.8767	AT	Stato di Salisburgo	2766823	Politischer Bezirk Salzburg-Umgebung	0	PPL	387
+auweidenholz	1	11748028	Auweidenholz	48.3342	13.8384	AT	Alta Austria	2769848	Politischer Bezirk Grieskirchen	22	PPL	370
+auwies	1	11609808	Auwies	48.3352	13.8574	AT	Alta Austria	2769848	Politischer Bezirk Grieskirchen	12	PPL	355
+auwiesen	1	11862270	Auwiesen	48.1945	13.7361	AT	Alta Austria	2769848	Politischer Bezirk Grieskirchen	57	PPL	417
+auwis	1	6293746	Auwis	47.3898	8.8594	CH	Cantone di Zurigo	2657895	Bezirk Pfäffikon	117	PPL	605
+aux aussat	1	3035847	Aux-Aussat	43.4359	0.2707	FR	Occitania	11071623	Gers	211	PPL	244
+aux capots	1	12323376	Aux Capots	43.8395	0.6178	FR	Occitania	11071623	Gers	0	PPL	157
+aux champs	1	12277762	Aux Champs	45.1865	0.5782	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	130
+aux clots	1	12316598	Aux Clots	43.7574	2.0122	FR	Occitania	11071623	Tarn	0	PPL	172
+aux marais	1	3035836	Aux Marais	49.4150	2.0417	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	720	PPL	75
+aux parcs	1	3035826	Aux Parcs	45.5354	0.8911	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	293
+aux rois	1	3035825	Aux Rois	47.2259	2.1847	FR	Centro-Valle della Loira	3027939	Cher	0	PPL	136
+auxais	1	3035852	Auxais	49.2188	-1.2987	FR	Normandia	11071621	Manica	140	PPL	12
+auxances	1	3035850	Auxances	46.6311	0.3030	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Vienne	0	PPL	89
+auxange	1	3035849	Auxange	47.1733	5.6498	FR	Borgogna-Franca Contea	11071619	Giura	148	PPL	221
+auxant	1	3035848	Auxant	47.1225	4.6233	FR	Borgogna-Franca Contea	11071619	Cote d'Or	53	PPL	398
+auxelles bas	1	3035846	Auxelles-Bas	47.7342	6.7803	FR	Borgogna-Franca Contea	11071619	Territorio di Belfort	479	PPL	493
+auxelles haut	1	3035845	Auxelles-Haut	47.7437	6.7733	FR	Borgogna-Franca Contea	11071619	Territorio di Belfort	321	PPL	560
+auxerre	1	3035843	Auxerre	47.7996	3.5703	FR	Borgogna-Franca Contea	11071619	Yonne	41516	PPLA2	120
+auxey duresses	1	3035841	Auxey-Duresses	46.9862	4.7486	FR	Borgogna-Franca Contea	11071619	Cote d'Or	339	PPL	260
+auxi	0	3035838	Auxi-le-Château	50.2310	2.1159	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	2969	PPL	32
+auxi le chateau	1	3035838	Auxi-le-Château	50.2310	2.1159	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	2969	PPL	32
+auxicourt	1	3035839	Auxicourt	49.1783	1.6843	FR	Île-de-France	3012874	Val-d'Oise	0	PPL	71
+auxillac	1	3035837	Auxillac	44.4669	3.2279	FR	Occitania	11071623	Lozère	0	PPL	624
+auxois	1	12318780	Auxois	47.2788	3.7065	FR	Borgogna-Franca Contea	11071619	Nièvre	0	PPL	188
+auxon	0	2981173	Saint-Christol-les-Alès	44.0841	4.0769	FR	Occitania	11071623	Gard	6113	PPL	138
+auxon	0	3038224	Alès	44.1249	4.0808	FR	Occitania	11071623	Gard	42410	PPLA3	135
+auxon	1	3035832	Auxon	48.1046	3.9180	FR	Gran Este	11071622	Aube	938	PPL	155
+auxon	1	3035833	Auxon	47.6824	6.1648	FR	Borgogna-Franca Contea	11071619	Alta Saona	407	PPL	232
+auxon	1	3035834	Auxon	47.4164	3.9711	FR	Borgogna-Franca Contea	11071619	Yonne	0	PPL	367
+auxon dessous	1	3035830	Auxon-Dessous	47.3000	5.9500	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	1131	PPL	224
+auxon dessus	1	3035829	Auxon-Dessus	47.2972	5.9556	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	777	PPL	236
+auxona	0	3035828	Auxonne	47.1925	5.3873	FR	Borgogna-Franca Contea	11071619	Cote d'Or	7958	PPL	189
+auxonne	1	3035828	Auxonne	47.1925	5.3873	FR	Borgogna-Franca Contea	11071619	Cote d'Or	7958	PPL	189
+auxonnettes	1	3035827	Auxonnettes	48.5263	2.5114	FR	Île-de-France	3012874	Senna e Marna	0	PPL	73
+auxy	1	3035822	Auxy	48.2994	2.4432	FR	Île-de-France	3012874	Senna e Marna	0	PPL	100
+auxy	1	3035823	Auxy	48.1183	2.4742	FR	Centro-Valle della Loira	3027939	Loiret	901	PPL	114
+auxy	1	3035824	Auxy	46.9494	4.4044	FR	Borgogna-Franca Contea	11071619	Saona e Loira	1059	PPL	515
+auxy la reunion	0	3035838	Auxi-le-Château	50.2310	2.1159	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	2969	PPL	32
+auzac	1	3035821	Auzac	44.7400	1.5206	FR	Occitania	11071623	Lot	0	PPL	261
+auzainville	1	3035820	Auzainville	48.4111	1.6668	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	0	PPL	154
+auzainvilliers	1	3035819	Auzainvilliers	48.2366	5.8410	FR	Gran Este	11071622	Vosgi	214	PPL	363
+auzais	1	3035818	Auzais	46.9791	-0.4321	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	0	PPL	114
+auzances	1	3035816	Auzances	46.0286	2.5007	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	1435	PPL	561
+auzanges	1	12322272	Auzanges	45.3988	2.5300	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	586
+auzas	1	3035815	Auzas	43.1689	0.8824	FR	Occitania	11071623	Alta Garonna	148	PPL	368
+auzat	0	3035812	Auzat-la-Combelle	45.4522	3.3182	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	2036	PPL	404
+auzat	1	3035813	Auzat	45.1855	3.3866	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	479
+auzat	1	3035814	Auzat	42.7664	1.4810	FR	Occitania	11071623	Ariège	708	PPL	738
+auzat la combelle	1	3035812	Auzat-la-Combelle	45.4522	3.3182	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	2036	PPL	404
+auzat sur allier	0	3035812	Auzat-la-Combelle	45.4522	3.3182	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	2036	PPL	404
+auzate	1	3182659	Auzate	45.7444	8.4200	IT	Piemonte	3170831	Novara	273	PPL	420
+auzay	1	3035811	Auzay	46.4420	-0.8679	FR	Paesi della Loira	2988289	Vandea	559	PPL	38
+auzebosc	1	3035808	Auzebosc	49.5956	0.7285	FR	Normandia	11071621	Senna marittima	1242	PPL	135
+auzecourt	1	3035807	Auzécourt	48.8845	4.9920	FR	Gran Este	11071622	Mosa	245	PPL	155
+auzelg	0	6295432	Zürich (Kreis 12) / Auzelg	47.4151	8.5701	CH	Cantone di Zurigo	2657895	Cantone di Zurigo	1143	PPLX	430
+auzelles	1	3035806	Auzelles	45.6020	3.5096	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	343	PPL	727
+auzeral	1	12322380	Auzeral	45.1000	2.4288	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	836
+auzers	1	3035805	Auzers	45.2655	2.4605	FR	Alvernia-Rodano-Alpi	11071625	Cantal	222	PPL	773
+auzet	1	3035804	Auzet	44.2936	6.3160	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	95	PPL	1198
+auzeville	0	3035802	Auzeville-Tolosane	43.5282	1.4832	FR	Occitania	11071623	Alta Garonna	2933	PPL	194
+auzeville	1	12317453	Auzeville	49.7966	0.6751	FR	Normandia	11071621	Senna marittima	0	PPL	103
+auzeville en argonne	1	3035803	Auzéville-en-Argonne	49.1012	5.0972	FR	Gran Este	11071622	Mosa	0	PPL	201
+auzeville tolosane	1	3035802	Auzeville-Tolosane	43.5282	1.4832	FR	Occitania	11071623	Alta Garonna	2933	PPL	194
+auzielle	1	3035801	Auzielle	43.5420	1.5659	FR	Occitania	11071623	Alta Garonna	1756	PPL	200
+auzil	1	13448432	Auzil	43.5123	1.4368	FR	Occitania	11071623	Alta Garonna	0	PPL	222
+auzillac	1	3035799	Auzillac	46.1313	1.2415	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	0	PPL	262
+auzille	1	3035798	Auzillé	47.6176	-1.2402	FR	Paesi della Loira	2988289	Loira Atlantica	0	PPL	63
+auzits	1	3035797	Auzits	44.5061	2.3287	FR	Occitania	11071623	Aveyron	910	PPL	410
+auzole	1	3035796	Auzole	44.5828	0.7760	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Lot-et-Garonne	0	PPL	137
+auzolles	1	3035795	Auzolles	45.4113	2.9992	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	1108
+auzon	1	3035793	Auzon	45.3922	3.3735	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	876	PPL	450
+auzon	1	3035794	Auzon	44.2005	4.2345	FR	Occitania	11071623	Gard	0	PPL	137
+auzouer	0	3035786	Auzouer-en-Touraine	47.5423	0.9207	FR	Centro-Valle della Loira	3027939	Indre e Loira	1459	PPL	96
+auzouer en touraine	1	3035786	Auzouer-en-Touraine	47.5423	0.9207	FR	Centro-Valle della Loira	3027939	Indre e Loira	1459	PPL	96
+auzouville auberbosc	1	3035785	Auzouville-Auberbosc	49.6270	0.5706	FR	Normandia	11071621	Senna marittima	270	PPL	135
+auzouville l esneval	1	3035784	Auzouville-l'Esneval	49.6433	0.8854	FR	Normandia	11071621	Senna marittima	0	PPL	165
+auzouville sur ry	1	3035783	Auzouville-sur-Ry	49.4422	1.3109	FR	Normandia	11071621	Senna marittima	590	PPL	146
+auzouville sur saane	1	3035782	Auzouville-sur-Saâne	49.7447	0.9369	FR	Normandia	11071621	Senna marittima	142	PPL	72
+auzoux	1	3035781	Auzoux	45.8349	1.8600	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	0	PPL	622
+auzza	1	3204755	Auzza	46.0944	13.6882	SI	Comune di Canale d'Isonzo	3239086		240	PPL	166
+außer dem steinhubel	1	3320942	Außer dem Steinhübel	48.5711	16.5222	AT	Bassa Austria	2770542	Politischer Bezirk Mistelbach	0	PPLL	204
+außer wiesenbach	1	11903727	Außer-Wiesenbach	48.0237	15.6380	AT	Bassa Austria	2770542	Politischer Bezirk Lilienfeld	260	PPL	422
+außerachleiten	1	3324485	Außerachleiten	48.5269	13.4625	AT	Alta Austria	2769848	Politischer Bezirk Schärding	0	PPL	436
+außere einode	1	2782153	Äußere Einöde	46.6925	13.8242	AT	Carinzia	2774686	Politischer Bezirk Villach Land	192	PPL	628
+außere großrotte	1	3323860	Äußere Großrotte	46.9167	12.3500	AT	Tirolo	2763586	Politischer Bezirk Lienz	0	PPL	1382
+außere kainisch	1	2782150	Äußere Kainisch	47.5724	13.8439	AT	Stiria	2764581	Politischer Bezirk Liezen	294	PPL	781
+außere ragnitz	1	3334985	Äußere Ragnitz	47.0833	15.5333	AT	Stiria	2764581	Politischer Bezirk Graz-Umgebung	0	PPL	476
+außere wimitz	1	2782142	Äußere Wimitz	46.8333	14.3167	AT	Carinzia	2774686	Politischer Bezirk Sankt Veit an der Glan	13	PPL	820
+außerer sonnberg	1	2598834	Äußerer Sonnberg	47.5151	14.4469	AT	Stiria	2764581	Politischer Bezirk Liezen	0	PPL	848
+außerfragant	1	2782140	Außerfragant	46.9344	13.1058	AT	Carinzia	2774686	Politischer Bezirk Spittal an der Drau	283	PPL	721
+außerfurth	1	11669143	Außerfurth	48.1531	15.9129	AT	Bassa Austria	2770542	Politischer Bezirk Sankt Pölten	122	PPL	272
+außerguggenberg	1	11862674	Außerguggenberg	48.2390	13.3907	AT	Alta Austria	2769848	Politischer Bezirk Ried im Innkreis	18	PPL	527
+außerhafling	1	11611977	Außerhafling	48.0295	13.6275	AT	Alta Austria	2769848	Politischer Bezirk Vöcklabruck	13	PPL	527
+außerhareth	1	3324512	Außerhareth	48.5417	13.5292	AT	Alta Austria	2769848	Politischer Bezirk Schärding	0	PPL	491
+außerhotzendorf	1	11669262	Außerhötzendorf	48.5127	13.9089	AT	Alta Austria	2769848	Politischer Bezirk Rohrbach	6	PPL	583
+außerklinglberg	1	2605927	Außerklinglberg	47.3333	13.1833	AT	Stato di Salisburgo	2766823	Politischer Bezirk Sankt Johann im Pongau	0	PPLL	691
+außerleiten	1	11694606	Außerleiten	48.1457	13.2817	AT	Alta Austria	2769848	Politischer Bezirk Braunau am Inn	44	PPL	565
+außerlerch	1	11591885	Außerlerch	46.7283	12.5024	AT	Tirolo	2763586	Politischer Bezirk Lienz	0	PPLL	1495
+außerpirach	1	11610164	Außerpirach	48.0867	13.0723	AT	Alta Austria	2769848	Politischer Bezirk Braunau am Inn	6	PPL	535
+außerreith	1	11591854	Außerreith	48.0805	15.2865	AT	Bassa Austria	2770542	Politischer Bezirk Melk	29	PPL	323
+außerreith	1	11594540	Außerreith	48.0220	13.4573	AT	Alta Austria	2769848	Politischer Bezirk Vöcklabruck	55	PPL	571
+außerrettenbach	1	3319518	Außerrettenbach	47.1667	11.7500	AT	Tirolo	2763586	Politischer Bezirk Schwaz	0	PPL	1363
+außerrotte	1	11592240	Außerrotte	46.9139	12.3535	AT	Tirolo	2763586	Politischer Bezirk Lienz	106	PPL	1390
+außerschmirn	1	2782125	Außerschmirn	47.0833	11.5333	AT	Tirolo	2763586	Politischer Bezirk Innsbruck Land	698	PPL	2140
+außersteinberg	1	3334130	Außersteinberg	47.5200	11.8267	AT	Tirolo	2763586	Politischer Bezirk Schwaz	0	PPL	950
+außerteuchen	1	2782121	Außerteuchen	46.7500	13.9667	AT	Carinzia	2774686	Politischer Bezirk Feldkirchen	113	PPL	1315
+außerungenach	1	11696217	Außerungenach	48.0150	13.6003	AT	Alta Austria	2769848	Politischer Bezirk Vöcklabruck	68	PPL	451
+außervillgraten	1	2782118	Außervillgraten	46.7875	12.4314	AT	Tirolo	2763586	Politischer Bezirk Lienz	760	PPLA3	1288
+außerwall	1	3323048	Außerwall	47.9433	13.0456	AT	Stato di Salisburgo	2766823	Politischer Bezirk Salzburg-Umgebung	0	PPL	625

@@ -41,6 +41,7 @@
  */
 const fs   = require('fs');
 const { creaOre, segna, intensita } = require('./lib-intensita.js');
+const { creaDir, segnaDir, direzione } = require('./lib-direzione.js');
 const path = require('path');
 
 const DATA_ROOT   = path.join(__dirname, '../..', 'data');
@@ -269,7 +270,10 @@ async function main() {
       // umidità relativa % (18/8/2026): un/ux = min/max nell'ora, ripiego su u istantanea
       const pct = x => { const v = parseFloat(x); return (isNaN(v) || v < 0 || v > 100) ? null : v; };
       const u = pct(r.u), ulo = pct(r.un) != null ? pct(r.un) : u, uhi = pct(r.ux) != null ? pct(r.ux) : u;
-      (ore[r.geo_id_insee] = ore[r.geo_id_insee] || []).push([ts, parseFloat(r.rr1), tlo, thi, ff, fx, ulo, uhi]);
+      // direzione del vento (2/10/2026): `dd`, gradi, media sui 10' dell'ora. ⚠️ Non provata in
+      // locale (serve la chiave): se la colonna non c'e', `dd` resta null e non si scrive niente.
+      const dd = metri(r.dd);
+      (ore[r.geo_id_insee] = ore[r.geo_id_insee] || []).push([ts, parseFloat(r.rr1), tlo, thi, ff, fx, ulo, uhi, dd]);
     }
     for (const id of Object.keys(ore)) {
       const st = byId[id];
@@ -280,13 +284,18 @@ async function main() {
         let ffSum = 0, nFF = 0, fxMax = -Infinity, nFX = 0;
         let umin = Infinity, umax = -Infinity, nU = 0;
         const secchielli = creaOre();   // intensita' (12/9/2026)
-        for (const [ts, v, tlo, thi, ff, fx, ulo, uhi] of ore[id]) {
+        const dir = creaDir();          // direzione del vento (2/10/2026), pesata su ff
+        for (const [ts, v, tlo, thi, ff, fx, ulo, uhi, dd] of ore[id]) {
           if (!(ts > w.start && ts <= w.end)) continue;
-          if (isFinite(v)) { sum += v; n++; segna(secchielli, ts, v); }
+          // ⚠️ un rr1 NEGATIVO vale 0 (19/10/2026, quinto check, bug 15): il tempo reale ne manda ogni tanto e la somma
+          // usciva sotto il vero con la punta sopra il totale (Vichy-Charmeil 7/10: 1,5 mm con punta 1,6, all'archivio
+          // ufficiale un'ora sola da 1,6 e nessun negativo; Luxeuil 16/9: 0,3 contro 0,6). L'ora resta contata come letta.
+          if (isFinite(v)) { const vv = Math.max(0, v); sum += vv; n++; segna(secchielli, ts, vv); }
           // sanity come Austria/Svizzera: fuori da [-45,50] °C o medio ≥60 m/s = glitch
           if (tlo != null && tlo >= -45 && tlo <= 50) { if (tlo < tmin) tmin = tlo; nT++; }
           if (thi != null && thi >= -45 && thi <= 50) { if (thi > tmax) tmax = thi; }
           if (ff != null && ff >= 0 && ff < 60) { ffSum += ff; nFF++; }
+          if (ff != null && ff >= 0 && ff < 60) segnaDir(dir, ts, dd, ff);
           if (fx != null && fx >= 0 && fx < 90) { if (fx > fxMax) fxMax = fx; nFX++; }
           if (ulo != null) { if (ulo < umin) umin = ulo; nU++; }
           if (uhi != null && uhi > umax) umax = uhi;
@@ -303,6 +312,8 @@ async function main() {
         if (nU >= MIN_ORE && umax > -Infinity) rec.u = [Math.round(umin), Math.round(umax)];
         const inte = intensita(secchielli);
         if (inte) rec.i = inte;
+        const wd = direzione(dir);
+        if (wd !== null && rec.w) rec.wd = wd;
         perRegDay[reg.key][w.dateStr].push(rec);
       }
     }

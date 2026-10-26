@@ -58,6 +58,15 @@ const LANCIA = process.env.LANCIA === '1';
 // due ore: sotto le 2h30 si ri-lancerebbero workflow che stanno solo
 // arrivando tardi, cioe' si farebbe rumore invece che riparazione.
 const MARGINE_MIN = 150;
+// ⚠️ AL MATTINO IL MARGINE E' CORTO (5/10/2026). Il margine lungo e' nato per i giri
+// che GitHub fa partire IN RITARDO; ma nelle notti storte GitHub i giri li SALTA, e
+// aspettare 2h30 un giro che non arrivera' voleva dire dati alle 7 o alle 9 invece che
+// alle 6 (5/10: MeteoHub e Svizzera saltati alle 4:20, il guardiano delle 6:00 e delle
+// 6:30 li ha lasciati stare). Dalle 5 alle 9 italiane chi si alza per andare a funghi
+// deve trovare ieri: si ri-lancia dopo 30'. Doppioni non ce ne sono: dal 5/10 ogni
+// collector ha `concurrency` e un secondo giro aspetta in fila che il primo finisca.
+const MARGINE_MATTINO_MIN = 30;
+const margineAdesso = (adesso) => (oraIT(adesso) >= 5 && oraIT(adesso) < 9) ? MARGINE_MATTINO_MIN : MARGINE_MIN;
 
 // Se il prossimo giro programmato e' dietro l'angolo si lascia stare: fra
 // poco ci pensa lui. Finestra STRETTA apposta — con un giro su tre che salta,
@@ -70,6 +79,16 @@ const PROSSIMO_MIN = 20;
 // tarature qui sopra trattengono quasi tutto e a questo ramo non ci si arriva
 // mai — cioe' resterebbe codice mai visto girare.
 const MAX_LANCI = Number(process.env.MAX_LANCI || 8);
+
+// ⚠️ UNA FONTE FERMA NON SI RILANCIA ALL'INFINITO (25/10/2026). Il guardiano passa fino a nove volte al
+// giorno e una fonte morta veniva rilanciata a ogni passaggio, riepiloghi compresi: il 25/10 il Ticino (OASI
+// giu' dal 21/10, irraggiungibile anche dal PC) quattro volte fra le 6 e le 7:30, e i riepiloghi ogni ora.
+// Regola sua: tre tentativi al mattino, uno dalle 17, poi niente fino al giorno dopo. Non si perde niente: i
+// giri normali del collector restano tutti (il Ticino ne ha uno verso le 17:30), e se la fonte torna i dati
+// arrivano da li'. Il conto si fa sul registro, in ora italiana. I riepiloghi hanno la loro regola, qui no.
+const TENTATIVI_MATTINA = 3;
+const ORA_SERA = 17;
+const TENTATIVI_SERA = 1;
 
 // Le fonti che dichiarano un ritardo loro: per queste «ieri» non esiste mai.
 // ⚠️ ARSO pubblica con ~34 ore di scarto (vedi CLAUDE.md, scheda Slovenia):
@@ -90,6 +109,9 @@ const FMT_IT = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'Europe/Rome', year: 'numeric', month: '2-digit', day: '2-digit',
 });
 const giornoIT = (d) => FMT_IT.format(d);
+const oraIT = (d) => Number(new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/Rome', hour: '2-digit', hourCycle: 'h23',
+}).format(d));
 
 // ⚠️ IL GIORNO SI CONTA DA `adesso`, NON DA `Date.now()` (raddrizzato il
 // 22/9/2026). Prima l'ora finta di `ORA=` spostava il conto dei cron ma NON il
@@ -221,8 +243,9 @@ function controllaCartelle(adesso) {
        conto sugli ultimi venti giri: lo saltava 14 volte su 20. Il 20/9 il
        terzo giro ha mancato la soglia per SETTE MINUTI. */
     const guasto = buco >= 2;
-    if (!guasto && t.daUltimo < MARGINE_MIN) {
-      spiega(`l'ultimo giro e' di ${Math.round(t.daUltimo)}' fa, sotto il margine di ${MARGINE_MIN}'`);
+    const margine = margineAdesso(adesso);
+    if (!guasto && t.daUltimo < margine) {
+      spiega(`l'ultimo giro e' di ${Math.round(t.daUltimo)}' fa, sotto il margine di ${margine}'`);
       continue;
     }
     if (!guasto && t.alProssimo < PROSSIMO_MIN) {
@@ -251,10 +274,68 @@ function controllaRiepiloghi(adesso) {
     const ore = (adesso - new Date(j.generato)) / 3600000;
     if (piuVecchio === null || ore > piuVecchio.ore) piuVecchio = { file: f, ore };
   }
-  if (!piuVecchio || piuVecchio.ore < RIEPILOGHI_ORE) return null;
-  const t = quandoGirava(WF_RIEPILOGHI, adesso);
-  if (t && t.alProssimo < PROSSIMO_MIN) return null;
-  return { wf: WF_RIEPILOGHI, ore: Math.round(piuVecchio.ore), file: piuVecchio.file };
+  if (piuVecchio && piuVecchio.ore >= RIEPILOGHI_ORE) {
+    const t = quandoGirava(WF_RIEPILOGHI, adesso);
+    if (!(t && t.alProssimo < PROSSIMO_MIN))
+      return { wf: WF_RIEPILOGHI, motivo: `vecchi di ${Math.round(piuVecchio.ore)} h (${piuVecchio.file})` };
+  }
+
+  /* ⚠️ LE 30 ORE NON BASTANO DOPO UNA NOTTE SALTATA (4/10/2026). Il 3->4/10
+     GitHub non ha fatto partire niente dalle 22:13 UTC: alle 6 i riepiloghi
+     del giorno prima avevano ~19 ore, «freschi» per la regola qui sopra, e
+     pagine regione e temperature di ieri restavano su altroieri fino al
+     pomeriggio. Da qui due regole in piu', che non aspettano il prossimo cron
+     (aspettarlo e' proprio la scommessa che si perde) e non costano niente:
+     un riepilogo rifatto senza novita' non riscrive nulla.
+     1) Dalle 6 italiane il file delle temperature deve avere IERI: se no, si
+        rilancia. E' il segnale che il giro del mattino non c'e' stato.
+     2) Se il giro precedente del guardiano (entro due ore) ha ri-lanciato
+        dei collector, si rilancia: i riepiloghi devono contenere anche i
+        dati arrivati nel frattempo. Mai due giri di fila: se il precedente
+        ha gia' rilanciato i riepiloghi si salta (la Slovenia, ri-lanciata a
+        ogni giro finche' ARSO non pubblica, li rifarebbe ogni mezz'ora). */
+  if (oraIT(adesso) >= 6) {
+    let g = null;
+    try { g = JSON.parse(fs.readFileSync(path.join(DATA, 'temperature-ieri.json'), 'utf8')).giorno; } catch (e) {}
+    const ieri = giorniFa(adesso, 1);
+    if (g !== ieri) return { wf: WF_RIEPILOGHI, motivo: `temperature-ieri ha ${g || 'niente'} invece di ${ieri}` };
+  }
+  const prec = ultimoGiro();
+  const daPrec = prec ? (adesso - new Date(prec.quando)) / 60000 : -1;
+  if (daPrec >= 0 && daPrec <= 120
+      && !(prec.lanciati || []).includes(WF_RIEPILOGHI)
+      && (prec.lanciati || []).some(wf => wf !== WF_RIEPILOGHI))
+    return { wf: WF_RIEPILOGHI, motivo: `il giro delle ${prec.quando.slice(11, 16)} UTC ha ri-lanciato ${prec.lanciati.join(', ')}` };
+  return null;
+}
+
+// Quante volte un workflow e' gia' stato rilanciato OGGI (giorno italiano), prima e dopo le 17. Si contano
+// solo i giri fino ad `adesso`: con ORA= si prova anche un momento gia' passato.
+function tentativiOggi(wf, adesso) {
+  let giri = [];
+  try { giri = JSON.parse(fs.readFileSync(REGISTRO, 'utf8')).giri || []; } catch (e) { /* registro nuovo */ }
+  const oggi = giornoIT(adesso);
+  const conto = { mattina: 0, sera: 0 };
+  for (const g of giri) {
+    const q = new Date(g.quando);
+    if (!(q <= adesso) || giornoIT(q) !== oggi || !(g.lanciati || []).includes(wf)) continue;
+    conto[oraIT(q) >= ORA_SERA ? 'sera' : 'mattina']++;
+  }
+  return conto;
+}
+
+// null = si puo' lanciare; se no, il perche' da scrivere nel log.
+function fermoPerOggi(wf, adesso) {
+  if (wf === WF_RIEPILOGHI) return null;
+  const t = tentativiOggi(wf, adesso);
+  if (oraIT(adesso) < ORA_SERA)
+    return t.mattina >= TENTATIVI_MATTINA ? `gia' rilanciato ${t.mattina} volte stamattina, riprovo dalle ${ORA_SERA}` : null;
+  return t.sera >= TENTATIVI_SERA ? `gia' rilanciato dopo le ${ORA_SERA}, riprovo domani` : null;
+}
+
+function ultimoGiro() {
+  try { const r = JSON.parse(fs.readFileSync(REGISTRO, 'utf8')); return (r.giri || []).slice(-1)[0] || null; }
+  catch (e) { return null; }
 }
 
 /* ── Il lancio ──────────────────────────────────────────────────── */
@@ -271,7 +352,7 @@ function main() {
   // tarature (margine, tetto) senza aspettare l'ora giusta del giorno.
   const adesso = process.env.ORA ? new Date(process.env.ORA) : new Date();
   console.log(`Guardiano — ${adesso.toISOString()}  (giorno italiano ${giornoIT(adesso)})`);
-  console.log(`margine ${MARGINE_MIN}'  ·  prossimo ${PROSSIMO_MIN}'  ·  tetto ${MAX_LANCI}`);
+  console.log(`margine ${margineAdesso(adesso)}'  ·  prossimo ${PROSSIMO_MIN}'  ·  tetto ${MAX_LANCI}`);
   console.log(LANCIA ? 'modo: LANCIA' : 'modo: guardo e basta (LANCIA=1 per agire)');
   console.log('');
 
@@ -303,7 +384,7 @@ function main() {
                 (r.buco >= 2 ? ` e i ${r.buco - 1} giorni prima — GUASTO, non ritardo` : '') +
                 `. ${r.wf}, ultimo giro ${r.daUltimo}' fa, prossimo fra ${r.alProssimo}'`);
   }
-  if (riep) console.log(`⏳ Riepiloghi vecchi di ${riep.ore} h (${riep.file})`);
+  if (riep) console.log(`⏳ Riepiloghi: ${riep.motivo}`);
 
   // Dedup per workflow: le 13 cartelle francesi e le 11 di MeteoHub sono un
   // lancio solo. Senza questo, una piattaforma giu' produrrebbe 13 dispatch.
@@ -317,8 +398,13 @@ function main() {
     return;
   }
 
+  // Le fonti ferme: tre tentativi al mattino, uno dalle 17, poi basta fino a domani (vedi TENTATIVI_MATTINA).
+  const fermi = daLanciare.map(wf => [wf, fermoPerOggi(wf, adesso)]).filter(([, perche]) => perche);
+  for (const [wf, perche] of fermi) console.log(`⏸ ${wf}: ${perche}`);
+  const daProvare = daLanciare.filter(wf => !fermi.some(([f]) => f === wf));
+
   const lanciati = [];
-  for (const wf of daLanciare) {
+  for (const wf of daProvare) {
     if (!LANCIA) { console.log(`   (lancerei ${wf})`); continue; }
     try { lancia(wf); lanciati.push(wf); console.log(`🚀 lanciato ${wf}`); }
     catch (e) { console.log(`❌ ${wf}: ${String(e.message).split('\n')[0]}`); }

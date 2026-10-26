@@ -67,7 +67,7 @@ function scriviSitemap(SITO, RADICE) {
 
   // Quattro famiglie, quattro file. La prima tiene anche la home e le fonti:
   // sono due pagine, non meritano una sitemap loro.
-  const fam = { mappa: [], funghi: [], localita: [], zone: [], zonePiogge: [], forestale: [] };
+  const fam = { mappa: [], funghi: [], localita: [], zone: [], zonePiogge: [], forestale: [], meteo: [], meteoB: [] };
   const voci = fam.mappa;
 
   voci.push({ loc: SITO + '/', lastmod: '2026-08-14', freq: 'daily', pri: '1.0' });
@@ -172,6 +172,17 @@ function scriviSitemap(SITO, RADICE) {
     }
   }
 
+  // Le pagine «PREVISIONI METEO» di zona, dal 24/10/2026 (genera-pagine-meteo-zona.js): un TEST su 11 zone, con la
+  // sua sitemap per misurarle da sole in Search Console. Priorita' 0.7 come le zone piogge; data del guscio fissa.
+  // Dal 24/10 sera due gruppi: le zone di ZONE_METEO_B (genera-pagine-meteo-zona.js) vanno in sitemap-meteo-b.xml.
+  const MZ = path.join(RADICE, 'meteo'), MB = new Set(require('./genera-pagine-meteo-zona.js').ZONE_METEO_B);
+  if (fs.existsSync(MZ)) {
+    for (const d of fs.readdirSync(MZ).sort()) {
+      if (c_e(path.join('meteo', d, 'index.html')))
+        fam[MB.has(d) ? 'meteoB' : 'meteo'].push({ loc: SITO + '/meteo/' + d + '/', lastmod: LASTMOD.meteo || LASTMOD.regioni, freq: 'daily', pri: '0.7' });
+    }
+  }
+
   const voce = v => `  <url>\n    <loc>${v.loc}</loc>\n    <lastmod>${v.lastmod}</lastmod>\n` +
                     `    <changefreq>${v.freq}</changefreq>\n    <priority>${v.pri}</priority>\n  </url>`;
   const INTESTA = `<!-- Generata da .github/scripts/genera-sitemap.js — non modificare a mano.\n` +
@@ -183,7 +194,8 @@ function scriviSitemap(SITO, RADICE) {
   // famiglia nasce in produzione) dichiarerebbe un file inesistente.
   const NOMI = { mappa: 'sitemap-mappa.xml', funghi: 'sitemap-funghi.xml',
                  localita: 'sitemap-localita.xml', zone: 'sitemap-zone.xml',
-                 zonePiogge: 'sitemap-zone-piogge.xml', forestale: 'sitemap-mappa-forestale.xml' };
+                 zonePiogge: 'sitemap-zone-piogge.xml', forestale: 'sitemap-mappa-forestale.xml',
+                 meteo: 'sitemap-meteo.xml', meteoB: 'sitemap-meteo-b.xml' };
   const figlie = [];
   let totale = 0;
   for (const k of Object.keys(NOMI)) {

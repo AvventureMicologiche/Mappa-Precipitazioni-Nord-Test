@@ -23,7 +23,7 @@
  * (aggiornato ogni 10 minuti, ~1 KB).
  *
  * Come OASI, l'archivio è interrogabile: "recent" copre l'intero anno, quindi
- * ogni run può auto-riparare GRATIS i giorni mancanti recenti (qui 3..10)
+ * ogni run può auto-riparare GRATIS i giorni mancanti recenti (qui 3..30, stime comprese, dal 26/10/2026)
  * senza richieste aggiuntive. Un run fallito non perde mai dati.
  *
  * ESCLUSE le stazioni del Canton Ticino: quella zona è coperta da OASI
@@ -46,6 +46,7 @@
 const https = require('https');
 const fs    = require('fs');
 const { creaOre, segna, intensita } = require('./lib-intensita.js');
+const { creaDir, segnaDir, direzione } = require('./lib-direzione.js');
 const path  = require('path');
 
 const DATA_DIR = path.join(__dirname, '../..', 'data', 'svizzera');
@@ -66,7 +67,11 @@ const MIN_ORE     = 20;   // ore valide minime per accettare il totale di un gio
 // rete precip altre 7 — NON si aggiungono senza un check doppioni contro OASI.
 const TI_SMN_DA_OASI = ['MAG', 'CEV', 'COM', 'OTL', 'LUG', 'PIO', 'ROE', 'SBE', 'SBO'];
 const CONCURRENCY = 8;    // stazioni in parallelo (stile Liguria)
-const REPAIR_DAYS = 10;   // auto-riparazione fino a D-10
+// Auto-riparazione fino a D-30, giorni STIMATI compresi (26/10/2026, prima D-10 e solo i mancanti): check-gaps-nord.js
+// copre un buco con le stime dopo 3 giorni, e qui la stima si rifa' col dato vero appena MeteoSvizzera risponde. Costa
+// zero richieste in piu': il CSV «recent» di ogni stazione ha gia' tutto l'anno. ⚠️ Solo l'anno CORRENTE: nei primi
+// giorni di gennaio i giorni di dicembre non ci sono, e una loro stima resta (andrebbe preso lo «historical»).
+const REPAIR_DAYS = 30;
 
 function getItalyOffset(date) {
   // Svizzera e Italia condividono lo stesso fuso (CET/CEST)
@@ -146,6 +151,7 @@ function parseHourly(buf) {
   const iTn = head.indexOf('tre200hn'), iTx = head.indexOf('tre200hx');
   const iFf = head.indexOf('fkl010h0'), iFx = head.indexOf('fkl010h1');
   const iU  = head.indexOf('ure200h0');   // umidità relativa % media oraria (18/8/2026)
+  const iDd = head.indexOf('dkl010h0');   // direzione del vento, gradi (2/10/2026)
   const num = (c, i) => {
     if (i < 0) return null;
     const raw = c[i];
@@ -162,7 +168,7 @@ function parseHourly(buf) {
     if (raw === '' || raw === undefined) continue;
     const v = parseFloat(raw);
     if (isNaN(v) || v < 0) continue;
-    out.push([t, v, num(c, iTn), num(c, iTx), num(c, iFf), num(c, iFx), num(c, iU)]);
+    out.push([t, v, num(c, iTn), num(c, iTx), num(c, iFf), num(c, iFx), num(c, iU), num(c, iDd)]);
   }
   return out;
 }
@@ -240,7 +246,8 @@ async function collectStation(st, windows, maxEnd) {
     let ffSum = 0, nFF = 0, fxMax = -Infinity, nFX = 0;
     let umin = Infinity, umax = -Infinity, nU = 0;
     const secchielli = creaOre();   // intensita' (12/9/2026)
-    for (const [t, v, tn, tx, ff, fx, u] of rows) {
+    const dir = creaDir();          // direzione del vento (2/10/2026), pesata su ff
+    for (const [t, v, tn, tx, ff, fx, u, dd] of rows) {
       if (!(t > w.start && t <= w.end)) continue;
       sum += v; n++;
       segna(secchielli, t, v);
@@ -250,6 +257,7 @@ async function collectStation(st, windows, maxEnd) {
       if (ff != null && ff >= 0 && ff < 60) { ffSum += ff; nFF++; }
       if (fx != null && fx >= 0 && fx < 90) { if (fx > fxMax) fxMax = fx; nFX++; }
       if (u != null && u >= 0 && u <= 100) { if (u < umin) umin = u; if (u > umax) umax = u; nU++; }
+      if (dd != null && ff != null && ff >= 0 && ff < 60) segnaDir(dir, t, dd, ff);
     }
     if (n >= MIN_ORE) {
       const mm = Math.round(sum * 10) / 10;
@@ -263,6 +271,8 @@ async function collectStation(st, windows, maxEnd) {
         if (nU >= MIN_ORE && umax > -Infinity) rec.u = [Math.round(umin), Math.round(umax)];
         const inte = intensita(secchielli);
         if (inte) rec.i = inte;
+        const wd = direzione(dir);
+        if (wd !== null) rec.wd = wd;
         res[w.dateStr] = rec;
       }
     }
@@ -276,11 +286,15 @@ function loadExisting(dateStr) {
   try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return null; }
 }
 
-/** Merge per stazione: il valore nuovo vince, le stazioni vecchie senza valore nuovo restano. */
+const eStima = j => !!j && /open-meteo/.test(j.source || '');
+
+/** Merge per stazione: il valore nuovo vince, le stazioni vecchie senza valore nuovo restano.
+ *  ⚠️ Ma NON sopra un file di stima (26/10/2026): le stazioni stimate senza valore nuovo resterebbero dentro un file
+ *  che da quel momento si dichiara `meteoswiss`, cioe' stime spacciate per misure. Su una stima si riparte da zero. */
 function writeDay(dateStr, freshStations) {
   const existing = loadExisting(dateStr);
   const byId = {};
-  if (existing && Array.isArray(existing.stations)) {
+  if (existing && Array.isArray(existing.stations) && !eStima(existing)) {
     for (const s of existing.stations) byId[s.id] = s;
   }
   for (const s of freshStations) byId[s.id] = s;
@@ -318,9 +332,9 @@ async function main() {
     for (let i = 1; i <= REPAIR_DAYS; i++) {
       const dateStr = fmtDate(new Date(todayNoon - i * 24 * 3600000));
       if (i <= 2) { targets.push({ dateStr, always: true }); continue; }
-      // 3..REPAIR_DAYS: solo se il file manca o è corto (auto-riparazione gratuita)
+      // 3..REPAIR_DAYS: solo se il file manca, è corto o è una STIMA (auto-riparazione gratuita)
       const ex = loadExisting(dateStr);
-      if (!ex || (ex.count || 0) < 150) targets.push({ dateStr, always: false });
+      if (!ex || (ex.count || 0) < 150 || eStima(ex)) targets.push({ dateStr, always: false });
     }
   }
   const windows = targets.map(t => Object.assign({ dateStr: t.dateStr }, dayWindow(t.dateStr)));
@@ -355,6 +369,7 @@ async function main() {
         if (r.w) rec.w = r.w;
         if (r.u) rec.u = r.u;
         if (r.i) rec.i = r.i;
+        if (r.wd !== undefined) rec.wd = r.wd;   // ⚠️ il record si ricostruisce campo per campo: senza questa riga wd sparisce
         perDay[dateStr].push(rec);
       }
     }

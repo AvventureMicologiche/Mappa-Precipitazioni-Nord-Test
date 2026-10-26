@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pluviometria Lazio: dove ha piovuto ieri, 20 ottobre</title>
-<meta name="description" content="Ieri 20 ottobre: 60,2 mm a Mignone SS Aurelia. Ultimi 7 giorni: 6,8 mm di media su 209 pluviometri MeteoHub, 60 mm a Mignone SS Aurelia.">
+<title>Pluviometria Lazio: dove ha piovuto ieri, 25 ottobre</title>
+<meta name="description" content="Ieri 25 ottobre: 1,3 mm ad Amatrice. Ultimi 7 giorni: 47,9 mm di media su 209 pluviometri MeteoHub, 272 mm a Osteria di Castro.">
 <link rel="canonical" href="https://avventurepluvio-test.pages.dev/lazio/">
 <meta property="og:title" content="Dove ha piovuto nel Lazio: ieri e negli ultimi giorni">
 <meta property="og:description" content="Riepilogo degli ultimi 7, 20 e 30 giorni con le zone più bagnate, da oltre 200 pluviometri di MeteoHub.">
@@ -187,7 +187,8 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 @media(max-width:480px){.banda-prev b{font-size:17.5px;}.banda-prev span{font-size:14px;}.tasti a{font-size:15px;}.capo-btn{font-size:15.5px;}
   .verdetto .top{font-size:16px;}.verdetto .dett{font-size:14px;}}
 /* BOTTONE YOUTUBE (lib-pagina-funghi.js) */
-.yt-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
+/* A TUTTA RIGA come i bottoni che aprono la mappa (25/10/2026, suo: «fallo largo come quelli che aprono le mappe») */
+.yt-btn{display:flex;justify-content:center;width:100%;box-sizing:border-box;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
   font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 4px 0 #7d0d12,0 9px 18px rgba(160,20,27,.32);transition:transform .08s,box-shadow .08s;}
 .yt-btn svg{width:26px;height:18px;flex:none;}
@@ -196,7 +197,8 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .yt-btn:hover{background:linear-gradient(180deg,#e8323a,#c01820);}
 .yt-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7d0d12,0 4px 8px rgba(160,20,27,.3);}
 
-/* QUIZ ACCANTO A YOUTUBE: due celle uguali, una sotto l'altra sul telefono */
+/* QUIZ ACCANTO A YOUTUBE: due celle uguali, una sotto l'altra sul telefono (25/10/2026, suo: «dove c'e' il quiz lascia
+   com'e'», solo YouTube da solo va a tutta riga) */
 .coppia-btn{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 4px;}
 .coppia-btn a{justify-content:center;box-sizing:border-box;min-height:53px;width:100%;}
 .coppia-btn svg{width:26px;flex:none;}
@@ -262,6 +264,8 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-cr span{display:flex;align-items:center;gap:3px;font-weight:600;flex-wrap:wrap;}
 .mk-cr span i{font-style:normal;font-size:19px;}
 .mk-cr span em{font-style:normal;font-size:12px;color:#1f6fd1;font-weight:700;width:100%;padding-left:24px;margin-top:-3px;}
+/* la % di pioggia (25/10/2026): la GOCCIA come nelle pagine meteo, i tre toni della mappa (sotto il 10% grigia, dal 60% rossa) */
+.mk-cr span em.mk-pc{margin-top:0;}.mk-cr span em.mk-pc.z{color:#9aa3ad;font-weight:500;}.mk-cr span em.mk-pc.alta{color:#c21f1f;}
 .mk-cr-t{background:#eef4fb;font-size:13px;color:#4a6180;padding:6px 12px;}
 .mk-cr-t span{font-weight:700;}
 .mk-dopo{display:none;}
@@ -337,7 +341,7 @@ header{position:relative;flex-wrap:nowrap;}
      alla domanda del titolo, cioe' IERI, poi le barre, poi i periodi, le zone,
      le mappe. Le spiegazioni stanno in fondo, in piccolo. -->
 <div id="attesa" style="display:none"></div>
-<div id="verdetto"><div class="verdetto"><div class="si">Ieri, 20 ottobre</div><div class="gr">6,7 mm<small>di media</small></div><div class="top">Dove ha piovuto di più: <b>Mignone SS Aurelia</b> 60,2 mm, <b>Marta a Tarquinia</b> 40,3 mm, <b>Allumiere</b> 34,4 mm.</div><div class="dett">Media di 209 pluviometri.</div><div class="capo-btns"><a class="ieri-btn" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-20&amp;a=2026-10-20&amp;s=p" onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-ieri-box'})}catch(e){}"><b>Apri la mappa di ieri</b><i>→</i><small>la pioggia in tutte le località</small></a></div><div class="mk-porte"><a href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;m=prev" onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-porta-previsioni'})}catch(e){}"><span>☀️</span>Previsioni</a><a href="https://avventurepluvio-test.pages.dev/lazio/adesso/" onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-porta-radar'})}catch(e){}"><span>📡</span>Radar</a><a href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;boschi=1" onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-porta-boschi'})}catch(e){}"><span>🌲</span>Boschi</a><a href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;boschi=1&amp;sat=1" onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-porta-satellite'})}catch(e){}"><span>🛰</span>Satellite</a></div></div></div>
+<div id="verdetto"><div class="verdetto"><div class="si">Ieri, 25 ottobre</div><div class="gr"><small style="margin:0 .3em 0 0">meno di</small>0,1 mm<small>di media</small></div><div class="top">Dove ha piovuto di più: <b>Amatrice</b> 1,3 mm.</div><div class="dett">Media di 209 pluviometri.</div><div class="capo-btns"><a class="ieri-btn" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-25&amp;a=2026-10-25&amp;s=p" onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-ieri-box'})}catch(e){}"><b>Apri la mappa di ieri</b><i>→</i><small>la pioggia in tutte le località</small></a></div><div class="mk-porte"><a href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;m=prev" onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-porta-previsioni'})}catch(e){}"><span>☀️</span>Previsioni</a><a href="https://avventurepluvio-test.pages.dev/lazio/adesso/" onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-porta-radar'})}catch(e){}"><span>📡</span>Radar</a><a href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;boschi=1" onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-porta-boschi'})}catch(e){}"><span>🌲</span>Boschi</a><a href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;boschi=1&amp;sat=1" onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-porta-satellite'})}catch(e){}"><span>🛰</span>Satellite</a></div></div></div>
 <!-- 19/10/2026: al posto della striscia blu «Che tempo farà», il blocco meteo (lib-meteo-regione.js):
      la casella per il proprio paese, che apre la mappa delle previsioni, e le città principali. -->
 <section class="mk-meteo" id="meteo">
@@ -347,35 +351,35 @@ header{position:relative;flex-wrap:nowrap;}
 </section>
 
 <h2 id="h-grafico">La pioggia degli ultimi 30 giorni</h2>
-<div id="grafico"><div class="gg"><div class="b" title="21 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="22 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="23 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="24 settembre: 0,1 mm"><i style="height:2%"></i></div><div class="b" title="25 settembre: 0,5 mm"><i style="height:2%"></i></div><div class="b" title="26 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="27 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="28 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="29 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="30 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="1 ottobre: 0,3 mm"><i style="height:2%"></i></div><div class="b" title="2 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="3 ottobre: 0,2 mm"><i style="height:2%"></i></div><div class="b" title="4 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="5 ottobre: 0,4 mm"><i style="height:2%"></i></div><div class="b" title="6 ottobre: 2,3 mm"><i style="height:7%"></i></div><div class="b" title="7 ottobre: 11,5 mm"><i style="height:37%"></i></div><div class="b" title="8 ottobre: 26,6 mm"><b>27</b><i style="height:86%"></i></div><div class="b" title="9 ottobre: 13,9 mm"><i style="height:45%"></i></div><div class="b" title="10 ottobre: 9,1 mm"><b>9,1</b><i style="height:29%"></i></div><div class="b" title="11 ottobre: 0,2 mm"><i style="height:2%"></i></div><div class="b" title="12 ottobre: 1,0 mm"><i style="height:3%"></i></div><div class="b" title="13 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="14 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="15 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="16 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="17 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="18 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b dentro" title="19 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="20 ottobre: 6,7 mm"><b>6,7</b><i style="height:22%"></i></div></div><div class="gg-x"><span>21/9</span><span></span><span></span><span></span><span></span><span>26/9</span><span></span><span></span><span></span><span></span><span>1/10</span><span></span><span></span><span></span><span></span><span>6/10</span><span></span><span></span><span></span><span></span><span>11/10</span><span></span><span></span><span></span><span></span><span>16/10</span><span></span><span></span><span></span><span>20/10</span></div><p class="gg-leg"><i style="background:var(--blu)"></i>ultimi 7 giorni &nbsp; <i style="background:#b9cbe2"></i>i giorni prima &nbsp;·&nbsp; media dei pluviometri della regione, in mm</p></div>
+<div id="grafico"><div class="gg"><div class="b" title="26 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="27 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="28 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="29 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="30 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="1 ottobre: 0,3 mm"><i style="height:2%"></i></div><div class="b" title="2 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="3 ottobre: 0,2 mm"><i style="height:2%"></i></div><div class="b" title="4 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="5 ottobre: 0,4 mm"><i style="height:2%"></i></div><div class="b" title="6 ottobre: 2,3 mm"><i style="height:5%"></i></div><div class="b" title="7 ottobre: 11,5 mm"><i style="height:27%"></i></div><div class="b" title="8 ottobre: 26,6 mm"><b>27</b><i style="height:61%"></i></div><div class="b" title="9 ottobre: 13,9 mm"><i style="height:32%"></i></div><div class="b" title="10 ottobre: 9,1 mm"><b>9,1</b><i style="height:21%"></i></div><div class="b" title="11 ottobre: 0,2 mm"><i style="height:2%"></i></div><div class="b" title="12 ottobre: 1,0 mm"><i style="height:2%"></i></div><div class="b" title="13 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="14 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="15 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="16 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="17 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="18 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b dentro" title="19 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="20 ottobre: 6,7 mm"><i style="height:15%"></i></div><div class="b dentro" title="21 ottobre: 37,3 mm"><b>37</b><i style="height:86%"></i></div><div class="b dentro" title="22 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b dentro" title="23 ottobre: 1,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="24 ottobre: 2,8 mm"><i style="height:6%"></i></div><div class="b dentro" title="25 ottobre: 0,0 mm"><i style="height:2%"></i></div></div><div class="gg-x"><span>26/9</span><span></span><span></span><span></span><span></span><span>1/10</span><span></span><span></span><span></span><span></span><span>6/10</span><span></span><span></span><span></span><span></span><span>11/10</span><span></span><span></span><span></span><span></span><span>16/10</span><span></span><span></span><span></span><span></span><span>21/10</span><span></span><span></span><span></span><span>25/10</span></div><p class="gg-leg"><i style="background:var(--blu)"></i>ultimi 7 giorni &nbsp; <i style="background:#b9cbe2"></i>i giorni prima &nbsp;·&nbsp; media dei pluviometri della regione, in mm</p></div>
 
 <h2>Dove ha piovuto di più</h2>
 <div class="griglia">
   <div class="card">
     <h3>Ultimi 7 giorni</h3>
-    <div class="numerone" id="rip7-media">6,8 mm <small>di media</small></div>
-    <div id="rip7-top"><ol class="top-staz"><li>Mignone SS Aurelia — 60,2 mm</li><li>Marta a Tarquinia — 40,3 mm</li><li>Allumiere — 34,6 mm</li><li>Monte Romano — 32,6 mm</li><li>Mandrione — 31,5 mm</li></ol></div>
-    <p class="nota" id="rip7-date">Dal 14 al 20 ottobre.</p>
+    <div class="numerone" id="rip7-media">48 mm <small>di media</small></div>
+    <div id="rip7-top"><ol class="top-staz"><li>Osteria di Castro — 272,0 mm</li><li>Amaseno a Fossanova — 192,3 mm</li><li>Latina — 169,2 mm</li><li>Ufente a Ponte Ferraioli — 166,6 mm</li><li>Vallecorsa — 166,2 mm</li></ol></div>
+    <p class="nota" id="rip7-date">Dal 19 al 25 ottobre.</p>
     <!-- ⚠️ L'indirizzo scritto qui deve GIA' portare alla regione (23/8/2026):
          lo script in fondo lo riscrive con le date esatte, ma solo dopo che i
          dati sono arrivati. Il parametro g sono i giorni: la mappa li fa date. -->
-    <a class="vai" id="cta7" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-14&amp;a=2026-10-20&amp;s=p"
+    <a class="vai" id="cta7" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-19&amp;a=2026-10-25&amp;s=p"
        onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-7gg'})}catch(e){}">Apri la mappa →</a>
   </div>
   <div class="card">
     <h3>Ultimi 20 giorni</h3>
-    <div class="numerone" id="rip20-media">72 mm <small>di media</small></div>
-    <div id="rip20-top"><ol class="top-staz"><li>Anzio — 222,9 mm</li><li>Sabaudia — 215,1 mm</li><li>Gaeta — 207,6 mm</li><li>Latina — 204,3 mm</li><li>Borgo Montello — 168,3 mm</li></ol></div>
-    <p class="nota" id="rip20-date">Dall’1 al 20 ottobre.</p>
-    <a class="vai" id="cta20" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-01&amp;a=2026-10-20&amp;s=p"
+    <div class="numerone" id="rip20-media">112 mm <small>di media</small></div>
+    <div id="rip20-top"><ol class="top-staz"><li>Latina — 369,1 mm</li><li>Osteria di Castro — 352,0 mm</li><li>Amaseno a Fossanova — 316,2 mm</li><li>Ufente a Ponte Ferraioli — 313,8 mm</li><li>Sabaudia — 294,2 mm</li></ol></div>
+    <p class="nota" id="rip20-date">Dal 6 al 25 ottobre.</p>
+    <a class="vai" id="cta20" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-06&amp;a=2026-10-25&amp;s=p"
        onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-20gg'})}catch(e){}">Apri la mappa →</a>
   </div>
   <div class="card" id="card30">
     <h3>Ultimo mese</h3>
-    <div class="numerone" id="rip30-media">73 mm <small>di media</small></div>
-    <div id="rip30-top"><ol class="top-staz"><li>Anzio — 223,5 mm</li><li>Sabaudia — 216,5 mm</li><li>Gaeta — 207,7 mm</li><li>Latina — 204,7 mm</li><li>Borgo Montello — 168,7 mm</li></ol></div>
-    <p class="nota" id="rip30-date">Dal 21 settembre al 20 ottobre.</p>
-    <a class="vai" id="cta30" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-09-21&amp;a=2026-10-20&amp;s=p"
+    <div class="numerone" id="rip30-media">113 mm <small>di media</small></div>
+    <div id="rip30-top"><ol class="top-staz"><li>Latina — 369,3 mm</li><li>Osteria di Castro — 352,4 mm</li><li>Amaseno a Fossanova — 316,2 mm</li><li>Ufente a Ponte Ferraioli — 313,8 mm</li><li>Sabaudia — 294,2 mm</li></ol></div>
+    <p class="nota" id="rip30-date">Dal 26 settembre al 25 ottobre.</p>
+    <a class="vai" id="cta30" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-09-26&amp;a=2026-10-25&amp;s=p"
        onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-30gg'})}catch(e){}">Apri la mappa →</a>
   </div>
 </div>
@@ -383,26 +387,26 @@ header{position:relative;flex-wrap:nowrap;}
 <h2>Dove ha piovuto, zona per zona</h2>
 <p class="nota" style="margin-top:0" id="zone-nota">Negli ultimi 7 giorni, media dei pluviometri di ogni zona. Ogni nome porta alla sua pagina.</p>
 <ol class="zone-dove" id="zone">
-<li data-z="sabina"><a href="https://avventurepluvio-test.pages.dev/zone/sabina/">Sabina</a><span class="zmm">1,0 mm<small>ieri 1,0</small></span></li>
-<li data-z="monti-sabini"><a href="https://avventurepluvio-test.pages.dev/zone/monti-sabini/">Monti Sabini</a><span class="zmm">0,6 mm<small>ieri 0,5</small></span></li>
-<li data-z="monti-reatini"><a href="https://avventurepluvio-test.pages.dev/zone/monti-reatini/">Monti Reatini</a><span class="zmm">0,5 mm<small>ieri 0,5</small></span></li>
-<li data-z="monti-prenestini"><a href="https://avventurepluvio-test.pages.dev/zone/monti-prenestini/">Monti Prenestini</a><span class="zmm">0,3 mm<small>ieri 0,3</small></span></li>
-<li data-z="vallonina"><a href="https://avventurepluvio-test.pages.dev/zone/vallonina/">Vallonina</a><span class="zmm">0,3 mm<small>ieri 0,2</small></span></li>
-<li data-z="piana-del-cavaliere"><a href="https://avventurepluvio-test.pages.dev/zone/piana-del-cavaliere/">Piana del Cavaliere</a><span class="zmm">0,1 mm<small>ieri 0</small></span></li>
-<li data-z="monti-cantari"><a href="https://avventurepluvio-test.pages.dev/zone/monti-cantari/">Monti Cantari</a><span class="zmm">0 mm<small>ieri 0</small></span></li>
+<li data-z="monti-cantari"><a href="https://avventurepluvio-test.pages.dev/zone/monti-cantari/">Monti Cantari</a><span class="zmm">62 mm<small>ieri 0,1</small></span></li>
+<li data-z="monti-reatini"><a href="https://avventurepluvio-test.pages.dev/zone/monti-reatini/">Monti Reatini</a><span class="zmm">47 mm<small>ieri 0</small></span></li>
+<li data-z="piana-del-cavaliere"><a href="https://avventurepluvio-test.pages.dev/zone/piana-del-cavaliere/">Piana del Cavaliere</a><span class="zmm">40 mm<small>ieri 0</small></span></li>
+<li data-z="monti-sabini"><a href="https://avventurepluvio-test.pages.dev/zone/monti-sabini/">Monti Sabini</a><span class="zmm">39 mm<small>ieri 0,1</small></span></li>
+<li data-z="monti-prenestini"><a href="https://avventurepluvio-test.pages.dev/zone/monti-prenestini/">Monti Prenestini</a><span class="zmm">36 mm<small>ieri 0</small></span></li>
+<li data-z="sabina"><a href="https://avventurepluvio-test.pages.dev/zone/sabina/">Sabina</a><span class="zmm">36 mm<small>ieri 0</small></span></li>
+<li data-z="vallonina"><a href="https://avventurepluvio-test.pages.dev/zone/vallonina/">Vallonina</a><span class="zmm">32 mm<small>ieri 0,2</small></span></li>
 </ol>
 
 <h2>Mappa pluviometrica del Lazio: guardala in dettaglio</h2>
 <div class="tasti">
-  <a class="forte" id="t1" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-20&amp;a=2026-10-20&amp;s=p"
+  <a class="forte" id="t1" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-25&amp;a=2026-10-25&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-1gg'})}catch(e){}">Ieri</a>
-  <a id="t7" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-14&amp;a=2026-10-20&amp;s=p"
+  <a id="t7" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-19&amp;a=2026-10-25&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-7gg'})}catch(e){}">Ultimi 7 gg</a>
-  <a id="t15" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-06&amp;a=2026-10-20&amp;s=p"
+  <a id="t15" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-11&amp;a=2026-10-25&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-15gg'})}catch(e){}">Ultimi 15 gg</a>
-  <a id="t20" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-01&amp;a=2026-10-20&amp;s=p"
+  <a id="t20" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-06&amp;a=2026-10-25&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-20gg'})}catch(e){}">Ultimi 20 gg</a>
-  <a id="t30" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-09-21&amp;a=2026-10-20&amp;s=p"
+  <a id="t30" href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-09-26&amp;a=2026-10-25&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-30gg'})}catch(e){}">Ultimi 30 gg</a>
   <a href="https://avventurepluvio-test.pages.dev/lazio/adesso/"
      onclick="try{gtag('event','apri_adesso',{da:'pagina-lazio-tasto'})}catch(e){}">📡 Radar adesso</a>
@@ -410,7 +414,7 @@ header{position:relative;flex-wrap:nowrap;}
      onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">La pioggia degli ultimi 20 giorni nel Lazio, pluviometro per pluviometro.</p>
-<a href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-01&amp;a=2026-10-20&amp;s=p" id="lnk-img" style="display:block;text-decoration:none;"
+<a href="https://avventurepluvio-test.pages.dev/?r=lazio&amp;da=2026-10-06&amp;a=2026-10-25&amp;s=p" id="lnk-img" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'pagina-lazio-anteprima'})}catch(e){}">
   <img class="img-mappa" src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/lazio.jpg" alt="La mappa delle piogge nel Lazio: le zone più bagnate, stazione per stazione"
        width="1600" height="1000" loading="lazy"></a>
@@ -797,7 +801,8 @@ temperatura, vento e umidità.</p>
     'Marche': 'marche', 'Lazio': 'lazio', 'Abruzzo': 'abruzzo', 'Molise': 'molise', 'Campania': 'campania', 'Puglia': 'puglia',
     'Basilicata': 'basilicata', 'Calabria': 'calabria', 'Sicilia': 'sicilia', 'Sardegna': 'sardegna' };
   function frazioni(testo) {
-    return fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(testo) + '&count=10&language=it&countryCode=IT')
+    // dal 25/10/2026 /api/cerca (GeoNames servito dal sito) al posto di Open-Meteo, stessa forma della risposta
+    return fetch(API.replace('/api/previsioni', '/api/cerca') + '?name=' + encodeURIComponent(testo) + '&count=10&language=it&countryCode=IT')
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (j) {   // un 429 non e' «nessun posto» (settimo check, bug 8)
         var visti = {};
         return (j.results || []).map(function (x) {
@@ -902,11 +907,14 @@ temperatura, vento e umidità.</p>
     var ab = {}; (ELENCO || []).forEach(function (x) { if (x.reg === K && !x.z) ab[x.q] = x.pop; });
     if (!OPZ.area && !OPZ.primi) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
     var g0 = cc[0].giorni;
+    var conPc = cc.some(function (c) { return c.giorni.slice(0, 3).some(function (g) { return g.pc != null; }); });   // Open-Meteo giu': niente righe vuote
     var testa = '<div class="mk-cr mk-cr-t"><span></span>' + [0, 1, 2].map(function (d) { return '<span>' + nomeG(g0[d].g, d) + '</span>'; }).join('') + '</div>';
     var righe = cc.map(function (c, i) {
       return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + (c.r || K) + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : c.sotto ? '<small>' + esc(c.sotto) + '</small>' : '') + '</b>'
         + [0, 1, 2].map(function (d) { var g = c.giorni[d]; return '<span><i>' + icona(g.s) + '</i>' + g.mx + '°'
-          + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '') + '</span>'; }).join('') + '</a>';
+          + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '')
+          // la % di pioggia del giorno, la piu' alta delle sue ore (la Function con &pr=1, 25/10/2026)
+          + (conPc ? '<em class="mk-pc' + (g.pc == null ? '' : g.pc < 10 ? ' z' : g.pc >= 60 ? ' alta' : '') + '">' + (g.pc == null ? '' : '💧 ' + g.pc + '%') + '</em>' : '') + '</span>'; }).join('') + '</a>';
     }).join('');
     /* IL BOTTONE DEL RADAR (20/10/2026, suo: «il bottone dove sta piovendo adesso col radar è un po' nascosto»).
        Prima era una riga piccola in coda a «Tocca una città...»: ora e' un bottone sotto la tabella (sua scelta, sotto
@@ -926,9 +934,12 @@ temperatura, vento e umidità.</p>
       + (piove ? '<span class="mk-pul"></span><span><b>Oggi è prevista pioggia ' + esc(dove) + '</b><small>guardala arrivare col radar piogge</small></span>'
                : '<span class="mk-ic">📡</span><span><b>Dove sta piovendo adesso</b><small>guarda il radar piogge</small></span>')
       + '<span class="mk-fr">→</span></a>';
-    box.innerHTML = (OPZ.sopra ? '<p class="mk-sopra">' + esc(OPZ.sopra) + '</p>' : '') + '<div class="mk-tab">' + testa + righe + '</div>'
+    // La frase del pluviometro solo se la sua riga c'e' (25/10/2026): se le previsioni non rispondono per quel punto
+    // la riga manca, e «Il pluviometro (1399 m) e i paesi intorno» annunciava una riga che non c'era.
+    var sopra = OPZ.sopraSenzaQui && !cc.some(function (c) { return c.qui; }) ? OPZ.sopraSenzaQui : OPZ.sopra;
+    box.innerHTML = (sopra ? '<p class="mk-sopra">' + esc(sopra) + '</p>' : '') + '<div class="mk-tab">' + testa + righe + '</div>'
       + (cc.length > 6 ? '<button class="mk-tutte">' + (OPZ.tutte || 'Mostra tutte le # città').replace('#', cc.length) + '</button>' : '')
-      + '<p class="mk-citta-n">' + (OPZ.tocca || 'Tocca una città per vederla ora per ora sulla mappa') + '</p>' + radar;
+      + '<p class="mk-citta-n">' + (OPZ.tocca || 'Tocca una città per vederla ora per ora sulla mappa') + (conPc ? '. 💧 è la probabilità di pioggia' : '') + '</p>' + radar;
     var bt = box.querySelector('.mk-tutte');
     if (bt) bt.addEventListener('click', function () { box.classList.add('mk-aperte'); bt.remove(); });
   }
@@ -1004,7 +1015,7 @@ temperatura, vento e umidità.</p>
     .then(function (j) { PRIMO = (j.primi && j.primi[0] && j.primi[0][2]) || '';
       return 'posti=' + (j.primi || []).slice(0, OPZ.primi).map(function (x) { return x[2] + '/' + x[3] + '/' + x[1]; }).join(','); });
   var citta = !blocco ? Promise.resolve(null)
-    : area.then(function (a) { return fetch(API + '?' + a); }).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11)
+    : area.then(function (a) { return fetch(API + '?' + a + '&pr=1'); }).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11); &pr=1 la % (25/10/2026)
   /* ⚠️ SOLO UN RIEPILOGO FRESCO (20/10/2026, settimo check, bug 5): scritto da meno di 36 ore, la stessa regola della
      pagina. Se e' piu' vecchio la pagina regione ha gia' disegnato il grafico dai file del giorno, e ridisegnarlo col
      riepilogo vecchio faceva sparire i giorni nuovi: allora il grafico resta com'e', senza i giorni previsti. Le zone

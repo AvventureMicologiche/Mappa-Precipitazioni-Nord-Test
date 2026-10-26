@@ -888,7 +888,7 @@ ${JS_AGGIORNATO}
 (${meteoClient.toString()})(${JSON.stringify(REG)}, ${JSON.stringify(NOME)}, ${JSON.stringify(SITO)}, ${fs.existsSync(path.join(RADICE, REG, 'adesso')) ? 'true' : 'false'}, ${JSON.stringify({
   ga: 'localita-' + REG, area: 'paese=' + REG + '/' + slug, id: 'mk-meteo', grafico: false, boschi: haBoschi(REG) ? 'mk-boschi' : '',
   guasto: 'Le previsioni dei paesi', tutte: 'Mostra tutti i paesi (#)', tocca: 'Tocca un paese per vederlo ora per ora sulla mappa',
-  sopra: 'Il pluviometro' + (quota > 0 ? ' (' + quota + ' m)' : '') + ' e i paesi intorno' })});
+  sopra: 'Il pluviometro' + (quota > 0 ? ' (' + quota + ' m)' : '') + ' e i paesi intorno', sopraSenzaQui: 'I paesi intorno' })});
 </script>
 ${strisciaScript({ reg: REG, tipo: 'punto', lat: +lat, lon: +lon, ga: 'localita-' + REG })}
 </body>

@@ -33,7 +33,7 @@ const { STILE_NUOVO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = require('./
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const RADICE = path.resolve(__dirname, '..', '..');
-const VERSIONE_JS = 4;   // si alza quando cambia lib/pagina-adesso.js: il browser riprende il file nuovo
+const VERSIONE_JS = 5;   // si alza quando cambia lib/pagina-adesso.js: il browser riprende il file nuovo (5: /api/cerca, 25/10/2026)
 
 // le regioni: l'anagrafe italiana + l'Abruzzo dopo il Lazio (stesso ordine nord-sud delle altre liste)
 const ABRUZZO = { k:'abruzzo', nome:'Abruzzo', prep:'in', senzaPagina:true };

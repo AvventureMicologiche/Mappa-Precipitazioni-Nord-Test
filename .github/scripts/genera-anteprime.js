@@ -110,7 +110,11 @@ async function scattaIeri(browser, k) {
   const page = await browser.newPage();
   await page.setViewport({ width: W, height: H, deviceScaleFactor: 2 });
   await page.evaluateOnNewDocument(() => { try { localStorage.setItem('novitaVista', '2099'); } catch (e) {} });
-  const ieri = iso(giornoFa(1));
+  /* ⚠️ IL GIORNO DELLA PAGINA, non «ieri» fisso (20/10/2026): la pagina mostra l'ultimo giorno intero del suo
+     riepilogo, e per la Slovenia (ARSO, ~34 ore di ritardo) e' sempre l'altroieri: con «ieri» la mappa restava
+     vuota, il «✅» non arrivava mai e lo scatto aspettava 3 minuti per niente. Senza riepilogo, ieri. */
+  let ieri = iso(giornoFa(1));
+  try { const u = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'data', 'riepiloghi', k + '.json'), 'utf8')).periodi['1'].ultimo; if (/^\d{4}-\d\d-\d\d$/.test(u)) ieri = u; } catch (e) {}
   try {
     await page.goto(SITO + '?r=' + k + '&da=' + ieri + '&a=' + ieri, { waitUntil: 'networkidle2', timeout: 120000 });
     await page.waitForFunction(() => { const s = document.getElementById('tp-status'); return s && s.textContent.indexOf('✅') === 0; }, { timeout: 180000, polling: 500 });

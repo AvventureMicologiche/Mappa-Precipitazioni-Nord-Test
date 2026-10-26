@@ -63,6 +63,8 @@ const { STILE_NUOVO, JS_COMUNE, JS_AGGIORNATO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, 
 // codice nel browser (lib-meteo-regione.js) con le opzioni dei funghi: blocco meteo con un altro id (#meteo qui e' il
 // grafico delle temperature) e NIENTE giorni previsti nel grafico dei funghi (regola: niente previsioni di crescita).
 const { METEO_CSS, meteoHtml, boschiHtml, meteoClient } = require('./lib-meteo-regione.js');
+// il link alle pagine «Previsioni meteo <zona>» (24/10/2026, test su 11 zone): l'elenco sta nel loro generatore
+const { linkMeteo } = require('./genera-pagine-meteo-zona.js');
 
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
@@ -266,7 +268,7 @@ ${rigaStagione()}
 <div id="guasto"></div>
 <div id="verdetto"></div>
 ${haBoschi(casa.k) ? boschiHtml('🌲 Trova i boschi ' + esc(z.dove) + ' e dintorni') : ''}
-${meteoHtml(casa, `Che tempo farà ${esc(z.dove)}`, 'Sto leggendo le previsioni dei paesi…', 'mk-meteo')}
+${meteoHtml(casa, `Che tempo farà ${esc(z.dove)}`, 'Sto leggendo le previsioni dei paesi…', 'mk-meteo', linkMeteo(zslug, z.n, 'zona-' + zslug))}
 
 <h2>Le piogge degli ultimi 25 giorni</h2>
 <div id="grafico"></div>

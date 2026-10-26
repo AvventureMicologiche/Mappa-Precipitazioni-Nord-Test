@@ -1,0 +1,377 @@
+sel c	0	2975199	Seltz	48.8952	8.1076	FR	Gran Este	11071622	Basso Reno	3171	PPL	122
+sel e	0	3027980	Cellieu	45.5187	4.5433	FR	Alvernia-Rodano-Alpi	11071625	Loira	1513	PPL	514
+sel levesko	0	3027999	Celle-Lévescault	46.4236	0.1873	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Vienne	1139	PPL	125
+sel levko	0	3027999	Celle-Lévescault	46.4236	0.1873	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Vienne	1139	PPL	125
+sel nica ob dravi	0	3339128	Selnica ob Dravi	46.5518	15.4929	SI	Municipality of Selnica ob Dravi	3344919		1348	PPLA	309
+sel sent avan	0	3010530	La Celle-Saint-Avant	47.0220	0.6049	FR	Centro-Valle della Loira	3027939	Indre e Loira	1126	PPL	59
+sel sir bel	0	3027989	Celles-sur-Belle	46.2618	-0.2118	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	3600	PPL	118
+sel sir moren	0	3010523	La Celle-sur-Morin	48.8115	2.9692	FR	Île-de-France	3012874	Senna e Marna	1211	PPL	81
+sel sjur bel	0	3027989	Celles-sur-Belle	46.2618	-0.2118	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	3600	PPL	118
+sel sjur sher	0	2975215	Selles-sur-Cher	47.2790	1.5539	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	4933	PPL	80
+sel vaccano dentro	0	3166766	Selvazzano Dentro	45.3876	11.7923	IT	Veneto	3164604	Padova	7962	PPLA3	18
+sela	1	10794182	Sela	45.9869	15.6336	SI	Municipality of Brežice	3203411		0	PPLH	230
+sela	1	3191139	Sela	46.0014	14.5856	SI	Municipality of Škofljica	3239066		0	PPL	335
+sela	1	3191148	Sela	46.3816	15.8294	SI	Municipality of Videm	3239231		194	PPL	228
+sela	1	3191149	Sela	45.7728	13.9264	SI	Municipality of Sežana	3190944		54	PPL	360
+sela	1	8987524	Sela	46.1268	15.5828	SI	Municipality of Podčetrtek	3239241		137	PPL	198
+sela	1	8988916	Sela	45.8682	15.2642	SI	Municipality of Šmarješke Toplice	8133593		27	PPL	195
+sela	1	8989683	Sela	45.5329	14.6914	SI	Municipality of Osilnica	3239061		78	PPL	347
+sela bulgnaisa	0	3168700	Sala Bolognese	44.6139	11.2567	IT	Emilia-Romagna	3177401	Bologna	1723	PPL	25
+sela na krasu	1	3191144	Sela na Krasu	45.8214	13.6164	SI	Municipality of Miren–Kostanjevica	3239080		157	PPL	227
+sela nad podmelcem	1	8989297	Sela nad Podmelcem	46.1911	13.8095	SI	Municipality of Tolmin	3189037		9	PPL	1057
+sela pri ajdovcu	1	8989342	Sela pri Ajdovcu	45.8152	15.0261	SI	Municipality of Žužemberk	3344909		7	PPL	496
+sela pri dobovi	1	3191143	Sela pri Dobovi	45.9167	15.6333	SI	Municipality of Brežice	3203411		575	PPL	162
+sela pri dobu	1	8988616	Sela pri Dobu	45.9286	14.8696	SI	Municipality of Ivančna Gorica	3239191		40	PPL	317
+sela pri dolenjskih toplicah	1	8987130	Sela pri Dolenjskih Toplicah	45.7505	15.0459	SI	Dolenjske Toplice	3344910		251	PPL	212
+sela pri dragatusu	1	8989827	Sela pri Dragatušu	45.5296	15.1707	SI	Črnomelj	3202332		76	PPL	149
+sela pri hinjah	1	3191142	Sela pri Hinjah	45.7967	14.8894	SI	Municipality of Žužemberk	3344909		52	PPL	413
+sela pri jugorju	1	3191141	Sela pri Jugorju	45.7102	15.2266	SI	Municipality of Metlika	3195213		45	PPL	546
+sela pri kamniku	1	3191140	Sela pri Kamniku	46.2365	14.6868	SI	Municipality of Kamnik	3198364		133	PPL	526
+sela pri otovcu	1	8988152	Sela pri Otovcu	45.5995	15.1625	SI	Črnomelj	3202332		69	PPL	197
+sela pri raki	1	8989515	Sela pri Raki	45.9207	15.3991	SI	Urban Municipality of Krško	3197146		101	PPL	205
+sela pri ratezu	1	8988367	Sela pri Ratežu	45.8206	15.2266	SI	Urban Municipality of Novo Mesto	3194350		54	PPL	204
+sela pri sentjerneju	1	8989520	Sela pri Šentjerneju	45.8274	15.3516	SI	Municipality of Šentjernej	3239197		94	PPL	211
+sela pri smarju	1	3191138	Sela pri Šmarju	45.9589	14.6220	SI	Municipality of Grosuplje	3199522		160	PPL	355
+sela pri sobracah	1	8988639	Sela pri Sobračah	45.9958	14.8792	SI	Municipality of Ivančna Gorica	3239191		39	PPL	428
+sela pri stravberku	1	8989911	Sela pri Štravberku	45.8632	15.1942	SI	Urban Municipality of Novo Mesto	3194350		5	PPL	494
+sela pri sumberku	1	3191137	Sela pri Šumberku	45.8967	14.8917	SI	Comune di Trebnje	3188885		126	PPL	416
+sela pri visnji gori	1	3191136	Sela pri Višnji Gori	45.9772	14.7738	SI	Municipality of Ivančna Gorica	3239191		49	PPL	651
+sela pri volcah	1	8987974	Sela pri Volčah	46.1380	13.7143	SI	Municipality of Tolmin	3189037		85	PPL	219
+sela pri vrcicah	1	8989140	Sela pri Vrčicah	45.6557	15.1492	SI	Municipality of Semič	3239195		16	PPL	455
+sela pri zajcjem vrhu	1	8988234	Sela pri Zajčjem Vrhu	45.7755	15.2493	SI	Urban Municipality of Novo Mesto	3194350		62	PPL	334
+sela pri zburah	1	8989627	Sela pri Zburah	45.8988	15.2238	SI	Municipality of Šmarješke Toplice	8133593		24	PPL	335
+selaincourt	1	2975237	Selaincourt	48.4998	5.9658	FR	Gran Este	11071622	Meurthe e Mosella	186	PPL	327
+selaje	0	3202781	Celje	46.2309	15.2604	SI	Urban Municipality of Celje	3202780		38059	PPLA	240
+selamo	1	2523167	Selamo	39.5167	16.2833	IT	Calabria	2525468	Cosenza	0	PPL	315
+selanika oba dravi	0	3339128	Selnica ob Dravi	46.5518	15.4929	SI	Municipality of Selnica ob Dravi	3344919		1348	PPLA	309
+selargius	1	2523166	Selargius	39.2578	9.1632	IT	Sardegna	2523228	Cagliari	23285	PPLA3	11
+selbagnone	1	3166806	Selbagnone	44.1741	12.1091	IT	Emilia-Romagna	3177401	Forlì-Cesena	708	PPL	34
+selbagnone bis	1	9033864	Selbagnone Bis	44.1774	12.0992	IT	Emilia-Romagna	3177401	Forlì-Cesena	32	PPL	30
+selbio	1	8951839	Selbio	38.4353	15.9610	IT	Calabria	2525468	Reggio Calabria	280	PPL	76
+selbitz	1	2765181	Selbitz	48.5433	15.0431	AT	Bassa Austria	2770542	Politischer Bezirk Zwettl	0	PPL	671
+selca	1	3191133	Selca	46.2244	14.2056	SI	Železniki	3239093		666	PPL	469
+selce	1	3191128	Selce	46.5167	15.8333	SI	Municipality of Lenart	3196684		359	PPL	310
+selce	1	3191129	Selce	45.7028	14.1894	SI	San Pietro del Carso	3239054		243	PPL	546
+selce	1	8988459	Selce	46.3564	15.2852	SI	Municipality of Vojnik	3239202		49	PPL	681
+selce	1	8988879	Selce	46.1952	14.7976	SI	Lukovica	3239188		28	PPL	671
+selce	1	8989306	Selce	46.0155	15.0445	SI	Municipality of Litija	3196424		8	PPL	547
+selce	1	8989907	Selce	46.2186	13.6502	SI	Municipality of Tolmin	3189037		10	PPL	391
+selce nad blanco	1	8989853	Selce nad Blanco	46.0115	15.4123	SI	Comune di Sevnica	3190949		54	PPL	306
+selce pri leskovcu	1	8989861	Selce pri Leskovcu	45.9441	15.4520	SI	Urban Municipality of Krško	3197146		48	PPL	195
+selce pri moravcah	1	8989607	Selce pri Moravčah	46.1470	14.7637	SI	Municipality of Moravče	3239132		30	PPL	411
+selce pri speharjih	1	8989352	Selce pri Špeharjih	45.4555	15.1404	SI	Črnomelj	3202332		5	PPL	277
+selcetta	1	8948759	Selcetta	41.7653	12.4753	IT	Lazio	3174976	Roma	6772	PPL	66
+selci	1	3166803	Selci	43.5000	12.1833	IT	Umbria	3165048	Perugia	0	PPL	284
+selci	1	3166804	Selci	42.3029	12.6213	IT	Lazio	3174976	Rieti	623	PPLA3	204
+selci lama	1	3175224	Selci-Lama	43.5172	12.2129	IT	Umbria	3165048	Perugia	4837	PPL	322
+sele	0	3202781	Celje	46.2309	15.2604	SI	Urban Municipality of Celje	3202780		38059	PPLA	240
+sele	1	3191125	Sele	46.5000	15.0167	SI	Urban Municipality of Slovenj Gradec	3190535		257	PPL	664
+sele	1	8988908	Sele	46.1748	15.4198	SI	Comune di Šentjur	3191028		27	PPL	490
+sele part	1	8989916	Sele - part	46.5151	15.0069	SI	Municipality of Ravne na Koroškem	3239175		0	PPL	492
+sele pri polskavi	1	8987350	Sele pri Polskavi	46.4231	15.6353	SI	Municipality of Slovenska Bistrica	3190533		168	PPL	269
+seledin	1	2975235	Sélédin	48.2560	-3.0716	FR	Bretagna	3030293	Côtes-d'Armor	0	PPL	209
+selegas	1	2523165	Selegas	39.5678	9.1035	IT	Sardegna	2523228	Sud Sardegna	1295	PPLA3	234
+selenitzasattel	1	3323295	Selenitzasattel	46.4328	14.2369	AT				0	PASS	1677
+selens	1	2975234	Selens	49.5010	3.2094	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	210	PPL	72
+selesen	1	2765185	Selesen	46.7500	14.5000	AT	Carinzia	2774686	Politischer Bezirk Sankt Veit an der Glan	32	PPL	578
+selesta	0	2975233	Sélestat	48.2619	7.4489	FR	Gran Este	11071622	Basso Reno	18941	PPLA3	175
+selestadium	0	2975233	Sélestat	48.2619	7.4489	FR	Gran Este	11071622	Basso Reno	18941	PPLA3	175
+selestat	1	2975233	Sélestat	48.2619	7.4489	FR	Gran Este	11071622	Basso Reno	18941	PPLA3	175
+seleuji	0	3027883	Cergy	49.0365	2.0761	FR	Île-de-France	3012874	Val-d'Oise	57576	PPL	47
+seleute	1	8468992	Seleute	47.3667	7.1115	CH	Canton Giura	2660207	Distretto di Porrentruy	0	PPL	651
+selfranga	1	2658638	Selfranga	46.8614	9.8842	CH	Cantone dei Grigioni	2660522	Region Prättigau / Davos	0	PPL	1225
+selhan	0	2975265	Seillans	43.6362	6.6433	FR	Provenza-Alpi-Costa Azzurra	2985244	Varo	2286	PPL	413
+seliano	1	8977830	Seliano	40.4462	14.9942	IT	Campania	3181042	Salerno	18	PPL	11
+selibuelsattel	1	11075647	Selibüelsattel	46.7336	7.4291	CH	Canton Berna	2661551	Bern-Mittelland District	0	PASS	1634
+seligne	1	2975231	Séligné	46.1442	-0.2831	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	143	PPL	47
+seligney	1	2975230	Séligney	46.9385	5.5387	FR	Borgogna-Franca Contea	11071619	Giura	78	PPL	222
+seligny	1	2975229	Seligny	46.9641	0.5777	FR	Centro-Valle della Loira	3027939	Indre e Loira	0	PPL	69
+selije	0	3004813	Le Cellier	47.3196	-1.3472	FR	Paesi della Loira	2988289	Loira Atlantica	3596	PPL	63
+selije	0	3027980	Cellieu	45.5187	4.5433	FR	Alvernia-Rodano-Alpi	11071625	Loira	1513	PPL	514
+selincourt	1	2975228	Selincourt	49.8772	1.9011	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	0	PPL	131
+selino alto	1	9035528	Selino Alto	45.8204	9.5428	IT	Lombardia	3174618	Bergamo	386	PPL	563
+selino basso	1	8948940	Selino Basso	45.8103	9.5350	IT	Lombardia	3174618	Bergamo	2329	PPLA3	398
+selinunte	1	12022810	Selinunte	45.4707	9.1387	IT	Lombardia	3174618	Milano	0	PPLX	127
+selisce	1	8988849	Selišče	45.7380	15.0671	SI	Dolenjske Toplice	3344910		30	PPL	211
+selisce	1	8989162	Selišče	46.2129	13.6579	SI	Municipality of Tolmin	3189037		15	PPL	223
+selisci	1	3191116	Selišči	46.5667	16.0833	SI	Municipality of Sveti Jurij ob Ščavnici	3239259		104	PPL	213
+selje	0	3202781	Celje	46.2309	15.2604	SI	Urban Municipality of Celje	3202780		38059	PPLA	240
+selkach	1	2765183	Selkach	46.5429	14.0944	AT	Carinzia	2774686	Politischer Bezirk Villach Land	0	PPL	463
+selker	1	2765182	Selker	48.3920	14.5551	AT	Alta Austria	2769848	Politischer Bezirk Freistadt	115	PPL	504
+selkingen	1	7670402	Selkingen	46.4552	8.2155	CH	Canton Vallese	2658205	distretto di Goms	0	PPL	1318
+sella	1	11075648	Sella	46.2711	8.9125	CH	Canton Ticino	2658370	Distretto di Locarno	0	PASS	2368
+sella	1	11075649	Sella	46.4163	9.0427	CH	Canton Ticino	2658370	Distretto di Blenio	0	PASS	2006
+sella	1	3217592	Sella	45.8603	13.0145	IT	Friuli Venezia Giulia	3176525	Udine	36	PPL	12
+sella	1	8956321	Sella	45.6296	8.0499	IT	Piemonte	3170831	Biella	100	PPL	707
+sella	1	8957249	Sella	46.3604	11.2412	IT	Trentino-Alto Adige	3165244	Bolzano	87	PPL	442
+sella	1	8957612	Sella	44.4765	9.0967	IT	Liguria	3174725	Genova	83	PPL	587
+sella	1	8959137	Sella	45.6532	8.1462	IT	Piemonte	3170831	Biella	70	PPL	683
+sella	1	8971110	Sella	45.7480	8.3265	IT	Piemonte	3170831	Vercelli	27	PPL	646
+sella	1	8983202	Sella	45.9060	8.1871	IT	Piemonte	3170831	Vercelli	8	PPLL	1274
+sella carnizza	1	3219856	Sella Carnizza	46.3378	13.3159	IT	Friuli Venezia Giulia	3176525	Udine	0	PASS	1086
+sella cavone	1	3179258	Sella Cavone	42.3833	13.7167	IT	Abruzzo	3183560	dell’Aquila	0	PASS	1791
+sella cercevesa	1	3219051	Sella Cercevesa	46.5892	13.0453	IT	Friuli Venezia Giulia	3176525	Udine	0	PASS	1866
+sella cessuta	1	3178941	Sella Cessuta	40.2500	15.7833	IT	Campania	3181042	Salerno	0	PASS	930
+sella chianzutan	1	3220110	Sella Chianzutan	46.3600	12.9361	IT	Friuli Venezia Giulia	3176525	Udine	0	PASS	1019
+sella ciampigotto	1	11593374	Sella Ciampigotto	46.4868	12.5841	IT	Veneto	3164604	Belluno	0	PASS	1790
+sella clinac	1	3218962	Sella Clinac	46.5364	13.3986	IT	Friuli Venezia Giulia	3176525	Udine	0	PASS	1402
+sella contuberno	1	2524936	Sella Contuberno	37.6333	13.5000	IT	Sicilia	2523119	Agrigento	0	PASS	986
+sella dei due corni	1	3177461	Sella dei Due Corni	42.4751	13.5614	IT	Abruzzo	3183560	Teramo	0	PASS	2547
+sella dei grilli	1	3175814	Sella dei Grilli	42.4654	13.5274	IT	Abruzzo	3183560	dell’Aquila	0	PASS	2227
+sella del brecciaio	1	3181589	Sella del Brecciaio	42.4679	13.5543	IT	Abruzzo	3183560	Teramo	0	PASS	2506
+sella del corno grande	1	3178043	Sella del Corno Grande	42.4616	13.5642	IT	Abruzzo	3183560	Teramo	0	PASS	2421
+sella del rotolon	1	6695040	Sella del Rotolon	45.7235	11.1571	IT	Trentino-Alto Adige	3165244	Trento	0	PASS	1523
+sella della marzola	1	6941440	Sella della Marzola	46.0305	11.1855	IT	Trentino-Alto Adige	3165244	Trento	0	PASS	1692
+sella della turra	1	3166794	Sella della Turra	44.2500	7.7333	IT	Piemonte	3170831	Cuneo	0	PPL	1558
+sella di bivio	1	3191088	Sella di Bivio	45.8900	13.7883	SI	Comune di Aidussina	3204853		441	PPL	151
+sella di camporosso	1	3180926	Sella di Camporosso	46.5000	13.5167	IT	Friuli Venezia Giulia	3176525	Udine	0	PASS	1061
+sella di cereschiatis	1	3219032	Sella di Cereschiatis	46.5040	13.2455	IT	Friuli Venezia Giulia	3176525	Udine	0	PASS	1088
+sella di conza	1	3178146	Sella di Conza	40.8333	15.3000	IT	Campania	3181042	Salerno	0	PASS	660
+sella di corno	1	3178048	Sella di Corno	42.3667	13.1833	IT	Abruzzo	3183560	dell’Aquila	0	PASS	1015
+sella di corno	1	8658815	Sella di Corno	42.3666	13.1814	IT	Abruzzo	3183560	dell’Aquila	146	PPL	996
+sella di corticato	1	3177964	Sella di Corticato	40.4000	15.4333	IT	Campania	3181042	Salerno	0	PASS	1103
+sella di dobbiaco	1	3177570	Sella di Dobbiaco	46.7333	12.2333	IT	Trentino-Alto Adige	3165244	Bolzano	0	PASS	1375
+sella di fadalto	1	3177308	Sella di Fadalto	46.0667	12.3333	IT	Veneto	3164604	Treviso	0	PASS	300
+sella di leonessa	1	11073768	Sella di Leonessa	42.4748	13.0063	IT	Lazio	3174976	Rieti	0	PASS	1895
+sella di monte corvo	1	3172962	Sella di Monte Corvo	42.4735	13.4972	IT	Abruzzo	3183560	dell’Aquila	0	PASS	2305
+sella di razzo	1	11593359	Sella di Razzo	46.4768	12.6151	IT	Veneto	3164604	Belluno	0	PASS	1766
+sella di rioda	1	11593358	Sella di Rioda	46.4749	12.6359	IT	Veneto	3164604	Belluno	0	PASS	1800
+sella di san cristoforo	1	3168452	Sella di San Cristoforo	42.3833	13.6833	IT	Abruzzo	3183560	dell’Aquila	0	PASS	1527
+sella fontelacasa	1	3176784	Sella Fontelacasa	41.9500	14.6000	IT	Abruzzo	3183560	Chieti	0	PASS	526
+sella foredor	1	3220078	Sella Foredor	46.2886	13.1547	IT	Friuli Venezia Giulia	3176525	Udine	0	PASS	574
+sella iacci	1	11073805	Sella Iacci	42.4844	13.0127	IT	Lazio	3174976	Rieti	0	PASS	1792
+sella nevea	1	8963670	Sella Nevea	46.3898	13.4745	IT	Friuli Venezia Giulia	3176525	Udine	46	PPL	1158
+sella nuova	1	12022921	Forze Armate - Sella Nuova	45.4583	9.1111	IT	Lombardia	3174618	Milano	0	PPLX	125
+sella pradut	1	3220099	Sella Pradut	46.4158	13.0778	IT	Friuli Venezia Giulia	3176525	Udine	0	PASS	997
+sella spagnuola	1	2523037	Sella Spagnuola	37.4333	13.4833	IT	Sicilia	2523119	Agrigento	0	PASS	426
+sella spinella	1	2523018	Sella Spinella	37.7833	13.3667	IT	Sicilia	2523119	Palermo	0	PASS	770
+sella venacquaro	1	7874680	Sella Venacquaro	42.4678	13.4959	IT	Abruzzo	3183560	dell’Aquila	0	PASS	2236
+sella, fuorcla da la	1	11074670	Sella, Fuorcla da la	46.3652	9.8740	IT	Lombardia	3174618	Sondrio	0	PASS	3255
+sellano	1	3166793	Sellano	42.8873	12.9231	IT	Umbria	3165048	Perugia	247	PPLA3	640
+sellano	1	8970349	Sellano	43.1542	13.0140	IT	Marche	3174004	Macerata	29	PPL	517
+sellarino	1	8973978	Sellarino	44.7437	11.7474	IT	Emilia-Romagna	3177401	Ferrara	23	PPL	1
+sellaro	1	8961796	Sellaro	40.8841	14.3740	IT	Campania	3181042	Napoli	54	PPL	53
+selle	1	11074570	Selle	45.9381	7.7625	IT	Valle d'Aosta	3164857	Aosta	0	PASS	4020
+selle	1	11075658	Selle	46.1217	7.8472	CH	Canton Vallese	2658205	Distretto di Visp	0	PASS	3858
+selle	1	2975227	Selle	44.7000	1.6000	FR	Occitania	11071623	Lot	0	PPL	339
+selle	1	8977504	Selle	46.2260	11.9897	IT	Veneto	3164604	Belluno	18	PPL	925
+sellecchia	1	8964012	Sellecchia	42.4637	12.7749	IT	Lazio	3174976	Rieti	45	PPL	376
+sellenburen	1	6252014	Sellenbüren	47.3436	8.4830	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	1572	PPLX	560
+sellenburen / alt uetlibergweg	1	6290607	Sellenbüren / Alt-Uetlibergweg	47.3414	8.4870	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	158	PPLX	573
+sellenburen / atrium	1	6290609	Sellenbüren / Atrium	47.3384	8.4877	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	261	PPLX	560
+sellenburen / buel	1	6290604	Sellenbüren / Büel	47.3466	8.4817	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	211	PPLX	583
+sellenburen / chirchhof	1	6290599	Sellenbüren / Chirchhof	47.3488	8.4773	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	12	PPLL	569
+sellenburen / diebis	1	6290598	Sellenbüren / Diebis	47.3506	8.4760	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	36	PPLX	556
+sellenburen / loomatt	1	6290608	Sellenbüren / Loomatt	47.3397	8.4866	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	80	PPLX	559
+sellenburen / rainstrasse hofstetterweidweg	1	6290605	Sellenbüren / Rainstrasse-Hofstetterweidweg	47.3437	8.4842	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	124	PPLX	573
+sellenburen / talblick	1	6290606	Sellenbüren / Talblick	47.3430	8.4873	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	60	PPLX	611
+sellenburen / weidelacher	1	6290600	Sellenbüren / Weidelacher	47.3479	8.4799	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	146	PPLX	600
+sellenburen / zugnis	1	6290610	Sellenbüren / Zügnis	47.3366	8.4877	CH	Cantone di Zurigo	2657895	Bezirk Affoltern	104	PPLX	550
+sellengehr	1	2765223	Sellengehr	47.5831	9.8000	AT	Vorarlberg	2762300	Politischer Bezirk Bregenz	0	PPL	687
+sellero	1	3166791	Sellero	46.0515	10.3476	IT	Lombardia	3174618	Brescia	987	PPLA3	476
+selles	0	2975215	Selles-sur-Cher	47.2790	1.5539	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	4933	PPL	80
+selles	0	2975216	Selles-Saint-Denis	47.3869	1.9229	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	1242	PPL	97
+selles	1	2975219	Selles	50.7002	1.8960	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	291	PPL	63
+selles	1	2975220	Selles	49.3075	4.2852	FR	Gran Este	11071622	Marna	250	PPL	91
+selles	1	2975221	Selles	49.3010	0.5035	FR	Normandia	11071621	Eure	418	PPL	127
+selles	1	2975222	Selles	47.9633	6.0887	FR	Borgogna-Franca Contea	11071619	Alta Saona	252	PPL	245
+selles saint denis	1	2975216	Selles-Saint-Denis	47.3869	1.9229	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	1242	PPL	97
+selles sur cher	1	2975215	Selles-sur-Cher	47.2790	1.5539	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	4933	PPL	80
+selles sur nahon	1	2975214	Selles-sur-Nahon	47.0000	1.4500	FR	Centro-Valle della Loira	3027939	Indre	72	PPL	134
+selletta	1	8974203	Selletta	45.5884	8.0859	IT	Piemonte	3170831	Biella	23	PPL	544
+sellhof	1	2765180	Sellhof	47.6000	16.0167	AT	Bassa Austria	2770542	Politischer Bezirk Neunkirchen	0	PPL	633
+sellia	1	2523163	Sellia	38.9821	16.6307	IT	Calabria	2525468	Catanzaro	480	PPLA3	560
+sellia marina	1	6535319	Sellia Marina	38.8860	16.7493	IT	Calabria	2525468	Catanzaro	3867	PPLA3	82
+sellica	1	8967538	Sellica	38.1295	14.8541	IT	Sicilia	2523119	Messina	35	PPL	606
+sellieres	1	2975210	Sellières	46.8276	5.5642	FR	Borgogna-Franca Contea	11071619	Giura	824	PPL	224
+sellina	1	8982365	Sellina	39.1721	16.0939	IT	Calabria	2525468	Cosenza	11	PPL	537
+sellitte	1	8954862	Sellitte	39.5058	16.2376	IT	Calabria	2525468	Cosenza	127	PPL	99
+sellitti	1	8982334	Sellitti	41.0086	14.7302	IT	Campania	3181042	Avellino	11	PPL	503
+sellrain	1	3319573	Sellrain	47.2167	11.2167	AT	Tirolo	2763586	Politischer Bezirk Innsbruck Land	1333	PPLA3	954
+selluzza	1	8953346	Selluzza	43.3739	11.8066	IT	Toscana	3165361	Arezzo	191	PPL	249
+selma	1	2658636	Selma	46.3204	9.1200	CH	Cantone dei Grigioni	2660522	Region Moesa	49	PPL	934
+selnica	0	3191094	Selnica ob Muri	46.6833	15.7000	SI	Municipality of Šentilj	3239214		1078	PPLL	301
+selnica	0	3339128	Selnica ob Dravi	46.5518	15.4929	SI	Municipality of Selnica ob Dravi	3344919		1348	PPLA	309
+selnica ob dravi	1	3339128	Selnica ob Dravi	46.5518	15.4929	SI	Municipality of Selnica ob Dravi	3344919		1348	PPLA	309
+selnica ob muri	1	3191094	Selnica ob Muri	46.6833	15.7000	SI	Municipality of Šentilj	3239214		1078	PPLL	301
+selnik	1	8989030	Selnik	45.9003	14.5602	SI	Ig	3239069		21	PPL	541
+selnika oba drabhi	0	3339128	Selnica ob Dravi	46.5518	15.4929	SI	Municipality of Selnica ob Dravi	3344919		1348	PPLA	309
+selnika oba dravi	0	3339128	Selnica ob Dravi	46.5518	15.4929	SI	Municipality of Selnica ob Dravi	3344919		1348	PPLA	309
+selnitsa ob dravi	0	3339128	Selnica ob Dravi	46.5518	15.4929	SI	Municipality of Selnica ob Dravi	3344919		1348	PPLA	309
+selo	1	3191086	Selo	46.7279	16.2886	SI	Moravske Toplice	3239279		265	PPL	286
+selo	1	3191087	Selo	46.0667	14.1000	SI	Municipality of Žiri	3239087		298	PPL	523
+selo	1	3191088	Sella di Bivio	45.8900	13.7883	SI	Comune di Aidussina	3204853		441	PPL	151
+selo	1	3218117	Selo	45.5325	15.3019	SI	Črnomelj	3202332		0	PPL	194
+selo	1	3218339	Selo	46.1794	13.8175	SI	Municipality of Tolmin	3189037		0	PPL	800
+selo	1	3218380	Selo	46.1425	13.7222	SI	Municipality of Tolmin	3189037		0	PPL	281
+selo	1	8989041	Selo	45.8024	13.8960	SI	Municipality of Sežana	3190944		21	PPL	470
+selo	1	8989212	Selo	45.8622	15.4541	SI	Urban Municipality of Krško	3197146		13	PPL	149
+selo nad laskim	1	3338864	Selo nad Laškim	46.1249	15.2661	SI	Laško	3196759		35	PPL	456
+selo nad polhovim gradcem	1	8988690	Selo nad Polhovim Gradcem	46.0960	14.2981	SI	Municipality of Dobrova–Polhov Gradec	3239096		36	PPL	610
+selo pri bledu	1	8987222	Selo pri Bledu	46.3510	14.1067	SI	Municipality of Bled	3239103		213	PPL	434
+selo pri ihanu	1	8987046	Selo pri Ihanu	46.1063	14.6310	SI	Municipality of Domžale	3201729		292	PPL	383
+selo pri kostelu	1	8989674	Selo pri Kostelu	45.5140	14.8924	SI	Municipality of Kostel	3344908		2	PPL	412
+selo pri mirni	1	3218231	Selo pri Mirni	45.9742	15.0289	SI	Comune di Trebnje	3188885		66	PPL	385
+selo pri moravcah	1	8989845	Selo pri Moravčah	46.1365	14.6948	SI	Municipality of Moravče	3239132		63	PPL	367
+selo pri pancah	1	8988364	Selo pri Pancah	46.0062	14.6625	SI	Lubiana	3239318		54	PPL	529
+selo pri radohovi vasi	1	8988693	Selo pri Radohovi Vasi	45.9555	14.8743	SI	Municipality of Ivančna Gorica	3239191		36	PPL	327
+selo pri robu	1	8988710	Selo pri Robu	45.8347	14.5302	SI	Municipality of Velike Lašče	3239062		36	PPL	812
+selo pri vodicah	1	8989742	Selo pri Vodicah	46.1606	14.5152	SI	Municipality of Vodice	3239112		266	PPL	327
+selo pri vranskem	1	8988098	Selo pri Vranskem	46.2598	14.9603	SI	Municipality of Vransko	3344903		74	PPL	501
+selo pri zagorici	1	8988776	Selo pri Zagorici	45.8672	15.1286	SI	Mirna Peč	3344911		33	PPL	256
+selo pri zagorju	1	8989737	Selo pri Zagorju	46.1374	15.0104	SI	Municipality of Zagorje ob Savi	3186905		309	PPL	290
+selo pri zirovnici	1	8987041	Selo pri Žirovnici	46.3972	14.1416	SI	Municipality of Žirovnica	3344893		296	PPL	548
+seloge	1	2975207	Seloge	45.7222	6.7630	FR	Alvernia-Rodano-Alpi	11071625	Savoia	0	PPL	1801
+selommes	1	2975206	Selommes	47.7559	1.1940	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	790	PPL	121
+selon	0	2976341	Salon-de-Provence	43.6423	5.0948	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	41397	PPL	80
+selon de provenca	0	2976341	Salon-de-Provence	43.6423	5.0948	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	41397	PPL	80
+seloncourt	1	2975204	Seloncourt	47.4599	6.8553	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	6046	PPL	361
+selongey	1	2975203	Selongey	47.5885	5.1848	FR	Borgogna-Franca Contea	11071619	Cote d'Or	2348	PPL	298
+selonnet	1	2975202	Selonnet	44.3713	6.3110	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	435	PPL	1069
+selovec	1	8986924	Selovec	46.5507	15.0265	SI	Municipality of Dravograd	3201252		471	PPL	718
+selpritsch	1	2765177	Selpritsch	46.5995	14.0256	AT	Carinzia	2774686	Politischer Bezirk Villach Land	789	PPL	514
+sels	1	2975201	Sels	44.9910	2.3561	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	686
+selscek	1	3191084	Selšček	45.8325	14.3956	SI	Municipality of Cerknica	3202707		124	PPL	792
+selsek	1	8988010	Selšek	46.0373	14.8819	SI	Municipality of Šmartno pri Litiji	3344942		82	PPL	291
+selska gora	1	8989890	Selska Gora	45.9611	15.0228	SI	Comune di Trebnje	3188885		21	PPL	368
+selski vrh	1	8987920	Selski Vrh	46.3095	15.5334	SI	Municipality of Slovenske Konjice	3190529		90	PPL	309
+selsoif	1	12312064	Selsoif	49.3683	-1.5055	FR	Normandia	11071621	Manica	0	PPL	7
+seltenheim	1	2765176	Seltenheim	46.6500	14.2500	AT	Carinzia	2774686	Klagenfurt am Wörthersee	0	PPL	453
+selti	1	11488757	Selti	46.6107	7.3060	CH	Canton Friburgo	2660717	Gruyère District	0	PPL	1200
+seltimo san pietro	0	2523135	Settimo San Pietro	39.2911	9.1857	IT	Sardegna	2523228	Cagliari	6361	PPLA3	70
+seltisberg	1	2658635	Seltisberg	47.4625	7.7204	CH	Canton Basilea Campagna	2661603	Distretto di Liestal	1412	PPL	496
+seltot	1	2975200	Seltot	49.7253	0.8095	FR	Normandia	11071621	Senna marittima	0	PPL	150
+seltschach	1	2765175	Seltschach	46.5387	13.7028	AT	Carinzia	2774686	Politischer Bezirk Villach Land	398	PPL	706
+seltz	1	2975199	Seltz	48.8952	8.1076	FR	Gran Este	11071622	Basso Reno	3171	PPL	122
+seluci	1	9032633	Seluci	40.0712	15.9480	IT	Basilicata	3182306	Potenza	15	PPL	658
+selva	1	11113887	Selva	45.9953	8.8921	CH	Canton Ticino	2658370	Distretto di Lugano	0	PPL	397
+selva	1	11113908	Selva	45.9880	8.8639	CH	Canton Ticino	2658370	Distretto di Lugano	0	PPL	481
+selva	1	3166784	Selva di Val Gardena	46.5547	11.7604	IT	Trentino-Alto Adige	3165244	Bolzano	1601	PPLA3	1567
+selva	1	3166785	Selva	46.0156	11.5957	IT	Trentino-Alto Adige	3165244	Trento	98	PPL	267
+selva	1	3166786	Selva	44.9990	11.8481	IT	Veneto	3164604	Rovigo	73	PPL	3
+selva	1	3166788	Selva	44.5847	9.4840	IT	Emilia-Romagna	3177401	Piacenza	69	PPL	1107
+selva	1	3166789	Selva	43.2667	11.1000	IT	Toscana	3165361	Siena	0	PPL	580
+selva	1	3220296	Selva	46.1217	12.6114	IT	Friuli Venezia Giulia	3176525	Pordenone	0	PPL	316
+selva	1	6694155	Selva	44.3049	9.9589	IT	Toscana	3165361	Massa-Carrara	22	PPLX	166
+selva	1	7670403	Selva	46.6610	8.7217	CH	Cantone dei Grigioni	2660522	Region Surselva	0	PPL	1537
+selva	1	8949107	Selva	42.1144	14.3443	IT	Abruzzo	3183560	Chieti	1597	PPL	128
+selva	1	8950452	Selva	45.6803	9.8799	IT	Lombardia	3174618	Bergamo	484	PPL	281
+selva	1	8950850	Selva	44.5566	11.6285	IT	Emilia-Romagna	3177401	Bologna	401	PPL	12
+selva	1	8953109	Selva	45.4656	11.3595	IT	Veneto	3164604	Vicenza	205	PPL	78
+selva	1	8953305	Selva	45.5821	11.3089	IT	Veneto	3164604	Vicenza	196	PPL	540
+selva	1	8953313	Selva	44.3362	11.7608	IT	Emilia-Romagna	3177401	Bologna	195	PPL	56
+selva	1	8956000	Selva	46.1785	9.3770	IT	Lombardia	3174618	Como	104	PPL	463
+selva	1	8956049	Selva	42.0714	14.2125	IT	Abruzzo	3183560	Chieti	104	PPL	571
+selva	1	8956300	Selva	42.7936	11.5997	IT	Toscana	3165361	Grosseto	100	PPL	786
+selva	1	8961788	Selva	41.7012	13.8019	IT	Lazio	3174976	Frosinone	54	PPL	510
+selva	1	8963161	Selva	44.8128	11.7681	IT	Emilia-Romagna	3177401	Ferrara	48	PPL	0
+selva	1	8964607	Selva	40.2691	15.1143	IT	Campania	3181042	Salerno	43	PPL	70
+selva	1	8965198	Selva	44.1193	11.2968	IT	Toscana	3165361	Firenze	41	PPL	836
+selva	1	8965264	Selva	42.5193	13.9046	IT	Abruzzo	3183560	Teramo	41	PPL	164
+selva	1	8974095	Selva	41.1257	14.9546	IT	Campania	3181042	Benevento	23	PPL	443
+selva	1	8976918	Selva	43.8671	10.7297	IT	Toscana	3165361	Pistoia	19	PPL	32
+selva	1	8979505	Selva	44.1812	8.3742	IT	Liguria	3174725	Savona	15	PPL	118
+selva	1	8980916	Selva	44.6017	9.0501	IT	Liguria	3174725	Genova	13	PPL	563
+selva	1	8982170	Selva	44.6415	9.3793	IT	Emilia-Romagna	3177401	Piacenza	11	PPL	1061
+selva	1	8983056	Selva	44.2103	11.1997	IT	Emilia-Romagna	3177401	Bologna	9	PPLL	473
+selva	1	8983878	Selva	44.7531	9.7523	IT	Emilia-Romagna	3177401	Piacenza	6	PPLL	571
+selva ansaldo	1	8951392	Selva-Ansaldo	44.2133	12.1027	IT	Emilia-Romagna	3177401	Forlì-Cesena	325	PPL	23
+selva bassa	1	8967849	Selva Bassa	43.8438	10.9542	IT	Toscana	3165361	Pistoia	34	PPL	113
+selva candida	1	12023104	Selva Candida	41.9347	12.3773	IT	Lazio	3174976	Roma	0	PPLX	91
+selva casa martini	1	8954294	Selva-Casa Martini	44.3964	10.7930	IT	Emilia-Romagna	3177401	Modena	142	PPL	722
+selva cimino	1	8963217	Selva Cimino	41.2600	13.8215	IT	Lazio	3174976	Latina	48	PPL	12
+selva dei molini	1	3166777	Selva dei Molini	46.8903	11.8583	IT	Trentino-Alto Adige	3165244	Bolzano	479	PPLA3	1229
+selva dei muli	1	8968332	Selva dei Muli	41.6283	13.2945	IT	Lazio	3174976	Frosinone	33	PPL	194
+selva del montello	1	3218756	Selva del Montello	45.7884	12.1435	IT	Veneto	3164604	Treviso	1749	PPL	87
+selva del turchese	1	8981870	Selva del Turchese	40.1303	18.4737	IT	Puglia	3169778	Lecce	12	PPL	43
+selva di cadore	1	3166775	Selva di Cadore	46.4503	12.0569	IT	Veneto	3164604	Belluno	563	PPLA3	1505
+selva di dentro	1	8965430	Selva di Dentro	46.8940	11.8356	IT	Trentino-Alto Adige	3165244	Bolzano	40	PPL	1225
+selva di fasano	1	3166774	Selva di Fasano	40.8279	17.3220	IT	Puglia	3169778	Brindisi	0	PPL	391
+selva di progno	1	6535000	Selva di Progno	45.6114	11.1380	IT	Veneto	3164604	Verona	179	PPLA3	570
+selva di val gardena	1	3166784	Selva di Val Gardena	46.5547	11.7604	IT	Trentino-Alto Adige	3165244	Bolzano	1601	PPLA3	1567
+selva grossa	1	3166773	Selva Grossa	44.6119	10.0110	IT	Emilia-Romagna	3177401	Parma	26	PPL	507
+selva i	1	9031128	Selva I	41.5603	14.7203	IT	Molise	3173222	Campobasso	49	PPL	525
+selva ii	1	9034109	Selva II	41.5595	14.7134	IT	Molise	3173222	Campobasso	21	PPL	533
+selva iii	1	8962015	Selva III	41.5581	14.7099	IT	Molise	3173222	Campobasso	53	PPL	512
+selva inferiore	1	3166787	Selva Inferiore	44.7918	9.0570	IT	Piemonte	3170831	Alessandria	28	PPL	329
+selva maggiore	1	8958970	Selva Maggiore	41.5819	13.5056	IT	Lazio	3174976	Frosinone	71	PPL	174
+selva nera	1	8962974	Selva Nera	40.6154	15.2150	IT	Campania	3181042	Salerno	49	PPL	179
+selva nera	1	8975474	Selva Nera	42.4025	11.4070	IT	Toscana	3165361	Grosseto	21	PPL	16
+selva piana	1	8969357	Selva Piana	42.7010	13.8733	IT	Abruzzo	3183560	Teramo	31	PPL	71
+selva piana	1	8984388	Selva Piana	41.5665	14.6303	IT	Molise	3173222	Campobasso	4	PPLL	631
+selva piana	1	9035508	Selva Piana	42.1246	14.2980	IT	Abruzzo	3183560	Chieti	455	PPL	148
+selva piana baia d argento	1	8967053	Selva Piana-Baia d'Argento	41.2520	13.0562	IT	Lazio	3174976	Latina	36	PPL	22
+selva sopra	1	8964808	Selva Sopra	44.6945	9.6469	IT	Emilia-Romagna	3177401	Piacenza	42	PPL	909
+selva sotto	1	9032690	Selva Sotto	44.6937	9.6428	IT	Emilia-Romagna	3177401	Piacenza	14	PPL	881
+selva superiore	1	9035223	Selva Superiore	44.7954	9.0587	IT	Piemonte	3170831	Alessandria	14	PPL	406
+selvacava	1	3166778	Selvacava	41.3535	13.7325	IT	Lazio	3174976	Frosinone	335	PPL	246
+selvaccia	1	8973391	Selvaccia	43.3218	11.2697	IT	Toscana	3165361	Siena	24	PPL	292
+selvafranca	1	8955122	Selvafranca	41.4415	14.7217	IT	Molise	3173222	Campobasso	121	PPL	755
+selvaggia	1	8968983	Selvaggia	44.7031	8.5892	IT	Piemonte	3170831	Alessandria	31	PPL	263
+selvaggio	1	8968026	Selvaggio	44.9792	7.1524	IT	Piemonte	3170831	Torino	33	PPL	764
+selvaiella	1	8963515	Selvaiella	42.4318	14.0815	IT	Abruzzo	3183560	Pescara	47	PPL	158
+selvalagli	1	8953153	Selvalagli	43.2185	13.0667	IT	Marche	3174004	Macerata	204	PPL	288
+selvalonga	1	8961192	Selvalonga	41.3897	13.8441	IT	Lazio	3174976	Frosinone	57	PPL	82
+selvamaggio	1	8952053	Selvamaggio	43.4122	11.1481	IT	Toscana	3165361	Siena	262	PPL	222
+selvamaggiore	1	8978273	Selvamaggiore	45.7525	12.8801	IT	Veneto	3164604	Venezia	17	PPL	1
+selvanelli	1	8967412	Selvanelli	43.1634	11.7586	IT	Toscana	3165361	Siena	35	PPL	347
+selvanera	1	11492996	Selvanera	46.6052	9.4522	CH	Cantone dei Grigioni	2660522	Region Viamala	0	PPL	1781
+selvanesco	1	8978847	Selvanesco	45.4187	9.1948	IT	Lombardia	3174618	Milano	16	PPL	103
+selvanese	1	8956702	Selvanese	45.5142	12.1985	IT	Veneto	3164604	Venezia	94	PPL	2
+selvanizza	1	3166772	Selvanizza	44.4373	10.2244	IT	Emilia-Romagna	3177401	Parma	89	PPL	532
+selvaperugina	1	8968803	Selvaperugina	43.6013	12.0022	IT	Toscana	3165361	Arezzo	32	PPL	639
+selvapiana	1	3166771	Selvapiana	43.8761	12.0417	IT	Emilia-Romagna	3177401	Forlì-Cesena	108	PPL	570
+selvapiana	1	8960611	Selvapiana	44.5640	10.4144	IT	Emilia-Romagna	3177401	Reggio Emilia	60	PPL	460
+selvapiana	1	8964129	Selvapiana	44.7651	9.1730	IT	Piemonte	3170831	Alessandria	44	PPL	767
+selvapiana	1	8964938	Selvapiana	41.4130	14.7441	IT	Molise	3173222	Campobasso	42	PPL	786
+selvapiana	1	8965581	Selvapiana	41.6514	13.7716	IT	Lazio	3174976	Frosinone	40	PPL	411
+selvapiana	1	8968285	Selvapiana	43.7936	11.4649	IT	Toscana	3165361	Firenze	33	PPL	101
+selvapiana	1	8978487	Selvapiana	43.2777	11.6386	IT	Toscana	3165361	Siena	17	PPL	319
+selvapiana	1	8982059	Selvapiana	46.1501	9.5782	IT	Lombardia	3174618	Sondrio	11	PPL	429
+selvarella	1	8955582	Selvarella	42.4353	12.2365	IT	Lazio	3174976	Viterbo	111	PPL	354
+selvarelle alte	1	9031499	Selvarelle Alte	42.7297	12.4943	IT	Umbria	3165048	Terni	33	PPL	265
+selvarelle basse	1	8965217	Selvarelle Basse	42.7264	12.4959	IT	Umbria	3165048	Terni	41	PPL	220
+selvarizzo	1	8965424	Selvarizzo	45.3002	10.6015	IT	Lombardia	3174618	Mantova	40	PPL	51
+selvatelle	1	3166769	Selvatelle	43.5628	10.6909	IT	Toscana	3165361	Pisa	1302	PPL	50
+selvatiche	1	8982959	Selvatiche	45.0958	10.0852	IT	Lombardia	3174618	Cremona	9	PPLL	36
+selvatico	1	8962129	Selvatico	45.4907	11.9470	IT	Veneto	3164604	Padova	52	PPL	11
+selvatine	1	8973463	Selvatine	40.2740	15.1156	IT	Campania	3181042	Salerno	24	PPL	200
+selvavecchia	1	3166768	Selvavecchia	45.6542	10.9724	IT	Veneto	3164604	Verona	16	PPL	1027
+selvavetere	1	13665314	Selvavetere	41.3028	13.3638	IT	Lazio	3174976	Latina	0	PPL	2
+selvazzano dentro	1	3166766	Selvazzano Dentro	45.3876	11.7923	IT	Veneto	3164604	Padova	7962	PPLA3	18
+selve	1	8954166	Selve	44.2913	11.2761	IT	Emilia-Romagna	3177401	Bologna	148	PPL	505
+selve	1	8955463	Selve	45.4031	11.7303	IT	Veneto	3164604	Padova	113	PPL	15
+selve	1	8960714	Selve	45.9540	9.0851	IT	Lombardia	3174618	Como	59	PPL	607
+selve	1	8965000	Selve	45.3244	8.3091	IT	Piemonte	3170831	Vercelli	41	PPL	150
+selve	1	8966692	Selve	42.2652	14.2303	IT	Abruzzo	3183560	Chieti	37	PPL	230
+selve	1	8974669	Selve	43.2912	13.6333	IT	Marche	3174004	Macerata	22	PPL	67
+selve	1	9031185	Selve	40.9000	14.7815	IT	Campania	3181042	Avellino	46	PPL	431
+selve di mondragone	1	8962696	Selve di Mondragone	41.8101	12.6992	IT	Lazio	3174976	Roma	50	PPL	396
+selve marcone	1	6534822	Selve Marcone	45.6198	8.0874	IT	Piemonte	3170831	Biella	103	PPLA3	759
+selve piane	1	8958167	Selve Piane	42.0695	13.2730	IT	Abruzzo	3183560	dell’Aquila	78	PPL	729
+selve vecchie	1	8956819	Selve Vecchie	40.8952	14.8143	IT	Campania	3181042	Avellino	93	PPL	353
+selvella	1	8984118	Selvella	44.2107	10.5618	IT	Emilia-Romagna	3177401	Modena	5	PPLL	1272
+selvelle	1	8960321	Selvelle	41.6641	13.6448	IT	Lazio	3174976	Frosinone	62	PPL	599
+selvena	1	3166765	Selvena	42.7670	11.6421	IT	Toscana	3165361	Grosseto	480	PPL	658
+selverine delle monache	1	8961644	Selverine delle Monache	41.5783	14.2333	IT	Molise	3173222	Isernia	55	PPL	398
+selvetta	1	3166764	Selvetta	46.1583	9.6870	IT	Lombardia	3174618	Sondrio	132	PPL	278
+selvigny	1	2975194	Selvigny	50.0797	3.3490	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	2162	PPL	139
+selvino	1	3166763	Selvino	45.7852	9.7529	IT	Lombardia	3174618	Bergamo	1984	PPLA3	960
+selvis	1	3219971	Selvis	46.0708	13.3195	IT	Friuli Venezia Giulia	3176525	Udine	238	PPL	101
+selvitelle	1	8982766	Selvitelle	41.5040	14.5233	IT	Molise	3173222	Campobasso	10	PPLL	572
+selvo	1	3214918	Selvo	44.2125	12.1275	IT	Emilia-Romagna	3177401	Forlì-Cesena	0	PPL	22
+selvola	1	8963427	Selvola	44.5328	9.5333	IT	Emilia-Romagna	3177401	Parma	47	PPL	992
+selvole	1	8966235	Selvole	43.4985	11.4171	IT	Toscana	3165361	Siena	38	PPL	493
+selvone	1	3166762	Selvone	41.5677	14.0525	IT	Molise	3173222	Isernia	125	PPL	580
+selvone	1	8967447	Selvone	41.4336	13.8695	IT	Lazio	3174976	Frosinone	35	PPL	58
+selvoni	1	8972859	Selvoni	41.9569	14.2102	IT	Abruzzo	3183560	Chieti	25	PPL	1089
+selvotta	1	8949933	Selvotta	41.4195	14.0875	IT	Molise	3173222	Isernia	662	PPL	158
+selvotta	1	8951559	Selvotta	41.5191	13.2975	IT	Lazio	3174976	Frosinone	305	PPL	169
+selvotta	1	8953241	Selvotta	42.1200	12.5612	IT	Lazio	3174976	Roma	201	PPL	75
+selvotta	1	8962949	Selvotta	41.4822	13.7226	IT	Lazio	3174976	Frosinone	49	PPL	106
+selvotta	1	8963224	Selvotta	41.3765	13.7343	IT	Lazio	3174976	Frosinone	48	PPL	181
+selvotta due torri	1	8956443	Selvotta-Due Torri	42.0408	12.4119	IT	Lazio	3174976	Roma	98	PPL	97
+selvuzzis	1	3166761	Selvuzzis	45.9837	13.3038	IT	Friuli Venezia Giulia	3176525	Udine	33	PPL	61
+selz	0	2975199	Seltz	48.8952	8.1076	FR	Gran Este	11071622	Basso Reno	3171	PPL	122
+selzach	1	2658634	Selzach	47.2053	7.4552	CH	Canton Soletta	2658563	Bezirk Lebern	2900	PPL	453
+selzthal	1	2765174	Selzthal	47.5499	14.3120	AT	Stiria	2764581	Politischer Bezirk Liezen	1023	PPLA3	634

@@ -57,6 +57,8 @@ function adessoItalia() {
 }
 function giornoPrima(g) { const d = new Date(g + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() - 1); return d.toISOString().slice(0, 10); }
 
+const { creaDir, segnaDir, direzione } = require('./lib-direzione.js');
+
 function num(v) { if (v == null || v === '' || v === '-') return null; const f = parseFloat(String(v).replace(',', '.')); return isNaN(f) ? null : f; }
 
 function parseAnemo(html) {
@@ -69,7 +71,8 @@ function parseAnemo(html) {
     if (out[id]) continue;                    // prima occorrenza = array completo
     const vel = num(v[6]), raff = num(v[7]), ora = (v[9] || '').replace('.', ':');
     const raffMaxIeri = num(v[15]), velMaxIeri = num(v[14]);
-    out[id] = { n: v[1], vel, raff, ora, raffMaxIeri, velMaxIeri };
+    const dir = num(v[8]);   // direzione istantanea, gradi (2/10/2026)
+    out[id] = { n: v[1], vel, raff, ora, raffMaxIeri, velMaxIeri, dir };
   }
   return out;
 }
@@ -97,6 +100,23 @@ function calcolaW(doc) {
   return w;
 }
 
+// Direzione del vento del giorno (2/10/2026): dai campioni orari che portano
+// il quarto elemento (gradi). I file di prima del 2/10 non ce l'hanno: niente wd.
+function calcolaWd(doc) {
+  const wd = {};
+  for (const [id, camp] of Object.entries(doc.campioni || {})) {
+    const acc = creaDir();
+    for (const c of camp) {
+      if (c.length < 4) continue;
+      if (c[1] == null || c[1] < 0 || c[1] >= 60) continue;
+      segnaDir(acc, String(c[0]).slice(0, 2), c[3], c[1]);
+    }
+    const d = direzione(acc);
+    if (d !== null) wd[id] = d;
+  }
+  return wd;
+}
+
 async function main() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
   const { giorno, ora } = adessoItalia();
@@ -117,11 +137,12 @@ async function main() {
     const arr = doc.campioni[id] = doc.campioni[id] || [];
     const chiave = s.ora || ora;
     if (arr.some(c => c[0] === chiave)) continue;    // stessa lettura gia' presa
-    arr.push([chiave, s.vel, s.raff]);
+    arr.push([chiave, s.vel, s.raff, s.dir]);
     nuovi++;
   }
   doc.collected = new Date().toISOString();
   doc.w = calcolaW(doc);
+  doc.wd = calcolaWd(doc);
   fs.writeFileSync(fOggi, JSON.stringify(doc));
   console.log(`  ${giorno} ${ora}: ${conVel} anemometri con velocita', ${nuovi} campioni nuovi; stazioni con w gia' calcolabile: ${Object.keys(doc.w).length}`);
 
@@ -132,9 +153,10 @@ async function main() {
   if (dIeri) {
     dIeri.raffMaxIeri = dIeri.raffMaxIeri || {};
     for (const id of ids) if (staz[id].raffMaxIeri != null) dIeri.raffMaxIeri[id] = staz[id].raffMaxIeri;
-    const prima = JSON.stringify(dIeri.w || {});
+    const prima = JSON.stringify([dIeri.w || {}, dIeri.wd || {}]);
     dIeri.w = calcolaW(dIeri);
-    if (JSON.stringify(dIeri.w) !== prima || !dIeri.chiuso) { dIeri.chiuso = true; fs.writeFileSync(fIeri, JSON.stringify(dIeri)); }
+    dIeri.wd = calcolaWd(dIeri);
+    if (JSON.stringify([dIeri.w, dIeri.wd]) !== prima || !dIeri.chiuso) { dIeri.chiuso = true; fs.writeFileSync(fIeri, JSON.stringify(dIeri)); }
     console.log(`  ${ieri}: w su ${Object.keys(dIeri.w).length} stazioni (campioni >= ${MIN_CAMPIONI})`);
   }
 

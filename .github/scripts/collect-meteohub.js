@@ -48,10 +48,37 @@ const DATA_ROOT = path.join(__dirname, '../..', 'data');
 //    generico rischierebbe di rovinare un nome che contiene «u00» per caso.
 const ACCENTATE = { c0:'À', c8:'È', cc:'Ì', d2:'Ò', d9:'Ù',
                     e0:'à', e8:'è', e9:'é', ec:'ì', f2:'ò', f9:'ù' };
+// Nomi che arrivano col carattere ROTTO (U+FFFD, la lettera e' persa a monte e non
+// si puo' ricostruire da sola): si correggono uno per uno (17/10/2026).
+// ⚠️ Fino al 15/9 la stessa stazione arrivava anche con l'escape rotto «ufffd» in lettere (20/10/2026,
+// sesto check, bug 18): la regola delle accentate non la prende, e serve la chiave a parte. Stesso giro:
+// la Sardegna ha avuto fino al 15/9 il nome TAGLIATO «Pranu San», dal 16/9 MeteoHub manda quello intero.
+const NOMI_CORRETTI = {
+  'Trinit� Diga R2': 'Trinità Diga R2',
+  'Trinitufffd Diga R2': 'Trinità Diga R2',
+  'S. Nicolò Gerrei - Pranu San': 'S. Nicolò Gerrei - Pranu Sangun',
+};
+// ⚠️ DUE STAZIONI ALLO STESSO PUNTO (19/10/2026, quinto check, bug 18). Nel Lazio MeteoHub pubblica
+// alle stesse coordinate un idrometro e una stazione meteo («Tevere a Ripetta» e «Cassiodoro»), e
+// il nostro id e' fatto con le sole coordinate: ogni giorno entra quella con la serie completa e il
+// nome cambiava da un giorno all'altro (mai due nello stesso file). Il nome si fissa per id, con
+// quello che compare piu' spesso nello storico (80-101 giorni contro 1-22).
+// La tabella e' per id e vale per TUTTE le reti (collectDay la guarda prima del nome di MeteoHub):
+// dal 20/10/2026 (sesto check, bug 19) c'e' anche la Puglia.
+const NOMI_FISSI = {
+  '41.99972_12.49139': 'Tevere a Castelgiubileo',   // anche «Fosso Cremera a Labaro»
+  '41.93194_12.57611': 'Roma Est',                  // anche «Aniene a Ponte Mammolo»
+  '42.40667_11.88111': 'Tuscania',                  // anche «Marta a Piantata»
+  '41.94889_12.49139': 'Acqua Acetosa',             // anche «Tevere a Foro Italico»
+  '41.91500_12.47444': 'Cassiodoro',                // anche «Tevere a Ripetta»
+  '41.83028_12.49139': 'Roma EUR',                  // anche «Eur»
+  '41.82300_15.24067': 'Fortore a Ripalta',         // Puglia, anche «Fiume Fortore a Ponte Ripalta» (4 giorni)
+};
 function ripulisciNome(s) {
   // il (?<!\\) protegge gli escape SCRITTI BENE, che vanno lasciati stare
-  return String(s).replace(/(?<!\\)u00([0-9a-fA-F]{2})/g,
+  const n = String(s).replace(/(?<!\\)u00([0-9a-fA-F]{2})/g,
     (intero, hex) => ACCENTATE[hex.toLowerCase()] || intero);
+  return NOMI_CORRETTI[n] || n;
 }
 
 const NETWORKS = [
@@ -132,10 +159,12 @@ async function fetchJSON(url, retries = 3) {
 }
 
 /** Finestra UTC del giorno di calendario italiano dateStr (YYYY-MM-DD). */
+// ⚠️ Da lib-giorno-italiano (18/10/2026): prima il fuso era quello di mezzogiorno
+// e la finestra durava sempre 24 ore, e il 25/10 l'ora 00-01 non finiva da nessuna parte.
 function utcWindowForItalianDay(dateStr) {
-  const offset = getItalyOffset(new Date(dateStr + 'T12:00:00Z'));
-  const start = new Date(new Date(dateStr + 'T00:00:00Z').getTime() - offset * 3600000);
-  const end   = new Date(start.getTime() + 24 * 3600000);
+  const f = require('./lib-giorno-italiano.js').finestraGiorno(dateStr);
+  const start = new Date(f.start);
+  const end   = new Date(f.end);
   const fmtQ   = d => d.toISOString().substring(0, 16).replace('T', ' '); // "YYYY-MM-DD HH:MM"
   const fmtRef = d => d.toISOString().substring(0, 19);                   // confronto stringa coi ref
   return { qFrom: fmtQ(start), qTo: fmtQ(end), refFrom: fmtRef(start), refTo: fmtRef(end) };
@@ -149,6 +178,16 @@ function utcWindowForItalianDay(dateStr) {
 // per B13011); completezza in ORE COPERTE ≥ MIN_ORE_METEO. Tutto in un try:
 // un guasto delle query meteo non tocca mai la pioggia.
 const MIN_ORE_METEO = 20;
+/* ⚠️ VENTO MEDIO: TETTO A 40 m/s, NON 60 (19/10/2026, quinto check, bug 9). San Vito Lo Capo (15-17/10) e
+   Manfredonia (16-17/10) hanno avuto l'anemometro bloccato su un gradino piatto di 41-52 m/s (150-185 km/h) per ore,
+   con i vicini a 2-12 km/h: nei file 157,1 / 107,8 / 95,8 km/h di MEDIA del giorno. 60 m/s (216 km/h) non fermava
+   niente. Una media di 10 minuti sopra i 144 km/h in Italia non si misura nemmeno nei medicane; il vento medio
+   giornaliero piu' forte di tutto l'archivio (209.700 stazioni-giorno) e' 74,4 km/h in cima al Mont Aigoual.
+   La raffica (B11041) resta a 90. Stesso tetto in collect-toscana-sir.js e backfill-meteo-meteohub.js. */
+const VENTO_MAX_MS = 40;
+const { creaDir, segnaDir, direzione } = require('./lib-direzione.js');
+const { tieniMeteo } = require('./lib-tieni-meteo.js');
+const { fattoreVento } = require('./lib-vento-meteohub.js');
 async function collectMeteoHub(netCfg, w) {
   const out = {};   // id → {t?, w?}
   const fetchProd = async prod => {
@@ -172,28 +211,84 @@ async function collectMeteoHub(netCfg, w) {
     return perId;
   };
   const oreDi = vals => new Set(vals.map(v => (v.ref || '').slice(11, 13))).size;
+  // ⚠️ OGNI QUERY PER CONTO SUO (19/10/2026, quinto check, bug 6). Prima stavano tutte in UN try (quello di
+  // collectDay): se cadeva l'umidita' si perdevano anche temperatura e vento gia' arrivati. Ora una query che
+  // cade da' null, si salta solo il suo campo, e writeDay lo riprende dal file del giorno (lib-tieni-meteo.js).
+  const prendi = async prod => { try { return await fetchProd(prod); } catch (e) { console.warn(`  Warn ${prod} ${netCfg.net}: ${e.message}`); return null; } };
 
-  const temp = await fetchProd('B12101');
+  const temp = (await prendi('B12101')) || {};
   Object.keys(temp).forEach(id => {
-    const vals = temp[id].map(v => v.val > 100 ? v.val - 273.15 : v.val).filter(v => v >= -45 && v <= 50);
+    // ⚠️ FALSI ZERI (3/10/2026): in una serie in KELVIN uno 0 grezzo non e' una
+    // temperatura (0 K), e' un dato non pervenuto. Con la sola conversione
+    // `v>100 ? v-273.15 : v` passava come 0 °C: Benevento 0 / 29,2° a 234 m il
+    // 30/9, 226 minime false in agosto-settembre sulle reti MeteoHub. Se la serie
+    // e' in kelvin (almeno una lettura sopra 100, vedi sotto) si scarta tutto cio' che
+    // sta sotto: senza minima valida resta il trattino, non lo zero.
+    // ⚠️ BASTA UNA LETTURA SOPRA 100 (19/10/2026), non la maggioranza: il 12/10 MeteoHub ha
+    // mandato zeri MINUTO PER MINUTO per un'ora e mezza su 15 stazioni siciliane (87 zeri contro
+    // 51 letture vere a mezz'ora), gli zeri erano la maggioranza, la serie passava per gradi e
+    // diventavano 0 °C (Mistretta 0 / 35,3; 25 minime false in ottobre). Una serie in gradi
+    // non arriva mai a 100, quindi una lettura sopra basta a dire che e' in kelvin.
+    const kelvin = temp[id].some(v => v.val > 100);
+    if (temp[id].every(v => v.val === 0)) return;   // tutta zeri: termometro muto, trattino
+    // ⚠️ SBALZI ISOLATI (4/10/2026): Favarella e Imera (Sicilia, 1/10) avevano UNA lettura a 0,0 °C
+    // in kelvin (273,15) fra letture sopra i 15°: un valore valido per forma, falso per sostanza.
+    // Una lettura che si stacca di oltre 10° sia dalla precedente sia dalla successiva non e' una
+    // temperatura vera (fra due letture passano 10-60 minuti): si scarta. Vale per ogni sbalzo,
+    // non solo lo zero.
+    const serie = temp[id].filter(v => !kelvin || v.val > 100)
+      .map(v => ({ ref: v.ref || '', c: v.val > 100 ? v.val - 273.15 : v.val })).filter(v => v.c >= -45 && v.c <= 50)
+      .sort((a, b) => (a.ref < b.ref ? -1 : a.ref > b.ref ? 1 : 0));
+    const vals = serie.filter((v, i) => !(i > 0 && i < serie.length - 1
+      && Math.abs(v.c - serie[i - 1].c) > 10 && Math.abs(v.c - serie[i + 1].c) > 10)).map(v => v.c);
     if (vals.length && oreDi(temp[id]) >= MIN_ORE_METEO)
       (out[id] = out[id] || {}).t = [Math.round(Math.min(...vals) * 10) / 10,
                                      Math.round(Math.max(...vals) * 10) / 10];
   });
   await sleep(500);
-  const vento = await fetchProd('B11002');
-  const raffica = await fetchProd('B11041');
+  /* SENZA LA RAFFICA il vento si scrive lo stesso, ma «provvisorio» (wp, 20/10/2026, settimo check, bug 10): prima si
+     buttava tutto, e al primo salvataggio del giorno il file restava senza vento e direzione fino al giro dopo. Il
+     segno wp lo legge writeDay: dove il file del giorno ha gia' un vento (con la sua raffica) si tiene quello, perche'
+     [media, null] cancellerebbe la raffica gia' salvata; dove non c'e' niente si scrive [media, null]. */
+  const ventoRaw = await prendi('B11002');
+  const raffica = await prendi('B11041');
+  const vento = ventoRaw || {}, senzaRaffica = !raffica;
   Object.keys(vento).forEach(id => {
-    const vals = vento[id].map(v => v.val).filter(v => v >= 0 && v < 60);
-    if (!vals.length || oreDi(vento[id]) < MIN_ORE_METEO) return;
+    // ⚠️ le ore si contano sulle letture BUONE (19/10/2026, bug 9): con l'anemometro bloccato a 45 m/s tutto il giorno
+    // le ore lette erano 24 anche se nessuna lettura era buona
+    const buone = vento[id].filter(v => v.val >= 0 && v.val < VENTO_MAX_MS);
+    const vals = buone.map(v => v.val);
+    if (!vals.length || oreDi(buone) < MIN_ORE_METEO) return;
+    // ⚠️ VENTO MEDIO DIVISO PER 3,6 SU ALCUNE STAZIONI (26/10/2026): fattore per stazione in meteohub-vento.json;
+    // 0 = il vento di questa stazione non si usa (niente media, raffica ne' direzione)
+    const fv = fattoreVento(id);
+    if (!fv) return;
     const media = vals.reduce((a, v) => a + v, 0) / vals.length;
-    const gu = (raffica[id] || []).map(v => v.val).filter(v => v >= 0 && v < 90);
-    (out[id] = out[id] || {}).w = [Math.round(media * 3.6 * 10) / 10,
+    const gu = ((raffica || {})[id] || []).map(v => v.val).filter(v => v >= 0 && v < 90);
+    (out[id] = out[id] || {}).w = [Math.round(media * 3.6 * fv * 10) / 10,
                                    gu.length ? Math.round(Math.max(...gu) * 3.6 * 10) / 10 : null];
+    if (senzaRaffica) out[id].wp = 1;
   });
+  // Direzione del vento (2/10/2026): prodotto B11001 (gradi), una query in piu' per
+  // rete/giorno. Si accoppia a B11002 per marca temporale e si fa la media
+  // vettoriale pesata sulla velocita' (lib-direzione.js). In un try suo: se manca,
+  // restano vento, temperatura e umidita'.
+  try {
+    await sleep(500);
+    const dirz = await fetchProd('B11001');
+    Object.keys(dirz).forEach(id => {
+      if (!out[id] || !out[id].w || !vento[id]) return;
+      const perRef = {};
+      dirz[id].forEach(v => { perRef[v.ref] = v.val; });
+      const acc = creaDir();
+      vento[id].forEach(v => { if (v.val >= 0 && v.val < VENTO_MAX_MS) segnaDir(acc, (v.ref || '').slice(11, 13), perRef[v.ref] !== undefined ? perRef[v.ref] : null, v.val); });
+      const wd = direzione(acc);
+      if (wd !== null) out[id].wd = wd;
+    });
+  } catch (e) { console.warn(`  Warn direzione ${netCfg.net}: ${e.message}`); }
   // Umidità relativa (18/8/2026): prodotto B13003 (%), una query in più per rete/giorno.
   await sleep(500);
-  const umid = await fetchProd('B13003');
+  const umid = (await prendi('B13003')) || {};
   Object.keys(umid).forEach(id => {
     const vals = umid[id].map(v => v.val).filter(v => v >= 0 && v <= 100);
     if (vals.length && oreDi(umid[id]) >= MIN_ORE_METEO)
@@ -202,7 +297,9 @@ async function collectMeteoHub(netCfg, w) {
   return out;
 }
 
-async function collectDay(netCfg, dateStr) {
+// `opz` serve al ripiego del Piemonte (collect-piemonte.js, 26/10/2026): `ore` aggiunge `h` (ore lette, come nei file
+// ARPA), `quote: false` salta la quota dal terreno (il Piemonte ha quella dell'ente). Senza `opz` non cambia niente.
+async function collectDay(netCfg, dateStr, opz = {}) {
   const w = utcWindowForItalianDay(dateStr);
   const q = `reftime: >=${w.qFrom},<=${w.qTo};product:B13011;license:CCBY_COMPLIANT`;
   const url = `${BASE_URL}?networks=${encodeURIComponent(netCfg.net)}&q=${encodeURIComponent(q)}`;
@@ -228,8 +325,8 @@ async function collectDay(netCfg, dateStr) {
     let mm = vals.reduce((a, v) => a + v.val, 0);
     mm = Math.round(mm * 10) / 10;
     if (mm < 0 || mm > 500) continue;
-    const nome = ripulisciNome(((entry.stat.details || []).find(x => x.var === 'B01019') || {}).val || '—');
     const idStaz = `${stat.lat.toFixed(5)}_${stat.lon.toFixed(5)}`;
+    const nome = NOMI_FISSI[idStaz] || ripulisciNome(((entry.stat.details || []).find(x => x.var === 'B01019') || {}).val || '—');
     const qTer = quotaTerreno(idStaz);
     const rec = {
       id:  idStaz,
@@ -241,6 +338,7 @@ async function collectDay(netCfg, dateStr) {
       mm
     };
     if (qTer !== null) rec.qt = 1;   // quota del terreno, non dichiarata dall'ente
+    if (opz.ore) rec.h = Math.min(24, Math.round(vals.length * stepSec / 3600));
     const secchielli = creaOre();   // intensita' (12/9/2026)
     for (const v of vals) segna(secchielli, Math.floor((Date.parse(v.ref + 'Z') - 1) / 3600000), v.val);
     const inte = intensita(secchielli);
@@ -252,6 +350,7 @@ async function collectDay(netCfg, dateStr) {
     const meteo = await collectMeteoHub(netCfg, w);
     out.forEach(rec => { if (meteo[rec.id]) Object.assign(rec, meteo[rec.id]); });
   } catch (e) { console.warn(`  Warn meteo ${netCfg.net}: ${e.message}`); }
+  if (opz.quote !== false) await completaQuote(out);   // stazioni nuove, non ancora in quote-terreno.json (14/10/2026)
   return out;
 }
 
@@ -263,20 +362,11 @@ async function collectDay(netCfg, dateStr) {
    legge per mostrare il ~ davanti al numero.
    ⚠️ Se il file manca la quota resta `null`, cioe' «non lo sappiamo»: MAI 0,
    che vuol dire «sul mare» ed e' un'affermazione falsa.
-   ⚠️ RESTA DA RISOLVERE: la strada giusta e' l'anagrafica vera dell'ente. */
-let _quoteTerreno = null;
-function quotaTerreno(id) {
-  if (_quoteTerreno === null) {
-    _quoteTerreno = {};
-    try {
-      const j = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'data', 'quote-terreno.json'), 'utf8'));
-      for (const rete of Object.values(j.reti || {})) Object.assign(_quoteTerreno, rete);
-      console.log(`  quote dal terreno: ${Object.keys(_quoteTerreno).length} stazioni note`);
-    } catch (e) { console.warn(`  Warn quote-terreno.json: ${e.message}`); }
-  }
-  const q = _quoteTerreno[id];
-  return typeof q === 'number' ? Math.max(0, Math.round(q)) : null;
-}
+   ✅ 14/10/2026: misurata contro la quota dichiarata su 1.848 stazioni del
+   nord, scarto mediano 5 m: la quota vera dell'ente non serve piu' cercarla.
+   Le stazioni che nel file non ci sono (comparse dopo) la chiedono a giro in
+   corso: `completaQuote` in fondo a collectDay, vedi lib-quota-terreno.js. */
+const { quotaNota: quotaTerreno, completaQuote } = require('./lib-quota-terreno.js');
 
 /** Stazioni REALI (non stimate) presenti in un file già scritto. */
 function realiInFile(j) {
@@ -309,7 +399,43 @@ function tipicoReali(dir, giorni) {
   return v[Math.floor(v.length / 2)];
 }
 
+/* ⚠️ PICCHI FALSI (17/10/2026). L'8/10/2026 Palermo Abela ha consegnato 471,2 mm
+   («18 ore di pioggia», con 34° di massima e il 32% di umidita'), mentre UIR e
+   SIAS a 2 km, Chiavelli e Partanna segnavano 0,0: nessuna notizia di nubifragi,
+   previsioni di sole. Finiva in testa alla Sicilia a 20 e 30 giorni.
+   Regola SEVERA apposta, suo ok: una bomba d'acqua vera fa differenze enormi in
+   pochi km, ma lascia sempre qualcosa ai bordi. Si toglie il pluviometro dal
+   giorno (assente, non zero: la mappa somma `mm||0`) solo se ha almeno PICCO_MM
+   nel giorno E i vicini sono TUTTI sotto PICCO_ASCIUTTO mm, contando:
+     - almeno 2 vicini entro 5 km (Abela: UIR e SIAS a 2 km), oppure
+     - almeno 3 vicini entro 15 km (Monterosso Almo SP11, 9/10: 362,5 mm con
+       Palazzolo Acreide a 8 km, Case Granvilla, Ferla e Noto tutti a 0; il
+       giorno dopo pioveva su tutti e lui segnava 15 contro 12-47, cioe' sano).
+   Sui 60 giorni di tutte le reti (17/10) prende solo questi due; l'alluvione
+   delle Cevenne del 30/9 (300 mm, vicini 150-335) non la tocca. */
+const PICCO_MM = 200, PICCO_ASCIUTTO = 1;
+const PICCO_CERCHI = [[5, 2], [15, 3]];   // [km, vicini minimi]
+function togliPicchiFalsi(stations, dateStr) {
+  const km = (a, b) => Math.hypot(a.lat - b.lat, (a.lon - b.lon) * Math.cos(a.lat * Math.PI / 180)) * 111.2;
+  return stations.filter(s => {
+    if (!(s.mm >= PICCO_MM) || s.lat == null || s.lon == null) return true;
+    for (const [r, minimi] of PICCO_CERCHI) {
+      const vicini = stations.filter(x => x !== s && x.lat != null && x.mm != null && km(s, x) <= r);
+      if (vicini.length >= minimi && vicini.every(x => x.mm < PICCO_ASCIUTTO)) {
+        console.warn(`  ⚠️ ${dateStr}: ${s.n} ${s.mm} mm con ${vicini.length} vicini entro ${r} km tutti sotto ${PICCO_ASCIUTTO} mm: picco falso, tolto dal giorno`);
+        return false;
+      }
+    }
+    return true;
+  });
+}
+
+// ⚠️ VENTI FALSI (19/10/2026, quinto check, bug 9): la regola sta in lib-venti-falsi.js dal 20/10/2026 (settimo check,
+// bug 11), perche' la usa anche backfill-meteo-meteohub.js. Gira in writeDay DOPO tieniMeteo.
+const { togliVentiFalsi } = require('./lib-venti-falsi.js');
+
 function writeDay(dir, dateStr, stations, net, soglia, src) {
+  stations = togliPicchiFalsi(stations, dateStr);
   if (stations.length < 10) {
     console.warn(`  ${dateStr}: solo ${stations.length} stazioni, salto la scrittura`);
     return false;
@@ -330,6 +456,15 @@ function writeDay(dir, dateStr, stations, net, soglia, src) {
       console.log(`  ${dateStr}: dato reale tornato (${stations.length} stazioni), sostituisco le stime`);
     }
   }
+  // t/w/u/wd che a questo giro mancano si riprendono dal file dello stesso giorno (bug 6, 19/10/2026):
+  // prima il file si riscriveva da capo e una query meteo caduta cancellava i giri precedenti
+  const prima = leggiFile(outFile);
+  // il vento «provvisorio» (senza raffica, bug 10 del settimo check): dove il file ha gia' un vento si tiene quello
+  const conVento = {}; ((prima && prima.stations) || []).forEach(s => { if (s.w) conVento[s.id] = 1; });
+  stations.forEach(s => { if (!s.wp) return; delete s.wp; if (conVento[s.id]) { delete s.w; delete s.wd; } });
+  const ripresi = prima ? tieniMeteo(stations, prima.stations) : 0;
+  if (ripresi) console.log(`  ${dateStr}: t/w/u/wd ripresi dal file per ${ripresi} stazioni`);
+  togliVentiFalsi(stations, dateStr);   // dopo tieniMeteo (bug 9, 19/10/2026)
   fs.writeFileSync(outFile, JSON.stringify({
     date:      dateStr,
     collected: new Date().toISOString(),
@@ -449,4 +584,6 @@ async function main() {
   console.log('=== collect-meteohub completato ===');
 }
 
-main().catch(e => { console.error('❌', e.message); process.exit(1); });
+// Lanciato da solo raccoglie; richiamato con require (ripiego del Piemonte) da' solo le funzioni.
+if (require.main === module) main().catch(e => { console.error('❌', e.message); process.exit(1); });
+module.exports = { collectDay, togliPicchiFalsi };

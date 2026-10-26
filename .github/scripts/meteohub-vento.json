@@ -1,0 +1,30 @@
+{
+ "_leggimi": "Vento medio delle reti MeteoHub (collect-meteohub.js e backfill-meteo-meteohub.js, via lib-vento-meteohub.js), 26/10/2026. Su alcune stazioni MeteoHub da' il vento medio (B11002) diviso per 3,6 una volta di troppo: trovato sul Piemonte confrontando con ARPA (42 stazioni su 72, rapporto 0,278 = 1/3,6), qui riconosciuto con due prove che sul Piemonte separano bene i due gruppi: il rapporto media/raffica (diviso 0,054, giusto 0,231; la raffica invece e' giusta) e il rapporto col modello Open-Meteo nello stesso punto (diviso 0,20, giusto 0,87). Il rapporto e' lo stesso da agosto a ottobre: l'errore c'e' da quando raccogliamo il vento (3/8). fv 3.6 = si moltiplica; fv 0 = il vento di MeteoHub (media, raffica, direzione) non si usa, perche' non si sa se e' giusto. Le stazioni che non sono qui restano come sono. Le stazioni siciliane SIAS hanno il vento basso rispetto al modello perche' misurano a 2 m: non e' questo errore. Misurato con spia-vento.js, testimone-om.js, classifica-mh.js (scratchpad della scheda 95).",
+ "fatta": "2026-10-26",
+ "stazioni": {
+  "40.31000_16.75194": {"rete":"basilicata","n":"Terra Montonata","fv":3.6,"perche":"media/raffica 0.099 su 82 giorni"},
+  "39.62972_15.85167": {"rete":"calabria","n":"Belvedere Marittimo","fv":3.6,"perche":"media/raffica 0.063 su 84 giorni"},
+  "39.40000_16.53750": {"rete":"calabria","n":"Cecita","fv":0,"perche":"media/raffica 0.024 su 79 giorni; moltiplicato per 3,6 il rapporto media/raffica resta 0,09-0,10 e col modello 0,29-0,43: il fattore non torna"},
+  "38.67222_16.40167": {"rete":"calabria","n":"Chiaravalle","fv":3.6,"perche":"media/raffica 0.076 su 84 giorni"},
+  "39.08221_17.13555": {"rete":"calabria","n":"Crotone Molo Giunti","fv":3.6,"perche":"media/raffica 0.089 su 84 giorni"},
+  "39.52401_16.16225": {"rete":"calabria","n":"Fitterizzi Meteo","fv":3.6,"perche":"media/raffica 0.044 su 84 giorni"},
+  "38.86528_16.24417": {"rete":"calabria","n":"Lamezia","fv":3.6,"perche":"media/raffica 0.102 su 84 giorni"},
+  "39.24722_16.54444": {"rete":"calabria","n":"Nocelle-Arvo","fv":0,"perche":"media/raffica 0.027 su 84 giorni; moltiplicato per 3,6 il rapporto media/raffica resta 0,09-0,10 e col modello 0,29-0,43: il fattore non torna"},
+  "40.05000_16.44694": {"rete":"calabria","n":"Oriolo","fv":3.6,"perche":"media/raffica 0.063 su 84 giorni"},
+  "39.36111_16.04167": {"rete":"calabria","n":"Paola","fv":3.6,"perche":"media/raffica 0.066 su 84 giorni"},
+  "38.43556_16.57000": {"rete":"calabria","n":"Punta Stilo","fv":0,"perche":"media/raffica 0,097 al confine, modello 0,39"},
+  "39.99111_16.60667": {"rete":"calabria","n":"Roseto Capo Spulico","fv":3.6,"perche":"media/raffica 0.072 su 84 giorni"},
+  "41.32948_14.33605": {"rete":"campania","n":"Alife","fv":0,"perche":"media/raffica 0.025 su 84 giorni; moltiplicato per 3,6 il rapporto media/raffica resta 0,09-0,10 e col modello 0,29-0,43: il fattore non torna"},
+  "40.60361_14.97472": {"rete":"campania","n":"Battipaglia","fv":3.6,"perche":"media/raffica 0.097 su 84 giorni"},
+  "40.85861_14.61556": {"rete":"campania","n":"Torriello","fv":0,"perche":"media/raffica 0,111 al confine, modello 0,35"},
+  "41.86417_12.62694": {"rete":"lazio","n":"Tor Vergata","fv":0,"perche":"senza raffica, rapporto col modello 0.18 su 27 giorni"},
+  "41.47472_14.54028": {"rete":"molise","n":"Campochiaro","fv":0,"perche":"media/raffica 0,109 al confine, modello 0,36"},
+  "41.77972_14.54667": {"rete":"molise","n":"Trivento PLUVIO","fv":3.6,"perche":"media/raffica 0.059 su 84 giorni"},
+  "43.06806_12.69861": {"rete":"umbria","n":"Armenzano","fv":3.6,"perche":"media/raffica 0.071 su 83 giorni"},
+  "43.50806_12.23167": {"rete":"umbria","n":"Cerbara","fv":0,"perche":"senza raffica, rapporto col modello 0.05 su 27 giorni"},
+  "42.55111_12.54278": {"rete":"umbria","n":"Narni Scalo","fv":0,"perche":"senza raffica, rapporto col modello 0.16 su 25 giorni"},
+  "43.10500_12.37194": {"rete":"umbria","n":"Perugia Sede","fv":0,"perche":"senza raffica, rapporto col modello 0.19 su 24 giorni"},
+  "42.53227_12.77353": {"rete":"umbria","n":"Piediluco","fv":0,"perche":"senza raffica, rapporto col modello 0.15 su 27 giorni"},
+  "43.16111_11.95278": {"rete":"umbria","n":"Strada Prov.302","fv":0,"perche":"senza raffica, rapporto col modello 0.11 su 22 giorni"}
+ }
+}

@@ -1,0 +1,1415 @@
+val	0	2658191	Vals Platz	46.6165	9.1802	CH	Cantone dei Grigioni	2660522	Region Surselva	1006	PPL	1252
+val	0	2970634	Vasles	46.5757	-0.0252	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	1615	PPL	161
+val	1	2971145	Val	45.3000	2.7333	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	1075
+val	1	8959314	Val	46.4543	11.9709	IT	Veneto	3164604	Belluno	68	PPL	1468
+val	1	8978295	Val	46.4618	12.9323	IT	Friuli Venezia Giulia	3176525	Udine	17	PPL	1184
+val	1	9032872	Val	46.3848	11.9699	IT	Veneto	3164604	Belluno	11	PPL	1052
+val aux mines	0	2980438	Sainte-Marie-aux-Mines	48.2465	7.1838	FR	Gran Este	11071622	Alto Reno	6189	PPL	374
+val baudana	1	8960054	Val Baudana	45.1370	7.8587	IT	Piemonte	3170831	Torino	63	PPL	248
+val bonn	0	2971117	Valbonne	43.6329	6.9991	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	12633	PPL	232
+val bourgin	1	3231598	Val Bourgin	49.6850	-1.4666	FR	Normandia	11071621	Manica	0	PPLL	14
+val brehout	1	2971113	Val Bréhout	49.8833	1.0667	FR	Normandia	11071621	Senna marittima	0	PPL	33
+val cenkhauzen	0	2658055	Walzenhausen	47.4487	9.6050	CH	Canton Appenzello Esterno	2661739	Bezirk Vorderland	2120	PPL	704
+val charente	0	3026224	Châteauneuf-sur-Charente	45.5985	-0.0540	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	3523	PPL	25
+val claret	1	12308848	Val Claret	45.4553	6.9003	FR	Alvernia-Rodano-Alpi	11071625	Savoia	0	PPL	2128
+val d	0	2658073	Wald	47.2760	8.9140	CH	Cantone di Zurigo	2657895	Distretto di Hinwil	3061	PPL	621
+val d arquata	1	8967611	Val d'Arquata	44.6973	8.8803	IT	Piemonte	3170831	Alessandria	34	PPL	234
+val d auzon	1	3035787	Val-d'Auzon	48.4167	4.3667	FR	Gran Este	11071622	Aube	0	PPL	108
+val d epy	1	3019965	Val-d'Épy	46.3833	5.4000	FR	Borgogna-Franca Contea	11071619	Giura	0	PPL	379
+val d esquieres	1	12319380	Val d'Esquières	43.3486	6.6777	FR	Provenza-Alpi-Costa Azzurra	2985244	Varo	0	PPL	32
+val d eynan	0	2979976	Saint-Geoire-en-Valdaine	45.4567	5.6352	FR	Alvernia-Rodano-Alpi	11071625	Isère	2153	PPL	447
+val d illiez	1	2658199	Val d'Illiez	46.2036	6.8910	CH	Canton Vallese	2658205	Monthey District	0	PPL	983
+val d isere	1	2971074	Val-d'Isère	45.4514	6.9745	FR	Alvernia-Rodano-Alpi	11071625	Savoia	1632	PPL	1849
+val d ize	1	2971073	Val-d'Izé	48.1778	-1.3060	FR	Bretagna	3030293	Ille-et-Vilaine	0	PPL	98
+val d izer	0	2971074	Val-d'Isère	45.4514	6.9745	FR	Alvernia-Rodano-Alpi	11071625	Savoia	1632	PPL	1849
+val d oisa	1	8970564	Val d'Oisa	44.8128	8.0257	IT	Piemonte	3170831	Cuneo	28	PPL	208
+val d or	0	2977358	Saint-Priest	44.7165	4.5463	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	1178	PPL	414
+val d ornain	1	2991104	Val-d'Ornain	48.8000	5.0667	FR	Gran Este	11071622	Mosa	0	PPL	177
+val da roda, pass da la	1	11075277	Val da Roda, Pass da la	46.3789	9.5504	CH	Cantone dei Grigioni	2660522	Region Maloja	0	PASS	2770
+val daubert	1	2971094	Val Daubert	43.2901	6.4517	FR	Provenza-Alpi-Costa Azzurra	2985244	Varo	0	PPL	321
+val de bride	1	3011585	Val-de-Bride	48.8239	6.7015	FR	Gran Este	11071622	Mosella	0	PPL	210
+val de chalvagne	1	3028372	Val-de-Chalvagne	43.9167	6.8000	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	0	PPL	1035
+val de fer	1	12316917	Val de Fer	48.6254	6.1075	FR	Gran Este	11071622	Meurthe e Mosella	0	PPL	274
+val de fier	1	2981710	Val-de-Fier	45.9333	5.9000	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	0	PPL	357
+val de gilly	1	12319397	Val de Gilly	43.2793	6.4684	FR	Provenza-Alpi-Costa Azzurra	2985244	Varo	0	PPL	86
+val de la haye	1	2971092	Val-de-la-Haye	49.3787	1.0020	FR	Normandia	11071621	Senna marittima	805	PPL	6
+val de maine	1	12308392	Val de Maine	47.4425	-0.6132	FR	Paesi della Loira	2988289	Maine e Loira	0	PPL	41
+val de mercy	1	2971088	Val-de-Mercy	47.6753	3.5886	FR	Borgogna-Franca Contea	11071619	Yonne	395	PPL	145
+val de meuse	1	2992408	Val-de-Meuse	48.0000	5.5000	FR	Gran Este	11071622	Alta Marna	2168	PPL	390
+val de murigny	1	12318238	Val de Murigny	49.2166	4.0247	FR	Gran Este	11071622	Marna	0	PPL	88
+val de passey	1	11971513	Val de Passey	48.6427	5.8089	FR	Gran Este	11071622		0	PPL	282
+val de rej	0	6619659	Val-de-Reuil	49.2739	1.2102	FR	Normandia	11071621	Eure	13824	PPL	13
+val de reuil	1	6619659	Val-de-Reuil	49.2739	1.2102	FR	Normandia	11071621	Eure	13824	PPL	13
+val de ricarville	1	2971086	Val-de-Ricarville	49.7999	1.2648	FR	Normandia	11071621	Senna marittima	0	PPL	77
+val de rjoj	0	6619659	Val-de-Reuil	49.2739	1.2102	FR	Normandia	11071621	Eure	13824	PPL	13
+val de roulans	1	2971084	Val-de-Roulans	47.3620	6.2722	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	87	PPL	413
+val de saane	1	3037614	Val-de-Saâne	49.7000	0.9667	FR	Normandia	11071621	Senna marittima	0	PPL	105
+val de saire	1	3231096	Val de Saire	49.6333	-1.6167	FR	Normandia	11071621	Manica	0	PPLX	4
+val de sibourg	1	12314447	Val de Sibourg	43.5842	5.2152	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	0	PPL	153
+val de varri	1	9031200	Val de Varri	42.1686	13.1727	IT	Lazio	3174976	Rieti	45	PPL	1029
+val de vesle	1	2972662	Val-de-Vesle	49.1667	4.2333	FR	Gran Este	11071622	Marna	0	PPL	91
+val de viere	1	3020986	Val-de-Vière	48.8167	4.7333	FR	Gran Este	11071622	Marna	0	PPL	125
+val de ville	1	2971080	Val de Villé	48.2828	7.3826	FR	Gran Este	11071622	Basso Reno	0	PPL	200
+val del fo	1	8955180	Val del Fo'	45.5731	10.3243	IT	Lombardia	3174618	Brescia	119	PPL	500
+val del gat	1	8983628	Val del Gat	46.0976	12.2857	IT	Veneto	3164604	Belluno	7	PPLL	1013
+val della cort	1	3164946	Val della Cort	45.9667	12.0000	IT	Veneto	3164604	Treviso	0	PPL	880
+val della giara	1	8983867	Val della Giara	45.8608	11.7469	IT	Veneto	3164604	Vicenza	6	PPLL	1160
+val della meta	1	8965557	Val della Meta	43.7832	11.9011	IT	Toscana	3165361	Arezzo	40	PPL	903
+val della neve, passo	1	11075456	Val della Neve, Passo	46.3343	9.6352	CH	Cantone dei Grigioni	2660522	Region Maloja	0	PASS	2376
+val della torre	1	6534322	Val della Torre	45.1551	7.4450	IT	Piemonte	3170831	Torino	3529	PPLA3	493
+val della torre	1	8975891	Val della Torre	46.7094	11.9407	IT	Trentino-Alto Adige	3165244	Bolzano	20	PPL	1396
+val denburg	0	2658071	Waldenburg	47.3833	7.7500	CH	Canton Basilea Campagna	2661603	Distretto di Waldenburg	1081	PPLA2	544
+val des marais	1	3024350	Val-des-Marais	48.8500	3.9667	FR	Gran Este	11071622	Marna	0	PPL	145
+val des pres	1	2971082	Val-des-Prés	44.9492	6.6782	FR	Provenza-Alpi-Costa Azzurra	2985244	Alte Alpi	503	PPL	1395
+val des quatre pignons	1	12305684	Val des Quatre Pignons	48.8574	1.9049	FR	Île-de-France	3012874	Yvelines	0	PPL	83
+val di barco	1	8980375	Val di Barco	45.5995	11.4051	IT	Veneto	3164604	Vicenza	14	PPL	107
+val di cava	1	8949312	Val di Cava	43.6383	10.6490	IT	Toscana	3165361	Pisa	1146	PPL	22
+val di denari	1	8969804	Val di Denari	42.8083	10.2998	IT	Toscana	3165361	Livorno	30	PPL	52
+val di fies	1	8983617	Val di Fies	45.6851	10.7809	IT	Veneto	3164604	Verona	7	PPLL	993
+val di foro	1	8952888	Val di Foro	42.2694	14.1965	IT	Abruzzo	3183560	Chieti	214	PPL	187
+val di lago	1	8985337	Val di Lago	42.6539	11.9329	IT	Lazio	3174976	Viterbo	0	PPLL	309
+val di mezzo	1	3164941	Val di Mezzo	46.8545	11.3858	IT	Trentino-Alto Adige	3165244	Bolzano	145	PPL	1080
+val di mezzo	1	8961121	Val di Mezzo	45.4571	11.1264	IT	Veneto	3164604	Verona	57	PPL	92
+val di paglia	1	8984576	Val di Paglia	42.8340	11.7594	IT	Toscana	3165361	Siena	3	PPLL	324
+val di perga	1	3164937	Val di Perga	43.4167	10.5000	IT	Toscana	3165361	Livorno	0	PPL	36
+val di pugna	1	3164936	Val di Pugna	43.3066	11.3696	IT	Toscana	3165361	Siena	34	PPL	252
+val di rame	1	8966038	Val di Rame	45.7880	8.9202	IT	Lombardia	3174618	Como	38	PPL	430
+val di ranco	1	8969428	Val di Ranco	43.8867	12.6337	IT	Emilia-Romagna	3177401	Rimini	31	PPL	239
+val di ranco	1	8984374	Val di Ranco	43.3580	12.7662	IT	Umbria	3165048	Perugia	4	PPLL	1098
+val di rua	1	8956942	Val di Rua	45.1516	11.1935	IT	Veneto	3164604	Verona	91	PPL	13
+val di serra	1	8980194	Val di Serra	44.8127	8.0700	IT	Piemonte	3170831	Asti	14	PPL	184
+val di sole	1	8972033	Val di Sole	44.3457	11.3121	IT	Emilia-Romagna	3177401	Bologna	26	PPL	324
+val di sur san michele	1	8951251	Val di Sur-San Michele	45.6360	10.5502	IT	Lombardia	3174618	Brescia	341	PPL	370
+val digofen	0	2967500	Waldighofen	47.5504	7.3151	FR	Gran Este	11071622	Alto Reno	1240	PPL	347
+val ding	0	2761999	Walding	48.3521	14.1576	AT	Alta Austria	2769848	Politischer Bezirk Urfahr-Umgebung	4095	PPLA3	277
+val dshtatt	0	2658066	Waldstatt	47.3563	9.2835	CH	Canton Appenzello Esterno	2661739	Bezirk Hinterland	1722	PPL	823
+val dstat	0	2658066	Waldstatt	47.3563	9.2835	CH	Canton Appenzello Esterno	2661739	Bezirk Hinterland	1722	PPL	823
+val du carei	1	12319199	Val du Careï	43.7892	7.4926	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	0	PPL	46
+val du phenix	1	12317622	Val du Phénix	49.4178	0.9657	FR	Normandia	11071621	Senna marittima	0	PPL	29
+val du pin	0	3006202	La Tour-du-Pin	45.5660	5.4449	FR	Alvernia-Rodano-Alpi	11071625	Isère	7248	PPLA3	322
+val du roy	1	2971064	Val du Roy	49.9372	1.4665	FR	Normandia	11071621	Senna marittima	0	PPL	65
+val dua	0	2971072	Valdoie	47.6704	6.8420	FR	Borgogna-Franca Contea	11071619	Territorio di Belfort	5063	PPL	375
+val et chatillon	1	2971020	Val-et-Châtillon	48.5603	6.9654	FR	Gran Este	11071622	Meurthe e Mosella	0	PPL	316
+val fegana	1	8959219	Val Fegana	44.0166	10.5441	IT	Toscana	3165361	Lucca	69	PPL	158
+val ff	0	2971007	Valff	48.4214	7.5206	FR	Gran Este	11071622	Basso Reno	1354	PPL	160
+val fleurion	1	12316918	Val Fleurion	48.6313	6.0910	FR	Gran Este	11071622	Meurthe e Mosella	0	PPL	297
+val indre	0	2984132	Reignac-sur-Indre	47.2266	0.9159	FR	Centro-Valle della Loira	3027939	Indre e Loira	1124	PPL	62
+val joli	0	2975339	Séez	45.6237	6.8015	FR	Alvernia-Rodano-Alpi	11071625	Savoia	2139	PPL	912
+val joyeux	0	3026266	Château-la-Vallière	47.5466	0.3246	FR	Centro-Valle della Loira	3027939	Indre e Loira	1615	PPL	97
+val julien	0	2979133	Saint-Julien	47.4003	5.1416	FR	Borgogna-Franca Contea	11071619	Cote d'Or	1278	PPL	236
+val kringen	0	2658064	Walkringen	46.9486	7.6204	CH	Canton Berna	2661551	Bern-Mittelland District	1817	PPL	693
+val le ben	0	2970828	Vals-les-Bains	44.6656	4.3662	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	3777	PPL	261
+val libre	0	2976699	Saint-Vallier	45.1715	4.8176	FR	Alvernia-Rodano-Alpi	11071625	Drôme	4038	PPL	128
+val libre	0	2976748	Saint-Trivier-de-Courtes	46.4598	5.0776	FR	Alvernia-Rodano-Alpi	11071625	Ain	1025	PPL	214
+val libre	0	2980942	Saint-Cyr-l'École	48.7987	2.0681	FR	Île-de-France	3012874	Yvelines	16365	PPL	153
+val libre	0	2998965	Le Val-Saint-Germain	48.5660	2.0647	FR	Île-de-France	3012874	Essonne	1513	PPL	76
+val libre	0	3004337	Le Donjon	46.3506	3.7927	FR	Alvernia-Rodano-Alpi	11071625	Allier	1191	PPL	293
+val libre	0	3019532	Estissac	48.2692	3.8051	FR	Gran Este	11071622	Aube	1746	PPL	131
+val loga, pass de	1	11075304	Val Loga, Pass de	46.4776	9.2768	IT	Lombardia	3174618	Sondrio	0	PASS	2913
+val longhini	1	8969109	Val Longhini	45.8657	11.5324	IT	Veneto	3164604	Vicenza	31	PPL	1016
+val louron	1	9034777	Val Louron	42.7917	0.3892	FR	Occitania	11071623	Alti Pirenei	0	PPL	1448
+val madeira	1	12307790	Val Madeira	49.2188	6.1562	FR	Gran Este	11071622	Mosella	0	PPL	159
+val madre	1	3164783	Val Madre	46.1167	9.7500	IT	Lombardia	3174618	Sondrio	0	PPL	1061
+val maggia, bocchetta di	1	11074134	Val Maggia, Bocchetta di	46.4393	8.4640	IT				0	PASS	2631
+val malga	1	8985130	Val Malga	46.1364	10.3798	IT	Lombardia	3174618	Brescia	0	PPLL	1150
+val maravel	1	3017525	Val-Maravel	44.5833	5.5667	FR	Alvernia-Rodano-Alpi	11071625	Drôme	0	PPL	934
+val marie	1	12307735	Val Marie	49.3620	6.1369	FR	Gran Este	11071622	Mosella	0	PPL	163
+val masino	1	6534734	Val Masino	46.2152	9.6380	IT	Lombardia	3174618	Sondrio	963	PPLA3	824
+val maubuee	1	12305592	Val Maubuée	48.8423	2.6413	FR	Île-de-France	3012874	Senna e Marna	0	PPL	77
+val mera, pass da	1	11075285	Val Mera, Pass da	46.4226	10.0920	IT				0	PASS	2679
+val meschia	1	8957519	Val Meschia	44.3743	8.3133	IT	Liguria	3174725	Savona	84	PPL	351
+val mondua	0	2970866	Valmondois	49.0973	2.1900	FR	Île-de-France	3012874	Val-d'Oise	1289	PPL	31
+val mora, passo	1	11075457	Val Mora, Passo	46.5748	10.2463	IT	Lombardia	3174618	Sondrio	0	PASS	1938
+val morea	0	6535758	Valmorea	45.8152	8.9306	IT	Lombardia	3174618	Como	2467	PPLA3	408
+val moreja	0	6535758	Valmorea	45.8152	8.9306	IT	Lombardia	3174618	Como	2467	PPLA3	408
+val nera, colle	1	11074505	Val Nera, Colle	46.4307	10.1281	IT				0	PASS	2987
+val paolaccio, passo di	1	11075422	Val Paolaccio, Passo di	46.5549	10.2965	IT				0	PASS	2826
+val pelouse	1	11549309	Val Pelouse	45.4192	6.1679	FR	Alvernia-Rodano-Alpi	11071625	Savoia	0	PPL	1684
+val peronne	1	2970848	Val Péronne	48.1335	3.3486	FR	Borgogna-Franca Contea	11071619	Yonne	0	PPL	152
+val pompadour	1	2970847	Val Pompadour	48.7657	2.4499	FR	Île-de-France	3012874	Valle della Marna	0	PPL	38
+val profonde	1	2970842	Val Profonde	48.0648	3.3545	FR	Borgogna-Franca Contea	11071619	Yonne	0	PPL	128
+val quarole	1	8968160	Val Quarole	45.5401	10.7562	IT	Veneto	3164604	Verona	33	PPL	194
+val reas	0	2970838	Valréas	44.3849	4.9912	FR	Provenza-Alpi-Costa Azzurra	2985244	Vaucluse	10211	PPL	245
+val rezzo	1	6534485	Val Rezzo	46.0727	9.1118	IT	Lombardia	3174618	Como	182	PPLA3	1092
+val riam	0	2981129	Saint-Christophe-sur-le-Nais	47.6172	0.4780	FR	Centro-Valle della Loira	3027939	Indre e Loira	1004	PPL	80
+val riant	0	2981129	Saint-Christophe-sur-le-Nais	47.6172	0.4780	FR	Centro-Valle della Loira	3027939	Indre e Loira	1004	PPL	80
+val rog	0	2970941	Valleraugue	44.0813	3.6420	FR	Occitania	11071623	Gard	1092	PPL	374
+val rousseau	0	2981206	Saint-Chamond	45.4759	4.5129	FR	Alvernia-Rodano-Alpi	11071625	Loira	38014	PPL	372
+val s le ben	0	2970828	Vals-les-Bains	44.6656	4.3662	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	3777	PPL	261
+val saint andre	1	12314456	Val Saint-André	43.5171	5.4725	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	0	PPL	189
+val saint georges	1	12324099	Val Saint-Georges	43.5453	5.4642	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	0	PPL	300
+val saint jacques	1	12307963	Val Saint-Jacques	46.0212	1.1880	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	0	PPL	287
+val saint pair	0	2998963	Le Val-Saint-Père	48.6618	-1.3765	FR	Normandia	11071621	Manica	1656	PPL	13
+val senaga	1	8978940	Val Senaga	45.6738	10.7804	IT	Veneto	3164604	Verona	16	PPL	1008
+val shed	0	2967490	Walscheid	48.6531	7.1500	FR	Gran Este	11071622	Mosella	1671	PPL	326
+val sur sonne	0	3010371	La Chapelle-de-la-Tour	45.5848	5.4636	FR	Alvernia-Rodano-Alpi	11071625	Isère	1566	PPL	439
+val suzon	1	2970825	Val-Suzon	47.4119	4.9026	FR	Borgogna-Franca Contea	11071619	Cote d'Or	187	PPL	358
+val tenshvil	0	2658058	Waltenschwil	47.3334	8.2979	CH	Canton Argovia	2661876	Distretto di Muri	2192	PPL	425
+val thorens	1	6544556	Val Thorens	45.2978	6.5838	FR	Alvernia-Rodano-Alpi	11071625	Savoia	2500	PPLL	2333
+val torans	0	6544556	Val Thorens	45.2978	6.5838	FR	Alvernia-Rodano-Alpi	11071625	Savoia	2500	PPLL	2333
+val varinot	1	12318346	Val Varinot	48.0998	5.1528	FR	Gran Este	11071622	Alta Marna	0	PPL	323
+val viola, pass da	1	11075286	Val Viola, Pass da	46.4135	10.1476	IT				0	PASS	2467
+val vomano	1	9036138	Val Vomano	42.6082	13.7568	IT	Abruzzo	3183560	Teramo	939	PPL	150
+valabres	1	2971139	Valabres	44.1500	7.0833	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	0	PPL	1288
+valacchio	1	6544507	Valacchio	43.2996	11.2324	IT	Toscana	3165361	Siena	9	PPL	229
+valade	1	12277602	Valade	45.3666	0.7050	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	111
+valades	1	2971138	Valades	44.7234	0.5794	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	106
+valady	1	2971137	Valady	44.4563	2.4275	FR	Occitania	11071623	Aveyron	1361	PPL	327
+valagnesi	1	8979186	Valagnesi	43.7985	11.7687	IT	Toscana	3165361	Arezzo	16	PPL	740
+valailles	1	2971136	Valailles	49.1213	0.6000	FR	Normandia	11071621	Eure	343	PPL	157
+valaine	1	12315444	Valaine	48.4684	-1.3082	FR	Bretagna	3030293	Ille-et-Vilaine	0	PPL	136
+valaine	1	2971135	Valaine	49.6964	0.1976	FR	Normandia	11071621	Senna marittima	0	PPL	97
+valaire	1	2971134	Valaire	47.4701	1.2685	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	91	PPL	88
+valancon	1	2971133	Valançon	46.3167	3.4488	FR	Alvernia-Rodano-Alpi	11071625	Allier	0	PPL	278
+valanec	1	6255064	Valanec	48.7205	-3.9775	FR	Bretagna	3030293	Finistère	0	PPLX	12
+valangin	1	2658204	Valangin	47.0161	6.9067	CH	Cantone Neuchâtel	2659495	Distretti di Neuchâtel	0	PPL	652
+valanjou	1	3015672	Valanjou	47.2167	-0.5833	FR	Paesi della Loira	2988289	Maine e Loira	0	PPL	71
+valans en	0	2971041	Valenciennes	50.3591	3.5251	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	44821	PPLA3	29
+valans enn	0	2971041	Valenciennes	50.3591	3.5251	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	44821	PPLA3	29
+valansa	0	2971053	Valence	44.9256	4.9096	FR	Alvernia-Rodano-Alpi	11071625	Drôme	63864	PPLA2	126
+valanse	0	2971056	Valençay	47.1621	1.5685	FR	Centro-Valle della Loira	3027939	Indre	2897	PPL	118
+valansien	0	2971041	Valenciennes	50.3591	3.5251	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	44821	PPLA3	29
+valansjen	0	2971041	Valenciennes	50.3591	3.5251	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	44821	PPLA3	29
+valansjenas	0	2971041	Valenciennes	50.3591	3.5251	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	44821	PPLA3	29
+valansol	0	2971033	Valensole	43.8377	5.9839	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	2479	PPL	569
+valanton	0	2971027	Valenton	48.7453	2.4647	FR	Île-de-France	3012874	Valle della Marna	11969	PPL	52
+valanzano	1	8983817	Valanzano	44.8393	8.2569	IT	Piemonte	3170831	Asti	6	PPLL	232
+valanziera	1	8979232	Valanziera	41.6974	13.8210	IT	Lazio	3174976	Frosinone	16	PPL	591
+valarsage	1	11579006	Valarsäge	47.0363	9.6832	CH	Cantone dei Grigioni	2660522	Region Prättigau / Davos	0	PPLL	1759
+valarsch	1	11587081	Valarsch	47.1198	9.3360	CH	Canton San Gallo	2658821	Wahlkreis Sarganserland	0	PPLL	490
+valas	1	8961296	Valas	46.5863	11.2965	IT	Trentino-Alto Adige	3165244	Bolzano	56	PPL	1374
+valatscha	1	2658203	Valatscha	46.7760	10.2430	CH	Cantone dei Grigioni	2660522	Region Engiadina Bassa / Val Müstair	0	PPL	1335
+valatschalp	1	2658202	Valatschalp	46.6167	9.2000	CH	Cantone dei Grigioni	2660522	Region Surselva	0	PPL	1973
+valauria	0	2970962	Vallauris	43.5780	7.0545	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	27286	PPL	115
+valaurie	1	2971129	Valaurie	44.4239	4.8108	FR	Alvernia-Rodano-Alpi	11071625	Drôme	550	PPL	134
+valauris	1	2971128	Valauris	43.3500	6.5500	FR	Provenza-Alpi-Costa Azzurra	2985244	Varo	0	PPL	136
+valaury	1	2971127	Valaury	43.2005	6.0014	FR	Provenza-Alpi-Costa Azzurra	2985244	Varo	0	PPL	168
+valavoire	1	2971126	Valavoire	44.2790	6.0668	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	28	PPL	1133
+valay	1	12277827	Valay	45.0772	0.3995	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	71
+valay	1	2971125	Valay	47.3382	5.6379	FR	Borgogna-Franca Contea	11071619	Alta Saona	523	PPL	217
+valazzana	1	9032768	Valazzana	44.2632	10.1106	IT	Toscana	3165361	Massa-Carrara	13	PPL	529
+valbeau	0	3038266	Albertville	45.6745	6.3906	FR	Alvernia-Rodano-Alpi	11071625	Savoia	19113	PPLA3	346
+valbeleix	1	2971123	Valbeleix	45.4690	2.9873	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	158	PPL	782
+valbella	1	2658201	Valbella	46.4012	9.1313	CH	Cantone dei Grigioni	2660522	Region Moesa	0	PPL	1321
+valbella	1	6695180	Valbella	46.7473	9.5542	CH	Cantone dei Grigioni	2660522	Region Albula	0	PPL	1518
+valbella furgga	1	11075808	Valbella Furgga	46.7390	9.6964	CH	Cantone dei Grigioni	2660522	Region Prättigau / Davos	0	PASS	2555
+valbella inferiore	1	8983785	Valbella Inferiore	45.8696	8.1983	IT	Piemonte	3170831	Vercelli	6	PPLL	792
+valbelle	1	2971122	Valbelle	44.1478	5.8815	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	228	PPL	565
+valberg	1	2971119	Valberg	44.0971	6.9294	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	0	PPL	1680
+valbiano	1	3164961	Valbiano	43.9054	12.1131	IT	Emilia-Romagna	3177401	Forlì-Cesena	35	PPL	240
+valbocchetto	1	8982476	Valbocchetto	44.8495	8.2371	IT	Piemonte	3170831	Asti	10	PPLL	184
+valbois	1	2970640	Valbois	48.9333	5.6167	FR	Gran Este	11071622	Mosa	0	PPL	263
+valbona	1	8961936	Valbona	44.3521	10.2483	IT	Emilia-Romagna	3177401	Reggio Emilia	53	PPL	1115
+valbona	1	8964769	Valbona	45.2115	11.3133	IT	Veneto	3164604	Verona	42	PPL	12
+valbona	1	8966048	Valbona	45.7159	9.7588	IT	Lombardia	3174618	Bergamo	38	PPL	301
+valbona	1	8969553	Valbona	45.1437	9.1672	IT	Lombardia	3174618	Pavia	30	PPL	62
+valbona	1	8971805	Valbona	45.4560	10.3021	IT	Lombardia	3174618	Brescia	26	PPL	121
+valbona	1	8974019	Valbona	44.1852	10.4502	IT	Toscana	3165361	Lucca	23	PPL	701
+valbona	1	8976065	Valbona	44.5001	9.9452	IT	Emilia-Romagna	3177401	Parma	20	PPL	590
+valbona	1	8981994	Valbona	44.8673	8.9557	IT	Piemonte	3170831	Alessandria	11	PPL	329
+valbonaga	1	8952092	Valbonaga	45.7499	9.4773	IT	Lombardia	3174618	Bergamo	258	PPL	341
+valboncione	1	8971494	Valboncione	43.6453	11.9550	IT	Toscana	3165361	Arezzo	27	PPL	737
+valbonnais	1	2971118	Valbonnais	44.9003	5.9080	FR	Alvernia-Rodano-Alpi	11071625	Isère	478	PPL	786
+valbonne	1	2971117	Valbonne	43.6329	6.9991	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	12633	PPL	232
+valborgo	1	8970093	Valborgo	45.8658	9.6930	IT	Lombardia	3174618	Bergamo	29	PPL	688
+valbourdin	1	2971115	Valbourdin	43.1333	5.9167	FR	Provenza-Alpi-Costa Azzurra	2985244	Varo	0	PPL	20
+valbrona	1	6534484	Valbrona	45.8774	9.2988	IT	Lombardia	3174618	Como	2451	PPLA3	485
+valbruant	1	2971112	Valbruant	47.9272	5.0459	FR	Gran Este	11071622	Alta Marna	0	PPL	305
+valbruna	1	3164959	Valbruna	46.4903	13.4908	IT	Friuli Venezia Giulia	3176525	Udine	188	PPL	807
+valbucciana	1	8974618	Valbucciana	44.3535	10.4451	IT	Emilia-Romagna	3177401	Reggio Emilia	22	PPL	856
+valburga	1	3164958	Valburga	46.0667	9.5667	IT	Lombardia	3174618	Sondrio	0	PPL	1159
+valburga	1	3188413	Valburga	46.1667	14.4333	SI	Municipality of Medvode	3239113		540	PPL	352
+valbusa	1	9032414	Valbusa	45.6213	11.0125	IT	Veneto	3164604	Verona	17	PPL	963
+valbusaga	1	8954829	Valbusaga	45.7224	8.2923	IT	Piemonte	3170831	Vercelli	127	PPL	458
+valbusi	1	8963090	Valbusi	45.6458	11.0004	IT	Veneto	3164604	Verona	48	PPL	1138
+valcabrere	1	2971109	Valcabrère	43.0332	0.5816	FR	Occitania	11071623	Alta Garonna	158	PPL	458
+valcaccia	1	12045433	Valcaccia	42.0293	9.3444	FR	Corsica	3023519		0	PPL	73
+valcagnano	1	8955774	Valcagnano	41.7672	13.2662	IT	Lazio	3174976	Frosinone	108	PPL	612
+valcalchera	1	8971790	Valcalchera	45.7197	9.8205	IT	Lombardia	3174618	Bergamo	26	PPL	405
+valcaldara	1	3164957	Valcaldara	42.7403	13.1276	IT	Umbria	3165048	Perugia	38	PPL	800
+valcanale	1	8952167	Valcanale	45.9503	9.8575	IT	Lombardia	3174618	Bergamo	252	PPL	988
+valcanina	1	8962408	Valcanina	43.1232	10.6391	IT	Toscana	3165361	Livorno	51	PPL	383
+valcanneto	1	8948827	Valcanneto	41.9508	12.1573	IT	Lazio	3174976	Roma	3764	PPL	56
+valcanover	1	8950521	Valcanover	46.0282	11.2289	IT	Trentino-Alto Adige	3165244	Trento	471	PPL	467
+valcanville	1	2971108	Valcanville	49.6436	-1.3311	FR	Normandia	11071621	Manica	395	PPL	20
+valcarecce	1	3164956	Valcarecce	43.3998	13.1751	IT	Marche	3174004	Macerata	31	PPL	418
+valcarene	1	8957944	Valcarene	42.7858	10.3024	IT	Toscana	3165361	Livorno	80	PPL	64
+valcasoni	1	8953007	Valcasoni	45.6147	12.7196	IT	Veneto	3164604	Venezia	209	PPL	0
+valcasotto	1	8970015	Valcasotto	44.2402	7.9050	IT	Piemonte	3170831	Cuneo	29	PPL	1003
+valcava	1	3164955	Valcava	45.7842	9.5120	IT	Lombardia	3174618	Bergamo	17	PPL	1340
+valcava	1	8964460	Valcava	46.2064	11.3119	IT	Trentino-Alto Adige	3165244	Trento	43	PPL	942
+valcava	1	8976866	Valcava	43.8899	11.9990	IT	Emilia-Romagna	3177401	Forlì-Cesena	19	PPL	529
+valcebollere	1	2971107	Valcebollère	42.3874	2.0349	FR	Occitania	11071623	Pirenei Orientali	54	PPL	1518
+valcera	1	3219314	Valcera	45.1394	12.1814	IT	Veneto	3164604	Venezia	0	PPL	-5
+valcerere dolfina	1	3219310	Valcerere-Dolfina	45.1533	12.2091	IT	Veneto	3164604	Venezia	242	PPL	0
+valcesura	1	8953540	Valcesura	44.7782	11.9545	IT	Emilia-Romagna	3177401	Ferrara	177	PPL	0
+valchava	1	2658200	Valchava	46.6008	10.4069	CH	Cantone dei Grigioni	2660522	Region Engiadina Bassa / Val Müstair	0	PPL	1417
+valchesina	1	8975212	Valchesina	46.2394	12.0178	IT	Veneto	3164604	Belluno	21	PPL	977
+valchevriere	1	2971105	Valchevrière	45.0667	5.4833	FR	Alvernia-Rodano-Alpi	11071625	Isère	0	PPL	1201
+valchiampo	1	8984092	Valchiampo	45.4842	11.3742	IT	Veneto	3164604	Vicenza	5	PPLL	72
+valcieca	1	8964247	Valcieca	44.3908	10.1699	IT	Emilia-Romagna	3177401	Parma	44	PPL	898
+valcimarra	1	8963978	Valcimarra	43.1385	13.1716	IT	Marche	3174004	Macerata	45	PPL	307
+valcivieres	1	2971103	Valcivières	45.5923	3.7956	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	227	PPL	861
+valcomperto	1	8967446	Valcomperto	41.7179	13.6429	IT	Lazio	3174976	Frosinone	35	PPL	317
+valcona soprana	1	8984675	Valcona Soprana	44.0908	7.7416	IT	Liguria	3174725	Imperia	2	PPLL	1438
+valcona sottana	1	9033100	Valcona Sottana	44.0956	7.7506	IT	Liguria	3174725	Imperia	1	PPL	1226
+valconasso	1	8951044	Valconasso	44.9671	9.7820	IT	Emilia-Romagna	3177401	Piacenza	368	PPL	78
+valcongrain	1	12500665	Valcongrain	48.9908	-0.5849	FR	Normandia	11071621	Calvados	0	PPL	191
+valcora	1	8968762	Valcora	43.1877	12.9127	IT	Marche	3174004	Macerata	32	PPL	474
+valcorbon	1	2971102	Valcorbon	49.1372	1.5988	FR	Normandia	11071621	Eure	0	PPL	54
+valcossana grilletto	1	8957897	Valcossana-Grilletto	44.9121	8.2749	IT	Piemonte	3170831	Asti	80	PPL	122
+valcourt	1	12316905	Valcourt	48.6634	5.8881	FR	Gran Este	11071622	Meurthe e Mosella	0	PPL	205
+valcourt	1	2971100	Valcourt	48.6169	4.9072	FR	Gran Este	11071622	Alta Marna	736	PPL	134
+valcozzena	1	8955559	Valcozzena	46.2820	12.0238	IT	Veneto	3164604	Belluno	111	PPL	581
+valcros	1	2971098	Valcros	43.2353	6.0362	FR	Provenza-Alpi-Costa Azzurra	2985244	Varo	0	PPL	218
+valcros	1	2971099	Valcros	43.1830	6.2794	FR	Provenza-Alpi-Costa Azzurra	2985244	Varo	0	PPL	107
+valcurta	1	8980146	Valcurta	44.5574	7.3365	IT	Piemonte	3170831	Cuneo	14	PPL	685
+valda	1	6535570	Valda	46.2072	11.2649	IT	Trentino-Alto Adige	3165244	Trento	214	PPLA3	795
+valdagno	1	3164954	Valdagno	45.6450	11.2989	IT	Veneto	3164604	Vicenza	22555	PPLA3	230
+valdagno di trento	1	3164953	Valdagno di Trento	46.3667	11.3500	IT	Trentino-Alto Adige	3165244	Bolzano	0	PPL	1184
+valdahon	1	2998998	Valdahon	47.1500	6.3500	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	5077	PPL	664
+valdalbero	1	8981137	Valdalbero	44.2744	10.7177	IT	Emilia-Romagna	3177401	Modena	13	PPL	609
+valdamonte	1	3164951	Valdamonte	44.9881	9.3179	IT	Lombardia	3174618	Pavia	78	PPL	299
+valdampierre	1	2971096	Valdampierre	49.3040	2.0526	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	917	PPL	155
+valdana	1	8982280	Valdana	42.7687	10.3517	IT	Toscana	3165361	Livorno	11	PPL	36
+valdans	1	2971095	Valdans	44.9833	4.6167	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	0	PPL	546
+valdantena casalina	1	3164950	Valdantena Casalina	44.4167	9.9333	IT	Toscana	3165361	Massa-Carrara	0	PPL	502
+valdanzanotto	1	8978024	Valdanzanotto	44.7573	8.5118	IT	Piemonte	3170831	Alessandria	17	PPL	145
+valdaora	1	3164949	Valdaora	46.7603	12.0295	IT	Trentino-Alto Adige	3165244	Bolzano	1668	PPLA3	1052
+valdaora di mezzo	1	3164949	Valdaora	46.7603	12.0295	IT	Trentino-Alto Adige	3165244	Bolzano	1668	PPLA3	1052
+valdaora di sotto	1	9036159	Valdaora di Sotto	46.7681	12.0182	IT	Trentino-Alto Adige	3165244	Bolzano	756	PPL	1014
+valdapra	0	3164949	Valdaora	46.7603	12.0295	IT	Trentino-Alto Adige	3165244	Bolzano	1668	PPLA3	1052
+valdara	1	8954435	Valdara	43.5311	12.5061	IT	Marche	3174004	Pesaro e Urbino	138	PPL	634
+valdarenne	1	8962297	Valdarenne	45.5121	8.9880	IT	Lombardia	3174618	Milano	51	PPL	155
+valdarmella	1	8984036	Valdarmella	44.1658	7.8816	IT	Piemonte	3170831	Cuneo	5	PPLL	1070
+valdaro	1	8953341	Valdaro	45.1358	10.8598	IT	Lombardia	3174618	Mantova	191	PPL	22
+valdaso	1	8949685	Valdaso	43.0958	13.8315	IT	Marche	3174004	Fermo	785	PPL	9
+valdazze	1	8983445	Valdazze	43.7139	12.0881	IT	Toscana	3165361	Arezzo	8	PPLL	979
+valdazzo	1	3164947	Valdazzo	43.7500	12.6167	IT	Marche	3174004	Pesaro e Urbino	0	PPL	371
+valdeblore	1	6620019	Valdeblore	44.0712	7.1720	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	835	PPL	1060
+valdelancourt	1	2971091	Valdelancourt	48.1058	5.0022	FR	Gran Este	11071622	Alta Marna	0	PPL	298
+valdellette	1	8957021	Valdellette	45.7550	11.5316	IT	Veneto	3164604	Vicenza	90	PPL	273
+valdena	1	3164945	Valdena	44.4512	9.7860	IT	Emilia-Romagna	3177401	Parma	7	PPL	723
+valdengo	1	6535342	Valdengo	45.5671	8.1383	IT	Piemonte	3170831	Biella	1986	PPLA3	320
+valdenogher	1	3219491	Valdenogher	46.1233	12.3880	IT	Veneto	3164604	Belluno	145	PPL	852
+valderice	1	6534274	Valderice	38.0401	12.6151	IT	Sicilia	2523119	Trapani	6827	PPLA3	240
+valderies	1	2971085	Valderiès	44.0119	2.2324	FR	Occitania	11071623	Tarn	802	PPL	342
+valderio	1	8955230	Valderio	45.7419	11.6105	IT	Veneto	3164604	Vicenza	118	PPL	130
+valderoure	1	2971083	Valderoure	43.7975	6.7108	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	317	PPL	1097
+valdeserta, passo di	1	11075423	Valdeserta, Passo di	46.3664	8.2747	IT	Piemonte	3170831	Verbano-Cusio-Ossola	0	PASS	2664
+valdestali	1	3220215	Valdestali	46.2067	12.7572	IT	Friuli Venezia Giulia	3176525	Pordenone	6	PPL	590
+valdevarri	1	8959852	Valdevarri	42.1568	13.1850	IT	Abruzzo	3183560	dell’Aquila	65	PPL	998
+valdi	1	8983919	Valdi	44.0833	10.8794	IT	Toscana	3165361	Pistoia	6	PPLL	886
+valdiano	1	8975508	Valdiano	42.2119	12.2999	IT	Lazio	3174976	Viterbo	21	PPL	234
+valdibrana	1	8950954	Valdibrana	43.9727	10.9149	IT	Toscana	3165361	Pistoia	383	PPL	156
+valdicastello	1	6544036	Valdicastello	43.9579	10.2699	IT	Toscana	3165361	Lucca	0	PPL	152
+valdiceci di sopra	1	8982720	Valdiceci di Sopra	43.7492	12.2530	IT	Toscana	3165361	Arezzo	10	PPLL	816
+valdichiesa	1	8957140	Valdichiesa	38.5632	14.8302	IT	Sicilia	2523119	Messina	89	PPL	294
+valdichiesa	1	8962276	Valdichiesa	44.9656	7.9063	IT	Piemonte	3170831	Asti	51	PPL	258
+valdiea	1	8972695	Valdiea	43.1090	13.1314	IT	Marche	3174004	Macerata	25	PPL	392
+valdieri	1	3164942	Valdieri	44.2776	7.3976	IT	Piemonte	3170831	Cuneo	500	PPLA3	774
+valdieu	1	12524880	Valdieu	47.6317	7.0587	FR	Gran Este	11071622	Alto Reno	0	PPL	343
+valdieu lutran	1	2971078	Valdieu-Lutran	47.6333	7.0667	FR	Gran Este	11071622	Alto Reno	0	PPL	327
+valdifrina	1	8983160	Valdifrina	46.2056	12.6987	IT	Friuli Venezia Giulia	3176525	Pordenone	9	PPLL	540
+valdigieri	1	2971076	Valdigiéri	43.2784	6.4707	FR	Provenza-Alpi-Costa Azzurra	2985244	Varo	0	PPL	67
+valdigna	0	3172600	Morgex	45.7566	7.0412	IT	Valle d'Aosta	3164857	Aosta	1741	PPLA3	923
+valdigna d aosta	0	3172600	Morgex	45.7566	7.0412	IT	Valle d'Aosta	3164857	Aosta	1741	PPLA3	923
+valdilucciole	1	8965209	Valdilucciole	43.0018	12.0273	IT	Umbria	3165048	Perugia	41	PPL	281
+valdimolino	1	8953735	Valdimolino	45.5550	11.4106	IT	Veneto	3164604	Vicenza	166	PPL	59
+valdina	1	2522807	Valdina	38.1935	15.3698	IT	Sicilia	2523119	Messina	356	PPLA3	213
+valdinoce	1	3164939	Valdinoce	44.0594	12.1021	IT	Emilia-Romagna	3177401	Forlì-Cesena	26	PPL	354
+valdipino	1	8952931	Valdipino	44.1461	9.7460	IT	Liguria	3174725	La Spezia	212	PPL	241
+valdiporro	1	8955821	Valdiporro	45.6255	11.0520	IT	Veneto	3164604	Verona	107	PPL	1083
+valdirame	1	3164935	Valdirame	44.9833	11.1000	IT	Lombardia	3174618	Mantova	0	PPL	11
+valdirosa	1	8981741	Valdirosa	44.1750	11.2870	IT	Emilia-Romagna	3177401	Bologna	12	PPL	877
+valdirose	1	3343551	Valdirose	45.9419	13.6678	SI	Municipality of Šempeter–Vrtojba	3344898		1118	PPL	144
+valdisotto	1	6534733	Valdisotto	46.4344	10.3569	IT	Lombardia	3174618	Sondrio	3217	PPLA3	1165
+valdissera	1	8973796	Valdissera	45.6255	11.4306	IT	Veneto	3164604	Vicenza	23	PPL	79
+valditacca	1	3164934	Valditacca	44.3895	10.0982	IT	Emilia-Romagna	3177401	Parma	117	PPL	1010
+valditermine	1	8966204	Valditermine	44.3591	9.7566	IT	Toscana	3165361	Massa-Carrara	38	PPL	845
+valdivelo	1	8974480	Valdivelo	45.6097	11.0898	IT	Veneto	3164604	Verona	22	PPL	1046
+valdivienne	1	2978262	Valdivienne	46.5167	0.6333	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Vienne	0	PPL	76
+valdivilla	1	8955600	Valdivilla	44.7095	8.1828	IT	Piemonte	3170831	Cuneo	110	PPL	411
+valdo	1	8956919	Valdo	46.3730	8.4260	IT	Piemonte	3170831	Verbano-Cusio-Ossola	92	PPL	1284
+valdo	1	8982049	Valdo	46.0076	8.7744	IT	Lombardia	3174618	Varese	11	PPL	493
+valdobbiadene	1	3164931	Valdobbiadene	45.8969	11.9825	IT	Veneto	3164604	Treviso	6307	PPLA3	253
+valdocco	1	12023059	Valdocco	45.0782	7.6749	IT	Piemonte	3170831	Torino	0	PPLX	249
+valdoie	1	2971072	Valdoie	47.6704	6.8420	FR	Borgogna-Franca Contea	11071619	Territorio di Belfort	5063	PPL	375
+valdolenga	1	8975030	Valdolenga	45.0019	8.5418	IT	Piemonte	3170831	Alessandria	21	PPL	165
+valdolmo	1	8960622	Valdolmo	43.4400	12.8077	IT	Marche	3174004	Ancona	60	PPL	480
+valdoltra	1	3188409	Valdoltra	45.5811	13.7303	SI	Comune di Ancarano	11288217		0	PPL	22
+valdone	1	8977248	Valdone	44.7850	7.9572	IT	Piemonte	3170831	Cuneo	18	PPL	244
+valdonega	1	13353919	Valdonega	45.4557	11.0008	IT	Veneto	3164604	Verona	0	PPLX	95
+valdoneghe	1	9031946	Valdoneghe	45.5806	10.7684	IT	Veneto	3164604	Verona	23	PPL	213
+valdoneghe di sotto	1	8971282	Valdoneghe di Sotto	45.5772	10.7676	IT	Veneto	3164604	Verona	27	PPL	210
+valdonica	1	8957156	Valdonica	44.2110	9.8483	IT	Liguria	3174725	La Spezia	88	PPL	351
+valdonica	1	8971506	Valdonica	42.6843	13.0527	IT	Umbria	3165048	Perugia	27	PPL	1044
+valdonne	1	2971069	Valdonne	43.3998	5.5622	FR	Provenza-Alpi-Costa Azzurra	2985244	Bocche del Rodano	0	PPL	275
+valdoria	1	8972241	Valdoria	38.0531	14.9946	IT	Sicilia	2523119	Messina	26	PPL	612
+valdorley	0	2977660	Saint-Paul-en-Jarez	45.4851	4.5711	FR	Alvernia-Rodano-Alpi	11071625	Loira	3978	PPL	386
+valdottavo	1	3164928	Valdottavo	43.9419	10.4811	IT	Toscana	3165361	Lucca	1248	PPL	100
+valdozza	1	8958316	Valdozza	44.7203	7.9254	IT	Piemonte	3170831	Cuneo	76	PPL	239
+valdrome	1	2971068	Valdrôme	44.5046	5.5739	FR	Alvernia-Rodano-Alpi	11071625	Drôme	129	PPL	803
+valdu	1	12322537	Valdu	42.1223	8.9017	FR	Corsica	3023519	Corsica del Sud	0	PPL	701
+valduga	1	8958913	Valduga	45.8775	11.1303	IT	Trentino-Alto Adige	3165244	Trento	71	PPL	648
+valduggia	1	3164927	Valduggia	45.7272	8.3273	IT	Piemonte	3170831	Vercelli	1257	PPLA3	390
+valdugliano ii	1	9034015	Valdugliano II	41.1185	15.1175	IT	Campania	3181042	Avellino	25	PPL	591
+valdugliano iv	1	8958974	Valdugliano Iv	41.1211	15.1186	IT	Campania	3181042	Avellino	71	PPL	598
+valduna	1	2762484	Valduna	47.2667	9.6500	AT	Vorarlberg	2762300	Politischer Bezirk Feldkirch	0	PPL	593
+valdurenque	1	2971065	Valdurenque	43.5687	2.3083	FR	Occitania	11071623	Tarn	654	PPL	217
+valdurna	1	3164926	Valdurna	46.7392	11.4379	IT	Trentino-Alto Adige	3165244	Bolzano	49	PPL	1568
+vale	1	3216564	Vale	45.8158	13.6731	SI	Municipality of Komen	3239078		14	PPL	163
+vale	1	7669983	Valé	46.6128	9.1779	CH	Cantone dei Grigioni	2660522	Region Surselva	0	PPL	1271
+vale	1	8976037	Vale	46.3454	13.1308	IT	Friuli Venezia Giulia	3176525	Udine	20	PPL	236
+vale thorens	0	6544556	Val Thorens	45.2978	6.5838	FR	Alvernia-Rodano-Alpi	11071625	Savoia	2500	PPLL	2333
+valecchie	1	8972771	Valecchie	43.0669	12.6065	IT	Umbria	3165048	Perugia	25	PPL	264
+valecco	1	8967294	Valecco	45.5986	11.2258	IT	Veneto	3164604	Verona	35	PPL	601
+valecourt	1	2971063	Valécourt	49.1986	1.7783	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	0	PPL	97
+valecreusa	0	3164862	Vallecrosia	43.7867	7.6390	IT	Liguria	3174725	Imperia	6024	PPLA3	5
+valeda	1	8973056	Valeda	45.8778	9.9601	IT	Lombardia	3174618	Bergamo	24	PPL	597
+valeggio	0	3164924	Valeggio sul Mincio	45.3533	10.7363	IT	Veneto	3164604	Verona	8641	PPLA3	88
+valeggio	1	3164925	Valeggio	45.1506	8.8613	IT	Lombardia	3174618	Pavia	191	PPLA3	93
+valeggio	1	8974201	Valeggio	45.5836	8.0803	IT	Piemonte	3170831	Biella	23	PPL	498
+valeggio sul mincio	1	3164924	Valeggio sul Mincio	45.3533	10.7363	IT	Veneto	3164604	Verona	8641	PPLA3	88
+valeille	1	12277304	Valeille	44.8301	1.3096	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	126
+valeille	1	2971060	Valeille	45.7084	4.3033	FR	Alvernia-Rodano-Alpi	11071625	Loira	526	PPL	381
+valeille	1	2971062	Valeille	44.9833	1.3667	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	271
+valeilles	1	2971061	Valeilles	44.3636	0.9223	FR	Occitania	11071623	Tarn-et-Garonne	282	PPL	149
+valeins	1	2971059	Valeins	46.1126	4.8724	FR	Alvernia-Rodano-Alpi	11071625	Ain	97	PPL	260
+valeins, hautefage	1	8521489	Valeins, Hautefage	45.0897	1.9822	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	518
+valeix	1	12308273	Valeix	45.6787	1.1335	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	0	PPL	333
+valeix	1	2971058	Valeix	45.3167	2.1500	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	537
+valempoulieres	1	2971057	Valempoulières	46.8263	5.8637	FR	Borgogna-Franca Contea	11071619	Giura	176	PPL	651
+valenca	0	2971053	Valence	44.9256	4.9096	FR	Alvernia-Rodano-Alpi	11071625	Drôme	63864	PPLA2	126
+valenca bassa	1	8976580	Valenca Bassa	45.5333	9.9671	IT	Lombardia	3174618	Brescia	19	PPL	139
+valencas	1	12318054	Valencas	44.0693	2.8724	FR	Occitania	11071623	Aveyron	0	PPL	539
+valencay	1	2971056	Valençay	47.1621	1.5685	FR	Centro-Valle della Loira	3027939	Indre	2897	PPL	118
+valence	0	2971043	Valence-sur-Baïse	43.8822	0.3811	FR	Occitania	11071623	Gers	1196	PPL	119
+valence	0	2971046	Valence-d'Albigeois	44.0196	2.4043	FR	Occitania	11071623	Tarn	1295	PPL	468
+valence	1	2971051	Valence	45.8899	0.3074	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	247	PPL	92
+valence	1	2971052	Valence	45.2124	3.0329	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	1089
+valence	1	2971053	Valence	44.9256	4.9096	FR	Alvernia-Rodano-Alpi	11071625	Drôme	63864	PPLA2	126
+valence	1	2971054	Valence	44.1082	0.8910	FR	Occitania	11071623	Tarn-et-Garonne	5039	PPL	71
+valence d abigeois	0	2971046	Valence-d'Albigeois	44.0196	2.4043	FR	Occitania	11071623	Tarn	1295	PPL	468
+valence d agen	0	2971054	Valence	44.1082	0.8910	FR	Occitania	11071623	Tarn-et-Garonne	5039	PPL	71
+valence d albigeois	1	2971046	Valence-d'Albigeois	44.0196	2.4043	FR	Occitania	11071623	Tarn	1295	PPL	468
+valence en brie	1	2971045	Valence-en-Brie	48.4428	2.8902	FR	Île-de-France	3012874	Senna e Marna	715	PPL	104
+valence sur baise	1	2971043	Valence-sur-Baïse	43.8822	0.3811	FR	Occitania	11071623	Gers	1196	PPL	119
+valencenae	0	2971041	Valenciennes	50.3591	3.5251	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	44821	PPLA3	29
+valencendre	1	2971044	Valencendre	50.4845	1.6961	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	0	PPL	4
+valencia	0	2971053	Valence	44.9256	4.9096	FR	Alvernia-Rodano-Alpi	11071625	Drôme	63864	PPLA2	126
+valencianas	0	2971041	Valenciennes	50.3591	3.5251	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	44821	PPLA3	29
+valenciennes	1	2971041	Valenciennes	50.3591	3.5251	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	44821	PPLA3	29
+valencin	1	2971039	Valencin	45.6111	5.0293	FR	Alvernia-Rodano-Alpi	11071625	Isère	2234	PPL	337
+valencins	1	2971038	Valencins	46.9851	2.3150	FR	Centro-Valle della Loira	3027939	Cher	0	PPL	165
+valencogne	1	2971036	Valencogne	45.5003	5.5429	FR	Alvernia-Rodano-Alpi	11071625	Isère	499	PPL	577
+valencola	0	2971033	Valensole	43.8377	5.9839	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	2479	PPL	569
+valendas	1	2658198	Valendas	46.7878	9.2826	CH	Cantone dei Grigioni	2660522	Region Surselva	294	PPL	813
+valenkur sel vin i	0	2967495	Walincourt-Selvigny	50.0667	3.3333	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	2068	PPL	129
+valennes	1	2971034	Valennes	47.9965	0.8093	FR	Paesi della Loira	2988289	Sarthe	369	PPL	109
+valens	1	2658197	Valens	46.9666	9.4771	CH	Canton San Gallo	2658821	Wahlkreis Sarganserland	0	PPL	952
+valensa	0	3164920	Valenza	45.0124	8.6438	IT	Piemonte	3170831	Alessandria	17305	PPLA3	125
+valenshtadt	0	2658061	Walenstadt	47.1241	9.3119	CH	Canton San Gallo	2658821	Wahlkreis Sarganserland	5000	PPL	426
+valensole	1	2971033	Valensole	43.8377	5.9839	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	2479	PPL	569
+valenson	1	12307225	Valenson	44.9288	4.8724	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	0	PPL	113
+valenta	1	8978457	Valenta	43.9256	10.8419	IT	Toscana	3165361	Pistoia	17	PPL	419
+valentano	1	3164923	Valentano	42.5638	11.8275	IT	Lazio	3174976	Viterbo	2809	PPLA3	538
+valentees	1	13712902	Valentées	43.5218	0.3984	FR	Occitania	11071623	Gers	0	PPL	164
+valenti	1	2971031	Valenti	44.3697	5.9254	FR	Provenza-Alpi-Costa Azzurra	2985244	Alte Alpi	0	PPL	567
+valenti	1	8966725	Valenti	38.4449	16.4109	IT	Calabria	2525468	Reggio Calabria	37	PPL	541
+valenti	1	8976699	Valenti	45.6910	11.8157	IT	Veneto	3164604	Vicenza	19	PPL	62
+valentigney	1	2971030	Valentigney	47.4639	6.8317	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	12608	PPL	327
+valentigny	1	2971029	Valentigny	47.1990	2.5826	FR	Centro-Valle della Loira	3027939	Cher	0	PPL	177
+valentigo di sopra	1	9032429	Valentigo di Sopra	45.7588	12.5195	IT	Veneto	3164604	Treviso	17	PPL	6
+valentigo di sotto	1	8972546	Valentigo di Sotto	45.7524	12.5260	IT	Veneto	3164604	Treviso	25	PPL	5
+valentin	1	8260076	Valentin	47.2751	5.9991	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	0	PPLL	323
+valentina	1	3164922	Valentina	42.8667	13.3667	IT	Marche	3174004	Ascoli Piceno	0	PPL	606
+valentina	1	8974505	Valentina	45.5724	11.3350	IT	Veneto	3164604	Vicenza	22	PPL	285
+valentine	1	2971028	Valentine	43.0948	0.7044	FR	Occitania	11071623	Alta Garonna	840	PPL	372
+valentinges	1	12318775	Valentinges	47.2776	3.7623	FR	Borgogna-Franca Contea	11071619	Nièvre	0	PPL	234
+valentinhaft	1	2762482	Valentinhaft	48.0372	13.1908	AT	Alta Austria	2769848	Politischer Bezirk Braunau am Inn	172	PPL	497
+valentini	1	8957094	Valentini	45.0745	11.4419	IT	Veneto	3164604	Verona	89	PPL	8
+valentini	1	8973851	Valentini	45.5261	11.9553	IT	Veneto	3164604	Padova	23	PPL	16
+valentino	1	8952637	Valentino	45.1556	8.0939	IT	Piemonte	3170831	Torino	224	PPLA3	284
+valentino	1	8965014	Valentino	44.8072	8.1388	IT	Piemonte	3170831	Asti	41	PPL	133
+valentino	1	8971712	Valentino	44.7030	7.9046	IT	Piemonte	3170831	Cuneo	26	PPL	271
+valentino	1	8972292	Valentino	45.1945	7.9551	IT	Piemonte	3170831	Torino	25	PPL	179
+valentino	1	9031387	Valentino	42.8764	13.7118	IT	Marche	3174004	Ascoli Piceno	36	PPL	96
+valentins	1	8969950	Valentins	46.3047	12.9292	IT	Friuli Venezia Giulia	3176525	Pordenone	30	PPL	357
+valentintorl	1	2762481	Valentintörl	46.6167	12.8833	AT	Carinzia	2774686	Politischer Bezirk Hermagor	0	PASS	2239
+valenton	1	2971027	Valenton	48.7453	2.4647	FR	Île-de-France	3012874	Valle della Marna	11969	PPL	52
+valenurbo	0	2658061	Walenstadt	47.1241	9.3119	CH	Canton San Gallo	2658821	Wahlkreis Sarganserland	5000	PPL	426
+valenza	1	3164920	Valenza	45.0124	8.6438	IT	Piemonte	3170831	Alessandria	17305	PPLA3	125
+valenza	1	8956435	Valenza	44.2251	10.0172	IT	Toscana	3165361	Massa-Carrara	98	PPL	156
+valenzai	1	8973185	Valenzai	46.0585	12.0863	IT	Veneto	3164604	Belluno	24	PPL	328
+valenzano	1	3164919	Valenzano	41.0438	16.8849	IT	Puglia	3169778	Bari	16101	PPLA3	85
+valenzano	1	8960565	Valenzano	45.6096	10.0835	IT	Lombardia	3174618	Brescia	60	PPL	215
+valenzatico	1	8949023	Valenzatico	43.8668	10.9650	IT	Toscana	3165361	Pistoia	1901	PPL	41
+valeoux	1	2971026	Valeoux	45.8321	2.0564	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	0	PPL	712
+valera	1	8973918	Valera	44.7993	10.2842	IT	Emilia-Romagna	3177401	Parma	23	PPL	63
+valera	1	8977170	Valera	45.3872	7.9876	IT	Piemonte	3170831	Torino	18	PPL	342
+valera fratta	1	6535373	Valera Fratta	45.2572	9.3361	IT	Lombardia	3174618	Lodi	1563	PPLA3	78
+valerauga	0	2970941	Valleraugue	44.0813	3.6420	FR	Occitania	11071623	Gard	1092	PPL	374
+valergues	1	2971025	Valergues	43.6682	4.0611	FR	Occitania	11071623	Hérault	1941	PPL	21
+valeri	1	9032754	Valeri	45.7654	11.6129	IT	Veneto	3164604	Vicenza	13	PPL	398
+valeria	1	8977273	Valeria	44.8294	8.9416	IT	Piemonte	3170831	Alessandria	18	PPL	301
+valeriana	1	8977329	Valeriana	46.1569	9.8097	IT	Lombardia	3174618	Sondrio	18	PPL	279
+valeriano	1	3164917	Valeriano	44.1494	9.8563	IT	Liguria	3174725	La Spezia	307	PPL	250
+valeriano	1	3164918	Valeriano	46.1671	12.9216	IT	Friuli Venezia Giulia	3176525	Pordenone	619	PPL	182
+valerio	1	8958805	Valerio	45.6979	11.5751	IT	Veneto	3164604	Vicenza	72	PPL	97
+valerio	1	8978641	Valerio	41.5410	14.0608	IT	Molise	3173222	Isernia	17	PPL	457
+valerisce	1	8957108	Valerisce	45.9680	13.5772	IT	Friuli Venezia Giulia	3176525	Gorizia	89	PPL	132
+valernes	1	2971024	Valernes	44.2619	5.9586	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	253	PPL	605
+valery	1	6942504	Valéry	43.7779	1.9669	FR	Occitania	11071623	Tarn	0	PPLL	175
+vales	1	12316517	Valès	43.9742	1.7328	FR	Occitania	11071623	Tarn	0	PPL	201
+valescourt	1	2971023	Valescourt	49.4827	2.4362	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	284	PPL	86
+valescure	1	2971022	Valescure	43.4383	6.7770	FR	Provenza-Alpi-Costa Azzurra	2985244	Varo	0	PPL	24
+valesole	0	2971033	Valensole	43.8377	5.9839	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	2479	PPL	569
+valessa ceolini	1	9034405	Valessa-Ceolini	45.9890	12.6062	IT	Friuli Venezia Giulia	3176525	Pordenone	10	PPL	67
+valessard	1	2971021	Valessard	45.4000	2.6167	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	750
+valestra	1	8952503	Valestra	44.4507	10.5774	IT	Emilia-Romagna	3177401	Reggio Emilia	231	PPL	637
+valette	1	12310407	Valette	47.2807	1.7669	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	0	PPL	99
+valette	1	12547133	Valette	45.2334	2.1645	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	367
+valette	1	2971015	Valette	49.0517	6.8420	FR	Gran Este	11071622	Mosella	0	PPL	260
+valette	1	2971016	Valette	46.2317	1.8982	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	0	PPL	348
+valette	1	2971017	Valette	45.8606	0.8405	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	0	PPL	204
+valette	1	2971018	Valette	45.6398	1.1637	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	0	PPL	398
+valette	1	2971019	Valette	45.2677	2.6030	FR	Alvernia-Rodano-Alpi	11071625	Cantal	262	PPL	897
+valeuil	1	2971013	Valeuil	45.3333	0.6179	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	371	PPL	111
+valeyrac	1	2971011	Valeyrac	45.3960	-0.8954	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	0	PPL	5
+valeyrac	1	2971012	Valeyrac	45.0316	1.5855	FR	Occitania	11071623	Lot	0	PPL	241
+valeyres sous montagny	1	11790500	Valeyres-sous-Montagny	46.7986	6.6109	CH	Canton Vaud	2658182	distretto del Jura-Nord vaudois	0	PPLA3	460
+valeyres sous rances	1	11048500	Valeyres-sous-Rances	46.7530	6.5262	CH	Canton Vaud	2658182	distretto del Jura-Nord vaudois	0	PPL	509
+valeyres sous ursins	1	8533320	Valeyres-sous-Ursins	46.7471	6.6523	CH	Canton Vaud	2658182	distretto del Jura-Nord vaudois	0	PPL	530
+valezan	1	2971010	Valezan	45.5743	6.6925	FR	Alvernia-Rodano-Alpi	11071625	Savoia	168	PPL	1160
+valf	0	2971007	Valff	48.4214	7.5206	FR	Gran Este	11071622	Basso Reno	1354	PPL	160
+valfabbrica	1	3164915	Valfabbrica	43.1578	12.6020	IT	Umbria	3165048	Perugia	1534	PPLA3	289
+valfea	1	8965013	Valfea	44.9195	8.2729	IT	Piemonte	3170831	Asti	41	PPL	131
+valfenera	1	3164914	Valfenera	44.9017	7.9643	IT	Piemonte	3170831	Asti	1499	PPLA3	282
+valff	1	2971007	Valff	48.4214	7.5206	FR	Gran Este	11071622	Basso Reno	1354	PPL	160
+valfin	0	2971006	Valfin-lès-Saint-Claude	46.4376	5.8551	FR	Borgogna-Franca Contea	11071619	Giura	12966	PPL	683
+valfin les saint claude	1	2971006	Valfin-lès-Saint-Claude	46.4376	5.8551	FR	Borgogna-Franca Contea	11071619	Giura	12966	PPL	683
+valfin sur valouse	1	2971005	Valfin-sur-Valouse	46.3699	5.5168	FR	Borgogna-Franca Contea	11071619	Giura	92	PPL	378
+valfiorita	1	8981159	Valfiorita	44.2368	11.0142	IT	Emilia-Romagna	3177401	Bologna	13	PPL	460
+valflaunes	1	2971004	Valflaunès	43.8007	3.8717	FR	Occitania	11071623	Hérault	744	PPL	156
+valfleury	1	2971003	Valfleury	45.5231	4.4922	FR	Alvernia-Rodano-Alpi	11071625	Loira	521	PPL	640
+valfloriana	1	6534594	Valfloriana	46.2497	11.3431	IT	Trentino-Alto Adige	3165244	Trento	567	PPLA3	845
+valformosa	1	8980289	Valformosa	44.7414	9.2548	IT	Lombardia	3174618	Pavia	14	PPL	963
+valfournes	1	2971001	Valfournès	44.4484	3.8712	FR	Occitania	11071623	Lozère	0	PPL	882
+valframbert	1	2971000	Valframbert	48.4646	0.1083	FR	Normandia	11071621	Orne	1551	PPL	146
+valfredda	1	8975650	Valfredda	45.7102	9.3787	IT	Lombardia	3174618	Lecco	21	PPL	319
+valfrejus	1	8643077	Valfrejus	45.1738	6.6528	FR	Alvernia-Rodano-Alpi	11071625	Savoia	0	PPL	1533
+valfroicourt	1	2970999	Valfroicourt	48.1982	6.0960	FR	Gran Este	11071622	Vosgi	262	PPL	301
+valgadena	1	8965459	Valgadena	45.8882	11.6863	IT	Veneto	3164604	Vicenza	40	PPL	175
+valgai	1	8966784	Valgai	44.7335	7.9003	IT	Piemonte	3170831	Cuneo	36	PPL	286
+valganna	1	3164911	Valganna	45.9023	8.8233	IT	Lombardia	3174618	Varese	1462	PPLA3	461
+valgatara	1	7290085	Valgatara	45.5347	10.9119	IT	Veneto	3164604	Verona	1186	PPL	176
+valgenauna	1	8968575	Valgenauna	46.8680	11.5063	IT	Trentino-Alto Adige	3165244	Bolzano	32	PPL	1059
+valgianna	1	8952262	Valgianna	43.8591	12.0153	IT	Emilia-Romagna	3177401	Forlì-Cesena	246	PPL	673
+valgianni	1	8966227	Valgianni	43.7341	11.6558	IT	Toscana	3165361	Arezzo	38	PPL	698
+valgiano	1	3164910	Valgiano	43.9119	10.5899	IT	Toscana	3165361	Lucca	107	PPL	312
+valgioie	1	3164909	Valgioie	45.0640	7.3493	IT	Piemonte	3170831	Torino	824	PPLA3	870
+valgiubbola	1	8984564	Valgiubbola	43.4045	12.9902	IT	Marche	3174004	Ancona	3	PPLL	479
+valgiuncata	1	8970070	Valgiuncata	44.3061	9.7357	IT	Liguria	3174725	La Spezia	29	PPL	451
+valgoglio	1	6534518	Valgoglio	45.9749	9.9136	IT	Lombardia	3174618	Bergamo	345	PPLA3	929
+valgorge	1	2970996	Valgorge	44.5904	4.1151	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	400	PPL	584
+valgrana	1	3164908	Valgrana	44.4118	7.3807	IT	Piemonte	3170831	Cuneo	375	PPLA3	642
+valgrande	1	8965839	Valgrande	44.9657	11.9476	IT	Emilia-Romagna	3177401	Ferrara	39	PPL	0
+valgraveglia	1	8951724	Valgraveglia	44.1561	9.7827	IT	Liguria	3174725	La Spezia	289	PPL	134
+valgreghentino	1	6535362	Valgreghentino	45.7793	9.4134	IT	Lombardia	3174618	Lecco	3103	PPLA3	304
+valgrisanche	1	3164907	Valgrisanche	45.6333	7.0667	IT	Valle d'Aosta	3164857	Aosta	0	PPL	1629
+valgrisenche	1	6535079	Valgrisenche	45.6304	7.0640	IT	Valle d'Aosta	3164857	Aosta	49	PPLA3	1664
+valguarnera	0	2522805	Valguarnera Caropepe	37.4953	14.3902	IT	Sicilia	2523119	Enna	7453	PPLA3	590
+valguarnera	1	2522806	Valguarnera	38.0167	13.0833	IT	Sicilia	2523119	Palermo	0	PPL	202
+valguarnera caropepe	1	2522805	Valguarnera Caropepe	37.4953	14.3902	IT	Sicilia	2523119	Enna	7453	PPLA3	590
+valguglioglio	1	8968498	Valguglioglio	44.7296	8.5008	IT	Piemonte	3170831	Alessandria	32	PPL	219
+valhey	1	2970994	Valhey	48.6793	6.4916	FR	Gran Este	11071622	Meurthe e Mosella	163	PPL	242
+valhuon	1	2970992	Valhuon	50.4335	2.3780	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	525	PPL	159
+valia	1	8977193	Valia	45.4098	7.7655	IT	Piemonte	3170831	Torino	18	PPL	380
+valialle	1	8971491	Valialle	43.5252	12.0337	IT	Toscana	3165361	Arezzo	27	PPL	380
+valiana	1	8953016	Valiana	41.5918	13.2664	IT	Lazio	3174976	Frosinone	209	PPL	173
+valiano	1	3164906	Valiano	43.1462	11.9023	IT	Toscana	3165361	Siena	343	PPL	332
+valicna vas	1	8988075	Valična Vas	45.8652	14.8720	SI	Municipality of Ivančna Gorica	3239191		75	PPLL	401
+valico	1	8952909	Valico	43.7905	11.1334	IT	Toscana	3165361	Firenze	213	PPL	36
+valico	1	9031727	Valico	46.6363	10.4589	IT	Trentino-Alto Adige	3165244	Bolzano	27	PPL	1248
+valico del monte fumaiolo	1	8224818	Valico del Monte Fumaiolo	43.7898	12.0722	IT	Emilia-Romagna	3177401	Forlì-Cesena	0	PASS	1355
+valico di montecoronaro	1	3172964	Valico di Montecoronaro	43.7854	12.0254	IT	Emilia-Romagna	3177401	Forlì-Cesena	0	PASS	852
+valico rabuiese	1	9033517	Valico Rabuiese	45.5829	13.7966	IT	Friuli Venezia Giulia	3176525	Trieste	59	PPL	21
+valiera	1	8969673	Valiera	44.9375	11.6486	IT	Veneto	3164604	Rovigo	30	PPL	6
+valiere	1	2970991	Valière	46.9710	1.7898	FR	Centro-Valle della Loira	3027939	Indre	0	PPL	173
+valiergues	1	2970990	Valiergues	45.4787	2.2925	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	123	PPL	652
+valierguet	1	2970989	Valierguet	45.4833	2.3000	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	658
+valiga	1	8975843	Valiga	45.9453	10.2919	IT	Lombardia	3174618	Brescia	20	PPL	466
+valignat	1	2970988	Valignat	46.1768	3.0752	FR	Alvernia-Rodano-Alpi	11071625	Allier	57	PPL	445
+valigny	1	2970987	Valigny	46.7120	2.8172	FR	Alvernia-Rodano-Alpi	11071625	Allier	448	PPL	225
+valigondoli	1	8978463	Valigondoli	43.5950	11.2556	IT	Toscana	3165361	Firenze	17	PPL	483
+valin	1	12313782	Valin	45.1403	-0.1642	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente-Maritime	0	PPL	40
+valinardi	1	8970379	Valinardi	43.7760	10.9281	IT	Toscana	3165361	Firenze	29	PPL	43
+valincyinne	0	2971041	Valenciennes	50.3591	3.5251	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	44821	PPLA3	29
+valines	1	2970985	Valines	50.0765	1.6227	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	678	PPL	91
+valise	1	2970983	Valise	47.4728	2.8598	FR	Centro-Valle della Loira	3027939	Cher	0	PPL	150
+valissant bas	1	12309098	Valissant Bas	46.0950	4.3132	FR	Alvernia-Rodano-Alpi	11071625	Rodano	0	PPL	502
+valitosa	1	8961559	Valitosa	43.4509	12.8300	IT	Marche	3174004	Ancona	55	PPL	403
+valjoly	1	6692601	Valjoly	49.9736	4.1206	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	0	PPL	215
+valjouan	1	2970982	Valjouan	48.5048	3.0430	FR	Île-de-France	3012874	Senna e Marna	0	PPL	135
+valjouffrey	1	3010470	Valjouffrey	44.8667	6.0333	FR	Alvernia-Rodano-Alpi	11071625	Isère	0	PPL	1042
+valjouze	1	2970981	Valjouze	45.1629	3.0602	FR	Alvernia-Rodano-Alpi	11071625	Cantal	23	PPL	907
+vall alta	1	3164901	Vall'Alta	45.7612	9.8264	IT	Lombardia	3174618	Bergamo	1436	PPL	437
+valla	0	2761964	Wallern im Burgenland	47.7285	16.9371	AT	Burgenland	2781194	Politischer Bezirk Neusiedl am See	1702	PPLA3	118
+valla	1	11113778	Valla	46.0401	8.9944	CH	Canton Ticino	2658370	Distretto di Lugano	0	PPL	709
+valla	1	3164904	Vallà	45.7071	11.9327	IT	Veneto	3164604	Treviso	2368	PPL	55
+valla	1	8978030	Valla	44.5108	8.3573	IT	Piemonte	3170831	Alessandria	17	PPL	343
+valla	1	8984320	Vallà	45.8541	11.3307	IT	Veneto	3164604	Vicenza	4	PPLL	1073
+vallabregues	1	2970978	Vallabrègues	43.8531	4.6266	FR	Occitania	11071623	Gard	1304	PPL	17
+vallabrix	1	2970977	Vallabrix	44.0611	4.4783	FR	Occitania	11071623	Gard	369	PPL	150
+vallacquosa	1	3164902	Vallacquosa	44.8833	11.2333	IT	Emilia-Romagna	3177401	Modena	0	PPL	6
+vallada agordina	1	6534798	Vallada Agordina	46.3644	11.9340	IT	Veneto	3164604	Belluno	556	PPLA3	965
+valladis	1	8962857	Valladis	45.7910	12.8825	IT	Veneto	3164604	Venezia	49	PPL	4
+vallainville	1	2970975	Vallainville	48.1049	1.4114	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	0	PPL	114
+vallaise	1	2970974	Vallaise	46.0952	2.1181	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	0	PPL	483
+vallalta	1	3164900	Vallalta	46.2167	11.9667	IT	Veneto	3164604	Belluno	0	PPL	961
+vallalta	1	8950094	Vallalta	44.9432	11.0071	IT	Emilia-Romagna	3177401	Modena	597	PPL	15
+vallalta sul canale	1	9032919	Vallalta sul Canale	45.0359	11.4810	IT	Veneto	3164604	Rovigo	10	PPL	8
+vallalta sul tartaro	1	8966137	Vallalta sul Tartaro	45.0284	11.4792	IT	Veneto	3164604	Rovigo	38	PPL	8
+vallamand	1	8468931	Vallamand	46.9293	7.0404	CH	Canton Vaud	2658182	distretto della Broye-Vully	0	PPL	468
+vallan	1	2970972	Vallan	47.7446	3.5391	FR	Borgogna-Franca Contea	11071619	Yonne	763	PPL	152
+vallana	1	8982466	Vallana	45.0774	7.9932	IT	Piemonte	3170831	Asti	10	PPLL	325
+vallancazza	1	8960037	Vallancazza	38.0062	15.1064	IT	Sicilia	2523119	Messina	64	PPL	496
+vallandry	1	6690953	Vallandry	45.5553	6.7615	FR	Alvernia-Rodano-Alpi	11071625	Savoia	0	PPL	1559
+vallangoujard	1	2970971	Vallangoujard	49.1374	2.1140	FR	Île-de-France	3012874	Val-d'Oise	674	PPL	51
+vallano	1	8969569	Vallano	45.1546	11.0276	IT	Lombardia	3174618	Mantova	30	PPL	17
+vallans	1	2970970	Vallans	46.2162	-0.5514	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	595	PPL	33
+vallansange	1	2970969	Vallansange	45.5475	4.0581	FR	Alvernia-Rodano-Alpi	11071625	Loira	0	PPL	611
+vallansanges	1	12323221	Vallansanges	46.0506	2.2043	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	0	PPL	524
+vallant	1	2970968	Vallant	46.5525	2.4685	FR	Centro-Valle della Loira	3027939	Cher	0	PPL	265
+vallant saint georges	1	2970966	Vallant-Saint-Georges	48.4695	3.9030	FR	Gran Este	11071622	Aube	363	PPL	84
+vallanzengo	1	6534824	Vallanzengo	45.6033	8.1504	IT	Piemonte	3170831	Biella	250	PPLA3	416
+vallaon	1	8974457	Vallaon	45.4693	10.8783	IT	Veneto	3164604	Verona	22	PPL	87
+vallaperta, passo di	1	11075424	Vallaperta, Passo di	46.2810	8.1133	IT	Piemonte	3170831	Verbano-Cusio-Ossola	0	PASS	2732
+vallarana	1	8959051	Vallarana	45.1718	11.4927	IT	Veneto	3164604	Padova	70	PPL	6
+vallarga	1	3164898	Vallarga	46.8428	11.7274	IT	Trentino-Alto Adige	3165244	Bolzano	732	PPL	882
+vallarga tintal	1	8970156	Vallarga-Tintal	46.7316	11.8668	IT	Trentino-Alto Adige	3165244	Bolzano	29	PPL	1382
+vallarno	1	8961610	Vallarno	42.3129	13.9471	IT	Abruzzo	3183560	Pescara	55	PPL	221
+vallaro	1	3164897	Vallaro	46.1333	8.1500	IT	Piemonte	3170831	Verbano-Cusio-Ossola	0	PPL	2238
+vallaro, passo di	1	11075425	Vallaro, Passo di	46.1359	8.1295	IT	Piemonte	3170831	Verbano-Cusio-Ossola	0	PASS	2488
+vallarolo	1	8980205	Vallarolo	45.1131	8.1443	IT	Piemonte	3170831	Alessandria	14	PPL	305
+vallarsa	1	3164896	Vallarsa	45.1000	11.0167	IT	Lombardia	3174618	Mantova	0	PPL	13
+vallarsa	1	6534595	Vallarsa	45.7828	11.1179	IT	Trentino-Alto Adige	3165244	Trento	1393	PPLA3	726
+vallarsa	1	8979762	Vallarsa	45.0245	9.5577	IT	Emilia-Romagna	3177401	Piacenza	15	PPL	73
+vallaspra	1	8984879	Vallaspra	42.0604	14.4267	IT	Abruzzo	3183560	Chieti	1	PPLL	493
+vallat	1	2970965	Vallat	45.4333	2.5500	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	689
+vallata	1	3164895	Vallata	41.0402	15.2538	IT	Campania	3181042	Avellino	1760	PPLA3	870
+vallata	1	8972532	Vallata	46.3840	11.9671	IT	Veneto	3164604	Belluno	25	PPL	1093
+vallata	1	8978638	Vallata	46.2263	12.9582	IT	Friuli Venezia Giulia	3176525	Pordenone	17	PPL	170
+vallate	1	8970618	Vallate	46.1358	9.5077	IT	Lombardia	3174618	Sondrio	28	PPL	214
+vallate	1	8975098	Vallate	45.3130	10.0949	IT	Lombardia	3174618	Brescia	21	PPL	59
+vallate	1	9032306	Vallate	46.1580	9.5868	IT	Lombardia	3174618	Sondrio	18	PPL	701
+vallato	1	8960627	Vallato	43.0534	13.2635	IT	Marche	3174004	Macerata	60	PPL	583
+vallauria	1	8963262	Vallauria	40.5630	15.5636	IT	Basilicata	3182306	Potenza	48	PPL	664
+vallauris	1	2970962	Vallauris	43.5780	7.0545	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	27286	PPL	115
+vallazza	1	8955562	Vallazza	45.1270	11.7896	IT	Veneto	3164604	Padova	111	PPL	3
+vallazza	1	8964939	Vallazza	41.4493	14.6979	IT	Molise	3173222	Campobasso	42	PPL	641
+vallazza	1	8971676	Vallazza	45.5626	8.5031	IT	Piemonte	3170831	Novara	26	PPL	225
+valle	1	3164864	Valle	40.2679	15.0709	IT	Campania	3181042	Salerno	115	PPL	345
+valle	1	3164883	Valle	46.1570	13.3935	IT	Friuli Venezia Giulia	3176525	Udine	19	PPL	678
+valle	1	3164884	Valle	46.0690	10.4297	IT	Lombardia	3174618	Brescia	555	PPL	1118
+valle	1	3164886	Valle	45.5864	11.4115	IT	Veneto	3164604	Vicenza	553	PPL	61
+valle	1	3164887	Valle	44.7833	9.3598	IT	Emilia-Romagna	3177401	Piacenza	14	PPL	581
+valle	1	3164888	Valle	44.4333	10.8000	IT	Emilia-Romagna	3177401	Modena	0	PPL	610
+valle	1	3164889	Valle	44.2408	11.2255	IT	Emilia-Romagna	3177401	Bologna	39	PPL	433
+valle	1	3164891	Valle	41.5380	14.0639	IT	Molise	3173222	Isernia	33	PPL	491
+valle	1	3219070	Valle	46.4855	13.0834	IT	Friuli Venezia Giulia	3176525	Udine	43	PPL	931
+valle	1	3220669	Valle	45.9261	12.6336	IT	Friuli Venezia Giulia	3176525	Pordenone	0	PPL	16
+valle	1	8952764	Valle	40.6641	15.2958	IT	Campania	3181042	Salerno	219	PPL	437
+valle	1	8954027	Valle	44.9678	8.9829	IT	Lombardia	3174618	Pavia	153	PPL	109
+valle	1	8955398	Valle	45.6056	8.0065	IT	Piemonte	3170831	Biella	115	PPL	679
+valle	1	8955781	Valle	42.2584	14.3197	IT	Abruzzo	3183560	Chieti	108	PPL	302
+valle	1	8957181	Valle	44.8392	9.7401	IT	Emilia-Romagna	3177401	Piacenza	88	PPL	242
+valle	1	8959118	Valle	39.5209	15.9725	IT	Calabria	2525468	Cosenza	70	PPL	219
+valle	1	8959595	Valle	44.3040	8.1220	IT	Liguria	3174725	Savona	66	PPL	560
+valle	1	8959666	Valle	44.3599	9.8469	IT	Toscana	3165361	Massa-Carrara	66	PPL	497
+valle	1	8960932	Valle	45.4253	10.8251	IT	Veneto	3164604	Verona	58	PPL	114
+valle	1	8961500	Valle	46.2388	11.3507	IT	Trentino-Alto Adige	3165244	Trento	55	PPL	1057
+valle	1	8962318	Valle	46.1130	11.2125	IT	Trentino-Alto Adige	3165244	Trento	51	PPL	617
+valle	1	8962875	Valle	44.9649	10.2133	IT	Emilia-Romagna	3177401	Parma	49	PPL	35
+valle	1	8963809	Valle	45.5249	8.2297	IT	Piemonte	3170831	Biella	46	PPL	202
+valle	1	8964761	Valle	45.9644	11.2329	IT	Trentino-Alto Adige	3165244	Trento	42	PPL	690
+valle	1	8965068	Valle	45.4051	10.5143	IT	Lombardia	3174618	Mantova	41	PPL	128
+valle	1	8966045	Valle	45.9403	9.9395	IT	Lombardia	3174618	Bergamo	38	PPL	699
+valle	1	8967940	Valle	40.9217	15.0420	IT	Campania	3181042	Avellino	34	PPL	431
+valle	1	8969078	Valle	45.0904	10.5270	IT	Lombardia	3174618	Mantova	31	PPL	24
+valle	1	8970014	Valle	44.4599	8.0883	IT	Piemonte	3170831	Cuneo	29	PPL	694
+valle	1	8970166	Valle	46.0119	11.1069	IT	Trentino-Alto Adige	3165244	Trento	29	PPL	189
+valle	1	8971372	Valle	45.0780	11.6677	IT	Veneto	3164604	Rovigo	27	PPL	4
+valle	1	8973780	Valle	45.6080	11.1038	IT	Veneto	3164604	Verona	23	PPL	1018
+valle	1	8974333	Valle	44.4568	9.0456	IT	Liguria	3174725	Genova	22	PPL	360
+valle	1	8975159	Valle	46.0655	11.4373	IT	Trentino-Alto Adige	3165244	Trento	21	PPL	643
+valle	1	8975168	Valle	45.5745	10.9470	IT	Veneto	3164604	Verona	21	PPL	491
+valle	1	8976412	Valle	45.1515	8.0699	IT	Piemonte	3170831	Torino	19	PPL	186
+valle	1	8976798	Valle	44.9129	10.4352	IT	Emilia-Romagna	3177401	Parma	19	PPL	24
+valle	1	8979249	Valle	41.2547	14.9403	IT	Campania	3181042	Benevento	16	PPL	629
+valle	1	8979771	Valle	44.9246	9.3961	IT	Emilia-Romagna	3177401	Piacenza	15	PPL	375
+valle	1	8980542	Valle	43.8761	12.0204	IT	Emilia-Romagna	3177401	Forlì-Cesena	14	PPL	558
+valle	1	8982470	Valle	44.9883	8.2007	IT	Piemonte	3170831	Asti	10	PPLL	170
+valle	1	8983560	Valle	44.7721	8.1588	IT	Piemonte	3170831	Asti	7	PPLL	252
+valle	1	8984262	Valle	44.6902	8.8164	IT	Piemonte	3170831	Alessandria	4	PPLL	247
+valle	1	9031154	Valle	44.4566	8.1941	IT	Piemonte	3170831	Cuneo	47	PPL	465
+valle	1	9031196	Valle	45.3517	11.3117	IT	Veneto	3164604	Verona	45	PPL	26
+valle	1	9031228	Valle	42.2199	14.2414	IT	Abruzzo	3183560	Chieti	44	PPL	362
+valle	1	9031301	Valle	42.2989	14.3105	IT	Abruzzo	3183560	Chieti	40	PPL	232
+valle	1	9031367	Valle	41.9654	12.9001	IT	Lazio	3174976	Roma	37	PPL	328
+valle	1	9031449	Valle	44.5538	8.2040	IT	Piemonte	3170831	Cuneo	34	PPL	290
+valle	1	9031697	Valle	44.3244	9.7855	IT	Toscana	3165361	Massa-Carrara	28	PPL	679
+valle	1	9031772	Valle	45.2998	11.3614	IT	Veneto	3164604	Verona	26	PPL	19
+valle	1	9031820	Valle	44.6867	8.4103	IT	Piemonte	3170831	Alessandria	25	PPL	277
+valle	1	9031997	Valle	45.3278	11.2740	IT	Veneto	3164604	Verona	22	PPL	19
+valle	1	9032211	Valle	45.0996	8.0404	IT	Piemonte	3170831	Asti	19	PPL	351
+valle	1	9032219	Valle	46.0658	9.5492	IT	Lombardia	3174618	Sondrio	19	PPL	978
+valle	1	9032334	Valle	45.0363	11.6357	IT	Veneto	3164604	Rovigo	18	PPL	4
+valle	1	9032490	Valle	44.9284	8.9039	IT	Piemonte	3170831	Alessandria	16	PPL	105
+valle	1	9032845	Valle	45.6058	8.1819	IT	Piemonte	3170831	Biella	12	PPL	332
+valle	1	9033499	Valle	44.3081	11.3030	IT	Emilia-Romagna	3177401	Bologna	60	PPL	428
+valle	1	9033503	Valle	41.0716	14.7507	IT	Campania	3181042	Benevento	60	PPL	305
+valle agricola	1	3164876	Valle Agricola	41.4248	14.2558	IT	Campania	3181042	Caserta	971	PPLA3	691
+valle amaseno	1	8953686	Valle Amaseno	41.7251	13.4367	IT	Lazio	3174976	Frosinone	169	PPL	495
+valle apparignano	1	8972066	Valle Apparignano	42.9485	13.7907	IT	Marche	3174004	Ascoli Piceno	26	PPL	281
+valle audana	1	8966795	Valle Audana	44.9075	8.0545	IT	Piemonte	3170831	Asti	36	PPL	165
+valle aurina ahrntal	1	6534793	Valle Aurina - Ahrntal	46.9962	11.9799	IT	Trentino-Alto Adige	3165244	Bolzano	5517	PPLA3	1062
+valle avellana	1	3164875	Valle Avellana	43.8304	12.5293	IT	Marche	3174004	Pesaro e Urbino	32	PPL	370
+valle baroni	1	8968380	Valle Baroni	42.2695	13.9277	IT	Abruzzo	3183560	Pescara	33	PPL	362
+valle benedetta	1	3164874	Valle Benedetta	43.5220	10.4063	IT	Toscana	3165361	Livorno	149	PPL	340
+valle bernardo	1	8950037	Valle Bernardo	41.3894	13.4397	IT	Lazio	3174976	Latina	620	PPL	155
+valle bianca	1	8974676	Valle Bianca	42.9670	13.6343	IT	Marche	3174004	Ascoli Piceno	22	PPL	295
+valle boidi	1	8973635	Valle Boidi	44.7148	8.4339	IT	Piemonte	3170831	Alessandria	23	PPL	271
+valle bona	1	8966650	Valle Bona	41.5881	13.4042	IT	Lazio	3174976	Frosinone	37	PPL	206
+valle bona	1	8973493	Valle Bona	40.7242	15.7253	IT	Basilicata	3182306	Potenza	24	PPL	751
+valle bormida	1	8968083	Valle Bormida	44.5402	8.3250	IT	Piemonte	3170831	Alessandria	33	PPL	243
+valle botta	1	8953182	Valle Botta	45.0910	9.1098	IT	Lombardia	3174618	Pavia	203	PPL	63
+valle braccia	1	8962186	Valle Braccia	42.0978	12.5280	IT	Lazio	3174976	Roma	52	PPL	154
+valle buratto	1	8976629	Valle Buratto	45.2573	10.6574	IT	Lombardia	3174618	Mantova	19	PPL	41
+valle campoerbolo	1	8971205	Valle-Campoerbolo	46.1112	9.5835	IT	Lombardia	3174618	Sondrio	27	PPL	810
+valle canzano	1	3164869	Valle Canzano	42.6589	13.7936	IT	Abruzzo	3183560	Teramo	109	PPL	369
+valle caprara	1	8960646	Valle Caprara	41.9605	12.8996	IT	Lazio	3174976	Roma	60	PPL	323
+valle carbura	1	8962221	Valle Carbura	42.2476	14.4444	IT	Abruzzo	3183560	Chieti	52	PPL	191
+valle careta	1	8967914	Valle Careta	41.7831	13.3142	IT	Lazio	3174976	Frosinone	34	PPL	503
+valle caruso	1	8954117	Valle Caruso	39.5565	16.1422	IT	Calabria	2525468	Cosenza	150	PPL	329
+valle casale	1	8966705	Valle Casale	40.3935	15.7515	IT	Basilicata	3182306	Potenza	37	PPL	674
+valle cascia	1	8950537	Valle Cascia	43.3475	13.4333	IT	Marche	3174004	Macerata	468	PPL	99
+valle casette	1	8957601	Valle Casette	44.8480	7.9705	IT	Piemonte	3170831	Cuneo	83	PPL	275
+valle castagneta	1	8974051	Valle Castagneta	42.7088	11.7186	IT	Toscana	3165361	Grosseto	23	PPL	468
+valle castellana	1	3164868	Valle Castellana	42.7361	13.4971	IT	Abruzzo	3183560	Teramo	254	PPLA3	625
+valle caterina	1	8980707	Valle Caterina	42.2082	14.5943	IT	Abruzzo	3183560	Chieti	14	PPL	18
+valle cavalletto d ocre	1	3164890	Valle-Cavalletto d'Ocre	42.3058	13.4576	IT	Abruzzo	3183560	dell’Aquila	434	PPL	651
+valle cecchina	1	8979874	Valle Cecchina	42.9178	13.7864	IT	Marche	3174004	Ascoli Piceno	15	PPL	157
+valle ceppi	1	8956067	Valle Ceppi	45.0491	7.8045	IT	Piemonte	3170831	Torino	103	PPL	386
+valle cerrina	1	9036191	Valle Cerrina	45.1148	8.2119	IT	Piemonte	3170831	Alessandria	559	PPL	176
+valle chiara	1	8985427	Valle Chiara	41.8339	13.7904	IT	Abruzzo	3183560	dell’Aquila	0	PPLL	1191
+valle cochi	1	8971164	Valle Cochi	44.6794	8.6887	IT	Piemonte	3170831	Alessandria	27	PPL	191
+valle copella	1	8951579	Valle Copella	41.8052	12.6290	IT	Lazio	3174976	Roma	303	PPL	140
+valle cupa	1	3164860	Valle Cupa	42.0536	14.3555	IT	Abruzzo	3183560	Chieti	56	PPL	376
+valle cupa	1	8954045	Valle Cupa	42.5995	13.6307	IT	Abruzzo	3183560	Teramo	153	PPL	367
+valle cupa	1	8958386	Valle Cupa	42.9174	12.6416	IT	Umbria	3165048	Perugia	76	PPL	244
+valle cupa	1	8976269	Valle Cupa	41.2680	14.7517	IT	Campania	3181042	Benevento	20	PPL	374
+valle d alesani	1	6620230	Valle-d'Alesani	42.3261	9.4157	FR	Corsica	3023519	Corsica settentrionale	0	PPL	573
+valle d inferno	1	8970393	Valle d'Inferno	43.5134	11.6319	IT	Toscana	3165361	Arezzo	29	PPL	158
+valle d orezza	1	2970957	Valle-d'Orezza	42.3612	9.4040	FR	Corsica	3023519	Corsica settentrionale	0	PPL	688
+valle d orta	1	8957714	Valle d'Orta	44.8409	8.0274	IT	Piemonte	3170831	Asti	82	PPL	197
+valle d orzili	1	12567364	Valle d'Orzili	39.9283	9.5996	IT	Sardegna	2523228		0	PPLL	104
+valle de yure	1	8963768	Valle de Yure	42.1690	14.5696	IT	Abruzzo	3183560	Chieti	46	PPL	174
+valle dei calvi	1	9031777	Valle dei Calvi	45.4957	11.5130	IT	Veneto	3164604	Vicenza	26	PPL	43
+valle dei lunghi	1	8955173	Valle dei Lunghi	44.7862	7.9672	IT	Piemonte	3170831	Cuneo	119	PPL	223
+valle dei ronchi	1	9032075	Valle dei Ronchi	45.8911	11.5642	IT	Veneto	3164604	Vicenza	21	PPL	952
+valle dei vicari	1	8959475	Valle dei Vicari	45.5089	11.5270	IT	Veneto	3164604	Vicenza	67	PPL	44
+valle del canneto	1	9032620	Valle del Canneto	41.9730	12.1607	IT	Lazio	3174976	Roma	15	PPL	122
+valle del gelso	1	8954781	Valle del Gelso	39.6954	16.2467	IT	Calabria	2525468	Cosenza	129	PPL	158
+valle del morto	1	8960698	Valle del Morto	44.8394	7.9618	IT	Piemonte	3170831	Cuneo	59	PPL	289
+valle del porco	1	8977909	Valle del Porco	41.7757	14.4517	IT	Molise	3173222	Isernia	18	PPL	559
+valle del pozzo	1	8966983	Valle del Pozzo	43.7442	13.1128	IT	Marche	3174004	Pesaro e Urbino	36	PPL	44
+valle del sole	1	8967095	Valle del Sole	41.9223	14.2104	IT	Abruzzo	3183560	Chieti	36	PPL	1424
+valle dell angelo	1	3164856	Valle dell'Angelo	40.3438	15.3685	IT	Campania	3181042	Salerno	278	PPLA3	621
+valle dell erica	1	11127678	Valle Dell'Erica	41.2244	9.2756	IT	Sardegna	2523228	Sassari	0	PPL	22
+valle dell olmo	1	8969915	Valle dell'Olmo	40.6959	15.6473	IT	Basilicata	3182306	Potenza	30	PPL	667
+valle dell orco	1	8952267	Valle dell'Orco	39.7319	15.8249	IT	Calabria	2525468	Cosenza	246	PPL	48
+valle della pietra	1	8973494	Valle della Pietra	40.7696	15.6759	IT	Basilicata	3182306	Potenza	24	PPL	914
+valle di badia	1	8968288	Valle di Badia	43.7347	10.6123	IT	Toscana	3165361	Pisa	33	PPL	51
+valle di botta	1	3035231	Valle di Botta	42.4360	8.7188	FR	Corsica	3023519	Corsica settentrionale	0	PPL	156
+valle di cadore	1	3219716	Valle di Cadore	46.4181	12.3343	IT	Veneto	3164604	Belluno	1394	PPLA3	819
+valle di campoloro	1	2970960	Valle-di-Campoloro	42.3343	9.5152	FR	Corsica	3023519	Corsica settentrionale	290	PPL	88
+valle di casies gsies	1	6534794	Valle di Casies - Gsies	46.7683	12.1794	IT	Trentino-Alto Adige	3165244	Bolzano	2098	PPLA3	1206
+valle di castagne	1	9033908	Valle di Castagnè	45.4952	11.1071	IT	Veneto	3164604	Verona	29	PPL	421
+valle di castrignano	1	9033682	Valle di Castrignano	44.5993	10.2124	IT	Emilia-Romagna	3177401	Parma	50	PPL	490
+valle di ginestreto	1	9034160	Valle di Ginestreto	43.8353	12.8210	IT	Marche	3174004	Pesaro e Urbino	19	PPL	226
+valle di lazzaro	1	8951826	Valle di Lazzaro	42.7998	10.2979	IT	Toscana	3165361	Livorno	281	PPL	22
+valle di lifo	1	8977074	Valle di Lifo	40.7167	15.9381	IT	Basilicata	3182306	Potenza	19	PPL	694
+valle di maddaloni	1	3164853	Valle di Maddaloni	41.0795	14.4179	IT	Campania	3181042	Caserta	2188	PPLA3	156
+valle di mezzana	1	2970959	Valle-di-Mezzana	42.0229	8.8215	FR	Corsica	3023519	Corsica del Sud	227	PPL	406
+valle di natale	1	8984383	Valle di Natale	40.0712	15.4965	IT	Campania	3181042	Salerno	4	PPLL	61
+valle di nivione	1	9032808	Valle di Nivione	44.7992	9.1739	IT	Lombardia	3174618	Pavia	12	PPL	540
+valle di paola	1	8958065	Valle di Paola	39.6932	16.2394	IT	Calabria	2525468	Cosenza	79	PPL	133
+valle di pompei	0	3170335	Pompei	40.7457	14.4970	IT	Campania	3181042	Napoli	23902	PPLA3	14
+valle di rio	1	8954502	Valle di Rio	41.7339	13.7328	IT	Lazio	3174976	Frosinone	136	PPL	761
+valle di rostino	1	2970958	Valle di Rostino	42.4572	9.2797	FR	Corsica	3023519	Corsica settentrionale	89	PPL	489
+valle di rozzol	1	10630232	Valle di Rozzol	45.6413	13.7977	IT	Friuli Venezia Giulia	3176525	Trieste	0	PPLL	79
+valle di segola	1	9032526	Valle di Segola	44.8524	9.7964	IT	Emilia-Romagna	3177401	Piacenza	16	PPL	272
+valle di sopra	1	8957920	Valle di Sopra	45.7741	11.5504	IT	Veneto	3164604	Vicenza	80	PPL	439
+valle di sopra	1	8966385	Valle di Sopra	44.6786	7.7540	IT	Piemonte	3170831	Cuneo	37	PPL	314
+valle di sotto	1	8977393	Valle di Sotto	44.8728	9.2768	IT	Lombardia	3174618	Pavia	18	PPL	435
+valle di sotto	1	8981918	Valle di Sotto	45.7473	9.3032	IT	Lombardia	3174618	Lecco	12	PPL	354
+valle di sotto	1	9032152	Valle di Sotto	45.7669	11.5489	IT	Veneto	3164604	Vicenza	20	PPL	283
+valle di suio	1	9035336	Valle di Suio	41.3120	13.8636	IT	Lazio	3174976	Latina	181	PPL	147
+valle di teva	1	8974657	Valle di Teva	43.8379	12.4971	IT	Marche	3174004	Pesaro e Urbino	22	PPL	351
+valle di vado	1	8949186	Valle di Vado	44.2618	8.4140	IT	Liguria	3174725	Savona	1401	PPL	28
+valle di vitalba	1	8984392	Valle di Vitalba	40.8524	15.6436	IT	Basilicata	3182306	Potenza	4	PPLL	464
+valle donne	1	8975667	Valle Donne	39.2199	16.9604	IT	Calabria	2525468	Crotone	21	PPL	63
+valle dorizzo	1	3164929	Valle Dorizzo	45.8836	10.4517	IT	Lombardia	3174618	Brescia	29	PPL	1181
+valle e castello	1	6534671	Valle e Castello	43.0374	13.0874	IT	Marche	3174004	Macerata	66	PPLA3	569
+valle falsa	1	8957277	Valle Falsa	42.1836	12.6561	IT	Lazio	3174976	Rieti	87	PPL	94
+valle ferrara	1	8963740	Valle Ferrara	41.4260	14.8146	IT	Campania	3181042	Benevento	46	PPL	702
+valle fiaschetta	1	8975577	Valle Fiaschetta	42.0583	14.5384	IT	Abruzzo	3183560	Chieti	21	PPL	270
+valle fioretta	1	8952991	Valle Fioretta	41.6088	13.3023	IT	Lazio	3174976	Frosinone	210	PPL	141
+valle franceschelli	1	8971005	Valle Franceschelli	42.0960	14.3997	IT	Abruzzo	3183560	Chieti	28	PPL	237
+valle frassino	1	8958866	Valle Frassino	40.1804	15.6227	IT	Campania	3181042	Salerno	72	PPL	641
+valle fredda	1	8971062	Valle Fredda	45.6629	8.1994	IT	Piemonte	3170831	Biella	28	PPL	462
+valle fredda valvarina	1	8969308	Valle Fredda-Valvarina	41.8140	12.8597	IT	Lazio	3174976	Roma	31	PPL	364
+valle fuini	1	8964542	Valle Fuini	43.8490	12.5504	IT	Marche	3174004	Pesaro e Urbino	43	PPL	299
+valle gaggio	1	8979552	Valle Gaggio	45.8166	9.8808	IT	Lombardia	3174618	Bergamo	15	PPL	559
+valle goria	1	9031719	Valle Goria	44.9310	8.0060	IT	Piemonte	3170831	Asti	27	PPL	175
+valle granara	1	8977801	Valle Granara	41.9081	13.3551	IT	Lazio	3174976	Frosinone	18	PPL	1290
+valle grande	1	3164852	Valle Grande	41.6187	13.8703	IT	Lazio	3174976	Frosinone	241	PPL	509
+valle grazietti	1	8982345	Valle Grazietti	42.2737	13.9270	IT	Abruzzo	3183560	Pescara	11	PPL	339
+valle i	1	9034157	Valle I	46.4827	13.0865	IT	Friuli Venezia Giulia	3176525	Udine	19	PPL	663
+valle i	1	9035320	Valle I	45.8621	11.3236	IT	Veneto	3164604	Vicenza	2	PPL	1070
+valle ii	1	3164885	Valle II	45.8607	11.3207	IT	Veneto	3164604	Vicenza	3	PPL	1048
+valle in casa	1	8961623	Valle in Casa	40.6850	15.6564	IT	Basilicata	3182306	Potenza	55	PPL	802
+valle la fontana	1	9035163	Valle la Fontana	39.3575	16.2764	IT	Calabria	2525468	Cosenza	50	PPL	319
+valle la posta	1	8959233	Valle la Posta	42.1334	12.4924	IT	Lazio	3174976	Roma	69	PPL	265
+valle lomellina	1	3164850	Valle Lomellina	45.1510	8.6696	IT	Lombardia	3174618	Pavia	2067	PPLA3	101
+valle lupina	1	8974743	Valle Lupina	43.0901	12.2380	IT	Umbria	3165048	Perugia	22	PPL	234
+valle magnone	1	8979847	Valle Magnone	43.8547	12.4257	IT	Marche	3174004	Pesaro e Urbino	15	PPL	643
+valle mammoli	1	8971539	Valle Mammoli	41.5889	13.6182	IT	Lazio	3174976	Frosinone	27	PPL	484
+valle marciana	1	8967439	Valle Marciana	41.7917	12.6439	IT	Lazio	3174976	Roma	35	PPL	190
+valle marina	1	8965577	Valle Marina	41.3339	13.3151	IT	Lazio	3174976	Latina	40	PPL	5
+valle martella	1	8948795	Valle Martella	41.8783	12.7468	IT	Lazio	3174976	Roma	4410	PPL	127
+valle massima	1	8963219	Valle Massima	41.7191	13.7502	IT	Lazio	3174976	Frosinone	48	PPL	720
+valle molino	1	8952675	Valle Molino	42.4560	14.0809	IT	Abruzzo	3183560	Pescara	223	PPL	57
+valle montale	1	8966201	Valle-Montale	44.3466	9.9994	IT	Toscana	3165361	Massa-Carrara	38	PPL	448
+valle morelli	1	8959719	Valle Morelli	39.5845	16.2163	IT	Calabria	2525468	Cosenza	66	PPL	163
+valle mosso	1	3164842	Valle Mosso	45.6307	8.1476	IT	Piemonte	3170831	Biella	2079	PPLA3	434
+valle muricana	1	12023114	Valle Muricana	42.0258	12.4653	IT	Lazio	3174976	Roma	0	PPLX	82
+valle muto	1	8973098	Valle Muto	45.0774	9.3313	IT	Lombardia	3174618	Pavia	24	PPL	77
+valle nimis	0	3172259	Nimis	46.2066	13.2678	IT	Friuli Venezia Giulia	3176525	Udine	2213	PPLA3	207
+valle ombrosa	1	8962397	Valle Ombrosa	44.2311	10.1211	IT	Toscana	3165361	Massa-Carrara	51	PPL	304
+valle orsara	1	3164839	Valle Orsara	42.8167	13.3167	IT	Marche	3174004	Ascoli Piceno	0	PPL	993
+valle pantano	1	8960000	Valle Pantano	41.7526	12.7223	IT	Lazio	3174976	Roma	64	PPL	753
+valle pelillo	1	9031471	Valle Pelillo	42.4245	14.0935	IT	Abruzzo	3183560	Pescara	34	PPL	135
+valle pelillo ovest	1	8960496	Valle Pelillo Ovest	42.4243	14.0890	IT	Abruzzo	3183560	Pescara	61	PPL	144
+valle pera	1	8952329	Valle Pera	41.7515	12.8827	IT	Lazio	3174976	Roma	242	PPL	306
+valle pernigo	1	8978194	Valle Pernigo	45.5483	11.1274	IT	Veneto	3164604	Verona	17	PPL	598
+valle piana, bocchetta di	1	11074136	Valle Piana, Bocchetta di	46.2886	10.1562	IT	Lombardia	3174618	Sondrio	0	PASS	2714
+valle piola	1	3164834	Valle Piola	42.6980	13.5767	IT	Abruzzo	3183560	Teramo	0	PPLQ	1022
+valle pratese	1	8965651	Valle Pratese	41.5276	14.1649	IT	Molise	3173222	Isernia	40	PPL	277
+valle prato	1	8970942	Valle Prato	42.2242	12.5249	IT	Lazio	3174976	Roma	28	PPL	247
+valle reale	1	8978770	Valle Reale	44.9490	8.0071	IT	Piemonte	3170831	Asti	16	PPL	197
+valle richetti	1	8963864	Valle Richetti	45.9555	10.1041	IT	Lombardia	3174618	Bergamo	45	PPL	934
+valle rizza	1	8974777	Valle Rizza	41.5361	13.3355	IT	Lazio	3174976	Frosinone	22	PPL	209
+valle rotta	1	8958615	Valle Rotta	41.3948	13.2090	IT	Lazio	3174976	Latina	74	PPL	45
+valle sacchette	1	8977855	Valle Sacchette	41.9180	14.2676	IT	Abruzzo	3183560	Chieti	18	PPL	802
+valle sala	1	8956384	Valle Sala	39.5893	16.1642	IT	Calabria	2525468	Cosenza	99	PPL	176
+valle salimbene	1	6535223	Valle Salimbene	45.1720	9.2345	IT	Lombardia	3174618	Pavia	400	PPLA3	71
+valle salomone	1	8972222	Valle Salomone	40.0676	15.8857	IT	Basilicata	3182306	Potenza	26	PPL	853
+valle san bartolomeo	1	8949238	Valle San Bartolomeo	44.9502	8.6404	IT	Piemonte	3170831	Alessandria	1288	PPL	95
+valle san felice	1	8951739	Valle San Felice	45.8691	10.9376	IT	Trentino-Alto Adige	3165244	Trento	288	PPL	587
+valle san floriano	1	8951625	Valle San Floriano	45.7682	11.6600	IT	Veneto	3164604	Vicenza	299	PPL	120
+valle san giorgio	1	8953986	Valle San Giorgio	45.2655	11.6867	IT	Veneto	3164604	Padova	155	PPL	39
+valle san giovanni	1	3164823	Valle San Giovanni	42.6215	13.6181	IT	Abruzzo	3183560	Teramo	805	PPL	320
+valle san giovanni	1	8958430	Valle San Giovanni	44.7498	8.3232	IT	Piemonte	3170831	Asti	75	PPL	162
+valle san martino	1	3164822	Valle San Martino	42.6219	12.7236	IT	Umbria	3165048	Perugia	50	PPL	500
+valle san martino	1	8966069	Valle San Martino	44.9573	10.9080	IT	Lombardia	3174618	Mantova	38	PPL	17
+valle san martino	1	9034161	Valle San Martino	42.8995	13.6885	IT	Marche	3174004	Ascoli Piceno	19	PPL	187
+valle san martino i	1	8976899	Valle San Martino I	42.8826	13.6825	IT	Marche	3174004	Ascoli Piceno	19	PPL	224
+valle san nicolao	1	3164821	Valle San Nicolao	45.6071	8.1410	IT	Piemonte	3170831	Biella	101	PPLA3	464
+valle san pietro	1	8961381	Valle San Pietro	41.8751	12.8547	IT	Lazio	3174976	Roma	56	PPL	334
+valle san silvestro	1	3164820	San Silvestro	46.7460	12.2337	IT	Trentino-Alto Adige	3165244	Bolzano	376	PPL	1318
+valle sant andrea	1	8963753	Valle Sant'Andrea	40.7061	14.9608	IT	Campania	3181042	Salerno	46	PPL	218
+valle sant angelo	1	8449956	Valle Sant'Angelo	42.7809	13.6384	IT	Abruzzo	3183560	Teramo	32	PPL	516
+valle sant innocenzo	1	8963842	Valle Sant'Innocenzo	44.8518	8.9495	IT	Piemonte	3170831	Alessandria	45	PPL	209
+valle santa	1	7577048	Valle Santa	41.9453	12.3197	IT	Lazio	3174976	Roma	1763	PPL	93
+valle santa	1	8975057	Valle Santa	44.1739	9.6008	IT	Liguria	3174725	La Spezia	21	PPL	62
+valle santa croce	1	8964974	Valle Santa Croce	45.7199	9.3467	IT	Lombardia	3174618	Lecco	42	PPL	315
+valle santa felicita	1	8960747	Valle Santa Felicita	45.8089	11.7579	IT	Veneto	3164604	Vicenza	59	PPL	222
+valle santa maria	1	8962300	Valle Santa Maria	45.9783	9.9306	IT	Lombardia	3174618	Bergamo	51	PPL	867
+valle scalza	1	8982323	Valle Scalza	41.6633	13.6885	IT	Lazio	3174976	Frosinone	11	PPL	378
+valle senzana	1	8953639	Valle Senzana	42.8756	13.6135	IT	Marche	3174004	Ascoli Piceno	171	PPL	255
+valle spadana	1	8963482	Valle Spadana	42.1575	12.4765	IT	Lazio	3174976	Roma	47	PPL	260
+valle sponda	1	8966443	Valle Sponda	45.9487	10.0994	IT	Lombardia	3174618	Bergamo	37	PPL	931
+valle straggini	1	8980295	Valle Straggini	45.0117	9.1655	IT	Lombardia	3174618	Pavia	14	PPL	148
+valle superiore	1	8984298	Valle Superiore	44.6961	9.3049	IT	Lombardia	3174618	Pavia	4	PPLL	574
+valle talloria	1	8950941	Valle Talloria	44.6407	8.0023	IT	Piemonte	3170831	Cuneo	385	PPL	217
+valle tanaro	1	8977255	Valle Tanaro	44.7727	8.1341	IT	Piemonte	3170831	Asti	18	PPL	147
+valle tomba	1	8960418	Valle Tomba	45.3062	11.2388	IT	Veneto	3164604	Verona	61	PPL	18
+valle vaccaro	1	3164811	Valle Vaccaro	42.5958	13.4758	IT	Abruzzo	3183560	Teramo	33	PPL	1111
+valle vecchia	1	8974868	Valle Vecchia	39.5681	16.1942	IT	Calabria	2525468	Cosenza	22	PPL	185
+valle verde	1	8981824	Valle Verde	42.2364	12.9437	IT	Lazio	3174976	Rieti	12	PPL	668
+valle vescovi	1	8956082	Valle Vescovi	45.8805	11.4899	IT	Veneto	3164604	Vicenza	103	PPL	1040
+valle vevera	1	8974250	Valle Vevera	45.7577	8.5385	IT	Piemonte	3170831	Novara	22	PPL	271
+valle yoro	1	8950704	Valle Yoro	42.1140	12.5158	IT	Lazio	3174976	Roma	432	PPL	212
+valle, bocchetta di	1	11074135	Valle, Bocchetta di	46.1202	8.6584	CH	Canton Ticino	2658370	Distretto di Locarno	0	PASS	1944
+vallea	1	8972760	Vallea	43.5837	11.7796	IT	Toscana	3165361	Arezzo	25	PPL	477
+valleandona	1	8128781	Valleandona	44.9124	8.1160	IT	Piemonte	3170831	Asti	147	PPL	166
+vallebona	1	3164872	Vallebona	43.8122	7.6654	IT	Liguria	3174725	Imperia	779	PPLA3	149
+vallebona	1	3164873	Vallebona	42.5302	12.2069	IT	Lazio	3174976	Viterbo	100	PPL	185
+vallebotte	1	8974839	Vallebotte	42.3135	14.2858	IT	Abruzzo	3183560	Chieti	22	PPL	175
+vallebruca iria	1	2524504	Vallebruca-Iria	38.0333	14.6333	IT	Sicilia	2523119	Messina	395	PPL	440
+vallebuia	1	8960991	Vallebuia	42.7453	10.1710	IT	Toscana	3165361	Livorno	58	PPL	135
+vallebuona	1	3164870	Vallebuona	44.4587	9.1180	IT	Liguria	3174725	Genova	69	PPL	427
+vallebuona	1	3164871	Vallebuona	42.1333	12.9167	IT	Lazio	3174976	Rieti	0	PPL	835
+vallecalda	1	8963854	Vallecalda	44.6004	8.9116	IT	Liguria	3174725	Genova	45	PPL	496
+vallecalda	1	8966423	Vallecalda	44.5497	8.9670	IT	Liguria	3174725	Genova	37	PPL	522
+vallecalle	1	2970961	Vallecalle	42.5988	9.3398	FR	Corsica	3023519	Corsica settentrionale	118	PPL	316
+vallecardi	1	8972172	Vallecardi	41.3363	13.9800	IT	Campania	3181042	Caserta	26	PPL	445
+vallecchia	1	3164867	Vallecchia	43.9833	10.2167	IT	Toscana	3165361	Lucca	0	PPL	25
+vallecchia	1	6694147	Vallecchia	44.1097	10.0315	IT	Liguria	3174725	La Spezia	78	PPLX	362
+vallecchia monte acuto	1	11874179	Vallecchia Monte Acuto	42.7514	13.4052	IT	Marche	3174004	Ascoli Piceno	0	PPL	637
+vallecchia monte calvo	1	11874180	Vallecchia Monte Calvo	42.7323	13.4447	IT	Marche	3174004	Ascoli Piceno	0	PPL	797
+vallecchie	1	8961591	Vallecchie	41.4975	13.4867	IT	Lazio	3174976	Frosinone	55	PPL	201
+vallececa	1	3164865	Vallececa	42.2438	13.0727	IT	Lazio	3174976	Rieti	24	PPL	591
+vallecentanni	1	8967077	Vallecentanni	40.4775	15.0669	IT	Campania	3181042	Salerno	36	PPL	69
+vallecontieri	1	8979960	Vallecontieri	41.5992	13.6514	IT	Lazio	3174976	Frosinone	15	PPL	448
+vallecorsa	1	3164863	Vallecorsa	41.4435	13.4063	IT	Lazio	3174976	Frosinone	2353	PPLA3	350
+vallecorvo	1	8962723	Vallecorvo	42.0430	13.8844	IT	Abruzzo	3183560	dell’Aquila	50	PPL	416
+vallecrosia	1	3164862	Vallecrosia	43.7867	7.6390	IT	Liguria	3174725	Imperia	6024	PPLA3	5
+vallecrosia alta	1	9035524	Vallecrosia Alta	43.8081	7.6514	IT	Liguria	3174725	Imperia	399	PPL	47
+vallecupa	1	3164859	Vallecupa	42.2537	13.5747	IT	Abruzzo	3183560	dell’Aquila	42	PPLA3	665
+vallecupa	1	3164861	Vallecupa	41.4395	14.0142	IT	Molise	3173222	Isernia	182	PPL	290
+vallecupa	1	8972807	Vallecupa	41.3147	14.0295	IT	Campania	3181042	Caserta	25	PPL	375
+vallecupa	1	9031658	Vallecupa	42.5811	12.7988	IT	Umbria	3165048	Terni	29	PPL	302
+vallecupa di sopra	1	8980575	Vallecupa di Sopra	42.8941	13.4206	IT	Marche	3174004	Ascoli Piceno	14	PPL	618
+vallecupola	1	3164858	Vallecupola	42.2509	13.0048	IT	Lazio	3174976	Rieti	88	PPL	1007
+valledacqua	1	11874181	Valledacqua	42.7761	13.4359	IT	Marche	3174004	Ascoli Piceno	0	PPL	564
+valledolmo	1	2522804	Valledolmo	37.7470	13.8281	IT	Sicilia	2523119	Palermo	3747	PPLA3	746
+valledonna	1	8973430	Valledonna	41.6865	13.5535	IT	Lazio	3174976	Frosinone	24	PPL	257
+valledoria	1	6534816	Valledoria	40.9287	8.8232	IT	Sardegna	2523228	Sassari	3713	PPLA3	15
+vallee barrey	1	12309508	Vallée Barrey	49.1700	-0.3099	FR	Normandia	11071621	Calvados	0	PPL	13
+vallee de schrimeck	1	13308837	Vallée de Schrimeck	48.4840	7.2265	FR	Gran Este	11071622	Basso Reno	0	PPL	314
+vallee roussean	0	2981206	Saint-Chamond	45.4759	4.5129	FR	Alvernia-Rodano-Alpi	11071625	Loira	38014	PPL	372
+vallees de cerilly	1	2970951	Vallées-de-Cérilly	48.1682	3.6287	FR	Borgogna-Franca Contea	11071619	Yonne	0	PPL	155
+vallees pitron	1	2970950	Vallées Pitron	47.3180	1.1444	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	0	PPL	78
+vallefara	1	8970463	Vallefara	42.7035	13.5031	IT	Abruzzo	3183560	Teramo	29	PPL	843
+vallefiorita	1	2522803	Vallefiorita	38.7764	16.4610	IT	Calabria	2525468	Catanzaro	1849	PPLA3	329
+vallefratta	1	8954989	Vallefratta	41.4977	13.3919	IT	Lazio	3174976	Frosinone	124	PPL	147
+vallefredda	1	8954445	Vallefredda	41.7346	13.6457	IT	Lazio	3174976	Frosinone	138	PPL	377
+vallefredda	1	8974779	Vallefredda	41.6055	13.5713	IT	Lazio	3174976	Frosinone	22	PPL	272
+vallefredda	1	8981266	Vallefredda	42.5720	12.7872	IT	Umbria	3165048	Terni	13	PPL	345
+vallefredda	1	8981832	Vallefredda	41.7379	13.2917	IT	Lazio	3174976	Frosinone	12	PPL	541
+vallefredda	1	9031851	Vallefredda	41.6691	13.5913	IT	Lazio	3174976	Frosinone	25	PPL	373
+vallefusella	1	8979138	Vallefusella	42.8045	13.4182	IT	Marche	3174004	Ascoli Piceno	16	PPL	423
+vallegeas	1	12308055	Vallégeas	45.8907	1.5753	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	0	PPL	457
+valleggi	1	11113834	Valleggi	46.0137	8.8819	CH	Canton Ticino	2658370	Distretto di Lugano	0	PPL	753
+valleggia	1	3343518	Valleggia	45.5284	13.6472	SI	Comune di Isola	3199016		2225	PPL	29
+valleggia	1	8948867	Valleggia	44.2808	8.4297	IT	Liguria	3174725	Savona	3086	PPL	9
+valleggia	1	8983507	Valleggia	46.0618	8.2117	IT	Piemonte	3170831	Verbano-Cusio-Ossola	8	PPLL	850
+vallegianno	1	8950277	Vallegianno	39.1992	16.3052	IT	Calabria	2525468	Cosenza	535	PPL	646
+vallegioliti	1	8957235	Vallegioliti	45.1425	8.1611	IT	Piemonte	3170831	Alessandria	87	PPL	199
+vallegrande	1	8959186	Vallegrande	45.4954	11.3501	IT	Veneto	3164604	Vicenza	69	PPL	92
+vallegrascia	1	3164851	Vallegrascia	42.8707	13.3133	IT	Marche	3174004	Ascoli Piceno	27	PPL	868
+vallegrini	1	8954245	Vallegrini	40.6384	15.1248	IT	Campania	3181042	Salerno	144	PPL	172
+vallegue	1	2970949	Vallègue	43.4244	1.7538	FR	Occitania	11071623	Alta Garonna	431	PPL	238
+valleil verney	1	8959448	Valleil-Verney	45.7985	7.5702	IT	Valle d'Aosta	3164857	Aosta	67	PPL	1419
+valleiry	1	2970948	Valleiry	46.1111	5.9704	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	2421	PPL	469
+valleiuta	1	8970466	Valleiuta	42.4344	14.0540	IT	Abruzzo	3183560	Pescara	29	PPL	188
+vallelaposta	1	8954704	Vallelaposta	39.1608	16.4235	IT	Calabria	2525468	Cosenza	131	PPL	821
+vallelarga	1	8953047	Vallelarga	42.0001	13.9390	IT	Abruzzo	3183560	dell’Aquila	208	PPL	509
+vallelata centrale	1	9035402	Vallelata Centrale	41.6140	12.6410	IT	Lazio	3174976	Latina	140	PPL	99
+vallelata nord	1	8951767	Vallelata Nord	41.6232	12.6487	IT	Lazio	3174976	Latina	286	PPL	108
+valleleotta inferiore	1	9034085	Valleleotta Inferiore	39.4729	16.2690	IT	Calabria	2525468	Cosenza	22	PPL	176
+valleleotta superiore	1	8953722	Valleleotta Superiore	39.4726	16.2724	IT	Calabria	2525468	Cosenza	167	PPL	186
+vallelonga	1	2522802	Vallelonga	38.6474	16.2966	IT	Calabria	2525468	Vibo Valentia	455	PPLA3	646
+valleluce	1	3164848	Valleluce	41.5658	13.8580	IT	Lazio	3174976	Frosinone	482	PPL	369
+valleludra	1	8960161	Valleludra	42.5818	12.7848	IT	Umbria	3165048	Terni	63	PPL	259
+vallelunga	1	8952813	Vallelunga	41.4929	14.1781	IT	Campania	3181042	Caserta	217	PPL	818
+vallelunga pratameno	1	2522801	Vallelunga Pratameno	37.6820	13.8316	IT	Sicilia	2523119	Caltanissetta	3508	PPLA3	472
+valleluogo	1	8972824	Valleluogo	41.1769	15.0842	IT	Campania	3181042	Avellino	25	PPL	537
+vallemaio	1	3164845	Vallemaio	41.3663	13.8084	IT	Lazio	3174976	Frosinone	409	PPLA3	337
+vallemania	1	8981762	Vallemania	43.4195	12.9471	IT	Marche	3174004	Ancona	12	PPL	424
+vallemara	1	8975805	Vallemara	44.5908	9.0297	IT	Liguria	3174725	Genova	20	PPL	663
+vallemare	1	3164844	Vallemare	42.4845	13.1137	IT	Lazio	3174976	Rieti	59	PPL	1018
+vallemare	1	8950339	Vallemare	42.3524	14.1040	IT	Abruzzo	3183560	Pescara	515	PPL	73
+vallemartina	1	8954621	Vallemartina	41.4776	13.3409	IT	Lazio	3174976	Frosinone	133	PPL	103
+vallemicero	1	8962686	Vallemicero	42.5837	12.5788	IT	Umbria	3165048	Terni	50	PPL	125
+vallemiola	1	8984901	Vallemiola	46.0725	8.2220	IT	Piemonte	3170831	Verbano-Cusio-Ossola	1	PPLL	759
+vallemontagnana	1	8975391	Vallemontagnana	43.3853	12.9505	IT	Marche	3174004	Ancona	21	PPL	507
+vallemontana	1	3219879	Vallemontana	46.2167	13.2938	IT	Friuli Venezia Giulia	3176525	Udine	69	PPL	272
+vallemontana	1	8969317	Vallemontana	41.3972	13.7909	IT	Lazio	3174976	Frosinone	31	PPL	127
+vallempa	1	8978571	Vallempa	42.8798	13.8439	IT	Abruzzo	3183560	Teramo	17	PPL	11
+vallena	1	8957062	Vallena	39.2941	16.0569	IT	Calabria	2525468	Cosenza	90	PPL	41
+vallenay	1	2970945	Vallenay	46.7845	2.3711	FR	Centro-Valle della Loira	3027939	Cher	725	PPL	167
+vallene	1	8976682	Vallene	45.6600	10.9615	IT	Veneto	3164604	Verona	19	PPL	1065
+vallenervi	1	8966791	Vallenervi	45.1265	8.0359	IT	Piemonte	3170831	Asti	36	PPL	263
+vallenetta	1	2522800	Vallenetta	39.1833	16.1167	IT	Calabria	2525468	Cosenza	0	PPL	629
+vallennora	1	8975552	Vallennora	40.1621	15.6793	IT	Campania	3181042	Salerno	21	PPL	689
+vallenquina	1	3164840	Vallenquina	42.7333	13.5333	IT	Abruzzo	3183560	Teramo	0	PPL	807
+vallentigny	1	2970944	Vallentigny	48.4452	4.5822	FR	Gran Este	11071622	Aube	191	PPL	118
+vallenzona	1	8965717	Vallenzona	44.6035	9.0871	IT	Liguria	3174725	Genova	39	PPL	738
+vallepescara	1	8956449	Vallepescara	42.0168	13.9367	IT	Abruzzo	3183560	dell’Aquila	98	PPL	466
+vallepezzata	1	3164837	Vallepezzata	42.7000	13.5167	IT	Abruzzo	3183560	Teramo	0	PPL	1106
+vallepiana	1	8964713	Vallepiana	44.4444	9.4339	IT	Liguria	3174725	Genova	42	PPL	604
+vallepiccola	1	2522799	Vallepiccola	39.3000	16.6167	IT	Calabria	2525468	Cosenza	0	PPL	1274
+vallepietra	1	3164835	Vallepietra	41.9255	13.2313	IT	Lazio	3174976	Roma	306	PPLA3	825
+valleporcina	1	8974087	Valleporcina	41.6430	13.8976	IT	Lazio	3174976	Frosinone	23	PPL	813
+vallera	1	11114070	Vallera	45.8922	9.0459	CH	Canton Ticino	2658370	Distretto di Mendrisio	0	PPL	685
+vallera	1	8950780	Vallera	45.0192	9.6376	IT	Emilia-Romagna	3177401	Piacenza	414	PPL	78
+vallera	1	8964703	Vallera	45.0503	8.0736	IT	Piemonte	3170831	Asti	42	PPL	287
+vallera case negro	1	9033998	Vallera Case Negro	45.0473	8.0708	IT	Piemonte	3170831	Asti	25	PPL	278
+vallera sul bricco	1	9033999	Vallera sul Bricco	45.0457	8.0748	IT	Piemonte	3170831	Asti	25	PPL	279
+vallerange	1	2970943	Vallerange	48.9507	6.6838	FR	Gran Este	11071622	Mosella	205	PPL	255
+vallerano	1	3164832	Vallerano	44.6170	10.1913	IT	Emilia-Romagna	3177401	Parma	35	PPL	516
+vallerano	1	3164833	Vallerano	42.3833	12.2614	IT	Lazio	3174976	Viterbo	2530	PPLA3	390
+vallerargues	1	2970942	Vallérargues	44.1313	4.3519	FR	Occitania	11071623	Gard	123	PPL	283
+valleraugue	1	2970941	Valleraugue	44.0813	3.6420	FR	Occitania	11071623	Gard	1092	PPL	374
+vallerea	1	8978407	Vallerea	43.5712	12.8504	IT	Marche	3174004	Pesaro e Urbino	17	PPL	237
+valleremita	1	3164831	Valleremita	43.2969	12.8729	IT	Marche	3174004	Ancona	100	PPL	453
+vallerenzo	1	3164830	Vallerenzo	44.8909	9.3722	IT	Emilia-Romagna	3177401	Piacenza	19	PPL	481
+valleres	1	2970940	Vallères	47.3115	0.4740	FR	Centro-Valle della Loira	3027939	Indre e Loira	813	PPL	79
+valleret	1	2970939	Valleret	48.4867	5.0006	FR	Gran Este	11071622	Alta Marna	67	PPL	256
+vallereuil	1	2970937	Vallereuil	45.0723	0.5012	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	274	PPL	143
+vallerga	1	8965393	Vallerga	44.4003	8.5328	IT	Liguria	3174725	Savona	40	PPL	386
+vallericciardo inferiore	1	8956830	Vallericciardo Inferiore	39.0053	16.2418	IT	Calabria	2525468	Catanzaro	93	PPL	721
+vallericciardo superiore	1	9033695	Vallericciardo Superiore	39.0127	16.2332	IT	Calabria	2525468	Catanzaro	50	PPL	985
+vallermosa	1	2522798	Vallermosa	39.3639	8.7956	IT	Sardegna	2523228	Sud Sardegna	1593	PPLA3	70
+vallern na tratnakhe	0	2761965	Wallern an der Trattnach	48.2330	13.9462	AT	Alta Austria	2769848	Politischer Bezirk Grieskirchen	1965	PPL	300
+valleroffa	1	8976256	Valleroffa	41.3893	13.8039	IT	Lazio	3174976	Frosinone	20	PPL	343
+vallerog	0	2970941	Valleraugue	44.0813	3.6420	FR	Occitania	11071623	Gard	1092	PPL	374
+vallerois le bois	1	2970936	Vallerois-le-Bois	47.5488	6.2889	FR	Borgogna-Franca Contea	11071619	Alta Saona	262	PPL	305
+vallerois lorioz	1	2970935	Vallerois-Lorioz	47.5634	6.1512	FR	Borgogna-Franca Contea	11071619	Alta Saona	214	PPL	355
+vallerona	1	3164829	Vallerona	42.7928	11.4704	IT	Toscana	3165361	Grosseto	243	PPL	569
+vallerotana	1	12324426	Vallerotana	42.8485	11.1014	IT	Toscana	3165361	Grosseto	0	PPL	45
+vallerotonda	1	3164828	Vallerotonda	41.5513	13.9137	IT	Lazio	3174976	Frosinone	354	PPLA3	620
+valleroy	1	2970932	Valleroy	49.2094	5.9370	FR	Gran Este	11071622	Meurthe e Mosella	2360	PPL	204
+valleroy	1	2970933	Valleroy	47.6982	5.6565	FR	Gran Este	11071622	Alta Marna	27	PPL	296
+valleroy	1	2970934	Valleroy	47.3863	6.1156	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	93	PPL	255
+valleroy aux saules	1	2970931	Valleroy-aux-Saules	48.2478	6.1431	FR	Gran Este	11071622	Vosgi	232	PPL	279
+valleroy le sec	1	2970930	Valleroy-le-Sec	48.1868	6.0108	FR	Gran Este	11071622	Vosgi	196	PPL	397
+vallery	1	2970929	Vallery	48.2392	3.0459	FR	Borgogna-Franca Contea	11071619	Yonne	490	PPL	120
+vallery	1	8971170	Vallery	45.7398	7.5483	IT	Valle d'Aosta	3164857	Aosta	27	PPL	531
+vallerysthal	1	2970928	Vallérysthal	48.6771	7.1288	FR	Gran Este	11071622	Mosella	0	PPL	307
+valles	1	3164827	Valles	46.8419	11.6266	IT	Trentino-Alto Adige	3165244	Bolzano	386	PPL	1354
+vallesaccarda	1	6535642	Vallesaccarda	41.0631	15.2521	IT	Campania	3181042	Avellino	650	PPLA3	650
+vallescura	1	3164819	Vallescura	44.5217	9.2994	IT	Liguria	3174725	Genova	22	PPL	963
+vallescuropasso localita stefano	1	8950176	Vallescuropasso-Località Stefano	45.0520	9.2446	IT	Lombardia	3174618	Pavia	567	PPL	83
+vallese	1	3164818	Vallese	45.3283	11.0861	IT	Veneto	3164604	Verona	3091	PPL	30
+vallese due ponti	1	9032415	Vallese-Due Ponti	45.3450	11.0698	IT	Veneto	3164604	Verona	17	PPL	34
+vallese zona industriale	1	9033678	Vallese-Zona Industriale	45.3280	11.0768	IT	Veneto	3164604	Verona	50	PPL	29
+vallesettedue	1	8985346	Vallesettedue	41.7370	13.0120	IT	Lazio	3174976	Roma	0	PPLL	206
+vallesina	1	8953212	Vallesina	46.5721	11.2565	IT	Trentino-Alto Adige	3165244	Bolzano	202	PPL	1037
+vallesina di sopra	1	8973189	Vallesina di Sopra	46.4167	12.3137	IT	Veneto	3164604	Belluno	24	PPL	772
+vallesindola	1	3164816	Vallesindola	42.3027	13.4315	IT	Abruzzo	3183560	dell’Aquila	0	PPL	805
+vallesse	1	8962083	Vallesse	45.7152	9.8457	IT	Lombardia	3174618	Bergamo	52	PPL	357
+vallestura	1	8967199	Vallestura	45.1011	8.1791	IT	Piemonte	3170831	Alessandria	35	PPL	251
+vallesvilles	1	2970925	Vallesvilles	43.5927	1.6436	FR	Occitania	11071623	Alta Garonna	316	PPL	246
+vallet	1	2970923	Vallet	47.1613	-1.2671	FR	Paesi della Loira	2988289	Loira Atlantica	7483	PPL	55
+vallet	1	2970924	Vallet	45.2983	-0.3608	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente-Maritime	0	PPL	74
+valleto	1	8971391	Valleto	44.4607	9.7849	IT	Emilia-Romagna	3177401	Parma	27	PPL	583
+valletot	1	2970922	Valletot	49.3623	0.6225	FR	Normandia	11071621	Eure	265	PPL	125
+valletta	1	3164813	Valletta	45.0667	11.2833	IT	Veneto	3164604	Rovigo	0	PPL	5
+valletta	1	8954459	Valletta	45.6242	11.2177	IT	Veneto	3164604	Vicenza	137	PPL	349
+valletta	1	8971258	Valletta	46.7403	11.7794	IT	Trentino-Alto Adige	3165244	Bolzano	27	PPL	1342
+valletta, fuorcla da la	1	11074671	Valletta, Fuorcla da la	46.4321	9.6053	CH	Cantone dei Grigioni	2660522	Region Viamala	0	PASS	2581
+vallette	1	11288654	Vallette	45.1053	7.6411	IT	Piemonte	3170831	Torino	0	PPLX	259
+vallette	1	12322635	Vallette	46.8308	-0.4871	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	0	PPL	175
+valletti	1	8051064	Valletti	44.3759	9.5272	IT	Liguria	3174725	La Spezia	15	PPL	657
+vallettina	1	8975150	Vallettina	46.8684	11.2521	IT	Trentino-Alto Adige	3165244	Bolzano	21	PPL	1485
+valleu	1	2762474	Valleu	47.1167	9.8667	AT	Vorarlberg	2762300	Politischer Bezirk Bludenz	0	PPL	706
+valleve	1	6534520	Valleve	46.0282	9.7438	IT	Lombardia	3174618	Bergamo	129	PPLA3	1141
+valleverde stipes	1	9032956	Valleverde Stipes	42.2380	12.9478	IT	Lazio	3174976	Rieti	9	PPL	669
+vallevignale	1	8961025	Vallevignale	42.6712	13.8667	IT	Abruzzo	3183560	Teramo	58	PPL	254
+valleville	1	2970920	Valleville	49.6530	0.8044	FR	Normandia	11071621	Senna marittima	0	PPL	142
+vallevo	1	8952555	Vallevò	42.2872	14.4787	IT	Abruzzo	3183560	Chieti	229	PPL	21
+vallevo i	1	9033869	Vallevò I	42.2818	14.4874	IT	Abruzzo	3183560	Chieti	32	PPL	21
+vallevona	1	8969858	Vallevona	41.4009	13.9349	IT	Campania	3181042	Caserta	30	PPL	523
+vallevona	1	8982354	Vallevona	41.6513	15.0585	IT	Puglia	3169778	Foggia	11	PPL	184
+valleyre	1	2970919	Valleyre	45.5500	3.7833	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	786
+vallezza	1	3164810	Vallezza	44.6500	10.1500	IT	Emilia-Romagna	3177401	Parma	0	PPL	352
+valli	1	3164808	Valli	43.3000	11.3500	IT	Toscana	3165361	Siena	0	PPL	208
+valli	1	3164809	Valli	43.2985	11.2442	IT	Toscana	3165361	Siena	0	PPL	245
+valli	1	8449946	Valli	42.8351	13.5976	IT	Marche	3174004	Ascoli Piceno	347	PPL	370
+valli	1	8949318	Valli	45.2234	12.1899	IT	Veneto	3164604	Venezia	1143	PPL	0
+valli	1	8951517	Valli	39.2853	16.1632	IT	Calabria	2525468	Cosenza	309	PPL	613
+valli	1	8952263	Valli	42.3738	12.4252	IT	Lazio	3174976	Viterbo	246	PPL	79
+valli	1	8955970	Valli	41.4554	13.7276	IT	Lazio	3174976	Frosinone	105	PPL	92
+valli	1	8959102	Valli	40.9779	15.1479	IT	Campania	3181042	Avellino	70	PPL	725
+valli	1	8959797	Valli	45.5889	11.7932	IT	Veneto	3164604	Padova	65	PPL	31
+valli	1	8961115	Valli	45.1600	10.4648	IT	Lombardia	3174618	Mantova	57	PPL	31
+valli	1	8961924	Valli	45.1779	11.7906	IT	Veneto	3164604	Padova	53	PPL	4
+valli	1	8965614	Valli	41.5923	14.5233	IT	Molise	3173222	Campobasso	40	PPL	598
+valli	1	8970018	Valli	44.3690	7.9022	IT	Piemonte	3170831	Cuneo	29	PPL	457
+valli	1	8978884	Valli	45.0067	9.2669	IT	Lombardia	3174618	Pavia	16	PPL	226
+valli	1	8979570	Valli	45.6494	10.6105	IT	Lombardia	3174618	Brescia	15	PPL	257
+valli	1	9031588	Valli	41.8360	14.4697	IT	Abruzzo	3183560	Chieti	31	PPL	921
+valli d oro	1	8952108	Valli d'Oro	41.4816	12.9647	IT	Lazio	3174976	Latina	257	PPL	9
+valli del pasubio	1	3164804	Valli del Pasubio	45.7403	11.2635	IT	Veneto	3164604	Vicenza	927	PPLA3	350
+valli di santa lucia	1	8954551	Valli di Santa Lucia	41.5789	12.5326	IT	Lazio	3174976	Roma	135	PPL	12
+valli di sopra	1	8981756	Valli di Sopra	43.7362	12.7544	IT	Marche	3174004	Pesaro e Urbino	12	PPL	344
+valli i	1	8960022	Valli I	41.8344	14.4573	IT	Abruzzo	3183560	Chieti	64	PPL	747
+valli mocenighe	1	3164802	Valli Mocenighe	45.1611	11.5674	IT	Veneto	3164604	Padova	33	PPL	8
+valli pianta	1	9031896	Valli Pianta	45.1651	11.7414	IT	Veneto	3164604	Padova	24	PPL	4
+vallia	1	8969487	Vallia	45.0251	8.0597	IT	Piemonte	3170831	Asti	30	PPL	245
+valliano	1	8966239	Valliano	43.1258	12.2818	IT	Umbria	3165048	Perugia	38	PPL	265
+vallibbia	1	8982250	Vallibbia	43.1968	12.9093	IT	Marche	3174004	Macerata	11	PPL	477
+vallibre	0	2970885	Vallon-Pont-d'Arc	44.4068	4.3937	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	2337	PPL	111
+vallica	1	2970918	Vallica	42.5208	9.0515	FR	Corsica	3023519	Corsica settentrionale	29	PPL	814
+vallicalla	1	12024293	Vallicalla	42.3817	9.5297	FR	Corsica	3023519		0	PPL	3
+vallicchio	1	3164806	Vallicchio	43.0828	13.0587	IT	Marche	3174004	Macerata	15	PPL	560
+vallicciardi	1	2522797	Vallicciardi	39.0000	16.2333	IT	Calabria	2525468	Catanzaro	0	PPL	977
+vallicella	1	3164805	Vallicella	42.4333	13.3167	IT	Abruzzo	3183560	dell’Aquila	0	PPL	805
+vallicella	1	8977693	Vallicella	42.8570	13.4643	IT	Marche	3174004	Ascoli Piceno	18	PPL	463
+vallicella	1	8985265	Vallicella	44.7841	11.9422	IT	Emilia-Romagna	3177401	Ferrara	0	PPLL	-5
+vallicella alta	1	9033253	Vallicella Alta	44.9666	11.4362	IT	Veneto	3164604	Rovigo	87	PPL	9
+vallicella bassa	1	8956088	Vallicella Bassa	44.9720	11.4406	IT	Veneto	3164604	Rovigo	103	PPL	5
+vallicelle	1	8960477	Vallicelle	42.9647	12.2743	IT	Umbria	3165048	Perugia	61	PPL	237
+vallicelle pugnani cona del monte	1	8960822	Vallicelle-Pugnani-Cona del Monte	41.6909	13.0571	IT	Lazio	3174976	Roma	59	PPL	233
+vallicelli	1	8954009	Vallicelli	40.9239	15.0621	IT	Campania	3181042	Avellino	154	PPL	671
+vallicelo	1	2970917	Vallicelo	41.5283	9.1209	FR	Corsica	3023519	Corsica del Sud	0	PPL	100
+vallico di sopra	1	8659271	Vallico di Sopra	44.0174	10.4461	IT	Toscana	3165361	Lucca	67	PPL	642
+vallico di sotto	1	8659272	Vallico di Sotto	44.0138	10.4428	IT	Toscana	3165361	Lucca	105	PPL	486
+vallicone	1	12324071	Vallicone	41.6511	9.3795	FR	Corsica	3023519	Corsica del Sud	0	PPL	12
+vallier	1	3232844	Vallier	44.9592	-0.5458	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	0	PPL	6
+vallier les bois	0	2976697	Saint-Vallier	46.6411	4.3711	FR	Borgogna-Franca Contea	11071619	Saona e Loira	9670	PPL	332
+valliera	1	3164803	Valliera	44.4167	7.2167	IT	Piemonte	3170831	Cuneo	0	PPL	1336
+valliera	1	3219260	Valliera	45.0564	12.1817	IT	Veneto	3164604	Rovigo	0	PPL	-4
+valliera	1	3219264	Valliera	45.0611	12.0155	IT	Veneto	3164604	Rovigo	719	PPL	2
+valliera	1	8961726	Valliera	45.6586	11.7502	IT	Veneto	3164604	Padova	54	PPL	54
+valliera i	1	9033756	Valliera I	45.6579	11.7389	IT	Veneto	3164604	Padova	42	PPL	53
+valliere	1	12310242	Vallière	47.8776	1.4525	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	0	PPL	131
+valliere	1	2970912	Vallière	45.9064	2.0347	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	0	PPL	580
+valliere	1	2970914	Vallière	48.1064	1.4817	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	0	PPL	115
+vallieres	1	12305703	Vallières	49.1262	6.2176	FR	Gran Este	11071622	Mosella	0	PPL	180
+vallieres	1	12313688	Vallières	45.6113	-1.0053	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente-Maritime	0	PPL	9
+vallieres	1	12511121	Vallières	47.3904	0.6106	FR	Centro-Valle della Loira	3027939	Indre e Loira	0	PPL	46
+vallieres	1	2970909	Vallières	48.3220	3.3912	FR	Borgogna-Franca Contea	11071619	Yonne	0	PPL	177
+vallieres	1	2970910	Vallières	47.9960	4.0607	FR	Gran Este	11071622	Aube	139	PPL	208
+vallieres	1	2970911	Vallières	45.9004	5.9386	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	1378	PPL	357
+vallieres bas	1	2970905	Vallières-Bas	47.9977	4.0666	FR	Gran Este	11071622	Aube	0	PPLX	184
+vallieres haut	1	2970904	Vallières-Haut	47.9949	4.0562	FR	Gran Este	11071622	Aube	0	PPLX	214
+vallieres les grandes	1	2970903	Vallières-les-Grandes	47.4237	1.1472	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	633	PPL	86
+vallieres les metz	1	8260355	Vallières-lès-Metz	49.1271	6.2167	FR	Gran Este	11071622	Mosella	0	PPLL	205
+valliguieres	1	2970902	Valliguières	44.0072	4.5798	FR	Occitania	11071623	Gard	401	PPL	141
+vallimestre	1	8972062	Vallimestre	43.1137	13.2989	IT	Marche	3174004	Macerata	26	PPL	486
+vallimpuni	1	8974073	Vallimpuni	42.5607	13.0136	IT	Lazio	3174976	Rieti	23	PPL	933
+vallin buio	1	8984571	Vallin Buio	43.5748	10.3520	IT	Toscana	3165361	Livorno	3	PPLL	6
+vallina	1	8950561	Vallina	43.7786	11.3631	IT	Toscana	3165361	Firenze	464	PPL	73
+vallina	1	8956052	Vallina	40.1466	16.1850	IT	Basilicata	3182306	Potenza	104	PPL	468
+vallina	1	8972691	Vallina	43.3456	12.8103	IT	Marche	3174004	Ancona	25	PPL	440
+vallincu	1	3227254	Vallincu	41.6916	8.9113	FR	Corsica	3023519	Corsica del Sud	0	PPL	31
+valline	1	3215758	Valline	44.9603	12.1078	IT	Emilia-Romagna	3177401	Ferrara	0	PPL	-2
+valline	1	6696185	Valline	46.1657	11.7647	IT	Veneto	3164604		0	PPL	1024
+vallinfante	1	3164801	Vallinfante	42.8917	13.1729	IT	Marche	3174004	Macerata	49	PPL	858
+vallinfreda	1	3164800	Vallinfreda	42.0849	12.9960	IT	Lazio	3174976	Roma	239	PPLA3	874
+vallinsu	1	8658816	Vallinsù	42.3640	13.2489	IT	Abruzzo	3183560	dell’Aquila	54	PPL	800
+vallio	1	3174317	Vallio	45.6376	12.4130	IT	Veneto	3164604	Treviso	425	PPL	6
+vallio terme	1	6534753	Vallio Terme	45.6098	10.3974	IT	Lombardia	3174618	Brescia	1148	PPLA3	285
+valliquerville	1	2970901	Valliquerville	49.6138	0.6870	FR	Normandia	11071621	Senna marittima	1208	PPL	131
+vallis crisonis	0	2970540	Vaucresson	48.8408	2.1565	FR	Île-de-France	3012874	Hauts-de-Seine	8693	PPL	160
+vallis morea	0	6535758	Valmorea	45.8152	8.9306	IT	Lombardia	3174618	Como	2467	PPLA3	408
+vallis serenae	0	3167131	Sarentino	46.6412	11.3541	IT	Trentino-Alto Adige	3165244	Bolzano	2299	PPLA3	961
+vallisnera	1	8954939	Vallisnera	44.3625	10.2646	IT	Emilia-Romagna	3177401	Reggio Emilia	125	PPL	987
+vallizellen	0	2658060	Wallisellen	47.4150	8.5967	CH	Cantone di Zurigo	2657895	Distretto di Bülach	11705	PPL	462
+vallo	1	3164796	Vallo	45.2669	7.8792	IT	Piemonte	3170831	Torino	519	PPL	240
+vallo	1	8955896	Vallo	45.6740	11.8656	IT	Veneto	3164604	Treviso	106	PPL	45
+vallo della lucania	1	3164794	Vallo della Lucania	40.2279	15.2663	IT	Campania	3181042	Salerno	6899	PPLA3	380
+vallo di lucania	0	3164794	Vallo della Lucania	40.2279	15.2663	IT	Campania	3181042	Salerno	6899	PPLA3	380
+vallo di nera	1	3164793	Vallo di Nera	42.8004	12.8638	IT	Umbria	3165048	Perugia	100	PPL	769
+vallo marino	1	8963007	Vallo Marino	39.6724	16.1088	IT	Calabria	2525468	Cosenza	49	PPL	392
+vallo scalo	1	8952711	Vallo Scalo	40.2273	15.1612	IT	Campania	3181042	Salerno	221	PPL	28
+vallo torinese	1	6535426	Vallo Torinese	45.2236	7.4963	IT	Piemonte	3170831	Torino	748	PPLA3	508
+vallocchia	1	3164795	Vallocchia	42.7190	12.7896	IT	Umbria	3165048	Perugia	16	PPL	777
+vallocchia tesima	1	8961385	Vallocchia Tesima	41.5442	13.9058	IT	Lazio	3174976	Frosinone	56	PPL	574
+vallocchie torre	1	8968870	Vallocchie Torre	41.9320	14.4664	IT	Abruzzo	3183560	Chieti	32	PPL	825
+vallogge	1	8983288	Vallogge	45.4778	8.8358	IT	Lombardia	3174618	Milano	8	PPLL	140
+valloire	1	2970899	Valloire	45.1654	6.4300	FR	Alvernia-Rodano-Alpi	11071625	Savoia	1346	PPL	1404
+valloires	1	12320460	Valloires	50.3485	1.8199	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	0	PPL	12
+vallois	1	2970897	Vallois	48.4626	6.5493	FR	Gran Este	11071622	Meurthe e Mosella	150	PPL	245
+vallolmo	1	8979187	Vallolmo	43.8123	11.7596	IT	Toscana	3165361	Arezzo	16	PPL	873
+vallombrosa	1	3164792	Vallombrosa	43.7329	11.5564	IT	Toscana	3165361	Firenze	28	PPL	1017
+vallombrosa	1	8976614	Vallombrosa	45.2820	9.2201	IT	Lombardia	3174618	Pavia	19	PPL	82
+vallommari	1	8957045	Vallommari	41.3803	13.7381	IT	Lazio	3174976	Frosinone	90	PPL	233
+vallon	0	2970885	Vallon-Pont-d'Arc	44.4068	4.3937	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	2337	PPL	111
+vallon	0	2970889	Vallon-en-Sully	46.5363	2.6080	FR	Alvernia-Rodano-Alpi	11071625	Allier	1754	PPL	183
+vallon	1	2970896	Vallon	44.7388	2.6349	FR	Occitania	11071623	Aveyron	0	PPL	531
+vallon	1	8533360	Vallon	46.8838	6.9554	CH	Canton Friburgo	2660717	distretto della Broye	0	PPL	472
+vallon bethusy	1	11789392	Vallon - Béthusy	46.5262	6.6438	CH	Canton Vaud	2658182	distretto di Losanna	0	PPLX	588
+vallon d en bas	1	12318528	Vallon d'en Bas	46.0751	6.7414	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	0	PPL	712
+vallon d en haut	1	12318527	Vallon d'en Haut	46.0704	6.7472	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	0	PPL	722
+vallon des oiseaux	1	12309539	Vallon des Oiseaux	49.1215	-0.3819	FR	Normandia	11071621	Calvados	0	PPL	33
+vallon en sully	1	2970889	Vallon-en-Sully	46.5363	2.6080	FR	Alvernia-Rodano-Alpi	11071625	Allier	1754	PPL	183
+vallon grande	1	8973621	Vallon Grande	44.3231	7.5031	IT	Piemonte	3170831	Cuneo	23	PPL	654
+vallon la montagne	0	2979995	Saint-Geniez-d'Olt	44.4656	2.9736	FR	Occitania	11071623	Aveyron	2068	PPL	435
+vallon pont d arc	1	2970885	Vallon-Pont-d'Arc	44.4068	4.3937	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	2337	PPL	111
+vallon sur gee	1	2970883	Vallon-sur-Gée	47.9629	-0.0683	FR	Paesi della Loira	2988289	Sarthe	732	PPL	60
+vallona	1	3164791	Vallona	45.0000	12.2833	IT	Veneto	3164604	Rovigo	0	PPL	-4
+vallona	1	8976738	Vallona	45.4097	11.7574	IT	Veneto	3164604	Padova	19	PPL	14
+vallonara	1	8950676	Vallonara	45.7615	11.6456	IT	Veneto	3164604	Vicenza	436	PPL	129
+vallone	1	3164789	Vallone	43.6799	13.1883	IT	Marche	3174004	Ancona	578	PPL	26
+vallone	1	3218611	Vallone	46.7179	12.1426	IT	Trentino-Alto Adige	3165244	Bolzano	30	PPL	1250
+vallone	1	8953037	Vallone	44.9209	11.6816	IT	Veneto	3164604	Rovigo	208	PPL	5
+vallone	1	8967002	Vallone	43.9015	10.3502	IT	Toscana	3165361	Lucca	36	PPL	206
+vallone	1	8977312	Vallone	44.0717	8.0841	IT	Liguria	3174725	Savona	18	PPL	290
+vallone	1	8980172	Vallone	44.5354	7.7366	IT	Piemonte	3170831	Cuneo	14	PPL	361
+vallone	1	8981518	Vallone	46.1647	9.9965	IT	Lombardia	3174618	Sondrio	12	PPL	358
+vallone	1	9035374	Vallone	43.2440	11.9909	IT	Toscana	3165361	Arezzo	154	PPL	258
+vallone monaco	1	8985415	Vallone Monaco	40.8384	14.5907	IT	Campania	3181042	Salerno	0	PPLL	110
+vallone pip	1	8953801	Vallone Pip	43.2390	11.9952	IT	Toscana	3165361	Arezzo	163	PPL	260
+vallone ponte	1	8976930	Vallone Ponte	43.6097	10.9855	IT	Toscana	3165361	Firenze	19	PPL	60
+vallone ricchiardi	1	8981443	Vallone Ricchiardi	44.5942	7.2360	IT	Piemonte	3170831	Cuneo	12	PPL	1293
+vallone rosso	1	8972901	Vallone Rosso	37.6702	14.8992	IT	Sicilia	2523119	Catania	25	PPL	905
+vallone san pietro	1	8966677	Vallone San Pietro	42.0107	13.9411	IT	Abruzzo	3183560	dell’Aquila	37	PPL	479
+vallonecupo	1	8952891	Vallonecupo	39.5447	16.3858	IT	Calabria	2525468	Cosenza	214	PPL	643
+vallonevina inferiore	1	9034206	Vallonevina Inferiore	38.1022	14.9506	IT	Sicilia	2523119	Messina	18	PPL	275
+vallonevina superiore	1	8971608	Vallonevina Superiore	38.0984	14.9463	IT	Sicilia	2523119	Messina	27	PPL	371
+vallonga	1	3219185	Vallonga	45.2725	12.0786	IT	Veneto	3164604	Padova	1298	PPL	3
+vallonga	1	8958571	Vallonga	46.4123	11.6598	IT	Trentino-Alto Adige	3165244	Trento	74	PPL	1510
+vallonga	1	8970232	Vallonga	45.8699	12.2474	IT	Veneto	3164604	Treviso	29	PPL	71
+vallongo	1	8954276	Vallongo	44.9016	7.7523	IT	Piemonte	3170831	Torino	142	PPL	236
+valloni	1	3164787	Valloni	41.5934	14.1257	IT	Molise	3173222	Isernia	134	PPL	379
+valloni	1	8956825	Valloni	42.0740	14.5330	IT	Abruzzo	3183560	Chieti	93	PPL	300
+valloni	1	8981312	Valloni	41.6599	14.4872	IT	Molise	3173222	Campobasso	13	PPL	713
+valloni	1	9033904	Valloni	41.8404	14.4907	IT	Abruzzo	3183560	Chieti	30	PPL	1012
+valloni i	1	8971012	Valloni I	41.8380	14.4974	IT	Abruzzo	3183560	Chieti	28	PPL	906
+valloni rossi	1	9035343	Valloni-Rossi	41.6398	14.1125	IT	Molise	3173222	Isernia	178	PPL	586
+vallons pont d arc	0	2970885	Vallon-Pont-d'Arc	44.4068	4.3937	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	2337	PPL	111
+vallonsecco	1	8977831	Vallonsecco	40.1889	15.6997	IT	Campania	3181042	Salerno	18	PPL	636
+vallonto	1	3218597	Vallonto	45.8482	12.4822	IT	Veneto	3164604	Treviso	271	PPL	17
+vallorano	1	8959665	Vallorano	42.8772	13.5250	IT	Marche	3174004	Ascoli Piceno	66	PPL	403
+vallorbe	1	2658194	Vallorbe	46.7126	6.3789	CH	Canton Vaud	2658182	distretto del Jura-Nord vaudois	3098	PPL	757
+vallorcine	1	2970882	Vallorcine	46.0334	6.9319	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	432	PPL	1265
+valloria	1	8531968	Valloria	43.9272	7.9219	IT	Liguria	3174725	Imperia	47	PPLL	437
+valloria	1	8953300	Valloria	45.1043	9.6506	IT	Lombardia	3174618	Lodi	197	PPL	47
+valloria marittima	1	3164786	Valloria Marittima	43.9167	7.9167	IT	Liguria	3174725	Imperia	0	PPL	326
+valloriate	1	6534377	Valloriate	44.3376	7.3739	IT	Piemonte	3170831	Cuneo	166	PPLA3	785
+valloris	0	2970962	Vallauris	43.5780	7.0545	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	27286	PPL	115
+vallorona	1	8965448	Vallorona	45.5639	11.4133	IT	Veneto	3164604	Vicenza	40	PPL	62
+vallorsara	1	8960971	Vallorsara	44.2824	10.5326	IT	Emilia-Romagna	3177401	Modena	58	PPL	966
+vallosa	1	8968130	Vallosa	45.5773	10.0678	IT	Lombardia	3174618	Brescia	33	PPL	174
+vallosio	1	8955176	Vallosio	44.6096	8.5224	IT	Piemonte	3170831	Alessandria	119	PPL	433
+vallossera	1	8961656	Vallossera	45.3133	7.5766	IT	Piemonte	3170831	Torino	54	PPL	490
+vallossera	1	8964120	Vallossera	44.2927	7.9727	IT	Piemonte	3170831	Cuneo	44	PPL	755
+vallouise	1	2970881	Vallouise	44.8461	6.4890	FR	Provenza-Alpi-Costa Azzurra	2985244	Alte Alpi	694	PPL	1161
+valloux	1	2970878	Valloux	47.5121	3.8419	FR	Borgogna-Franca Contea	11071619	Yonne	0	PPL	148
+valluar	0	2970899	Valloire	45.1654	6.4300	FR	Alvernia-Rodano-Alpi	11071625	Savoia	1346	PPL	1404
+vallugana	1	9031889	Vallugana	45.6263	11.4199	IT	Veneto	3164604	Vicenza	24	PPL	90
+vallugana alta	1	9032005	Vallugana Alta	45.6258	11.4012	IT	Veneto	3164604	Vicenza	22	PPL	143
+vallugana bassa	1	8965095	Vallugana Bassa	45.6268	11.4046	IT	Veneto	3164604	Vicenza	41	PPL	96
+vallumida	1	8953444	Vallumida	44.8130	8.2171	IT	Piemonte	3170831	Asti	183	PPL	172
+vallun	1	12309483	Vallun	49.2064	-0.7853	FR	Normandia	11071621	Calvados	0	PPL	81
+vallunga	1	3164785	Vallunga	42.5791	13.0032	IT	Lazio	3174976	Rieti	51	PPL	922
+vallunga	1	8955315	Vallunga	45.0146	8.0561	IT	Piemonte	3170831	Asti	116	PPL	241
+vallunga	1	8973374	Vallunga	43.7777	12.2047	IT	Toscana	3165361	Arezzo	24	PPL	445
+vallunga	1	8974452	Vallunga	45.8994	11.0556	IT	Trentino-Alto Adige	3165244	Trento	22	PPL	325
+vallurbana	1	8972775	Vallurbana	43.5333	12.2793	IT	Umbria	3165048	Perugia	25	PPL	470
+valmacca	1	3164784	Valmacca	45.1010	8.5838	IT	Piemonte	3170831	Alessandria	717	PPLA3	97
+valmadonna	1	8949189	Valmadonna	44.9744	8.6115	IT	Piemonte	3170831	Alessandria	1394	PPL	125
+valmadrera	1	3164782	Valmadrera	45.8463	9.3582	IT	Lombardia	3174618	Lecco	11609	PPLA3	231
+valmadrera caserta	1	3164782	Valmadrera	45.8463	9.3582	IT	Lombardia	3174618	Lecco	11609	PPLA3	231
+valmaggia	1	8953073	Valmaggia	45.8242	8.2249	IT	Piemonte	3170831	Vercelli	206	PPL	483
+valmaggiore	1	3164780	Valmaggiore	45.7833	9.9833	IT	Lombardia	3174618	Bergamo	0	PPL	365
+valmaggiore	1	3164781	Valmaggiore	44.1333	11.6167	IT	Emilia-Romagna	3177401	Ravenna	0	PPL	599
+valmaggiore	1	8954019	Valmaggiore	45.7566	8.2783	IT	Piemonte	3170831	Vercelli	153	PPL	585
+valmaggiore	1	8965697	Valmaggiore	44.8750	7.9752	IT	Piemonte	3170831	Asti	39	PPL	293
+valmaggiore cerrati	1	8962273	Valmaggiore-Cerrati	44.7531	7.9734	IT	Piemonte	3170831	Cuneo	51	PPL	318
+valmairone	1	8963312	Valmairone	44.9418	8.1574	IT	Piemonte	3170831	Asti	47	PPL	148
+valmala	1	6535493	Valmala	44.5442	7.3460	IT	Piemonte	3170831	Cuneo	12	PPLA3	831
+valmala	1	8968588	Valmala	45.2359	10.9614	IT	Veneto	3164604	Verona	32	PPL	25
+valmanya	1	2970876	Valmanya	42.5383	2.5342	FR	Occitania	11071623	Pirenei Orientali	19	PPL	878
+valmara	1	11113578	Valmara	46.1023	8.6967	CH	Canton Ticino	2658370	Distretto di Locarno	0	PPL	223
+valmarana	1	8950961	Valmarana	45.5006	11.4911	IT	Veneto	3164604	Vicenza	381	PPL	127
+valmarchese	1	8978768	Valmarchese	44.9969	8.1674	IT	Piemonte	3170831	Asti	16	PPL	195
+valmareno	1	3218529	Valmareno	45.9665	12.1295	IT	Veneto	3164604	Treviso	922	PPL	249
+valmartin	1	2970875	Valmartin	49.6198	1.0486	FR	Normandia	11071621	Senna marittima	0	PPL	163
+valmarzuolo	1	8973735	Valmarzuolo	45.0717	10.8682	IT	Lombardia	3174618	Mantova	23	PPL	17
+valmascle	1	2970874	Valmascle	43.5966	3.2984	FR	Occitania	11071623	Hérault	46	PPL	261
+valmaure	1	12309025	Valmaure	45.2841	6.2107	FR	Alvernia-Rodano-Alpi	11071625	Savoia	0	PPL	1208
+valmeanaz	1	8975792	Valmeanaz	45.7335	7.4591	IT	Valle d'Aosta	3164857	Aosta	20	PPL	587
+valmeinier	1	2970873	Valmeinier	45.1857	6.4810	FR	Alvernia-Rodano-Alpi	11071625	Savoia	535	PPL	1546
+valmeray	1	12309564	Valmeray	49.0939	-0.1625	FR	Normandia	11071621	Calvados	0	PPL	33
+valmestroff	1	2970869	Valmestroff	49.3608	6.2657	FR	Gran Este	11071622	Mosella	266	PPL	208
+valmezzana	1	8961669	Valmezzana	44.9773	8.0411	IT	Piemonte	3170831	Asti	54	PPL	279
+valmezzano	1	8975661	Valmezzano	45.1081	9.7179	IT	Lombardia	3174618	Lodi	21	PPL	46
+valmigere	1	2970868	Valmigère	42.9822	2.3758	FR	Occitania	11071623	Aude	23	PPL	676
+valmineral	0	3002185	Les Allues	45.4325	6.5556	FR	Alvernia-Rodano-Alpi	11071625	Savoia	2015	PPL	1115
+valmir	1	8950733	Valmir	43.0488	13.6792	IT	Marche	3174004	Fermo	424	PPL	136
+valmolin	1	6696188	Valmolin	46.1599	11.7524	IT	Veneto	3164604		0	PPL	909
+valmolin inferiore	1	8956952	Valmolin Inferiore	45.0114	11.7727	IT	Veneto	3164604	Rovigo	91	PPL	2
+valmolin quadri	1	8976744	Valmolin Quadri	44.9990	11.7401	IT	Veneto	3164604	Rovigo	19	PPL	3
+valmolina	1	8976498	Valmolina	44.8288	8.0482	IT	Piemonte	3170831	Asti	19	PPL	197
+valmonaca	1	9032297	Valmonaca	44.8706	8.2795	IT	Piemonte	3170831	Asti	18	PPL	156
+valmondois	1	2970866	Valmondois	49.0973	2.1900	FR	Île-de-France	3012874	Val-d'Oise	1289	PPL	31
+valmonfredo	1	8977199	Valmonfredo	45.7510	8.3294	IT	Piemonte	3170831	Vercelli	18	PPL	698
+valmont	1	2970864	Valmont	49.7436	0.5129	FR	Normandia	11071621	Senna marittima	991	PPL	57
+valmont	1	2970865	Valmont	49.0843	6.6978	FR	Gran Este	11071622	Mosella	3312	PPL	277
+valmontasca	1	8959442	Valmontasca	44.8488	8.2491	IT	Piemonte	3170831	Asti	67	PPL	155
+valmontone	1	3164778	Valmontone	41.7732	12.9186	IT	Lazio	3174976	Roma	13001	PPLA3	303
+valmontone	1	8977658	Valmontone	44.7235	11.7361	IT	Emilia-Romagna	3177401	Ferrara	18	PPL	1
+valmorain	1	11492975	Valmorain	46.6234	10.3858	CH	Cantone dei Grigioni	2660522	Region Engiadina Bassa / Val Müstair	0	PPL	2191
+valmorana	1	8970074	Valmorana	45.7120	8.9986	IT	Lombardia	3174618	Como	29	PPL	318
+valmorbia	1	3164777	Valmorbia	45.8176	11.0938	IT	Trentino-Alto Adige	3165244	Trento	43	PPL	643
+valmorea	1	6535758	Valmorea	45.8152	8.9306	IT	Lombardia	3174618	Como	2467	PPLA3	408
+valmorel	1	6355130	Valmorel	45.4611	6.4433	FR	Alvernia-Rodano-Alpi	11071625	Savoia	0	PPL	1347
+valmorel	1	8982596	Valmorel	46.0542	12.2277	IT	Veneto	3164604	Belluno	10	PPLL	793
+valmoresca	1	3164775	Valmoresca	46.0028	9.6306	IT	Lombardia	3174618	Bergamo	10	PPL	843
+valmorino	1	8973076	Valmorino	45.8339	10.1686	IT	Lombardia	3174618	Brescia	24	PPL	802
+valmorre	1	8968740	Valmorre	44.2081	12.1767	IT	Emilia-Romagna	3177401	Forlì-Cesena	32	PPL	17
+valmorsel concamarise	1	6534599	Valmorsel-Concamarise	45.2138	11.1311	IT	Veneto	3164604	Verona	375	PPL	20
+valmort	1	12323590	Valmort	46.0249	3.0135	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	565
+valmosca	1	8965319	Valmosca	45.6724	7.9866	IT	Piemonte	3170831	Biella	41	PPL	859
+valmoselle	0	2980219	Saint-Étienne-lès-Remiremont	48.0229	6.6087	FR	Gran Este	11071622	Vosgi	4156	PPL	397
+valmunster	1	2970862	Valmunster	49.2414	6.5064	FR	Gran Este	11071622	Mosella	72	PPL	215
+valmy	1	2970861	Valmy	49.0839	4.7739	FR	Gran Este	11071622	Marna	292	PPL	159
+valnegra	1	3164774	Valnegra	45.9491	9.6893	IT	Lombardia	3174618	Bergamo	207	PPLA3	581
+valnogaredo	1	3164772	Valnogaredo	45.2992	11.6644	IT	Veneto	3164604	Padova	206	PPL	72
+valnontey	1	8982496	Valnontey	45.5865	7.3407	IT	Valle d'Aosta	3164857	Aosta	10	PPLL	1670
+valntenmpournk	0	2658071	Waldenburg	47.3833	7.7500	CH	Canton Basilea Campagna	2661603	Distretto di Waldenburg	1081	PPLA2	544
+valognes	1	2970860	Valognes	49.5088	-1.4705	FR	Normandia	11071621	Manica	7873	PPL	33
+valogno piccolo	1	3164771	Valogno Piccolo	41.2500	13.9667	IT	Campania	3181042	Caserta	0	PPL	358
+valoje	1	8982586	Valoje	45.8094	11.3357	IT	Veneto	3164604	Vicenza	10	PPLL	416
+valojoulx	1	13447638	Valojoulx	45.0186	1.1430	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	159
+valojoulx	1	2970859	Valojoulx	45.1167	1.1500	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	242	PPL	223
+valon	0	2970860	Valognes	49.5088	-1.4705	FR	Normandia	11071621	Manica	7873	PPL	33
+valon, bocchetta del	1	11074057	Valon, Bocchetta del	46.2324	9.2469	IT	Lombardia	3174618	Como	0	PASS	2327
+valoni	0	2970860	Valognes	49.5088	-1.4705	FR	Normandia	11071621	Manica	7873	PPL	33
+valonne	1	2970857	Valonne	47.3424	6.6590	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	188	PPL	531
+valoreille	1	2970856	Valoreille	47.2985	6.7422	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	94	PPL	698
+valori	0	2970962	Vallauris	43.5780	7.0545	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	27286	PPL	115
+valotte	1	2970855	Valotte	46.9839	3.3680	FR	Borgogna-Franca Contea	11071619	Nièvre	0	PPL	226
+valouse	1	2970854	Valouse	44.4626	5.1939	FR	Alvernia-Rodano-Alpi	11071625	Drôme	40	PPL	725
+valouze	1	12313791	Valouze	47.1312	4.2024	FR	Borgogna-Franca Contea	11071619	Saona e Loira	0	PPL	471
+valpagnana	1	8966792	Valpagnana	44.8623	8.2770	IT	Piemonte	3170831	Asti	36	PPL	207
+valpara	1	8977805	Valpara	41.7734	13.6231	IT	Lazio	3174976	Frosinone	18	PPL	560
+valparolo	1	8973646	Valparolo	45.0089	8.5922	IT	Piemonte	3170831	Alessandria	23	PPL	150
+valpaschun	1	11492974	Valpaschun	46.6097	10.3978	CH	Cantone dei Grigioni	2660522	Region Engiadina Bassa / Val Müstair	0	PPL	1794
+valpegara	1	8961125	Valpegara	45.8787	11.3579	IT	Veneto	3164604	Vicenza	57	PPL	382
+valpegari	1	8964202	Valpegari	45.8128	11.3612	IT	Veneto	3164604	Vicenza	44	PPL	326
+valpelina	1	3343555	Valpelina	45.6622	13.0036	IT	Veneto	3164604	Venezia	0	PPL	-2
+valpelline	1	3164769	Valpelline	45.8249	7.3255	IT	Valle d'Aosta	3164857	Aosta	385	PPLA3	960
+valperga	1	3164768	Valperga	45.3700	7.6612	IT	Piemonte	3170831	Torino	2548	PPLA3	385
+valperosa	1	8971726	Valperosa	44.8865	8.0565	IT	Piemonte	3170831	Asti	26	PPL	258
+valpiana	1	3164766	Valpiana	45.8847	9.7420	IT	Lombardia	3174618	Bergamo	205	PPL	1020
+valpiana	1	3164767	Valpiana	43.0048	10.8503	IT	Toscana	3165361	Grosseto	499	PPL	145
+valpiana	1	8963575	Valpiana	45.7606	8.3395	IT	Piemonte	3170831	Vercelli	46	PPL	726
+valpiana	1	8984329	Valpiana	45.9481	11.9757	IT	Veneto	3164604	Treviso	4	PPLL	759
+valpicetto	1	3164765	Valpicetto	46.5398	12.8622	IT	Friuli Venezia Giulia	3176525	Udine	57	PPL	756
+valpinza	1	8962680	Valpinza	43.1192	12.2937	IT	Umbria	3165048	Perugia	50	PPL	372
+valpone	1	8951008	Valpone	44.8045	8.0215	IT	Piemonte	3170831	Cuneo	373	PPL	181
+valporco	1	8980553	Valporco	43.8623	12.4412	IT	Marche	3174004	Pesaro e Urbino	14	PPL	672
+valporino	1	8976493	Valporino	44.9186	8.0704	IT	Piemonte	3170831	Asti	19	PPL	169
+valprato soana	1	3164764	Valprato Soana	45.5217	7.5495	IT	Piemonte	3170831	Torino	42	PPLA3	1113
+valpredina	1	8955947	Valpredina	45.7165	9.8157	IT	Lombardia	3174618	Bergamo	105	PPL	382
+valpreveyre	1	2970846	Valpreveyre	44.8120	6.9694	FR	Provenza-Alpi-Costa Azzurra	2985244	Alte Alpi	0	PPL	1857
+valprionde	1	2970844	Valprionde	44.5865	0.8950	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Lot-et-Garonne	0	PPL	210
+valprionde	1	2970845	Valprionde	44.3545	1.1092	FR	Occitania	11071623	Lot	162	PPL	202
+valprivas	1	2970843	Valprivas	45.3113	4.0440	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	422	PPL	834
+valpromaro	1	3164763	Valpromaro	43.9015	10.3798	IT	Toscana	3165361	Lucca	0	PPL	133
+valproto	1	8949821	Valproto	45.5584	11.6466	IT	Veneto	3164604	Vicenza	714	PPL	32
+valpuiseaux	1	2970840	Valpuiseaux	48.3932	2.3036	FR	Île-de-France	3012874	Essonne	541	PPL	80
+valquieres	1	13448598	Valquières	43.6671	3.2338	FR	Occitania	11071623	Hérault	0	PPL	518
+valras	0	2970839	Valras-Plage	43.2481	3.2903	FR	Occitania	11071623	Hérault	4078	PPL	3
+valras plage	1	2970839	Valras-Plage	43.2481	3.2903	FR	Occitania	11071623	Hérault	4078	PPL	3
+valreas	1	2970838	Valréas	44.3849	4.9912	FR	Provenza-Alpi-Costa Azzurra	2985244	Vaucluse	10211	PPL	245
+valroba	1	8979557	Valrobà	46.0208	9.7444	IT	Lombardia	3174618	Bergamo	15	PPL	1173
+valrobbia	1	8970696	Valrobbia	45.4650	10.7630	IT	Veneto	3164604	Verona	28	PPL	125
+valromaldo	1	8964405	Valromaldo	44.8456	8.2716	IT	Piemonte	3170831	Asti	43	PPL	216
+valromane	1	12312603	Valromane	44.2541	1.0967	FR	Occitania	11071623	Tarn-et-Garonne	0	PPL	195
+valros	1	2970837	Valros	43.4201	3.3660	FR	Occitania	11071623	Hérault	1276	PPL	60
+valrosera	1	8985030	Valrosera	46.2875	9.8428	IT	Lombardia	3174618	Sondrio	0	PPLL	1273
+valrossara	1	8973641	Valrossara	44.6810	8.7812	IT	Piemonte	3170831	Alessandria	23	PPL	288
+valroufie	1	2970836	Valroufié	44.5194	1.4885	FR	Occitania	11071623	Lot	0	PPL	203
+valrovina	1	3164762	Valrovina	45.7874	11.6891	IT	Veneto	3164604	Vicenza	507	PPL	265
+vals	0	2658191	Vals Platz	46.6165	9.1802	CH	Cantone dei Grigioni	2660522	Region Surselva	1006	PPL	1252
+vals	0	2970826	Vals-près-le-Puy	45.0316	3.8779	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	3758	PPL	646
+vals	0	2970828	Vals-les-Bains	44.6656	4.3662	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	3777	PPL	261
+vals	1	11903709	Vals	47.0451	11.5328	AT	Tirolo	2763586	Politischer Bezirk Innsbruck Land	532	PPLA3	1265
+vals	1	2970834	Vals	43.0964	1.7604	FR	Occitania	11071623	Ariège	78	PPL	277
+vals	1	8982384	Vals	46.1951	12.7248	IT	Friuli Venezia Giulia	3176525	Pordenone	11	PPL	511
+vals daus banhs	0	2970828	Vals-les-Bains	44.6656	4.3662	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	3777	PPL	261
+vals des tilles	1	3027496	Vals-des-Tilles	47.7000	5.0667	FR	Gran Este	11071622	Alta Marna	0	PPL	399
+vals le chastel	1	2970829	Vals-le-Chastel	45.2707	3.5211	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	50	PPL	524
+vals les bains	1	2970828	Vals-les-Bains	44.6656	4.3662	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	3777	PPL	261
+vals platz	1	2658191	Vals Platz	46.6165	9.1802	CH	Cantone dei Grigioni	2660522	Region Surselva	1006	PPL	1252
+vals pres le puy	1	2970826	Vals-près-le-Puy	45.0316	3.8779	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	3758	PPL	646
+valsabbia spa	1	8985132	Valsabbia Spa	45.6444	10.4571	IT	Lombardia	3174618	Brescia	0	PPLL	262
+valsago	1	11114099	Valsago	45.8774	9.0251	CH	Canton Ticino	2658370	Distretto di Mendrisio	0	PPL	578
+valsaintes	1	12314144	Valsaintes	43.9646	5.6077	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi dell'Alta Provenza	0	PPL	504
+valsanzibio	1	6544078	Valsanzibio	45.2935	11.7235	IT	Veneto	3164604	Padova	759	PPLL	25
+valsavarenche	1	6534765	Valsavarenche	45.5919	7.2100	IT	Valle d'Aosta	3164857	Aosta	180	PPLA3	1552
+valsavignone	1	3164760	Valsavignone	43.7355	12.0251	IT	Toscana	3165361	Arezzo	73	PPL	566
+valschnara	1	11587212	Valschnära	47.1163	9.4739	CH	Canton San Gallo	2658821	Circondario di Werdenberg	0	PPLL	658
+valscot	1	8975902	Valscot	46.0746	11.3056	IT	Trentino-Alto Adige	3165244	Trento	20	PPL	1261
+valsecca	1	3164758	Valsecca	45.8261	9.4947	IT	Lombardia	3174618	Bergamo	290	PPL	627
+valseme	1	2970833	Valsemé	49.2373	0.0961	FR	Normandia	11071621	Calvados	258	PPL	140
+valsenestre	1	2970832	Valsenestre	44.9093	6.0544	FR	Alvernia-Rodano-Alpi	11071625	Isère	0	PPL	1301
+valsenio	1	9033600	Valsenio	44.2415	11.6461	IT	Emilia-Romagna	3177401	Ravenna	54	PPL	171
+valserberg	1	11075809	Valserberg	46.5546	9.1983	CH	Cantone dei Grigioni	2660522	Region Surselva	0	PASS	2503
+valserena	1	8967019	Valserena	43.3162	10.5881	IT	Toscana	3165361	Pisa	36	PPL	133
+valseresino	1	8972431	Valseresino	45.3126	9.7900	IT	Lombardia	3174618	Cremona	25	PPL	68
+valserres	1	2970830	Valserres	44.4892	6.1276	FR	Provenza-Alpi-Costa Azzurra	2985244	Alte Alpi	207	PPL	685
+valsigiara	1	3164757	Valsigiara	44.6446	9.3253	IT	Emilia-Romagna	3177401	Piacenza	27	PPL	500
+valsinni	1	3164756	Valsinni	40.1710	16.4439	IT	Basilicata	3182306	Matera	1400	PPLA3	250
+valsondra	1	8981609	Valsondrà	45.8224	11.3316	IT	Veneto	3164604	Vicenza	12	PPL	470
+valsonne	1	2970827	Valsonne	45.9464	4.4296	FR	Alvernia-Rodano-Alpi	11071625	Rodano	762	PPL	472
+valsorda	1	8954877	Valsorda	46.0081	11.1550	IT	Trentino-Alto Adige	3165244	Trento	126	PPL	558
+valsorda	1	8959027	Valsorda	45.8045	9.5445	IT	Lombardia	3174618	Bergamo	70	PPL	431
+valsorda	1	8973661	Valsorda	44.1645	8.2435	IT	Liguria	3174725	Savona	23	PPL	257
+valsorda	1	8974375	Valsorda	45.5984	10.1959	IT	Lombardia	3174618	Brescia	22	PPL	242
+valsorda	1	8983793	Valsorda	44.4275	7.9709	IT	Piemonte	3170831	Cuneo	6	PPLL	449
+valsscharte	1	7628138	Valsscharte	46.9378	11.7169	IT	Trentino-Alto Adige	3165244	Bolzano	0	PASS	2409
+valstagna	1	3164754	Valstagna	45.8511	11.6664	IT	Veneto	3164604	Vicenza	970	PPLA3	147
+valstorna, bocchetta di	1	11074137	Valstorna, Bocchetta di	46.1937	9.1911	CH	Cantone dei Grigioni	2660522	Region Moesa	0	PASS	1934
+valstrona	1	6534841	Valstrona	45.9077	8.3432	IT	Piemonte	3170831	Verbano-Cusio-Ossola	1270	PPLA3	514
+valsugana	1	8973832	Valsugana	45.7473	12.3686	IT	Veneto	3164604	Treviso	23	PPL	22
+valsuolo	1	8978016	Valsuolo	44.9134	7.9315	IT	Piemonte	3170831	Asti	17	PPL	261
+valt	1	8953487	Valt	46.1068	11.2367	IT	Trentino-Alto Adige	3165244	Trento	180	PPL	950
+valt	1	8971914	Valt	46.3691	11.8700	IT	Veneto	3164604	Belluno	26	PPL	1306
+valtange	1	2970824	Valtange	46.4714	3.1031	FR	Alvernia-Rodano-Alpi	11071625	Allier	0	PPL	361
+valtau	1	11609831	Valtau	48.2750	13.9049	AT	Alta Austria	2769848	Politischer Bezirk Eferding	58	PPL	357
+valteglio	1	9032725	Valteglio	44.8621	8.0493	IT	Piemonte	3170831	Asti	13	PPL	189
+valternigo	1	8956008	Valternigo	46.1603	11.1606	IT	Trentino-Alto Adige	3165244	Trento	104	PPL	652
+valterski vrh	1	8989357	Valterski Vrh	46.1119	14.2432	SI	Škofja Loka	3190716		5	PPL	746
+valtesse	1	3164751	Valtesse	45.7167	9.6667	IT	Lombardia	3174618	Bergamo	0	PPLX	282
+valtiera	1	8955633	Valtiera	43.0887	12.4632	IT	Umbria	3165048	Perugia	110	PPL	186
+valtina	1	8958698	Valtina	46.8255	11.2882	IT	Trentino-Alto Adige	3165244	Bolzano	73	PPL	1280
+valtnovalp	1	2658190	Valtnovalp	46.9667	9.3167	CH	Canton San Gallo	2658821	Wahlkreis Sarganserland	0	PPL	2004
+valtopina	1	6535042	Valtopina	43.0567	12.7531	IT	Umbria	3165048	Perugia	714	PPLA3	360
+valtorta	1	3164749	Valtorta	45.9768	9.5348	IT	Lombardia	3174618	Bergamo	117	PPLA3	935
+valtorta	1	8977182	Valtorta	45.3457	7.6135	IT	Piemonte	3170831	Torino	18	PPL	433
+valtorta	1	8977328	Valtorta	45.7913	8.9580	IT	Lombardia	3174618	Como	18	PPL	400
+valtorte	1	12309090	Valtorte	46.1185	4.5193	FR	Alvernia-Rodano-Alpi	11071625	Rodano	0	PPL	637
+valtournanche	1	3164748	Valtournanche	45.8833	7.6167	IT	Valle d'Aosta	3164857	Aosta	0	PPL	1706
+valtournenche	1	6534766	Valtournenche	45.8761	7.6243	IT	Valle d'Aosta	3164857	Aosta	2198	PPLA3	1518
+valtreara	1	3164747	Valtreara	43.3920	12.9816	IT	Marche	3174004	Ancona	112	PPL	278
+valtriano	1	8950545	Valtriano	43.6082	10.5111	IT	Toscana	3165361	Pisa	467	PPL	12
+valtrighe	1	8949934	Valtrighe	45.6957	9.5367	IT	Lombardia	3174618	Bergamo	661	PPL	238
+valua, pass da	1	11075287	Valüa, Pass da	46.2845	10.1571	IT				0	PASS	2638
+valuejols	1	2970823	Valuéjols	45.0530	2.9340	FR	Alvernia-Rodano-Alpi	11071625	Cantal	538	PPL	1064
+valunga prazzo	1	3169890	Valunga-Prazzo	44.8086	7.9041	IT	Piemonte	3170831	Cuneo	71	PPL	337
+valva	1	3164746	Valva	40.7387	15.2681	IT	Campania	3181042	Salerno	769	PPLA3	510
+valvacera	1	8959681	Valvacera	42.1546	12.5202	IT	Lazio	3174976	Roma	66	PPL	266
+valvarino	1	8950932	Valvarino	41.8096	12.8363	IT	Lazio	3174976	Roma	387	PPL	346
+valvasone	1	3164745	Valvasone	45.9933	12.8666	IT	Friuli Venezia Giulia	3176525	Pordenone	1802	PPLA3	59
+valventosa	1	8981783	Valventosa	43.9949	10.2420	IT	Toscana	3165361	Lucca	12	PPL	78
+valverde	1	3164744	Valverde	40.5500	8.4000	IT	Sardegna	2523228	Sassari	0	PPL	125
+valverde	1	3215113	Valverde	44.1815	12.4220	IT	Emilia-Romagna	3177401	Forlì-Cesena	0	PPL	3
+valverde	1	6535328	Valverde	37.5769	15.1242	IT	Sicilia	2523119	Catania	4913	PPLA3	305
+valverde	1	8951876	Valverde	44.9709	8.5807	IT	Piemonte	3170831	Alessandria	276	PPL	134
+valverde	1	8981244	Valverde	42.9907	11.8827	IT	Toscana	3165361	Siena	13	PPL	505
+valvestino	1	6534754	Valvestino	45.7607	10.5955	IT	Lombardia	3174618	Brescia	287	PPLA3	658
+valvigneres	1	2970821	Valvignères	44.5004	4.5741	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	401	PPL	185
+valvinera	1	8961450	Valvinera	44.9459	8.3314	IT	Piemonte	3170831	Asti	55	PPL	161
+valvins	1	2970820	Valvins	48.4218	2.7380	FR	Île-de-France	3012874	Senna e Marna	0	PPL	50
+valvolciana	1	3187428	Valvolciana	45.9069	13.6775	SI	Commune di Ranziano-Voghersca	8133587		743	PPL	74
+valvori	1	3164742	Valvori	41.5644	13.8893	IT	Lazio	3174976	Frosinone	667	PPL	400
+valy hir	1	8531754	Valy Hir	48.3863	-4.5242	FR	Bretagna	3030293	Finistère	0	PPL	102
+valz sous chateauneuf	1	2970817	Valz-sous-Châteauneuf	45.4332	3.4165	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	561
+valzeina	1	2658189	Valzeina	46.9502	9.6027	CH	Cantone dei Grigioni	2660522	Region Prättigau / Davos	116	PPL	1126
+valzella	1	8953054	Valzella	45.9163	9.9254	IT	Lombardia	3174618	Bergamo	207	PPL	523
+valzella	1	8969627	Valzella	46.1480	12.3564	IT	Veneto	3164604	Belluno	30	PPL	522
+valzemola	1	8950240	Valzemola	44.3639	8.1738	IT	Liguria	3174725	Savona	547	PPLA3	570
+valzergues	1	2970818	Valzergues	44.4998	2.2228	FR	Occitania	11071623	Aveyron	211	PPL	438
+valzurio	1	8969532	Valzurio	45.9239	9.9714	IT	Lombardia	3174618	Bergamo	30	PPL	820

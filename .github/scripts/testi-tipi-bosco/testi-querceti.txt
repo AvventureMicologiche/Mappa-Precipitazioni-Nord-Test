@@ -1,5 +1,6 @@
 # ═════════════════════════════════════════════════════════════════════
-#  TESTI DELLA PAGINA «QUERCETI» — si modifica tutto col Blocco note
+#  TESTI DELLA PAGINA «QUERCETI E CERRETE» — si modifica tutto col Blocco note
+#  (dal 25/10/2026 la pagina somma querceti e cerrete; l'indirizzo resta /mappa-forestale/querceti/)
 # ═════════════════════════════════════════════════════════════════════
 #
 #  Le righe che cominciano con # sono istruzioni: la pagina non le mostra.
@@ -12,7 +13,7 @@
 #    «piogge per funghi» diventa da solo un link alle pagine funghi
 #
 #  Numeri calcolati (si scrivono fra graffe, il programma mette il numero):
-#    {ettari}          ettari di querceti in Italia
+#    {ettari}          ettari di querceti e cerrete in Italia
 #    {percento}        quanto sono del bosco italiano
 #    {quota_25} {quota_75}   fra queste due quote sta la metà
 #    {quota_mezzo}     la quota che divide in due
@@ -27,17 +28,17 @@
 
 == titolo ==
 # (quello che compare su Google e nella scheda del browser, massimo ~60 lettere)
-Mappa dei querceti d'Italia: dove sono e a che altitudine
+Mappa di querceti e cerrete d'Italia: dove sono e a che quota
 
 == descrizione ==
 # (le due righe sotto il titolo su Google, massimo ~155 lettere)
-Dove sono i boschi di querce in Italia, regione per regione e a che quota, e i loro funghi: porcino nero, ovolo, colombina. Dalle carte forestali ufficiali.
+Dove sono querceti e cerrete in Italia, regione per regione e a che quota, e i loro funghi: porcino nero, ovolo, colombina. Dalle carte forestali ufficiali.
 
 == titolo grande ==
-Mappa dei querceti d'Italia
+Mappa dei querceti e delle cerrete d'Italia
 
 == apertura ==
-Dove sono i boschi di querce in Italia, **regione per regione e valle per valle**, e a che altitudine stanno. Li vedi in ocra sulla mappa delle carte forestali ufficiali, anche dal telefono: tocchi un punto e sai che bosco è, a che quota e su quale versante.
+Dove sono i boschi di querce in Italia, **regione per regione e valle per valle**, e a che altitudine stanno. Li vedi sulla mappa delle carte forestali ufficiali, anche dal telefono: i querceti in ocra, le cerrete (i boschi di cerro) in bordeaux. Tocchi un punto e sai che bosco è, a che quota e su quale versante.
 
 == tre numeri ==
 # (tre caselle: numero grande | scritta sotto)
@@ -46,28 +47,28 @@ Dove sono i boschi di querce in Italia, **regione per regione e valle per valle*
 {testo_da}-{testo_a} | metri: il {testo_percento}% sta qui
 
 == tasto mappa ==
-🌳 Apri la mappa dei querceti
+🌳 Apri la mappa di querceti e cerrete
 
 == didascalia foto ==
-Valdelsa, intorno a Barberino: i querceti in ocra quasi dappertutto, qualche conifera in viola. Un tocco su un querceto: 315 metri, versante a ovest.
+Valdelsa, intorno a Barberino: i querceti in ocra, le cerrete in bordeaux, qualche conifera in viola. Un tocco su un querceto: 315 metri, versante a ovest.
 
 == foto, testo nascosto per chi non vede ==
-La mappa forestale in Valdelsa: i querceti in ocra sulle colline, con la nuvoletta di un querceto
+La mappa forestale in Valdelsa: i querceti in ocra e le cerrete in bordeaux sulle colline, con la nuvoletta di un querceto
 
 == regioni: titolo ==
 Dove sono: regione per regione
 
 == regioni: testo ==
-Gli ettari di querceti di ogni regione, misurati sulla nostra mappa. Accanto, quanto pesano sul bosco della regione.
+Gli ettari di querceti e cerrete di ogni regione, misurati sulla nostra mappa: in ocra i querceti, in bordeaux le cerrete. Accanto, quanto pesano sul bosco della regione.
 
 == altitudine: titolo ==
 A che altitudine
 
 == altitudine: testo ==
-Quanti ettari di querceti ci sono a ogni altitudine, a fasce di 100 metri, in tutta Italia. Il {testo_percento}% sta fra **{testo_da} e {testo_a} metri**, e la quota di mezzo è {quota_mezzo} m.
+Quanti ettari di querceti e cerrete ci sono a ogni altitudine, a fasce di 100 metri, in tutta Italia. Il {testo_percento}% sta fra **{testo_da} e {testo_a} metri**, e la quota di mezzo è {quota_mezzo} m.
 
 == altitudine: sotto il grafico ==
-In colore la fascia fra {fascia_da} e {fascia_a} m: ci sta il {fascia_percento}% dei querceti.
+In colore la fascia fra {fascia_da} e {fascia_a} m: ci sta il {fascia_percento}% di querceti e cerrete.
 
 == altitudine: tasto ==
 ⛰ Mappa filtrata: {fascia_da}–{fascia_a} m
@@ -76,7 +77,7 @@ In colore la fascia fra {fascia_da} e {fascia_a} m: ci sta il {fascia_percento}%
 Sulla mappa le due frecce del filtro di altitudine si spostano come vuoi: la fascia del tasto è solo il punto di partenza.
 
 == funghi: titolo ==
-I funghi dei querceti
+I funghi dei querceti e delle cerrete
 
 == funghi: testo ==
 I funghi che si cercano sotto le querce, col nome comune, gli altri nomi con cui li chiamano e il nome scientifico.
@@ -99,31 +100,31 @@ Nei querceti cresce anche la **tignosa verdognola** (*Amanita phalloides*), mort
 Per sapere **quando** andare conta la pioggia: la trovi, località per località, nelle nostre piogge per funghi.
 
 == valli: titolo ==
-Le valli con più querceti
+Le valli con più querce
 
 == valli: testo ==
-Le zone dove i querceti pesano di più sul bosco. Ogni zona ha la sua pagina con la mappa e i paesi intorno.
+Le zone dove querceti e cerrete pesano di più sul bosco. Ogni zona ha la sua pagina con la mappa e i paesi intorno.
 
 == paesi: titolo ==
-I paesi in mezzo ai querceti
+I paesi in mezzo alle querce
 
 == paesi: testo ==
-Dove entro 3 km dal paese il bosco è quasi tutto querceti, dal più basso al più alto. Il nome porta alla pagina con la pioggia per i funghi.
+Dove entro 3 km dal paese il bosco è quasi tutto querceti e cerrete, dal più basso al più alto. Il nome porta alla pagina con la pioggia per i funghi.
 
 == che cosa mettiamo: titolo ==
-Che cosa mettiamo sotto «querceti»
+Che cosa mettiamo sotto «querceti» e «cerrete»
 
 == che cosa mettiamo: testo ==
-Roverella, rovere, farnia, cerro, leccio e sughera, e i boschi misti di querce e carpino bianco. Il carpino nero con l'orniello ha un colore suo, azzurro.
+Nei querceti, in ocra: roverella, rovere, farnia, leccio e sughera, e i boschi misti di querce e carpino bianco. Nelle cerrete, in bordeaux, i boschi di cerro, nelle 14 regioni la cui carta li separa; nelle altre il cerro sta nei querceti. Il carpino nero con l'orniello ha un colore suo, azzurro.
 
-Ogni regione ha la sua carta forestale, con le sue sigle: noi le raggruppiamo negli undici colori della legenda.
+Ogni regione ha la sua carta forestale, con le sue sigle: noi le raggruppiamo nei dodici colori della legenda.
 
 == a chi serve: titolo ==
 A chi serve
 
 == a chi serve: elenco ==
 # icona | titolo | testo
-🟤 | Tartufi | Molti tartufi si cercano sotto le querce: con la mappa vedi dove sono i querceti vicino a casa.
+🟤 | Tartufi | Molti tartufi si cercano sotto le querce: con la mappa vedi dove sono querceti e cerrete vicino a casa.
 🍂 | Foliage | Il cerro e la roverella in autunno diventano bruni e ramati, e tengono le foglie secche fino all'inverno.
 🥾 | Escursioni | Prima di partire guardi che bosco attraversa il sentiero, a che quota e su quale versante: tocchi un punto sulla mappa e lo apri su Google Maps.
 
@@ -134,7 +135,7 @@ Gli altri boschi
 E la pioggia? Sulla stessa mappa
 
 == pioggia: testo ==
-La mappa forestale sta dentro la nostra **mappa pluviometrica**: scegli un periodo e vedi dove ha piovuto, poi con **⇆ Confronta con piogge** la metti accanto ai querceti.
+La mappa forestale sta dentro la nostra **mappa pluviometrica**: scegli un periodo e vedi dove ha piovuto, poi con **⇆ Confronta con piogge** la metti accanto alle querce.
 
 == impostazioni ==
 # (tecniche: dove apre la mappa, quale foto, quante voci negli elenchi)

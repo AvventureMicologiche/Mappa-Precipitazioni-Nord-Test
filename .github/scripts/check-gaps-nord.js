@@ -26,11 +26,13 @@
  *    a D-3 nessuno sta più lavorando quel giorno e non c'è rischio che una
  *    stima finisca dentro un merge (il Piemonte fa merge MAX: scriverci sopra
  *    darebbe max(stima, reale), un pasticcio).
- *  → 3 giorni per tutti. ECCEZIONE Ticino: 8 giorni, perché è l'unica fonte
- *    del progetto con le query storiche funzionanti e il suo collector
- *    riprova fino a D-7 riuscendoci davvero (in 135 giorni: zero buchi).
- *    Coprirlo prima significherebbe sostituire con una stima un dato reale
- *    che stava per arrivare.
+ *  → 3 giorni per tutti. Fino al 26/10/2026 Ticino aspettava 8 giorni e la
+ *    Svizzera 11, per non mettere una stima prima che il loro collector si
+ *    riprendesse il giorno vero dall'archivio. Dal 26/10 (sua decisione, dopo
+ *    OASI giu' dal 21/10) anche loro 3: i due collector trattano un file di
+ *    stima come un giorno MANCANTE e lo riscrivono col dato vero appena la
+ *    fonte risponde, fino a 30 giorni indietro. La stima diventa un
+ *    tappabuchi temporaneo, e il registro segna `sostituito-dal-reale`.
  *
  * Rileva SOLO i giorni interamente mancanti, non quelli "corti": nel Nord il
  * numero di stazioni oscilla da sé (sensori offline, reti che cambiano) e una
@@ -46,13 +48,14 @@ const DATA_ROOT = path.join(__dirname, '..', '..', 'data');
 const LEDGER = path.join(DATA_ROOT, 'gaps-nord.json');
 
 const GRACE_DEFAULT = 3;
-// Grazia più lunga per le fonti che si riparano da sole dal proprio archivio:
-// coprire prima che abbiano finito significherebbe mettere una STIMA dove il
-// giorno dopo sarebbe arrivato il dato VERO — e la stima poi resta, perché il
-// file esiste e nessuno lo riscrive più. La grazia deve quindi superare la
-// finestra di auto-riparazione del collector: Ticino recupera fino a D-7 (8),
-// Svizzera fino a D-10 (11).
-const GRACE_PER_REGIONE = { ticino: 8, svizzera: 11 };
+// Grazia per regione. Fino al 26/10/2026 Ticino 8 e Svizzera 11, piu' lunghe
+// della loro auto-riparazione, perche' una stima messa prima restava per sempre
+// (il collector riparava solo i file MANCANTI). Ora i due collector riscrivono
+// anche i file di stima (fino a D-30): la stima si mette al terzo giorno come
+// altrove e se ne va da sola quando la fonte torna. Il guasto lungo che l'ha
+// fatto vedere: OASI giu' dal 21/10, la stima sarebbe arrivata il 29/10, lo
+// stesso giorno in cui il 21/10 usciva dalla finestra di recupero.
+const GRACE_PER_REGIONE = {};
 const SCAN_DAYS = parseInt(process.env.SCAN_DAYS || '15', 10);
 const RETENTION_DAYS = 730;   // inutile creare file che la pulizia cancellerebbe
 const MIN_STAZIONI = 10;      // sotto questa soglia l'anagrafe non è affidabile
@@ -188,6 +191,17 @@ async function main() {
     const presenti = new Set(giorni);
     const primo = giorni[0];
 
+    // Stime gia' sostituite dal dato vero (26/10/2026): Ticino e Svizzera riscrivono i giorni stimati quando la
+    // fonte torna. Il registro lo segna, cosi' resta la misura di quante stime sono state solo un tappabuchi.
+    for (const ev of ledger.eventi) {
+      if (ev.regione !== reg || ev.stato !== 'coperto-openmeteo' || !presenti.has(ev.data)) continue;
+      const j = leggi(path.join(dir, ev.data + '.json'));
+      if (j && !eStima(j)) {
+        ev.stato = 'sostituito-dal-reale'; ev.sostituitoIl = oggi; cambiato = true;
+        console.log(`♻️  ${reg} ${ev.data}: la stima e' stata sostituita dal dato vero (${j.source || 'senza source'})`);
+      }
+    }
+
     // giorni da esaminare: dentro la finestra, dopo l'inizio dello storico,
     // entro la retention, e già oltre la grazia
     const daVedere = [];
@@ -251,7 +265,8 @@ async function main() {
   }
   const aperti = ledger.eventi.filter(e => e.stato === 'aperto').length;
   const coperti = ledger.eventi.filter(e => e.stato === 'coperto-openmeteo').length;
-  console.log(`=== Registro: ${ledger.eventi.length} eventi — ${aperti} aperti, ${coperti} coperti ===`);
+  const sostituiti = ledger.eventi.filter(e => e.stato === 'sostituito-dal-reale').length;
+  console.log(`=== Registro: ${ledger.eventi.length} eventi — ${aperti} aperti, ${coperti} coperti, ${sostituiti} sostituiti dal reale ===`);
 }
 
 main().catch(e => { console.error('❌', e.message); process.exit(1); });

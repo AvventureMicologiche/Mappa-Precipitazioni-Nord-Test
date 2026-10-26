@@ -10,7 +10,7 @@
 // Open-Meteo solo per la probabilita' di pioggia (MET non la da' in Italia). Staccabile: PROB=false.
 // Cache: Cache API di Cloudflare, per cella di ~1 km, durata dall'Expires di MET (tetto 1 ora).
 
-const UA = 'avventurepluvio-test.pages.dev (avventuremicologiche@gmail.com)';
+const UA = 'precipitazioni.avventuremicologiche.it (avventuremicologiche@gmail.com)';
 const PROB = true;
 const TETTO_CACHE = 3600, MIN_CACHE = 600;
 const VERSIONE = 13; // alzare quando cambia la forma della risposta: la cache vecchia non si rilegge (11: simbolo del giorno, 18/10/2026; 12: le tre correzioni del simbolo, 19/10/2026; 13: la % per istante UTC, 19/10/2026)
@@ -34,17 +34,19 @@ export async function onRequestGet({ request, env }) {
     // ?posti=toscana/tendola/MS,liguria/statale/GE,...: l'indice /funghi/ (20/10/2026). La classifica cambia ogni giorno e
     // i file pubblicati col sito no: l'elenco lo manda la pagina (letto da data/funghi/italia.json), qui per ogni posto si
     // prende il punto del pluviometro alla sua quota (la riga «qui» di data/paesi-localita/<reg>.json), nello stesso ordine
+    // &pr=1: anche la % di pioggia ai giorni di ogni posto, con UNA richiesta Open-Meteo per tutto il gruppo (probDi).
+    // Dal 25/10/2026 la chiedono le pagine meteo delle zone e il blocco «Che tempo farà» di tutte le pagine
+    const conPr = u.searchParams.get('pr') === '1';
     if (u.searchParams.has('posti')) {
-      const d = await perPosti(u.searchParams.get('posti'), env, request);
+      const d = await perPosti(u.searchParams.get('posti'), env, request, conPr);
       const stato = d.errore ? (d.capoluoghi ? 502 : 404) : 200;
       return rispondi(d, cors, stato, (d.capoluoghi || []).some(x => x.errore) ? 120 : 1800);
     }
     const zona = u.searchParams.get('zona'), zonedi = u.searchParams.get('zonedi');
     const area = paese ? paese[2] : zona || zonedi || u.searchParams.get('capoluoghi');
     if (area) {
-      // &pr=1 con ?zona=: anche la % di ogni paese (le pagine «Previsioni meteo <zona>», 25/10/2026); le altre no
       const d = await perArea(area, env, request, paese ? '/data/paesi-localita/' + paese[1] + '.json' : zona ? '/data/paesi-zone.json'
-        : zonedi ? '/data/zone-regioni.json' : '/data/capoluoghi.json', !!zona && !paese && u.searchParams.get('pr') === '1');
+        : zonedi ? '/data/zone-regioni.json' : '/data/capoluoghi.json', conPr);
       // ⚠️ (19/10/2026, quinto check, bug 5) nessuna citta' risponde = 502 e niente cache nel browser: prima era un 200
       // tenuto 10 minuti, e la mappa restava su «carico…»; qualcuna sola in errore = 200 ma per 2 minuti, poi si richiede
       const stato = d.errore ? (d.capoluoghi ? 502 : 404) : 200;
@@ -200,12 +202,12 @@ async function previsioniDi(citta, area, request, cache, chiave, conProb) {
 // ── i posti della classifica dell'indice /funghi/ (20/10/2026): al massimo 20, ognuno <reg>/<slug>[/<sigla>] ──
 // Ogni regione e' un file solo (data/paesi-localita/<reg>.json), letto una volta anche se ha piu' posti: con 20 posti
 // di 5 regioni sono 5 letture + 20 punti + 2 di cache, sotto il tetto di 50 sottorichieste (vedi perPunto, senzaCache).
-async function perPosti(testo, env, request) {
+async function perPosti(testo, env, request, conProb) {
   const voci = String(testo || '').split(',').filter(Boolean);
   if (!voci.length || voci.length > 20) return { errore: 'posti' };
   const pezzi = voci.map(v => /^([a-z]{4,12})\/([a-z0-9-]{2,80})(?:\/([A-Z]{1,3}))?$/.exec(v));
   if (pezzi.some(x => !x)) return { errore: 'posti' };
-  const chiave = new Request(`https://cache.previsioni/posti?v=${VERSIONE}&d=${oraLocale(new Date().toISOString()).g}&p=${encodeURIComponent(voci.join(','))}`);
+  const chiave = new Request(`https://cache.previsioni/posti?v=${VERSIONE}&d=${oraLocale(new Date().toISOString()).g}&p=${encodeURIComponent(voci.join(','))}${conProb ? '&pr=1' : ''}`);
   const cache = caches.default;
   const c = await cache.match(chiave); if (c) return c.json();
   const file = {};
@@ -220,7 +222,7 @@ async function perPosti(testo, env, request) {
     return { n: p.n, lat: p.lat, lon: p.lon, q: p.q, r: p.r || reg, sotto: [sg, p.q ? p.q + ' m' : ''].filter(Boolean).join(', ') };
   }).filter(Boolean);
   if (!citta.length) return { errore: 'posti sconosciuti' };
-  return previsioniDi(citta, 'posti', request, cache, chiave);
+  return previsioniDi(citta, 'posti', request, cache, chiave, conProb);
 }
 
 // ⚠️ UN formattatore solo, creato una volta: crearlo a ogni ora della previsione costava decine di ms di CPU

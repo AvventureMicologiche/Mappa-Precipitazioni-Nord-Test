@@ -1,0 +1,805 @@
+con alti	1	8980411	Con Alti	46.0000	12.2782	IT	Veneto	3164604	Treviso	14	PPL	268
+cona	1	3178217	Cona	45.1839	12.0197	IT	Veneto	3164604	Venezia	373	PPL	3
+cona	1	8379290	Cona	44.8058	11.7069	IT	Emilia-Romagna	3177401	Ferrara	1118	PPLX	5
+cona	1	8951543	Cona	42.0803	14.4426	IT	Abruzzo	3183560	Chieti	307	PPL	336
+cona	1	8960096	Cona	45.6231	10.9416	IT	Veneto	3164604	Verona	63	PPL	873
+cona	1	8967494	Cona	42.3079	13.8483	IT	Abruzzo	3183560	Pescara	35	PPL	861
+cona	1	8972835	Cona	40.9196	15.1559	IT	Campania	3181042	Avellino	25	PPL	675
+cona	1	8974174	Cona	39.0800	16.1295	IT	Calabria	2525468	Cosenza	23	PPL	329
+cona	1	8983130	Cona	42.2788	14.4369	IT	Abruzzo	3183560	Chieti	9	PPLL	145
+cona faiete	1	9033704	Cona Faiete	42.6698	13.5508	IT	Abruzzo	3183560	Teramo	48	PPL	977
+conagnet	1	3024043	Conagnet	44.9907	3.6350	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	748
+conan	1	3024042	Conan	47.7496	1.2863	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	196	PPL	121
+conand	1	3024040	Conand	45.8922	5.4724	FR	Alvernia-Rodano-Alpi	11071625	Ain	105	PPL	420
+conaprato	1	8956311	Conaprato	42.4664	13.8980	IT	Abruzzo	3183560	Pescara	100	PPL	363
+conat	1	3024039	Conat	42.6137	2.3565	FR	Occitania	11071623	Pirenei Orientali	49	PPL	530
+conca	0	2967125	Zonza	41.7493	9.1708	FR	Corsica	3023519	Corsica del Sud	1888	PPL	776
+conca	1	3024038	Conca	41.7345	9.3323	FR	Corsica	3023519	Corsica del Sud	808	PPL	251
+conca	1	3178216	Conca	42.5976	13.1558	IT	Lazio	3174976	Rieti	18	PPL	866
+conca	1	8961023	Conca	42.0024	13.9545	IT	Abruzzo	3183560	dell’Aquila	58	PPL	525
+conca	1	8963643	Conca	45.5643	11.3874	IT	Veneto	3164604	Vicenza	46	PPL	125
+conca	1	8963727	Conca	41.5104	12.8109	IT	Lazio	3174976	Latina	46	PPL	32
+conca	1	8970419	Conca	41.5883	13.3814	IT	Lazio	3174976	Frosinone	29	PPL	165
+conca	1	8976289	Conca	40.1697	15.6817	IT	Campania	3181042	Salerno	20	PPL	710
+conca	1	8979983	Conca	40.7010	14.6294	IT	Campania	3181042	Salerno	15	PPL	360
+conca	1	9031654	Conca	43.8446	12.4554	IT	Marche	3174004	Pesaro e Urbino	29	PPL	394
+conca casale	1	3178212	Conca Casale	41.4951	14.0068	IT	Molise	3173222	Isernia	269	PPLA3	657
+conca d oro	1	8959237	Conca d'Oro	41.3511	14.3338	IT	Campania	3181042	Caserta	69	PPL	242
+conca degli ulivi	1	8970863	Conca degli Ulivi	42.9395	13.8431	IT	Marche	3174004	Ascoli Piceno	28	PPL	172
+conca dei marini	1	3178210	Conca dei Marini	40.6175	14.5731	IT	Campania	3181042	Salerno	597	PPLA3	120
+conca dei parpari	1	12746653	Conca dei Parpari	45.6456	11.0925	IT	Veneto	3164604	Verona	0	PPL	1395
+conca del naviglio	1	12022749	Conca del Naviglio	45.4566	9.1775	IT	Lombardia	3174618	Milano	0	PPLX	125
+conca dell alben	1	8985111	Conca dell'Alben	45.8817	9.7704	IT	Lombardia	3174618	Bergamo	0	PPLL	1296
+conca della campania	1	3178209	Conca della Campania	41.3317	13.9914	IT	Campania	3181042	Caserta	242	PPLA3	420
+conca fallata	1	12022907	Conca Fallata	45.4282	9.1704	IT	Lombardia	3174618	Milano	0	PPLX	112
+conca specchiulla	1	6621068	Conca Specchiulla	40.2448	18.4451	IT	Puglia	3169778	Lecce	11	PPL	19
+conca su mortu	1	12577990	Conca su Mortu	39.9811	8.6721	IT	Sardegna	2523228		0	PPLL	49
+conca verde	1	8962965	Conca Verde	40.6058	14.3374	IT	Campania	3181042	Napoli	49	PPL	90
+conca verde	1	8971184	Conca Verde	44.3172	8.4490	IT	Liguria	3174725	Savona	27	PPL	264
+conca verde	1	9610724	Conca Verde	41.2135	9.2755	IT	Sardegna	2523228	Sassari	0	PPL	35
+concadalbero	1	3178211	Concadalbero	45.2156	12.0806	IT	Veneto	3164604	Padova	265	PPL	1
+concadirame	1	3178208	Concadirame	45.0937	11.7299	IT	Veneto	3164604	Rovigo	818	PPL	6
+concagno	1	8949816	Concagno	45.7991	8.9096	IT	Lombardia	3174618	Como	718	PPL	396
+concarella	1	8976245	Concarella	42.1369	12.2964	IT	Lazio	3174976	Roma	20	PPL	207
+concarneau	1	3024035	Concarneau	47.8754	-3.9190	FR	Bretagna	3030293	Finistère	21397	PPL	11
+concas	0	3023873	Conques-sur-Orbiel	43.2667	2.4167	FR	Occitania	11071623	Aude	2225	PPL	125
+concas	1	3178207	Concas	40.6493	9.5655	IT	Sardegna	2523228	Nuoro	22	PPL	143
+concas dorbiel	0	3023873	Conques-sur-Orbiel	43.2667	2.4167	FR	Occitania	11071623	Aude	2225	PPL	125
+conce	1	8983517	Conce	45.2867	7.3964	IT	Piemonte	3170831	Torino	7	PPLL	700
+conce ferroni	1	8979158	Conce Ferroni	43.6083	10.9571	IT	Toscana	3165361	Firenze	16	PPL	50
+concei	1	6534757	Concei	45.9060	10.7290	IT	Trentino-Alto Adige	3165244	Trento	758	PPL	760
+concello ii	1	8974055	Concello II	42.9413	11.9840	IT	Umbria	3165048	Perugia	23	PPL	336
+concenedo	1	8961239	Concenedo	45.9423	9.4785	IT	Lombardia	3174618	Lecco	57	PPL	918
+concerviano	1	3178206	Concerviano	42.3221	12.9853	IT	Lazio	3174976	Rieti	296	PPLA3	560
+concesio	1	6534249	Concesio	45.6052	10.2170	IT	Lombardia	3174618	Brescia	11262	PPLA3	216
+concevreux	1	3024033	Concevreux	49.3764	3.7895	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	204	PPL	54
+conceze	1	3024032	Concèze	45.3548	1.3451	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	405	PPL	395
+concharbin	1	3024031	Concharbin	45.7170	5.4639	FR	Alvernia-Rodano-Alpi	11071625	Isère	0	PPL	278
+conche	1	3219340	Conche	45.2375	12.1695	IT	Veneto	3164604	Padova	874	PPL	2
+conche	1	8963909	Conche	45.3131	11.4811	IT	Veneto	3164604	Vicenza	45	PPL	17
+conche	1	8965795	Conche	45.6974	12.5100	IT	Veneto	3164604	Treviso	39	PPL	4
+conches	0	3024026	Conches-en-Ouche	48.9577	0.9405	FR	Normandia	11071621	Eure	4506	PPL	152
+conches	1	6691630	Conches	46.1850	6.1739	CH	Canton Ginevra	2660645	Cantone di Ginevra	0	PPL	420
+conches en ouche	1	3024026	Conches-en-Ouche	48.9577	0.9405	FR	Normandia	11071621	Eure	4506	PPL	152
+conches sur gondoire	1	3024028	Conches-sur-Gondoire	48.8562	2.7178	FR	Île-de-France	3012874	Senna e Marna	1886	PPL	100
+conchetta	1	12022911	Conchetta	45.4539	9.1734	IT	Lombardia	3174618	Milano	0	PPLX	123
+conchez de bearn	1	3024025	Conchez-de-Béarn	43.5454	-0.1694	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	108	PPL	202
+conchigliu	1	3024024	Conchigliu	42.8665	9.3568	FR	Corsica	3023519	Corsica settentrionale	0	PPL	144
+conchil le temple	1	3024023	Conchil-le-Temple	50.3690	1.6641	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	805	PPL	5
+conchy les pots	1	3024022	Conchy-les-Pots	49.6025	2.7246	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	612	PPL	109
+conchy sur canche	1	3024021	Conchy-sur-Canche	50.3024	2.2005	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	201	PPL	54
+concie	1	8965792	Concie	45.7422	12.4174	IT	Veneto	3164604	Treviso	39	PPL	13
+concio	1	8961818	Concio	40.1745	16.6567	IT	Basilicata	3182306	Matera	54	PPL	10
+concio di baracco	1	2524951	Concio di Baracco	39.1667	16.8167	IT	Calabria	2525468	Crotone	0	PPL	165
+concio di liquirizia	1	2524950	Concio di Liquirizia	39.1000	16.9500	IT	Calabria	2525468	Crotone	0	PPL	125
+concis	1	3024020	Concis	44.9423	3.8681	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	961
+concise	1	12318373	Concise	46.3813	6.4860	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	0	PPL	412
+concise	1	2661133	Concise	46.8503	6.7197	CH	Canton Vaud	2658182	distretto del Jura-Nord vaudois	721	PPL	437
+concise	1	3024017	Concise	48.1920	3.8977	FR	Gran Este	11071622	Aube	0	PPL	182
+concise	1	3024018	Concise	46.4470	0.8606	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Vienne	0	PPL	98
+concise	1	3024019	Concise	46.3321	2.9359	FR	Alvernia-Rodano-Alpi	11071625	Allier	0	PPL	411
+conco	1	3178205	Conco	45.8004	11.6096	IT	Veneto	3164604	Vicenza	818	PPLA3	830
+concoeur et corboin	1	3024014	Concoeur-et-Corboin	47.1694	4.9191	FR	Borgogna-Franca Contea	11071619	Cote d'Or	0	PPL	400
+conconello	1	3178204	Conconello	45.6706	13.7951	IT	Friuli Venezia Giulia	3176525	Trieste	200	PPL	358
+concordia	0	3178202	Concordia sulla Secchia	44.9126	10.9880	IT	Emilia-Romagna	3177401	Modena	4832	PPLA3	22
+concordia	0	3178203	Concordia Sagittaria	45.7612	12.8236	IT	Veneto	3164604	Venezia	8677	PPLA3	2
+concordia	1	8977395	Concordia	45.4619	9.7380	IT	Lombardia	3174618	Cremona	18	PPL	97
+concordia sagittaria	1	3178203	Concordia Sagittaria	45.7612	12.8236	IT	Veneto	3164604	Venezia	8677	PPLA3	2
+concordia sulla secchia	1	3178202	Concordia sulla Secchia	44.9126	10.9880	IT	Emilia-Romagna	3177401	Modena	4832	PPLA3	22
+concores	1	3024012	Concorès	44.6588	1.3949	FR	Occitania	11071623	Lot	322	PPL	207
+concoret	1	3024011	Concoret	48.0641	-2.2069	FR	Bretagna	3030293	Morbihan	689	PPL	104
+concorezzo	1	3178201	Concorezzo	45.5885	9.3339	IT	Lombardia	3174618	Monza e Brianza	14910	PPLA3	171
+concorezzo	1	8970080	Concorezzo	45.3336	9.1405	IT	Lombardia	3174618	Milano	29	PPL	97
+concorrezzo	0	3178201	Concorezzo	45.5885	9.3339	IT	Lombardia	3174618	Monza e Brianza	14910	PPLA3	171
+concots	1	3024008	Concots	44.4013	1.6446	FR	Occitania	11071623	Lot	370	PPL	278
+concoules	1	3024007	Concoules	44.3828	3.9380	FR	Occitania	11071623	Gard	279	PPL	641
+concoules	1	6947216	Concoules	44.7099	3.8722	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	0	PPLL	968
+concoures	1	3024006	Concourès	44.4442	2.6515	FR	Occitania	11071623	Aveyron	0	PPL	585
+concouret	1	3024005	Concouret	45.0214	3.7392	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	1025
+concourre	1	3024004	Concourre	45.6793	0.7576	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	0	PPL	312
+concourson sur layon	1	3024003	Concourson-sur-Layon	47.1743	-0.3404	FR	Paesi della Loira	2988289	Maine e Loira	580	PPL	51
+concremiers	1	3024002	Concremiers	46.5967	1.0168	FR	Centro-Valle della Loira	3027939	Indre	622	PPL	92
+concressault	1	3024001	Concressault	47.4899	2.5762	FR	Centro-Valle della Loira	3027939	Cher	213	PPL	188
+concriers	1	3024000	Concriers	47.7720	1.4747	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	151	PPL	115
+concuardie	0	3178203	Concordia Sagittaria	45.7612	12.8236	IT	Veneto	3164604	Venezia	8677	PPLA3	2
+concue	0	3004513	Le Conquet	48.3605	-4.7709	FR	Bretagna	3030293	Finistère	2516	PPL	27
+concy	1	3023999	Concy	48.7085	2.4744	FR	Île-de-France	3012874	Essonne	0	PPL	35
+concœur	1	12316790	Concœur	47.1634	4.9192	FR	Borgogna-Franca Contea	11071619	Cote d'Or	0	PPL	395
+condac	1	3023998	Condac	46.0241	0.2276	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	486	PPL	91
+condades	1	11993235	Condades	43.4673	2.7922	FR	Occitania	11071623	Hérault	0	PPLX	407
+condadeuil	1	3023997	Condadeuil	45.7577	0.5138	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	0	PPL	267
+condado de melguelh	0	2995121	Mauguio	43.6169	4.0074	FR	Occitania	11071623	Hérault	18320	PPL	11
+condal	1	3023995	Condal	46.4626	5.2820	FR	Borgogna-Franca Contea	11071619	Saona e Loira	419	PPL	219
+condamine	1	3023992	Condamine	46.6501	5.4404	FR	Borgogna-Franca Contea	11071619	Giura	220	PPL	215
+condamine	1	3023993	Condamine	46.1077	5.5517	FR	Alvernia-Rodano-Alpi	11071625	Ain	342	PPL	582
+condamine	1	3023994	Condamine	45.4556	4.2603	FR	Alvernia-Rodano-Alpi	11071625	Loira	0	PPL	547
+condamines	1	12317769	Condamines	44.5079	2.9223	FR	Occitania	11071623	Aveyron	0	PPL	666
+condat	0	3023977	Condat-sur-Vienne	45.7934	1.2319	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	4372	PPL	284
+condat	1	12316218	Condat	44.8979	-0.2417	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	0	PPL	9
+condat	1	3023982	Condat	46.1796	1.6684	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Creuse	0	PPL	394
+condat	1	3023984	Condat	45.3409	2.7579	FR	Alvernia-Rodano-Alpi	11071625	Cantal	1143	PPL	727
+condat	1	3023985	Condat	45.3438	3.6009	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	1033
+condat	1	3023986	Condat	44.9906	1.6644	FR	Occitania	11071623	Lot	0	PPL	129
+condat	1	3023987	Condat	44.4820	1.6532	FR	Occitania	11071623	Lot	0	PPL	144
+condat	1	3023988	Condat	44.4943	0.9874	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Lot-et-Garonne	0	PPL	70
+condat en combraille	1	3023981	Condat-en-Combraille	45.8524	2.5636	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	671
+condat en feniers	0	3023984	Condat	45.3409	2.7579	FR	Alvernia-Rodano-Alpi	11071625	Cantal	1143	PPL	727
+condat les montboissier	1	3023983	Condat-lès-Montboissier	45.5500	3.5167	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	855
+condat montagne	0	2971006	Valfin-lès-Saint-Claude	46.4376	5.8551	FR	Borgogna-Franca Contea	11071619	Giura	12966	PPL	683
+condat sur ganaveix	1	3023980	Condat-sur-Ganaveix	45.4674	1.5940	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	647	PPL	373
+condat sur trincou	1	3023979	Condat-sur-Trincou	45.3827	0.7086	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	432	PPL	135
+condat sur vezere	1	3023978	Condat-sur-Vézère	45.1176	1.2305	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	882	PPL	87
+condat sur vienne	1	3023977	Condat-sur-Vienne	45.7934	1.2319	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	4372	PPL	284
+condate ad scaldim	0	3023955	Condé-sur-l'Escaut	50.4544	3.5888	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	10215	PPL	26
+condate redonum	0	2983990	Rennes	48.1111	-1.6743	FR	Bretagna	3030293	Ille-et-Vilaine	227830	PPLA	39
+condax	1	12315227	Condax	43.6155	2.6683	FR	Occitania	11071623	Hérault	0	PPL	692
+conde	0	3023947	Condé-sur-Vire	49.0500	-1.0333	FR	Normandia	11071621	Manica	3114	PPL	27
+conde	0	3023948	Condé-sur-Vesgre	48.7420	1.6607	FR	Île-de-France	3012874	Yvelines	1095	PPL	110
+conde	0	3023951	Condé-sur-Sarthe	48.4320	0.0340	FR	Normandia	11071621	Orne	2290	PPL	141
+conde	0	3023953	Condé-sur-Noireau	48.8488	-0.5521	FR	Normandia	11071621	Calvados	6364	PPL	83
+conde	0	3023955	Condé-sur-l'Escaut	50.4544	3.5888	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	10215	PPL	26
+conde	0	3023958	Condé-sur-Huisne	48.3810	0.8509	FR	Normandia	11071621	Orne	1202	PPL	124
+conde	0	3023960	Condé-Sainte-Libiaire	48.8969	2.8390	FR	Île-de-France	3012874	Senna e Marna	1477	PPL	76
+conde	1	3023964	Condé	49.1538	6.4305	FR	Gran Este	11071622	Mosella	544	PPL	210
+conde	1	3023975	Condé	46.8788	1.9865	FR	Centro-Valle della Loira	3027939	Indre	0	PPL	144
+conde	1	3023976	Condé	46.8014	2.2053	FR	Centro-Valle della Loira	3027939	Cher	0	PPL	151
+conde en barrois	1	12535125	Condé-en-Barrois	48.8681	5.1661	FR	Gran Este	11071622	Mosa	0	PPL	223
+conde en brie	1	3023970	Condé-en-Brie	49.0045	3.5638	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	639	PPL	94
+conde folie	1	3023969	Condé-Folie	50.0090	2.0122	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	828	PPL	16
+conde les autry	1	3023967	Condé-lès-Autry	49.2513	4.8542	FR	Gran Este	11071622	Ardenne	82	PPL	117
+conde les herpy	1	3023966	Condé-lès-Herpy	49.5277	4.2234	FR	Gran Este	11071622	Ardenne	160	PPL	70
+conde les vouziers	1	3023965	Condé-lès-Vouziers	49.4128	4.6994	FR	Gran Este	11071622	Ardenne	0	PPL	95
+conde sainte libiaire	1	3023960	Condé-Sainte-Libiaire	48.8969	2.8390	FR	Île-de-France	3012874	Senna e Marna	1477	PPL	76
+conde sur aisne	1	3023959	Condé-sur-Aisne	49.3979	3.4701	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	355	PPL	66
+conde sur escaut	0	3023955	Condé-sur-l'Escaut	50.4544	3.5888	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	10215	PPL	26
+conde sur huine	0	3023958	Condé-sur-Huisne	48.3810	0.8509	FR	Normandia	11071621	Orne	1202	PPL	124
+conde sur huisne	1	3023958	Condé-sur-Huisne	48.3810	0.8509	FR	Normandia	11071621	Orne	1202	PPL	124
+conde sur ifs	1	3023957	Condé-sur-Ifs	49.0500	-0.1167	FR	Normandia	11071621	Calvados	0	PPL	44
+conde sur iton	1	3023956	Condé-sur-Iton	48.8333	0.9667	FR	Normandia	11071621	Eure	0	PPL	153
+conde sur l escaut	1	3023955	Condé-sur-l'Escaut	50.4544	3.5888	FR	Nord-Passo di Calais-Piccardia	11071624	Nord	10215	PPL	26
+conde sur marne	1	3023954	Condé-sur-Marne	49.0443	4.1804	FR	Gran Este	11071622	Marna	666	PPL	79
+conde sur morin	0	3023960	Condé-Sainte-Libiaire	48.8969	2.8390	FR	Île-de-France	3012874	Senna e Marna	1477	PPL	76
+conde sur noireau	1	3023953	Condé-sur-Noireau	48.8488	-0.5521	FR	Normandia	11071621	Calvados	6364	PPL	83
+conde sur risle	1	3023952	Condé-sur-Risle	49.3162	0.6151	FR	Normandia	11071621	Eure	477	PPL	25
+conde sur sarthe	1	3023951	Condé-sur-Sarthe	48.4320	0.0340	FR	Normandia	11071621	Orne	2290	PPL	141
+conde sur seulles	1	3023950	Condé-sur-Seulles	49.2256	-0.6339	FR	Normandia	11071621	Calvados	215	PPL	56
+conde sur suippe	1	3023949	Condé-sur-Suippe	49.4204	3.9496	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	261	PPL	55
+conde sur vesgre	1	3023948	Condé-sur-Vesgre	48.7420	1.6607	FR	Île-de-France	3012874	Yvelines	1095	PPL	110
+conde sur vire	1	3023947	Condé-sur-Vire	49.0500	-1.0333	FR	Normandia	11071621	Manica	3114	PPL	27
+condeau	1	12320826	Condeau	45.6279	1.9101	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	718
+condeau	1	3023973	Condeau	48.3846	0.8324	FR	Normandia	11071621	Orne	334	PPL	131
+condecourt	1	3023972	Condécourt	49.0404	1.9420	FR	Île-de-France	3012874	Val-d'Oise	519	PPL	47
+condeissiat	1	3023968	Condeissiat	46.1567	5.0794	FR	Alvernia-Rodano-Alpi	11071625	Ain	683	PPL	248
+condel	1	12316589	Condel	43.8177	1.6725	FR	Occitania	11071623	Tarn	0	PPL	131
+condemine	1	8984268	Condemine	45.8560	7.3885	IT	Valle d'Aosta	3164857	Aosta	4	PPLL	1467
+condemines (nendaz)	1	8533437	Condémines (Nendaz)	46.1755	7.2554	CH	Canton Vallese	2658205	Conthey District	0	PPL	1110
+condeon	1	3023963	Condéon	45.4076	-0.1380	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	568	PPL	86
+condes	1	3023961	Condes	48.1437	5.1442	FR	Gran Este	11071622	Alta Marna	282	PPL	258
+condes	1	3023962	Condes	46.3371	5.6234	FR	Borgogna-Franca Contea	11071619	Giura	110	PPL	330
+condette	1	3023946	Condette	50.6582	1.6339	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	2764	PPL	73
+condetz	1	12306732	Condetz	48.9425	3.1210	FR	Île-de-France	3012874	Senna e Marna	0	PPL	59
+condezaygues	1	3023945	Condezaygues	44.4868	0.9165	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Lot-et-Garonne	888	PPL	128
+condillac	1	3023944	Condillac	44.6384	4.8120	FR	Alvernia-Rodano-Alpi	11071625	Drôme	141	PPL	166
+condino	1	3178199	Condino	45.8817	10.5937	IT	Trentino-Alto Adige	3165244	Trento	1492	PPLA3	444
+condofuri	1	2524949	Condofuri	38.0045	15.8577	IT	Calabria	2525468	Reggio Calabria	237	PPLA3	339
+condojanni	1	2524948	Condojanni	38.2101	16.1961	IT	Calabria	2525468	Reggio Calabria	180	PPL	156
+condom	1	3023943	Condom	43.9582	0.3720	FR	Occitania	11071623	Gers	7732	PPLA3	91
+condom d aubrac	1	3023941	Condom-d'Aubrac	44.6035	2.8649	FR	Occitania	11071623	Aveyron	0	PPL	944
+condom en armagnac	0	3023943	Condom	43.9582	0.3720	FR	Occitania	11071623	Gers	7732	PPLA3	91
+condomines	1	12316629	Condomines	43.6700	2.8100	FR	Occitania	11071623	Tarn	0	PPL	805
+condominium mons iugi	0	3001336	Les Contamines-Montjoie	45.8216	6.7287	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	1127	PPL	1176
+condon	1	13446275	Condon	45.7948	5.6558	FR	Alvernia-Rodano-Alpi	11071625	Ain	0	PPL	297
+condorcet	1	6620065	Condorcet	44.4075	5.1994	FR	Alvernia-Rodano-Alpi	11071625	Drôme	0	PPLA4	360
+condors	1	12317728	Condors	44.6386	2.8906	FR	Occitania	11071623	Aveyron	0	PPL	996
+condotta	1	8973859	Condotta	45.6352	12.0498	IT	Veneto	3164604	Padova	23	PPL	24
+condotti vecchi	1	8956961	Condotti Vecchi	43.5540	10.3489	IT	Toscana	3165361	Livorno	91	PPL	18
+condotto	1	8978371	Condotto	44.1963	11.1696	IT	Emilia-Romagna	3177401	Bologna	17	PPL	497
+condouin	1	3023940	Condouin	48.5246	0.1857	FR	Normandia	11071621	Orne	0	PPL	156
+condove	1	3178198	Condove	45.1159	7.3086	IT	Piemonte	3170831	Torino	4057	PPLA3	376
+condra	1	11113675	Condra	46.0807	8.9537	CH	Canton Ticino	2658370	Distretto di Lugano	0	PPL	1006
+condren	1	3023938	Condren	49.6294	3.2811	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	697	PPL	47
+condres	1	12321255	Condres	44.8205	3.7463	FR	Occitania	11071623	Lozère	0	PPL	888
+condrieu	1	3023937	Condrieu	45.4630	4.7676	FR	Alvernia-Rodano-Alpi	11071625	Rodano	3615	PPL	156
+condro	1	2524946	Condrò	38.1737	15.3266	IT	Sicilia	2523119	Messina	402	PPLA3	58
+condros	1	12322191	Condros	45.0759	3.9845	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	786
+condurso	1	8967540	Condurso	38.0894	15.1066	IT	Sicilia	2523119	Messina	35	PPL	212
+conduttiello	1	8959100	Conduttiello	41.0561	15.0358	IT	Campania	3181042	Avellino	70	PPL	459
+cone	1	12315048	Cône	48.0997	6.3876	FR	Gran Este	11071622	Vosgi	0	PPL	373
+conegliano	1	3178197	Conegliano	45.8880	12.3020	IT	Veneto	3164604	Treviso	30765	PPLA3	72
+coneo	1	8962415	Coneo	43.4004	11.0805	IT	Toscana	3165361	Siena	51	PPL	234
+conery	1	3023934	Conery	48.5941	-3.3213	FR	Bretagna	3030293	Côtes-d'Armor	0	PPL	150
+conetta	1	3178195	Conetta	45.1761	11.9942	IT	Veneto	3164604	Venezia	179	PPL	4
+confaloniera	1	8958439	Confaloniera	45.5658	10.0789	IT	Lombardia	3174618	Brescia	75	PPL	158
+confenti	1	8971284	Confenti	45.5413	11.2162	IT	Veneto	3164604	Verona	27	PPL	456
+confiente	1	8983006	Confiente	44.6981	9.3667	IT	Emilia-Romagna	3177401	Piacenza	9	PPLL	362
+confienza	1	3178193	Confienza	45.3315	8.5589	IT	Lombardia	3174618	Pavia	1621	PPLA3	126
+configlie	1	8984206	Configliè	45.4416	7.5854	IT	Piemonte	3170831	Torino	4	PPLL	682
+configni	1	3178191	Configni	42.6959	12.5305	IT	Umbria	3165048	Terni	89	PPL	380
+configni	1	3178192	Configni	42.4254	12.6443	IT	Lazio	3174976	Rieti	148	PPLA3	549
+configno	1	8965896	Configno	42.6166	13.2585	IT	Lazio	3174976	Rieti	39	PPL	1008
+confignon	1	2661132	Confignon	46.1734	6.0844	CH	Canton Ginevra	2660645	Cantone di Ginevra	3425	PPL	438
+confin	1	8971345	Confin	45.9533	12.2616	IT	Veneto	3164604	Treviso	27	PPL	187
+confine	1	11114025	Confine	45.9145	8.9197	CH	Canton Ticino	2658370	Distretto di Lugano	0	PPL	310
+confine	1	8955410	Confine	45.4398	10.7396	IT	Veneto	3164604	Verona	114	PPL	103
+confine fico fontanelle	1	8950525	Confine-Fico Fontanelle	37.4042	13.7069	IT	Sicilia	2523119	Agrigento	471	PPL	545
+confine inferiore	1	8983812	Confine Inferiore	44.5837	7.1286	IT	Piemonte	3170831	Cuneo	6	PPLL	1141
+confine superiore	1	9033098	Confine Superiore	44.5852	7.1271	IT	Piemonte	3170831	Cuneo	1	PPL	1175
+conflandey	1	3023931	Conflandey	47.7287	6.0456	FR	Borgogna-Franca Contea	11071619	Alta Saona	432	PPL	218
+conflans	0	3023924	Conflans-Sainte-Honorine	49.0016	2.0969	FR	Île-de-France	3012874	Yvelines	36358	PPL	48
+conflans	0	3023925	Conflans-en-Jarnisy	49.1673	5.8552	FR	Gran Este	11071622	Meurthe e Mosella	2619	PPL	188
+conflans	1	3023929	Conflans	45.6669	6.3978	FR	Alvernia-Rodano-Alpi	11071625	Savoia	0	PPL	337
+conflans	1	3023930	Conflans	45.0431	4.8855	FR	Alvernia-Rodano-Alpi	11071625	Drôme	0	PPL	145
+conflans en jarnisy	1	3023925	Conflans-en-Jarnisy	49.1673	5.8552	FR	Gran Este	11071622	Meurthe e Mosella	2619	PPL	188
+conflans sainte honorine	1	3023924	Conflans-Sainte-Honorine	49.0016	2.0969	FR	Île-de-France	3012874	Yvelines	36358	PPL	48
+conflans sur anille	1	3023923	Conflans-sur-Anille	47.9464	0.7448	FR	Paesi della Loira	2988289	Sarthe	608	PPL	125
+conflans sur lanterne	1	3023928	Conflans-sur-Lanterne	47.8167	6.2167	FR	Borgogna-Franca Contea	11071619	Alta Saona	687	PPL	259
+conflans sur loing	1	3023922	Conflans-sur-Loing	47.9528	2.7886	FR	Centro-Valle della Loira	3027939	Loiret	356	PPL	101
+conflans sur seine	1	3023921	Conflans-sur-Seine	48.5524	3.6802	FR	Gran Este	11071622	Marna	673	PPL	70
+conflenti	1	6534809	Conflenti	39.0717	16.2845	IT	Calabria	2525468	Catanzaro	696	PPLA3	540
+conflenti inferiore	1	2524945	Conflenti Inferiore	39.0667	16.2667	IT	Calabria	2525468	Catanzaro	0	PPL	416
+conflenti superiore	1	2524944	Conflenti Superiore	39.0500	16.4500	IT	Calabria	2525468	Catanzaro	0	PPL	958
+confluent de seine et oise	0	3023924	Conflans-Sainte-Honorine	49.0016	2.0969	FR	Île-de-France	3012874	Yvelines	36358	PPL	48
+confolant	1	12306323	Confolant	45.9130	2.7541	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	527
+confolens	1	3023919	Confolens	46.0131	0.6720	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	3104	PPLA3	142
+confolent	0	3023919	Confolens	46.0131	0.6720	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	3104	PPLA3	142
+confolent	1	12322087	Confolent	45.2580	4.1371	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	478
+confolent port dieu	1	3023917	Confolent-Port-Dieu	45.5433	2.4965	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	29	PPL	780
+confolents	0	3023919	Confolens	46.0131	0.6720	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	3104	PPLA3	142
+confoleuc	0	3023309	Coufouleux	43.8171	1.7308	FR	Occitania	11071623	Tarn	2135	PPL	118
+conforgien	1	11962307	Conforgien	47.2339	4.2154	FR	Borgogna-Franca Contea	11071619	Cote d'Or	0	PPL	579
+confort	1	12179079	Confort	48.6958	-3.3154	FR	Bretagna	3030293		0	PPL	84
+confort	1	3023916	Confort	46.1507	5.8233	FR	Alvernia-Rodano-Alpi	11071625	Ain	543	PPL	561
+confort meilars	1	3023915	Confort-Meilars	48.0500	-4.4333	FR	Bretagna	3030293	Finistère	754	PPL	62
+confortino	1	3178189	Confortino	44.5167	11.1833	IT	Emilia-Romagna	3177401	Bologna	0	PPL	47
+confos	1	3219560	Confos	46.0365	12.1725	IT	Veneto	3164604	Belluno	32	PPL	542
+confracourt	1	3023914	Confracourt	47.6659	5.8757	FR	Borgogna-Franca Contea	11071619	Alta Saona	184	PPL	223
+confrancon	1	12313930	Confrançon	46.5355	4.6481	FR	Borgogna-Franca Contea	11071619	Saona e Loira	0	PPL	203
+confrancon	1	3023912	Confrançon	46.2663	5.0661	FR	Alvernia-Rodano-Alpi	11071625	Ain	948	PPL	197
+cong ci gen	0	2657899	Zunzgen	47.4492	7.8079	CH	Canton Basilea Campagna	2661603	Distretto di Sissach	2632	PPLA3	399
+cong lin ge	0	3000060	Les Pavillons-sous-Bois	48.9068	2.5065	FR	Île-de-France	3012874	Senna-Saint-Denis	19730	PPL	55
+conge	1	12311392	Congé	48.4646	0.1188	FR	Normandia	11071621	Orne	0	PPL	159
+conge des guerets	1	12323427	Congé des Guérets	48.2632	0.1575	FR	Paesi della Loira	2988289	Sarthe	0	PPL	85
+conge sur orne	1	3023909	Congé-sur-Orne	48.2004	0.2544	FR	Paesi della Loira	2988289	Sarthe	303	PPL	59
+congenhas	0	3023911	Congénies	43.7780	4.1596	FR	Occitania	11071623	Gard	1168	PPL	79
+congenies	1	3023911	Congénies	43.7780	4.1596	FR	Occitania	11071623	Gard	1168	PPL	79
+congerville	1	8261080	Congerville	48.3872	1.9887	FR	Île-de-France	3012874	Essonne	0	PPLL	147
+congerville thionville	1	3023910	Congerville-Thionville	48.3833	1.9833	FR	Île-de-France	3012874	Essonne	240	PPL	146
+congis sur therouanne	1	3023908	Congis-sur-Thérouanne	49.0000	2.9833	FR	Île-de-France	3012874	Senna e Marna	2011	PPL	52
+congiunti	1	8949747	Congiunti	42.4718	14.0852	IT	Abruzzo	3183560	Pescara	755	PPL	40
+congr	0	2782511	Angern an der March	48.3778	16.8281	AT	Bassa Austria	2770542	Politischer Bezirk Gänserndorf	1418	PPLA3	152
+congrier	1	3023907	Congrier	47.8103	-1.1167	FR	Paesi della Loira	2988289	Dipartimento della Mayenne	1087	PPL	83
+congy	1	3023905	Congy	48.8592	3.8298	FR	Gran Este	11071622	Marna	296	PPL	174
+congy	1	3023906	Congy	47.3025	2.9894	FR	Borgogna-Franca Contea	11071619	Nièvre	0	PPL	203
+conhac	0	3024438	Cognac-la-Forêt	45.8333	1.0099	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	1055	PPL	343
+conhac	0	3024440	Cognac	45.6958	-0.3287	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	20868	PPLA3	28
+conhac la forest	0	3024438	Cognac-la-Forêt	45.8333	1.0099	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	1055	PPL	343
+coni	0	3177700	Cuneo	44.3907	7.5483	IT	Piemonte	3170831	Cuneo	55980	PPLA2	534
+coni	1	8981688	Coni	44.8663	9.5617	IT	Emilia-Romagna	3177401	Piacenza	12	PPL	273
+coniale	1	7117962	Coniale	44.1529	11.4569	IT	Toscana	3165361	Firenze	28	PPL	307
+conialo	1	3178188	Conialo	45.1500	8.3667	IT	Piemonte	3170831	Alessandria	0	PPL	221
+conicella	1	8963244	Conicella	42.6082	13.9343	IT	Abruzzo	3183560	Teramo	48	PPL	141
+conidoni	1	2524943	Conidoni	38.7022	16.0355	IT	Calabria	2525468	Vibo Valentia	208	PPL	170
+conie molitard	1	3023902	Conie-Molitard	48.1148	1.4437	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	355	PPL	131
+conifere	1	8962947	Conifere	42.0907	12.9966	IT	Lazio	3174976	Roma	49	PPL	816
+conil	1	3023900	Conil	44.9683	3.7170	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	1162
+conilhac corbieres	1	3023899	Conilhac-Corbières	43.1894	2.7152	FR	Occitania	11071623	Aude	646	PPL	84
+conilhac de la montagne	1	3023898	Conilhac-de-la-Montagne	42.9786	2.1950	FR	Occitania	11071623	Aude	0	PPL	431
+conilieu	1	3023897	Conilieu	45.8252	5.3837	FR	Alvernia-Rodano-Alpi	11071625	Isère	0	PPL	269
+coninie	1	3023896	Coninié	48.1603	1.3031	FR	Centro-Valle della Loira	3027939	Eure-et-Loir	0	PPL	159
+conio	1	3178187	Conio	43.9822	7.8953	IT	Liguria	3174725	Imperia	107	PPL	622
+conio	1	8379287	Conio	44.1282	10.7459	IT	Toscana	3165361	Pistoia	0	PPLL	1062
+conio	1	8379288	Conio	43.7715	10.9907	IT	Toscana	3165361	Firenze	153	PPLL	277
+conio	1	8979500	Conio	44.0625	8.0240	IT	Liguria	3174725	Imperia	15	PPL	221
+conio avena	1	8979517	Conio Avena	44.5432	9.2176	IT	Liguria	3174725	Genova	15	PPL	972
+coniolo	1	8949701	Coniolo	45.3833	9.9761	IT	Lombardia	3174618	Brescia	777	PPL	77
+coniolo basso	1	9035150	Coniolo Basso	45.1509	8.3677	IT	Piemonte	3170831	Alessandria	73	PPL	213
+coniolo bricco	1	6534396	Coniolo Bricco	45.1482	8.3709	IT	Piemonte	3170831	Alessandria	314	PPLA3	226
+conives	1	3023895	Conives	46.6202	1.4737	FR	Centro-Valle della Loira	3027939	Indre	0	PPL	101
+conjat	1	3023894	Conjat	45.8333	1.7167	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	0	PPL	596
+conjols	1	3023893	Conjols	44.8289	4.6151	FR	Alvernia-Rodano-Alpi	11071625	Ardèche	0	PPL	513
+conjux	1	3023892	Conjux	45.7900	5.8221	FR	Alvernia-Rodano-Alpi	11071625	Savoia	182	PPL	265
+conleau	1	12306164	Conleau	47.6346	-2.7788	FR	Bretagna	3030293	Morbihan	0	PPL	21
+conlie	1	3023891	Conlie	48.1226	-0.0167	FR	Paesi della Loira	2988289	Sarthe	1746	PPL	121
+conliege	1	3023890	Conliège	46.6546	5.5988	FR	Borgogna-Franca Contea	11071619	Giura	763	PPL	319
+conna	1	8955876	Conna	43.9807	8.1057	IT	Liguria	3174725	Savona	106	PPL	344
+connac	1	3023888	Connac	45.1320	3.7549	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	0	PPL	858
+connac	1	3023889	Connac	44.0202	2.6015	FR	Occitania	11071623	Aveyron	127	PPL	533
+connage	1	3023887	Connage	49.6256	4.8484	FR	Gran Este	11071622	Ardenne	0	PPL	168
+connangles	1	3023886	Connangles	45.2988	3.6472	FR	Alvernia-Rodano-Alpi	11071625	Alta Loira	135	PPL	992
+connantray vaurefroy	1	3023885	Connantray-Vaurefroy	48.7477	4.0623	FR	Gran Este	11071622	Marna	234	PPL	141
+connantre	1	3023884	Connantre	48.7266	3.9240	FR	Gran Este	11071622	Marna	1149	PPL	97
+connaux	1	3023883	Connaux	44.0913	4.5937	FR	Occitania	11071623	Gard	1776	PPL	84
+conne de labarde	1	3023882	Conne-de-Labarde	44.7801	0.5537	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	217	PPL	97
+conneau	1	12315956	Conneau	45.2752	-0.9255	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	0	PPL	20
+connelles	1	3023881	Connelles	49.2561	1.2730	FR	Normandia	11071621	Eure	196	PPL	16
+connerre	1	3023880	Connerré	48.0600	0.4924	FR	Paesi della Loira	2988289	Sarthe	2719	PPL	74
+connezac	1	3023879	Connezac	45.5000	0.5167	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	87	PPL	134
+connigis	1	3023878	Connigis	49.0333	3.5333	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	272	PPL	96
+connincthun	1	12315313	Connincthun	50.7939	1.6664	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	0	PPL	40
+connio	1	8973639	Connio	44.6215	9.1782	IT	Piemonte	3170831	Alessandria	23	PPL	928
+conocchia	1	3178185	Conocchia	41.6181	14.2126	IT	Molise	3173222	Isernia	257	PPL	596
+conol	1	3023877	Conol	45.5667	3.9667	FR	Alvernia-Rodano-Alpi	11071625	Loira	0	PPL	1035
+conord	1	3023876	Conord	45.8901	3.5148	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	403
+conore	1	3023875	Conore	45.9783	1.1597	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	0	PPL	334
+conquereuil	1	3023874	Conquereuil	47.6249	-1.7511	FR	Paesi della Loira	2988289	Loira Atlantica	1029	PPL	32
+conques	1	3023872	Conques	44.5994	2.3974	FR	Occitania	11071623	Aveyron	319	PPL	292
+conques sur orbiel	1	3023873	Conques-sur-Orbiel	43.2667	2.4167	FR	Occitania	11071623	Aude	2225	PPL	125
+conquestus	0	3004513	Le Conquet	48.3605	-4.7709	FR	Bretagna	3030293	Finistère	2516	PPL	27
+conquet	0	3004513	Le Conquet	48.3605	-4.7709	FR	Bretagna	3030293	Finistère	2516	PPL	27
+conquettes	1	12317972	Conquettes	44.2304	2.7060	FR	Occitania	11071623	Aveyron	0	PPL	808
+conqueyrac	1	3023871	Conqueyrac	43.9234	3.8973	FR	Occitania	11071623	Gard	131	PPL	196
+conradi	1	8973664	Conradi	44.3081	8.1188	IT	Liguria	3174725	Savona	23	PPL	574
+conroc	1	12306253	Conroc	45.1273	2.3245	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	700
+conrut	1	3023870	Conrut	45.2421	2.3809	FR	Alvernia-Rodano-Alpi	11071625	Cantal	0	PPL	742
+cons	1	7670122	Cons	46.6501	9.0916	CH	Cantone dei Grigioni	2660522	Region Surselva	0	PPL	1477
+cons la grandville	1	3023861	Cons-la-Grandville	49.4849	5.7038	FR	Gran Este	11071622	Meurthe e Mosella	623	PPL	239
+cons sainte colombe	1	3023859	Cons-Sainte-Colombe	45.7495	6.3263	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	293	PPL	553
+consac	1	3023868	Consac	45.4177	-0.5947	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente-Maritime	259	PPL	66
+consalvi	1	8967499	Consalvi	42.1487	14.2884	IT	Abruzzo	3183560	Chieti	35	PPL	380
+consandolo	1	3178183	Consandolo	44.6561	11.7752	IT	Emilia-Romagna	3177401	Ferrara	1992	PPL	4
+conscente	1	8953979	Conscente	44.0899	8.1326	IT	Liguria	3174725	Savona	155	PPL	71
+conscenti	1	3172350	Conscenti	44.3449	9.3954	IT	Liguria	3174725	Genova	742	PPLA3	68
+conscio	1	3178182	Conscio	45.6170	12.2822	IT	Veneto	3164604	Treviso	1082	PPL	9
+consegudes	1	3023866	Conségudes	43.8436	7.0479	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	66	PPL	633
+conselice	1	3178181	Conselice	44.5116	11.8285	IT	Emilia-Romagna	3177401	Ravenna	4486	PPLA3	6
+conselve	1	3178180	Conselve	45.2315	11.8750	IT	Veneto	3164604	Padova	8768	PPLA3	7
+consenvoye	1	3023865	Consenvoye	49.2873	5.2858	FR	Gran Este	11071622	Mosa	288	PPL	186
+conservatore	1	8961040	Conservatore	36.9552	14.6902	IT	Sicilia	2523119	Ragusa	58	PPL	681
+conseuille	1	3023863	Conseuille	47.0177	3.5091	FR	Borgogna-Franca Contea	11071619	Nièvre	0	PPL	253
+consiglio	1	8954521	Consiglio	46.1526	9.5375	IT	Lombardia	3174618	Sondrio	135	PPL	467
+consiglio di rumo	1	6534469	Consiglio di Rumo	46.1430	9.2933	IT	Lombardia	3174618	Como	1175	PPL	239
+consigny	1	3023862	Consigny	48.1667	5.4167	FR	Gran Este	11071622	Alta Marna	75	PPL	371
+consilvano	1	3178179	Consilvano	42.9167	13.3667	IT	Marche	3174004	Fermo	0	PPL	736
+consolana	1	8974498	Consolana	45.6927	11.2541	IT	Veneto	3164604	Vicenza	22	PPL	451
+consolata	1	8975529	Consolata	41.2365	14.1058	IT	Campania	3181042	Caserta	21	PPL	104
+consolation	0	3015509	Gournay-en-Bray	49.4828	1.7247	FR	Normandia	11071621	Senna marittima	6449	PPL	99
+consolation maisonnettes	1	3023860	Consolation-Maisonnettes	47.1582	6.6060	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	47	PPL	504
+console	1	8980012	Console	40.2613	17.9182	IT	Puglia	3169778	Lecce	15	PPL	27
+consona 1	1	8951028	Consona 1	38.0626	13.5006	IT	Sicilia	2523119	Palermo	372	PPL	181
+consonno	1	8976390	Consonno	45.7839	9.3928	IT	Lombardia	3174618	Lecco	20	PPL	634
+consorzio cella	1	9032018	Consorzio Cella	44.7668	10.1069	IT	Emilia-Romagna	3177401	Parma	22	PPL	145
+consorzio industriale bonifica valle del biferno	1	8962994	Consorzio Industriale Bonifica Valle del Biferno	41.9460	15.0001	IT	Molise	3173222	Campobasso	49	PPL	8
+consorzio mario negri sud	1	8971011	Consorzio Mario Negri Sud	42.2209	14.4440	IT	Abruzzo	3183560	Chieti	28	PPL	229
+consped italian leather	1	8983949	Consped - Italian Leather	41.0991	16.7348	IT	Puglia	3169778	Bari	6	PPLL	84
+constans	1	3023857	Constans	44.5034	1.4892	FR	Occitania	11071623	Lot	0	PPL	313
+constant	1	3023854	Constant	45.2933	2.0972	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Corrèze	0	PPL	596
+constant	1	3023855	Constant	44.9339	0.8840	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	183
+constant	1	3023856	Constant	44.5798	0.7188	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Lot-et-Garonne	0	PPL	129
+constante	0	3037282	Arbonne	43.4322	-1.5515	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Pirenei atlantici	1479	PPL	35
+constantia	0	3022826	Coutances	49.0454	-1.4452	FR	Normandia	11071621	Manica	9657	PPLA3	69
+constantine	1	8533364	Constantine	46.9183	7.0086	CH	Canton Vaud	2658182	distretto della Broye-Vully	0	PPL	510
+consuma	1	3178178	Consuma	43.7812	11.5959	IT	Toscana	3165361	Firenze	0	PPL	1017
+consuma	1	8967845	Consuma	44.1384	10.6758	IT	Toscana	3165361	Pistoia	34	PPL	1325
+containa	1	8965522	Containa	44.7377	11.7141	IT	Emilia-Romagna	3177401	Ferrara	40	PPL	2
+container terminal	1	8980037	Container Terminal	38.4577	15.9145	IT	Calabria	2525468	Reggio Calabria	15	PPL	6
+contalmaison	1	3023852	Contalmaison	50.0228	2.7312	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	99	PPL	125
+contamine	0	3023850	Contamine-sur-Arve	46.1422	6.3322	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	1634	PPL	478
+contamine sarzin	1	3023851	Contamine-Sarzin	46.0239	5.9841	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	382	PPL	517
+contamine sur arve	1	3023850	Contamine-sur-Arve	46.1422	6.3322	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	1634	PPL	478
+contamines montjoie	0	3001336	Les Contamines-Montjoie	45.8216	6.7287	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	1127	PPL	1176
+contane	1	8959348	Contane	44.9274	12.0481	IT	Emilia-Romagna	3177401	Ferrara	68	PPL	-3
+contarias	1	12277816	Contarias	45.1090	0.9269	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	227
+contarina	1	3219335	Contarina	45.0278	12.2286	IT	Veneto	3164604	Rovigo	0	PPL	-3
+contarina taglio	0	3165986	Taglio	45.0222	12.2108	IT	Veneto	3164604	Rovigo	14441	PPL	-1
+contarini pellizzari zannini	1	8953943	Contarini-Pellizzari-Zannini	45.8385	11.6863	IT	Veneto	3164604	Vicenza	157	PPL	139
+contault	1	3023849	Contault	48.9167	4.8000	FR	Gran Este	11071622	Marna	67	PPL	188
+contaut	1	3004443	Contaut	45.2137	-1.1263	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Gironda	0	PPL	18
+contay	1	3023848	Contay	50.0045	2.4754	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	356	PPL	55
+conte	0	2661129	Conthey	46.2237	7.3028	CH	Canton Vallese	2658205	Conthey District	8792	PPLA2	491
+conte	1	3023846	Conte	46.7484	6.0005	FR	Borgogna-Franca Contea	11071619	Giura	57	PPL	694
+conte	1	3023847	Conte	41.5060	9.2464	FR	Corsica	3023519	Corsica del Sud	0	PPL	69
+conte	1	8977797	Conte	41.6591	13.7140	IT	Lazio	3174976	Frosinone	18	PPL	526
+conte	1	8981615	Conte	45.8017	11.5897	IT	Veneto	3164604	Vicenza	12	PPL	690
+conte	1	9032682	Conte	45.7576	11.5533	IT	Veneto	3164604	Vicenza	14	PPL	350
+contea	1	8950513	Contea	43.8607	11.5288	IT	Toscana	3165361	Firenze	473	PPL	138
+contea	1	8957373	Contea	42.5193	12.6218	IT	Umbria	3165048	Terni	86	PPL	269
+contea	1	8964508	Contea	45.1322	11.9742	IT	Veneto	3164604	Rovigo	43	PPL	3
+contea di bergamo (medievale)	1	12225593	Contea di Bergamo (medievale)	45.6985	9.6625	IT	Lombardia	3174618	Bergamo	0	PPLH	305
+contebault	1	3023844	Contebault	47.2080	0.2430	FR	Centro-Valle della Loira	3027939	Indre e Loira	0	PPL	47
+conteisa	1	8984919	Conteisa	45.1535	7.8430	IT	Piemonte	3170831	Torino	0	PPLL	188
+contellena lovato	1	8960746	Contellena-Lovato	45.3198	11.5055	IT	Veneto	3164604	Vicenza	59	PPL	16
+conteneuil	1	12313699	Conteneuil	45.5758	-0.8561	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente-Maritime	0	PPL	53
+conteol	1	12308725	Contéol	45.6026	4.0078	FR	Alvernia-Rodano-Alpi	11071625	Loira	0	PPL	779
+conterico	1	8962296	Conterico	45.4338	9.4085	IT	Lombardia	3174618	Milano	51	PPL	100
+conters	1	2661130	Conters	46.9019	9.7991	CH	Cantone dei Grigioni	2660522	Region Prättigau / Davos	0	PPL	1115
+contes	1	3023841	Contes	50.4088	1.9602	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	344	PPL	20
+contes	1	3023842	Contes	43.8128	7.3144	FR	Provenza-Alpi-Costa Azzurra	2985244	Alpi Marittime	6864	PPL	256
+contescourt	1	3023840	Contescourt	49.7934	3.2315	FR	Nord-Passo di Calais-Piccardia	11071624	Aisne	76	PPL	95
+contesius	0	2661129	Conthey	46.2237	7.3028	CH	Canton Vallese	2658205	Conthey District	8792	PPLA2	491
+contessa	1	8950088	Contessa	39.4400	16.2157	IT	Calabria	2525468	Cosenza	599	PPL	222
+contessa entellina	1	2524940	Contessa Entellina	37.7300	13.1843	IT	Sicilia	2523119	Palermo	1754	PPLA3	571
+contessa soprana	1	9032636	Contessa Soprana	39.4405	16.1922	IT	Calabria	2525468	Cosenza	15	PPL	261
+contesse	1	8969427	Contesse	45.0889	9.7048	IT	Lombardia	3174618	Lodi	31	PPL	46
+contest	1	3023839	Contest	48.2621	-0.6567	FR	Paesi della Loira	2988289	Dipartimento della Mayenne	807	PPL	117
+conteville	1	3023834	Conteville	50.1786	2.0745	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	0	PPL	120
+conteville	1	3023835	Conteville	49.6944	1.6342	FR	Normandia	11071621	Senna marittima	0	PPL	245
+conteville	1	3023836	Conteville	49.6505	2.0489	FR	Nord-Passo di Calais-Piccardia	11071624	Oise	80	PPL	175
+conteville	1	3023837	Conteville	49.4178	0.3965	FR	Normandia	11071621	Eure	765	PPL	32
+conteville	1	3023838	Conteville	49.0889	-0.2368	FR	Normandia	11071621	Calvados	85	PPL	46
+conteville	1	3237321	Conteville	49.8492	0.6297	FR	Normandia	11071621	Senna marittima	0	PPL	71
+conteville en ternois	1	3023833	Conteville-en-Ternois	50.4333	2.3167	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	70	PPL	122
+conteville les boulogne	1	3023832	Conteville-lès-Boulogne	50.7443	1.7323	FR	Nord-Passo di Calais-Piccardia	11071624	Passo di Calais	449	PPL	32
+contezat	1	3023831	Contezat	45.0922	1.3458	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	301
+conthey	1	2661129	Conthey	46.2237	7.3028	CH	Canton Vallese	2658205	Conthey District	8792	PPLA2	491
+conthil	1	3023830	Conthil	48.8926	6.6613	FR	Gran Este	11071622	Mosella	174	PPL	246
+conti	1	3178170	Conti	42.9813	13.4065	IT	Marche	3174004	Fermo	0	PPL	477
+conti	1	8977220	Conti	44.4967	7.8569	IT	Piemonte	3170831	Cuneo	18	PPL	400
+conti	1	8978437	Conti	44.0814	10.4516	IT	Toscana	3165361	Lucca	17	PPL	221
+conti	1	8980994	Conti	46.1197	11.3060	IT	Trentino-Alto Adige	3165244	Trento	13	PPL	1172
+conti	1	8983232	Conti	44.4054	8.0787	IT	Piemonte	3170831	Cuneo	8	PPLL	592
+conti	1	9033056	Conti	44.8382	7.3509	IT	Piemonte	3170831	Torino	3	PPL	328
+conti i	1	8980783	Conti I	44.8396	7.3541	IT	Piemonte	3170831	Torino	13	PPL	327
+contigliano	1	3178169	Contigliano	42.4106	12.7720	IT	Lazio	3174976	Rieti	2230	PPLA3	488
+contiglianu	0	3178169	Contigliano	42.4106	12.7720	IT	Lazio	3174976	Rieti	2230	PPLA3	488
+contignaco cella	1	3178168	Contignaco-Cella	44.7833	9.9667	IT	Emilia-Romagna	3177401	Parma	48	PPL	228
+contignano	1	3178167	Contignano	42.9784	11.7399	IT	Toscana	3165361	Siena	270	PPL	479
+contigne	1	3023829	Contigné	47.7296	-0.5172	FR	Paesi della Loira	2988289	Maine e Loira	644	PPL	61
+contigny	1	3023828	Contigny	46.3529	3.3043	FR	Alvernia-Rodano-Alpi	11071625	Allier	573	PPL	231
+contile	1	8973924	Contile	44.6512	9.9036	IT	Emilia-Romagna	3177401	Parma	23	PPL	708
+contilianum	0	3178169	Contigliano	42.4106	12.7720	IT	Lazio	3174976	Rieti	2230	PPLA3	488
+contilly	1	3023827	Contilly	48.4009	0.3694	FR	Paesi della Loira	2988289	Sarthe	178	PPL	180
+contina	1	8981521	Contina	45.3464	8.9960	IT	Lombardia	3174618	Milano	12	PPL	106
+continassa	1	12023052	Continassa	45.1098	7.6329	IT	Piemonte	3170831	Torino	0	PPLX	266
+contine	1	8972486	Contine	45.5069	10.8715	IT	Veneto	3164604	Verona	25	PPL	130
+continvoir	1	3023826	Continvoir	47.3882	0.2176	FR	Centro-Valle della Loira	3027939	Indre e Loira	467	PPL	72
+contis les bains	1	3023823	Contis-les-Bains	44.0920	-1.3215	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Landes	0	PPL	12
+contis les marais	1	12311050	Contis Les Marais	44.0724	-1.2844	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Landes	0	PPL	13
+contis sud	1	12311047	Contis Sud	44.0826	-1.3129	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Landes	0	PPL	11
+contoire	1	3023822	Contoire	49.7212	2.5568	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	350	PPL	58
+contone	1	2661128	Contone	46.1509	8.9262	CH	Canton Ticino	2658370	Distretto di Locarno	788	PPL	202
+contornina	1	8952971	Contornina	45.5931	8.0751	IT	Piemonte	3170831	Biella	211	PPL	513
+contournat	1	3023821	Contournat	45.7009	3.2890	FR	Alvernia-Rodano-Alpi	11071625	Puy-de-Dôme	0	PPL	483
+contovello	1	3178165	Contovello	45.7017	13.7333	IT	Friuli Venezia Giulia	3176525	Trieste	0	PPL	250
+contra	1	2661127	Contra	46.1880	8.8407	CH	Canton Ticino	2658370	Distretto di Locarno	0	PPL	483
+contra	1	8954491	Contra'	45.6953	11.5186	IT	Veneto	3164604	Vicenza	136	PPL	104
+contra bosella	1	8965455	Contra' Bosella	45.6802	11.6297	IT	Veneto	3164604	Vicenza	40	PPL	63
+contra casetta	1	8966497	Contra' Casetta	45.4554	11.4355	IT	Veneto	3164604	Vicenza	37	PPL	43
+contra dei cani	1	8960935	Contra' dei Cani	45.7819	11.7303	IT	Veneto	3164604	Vicenza	58	PPL	112
+contra nova	1	8966136	Contrà Nova	45.0933	11.6526	IT	Veneto	3164604	Rovigo	38	PPL	4
+contra pelosi	1	8967303	Contra' Pelosi	45.4153	11.3615	IT	Veneto	3164604	Vicenza	35	PPL	32
+contrabbandiere, passo del	1	11075357	Contrabbandiere, Passo del	46.3744	8.3019	IT	Piemonte	3170831	Verbano-Cusio-Ossola	0	PASS	2545
+contrada	1	3178164	Contrada	40.8681	14.7775	IT	Campania	3181042	Avellino	2041	PPLA3	420
+contrada	1	8953131	Contrada	44.4459	8.1421	IT	Piemonte	3170831	Cuneo	204	PPL	366
+contrada	1	8959903	Contrada	44.3966	8.4853	IT	Liguria	3174725	Savona	64	PPL	280
+contrada abbazia	1	8978585	Contrada Abbazia	41.6136	14.7389	IT	Molise	3173222	Campobasso	17	PPL	784
+contrada acquasanta	1	8970460	Contrada Acquasanta	42.6610	13.9279	IT	Abruzzo	3183560	Teramo	29	PPL	145
+contrada ambele	1	8955982	Contrada Ambele	38.0911	15.8076	IT	Calabria	2525468	Reggio Calabria	105	PPL	891
+contrada angeli	1	9031439	Contrada Angeli	40.1615	18.1833	IT	Puglia	3169778	Lecce	35	PPL	67
+contrada angelini	1	8981531	Contrada Angelini	45.8029	9.6709	IT	Lombardia	3174618	Bergamo	12	PPL	332
+contrada anselmi	1	3178163	Contrada Anselmi	45.5833	11.1500	IT	Veneto	3164604	Verona	0	PPL	508
+contrada bagni	1	8964905	Contrada Bagni	41.2224	14.5215	IT	Campania	3181042	Benevento	42	PPL	55
+contrada battifoglia	1	8951710	Contrada Battifoglia	38.1559	15.1946	IT	Sicilia	2523119	Messina	291	PPL	19
+contrada belvedere	1	8958068	Contrada Belvedere	37.8039	13.2972	IT	Sicilia	2523119	Palermo	79	PPL	606
+contrada berardi	1	8977073	Contrada Berardi	40.8541	15.6330	IT	Basilicata	3182306	Potenza	19	PPL	545
+contrada biancari	1	9032993	Contrada Biancari	45.6344	11.0296	IT	Veneto	3164604	Verona	7	PPL	1082
+contrada biggeni	1	8962033	Contrada Biggeni	37.1149	15.1811	IT	Sicilia	2523119	Siracusa	53	PPL	166
+contrada broggio	1	3178162	Contrada Broggio	45.2667	11.1833	IT	Veneto	3164604	Verona	0	PPL	18
+contrada brutti	1	3178161	Contrada Brutti	45.6500	11.0500	IT	Veneto	3164604	Verona	0	PPL	1258
+contrada calamia	1	9033694	Contrada Calamia	39.5481	16.3704	IT	Calabria	2525468	Cosenza	50	PPL	802
+contrada calcasacco	1	9035409	Contrada Calcasacco	37.9718	13.7236	IT	Sicilia	2523119	Palermo	135	PPL	66
+contrada camerata	1	8981328	Contrada Camerata	39.7430	16.2586	IT	Calabria	2525468	Cosenza	13	PPL	80
+contrada campicelli	1	9031591	Contrada Campicelli	38.0973	15.7996	IT	Calabria	2525468	Reggio Calabria	31	PPL	1225
+contrada campo	1	8985566	Contrada Campo	37.7931	14.0168	IT	Sicilia	2523119	Palermo	0	PPLL	895
+contrada camporota	1	8970353	Contrada Camporota	43.3367	13.3382	IT	Marche	3174004	Macerata	29	PPL	179
+contrada canala (localita nardone)	1	8968914	Contrada Canala (Località Nardone)	41.9059	14.2813	IT	Molise	3173222	Isernia	32	PPL	661
+contrada canalcalmo	1	8963932	Contrada Canalcalmo	45.5855	12.6410	IT	Veneto	3164604	Venezia	45	PPL	1
+contrada cancelli zona industriale n 1	1	8970997	Contrada Cancelli Zona Industriale N.1	42.5194	13.9248	IT	Abruzzo	3183560	Teramo	28	PPL	131
+contrada cancelli zona industriale n 2	1	9034017	Contrada Cancelli Zona Industriale N.2	42.5143	13.9368	IT	Abruzzo	3183560	Teramo	25	PPL	121
+contrada cancrini	1	8969356	Contrada Cancrini	42.6645	13.9398	IT	Abruzzo	3183560	Teramo	31	PPL	172
+contrada cannellazza	1	8954824	Contrada Cannellazza	37.2606	14.9514	IT	Sicilia	2523119	Siracusa	128	PPL	61
+contrada canonica	1	8956904	Contrada Canonica	40.5474	15.6438	IT	Basilicata	3182306	Potenza	92	PPL	657
+contrada cantoni	1	8951017	Contrada Cantoni	38.1492	15.1787	IT	Sicilia	2523119	Messina	373	PPL	15
+contrada capitano	1	9033330	Contrada Capitano	38.0651	15.7770	IT	Calabria	2525468	Reggio Calabria	76	PPL	1043
+contrada capitolo	1	8958514	Contrada Capitolo	42.6364	14.0388	IT	Abruzzo	3183560	Teramo	75	PPL	24
+contrada carabona	1	9032283	Contrada Carabona	37.9148	12.8537	IT	Sicilia	2523119	Trapani	19	PPL	238
+contrada caracoli	1	8952969	Contrada Caracoli	37.9714	13.7309	IT	Sicilia	2523119	Palermo	211	PPL	69
+contrada cardeto nord	1	9035408	Contrada Cardeto Nord	38.1070	15.8002	IT	Calabria	2525468	Reggio Calabria	135	PPL	1231
+contrada cardeto sud taviano	1	9033669	Contrada Cardeto Sud-Taviano	38.0680	15.7854	IT	Calabria	2525468	Reggio Calabria	51	PPL	1079
+contrada carrarola	1	8954044	Contrada Carrarola	40.3498	15.6251	IT	Campania	3181042	Salerno	153	PPL	467
+contrada casabianca sud	1	8954745	Contrada Casabianca Sud	42.5254	13.9471	IT	Abruzzo	3183560	Teramo	130	PPL	277
+contrada casale di sotto	1	8981318	Contrada Casale di Sotto	40.7961	15.6687	IT	Basilicata	3182306	Potenza	13	PPL	749
+contrada casazza gruppilli	1	8954422	Contrada Casazza - Gruppilli	37.3013	15.0420	IT	Sicilia	2523119	Siracusa	139	PPL	129
+contrada case alberi	1	8985564	Contrada Case Alberì	37.7252	13.9823	IT	Sicilia	2523119	Palermo	0	PPLL	847
+contrada case bianche	1	8982338	Contrada Case Bianche	40.3255	15.0169	IT	Campania	3181042	Salerno	11	PPL	29
+contrada case nuove	1	8963800	Contrada Case Nuove	38.0791	15.1042	IT	Sicilia	2523119	Messina	46	PPL	329
+contrada case nuove	1	8978591	Contrada Case Nuove	40.8323	15.6782	IT	Basilicata	3182306	Potenza	17	PPL	496
+contrada castanea	1	9033557	Contrada Castanea	38.0946	15.8150	IT	Calabria	2525468	Reggio Calabria	57	PPL	997
+contrada castellano	1	9031590	Contrada Castellano	38.0905	15.7785	IT	Calabria	2525468	Reggio Calabria	31	PPL	908
+contrada castello	1	8974182	Contrada Castello	37.9113	12.8520	IT	Sicilia	2523119	Trapani	23	PPL	232
+contrada castello via lancellotta d	1	9033509	Contrada Castello-Via Lancellotta D.	41.6186	14.1327	IT	Molise	3173222	Isernia	60	PPL	581
+contrada catena	1	9032632	Contrada Catena	40.8391	15.6695	IT	Basilicata	3182306	Potenza	15	PPL	467
+contrada cesina	1	8950992	Contrada Cesina	40.9522	14.5554	IT	Campania	3181042	Napoli	376	PPL	81
+contrada chianche	1	9033422	Contrada Chianche	37.9729	13.7274	IT	Sicilia	2523119	Palermo	68	PPL	44
+contrada chiarera	1	9031130	Contrada Chiarera	37.9701	13.7203	IT	Sicilia	2523119	Palermo	49	PPL	92
+contrada chieti	1	9032280	Contrada Chieti	38.0862	15.7972	IT	Calabria	2525468	Reggio Calabria	19	PPL	717
+contrada chiosi	1	8967535	Contrada Chiosi	37.7996	13.3003	IT	Sicilia	2523119	Palermo	35	PPL	676
+contrada chiumputo	1	8975609	Contrada Chiumputo	38.0919	15.8133	IT	Calabria	2525468	Reggio Calabria	21	PPL	964
+contrada cicirelli	1	8956891	Contrada Cicirelli	40.3199	15.6608	IT	Campania	3181042	Salerno	92	PPL	544
+contrada cipollazzo	1	8982375	Contrada Cipollazzo	37.5752	12.9367	IT	Sicilia	2523119	Agrigento	11	PPL	11
+contrada cisterna	1	8956447	Contrada Cisterna	41.1542	14.8522	IT	Campania	3181042	Benevento	98	PPL	195
+contrada civitatomassa	1	9033220	Contrada Civitatomassa	42.3567	13.2839	IT	Abruzzo	3183560	dell’Aquila	92	PPL	688
+contrada cocco	1	3178160	Contrada Cocco	45.6333	11.2333	IT	Veneto	3164604	Vicenza	0	PPL	496
+contrada colachecco	1	9032781	Contrada Colachecco	38.0908	15.8187	IT	Calabria	2525468	Reggio Calabria	13	PPL	848
+contrada colle galli	1	8968371	Contrada Colle Galli	42.5420	13.9516	IT	Abruzzo	3183560	Teramo	33	PPL	334
+contrada colle san pietr0	1	8963246	Contrada Colle San Pietr0	42.6683	13.9364	IT	Abruzzo	3183560	Teramo	48	PPL	169
+contrada collepizzuto	1	8959709	Contrada Collepizzuto	42.2120	14.4139	IT	Abruzzo	3183560	Chieti	66	PPL	284
+contrada conicelle	1	8973505	Contrada Conicelle	39.8215	16.3130	IT	Calabria	2525468	Cosenza	24	PPL	422
+contrada croce	1	8958533	Contrada Croce	38.2060	15.3734	IT	Sicilia	2523119	Messina	75	PPL	122
+contrada croce	1	8979988	Contrada Croce	42.0713	13.3201	IT	Abruzzo	3183560	dell’Aquila	15	PPL	815
+contrada crocefisso	1	8961605	Contrada Crocefisso	40.0687	15.5017	IT	Campania	3181042	Salerno	55	PPL	36
+contrada crupazza	1	9032198	Contrada Crupazza	38.0835	15.7549	IT	Calabria	2525468	Reggio Calabria	20	PPL	739
+contrada d appolloni	1	8955850	Contrada d'Appolloni	42.3488	13.2713	IT	Abruzzo	3183560	dell’Aquila	107	PPL	698
+contrada da rigo	1	8971001	Contrada da Rigo	42.3544	13.9404	IT	Abruzzo	3183560	Pescara	28	PPL	304
+contrada da vicenne ii	1	9034313	Contrada da Vicenne II	42.3329	13.9081	IT	Abruzzo	3183560	Pescara	14	PPL	487
+contrada de simone	1	8967985	Contrada de Simone	38.0816	13.4559	IT	Sicilia	2523119	Palermo	34	PPL	41
+contrada dei muri	1	8959831	Contrada dei Muri	43.0088	12.2294	IT	Umbria	3165048	Perugia	65	PPL	251
+contrada della chiesa	1	3178159	Contrada della Chiesa	44.9492	10.0148	IT	Emilia-Romagna	3177401	Parma	85	PPL	47
+contrada demattia	1	8973455	Contrada Demattia	40.8867	14.8433	IT	Campania	3181042	Avellino	24	PPL	336
+contrada di bibano	1	8965785	Contrada di Bibano	45.6983	12.2849	IT	Veneto	3164604	Treviso	39	PPL	18
+contrada di sotto	1	3178158	Contrada di Sotto	46.2167	10.2000	IT	Lombardia	3174618	Sondrio	0	PPL	756
+contrada difesa i	1	9033816	Contrada Difesa I	38.7907	16.2132	IT	Calabria	2525468	Vibo Valentia	36	PPL	7
+contrada difesa ii	1	8949820	Contrada Difesa II	38.7974	16.2180	IT	Calabria	2525468	Vibo Valentia	715	PPL	5
+contrada donna	1	9033399	Contrada Donna	38.0954	15.7747	IT	Calabria	2525468	Reggio Calabria	70	PPL	1117
+contrada dosso valdiporro	1	9034182	Contrada Dosso Valdiporro	45.6193	11.0535	IT	Veneto	3164604	Verona	18	PPL	1020
+contrada dromo	1	9032470	Contrada Dromo	38.0844	15.8049	IT	Calabria	2525468	Reggio Calabria	17	PPL	811
+contrada duca	1	8985492	Contrada Duca	40.2069	18.1463	IT	Puglia	3169778	Lecce	0	PPLL	50
+contrada faveliti	1	9033251	Contrada Faveliti	38.0800	15.7701	IT	Calabria	2525468	Reggio Calabria	88	PPL	628
+contrada felicita	1	8980055	Contrada Felicita	37.9800	14.3660	IT	Sicilia	2523119	Messina	15	PPL	591
+contrada fellapane	1	8952735	Contrada Fellapane	40.9309	14.1385	IT	Campania	3181042	Napoli	220	PPL	86
+contrada femina arsa	1	8968346	Contrada Femina Arsa	41.1443	14.9222	IT	Campania	3181042	Benevento	33	PPL	227
+contrada fiori	1	9032638	Contrada Fiori	37.5755	12.9623	IT	Sicilia	2523119	Agrigento	15	PPL	17
+contrada fiori sud	1	8956833	Contrada Fiori Sud	37.5692	12.9553	IT	Sicilia	2523119	Agrigento	93	PPL	8
+contrada fiumicello	1	9033279	Contrada Fiumicello	40.3058	15.6536	IT	Campania	3181042	Salerno	82	PPL	481
+contrada foggia i	1	8965969	Contrada Foggia I	37.4998	13.0285	IT	Sicilia	2523119	Agrigento	39	PPL	55
+contrada fontanelle	1	9031397	Contrada Fontanelle	40.3120	15.6371	IT	Campania	3181042	Salerno	36	PPL	472
+contrada fonte doti	1	8973471	Contrada Fonte Doti	42.6608	13.9435	IT	Abruzzo	3183560	Teramo	24	PPL	146
+contrada fossa dell aglio	1	13664893	Contrada Fossa Dell'aglio	37.6288	14.8877	IT	Sicilia	2523119	Catania	106	PPLL	479
+contrada fratta	1	8971018	Contrada Fratta	41.0417	16.7369	IT	Puglia	3169778	Bari	28	PPL	132
+contrada gangemi	1	8955215	Contrada Gangemi	39.2339	17.1020	IT	Calabria	2525468	Crotone	119	PPL	17
+contrada garcea	1	9031171	Contrada Garcea	38.0917	15.7753	IT	Calabria	2525468	Reggio Calabria	47	PPL	959
+contrada gatto	1	8969933	Contrada Gatto	37.9820	13.8854	IT	Sicilia	2523119	Palermo	30	PPL	136
+contrada giammaria	1	8985560	Contrada Giammaria	37.7881	13.2076	IT	Sicilia	2523119	Palermo	0	PPLL	463
+contrada giarromesi	1	8964080	Contrada Giarromesi	38.0494	13.2959	IT	Sicilia	2523119	Palermo	45	PPL	280
+contrada gigliolo	1	8972930	Contrada Gigliolo	39.2623	17.0944	IT	Calabria	2525468	Crotone	25	PPL	33
+contrada grara	1	8959113	Contrada Grara	40.1213	15.7810	IT	Basilicata	3182306	Potenza	70	PPL	779
+contrada guardiola	1	8980713	Contrada Guardiola	39.8726	18.3954	IT	Puglia	3169778	Lecce	14	PPL	59
+contrada guidano	1	8950975	Contrada Guidano	40.1850	18.1449	IT	Puglia	3169778	Lecce	379	PPL	83
+contrada gurisa	1	8962026	Contrada Gurisa	39.5915	16.3413	IT	Calabria	2525468	Cosenza	53	PPL	356
+contrada hangar	1	8961211	Contrada Hangar	40.0815	15.4982	IT	Campania	3181042	Salerno	57	PPL	14
+contrada i monti	1	3178157	Contrada i Monti	43.4833	13.3333	IT	Marche	3174004	Ancona	0	PPL	194
+contrada iannacci	1	8967564	Contrada Iannacci	38.6309	16.0340	IT	Calabria	2525468	Vibo Valentia	35	PPL	553
+contrada iemallo	1	8964353	Contrada Iemallo	38.0924	16.0787	IT	Calabria	2525468	Reggio Calabria	44	PPL	414
+contrada iettacore	1	8967931	Contrada Iettacore	41.1724	14.8574	IT	Campania	3181042	Benevento	34	PPL	233
+contrada impiso	1	9032192	Contrada Impiso	40.3258	15.0276	IT	Campania	3181042	Salerno	20	PPL	66
+contrada inficherna	1	8977110	Contrada Inficherna	37.3076	13.5299	IT	Sicilia	2523119	Agrigento	19	PPL	187
+contrada iriti	1	9032281	Contrada Iriti	38.0851	15.8144	IT	Calabria	2525468	Reggio Calabria	19	PPL	918
+contrada isca	1	9033648	Contrada Isca	40.5323	15.6020	IT	Basilicata	3182306	Potenza	52	PPL	508
+contrada izzi	1	8957287	Contrada Izzi	41.0614	14.7047	IT	Campania	3181042	Benevento	87	PPL	215
+contrada la vecchia	1	8968325	Contrada la Vecchia	41.7815	12.9506	IT	Lazio	3174976	Roma	33	PPL	278
+contrada la voleca	1	9032029	Contrada la Voleca	41.7641	12.9723	IT	Lazio	3174976	Roma	22	PPL	219
+contrada lacco	1	2524939	Contrada Lacco	38.1392	14.8504	IT	Sicilia	2523119	Messina	0	PPL	425
+contrada lacco	1	8985572	Contrada Lacco	38.1079	15.1452	IT	Sicilia	2523119	Messina	0	PPLL	55
+contrada lacco	1	9032932	Contrada Lacco	38.0953	15.8221	IT	Calabria	2525468	Reggio Calabria	10	PPL	936
+contrada lamberta	1	9031248	Contrada Lamberta	38.0907	15.7956	IT	Calabria	2525468	Reggio Calabria	43	PPL	927
+contrada liddu	1	8967980	Contrada Liddu	38.0723	15.7924	IT	Calabria	2525468	Reggio Calabria	34	PPL	1108
+contrada liso	1	9033670	Contrada Liso	38.0877	15.7782	IT	Calabria	2525468	Reggio Calabria	51	PPL	694
+contrada loddini	1	9032842	Contrada Loddini	38.0930	15.8195	IT	Calabria	2525468	Reggio Calabria	12	PPL	890
+contrada lupinata	1	8955203	Contrada Lupinata	40.0962	15.5151	IT	Campania	3181042	Salerno	119	PPL	234
+contrada macchitelle	1	8964609	Contrada Macchitelle	40.6153	15.2802	IT	Campania	3181042	Salerno	43	PPL	179
+contrada macere	1	8971056	Contrada Macere	41.7286	14.3875	IT	Molise	3173222	Isernia	28	PPL	902
+contrada maffina	1	9031935	Contrada Maffina	46.1802	10.0017	IT	Lombardia	3174618	Sondrio	23	PPL	654
+contrada malacrino	1	9031974	Contrada Malacrinò	38.0778	15.7706	IT	Calabria	2525468	Reggio Calabria	23	PPL	731
+contrada malepasso	1	8956371	Contrada Malepasso	40.9881	15.4645	IT	Campania	3181042	Avellino	99	PPL	769
+contrada mallamaci	1	8967530	Contrada Mallamaci	38.0825	15.7875	IT	Calabria	2525468	Reggio Calabria	35	PPL	763
+contrada mannarella	1	8961824	Contrada Mannarella	38.0706	15.7619	IT	Calabria	2525468	Reggio Calabria	54	PPL	876
+contrada marcella	1	8974378	Contrada Marcella	45.4181	10.3549	IT	Lombardia	3174618	Brescia	22	PPL	101
+contrada marcianese	1	8961028	Contrada Marcianese	42.2112	14.3807	IT	Abruzzo	3183560	Chieti	58	PPL	348
+contrada marciano	1	9032626	Contrada Marciano	42.5431	13.9052	IT	Abruzzo	3183560	Teramo	15	PPL	320
+contrada maria	1	8960517	Contrada Marià	38.0580	14.9739	IT	Sicilia	2523119	Messina	61	PPL	488
+contrada marri	1	8970459	Contrada Marri	42.5668	13.9171	IT	Abruzzo	3183560	Teramo	29	PPL	235
+contrada martinelli	1	8983441	Contrada Martinelli	43.6647	10.5874	IT	Toscana	3165361	Pisa	8	PPLL	11
+contrada maruca	1	8956252	Contrada Maruca	38.9340	16.2260	IT	Calabria	2525468	Catanzaro	101	PPL	10
+contrada mellitto	1	8974846	Contrada Mellitto	40.9377	16.6608	IT	Puglia	3169778	Bari	22	PPL	361
+contrada micone	1	8980089	Contrada Micone	38.5197	16.3248	IT	Calabria	2525468	Vibo Valentia	15	PPL	1005
+contrada miracolo	1	8974155	Contrada Miracolo	40.8340	15.6645	IT	Basilicata	3182306	Potenza	23	PPL	522
+contrada mizzofato	1	8974170	Contrada Mizzofato	39.6224	16.4146	IT	Calabria	2525468	Cosenza	23	PPL	104
+contrada monteron	1	8962614	Contrada Monteron	45.7257	12.9692	IT	Veneto	3164604	Venezia	50	PPL	-3
+contrada montesanto	1	8970968	Contrada Montesanto	41.1566	14.8713	IT	Campania	3181042	Benevento	28	PPL	331
+contrada nastasi	1	8984601	Contrada Nastasi	37.9951	14.1280	IT	Sicilia	2523119	Palermo	3	PPLL	449
+contrada nasuti	1	8957789	Contrada Nasuti	42.2227	14.3621	IT	Abruzzo	3183560	Chieti	82	PPL	209
+contrada nero	1	8981331	Contrada Nero	39.0923	16.4868	IT	Calabria	2525468	Catanzaro	13	PPL	1156
+contrada nero (ind estrattiva)	1	9034526	Contrada Nero (Ind. Estrattiva)	39.1006	16.4802	IT	Calabria	2525468	Catanzaro	0	PPL	1139
+contrada noce bassa	1	9033409	Contrada Noce Bassa	40.2992	14.9953	IT	Campania	3181042	Salerno	69	PPL	126
+contrada noce del conte	1	8954697	Contrada Noce del Conte	40.3219	15.6451	IT	Campania	3181042	Salerno	131	PPL	502
+contrada notaro iaco	1	8957299	Contrada Notaro Iaco	40.1716	18.1484	IT	Puglia	3169778	Lecce	87	PPL	74
+contrada olmelli	1	8971601	Contrada Olmelli	38.4746	16.0208	IT	Calabria	2525468	Reggio Calabria	27	PPL	45
+contrada orticelli	1	9033395	Contrada Orticelli	41.1592	14.8955	IT	Campania	3181042	Benevento	70	PPL	295
+contrada pacifici	1	8958042	Contrada Pacifici	42.3923	12.5657	IT	Umbria	3165048	Terni	79	PPL	309
+contrada palazzo soccorso	1	8960844	Contrada Palazzo Soccorso	40.3356	15.2494	IT	Campania	3181042	Salerno	59	PPL	610
+contrada pannicaro	1	8967517	Contrada Pannicaro	40.7695	15.4680	IT	Basilicata	3182306	Potenza	35	PPL	615
+contrada pantanelle campo di rato	1	8956827	Contrada Pantanelle-Campo di Rato	40.5668	15.6125	IT	Basilicata	3182306	Potenza	93	PPL	763
+contrada pantano	1	8954147	Contrada Pantano	38.0812	15.7737	IT	Calabria	2525468	Reggio Calabria	149	PPL	700
+contrada paolo borsellino	1	8969890	Contrada Paolo Borsellino	42.0753	13.5892	IT	Abruzzo	3183560	dell’Aquila	30	PPL	873
+contrada paradisi	1	8972219	Contrada Paradisi	40.2038	18.1521	IT	Puglia	3169778	Lecce	26	PPL	56
+contrada perciata	1	8983154	Contrada Perciata	37.6465	14.4207	IT	Sicilia	2523119	Enna	9	PPLL	719
+contrada piani	1	8958986	Contrada Piani	40.1631	18.1976	IT	Puglia	3169778	Lecce	71	PPL	70
+contrada pianibianchi	1	8972064	Contrada Pianibianchi	43.1939	13.2729	IT	Marche	3174004	Macerata	26	PPL	211
+contrada piano	1	8965255	Contrada Piano	40.9385	14.8323	IT	Campania	3181042	Avellino	41	PPL	296
+contrada piano dei prati	1	8964633	Contrada Piano dei Prati	40.5528	15.6355	IT	Basilicata	3182306	Potenza	43	PPL	640
+contrada piano grasso i	1	9032276	Contrada Piano Grasso I	40.6258	15.2680	IT	Campania	3181042	Salerno	19	PPL	190
+contrada piano san vito	1	8970990	Contrada Piano San Vito	40.6170	15.2615	IT	Campania	3181042	Salerno	28	PPL	170
+contrada piano semente	1	12489740	Piano Semente 87050 Marzi (CS)	39.1621	16.3473	IT	Calabria	2525468	Cosenza	10	PPLL	680
+contrada piraino	1	9031863	Contrada Piraino	38.0929	15.8254	IT	Calabria	2525468	Reggio Calabria	25	PPL	914
+contrada piscicolo	1	8964321	Contrada Piscicolo	40.3242	15.0221	IT	Campania	3181042	Salerno	44	PPL	79
+contrada pistavecchia	1	8952377	Contrada Pistavecchia	37.9825	13.8423	IT	Sicilia	2523119	Palermo	239	PPL	4
+contrada plavignano	1	8967084	Contrada Plavignano	42.5107	13.9532	IT	Abruzzo	3183560	Teramo	36	PPL	119
+contrada porcini	1	8972201	Contrada Porcini	42.0561	13.3250	IT	Abruzzo	3183560	dell’Aquila	26	PPL	719
+contrada poria	1	9033470	Contrada Poria	40.0916	15.5228	IT	Campania	3181042	Salerno	63	PPL	182
+contrada pratelli	1	8980558	Contrada Pratelli	43.4877	13.0569	IT	Marche	3174004	Ancona	14	PPL	374
+contrada procisa vecchia	1	8972830	Contrada Procisa Vecchia	40.8930	15.2079	IT	Campania	3181042	Avellino	25	PPL	547
+contrada procisa vecchia 1	1	9034057	Contrada Procisa Vecchia 1	40.8886	15.1992	IT	Campania	3181042	Avellino	23	PPL	620
+contrada rais gerbi	1	8983964	Contrada Rais-Gerbi	38.0258	14.1489	IT	Sicilia	2523119	Palermo	6	PPLL	36
+contrada ramiera	1	8956043	Contrada Ramiera	40.9230	14.8474	IT	Campania	3181042	Avellino	104	PPL	350
+contrada re di coppe	1	8953529	Contrada Re di Coppe	42.2086	14.4117	IT	Abruzzo	3183560	Chieti	178	PPL	296
+contrada rebuttone	1	8972237	Contrada Rebuttone	38.0281	13.3317	IT	Sicilia	2523119	Palermo	26	PPL	695
+contrada ributino	1	8974006	Contrada Ributino	43.2071	13.2994	IT	Marche	3174004	Macerata	23	PPL	193
+contrada ridente	1	8977887	Contrada Ridente	38.1822	14.9303	IT	Sicilia	2523119	Messina	18	PPL	34
+contrada rinazza	1	9033652	Contrada Rinazza	38.0718	15.7779	IT	Calabria	2525468	Reggio Calabria	52	PPL	995
+contrada riposo	1	8969918	Contrada Riposo	39.2149	16.3395	IT	Calabria	2525468	Cosenza	30	PPL	808
+contrada rizzacorno	1	9033839	Contrada Rizzacorno	42.1689	14.4033	IT	Abruzzo	3183560	Chieti	34	PPL	149
+contrada rizzacorno i	1	8964333	Contrada Rizzacorno I	42.1736	14.3965	IT	Abruzzo	3183560	Chieti	44	PPL	168
+contrada ronchiel	1	3178156	Contrada Ronchiel	45.2167	11.1667	IT	Veneto	3164604	Verona	0	PPL	15
+contrada s arcangelo	1	8967069	Contrada S. Arcangelo	41.1943	14.9192	IT	Campania	3181042	Benevento	36	PPL	479
+contrada san francesco	1	8974158	Contrada San Francesco	40.7632	16.1116	IT	Basilicata	3182306	Potenza	23	PPL	261
+contrada san giovanni	1	8954014	Contrada San Giovanni	40.4693	17.3460	IT	Puglia	3169778	Taranto	154	PPL	24
+contrada san giuseppe	1	8970484	Contrada San Giuseppe	40.1883	18.1745	IT	Puglia	3169778	Lecce	29	PPL	68
+contrada san iorio	1	9031437	Contrada San Iorio	42.2336	14.3712	IT	Abruzzo	3183560	Chieti	35	PPL	174
+contrada san marco	1	8951074	Contrada San Marco	37.5008	13.0409	IT	Sicilia	2523119	Agrigento	365	PPL	49
+contrada san marco	1	8953957	Contrada San Marco	39.2401	16.3146	IT	Calabria	2525468	Cosenza	157	PPL	564
+contrada san reparata	1	9031971	Contrada San Reparata	42.8011	13.6906	IT	Abruzzo	3183560	Teramo	23	PPL	322
+contrada sant amato	1	8967502	Contrada Sant'Amato	42.2349	14.3623	IT	Abruzzo	3183560	Chieti	35	PPL	244
+contrada sant andrea	1	8964338	Contrada Sant'Andrea	41.4996	14.7197	IT	Molise	3173222	Campobasso	44	PPL	660
+contrada sant anna i	1	9033443	Contrada Sant'Anna I	39.0166	17.0732	IT	Calabria	2525468	Crotone	66	PPL	160
+contrada sant anna iii	1	9033815	Contrada Sant'Anna III	39.0122	17.0698	IT	Calabria	2525468	Crotone	36	PPL	161
+contrada sant anna iv	1	8949769	Contrada Sant'Anna Iv	39.0002	17.0698	IT	Calabria	2525468	Crotone	744	PPL	159
+contrada sant antonio	1	8961229	Contrada Sant'Antonio	38.2097	15.3722	IT	Sicilia	2523119	Messina	57	PPL	89
+contrada sant elena	1	8966662	Contrada Sant'Elena	41.1578	14.9127	IT	Campania	3181042	Benevento	37	PPL	372
+contrada sant elia	1	8952946	Contrada Sant'Elia	40.7675	17.3157	IT	Puglia	3169778	Bari	212	PPL	385
+contrada sant elia	1	9033245	Contrada Sant'Elia	38.0824	15.7825	IT	Calabria	2525468	Reggio Calabria	89	PPL	744
+contrada santa cenere	1	8973515	Contrada Santa Cenere	38.9199	16.6760	IT	Calabria	2525468	Catanzaro	24	PPL	85
+contrada santoro	1	8968895	Contrada Santoro	38.0383	13.5573	IT	Sicilia	2523119	Palermo	32	PPL	72
+contrada scala	1	9032282	Contrada Scala	38.0769	15.7769	IT	Calabria	2525468	Reggio Calabria	19	PPL	893
+contrada scalo ferroviario	1	8962991	Contrada Scalo Ferroviario	41.6224	14.6993	IT	Molise	3173222	Campobasso	49	PPL	812
+contrada scandole	1	8983332	Contrada Scandole	45.6550	11.0206	IT	Veneto	3164604	Verona	8	PPLL	1122
+contrada sclano	1	8961631	Contrada Sclanò	38.0719	15.8183	IT	Calabria	2525468	Reggio Calabria	55	PPL	1178
+contrada scorpio galatina	1	9031170	Contrada Scorpio-Galatina	40.1626	18.1483	IT	Puglia	3169778	Lecce	47	PPL	68
+contrada scorpio noha	1	9031507	Contrada Scorpio-Noha	40.1585	18.1550	IT	Puglia	3169778	Lecce	33	PPL	73
+contrada serra	1	8973500	Contrada Serra	40.5482	15.6292	IT	Basilicata	3182306	Potenza	24	PPL	664
+contrada serralta (ind estrattiva)	1	8985538	Contrada Serralta (Ind. Estrattiva)	39.0483	16.4978	IT	Calabria	2525468	Catanzaro	0	PPLL	1131
+contrada serre	1	8983129	Contrada Serre	42.1739	14.4521	IT	Abruzzo	3183560	Chieti	9	PPLL	64
+contrada sisto	1	8964635	Contrada Sisto	39.7694	16.3735	IT	Calabria	2525468	Cosenza	43	PPL	93
+contrada sopracanale	1	8961425	Contrada Sopracanale	37.4759	13.5584	IT	Sicilia	2523119	Agrigento	56	PPL	270
+contrada speciale	1	8963795	Contrada Speciale	37.9805	13.6063	IT	Sicilia	2523119	Palermo	46	PPL	315
+contrada spina	1	8982774	Contrada Spina	40.1551	18.1193	IT	Puglia	3169778	Lecce	10	PPLL	62
+contrada spinasanta	1	8980727	Contrada Spinasanta	37.8956	13.8119	IT	Sicilia	2523119	Palermo	14	PPL	317
+contrada spineta	1	8972220	Contrada Spineta	40.8655	15.6333	IT	Basilicata	3182306	Potenza	26	PPL	460
+contrada stara	1	9032782	Contrada Starà	38.0767	15.7746	IT	Calabria	2525468	Reggio Calabria	13	PPL	871
+contrada stella	1	8952894	Contrada Stella	37.6721	12.8072	IT	Sicilia	2523119	Trapani	214	PPL	152
+contrada suore	1	3178155	Contrada Suore	45.1500	11.2833	IT	Veneto	3164604	Verona	0	PPL	9
+contrada survi	1	8960671	Contrada Survì	38.0811	15.7584	IT	Calabria	2525468	Reggio Calabria	60	PPL	656
+contrada tala	1	8965311	Contrada Talà	37.1621	15.1666	IT	Sicilia	2523119	Siracusa	41	PPL	79
+contrada tander	1	9033082	Contrada Tander	45.6353	11.0189	IT	Veneto	3164604	Verona	2	PPL	1062
+contrada taverna	1	8659143	Contrada Taverna	38.6128	16.5583	IT	Calabria	2525468	Catanzaro	19	PPL	5
+contrada taverne pugliese	1	8975594	Contrada Taverne Pugliese	40.7643	15.5244	IT	Basilicata	3182306	Potenza	21	PPL	771
+contrada tenna	1	8951035	Contrada Tenna	43.1524	13.6266	IT	Marche	3174004	Fermo	370	PPL	105
+contrada terusa	1	9033653	Contrada Terusa	38.0801	15.7775	IT	Calabria	2525468	Reggio Calabria	52	PPL	785
+contrada torre i	1	9035403	Contrada Torre I	41.1598	14.9101	IT	Campania	3181042	Benevento	140	PPL	366
+contrada torre ii	1	8952651	Contrada Torre II	41.1597	14.9057	IT	Campania	3181042	Benevento	224	PPL	353
+contrada torre marino	1	9033567	Contrada Torre Marino	42.2105	14.3752	IT	Abruzzo	3183560	Chieti	56	PPL	324
+contrada torre monte i	1	9031806	Contrada Torre Monte I	41.1703	14.9075	IT	Campania	3181042	Benevento	26	PPL	353
+contrada torre monte ii	1	9033337	Contrada Torre Monte II	41.1658	14.9024	IT	Campania	3181042	Benevento	75	PPL	350
+contrada torre(zona artigianale)	1	8981341	Contrada Torre(Zona Artigianale)	38.0049	14.3441	IT	Sicilia	2523119	Messina	13	PPL	42
+contrada torrettella	1	8956599	Contrada Torrettella	38.0365	13.2756	IT	Sicilia	2523119	Palermo	96	PPL	524
+contrada torricelli	1	12023147	Contrada Torricelli	40.8990	14.2145	IT	Campania	3181042	Napoli	0	PPLX	143
+contrada tradimento	1	8953251	Contrada Tradimento	37.5033	13.0225	IT	Sicilia	2523119	Agrigento	201	PPL	78
+contrada turi	1	8967965	Contrada Turi	40.9592	17.1041	IT	Puglia	3169778	Bari	34	PPL	198
+contrada valle	1	8959022	Contrada Valle	46.1748	10.0127	IT	Lombardia	3174618	Sondrio	70	PPL	617
+contrada valle	1	8966994	Contrada-Valle	43.1205	12.9516	IT	Marche	3174004	Macerata	36	PPL	670
+contrada vattiato	1	8978665	Contrada Vattiato	39.0203	16.9595	IT	Calabria	2525468	Crotone	17	PPL	67
+contrada venedise	1	8983484	Contrada Venedise	36.7915	11.9581	IT	Sicilia	2523119	Trapani	8	PPLL	163
+contrada vigna la noce	1	8967109	Contrada Vigna la Noce	40.5636	15.6235	IT	Basilicata	3182306	Potenza	36	PPL	703
+contrada villa pasquini	1	9034293	Contrada Villa Pasquini	42.1771	14.4202	IT	Abruzzo	3183560	Chieti	15	PPL	112
+contrada viola	1	8964945	Contrada Viola	40.0065	15.9724	IT	Basilicata	3182306	Potenza	42	PPL	533
+contrada zafa	1	8973560	Contrada Zafà	38.6207	16.0044	IT	Calabria	2525468	Vibo Valentia	24	PPL	593
+contrada zappino	1	8983972	Contrada Zappino	37.7301	15.1060	IT	Sicilia	2523119	Catania	6	PPLL	876
+contradada inforcata	1	8985518	Contradada Inforcata	40.5106	16.5955	IT	Basilicata	3182306	Matera	0	PPLL	358
+contradada manferrara piscatore(zona paip)	1	8983733	Contradada Manferrara-Piscatore(Zona Paip)	40.5370	16.4980	IT	Basilicata	3182306	Matera	7	PPLL	471
+contrade noci diamale	1	8966329	Contrade Noci-Diamale	38.9278	16.6851	IT	Calabria	2525468	Catanzaro	38	PPL	197
+contradone di sotto	1	8960443	Contradone di Sotto	44.9886	9.8560	IT	Emilia-Romagna	3177401	Piacenza	61	PPL	58
+contradone sopra	1	9032439	Contradone Sopra	44.9829	9.8499	IT	Emilia-Romagna	3177401	Piacenza	17	PPL	59
+contrapo	1	8951578	Contrapo'	44.8417	11.7223	IT	Emilia-Romagna	3177401	Ferrara	303	PPL	4
+contrasto	1	8985580	Contrasto	37.6484	14.8074	IT	Sicilia	2523119	Catania	0	PPLL	224
+contray	1	3023819	Contray	47.1229	0.2002	FR	Centro-Valle della Loira	3027939	Indre e Loira	0	PPL	65
+contrazy	1	3023818	Contrazy	43.0599	1.2140	FR	Occitania	11071623	Ariège	88	PPL	557
+contre	1	3023816	Contre	49.7477	2.0963	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	92	PPL	68
+contre	1	3023817	Contré	46.0127	-0.2839	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente-Maritime	153	PPL	89
+contrebbia nuova	1	8953147	Contrebbia Nuova	45.0708	9.6303	IT	Emilia-Romagna	3177401	Piacenza	204	PPL	52
+contreglise	1	3023815	Contréglise	47.8255	6.0363	FR	Borgogna-Franca Contea	11071619	Alta Saona	125	PPL	249
+contremoulins	1	3023814	Contremoulins	49.7259	0.4278	FR	Normandia	11071621	Senna marittima	218	PPL	108
+contres	1	3023812	Contres	47.4175	1.4285	FR	Centro-Valle della Loira	3027939	Loir-et-Cher	3406	PPL	99
+contres	1	3023813	Contres	46.8688	2.4890	FR	Centro-Valle della Loira	3027939	Cher	31	PPL	164
+contres en vairais	1	3023811	Contres-en-Vairais	48.2823	0.4912	FR	Paesi della Loira	2988289	Sarthe	0	PPL	101
+contresol	1	12321827	Contresol	46.3603	3.8260	FR	Alvernia-Rodano-Alpi	11071625	Allier	0	PPL	310
+contreuve	1	3023810	Contreuve	49.3613	4.6261	FR	Gran Este	11071622	Ardenne	74	PPL	108
+contrevoz	1	3023809	Contrevoz	45.8062	5.6271	FR	Alvernia-Rodano-Alpi	11071625	Ain	472	PPL	371
+contrexeville	1	3023808	Contrexéville	48.1842	5.8957	FR	Gran Este	11071622	Vosgi	4181	PPL	350
+contri	1	8971944	Contri	45.6020	11.7195	IT	Veneto	3164604	Padova	26	PPL	34
+contri di sopra	1	9032815	Contri di Sopra	45.8958	11.6406	IT	Veneto	3164604	Vicenza	12	PPL	923
+contri sotto	1	8973166	Contri Sotto	45.8931	11.6416	IT	Veneto	3164604	Vicenza	24	PPL	914
+contrieres	1	3023807	Contrières	48.9868	-1.4308	FR	Normandia	11071621	Manica	344	PPL	55
+contrin	1	8977505	Contrin	46.5061	11.9228	IT	Veneto	3164604	Belluno	18	PPL	1696
+contrisson	1	3023806	Contrisson	48.8034	4.9557	FR	Gran Este	11071622	Mosa	691	PPL	134
+controal	1	3023805	Controal	47.9113	-3.5439	FR	Bretagna	3030293	Finistère	0	PPL	83
+controfino	1	8969354	Controfino	42.5287	13.8951	IT	Abruzzo	3183560	Teramo	31	PPL	167
+controguerra	1	3178153	Controguerra	42.8540	13.8178	IT	Abruzzo	3183560	Teramo	1063	PPLA3	267
+contron	1	3220249	Contron	46.2345	12.4881	IT	Friuli Venezia Giulia	3176525	Pordenone	6	PPL	472
+controne	1	3178152	Controne	40.5102	15.2040	IT	Campania	3181042	Salerno	666	PPLA3	200
+contura	1	2524935	Contura	38.1045	14.8973	IT	Sicilia	2523119	Messina	169	PPL	588
+contura	1	8967987	Contura	38.1011	14.7350	IT	Sicilia	2523119	Messina	34	PPL	76
+contura	1	8974219	Contura	38.6460	15.8468	IT	Calabria	2525468	Vibo Valentia	23	PPL	59
+contura	1	9031510	Contura	38.0613	14.8151	IT	Sicilia	2523119	Messina	33	PPL	397
+contura superiore	1	8959265	Contura Superiore	37.9411	15.3233	IT	Sicilia	2523119	Messina	69	PPL	82
+contursi terme	1	3178151	Contursi Terme	40.6503	15.2416	IT	Campania	3181042	Salerno	1865	PPLA3	250
+conty	1	3023804	Conty	49.7410	2.1512	FR	Nord-Passo di Calais-Piccardia	11071624	Somme	1727	PPL	63
+contz les bains	1	3023803	Contz-les-Bains	49.4532	6.3453	FR	Gran Este	11071622	Mosella	466	PPL	159
+convalle	1	8955627	Convalle	43.9528	10.4167	IT	Toscana	3165361	Lucca	110	PPL	342
+conveau	1	3023802	Conveau	48.1667	-3.5667	FR	Bretagna	3030293	Morbihan	0	PPL	220
+conventello	1	3215497	Conventello	44.5033	12.1003	IT	Emilia-Romagna	3177401	Ravenna	0	PPL	2
+conventi	1	8968336	Conventi	41.3582	13.8599	IT	Lazio	3174976	Frosinone	33	PPL	44
+convento	1	12322944	Convento	42.4342	9.2999	FR	Corsica	3023519	Corsica settentrionale	0	PPL	783
+convento	1	3178148	Convento	44.0000	12.4333	IT	Emilia-Romagna	3177401	Rimini	0	PPL	107
+convento	1	3178149	Convento	40.3667	18.0667	IT	Puglia	3169778	Lecce	0	PPL	25
+convento	1	8953571	Convento	43.1921	13.3821	IT	Marche	3174004	Macerata	175	PPL	229
+convento	1	8959253	Convento	41.4569	14.7086	IT	Molise	3173222	Campobasso	69	PPL	734
+convento	1	8963129	Convento	45.3267	12.0158	IT	Veneto	3164604	Padova	48	PPL	2
+convento	1	8963874	Convento	45.4953	10.0131	IT	Lombardia	3174618	Brescia	45	PPL	117
+convento	1	8964258	Convento	44.3303	11.6613	IT	Emilia-Romagna	3177401	Bologna	44	PPL	81
+convento	1	8978802	Convento	45.7510	7.3777	IT	Valle d'Aosta	3164857	Aosta	16	PPL	724
+convento	1	8981166	Convento	44.9287	12.0851	IT	Emilia-Romagna	3177401	Ferrara	13	PPL	-4
+convento	1	8983777	Convento	45.4928	7.5330	IT	Piemonte	3170831	Torino	6	PPLL	914
+convento	1	8984222	Convento	45.3689	7.6328	IT	Piemonte	3170831	Torino	4	PPLL	704
+convento	1	8984341	Convento	44.6988	10.4181	IT	Emilia-Romagna	3177401	Parma	4	PPLL	110
+convento	1	8984414	Convento	45.5705	8.0968	IT	Piemonte	3170831	Biella	4	PPLL	405
+convento	1	8984886	Convento	39.0141	16.1502	IT	Calabria	2525468	Catanzaro	1	PPLL	422
+convento bosco ai frati	1	8984733	Convento Bosco ai Frati	43.9863	11.3039	IT	Toscana	3165361	Firenze	2	PPLL	276
+convento cappuccini	1	8984746	Convento Cappuccini	41.5166	15.0079	IT	Puglia	3169778	Foggia	2	PPLL	573
+convento carmelitane scalze	1	8977774	Convento Carmelitane Scalze	42.2675	12.2520	IT	Lazio	3174976	Viterbo	18	PPL	305
+convento delle grazie	1	8984565	Convento delle Grazie	43.7037	13.1874	IT	Marche	3174004	Ancona	3	PPLL	46
+convento di san francesco	1	8983121	Convento di San Francesco	40.3001	15.0552	IT	Campania	3181042	Salerno	9	PPLL	520
+convento di san paolo	1	8984868	Convento di San Paolo	43.7200	11.2135	IT	Toscana	3165361	Firenze	1	PPLL	154
+convento di sant antonio	1	8984591	Convento di Sant'Antonio	41.9787	14.5495	IT	Abruzzo	3183560	Chieti	3	PPLL	475
+convento di santa vittoria	1	8956360	Convento di Santa Vittoria	43.6457	12.8929	IT	Marche	3174004	Pesaro e Urbino	99	PPL	434
+convento francescano	1	8982349	Convento Francescano	42.0440	14.1845	IT	Abruzzo	3183560	Chieti	11	PPL	716
+convento immacolata	1	8983474	Convento Immacolata	40.8596	17.1805	IT	Puglia	3169778	Bari	8	PPLL	361
+convento lo speco	1	8984739	Convento Lo Speco	42.4564	12.5967	IT	Umbria	3165048	Terni	2	PPLL	566
+convento monte maria	1	8980988	Convento Monte Maria	46.7060	10.5205	IT	Trentino-Alto Adige	3165244	Bolzano	13	PPL	1327
+convento monte senario	1	8982710	Convento Monte Senario	43.8948	11.3341	IT	Toscana	3165361	Firenze	10	PPLL	794
+convento noviziato	1	8985322	Convento Noviziato	42.4175	11.1536	IT	Toscana	3165361	Grosseto	0	PPLL	323
+convento padri passionisti	1	8982298	Convento Padri Passionisti	42.4134	11.1611	IT	Toscana	3165361	Grosseto	11	PPL	273
+convento praglia	1	8965484	Convento Praglia	45.3639	11.7351	IT	Veneto	3164604	Padova	40	PPL	19
+convento san francesco	1	8983832	Convento San Francesco	44.2347	9.7143	IT	Liguria	3174725	La Spezia	6	PPLL	120
+convento san francesco	1	8984150	Convento San Francesco	40.6692	14.4384	IT	Campania	3181042	Napoli	5	PPLL	261
+convento sant angelo	1	8983464	Convento Sant'Angelo	42.2996	13.4790	IT	Abruzzo	3183560	dell’Aquila	8	PPLL	732
+convento starace	1	8978589	Convento Starace	40.0660	18.0666	IT	Puglia	3169778	Lecce	17	PPL	65
+convento vecchio	1	8979196	Convento Vecchio	43.3260	11.2823	IT	Toscana	3165361	Siena	16	PPL	305
+convento zoccolanti	1	8953093	Convento Zoccolanti	42.7344	13.9041	IT	Abruzzo	3183560	Teramo	206	PPL	113
+convers	1	11467518	Convers	46.4455	6.3069	CH	Canton Vaud	2658182	distretto di Nyon	0	PPL	431
+convers	1	12316565	Convers	43.8798	1.7548	FR	Occitania	11071623	Tarn	0	PPL	197
+conversano	1	3178147	Conversano	40.9684	17.1133	IT	Puglia	3169778	Bari	22661	PPLA3	219
+convivio villa sant antonio	1	8983599	Convivio Villa Sant'Antonio	45.5600	10.2488	IT	Lombardia	3174618	Brescia	7	PPLL	183
+conza della campania	1	3178144	Conza della Campania	40.8586	15.3364	IT	Campania	3181042	Avellino	695	PPLA3	486
+conzago	1	8953595	Conzago	46.0514	12.0790	IT	Veneto	3164604	Belluno	173	PPL	387
+conzano	1	6534348	Conzano	45.0201	8.4555	IT	Piemonte	3170831	Alessandria	278	PPLA3	262
+conze	1	8975644	Conze	41.7257	14.4006	IT	Molise	3173222	Isernia	21	PPL	770
+conzieu	1	3023800	Conzieu	45.7265	5.6076	FR	Alvernia-Rodano-Alpi	11071625	Ain	98	PPL	356
+conzy	1	12309242	Conzy	45.8761	4.6242	FR	Alvernia-Rodano-Alpi	11071625	Rodano	0	PPL	304

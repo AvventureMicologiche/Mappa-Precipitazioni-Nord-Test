@@ -1,0 +1,17 @@
+name = "omirl-tramite"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+# OMIRL risponde solo dall'Italia: il worker gira vicino a Milano anche quando lo chiama GitHub dagli Stati Uniti
+[placement]
+region = "aws:eu-south-1"
+
+# il Durable Object del primo tentativo (Marsiglia, OMIRL non rispondeva) e' tolto
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Ponte"]
+
+[[migrations]]
+tag = "v2"
+deleted_classes = ["Ponte"]

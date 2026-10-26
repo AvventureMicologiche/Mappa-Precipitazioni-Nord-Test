@@ -45,7 +45,9 @@ const { coppiaQuiz } = require('./lib-pagina-funghi.js');
 // della zona (non le citta' della regione) e il grafico coi 7 giorni previsti. Il codice nel browser e' lo stesso
 // della regione (lib-meteo-regione.js, con le opzioni di zona): una regola sola, un posto solo.
 const { METEO_CSS, meteoHtml, meteoClient } = require('./lib-meteo-regione.js');
-const { STRISCIA_CSS, strisciaScript } = require('./lib-striscia.js');   // la mappa di ieri nel bottone in cima (20/10/2026)
+const { STRISCIA_CSS, strisciaScript } = require('./lib-striscia.js');
+// il link alle pagine «Previsioni meteo <zona>» (24/10/2026, test su 11 zone): l'elenco sta nel loro generatore
+const { linkMeteo } = require('./genera-pagine-meteo-zona.js');   // la mappa di ieri nel bottone in cima (20/10/2026)
 
 const RADICE = path.join(__dirname, '..', '..');
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
@@ -99,7 +101,7 @@ function scrivi(dest, testo) {
 const COMUNI = fs.readFileSync(path.join(RADICE, 'data', 'elenco-paesi.txt'), 'utf8').split('\n')
   .map(r => r.split('|')).filter(p => p.length >= 6 && (p[6] || '').trim() !== 'z')
   .map(p => ({ n: p[0], lat: +p[1], lon: +p[2], reg: p[4], pop: +p[5] || 0 }));
-const MAX_PAESI = 12;
+const MAX_PAESI = 12, MIN_PAESI = 8;
 const km = (a, b, c, d) => 111.2 * Math.hypot(c - a, (d - b) * Math.cos(a * Math.PI / 180));
 function inviluppo(pt) {   // catena monotona di Andrew, punti [x, y]
   const p = pt.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]), x = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
@@ -129,6 +131,12 @@ function paesiDellaZona(z) {
     if (poli.length >= 3 && dentro([c.lon * k, c.lat], poli)) metti(c, true);
     else if (c.reg === z.reg && km(z.lat, z.lon, c.lat, c.lon) <= Math.max(12, 1.6 * s)) metti(c);
   }
+  // ⚠️ ALMENO OTTO PAESI (24/10/2026, suo «arricchisci Nebrodi e Colline Metallifere»): i Nebrodi ne avevano 4 e le
+  // Colline Metallifere grossetane 3, perche' nel cerchio di 12 km cadono pochi comuni. Sotto MIN_PAESI il cerchio
+  // si allarga di 3 km alla volta fino a 30, sempre nella regione della zona; le zone che ne hanno gia' abbastanza
+  // non cambiano di un paese.
+  for (let r = Math.max(12, 1.6 * s) + 3; cand.size < MIN_PAESI && r <= 30; r += 3)
+    for (const c of COMUNI) if (c.reg === z.reg && km(z.lat, z.lon, c.lat, c.lon) <= r) metti(c);
   // ⚠️ PRIMA I CERTI (comune di un pluviometro o dentro l'area dei pluviometri), poi il cerchio: con la sola vicinanza
   // al centro la Garfagnana perdeva l'alta valle (Piazza al Serchio, Minucciano) per Bagni di Lucca. 20/10/2026.
   const peso = c => Math.log10(c.pop + 10) * Math.exp(-((c.d / (2 * s)) ** 2)) * (c.reg === z.reg ? 1 : 0.6);
@@ -260,7 +268,7 @@ ${METEO_CSS}${STRISCIA_CSS}
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="verdetto"></div>
-${meteoHtml(casa, `Che tempo farà ${esc(z.dove)}`, 'Sto leggendo le previsioni dei paesi…')}
+${meteoHtml(casa, `Che tempo farà ${esc(z.dove)}`, 'Sto leggendo le previsioni dei paesi…', undefined, linkMeteo(zslug, z.n, 'zona-piogge-' + zslug))}
 
 <h2 id="h-grafico">La pioggia degli ultimi 30 giorni</h2>
 <div id="grafico"></div>

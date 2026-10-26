@@ -12,6 +12,8 @@
  */
 const fs   = require('fs');
 const path = require('path');
+const { togliVentiFalsi } = require('./lib-venti-falsi.js');   // lo stesso filtro del collector (settimo check, bug 11)
+const { fattoreVento } = require('./lib-vento-meteohub.js');
 
 const BASE_URL  = 'https://meteohub.agenziaitaliameteo.it/api/observations';
 const DATA_ROOT = path.join(__dirname, '../..', 'data');
@@ -91,7 +93,24 @@ async function collectMeteoHub(net, w) {
 
   const temp = await fetchProd('B12101');
   Object.keys(temp).forEach(id => {
-    const vals = temp[id].map(v => v.val > 100 ? v.val - 273.15 : v.val).filter(v => v >= -45 && v <= 50);
+    // falsi zeri: stessa regola di collect-meteohub.js (3/10/2026), le due devono restare uguali
+    // ⚠️ BASTA UNA LETTURA SOPRA 100 (19/10/2026), non la maggioranza: il 12/10 MeteoHub ha
+    // mandato zeri MINUTO PER MINUTO per un'ora e mezza su 15 stazioni siciliane (87 zeri contro
+    // 51 letture vere a mezz'ora), gli zeri erano la maggioranza, la serie passava per gradi e
+    // diventavano 0 °C (Mistretta 0 / 35,3; 25 minime false in ottobre). Una serie in gradi
+    // non arriva mai a 100, quindi una lettura sopra basta a dire che e' in kelvin.
+    const kelvin = temp[id].some(v => v.val > 100);
+    if (temp[id].every(v => v.val === 0)) return;   // tutta zeri: termometro muto, trattino
+    // ⚠️ SBALZI ISOLATI (4/10/2026): Favarella e Imera (Sicilia, 1/10) avevano UNA lettura a 0,0 °C
+    // in kelvin (273,15) fra letture sopra i 15°: un valore valido per forma, falso per sostanza.
+    // Una lettura che si stacca di oltre 10° sia dalla precedente sia dalla successiva non e' una
+    // temperatura vera (fra due letture passano 10-60 minuti): si scarta. Vale per ogni sbalzo,
+    // non solo lo zero. Stessa regola di collect-meteohub.js: le due devono restare uguali.
+    const serie = temp[id].filter(v => !kelvin || v.val > 100)
+      .map(v => ({ ref: v.ref || '', c: v.val > 100 ? v.val - 273.15 : v.val })).filter(v => v.c >= -45 && v.c <= 50)
+      .sort((a, b) => (a.ref < b.ref ? -1 : a.ref > b.ref ? 1 : 0));
+    const vals = serie.filter((v, i) => !(i > 0 && i < serie.length - 1
+      && Math.abs(v.c - serie[i - 1].c) > 10 && Math.abs(v.c - serie[i + 1].c) > 10)).map(v => v.c);
     if (vals.length && oreDi(temp[id]) >= MIN_ORE)
       (out[id] = out[id] || {}).t = [Math.round(Math.min(...vals) * 10) / 10,
                                      Math.round(Math.max(...vals) * 10) / 10];
@@ -100,11 +119,15 @@ async function collectMeteoHub(net, w) {
   const vento = await fetchProd('B11002');
   const raffica = await fetchProd('B11041');
   Object.keys(vento).forEach(id => {
-    const vals = vento[id].map(v => v.val).filter(v => v >= 0 && v < 60);
-    if (!vals.length || oreDi(vento[id]) < MIN_ORE) return;
+    // tetto a 40 m/s e ore contate sulle letture buone, come collect-meteohub.js (19/10/2026, bug 9)
+    const buone = vento[id].filter(v => v.val >= 0 && v.val < 40);
+    const vals = buone.map(v => v.val);
+    if (!vals.length || oreDi(buone) < MIN_ORE) return;
+    const fv = fattoreVento(id);   // vento diviso per 3,6 su alcune stazioni, come collect-meteohub.js (26/10/2026)
+    if (!fv) return;
     const media = vals.reduce((a, v) => a + v, 0) / vals.length;
     const gu = (raffica[id] || []).map(v => v.val).filter(v => v >= 0 && v < 90);
-    (out[id] = out[id] || {}).w = [Math.round(media * 3.6 * 10) / 10,
+    (out[id] = out[id] || {}).w = [Math.round(media * 3.6 * fv * 10) / 10,
                                    gu.length ? Math.round(Math.max(...gu) * 3.6 * 10) / 10 : null];
   });
   return out;
@@ -128,12 +151,14 @@ async function main() {
         const data = JSON.parse(fs.readFileSync(f, 'utf8'));
         let toccate = 0;
         (data.stations || []).forEach(s => {
+          if (!fattoreVento(s.id)) { delete s.w; delete s.wd; }   // vento non usato: via anche quello gia' nel file
           const m = meteo[s.id];
           if (!m) return;
           if (m.t) s.t = m.t;
           if (m.w) s.w = m.w;
           toccate++;
         });
+        if (toccate > 0) togliVentiFalsi(data.stations, g);   // come il collector: dopo aver messo i venti nuovi
         if (toccate > 0) { fs.writeFileSync(f, JSON.stringify(data)); fileOk++; stazGiorno += toccate; }
       } catch (e) { console.warn(`  Warn ${netCfg.net} ${g}: ${e.message}`); }
       await sleep(600);

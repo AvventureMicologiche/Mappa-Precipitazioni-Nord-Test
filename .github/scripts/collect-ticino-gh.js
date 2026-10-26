@@ -51,6 +51,8 @@ const fs    = require('fs');
 const path  = require('path');
 
 const DATA_DIR = path.join(__dirname, '../..', 'data', 'ticino');
+const RIPARA_GIORNI   = 30;   // auto-riparazione fino a D-30, giorni stimati compresi (26/10/2026)
+const RIPARA_PER_GIRO = 8;    // giorni riparati al massimo in un giro
 const BASE_URL = 'https://www.oasi.ti.ch/web/rest';
 
 function getItalyOffset(date) {
@@ -308,20 +310,32 @@ async function main() {
     console.log(`  Consolido l'altroieri (${dayBeforeStr})...`);
     writeDay(dayBeforeStr, await collectDayConMeteo(stations, dayBeforeStr));
 
-    // ── Auto-riparazione: recupera dall'archivio OASI eventuali giorni
-    // mancanti negli ultimi 7 (es. run falliti per piu' giorni di fila).
-    // Possibile solo perche' le query storiche OASI funzionano.
-    for (let i = 3; i <= 7; i++) {
+    // ── Auto-riparazione: recupera dall'archivio OASI i giorni mancanti, corti
+    // o STIMATI degli ultimi 30. Possibile solo perche' le query storiche OASI
+    // funzionano.
+    // ⚠️ 26/10/2026: anche i giorni STIMATI (source open-meteo, li scrive
+    // check-gaps-nord.js dopo 3 giorni di buco) si rifanno col dato vero. Prima
+    // si riparavano solo i file mancanti fino a D-7, e una stima, una volta
+    // scritta, restava per sempre. Nato da OASI giu' dal 21/10 per piu' di una
+    // settimana. Tetto per giro, perche' al ritorno da un guasto lungo ogni
+    // giorno costa una chiamata per stazione piu' quelle di t/w/u: il resto lo
+    // fanno i giri dopo (quattro al giorno).
+    let riparati = 0;
+    for (let i = 3; i <= RIPARA_GIORNI && riparati < RIPARA_PER_GIRO; i++) {
       const dStr = fmtDate(new Date(noon - i * 24 * 3600000));
       const f = path.join(DATA_DIR, `${dStr}.json`);
-      let needsRepair = !fs.existsSync(f);
-      if (!needsRepair) {
-        try { needsRepair = (JSON.parse(fs.readFileSync(f, 'utf8')).count || 0) < 30; }
-        catch(e) { needsRepair = true; }
+      let motivo = fs.existsSync(f) ? '' : 'mancante';
+      if (!motivo) {
+        try {
+          const j = JSON.parse(fs.readFileSync(f, 'utf8'));
+          if (/open-meteo/.test(j.source || '')) motivo = 'stimato (' + j.source + ')';
+          else if ((j.count || 0) < 30) motivo = 'corto (' + (j.count || 0) + ' stazioni)';
+        } catch(e) { motivo = 'illeggibile'; }
       }
-      if (needsRepair) {
-        console.log(`  Auto-riparazione: recupero ${dStr} dall'archivio...`);
+      if (motivo) {
+        console.log(`  Auto-riparazione: recupero ${dStr} dall'archivio, giorno ${motivo}...`);
         writeDay(dStr, await collectDayConMeteo(stations, dStr));
+        riparati++;
       }
     }
   }

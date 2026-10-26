@@ -49,10 +49,14 @@ const SIR_MAPPA_URL = 'https://www.sir.toscana.it/open_layers/ajax_stations.php?
 // Restituisce { TOS…: [media_kmh, raffica_kmh|null] } per le sole stazioni
 // passate in `elenco`. Completezza: >= 20 ore distinte, come tutte le altre reti.
 const MH_URL = 'https://meteohub.agenziaitaliameteo.it/api/observations';
+const { creaDir, segnaDir, direzione } = require('./lib-direzione.js');
+const { correggiZeri } = require('./lib-quota-terreno.js');
+const { tieniMeteo } = require('./lib-tieni-meteo.js');
 async function ventoMeteoHub(dateStr, elenco) {
-  const off = getItalyOffset(new Date(dateStr + 'T12:00:00Z'));
-  const start = new Date(new Date(dateStr + 'T00:00:00Z').getTime() - off * 3600000);
-  const end   = new Date(start.getTime() + 24 * 3600000);
+  // ⚠️ Da lib-giorno-italiano (18/10/2026): il giorno dura 23 o 25 ore al cambio d'ora.
+  const f = require('./lib-giorno-italiano.js').finestraGiorno(dateStr);
+  const start = new Date(f.start);
+  const end   = new Date(f.end);
   const fq = d => d.toISOString().substring(0, 16).replace('T', ' ');
   const fr = d => d.toISOString().substring(0, 19);
   const prendi = async prod => {
@@ -73,7 +77,7 @@ async function ventoMeteoHub(dateStr, elenco) {
       if (!best) continue;
       const vals = best.val.filter(v => v.ref > fr(start) && v.ref <= fr(end) && typeof v.val === 'number');
       if (!vals.length) continue;
-      out.push({ lat: st.lat, lon: st.lon, v: vals.map(x => x.val),
+      out.push({ lat: st.lat, lon: st.lon, v: vals.map(x => x.val), ref: vals.map(x => x.ref),
                  ore: new Set(vals.map(x => x.ref.slice(11, 13))).size });
     }
     return out;
@@ -81,20 +85,38 @@ async function ventoMeteoHub(dateStr, elenco) {
   const medi = await prendi('B11002');
   let raff = [];
   try { raff = await prendi('B11041'); } catch (e) { /* poche stazioni, non blocca */ }
+  // Direzione del vento (2/10/2026): B11001, gradi, stessi istanti di B11002.
+  // ⚠️ Dal 26/8 il campionatore CFR raccoglie 4-8 letture al giorno invece di 24
+  // (lo scheduler di GitHub salta i cron orari), quindi il vento toscano viene
+  // tutto da qui: e la direzione si prende qui.
+  let dirz = [];
+  try { dirz = await prendi('B11001'); } catch (e) { /* senza direzione resta il vento */ }
   const vicino = (arr, s) => arr.find(o => Math.abs(o.lat - s.lat) < 0.0054 && Math.abs(o.lon - s.lon) < 0.0077);
-  const out = {};
+  const out = {}, outWd = {};
   for (const s of elenco) {
     const m = vicino(medi, s);
     if (!m || m.ore < 20) continue;
-    const buoni = m.v.filter(v => v >= 0 && v < 60);          // m/s, sanity come le altre reti
-    if (!buoni.length) continue;
+    // m/s; tetto a 40 e ore contate sulle letture buone (19/10/2026, bug 9: anemometri MeteoHub bloccati a 41-52 m/s,
+    // vedi VENTO_MAX_MS in collect-meteohub.js)
+    const buoni = m.v.filter(v => v >= 0 && v < 40);
+    if (!buoni.length || new Set(m.ref.filter((r, i) => m.v[i] >= 0 && m.v[i] < 40).map(r => r.slice(11, 13))).size < 20) continue;
     const media = buoni.reduce((a, v) => a + v, 0) / buoni.length;
     const g = vicino(raff, s);
     const gu = g ? g.v.filter(v => v >= 0 && v < 90) : [];
     out[s.id] = [Math.round(media * 3.6 * 10) / 10,
                  gu.length ? Math.round(Math.max(...gu) * 3.6 * 10) / 10 : null];
+    const d = vicino(dirz, s);
+    if (d) {
+      const perRef = {};
+      d.ref.forEach((r, i) => { perRef[r] = d.v[i]; });
+      const acc = creaDir();
+      m.ref.forEach((r, i) => { const v = m.v[i]; if (v >= 0 && v < 40) segnaDir(acc, r.slice(11, 13), perRef[r] !== undefined ? perRef[r] : null, v); });
+      const wd = direzione(acc);
+      if (wd !== null) outWd[s.id] = wd;
+    }
   }
-  return out;
+  // ⚠️ La forma di ritorno era la sola mappa del vento: chi la usa legge `.w`.
+  return { w: out, wd: outWd };
 }
 
 function getItalyOffset(date) {
@@ -113,7 +135,8 @@ function fmtDate(d) {
 
 function fetchRaw(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, {
+    // timeout nelle opzioni (26/10/2026): senza, finche' la connessione non e' aperta vale il tetto di 5 s dell'agente di Node e i 30 s qui sotto scattano dopo 5
+    https.get(url, { timeout: 30000,
       headers: {
         'Accept': '*/*',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
@@ -125,7 +148,8 @@ function fetchRaw(url) {
         if (res.statusCode !== 200) reject(new Error(`HTTP ${res.statusCode}`));
         else resolve(data);
       });
-    }).on('error', reject);
+    }).on('error', reject)
+      .setTimeout(30000, function () { this.destroy(new Error('nessuna risposta in 30 s')); });
   });
 }
 
@@ -163,7 +187,10 @@ async function main() {
   const nowRun = process.env.NOW_OVERRIDE ? new Date(process.env.NOW_OVERRIDE) : new Date();
   const italyNow = new Date(nowRun.getTime() + getItalyOffset(nowRun) * 3600000);
   const italyHour = italyNow.getUTCHours();
-  const isClosing = process.env.CLOSING === '1' || italyHour >= 22;
+  // ⚠️ CLOSING=1 VALE SOLO DALLE 22 (o dopo mezzanotte, la chiusura tardiva qui sotto) (19/10/2026, quinto check,
+  // bug 14): i cron di GitHub sono in UTC e d'inverno arrivano un'ora prima; un giro alle 21:40 italiane con
+  // CLOSING=1 toglieva la protezione glitch-0 con piu' di due ore ancora da contare.
+  const isClosing = italyHour >= 22 || (process.env.CLOSING === '1' && italyHour < 12);
   // ⚠️ GIRO DI CHIUSURA DOPO MEZZANOTTE (30/9/2026, bug #17 di ritorno). Dal 26/8/2026 lo
   // scheduler di GitHub fa partire i tre cron di chiusura (20:40, 21:00, 21:20 UTC) con due
   // ore e mezza di ritardo: atterravano alle 00:30-01:50 italiane. «Oggi in Italia» era gia'
@@ -235,6 +262,14 @@ async function main() {
   console.log(`  Stazioni con dati completi (lat/lon + pioggia): ${stations.length}`);
   if (stations.length < 10) throw new Error(`Troppo poche stazioni: ${stations.length}`);
 
+  // ⚠️ QUOTA 0 DICHIARATA DAL SIR SU STAZIONI DI COLLINA (14/10/2026). Il SIR scrive
+  // 0 m per Bulera (PI) e Ponte Orgia (SI), che per il terreno stanno a 183 e 184 m:
+  // il sito stampava «0 m slm». Sopra i 20 m di terreno lo 0 non e' «sul mare» e si
+  // usa la quota del terreno col ~ (qt:1). Livorno Mareografo, Viareggio, Bocca di
+  // Serchio e Orbetello per il terreno stanno fra 0 e 4 m e restano a 0. La quota
+  // dichiarata, quando c'e', non si tocca mai. Vedi lib-quota-terreno.js.
+  await correggiZeri(stations);
+
   const outFile = path.join(DATA_DIR, `${dateStr}.json`);
 
   // Merge: vince la lettura più recente (Δ24h "scivola" verso il totale di calendario col
@@ -243,6 +278,23 @@ async function main() {
   // Nei run di chiusura serali la protezione glitch NON si applica: lo 0 a fine giornata
   // è un dato reale, e preservare il valore precedente congelerebbe la pioggia di ieri
   // trascinata dai run del mattino (bug #17, vedi commento in testa al file).
+  // ⚠️ UNA CHIUSURA TARDIVA NON RISCRIVE UN GIORNO GIA' CHIUSO IN ORARIO (6/10/2026).
+  // Dal 5/10 le chiusure le lancia l'orologio su Cloudflare alle 22:40-23:40, e GitHub
+  // tiene i suoi tre cron come riserva. La prima notte GitHub li ha fatti partire alle
+  // 3:17-3:46: con closingLate hanno riscritto il file del 5/10, chiuso bene alle 23:40,
+  // con la finestra Δ24h spostata di quasi quattro ore. Se il file di ieri porta un
+  // `collected` fra le 22:00 e mezzanotte italiane di quel giorno e' gia' chiuso in
+  // orario: il giro tardivo non tocca i millimetri (il passo t/u di ieri resta).
+  let giaChiusoInOrario = false;
+  if (closingLate && fs.existsSync(outFile)) {
+    try {
+      const ex = JSON.parse(fs.readFileSync(outFile, 'utf8'));
+      if (ex.date === dateStr && ex.collected && !ex.closing_late) {
+        const c = new Date(ex.collected), cIt = new Date(c.getTime() + getItalyOffset(c) * 3600000);
+        if (cIt.toISOString().slice(0, 10) === dateStr && cIt.getUTCHours() >= 22) giaChiusoInOrario = true;   // getter UTC: fmtDate usa quelli locali e in Italia slitterebbe
+      }
+    } catch (e) {}
+  }
   let finalStations = stations;
   if (fs.existsSync(outFile)) {
     try {
@@ -259,6 +311,9 @@ async function main() {
         existing.stations.forEach(s => {
           if (!newIds.has(s.id) && s.mm > 0) finalStations.push(s);
         });
+        // ⚠️ (19/10/2026, quinto check, bug 6) il record nuovo ha solo la pioggia: t/u/w/wd del file restano finche'
+        // i passi qui sotto (pagina termo, igro, vento) non li riscrivono freschi; prima sparivano se uno cadeva
+        tieniMeteo(finalStations, existing.stations);
         console.log(isClosing
           ? '  Merge (run di chiusura: ultima lettura vince, 0 inclusi) applicato'
           : '  Merge (ultima lettura vince, protezione glitch 0) applicato');
@@ -270,6 +325,9 @@ async function main() {
 
   // closing_late: la spia. Se il giro di chiusura e' arrivato dopo mezzanotte lo si scrive nel
   // file, cosi' si vede senza andare a leggere i log di GitHub.
+  if (giaChiusoInOrario) {
+    console.log(`  ⏭ ${dateStr} risulta gia' chiuso in orario (collected ${JSON.parse(fs.readFileSync(outFile, 'utf8')).collected}): il giro tardivo non riscrive i millimetri`);
+  } else {
   fs.writeFileSync(outFile, JSON.stringify(Object.assign({
     date:      dateStr,
     collected: new Date().toISOString(),
@@ -277,6 +335,7 @@ async function main() {
     count:     finalStations.length
   }, closingLate ? { closing_late: nowRun.toISOString() } : {}, { stations: finalStations })));
   console.log(`✅ Scritto ${outFile} (${finalStations.length} stazioni)`);
+  }
 
   // ── Temperatura (dall'11/8/2026 — grafici stazione) ────────────────
   // La pagina SIR type=termo pubblica min/max di OGGI (progressivi, i run
@@ -327,10 +386,18 @@ async function main() {
       if (n > 0) fs.writeFileSync(file, JSON.stringify(j));
       return n;
     };
-    const nOggi = applica(outFile, tOggi);
-    const ieriStr = fmtDate(new Date(new Date(dateStr + 'T12:00:00Z').getTime() - 24 * 3600000));
-    const nIeri = applica(path.join(DATA_DIR, `${ieriStr}.json`), tIeri);
-    console.log(`  Meteo t: ${nOggi} stazioni su oggi, ${nIeri} su ieri (${ieriStr})`);
+    // ⚠️ LE COLONNE DEL SIR SONO DELL'OROLOGIO (19/10/2026, quinto check, bug 1). «Oggi» e «ieri» della
+    // pagina sono quelli di adesso, non del giorno che il giro sta chiudendo. Un giro di chiusura dopo
+    // mezzanotte (closingLate) chiude IERI, ma prima scriveva «oggi» del SIR (il giorno nuovo, prime ore)
+    // sul file di ieri e «ieri» del SIR sul file di due giorni fa: dal 29/9 ogni giorno toscano aveva
+    // temperatura e umidita' del giorno dopo (Licciana Nardi 13/10 = Liguria 14/10, 17 gemelle su 17).
+    // Ora ogni colonna va al giorno vero dell'orologio; di giorno non cambia niente.
+    const sirOggi = fmtDate(italyNow);
+    const sirIeri = fmtDate(new Date(italyNow.getTime() - 24 * 3600000));
+    const nOggi = applica(path.join(DATA_DIR, `${sirOggi}.json`), tOggi);
+    const ieriStr = fmtDate(new Date(new Date(dateStr + 'T12:00:00Z').getTime() - 24 * 3600000));   // per il vento, come prima
+    const nIeri = applica(path.join(DATA_DIR, `${sirIeri}.json`), tIeri);
+    console.log(`  Meteo t: ${nOggi} stazioni su ${sirOggi}, ${nIeri} su ${sirIeri}`);
     // Umidità relativa (18/8/2026): pagina type=igro, STESSE colonne della termo
     // ([8]/[10] min-max oggi, [12]/[14] min-max ieri; verificato: «Vara» 61/96 oggi,
     // 65/100 ieri), in %. Stessa estrazione per stringhe quotate.
@@ -365,8 +432,8 @@ async function main() {
         if (n > 0) fs.writeFileSync(file, JSON.stringify(j));
         return n;
       };
-      const nUo = applicaU(outFile, uOggi);
-      const nUi = applicaU(path.join(DATA_DIR, `${ieriStr}.json`), uIeri);
+      const nUo = applicaU(path.join(DATA_DIR, `${sirOggi}.json`), uOggi);   // stesse date dell'orologio, vedi sopra
+      const nUi = applicaU(path.join(DATA_DIR, `${sirIeri}.json`), uIeri);
       console.log(`  Meteo u: ${nUo} stazioni su oggi, ${nUi} su ieri`);
     } catch (e) { console.warn('  Warn: umidità SIR saltata: ' + e.message); }
     // Vento (19/8/2026): il SIR non lo pubblica, lo campiona ogni ora
@@ -378,7 +445,9 @@ async function main() {
     // tocca mai questi file, cosi' i due workflow non si pestano i push.
     try {
       const fv = path.join(DATA_DIR, '..', 'toscana-vento', `${ieriStr}.json`);
-      const wIeri = fs.existsSync(fv) ? ((JSON.parse(fs.readFileSync(fv, 'utf8')) || {}).w || {}) : {};
+      const docV = fs.existsSync(fv) ? (JSON.parse(fs.readFileSync(fv, 'utf8')) || {}) : {};
+      const wIeri = docV.w || {};
+      const wdIeri = docV.wd || {};   // direzione del vento (2/10/2026), stesso campionatore
       const nCampionatore = Object.keys(wIeri).length;
       const file = path.join(DATA_DIR, `${ieriStr}.json`);
       if (fs.existsSync(file)) {
@@ -393,15 +462,15 @@ async function main() {
         // VALIDATO il 19/8 sulle ore in comune di oggi: 272 confronti, scarto
         // medio 1,41 km/h, spiegato dal confronto fra istanti diversi dentro la
         // stessa ora (il vento e' raffichato). Unita': m/s in entrambe le fonti.
-        let daMH = {};
+        let daMH = {}, daMHwd = {};
         try {
           const mancanti = (j.stations || []).filter(s => !wIeri[s.id]);
-          if (mancanti.length) daMH = await ventoMeteoHub(ieriStr, mancanti);
+          if (mancanti.length) { const r = await ventoMeteoHub(ieriStr, mancanti); daMH = r.w; daMHwd = r.wd; }
         } catch (e) { console.warn('  Warn: rete di sicurezza MeteoHub saltata: ' + e.message); }
         let nC = 0, nM = 0;
         (j.stations || []).forEach(s => {
-          if (wIeri[s.id]) { s.w = wIeri[s.id]; nC++; }
-          else if (daMH[s.id]) { s.w = daMH[s.id]; nM++; }
+          if (wIeri[s.id]) { s.w = wIeri[s.id]; nC++; if (wdIeri[s.id] !== undefined) s.wd = wdIeri[s.id]; }
+          else if (daMH[s.id]) { s.w = daMH[s.id]; nM++; if (daMHwd[s.id] !== undefined) s.wd = daMHwd[s.id]; }
         });
         if (nC + nM > 0) fs.writeFileSync(file, JSON.stringify(j));
         console.log(`  Meteo w su ieri: ${nC} dal campionatore CFR (su ${nCampionatore} disponibili), ${nM} dalla rete di sicurezza MeteoHub`);

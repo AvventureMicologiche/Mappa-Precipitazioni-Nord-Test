@@ -80,6 +80,12 @@ function loadDay(region, day) {
   try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch(e) { return null; }
 }
 function isReal(j) { return j && typeof j.source === 'string' && j.source.startsWith('meteohub'); }
+/** La voce di anagrafe di una stazione reale, quella che si copia nelle stime. */
+function registroStazione(s) {
+  const r = { id: s.id, n: s.n, lat: s.lat, lon: s.lon, q: s.q, p: s.p };
+  if (s.qt) r.qt = s.qt;   // quota dal terreno: il sito ci mette il «~»
+  return r;
+}
 
 async function fetchOpenMeteoDay(stations, dateStr, pastDays) {
   // Batch da 50 coordinate; forecast API con past_days (l'archive ha ~5 giorni di lag)
@@ -94,10 +100,14 @@ async function fetchOpenMeteoDay(stations, dateStr, pastDays) {
     if (!res.ok) throw new Error(`Open-Meteo HTTP ${res.status}`);
     let j = await res.json();
     if (!Array.isArray(j)) j = [j];
+    // ⚠️ ASSENTE NON E' ZERO (20/10/2026, sesto check): un giorno o un valore che Open-Meteo non
+    // restituisce diventava 0 mm, cioe' una stazione asciutta inventata. Ora la stazione resta fuori
+    // dalla mappa e il chiamante non la scrive.
     j.forEach((loc, k) => {
-      const idx = loc.daily.time.indexOf(dateStr);
-      const v = idx >= 0 ? loc.daily.precipitation_sum[idx] : null;
-      out.set(batch[k].id, (typeof v === 'number') ? Math.round(v * 10) / 10 : 0);
+      const d = loc && loc.daily;
+      const idx = d && Array.isArray(d.time) ? d.time.indexOf(dateStr) : -1;
+      const v = idx >= 0 && Array.isArray(d.precipitation_sum) ? d.precipitation_sum[idx] : null;
+      if (typeof v === 'number' && Number.isFinite(v)) out.set(batch[k].id, Math.round(v * 10) / 10);
     });
     await new Promise(r => setTimeout(r, 800));
   }
@@ -127,7 +137,8 @@ async function main() {
       const j = loadDay(region, day);
       if (!isReal(j)) continue;
       counts.push(j.count || j.stations.length);
-      for (const s of j.stations) if (!s.om) registry.set(s.id, { id: s.id, n: s.n, lat: s.lat, lon: s.lon, q: s.q, p: s.p });
+      // qt si copia (20/10/2026, sesto check, bug 20): senza, la stazione stimata mostrava la quota del terreno senza «~»
+      for (const s of j.stations) if (!s.om) registry.set(s.id, registroStazione(s));
     }
     const tipico = median(counts);
     if (counts.length < 3 || tipico < 10) { console.log(`-- ${region}: finestra troppo scarna (${counts.length} file reali), salto`); continue; }
@@ -183,7 +194,11 @@ async function main() {
       if (mancanti.length === 0) continue;
       console.log(`🌍 ${region} ${day}: copro ${mancanti.length} stazioni con Open-Meteo...`);
       const om = await fetchOpenMeteoDay(mancanti, day, Math.min(Math.max(diff + 2, 2), 92));
-      const nuove = mancanti.map(s => ({ ...s, mm: om.get(s.id) ?? 0, om: true }));
+      // senza valore Open-Meteo la stazione non si scrive (assente, non 0 mm)
+      const nuove = mancanti.filter(s => om.has(s.id)).map(s => ({ ...s, mm: om.get(s.id), om: true }));
+      if (nuove.length < mancanti.length) console.log(`   ${region} ${day}: ${mancanti.length - nuove.length} stazioni senza valore Open-Meteo, lasciate fuori`);
+      // nessun valore: niente file e niente copertura, l'evento resta aperto e si riprova al giro dopo
+      if (nuove.length === 0) continue;
 
       const outFile = path.join(DATA_ROOT, 'meteohub-' + region, day + '.json');
       if (!j) {

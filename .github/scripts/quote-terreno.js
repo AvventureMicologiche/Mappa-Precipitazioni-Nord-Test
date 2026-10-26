@@ -12,7 +12,8 @@
  *
  * ⚠️ QUELLO CHE SCRIVE QUESTO SCRIPT NON E' LA QUOTA DELLA STAZIONE: e'
  * l'ALTEZZA DEL TERRENO nel punto in cui la stazione sta, presa da un modello
- * altimetrico (Copernicus DEM a 90 m via Open-Meteo). Le due cose coincidono
+ * altimetrico (fino al 25/10/2026 Copernicus DEM a 90 m via Open-Meteo, poi le
+ * tessere terrarium di lib-terrarium.js). Le due cose coincidono
  * quasi sempre, ma non sono la stessa affermazione: la quota vera la dichiara
  * l'ente, questa la deduciamo noi dalle coordinate. Per questo il dato viene
  * marcato come «terreno» e il sito lo mostra col ~ davanti.
@@ -30,7 +31,10 @@
 
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
+// ⚠️ DAL 25/10/2026 LE QUOTE NUOVE VENGONO DALLE TESSERE TERRARIUM, non piu' da Open-Meteo Elevation (il suo
+// piano gratuito vieta i siti con pubblicita'). Quelle gia' scritte nel file restano: sono dati del Copernicus
+// DEM, e si rifanno tutte solo con --tutte.
+const { quoteTerrarium, FONTE } = require('./lib-terrarium.js');
 
 const RADICE = path.join(__dirname, '..', '..', 'data');
 const FUORI = path.join(RADICE, 'quote-terreno.json');
@@ -40,14 +44,13 @@ const RETI = ['friuli-osmer'].concat(
   ['basilicata', 'calabria', 'campania', 'friuli', 'lazio', 'marche', 'molise',
    'puglia', 'sardegna', 'sicilia', 'umbria'].map(r => 'meteohub-' + r));
 
-// ⚠️ Open-Meteo conta le richieste A PESO, non a numero: un lotto da 100 punti
-// vale molto piu' di una chiamata, e il 26/8/2026 il primo giro con lotti da
-// 100 ha preso 429 su tre quarti delle reti. Lotti piccoli, pausa vera, e
-// soprattutto ATTESA LUNGA sul 429 invece di insistere.
-const LOTTO = 50;
-const PAUSA = 2500;         // ms fra un lotto e l'altro
-const ATTESA_429 = 65000;   // ms dopo un rifiuto per eccesso di richieste
-const TENTATIVI = 4;
+// Reti che la quota la dichiarano, ma per qualche stazione dichiarano 0 m anche
+// dove non c'e' il mare (14/10/2026: il SIR per Bulera e Ponte Orgia). Di queste
+// si chiedono SOLO le stazioni a 0: il collector usa il terreno se sta sopra i
+// 20 m (correggiZeri in lib-quota-terreno.js), se no lo 0 resta.
+const RETI_ZERI = ['toscana'];
+
+const LOTTO = 200;   // solo per non perdere tutta una rete se una tessera non arriva
 
 function leggi(f) {
   const d = JSON.parse(fs.readFileSync(f, 'utf8'));
@@ -57,49 +60,19 @@ function leggi(f) {
 /** Tutte le stazioni distinte di una rete, cercate in TUTTO lo storico:
  *  una stazione sparita a luglio deve avere la quota lo stesso, se no il
  *  buco resta nei giorni vecchi. */
-function stazioniDi(rete) {
+function stazioniDi(rete, soloZeri) {
   const dir = path.join(RADICE, rete);
   if (!fs.existsSync(dir)) return [];
   const viste = new Map();
   for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.json')).sort()) {
     for (const s of leggi(path.join(dir, f))) {
       if (!s.id || viste.has(s.id)) continue;
+      if (soloZeri && s.q !== 0) continue;
       if (typeof s.lat !== 'number' || typeof s.lon !== 'number') continue;
       viste.set(s.id, { id: s.id, n: s.n, lat: s.lat, lon: s.lon });
     }
   }
   return [...viste.values()];
-}
-
-function chiedi(url) {
-  return new Promise((ok, ko) => {
-    https.get(url, { headers: { 'User-Agent': 'mappa-pluviometrica/1.0' } }, r => {
-      if (r.statusCode !== 200) { r.resume(); return ko(new Error('HTTP ' + r.statusCode)); }
-      let b = '';
-      r.on('data', c => b += c);
-      r.on('end', () => { try { ok(JSON.parse(b)); } catch (e) { ko(e); } });
-    }).on('error', ko);
-  });
-}
-
-async function quotePer(punti) {
-  const lat = punti.map(p => p.lat).join(',');
-  const lon = punti.map(p => p.lon).join(',');
-  const url = `https://api.open-meteo.com/v1/elevation?latitude=${lat}&longitude=${lon}`;
-  for (let t = 1; t <= TENTATIVI; t++) {
-    try {
-      const r = await chiedi(url);
-      if (!r || !Array.isArray(r.elevation) || r.elevation.length !== punti.length)
-        throw new Error('risposta inattesa: ' + JSON.stringify(r).slice(0, 200));
-      return r.elevation;
-    } catch (e) {
-      const troppe = /HTTP 429/.test(e.message);
-      if (t === TENTATIVI) throw e;
-      const attesa = troppe ? ATTESA_429 : 4000;
-      console.log(`  ...tentativo ${t} fallito (${e.message}), aspetto ${attesa / 1000}s`);
-      await new Promise(r => setTimeout(r, attesa));
-    }
-  }
 }
 
 (async () => {
@@ -110,8 +83,8 @@ async function quotePer(punti) {
   }
 
   let chieste = 0, saltate = 0, falliti = 0;
-  for (const rete of RETI) {
-    const staz = stazioniDi(rete);
+  for (const rete of RETI.concat(RETI_ZERI)) {
+    const staz = stazioniDi(rete, RETI_ZERI.includes(rete));
     if (!staz.length) { console.log(`${rete}: nessun file, salto`); continue; }
     const note = fuori.reti[rete] || (fuori.reti[rete] = {});
     const daFare = RIFAI_TUTTE ? staz : staz.filter(s => note[s.id] === undefined);
@@ -121,7 +94,7 @@ async function quotePer(punti) {
     for (let i = 0; i < daFare.length; i += LOTTO) {
       const lotto = daFare.slice(i, i + LOTTO);
       try {
-        const q = await quotePer(lotto);
+        const q = await quoteTerrarium(lotto);
         lotto.forEach((s, k) => {
           const v = q[k];
           if (typeof v === 'number' && isFinite(v)) note[s.id] = Math.round(v);
@@ -132,7 +105,6 @@ async function quotePer(punti) {
         falliti += lotto.length;
         console.log(`  ⚠️ lotto ${rete} ${i}-${i + lotto.length}: ${e.message}`);
       }
-      await new Promise(r => setTimeout(r, PAUSA));
     }
     const q = Object.values(note);
     console.log(`${rete}: ${staz.length} stazioni, quote note ${q.length}, ` +
@@ -140,9 +112,11 @@ async function quotePer(punti) {
   }
 
   fuori._nota = 'ALTEZZA DEL TERRENO nel punto della stazione, NON la quota dichiarata ' +
-    'dall\'ente: queste reti l\'altitudine non la pubblicano. Ripiego onesto, DA RISOLVERE ' +
-    'trovando l\'anagrafica vera. Il sito la mostra col ~ davanti.';
-  fuori._fonte = 'Open-Meteo Elevation API (Copernicus DEM GLO-90)';
+    'dall\'ente: queste reti l\'altitudine non la pubblicano (toscana: solo le stazioni che il ' +
+    'SIR dichiara a 0 m). Misurata il 14/10/2026 contro 1.848 quote dichiarate: scarto mediano ' +
+    '5 m, 90% entro 26 m. Il sito la mostra col ~ davanti.';
+  fuori._fonte = RIFAI_TUTTE ? FONTE
+    : FONTE + ' dal 25/10/2026; le quote scritte prima vengono da Open-Meteo Elevation (Copernicus DEM GLO-90)';
   fuori._aggiornato = new Date().toISOString().slice(0, 10);
   fs.writeFileSync(FUORI, JSON.stringify(fuori, null, 1));
 

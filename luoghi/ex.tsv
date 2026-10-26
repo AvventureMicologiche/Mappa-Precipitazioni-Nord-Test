@@ -1,0 +1,48 @@
+ex b&b	1	8985353	Ex B&B	41.5004	13.6719	IT	Lazio	3174976	Frosinone	0	PPLL	117
+ex bertrand	1	8985618	Ex Bertrand	45.4977	8.1494	IT	Piemonte	3170831	Biella	0	PPLL	233
+ex casello autostrada	1	8960558	Ex Casello Autostrada	45.4819	8.8277	IT	Lombardia	3174618	Milano	60	PPL	144
+ex casermette	1	8974936	Ex Casermette	45.5083	7.8485	IT	Piemonte	3170831	Torino	21	PPL	252
+ex cifa	1	8985006	Ex Cifa	45.6821	8.9183	IT	Lombardia	3174618	Como	0	PPLL	269
+ex distilleria	1	8979111	Ex Distilleria	44.7935	11.9684	IT	Emilia-Romagna	3177401	Ferrara	16	PPL	4
+ex euroceramica	1	8979813	Ex Euroceramica	44.5613	11.1572	IT	Emilia-Romagna	3177401	Bologna	15	PPL	37
+ex ferriera	1	8975748	Ex Ferriera	44.6682	7.6669	IT	Piemonte	3170831	Cuneo	20	PPL	302
+ex fornace	1	8981936	Ex Fornace	45.2098	7.8817	IT	Piemonte	3170831	Torino	11	PPL	198
+ex fornace	1	8985264	Ex Fornace	44.7577	11.7930	IT	Emilia-Romagna	3177401	Ferrara	0	PPLL	-1
+ex fungaia de siervo	1	9034510	Ex Fungaia de Siervo	40.8806	14.4721	IT	Campania	3181042	Napoli	0	PPL	85
+ex los bens	0	3038350	Aix-les-Bains	45.6917	5.9086	FR	Alvernia-Rodano-Alpi	11071625	Savoia	27651	PPL	246
+ex ocis	1	8984874	Ex Ocis	41.5051	13.6901	IT	Lazio	3174976	Frosinone	1	PPLL	118
+ex om morivione	1	12022802	Ex Om - Morivione	45.4403	9.1942	IT	Lombardia	3174618	Milano	0	PPLX	113
+ex piovanelli	1	8983660	Ex Piovanelli	44.7682	10.4403	IT	Emilia-Romagna	3177401	Reggio Emilia	7	PPLL	52
+ex recoaro	1	8979229	Ex Recoaro	41.5065	13.6583	IT	Lazio	3174976	Frosinone	16	PPL	116
+ex scuola di santa lucia	1	8974002	Ex Scuola di Santa Lucia	43.2476	13.3508	IT	Marche	3174004	Macerata	23	PPL	297
+ex scuola mozzavinci	1	9034307	Ex Scuola Mozzavinci	43.2864	13.3623	IT	Marche	3174004	Macerata	14	PPL	130
+ex sigurta	1	8982127	Ex Sigurtà	45.3659	10.7344	IT	Veneto	3164604	Verona	11	PPL	104
+ex sottostazione	1	8972264	Ex Sottostazione	45.8722	8.5157	IT	Piemonte	3170831	Verbano-Cusio-Ossola	26	PPL	618
+ex stazione villalagarina	1	8972466	Ex Stazione Villalagarina	45.9126	11.0394	IT	Trentino-Alto Adige	3165244	Trento	25	PPL	180
+excenevex	1	3019254	Excenevex	46.3529	6.3517	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	760	PPL	409
+excenex	1	8714949	Excenex	45.7613	7.3001	IT	Valle d'Aosta	3164857	Aosta	311	PPL	1049
+excideuil	0	3019249	Exideuil-sur-Vienne	45.8862	0.6738	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	1055	PPL	153
+excideuil	1	3019253	Excideuil	45.3370	1.0494	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	1444	PPL	164
+excoffoniere	1	3019252	Excoffonière	45.8043	6.5597	FR	Alvernia-Rodano-Alpi	11071625	Savoia	0	PPL	1346
+excuvilly	1	12318398	Excuvilly	46.3304	6.3878	FR	Alvernia-Rodano-Alpi	11071625	Alta Savoia	0	PPL	414
+exeidioux	1	3019251	Exeidioux	45.6312	1.6819	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	0	PPL	532
+exenbach	1	2779874	Exenbach	47.3667	12.7000	AT	Stato di Salisburgo	2766823	Politischer Bezirk Zell am See	0	PPL	986
+exenberg	1	2779871	Exenberg	48.0167	14.1238	AT	Alta Austria	2769848	Politischer Bezirk Kirchdorf an der Krems	0	PPL	392
+exenschlag	1	11694652	Exenschlag	48.6258	13.8889	AT	Alta Austria	2769848	Politischer Bezirk Rohrbach	132	PPL	559
+exergillod	1	2660839	Exergillod	46.3368	7.0393	CH	Canton Vaud	2658182	distretto di Aigle	0	PPL	885
+exermont	1	3019250	Exermont	49.2942	5.0065	FR	Gran Este	11071622	Ardenne	31	PPL	148
+exideuil	0	3019249	Exideuil-sur-Vienne	45.8862	0.6738	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	1055	PPL	153
+exideuil sur vienne	1	3019249	Exideuil-sur-Vienne	45.8862	0.6738	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	1055	PPL	153
+exidolium	0	3019249	Exideuil-sur-Vienne	45.8862	0.6738	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente	1055	PPL	153
+exilles	1	3177326	Exilles	45.0975	6.9292	IT	Piemonte	3170831	Torino	139	PPLA3	870
+exincourt	1	3019248	Exincourt	47.4947	6.8317	FR	Borgogna-Franca Contea	11071619	Dipartimento del Doubs	3452	PPL	320
+exireuil	1	3019247	Exireuil	46.4330	-0.1920	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	1305	PPL	146
+exlau	1	11695050	Exlau	48.4134	13.9493	AT	Alta Austria	2769848	Politischer Bezirk Rohrbach	12	PPL	298
+exmes	1	3019246	Exmes	48.7602	0.1778	FR	Normandia	11071621	Orne	355	PPL	259
+exoldunum	0	3012655	Issoudun	46.9485	1.9936	FR	Centro-Valle della Loira	3027939	Indre	14385	PPLA3	146
+exorbepey	1	3019245	Exorbepey	45.2689	1.0281	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Dordogna	0	PPL	160
+exoudun	1	3019244	Exoudun	46.3442	-0.0819	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Deux-Sèvres	629	PPL	94
+expiremont	1	3019243	Expiremont	45.3245	-0.3720	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Charente-Maritime	112	PPL	114
+expopisa	1	9035321	Expopisa	43.6752	10.4284	IT	Toscana	3165361	Pisa	0	PPLX	1
+extrade	1	3019242	Extrade	45.7376	1.0743	FR	Aquitania-Limosino-Poitou-Charentes	11071620	Haute-Vienne	0	PPL	321
+extrepieraz	1	8956270	Extrepieraz	45.7804	7.6999	IT	Valle d'Aosta	3164857	Aosta	100	PPL	1401

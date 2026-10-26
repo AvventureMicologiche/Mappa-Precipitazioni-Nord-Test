@@ -5,7 +5,7 @@
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>https://avventurepluvio-test.pages.dev/sitemap-mappa.xml</loc>
-    <lastmod>2026-10-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://avventurepluvio-test.pages.dev/sitemap-funghi.xml</loc>
@@ -26,5 +26,13 @@
   <sitemap>
     <loc>https://avventurepluvio-test.pages.dev/sitemap-mappa-forestale.xml</loc>
     <lastmod>2026-10-20</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://avventurepluvio-test.pages.dev/sitemap-meteo.xml</loc>
+    <lastmod>2026-10-24</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://avventurepluvio-test.pages.dev/sitemap-meteo-b.xml</loc>
+    <lastmod>2026-10-24</lastmod>
   </sitemap>
 </sitemapindex>

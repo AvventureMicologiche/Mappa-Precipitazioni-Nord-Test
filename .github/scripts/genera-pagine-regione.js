@@ -429,6 +429,13 @@ function pagina(r, radice){
   // «mappa pluviometrica»). Ricontrollare con `sc.py` verso meta' ottobre.
   const gen = GEN[r.k];
   const titolo = `Dove ha piovuto ${r.prep} ${r.nome}`;
+  // ⚠️ 26/10/2026: LA SCRITTA GRANDE COMINCIA COME IL TITOLO (sua scelta, scheda GA4 4). Per
+  // «pluviometria toscana» Google non mostrava il nostro <title>: lo riscriveva con l'h1 piu' il
+  // logo, «Dove ha piovuto in Toscana - Mappa Pluviometrica». In Liguria, dove titolo e h1 dicono
+  // tutti e due «dove ha piovuto», tiene il nostro. Quindi nelle regioni col titolo «mappa» l'h1
+  // comincia con «Pluviometria <regione>» come il titolo; Lazio, Umbria e Liguria (TITOLO_IERI)
+  // restano «Dove ha piovuto in ...» e fanno da confronto. og:title non cambia.
+  const h1 = TITOLO_IERI.has(r.k) ? titolo : `Pluviometria ${nomeCorto}: dove ha piovuto`;
   // ⚠️ 13/9/2026: «PLUVIOMETRIA» IN TESTA. Search Console, 28 giorni: la gente
   // cerca «pluviometria toscana» (1.527 viste, nono posto, 0,6% di clic),
   // «pluviometria emilia romagna», «dati pluviometrici basilicata», e il
@@ -495,7 +502,7 @@ ${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}${IERI_GRANDE}${METEO_CSS}${STRISC
      onclick="try{gtag('event','click_youtube',{pulsante:'pagina-${r.k}'})}catch(e){}">▶ Iscriviti</a>
 </header>
 <main>
-<h1>${titolo}</h1>
+<h1>${h1}</h1>
 <p class="sotto"><b>Pluviometria ${gen}</b>: i dati di ${r.staz} pluviometri ${diEnte(r.agenzia)}, ieri e nell'ultimo mese, ${r.geo}.</p>
 
 <!-- ⚠️ 25/9/2026: LO SCHEMA «PRIMA I DATI», lo stesso delle pagine funghi del

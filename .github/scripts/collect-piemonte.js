@@ -44,14 +44,33 @@
 const fs   = require('fs');
 const path = require('path');
 const { creaOre, segna, intensita } = require('./lib-intensita.js');
+const { creaDir, segnaDir, direzione, daSettore } = require('./lib-direzione.js');
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'piemonte');
 const MAX_DAYS = 730;
-const API_BASE = 'https://utility.arpa.piemonte.it/api_realtime';
-const OFF_BASE = 'https://utility.arpa.piemonte.it/meteoidro';
+// ⚠️ DUE STRADE PER ARPA PIEMONTE, LA SCEGLIE OGNI GIRO (24/10/2026). Dalla sera del 23/10 ARPA non risponde piu'
+// ai runner di GitHub («fetch failed» gia' sull'anagrafica), dal PC si' in 0,2 s: lo stesso blocco di OMIRL in
+// Liguria, che risponde solo dall'Italia. Il workflow passa TRAMITE_URL (il worker omirl-tramite, fissato a Milano,
+// copia in .github/cloudflare/omirl-tramite.js) e TRAMITE_CHIAVE. L'anagrafica si chiede PRIMA DIRETTA (un solo
+// tentativo, 15 s), e solo se non risponde dal tramite (`scegliStrada`): il giorno che ARPA sblocca GitHub si torna
+// diretti da soli. Senza le due variabili, cioe' dal PC, si va solo diretti. Ogni indirizzo passa da `instrada`,
+// anche i `next` dell'archivio ufficiale, che arrivano con l'host diretto scritto dentro.
+// ARPA_DIRETTO serve solo alle prove: un indirizzo che non risponde finge il blocco.
+const ARPA_HOST = 'https://utility.arpa.piemonte.it';
+const ARPA_DIRETTO = (process.env.ARPA_DIRETTO || ARPA_HOST).replace(/\/$/, '');
+const TRAMITE_URL = (process.env.TRAMITE_URL || '').replace(/\/$/, '');
+const TRAMITE_CHIAVE = process.env.TRAMITE_CHIAVE || '';
+let viaTramite = false;              // lo accende scegliStrada
+const API_BASE = ARPA_HOST + '/api_realtime';
+const OFF_BASE = ARPA_HOST + '/meteoidro';
+function instrada(url) {
+  return url.indexOf(ARPA_HOST) === 0 ? (viaTramite ? TRAMITE_URL : ARPA_DIRETTO) + url.slice(ARPA_HOST.length) : url;
+}
 const RICALCOLA_GIORNI = 3;          // D-1..D-3 dal realtime + ufficiale
 const DRY_RUN = !!process.env.DRY_RUN;
 const SOGLIA_SOST_MM = 1;            // sostituisci solo se |nostro-ufficiale| > 1 mm e h<24
+const MAX_ORA_MM = 150;              // un'ora sopra questo e' un guasto, non pioggia: si scarta l'ora (bug 4, 19/10/2026)
+const SOGLIA_UFF_SEMPRE_MM = 300;    // giorno eccezionale: vince l'ufficiale anche con h=24 (bug 4, 19/10/2026)
 
 function getItalyOffset(date) {
   const year = date.getUTCFullYear();
@@ -81,13 +100,13 @@ function addDays(dateStr, n) {
   return d.toISOString().substring(0, 10);
 }
 
-async function fetchJSON(url, retries = 3) {
+async function fetchJSON(url, retries = 3, tetto = 30000) {
+  const headers = { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0 (mappa-precipitazioni)' };
+  if (viaTramite) headers['X-Chiave'] = TRAMITE_CHIAVE;
+  url = instrada(url);
   for (let i = 0; i < retries; i++) {
     try {
-      const res = await fetch(url, {
-        headers: { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0 (mappa-precipitazioni)' },
-        signal: AbortSignal.timeout(30000)
-      });
+      const res = await fetch(url, { headers, signal: AbortSignal.timeout(tetto) });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return await res.json();
     } catch (e) {
@@ -98,13 +117,38 @@ async function fetchJSON(url, retries = 3) {
   throw new Error('fetch fallito dopo ' + retries + ' tentativi');
 }
 
+/** Chiede l'anagrafica diretta e, se non risponde, dal tramite; il resto del giro va dalla strada vincente. */
+async function scegliStrada(via) {
+  try {
+    const anag = await fetchJSON(via, 1, 15000);
+    console.log('  Strada: diretta');
+    return anag;
+  } catch (e) {
+    if (!TRAMITE_URL) throw e;
+    console.log('  Diretta non risponde, provo dal tramite Cloudflare');
+  }
+  viaTramite = true;
+  const anagT = await fetchJSON(via);
+  console.log('  Strada: tramite Cloudflare');
+  return anagT;
+}
+
 // ── Realtime: record orari di un giorno solare italiano ─────────────
+// ⚠️ LA MARCA E' A FINE ORA (26/10/2026, scheda 95). Il record delle 00:00 e' la pioggia fra le 23 e mezzanotte del
+// giorno PRIMA, quello delle 00:00 del giorno dopo e' l'ultima ora di questo (vedi l'archivio ufficiale qui in cima:
+// «record dalle 03:00 di G alle 02:00 di G+1»). Fino al 26/10 si chiedevano i record dalle 00:00 alle 23:59, cioe'
+// il giorno spostato indietro di un'ora: la pioggia fra le 23 e mezzanotte finiva sul giorno dopo. Trovato
+// confrontando con MeteoHub dpcn-piemonte (stessi pluviometri, marca a fine ora): ora per ora identici a sfasamento 0
+// (559 ore bagnate su 560), e sommandoli con la vecchia finestra si ritrovavano i nostri file del 18-21/10 in 864 casi
+// su 875, con la finestra giusta in 191. Adesso si chiede fino alle 00:00 del giorno dopo (l'API ragiona in ora locale
+// e include le due estremita') e si tiene (inizio, fine] con finestraGiorno, che sa dei giorni da 23 e 25 ore.
+const { finestraGiorno } = require('./lib-giorno-italiano.js');
 async function fetchRealtimeDay(day) {
   let all = [];
   let page = 1;
   while (true) {
     const url = API_BASE + '/data_pie?date_from=' + encodeURIComponent(day + 'T00:00')
-      + '&date_to=' + encodeURIComponent(day + 'T23:59')
+      + '&date_to=' + encodeURIComponent(addDays(day, 1) + 'T00:00')
       + '&page=' + page + '&page_size=10000';
     const raw = await fetchJSON(url);
     const records = Array.isArray(raw) ? raw : (raw.data || raw.results || []);
@@ -112,7 +156,8 @@ async function fetchRealtimeDay(day) {
     if (records.length < 10000) break;
     page++;
   }
-  return all;
+  const f = finestraGiorno(day);
+  return all.filter(m => { const t = Date.parse(m.date); return t > f.start && t <= f.end; });
 }
 
 // Temperatura e vento dal realtime (11/8/2026): wind/gust GIÀ in km/h.
@@ -122,11 +167,13 @@ function aggregaMeteoPie(records) {
   records.forEach(m => {
     const id = m.station_code;
     if (!id) return;
-    const a = acc[id] = acc[id] || { tmin: Infinity, tmax: -Infinity, nT: 0, ffSum: 0, nFF: 0, fxMax: -Infinity, nFX: 0, umin: Infinity, umax: -Infinity, nU: 0 };
+    const a = acc[id] = acc[id] || { tmin: Infinity, tmax: -Infinity, nT: 0, ffSum: 0, nFF: 0, fxMax: -Infinity, nFX: 0, umin: Infinity, umax: -Infinity, nU: 0, dir: creaDir() };
     const t = parseFloat(m.air_temperature);
     if (!isNaN(t) && t >= -45 && t <= 50) { if (t < a.tmin) a.tmin = t; if (t > a.tmax) a.tmax = t; a.nT++; }
     const ff = parseFloat(m.wind);
     if (!isNaN(ff) && ff >= 0 && ff < 216) { a.ffSum += ff; a.nFF++; }
+    // Direzione del vento (2/10/2026): `wind_direction` in gradi negli stessi record, pesata su `wind`.
+    if (!isNaN(ff) && ff >= 0 && ff < 216) segnaDir(a.dir, m.date || a.nFF, (m.wind_direction == null || m.wind_direction === '') ? null : parseFloat(m.wind_direction), ff);
     const fx = parseFloat(m.gust_of_wind);
     if (!isNaN(fx) && fx >= 0 && fx < 324) { if (fx > a.fxMax) a.fxMax = fx; a.nFX++; }
     // Umidità relativa (18/8/2026): campo `humidity` (%) negli stessi record.
@@ -143,7 +190,9 @@ function aggregaMeteoPie(records) {
              a.nFX > 0 ? Math.round(a.fxMax * 10) / 10 : null];
     if (a.nU >= MIN_ORE_METEO && a.umax > -Infinity)
       m.u = [Math.round(a.umin), Math.round(a.umax)];
-    if (m.t || m.w || m.u) out[id] = m;
+    const wd = direzione(a.dir);
+    if (wd !== null) m.wd = wd;
+    if (m.t || m.w || m.u || m.wd !== undefined) out[id] = m;
   });
   return out;
 }
@@ -159,6 +208,10 @@ function buildDay(records, stIndex, quote) {
     if (!id) return;
     const v = parseFloat(m.cum_rain_1h);
     if (isNaN(v) || v < 0) return;
+    // ⚠️ IL GUASTO SI CERCA NELL'ORA, NON NEL GIORNO (19/10/2026, quinto check, bug 4). Un'ora sopra
+    // MAX_ORA_MM non e' pioggia: si scarta lei sola e non conta fra le ore, cosi' il giorno resta con h<24
+    // e l'ufficiale lo sostituisce appena esce (consolida). Vedi sotto il vecchio tetto dei 300 mm.
+    if (v > MAX_ORA_MM) { console.warn(`  ora scartata: ${id} ${m.date} cum_rain_1h=${v}`); return; }
     rain[id] = (rain[id] || 0) + v;
     ore[id] = (ore[id] || 0) + 1;
     if (!secchielli[id]) secchielli[id] = creaOre();
@@ -173,14 +226,19 @@ function buildDay(records, stIndex, quote) {
     const lon = parseFloat(s.lng || s.lon);
     if (isNaN(lat) || isNaN(lon)) return;
     if (lat < 43.8 || lat > 46.5 || lon < 6.6 || lon > 9.3) return;
-    let mm = Math.round(rain[id] * 10) / 10;
-    if (mm > 300) mm = 0;
+    /* ⚠️ NIENTE TETTO SUL GIORNO (19/10/2026, quinto check, bug 4). Qui c'era `if (mm > 300) mm = 0`
+       (3/5/2026, filtro generico): il giorno piu' bagnato diventava ASCIUTTO, e con h=24 l'ufficiale non lo
+       riparava piu'. Alla fonte, il 2/10/2020 (tempesta Alex) 16 pluviometri su 297 sopra i 300 mm: Limone
+       Pancani 553, Sambughetto 511, Piedicavallo 477, Candoglia 472, Oropa 427. Sarebbero stati i 16 punti
+       asciutti nel cuore dell'alluvione. I guasti si fermano ora per ora (MAX_ORA_MM, sopra) e un giorno sopra
+       SOGLIA_UFF_SEMPRE_MM lo rivede comunque l'ufficiale (consolida). */
+    const mm = Math.round(rain[id] * 10) / 10;
     const rec = {
       id, n: s.name || id,
       lat: Math.round(lat * 10000) / 10000,
       lon: Math.round(lon * 10000) / 10000,
       q: (quote && quote[id] != null) ? quote[id] : (parseInt(s.altitude || 0) || 0),
-      p: s.province || '—',
+      p: provinciaPulita(s.province) || '—',
       mm,
       h: Math.min(24, ore[id])
     };
@@ -206,7 +264,7 @@ async function fetchAnagraficaUfficiale() {
       out[id] = {
         q: (s.quota_stazione != null) ? Math.round(s.quota_stazione) : null,
         lat: s.latitudine_n_wgs84_d, lon: s.longitudine_e_wgs84_d,
-        n: s.denominazione, p: s.sigla_prov ? ('PROVINCIA DI ' + provinciaEstesa(s.sigla_prov)) : '—',
+        n: s.denominazione, p: s.sigla_prov ? provinciaPulita('PROVINCIA DI ' + provinciaEstesa(s.sigla_prov)) : '—',
         pm: (s.fk_id_punto_misura_meteo || '').replace(/\/$/, '').split('/').pop()  // PIE-xxxxxx-900
       };
     });
@@ -217,6 +275,13 @@ async function fetchAnagraficaUfficiale() {
 function provinciaEstesa(sigla) {
   return { TO: 'TORINO', CN: 'CUNEO', AL: 'ALESSANDRIA', AT: 'ASTI', BI: 'BIELLA',
            NO: 'NOVARA', VC: 'VERCELLI', VB: 'VERBANO-CUSIO-OSSOLA' }[sigla] || sigla;
+}
+/* ⚠️ IL VERBANO-CUSIO-OSSOLA HA UN NOME SOLO (19/10/2026, quinto check, bug 8). L'anagrafe del realtime tronca il
+   campo a 30 caratteri e scrive «PROVINCIA DEL VERBANO CUSIO OS» (29 stazioni su 32; 3 hanno la forma intera),
+   l'ufficiale qui sopra darebbe «PROVINCIA DI VERBANO-CUSIO-OSSOLA»: tre scritture per la stessa provincia, e
+   la pagina /piemonte/ stampava «Sambughetto (Provincia del verbano cusio os)». */
+function provinciaPulita(p) {
+  return p && /VERBANO/i.test(p) ? 'PROVINCIA DEL VERBANO-CUSIO-OSSOLA' : p;
 }
 
 /** giorno → { PIE-xxxxxx-900: {ptot,tmin,tmax,vmedia,vraffica} } (solo righe con almeno un dato). */
@@ -229,7 +294,7 @@ async function fetchUfficialeGiorno(day) {
     (j.results || []).forEach(r => {
       const pm = (r.fk_id_punto_misura_meteo || '').replace(/\/$/, '').split('/').pop();
       if (!pm) return;
-      out[pm] = { ptot: r.ptot, tmin: r.tmin, tmax: r.tmax, vmedia: r.vmedia, vraffica: r.vraffica, umin: r.umin, umax: r.umax };
+      out[pm] = { ptot: r.ptot, tmin: r.tmin, tmax: r.tmax, vmedia: r.vmedia, vraffica: r.vraffica, umin: r.umin, umax: r.umax, dir: r.settore_prevalente };
       n++;
     });
     url = j.next || null;
@@ -273,6 +338,7 @@ function consolida(day, stations, anag, uff) {
       if (u.tmin != null && u.tmax != null) rec.t = [u.tmin, u.tmax];
       if (u.vmedia != null) rec.w = [Math.round(u.vmedia * 36) / 10, u.vraffica != null ? Math.round(u.vraffica * 36) / 10 : null];
       if (u.umin != null && u.umax != null) rec.u = [Math.round(u.umin), Math.round(u.umax)];
+      if (daSettore(u.dir) !== null) rec.wd = daSettore(u.dir);   // settore prevalente ufficiale
       stations.push(rec); byId[id] = rec;
       stat.aggiunte++;
       stat.dettagli.push(`+ ${a.n} (${id}) ptot=${ptot}`);
@@ -286,7 +352,13 @@ function consolida(day, stations, anag, uff) {
     if (ptot != null) {
       const diff = Math.abs((mine.mm || 0) - ptot);
       if (diff <= SOGLIA_SOST_MM) stat.uguali++;
-      else if ((mine.h || 0) < 24) {
+      // sopra SOGLIA_UFF_SEMPRE_MM vince l'ufficiale anche col realtime completo: in un giorno eccezionale
+      // si vuole il numero validato da ARPA (bug 4, 19/10/2026)
+      // ⚠️ MA SOLO SE CI SMENTISCE (25/10/2026). L'ufficiale conta il giorno in UTC: preso sempre, nel giorno
+      // dell'alluvione perdeva la pioggia fra le 00 e le 02 italiane e prendeva quella del giorno dopo, che il
+      // realtime mette gia' nel file di G+1 (contata due volte). Sotto la meta' del nostro e' un sensore guasto
+      // (140 mm l'ora per 24 ore passa il tetto orario): vince l'ufficiale. Se no si tiene il giorno italiano.
+      else if ((mine.h || 0) < 24 || ((mine.mm || 0) > SOGLIA_UFF_SEMPRE_MM && ptot < (mine.mm || 0) * 0.5)) {
         stat.dettagli.push(`~ ${mine.n} (${id}) h=${mine.h} nostro=${mine.mm} → ufficiale=${ptot}`);
         mine.mm = ptot; mine.src = 'arpa-ufficiale';
         // ⚠️ L'intensita' veniva dal realtime INCOMPLETO (h<24) che qui stiamo
@@ -306,6 +378,7 @@ function consolida(day, stations, anag, uff) {
     if (!mine.t && u.tmin != null && u.tmax != null) { mine.t = [u.tmin, u.tmax]; tw = true; }
     if (!mine.w && u.vmedia != null) { mine.w = [Math.round(u.vmedia * 36) / 10, u.vraffica != null ? Math.round(u.vraffica * 36) / 10 : null]; tw = true; }
     if (!mine.u && u.umin != null && u.umax != null) { mine.u = [Math.round(u.umin), Math.round(u.umax)]; tw = true; }
+    if (mine.wd === undefined && daSettore(u.dir) !== null) { mine.wd = daSettore(u.dir); tw = true; }
     if (tw) stat.tw++;
   });
   return { stations, stat };
@@ -325,10 +398,75 @@ function mergePerOre(nuove, esistenti) {
     if (!m.t && prev.t) m.t = prev.t;
     if (!m.w && prev.w) m.w = prev.w;
     if (!m.u && prev.u) m.u = prev.u;
-    if (!m.i && prev.i) m.i = prev.i;
+    // ⚠️ l'intensita' NON si eredita (19/10/2026, quinto check, bug 15): segue il calcolo nuovo, fatto su almeno le
+    // stesse ore. Ereditata, restava quella di prima quando ARPA correggeva le ore: Montaldo Scarampi 10/9, 2,3 mm
+    // diventati 0,2 il 13/9 (sotto 0,5 l'intensita' non si scrive) con «punta 2,1» rimasta.
+    if (m.wd === undefined && prev.wd !== undefined) m.wd = prev.wd;
     return m;
   });
   // stazioni che erano nel vecchio file e nel nuovo realtime non ci sono (es. aggiunte dall'ufficiale)
+  Object.keys(map).forEach(k => { out.push(map[k]); });
+  return out;
+}
+
+/* ── RIPIEGO METEOHUB (26/10/2026, scheda 95) ────────────────────────────────────────────────────────────────────
+   Dalle 22 del 24/10/2026 ARPA non pubblica piu' niente (realtime e archivio, anche dal PC) e il 25/10 mancava. Gli
+   STESSI pluviometri arrivano su MeteoHub, rete dpcn-piemonte (Protezione Civile), per un'altra strada: ora per ora
+   identici ad ARPA (559 ore bagnate su 560 il 22-24/10), e il 25/10 c'erano tutti. Quando ARPA non da' il giorno
+   intero (meno di meta' delle stazioni con tutte le ore, o nessun file) il giorno si prende da MeteoHub con la ricetta
+   di collect-meteohub.js (pioggia, temperatura, vento, umidita', intensita'), e ogni stazione porta `src:'meteohub'`.
+   ⚠️ LE STAZIONI SI RICONOSCONO CON UNA TABELLA FISSA (`piemonte-meteohub.json`), non con la distanza: MeteoHub sposta
+   le coordinate fino a 2 km e a 500 m si abbinavano solo 205 stazioni su 278. Le coppie della tabella sono riconosciute
+   dai dati (pioggia del 18-24/10 identica sulla settimana, o ora per ora). Una stazione nuova di MeteoHub non entra.
+   Vince chi ha piu' ore, e a parita' ARPA: quando ARPA ripubblica il giorno intero, i suoi valori tornano da soli.
+   MeteoHub da anonimi tiene ~10 giorni (al massimo 3 per richiesta): qui si chiede un giorno alla volta, D-1..D-3. */
+let meteohub = null, tabellaMH = null;
+async function giornoDaMeteoHub(day) {
+  if (!meteohub) { meteohub = require('./collect-meteohub.js'); tabellaMH = require('./piemonte-meteohub.json').stazioni; }
+  const grezze = meteohub.togliPicchiFalsi(
+    await meteohub.collectDay({ net: 'dpcn-piemonte', sigla: 'PIE' }, day, { ore: true, quote: false }), day);
+  const out = [];
+  let fuori = 0;
+  grezze.forEach(r => {
+    const a = tabellaMH[r.id];
+    if (!a) { fuori++; return; }
+    const rec = { id: a.id, n: a.n, lat: a.lat, lon: a.lon, q: a.q, p: a.p, mm: r.mm, h: r.h };
+    if (r.i) rec.i = r.i;
+    ['t', 'u'].forEach(k => { if (r[k] !== undefined) rec[k] = r[k]; });
+    // ⚠️ IL VENTO MEDIO DI METEOHUB E' SBAGLIATO SU MOLTE STAZIONI (26/10/2026): su 42 su 72 e' quello di ARPA diviso
+    // per 3,6 (conversione km/h -> m/s fatta due volte a monte; raffica e direzione invece identiche). Il fattore e'
+    // misurato stazione per stazione in tabella (`fv`): 3.6 si moltiplica, 1 giusto, 0 o assente = vento non usato.
+    const fv = a.fv || 0;
+    if (r.w && fv) {
+      rec.w = [Math.round(r.w[0] * fv * 10) / 10, r.w[1]];
+      if (r.wd !== undefined) rec.wd = r.wd;
+      if (r.wp) rec.wp = 1;   // vento senza raffica: lo sistema unisciRipiego
+    }
+    rec.src = 'meteohub';
+    out.push(rec);
+  });
+  console.log(`  MeteoHub dpcn-piemonte: ${grezze.length} stazioni complete, ${out.length} riconosciute, ${fuori} fuori tabella`);
+  return out;
+}
+/** Il giorno di MeteoHub sopra quello che c'e': vince chi ha piu' ore, a parita' chi c'era (ARPA o un giro prima). */
+function unisciRipiego(daMH, esistenti) {
+  const map = {};
+  (esistenti || []).forEach(s => { map[s.id] = s; });
+  const out = daMH.map(s => {
+    const prev = map[s.id];
+    if (prev) delete map[s.id];
+    if (prev && (prev.h || 0) >= (s.h || 0)) return prev;
+    const m = { ...s };
+    // [media, null] senza raffica: se c'era gia' un vento (con la sua raffica) si tiene quello, come fa collect-meteohub
+    if (m.wp) { delete m.wp; if (prev && prev.w) { m.w = prev.w; if (prev.wd !== undefined) m.wd = prev.wd; else delete m.wd; } }
+    if (prev) {
+      if (!m.t && prev.t) m.t = prev.t;
+      if (!m.w && prev.w) m.w = prev.w;
+      if (!m.u && prev.u) m.u = prev.u;
+      if (m.wd === undefined && prev.wd !== undefined) m.wd = prev.wd;
+    }
+    return m;
+  });
   Object.keys(map).forEach(k => { out.push(map[k]); });
   return out;
 }
@@ -351,16 +489,25 @@ async function main() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
   // ── Step 1: anagrafica realtime ─────────────────────────────
+  // Se ARPA non risponde per niente si va avanti col solo ripiego MeteoHub (26/10/2026); il giro fallisce lo stesso
+  // se alla fine non ha scritto niente da MeteoHub, cosi' il guasto resta rosso su GitHub.
   console.log('Carico anagrafica stazioni (realtime)...');
-  const anagRaw = await fetchJSON(API_BASE + '/pie_anag?page_size=10000');
-  const stazioni = Array.isArray(anagRaw) ? anagRaw : (anagRaw.data || anagRaw.results || []);
+  let arpaGiu = false, ripieghi = 0;
   const stIndex = {};
-  stazioni.forEach(s => { if (s.station_code) stIndex[s.station_code] = s; });
-  console.log('  Stazioni realtime: ' + stazioni.length);
+  try {
+    const anagRaw = await scegliStrada(API_BASE + '/pie_anag?page_size=10000');
+    const stazioni = Array.isArray(anagRaw) ? anagRaw : (anagRaw.data || anagRaw.results || []);
+    stazioni.forEach(s => { if (s.station_code) stIndex[s.station_code] = s; });
+    console.log('  Stazioni realtime: ' + stazioni.length);
+  } catch (e) {
+    arpaGiu = true;
+    console.warn('  ARPA non risponde (' + e.message + '): niente realtime, solo il ripiego MeteoHub');
+  }
 
   // ── Step 1b: anagrafica ufficiale (quota, coordinate) — se cade, si va avanti senza ──
   let anagUff = {};
   try {
+    if (arpaGiu) throw new Error('ARPA non risponde');
     anagUff = await fetchAnagraficaUfficiale();
     console.log('  Stazioni ufficiali attive: ' + Object.keys(anagUff).length);
   } catch (e) { console.warn('  Anagrafica ufficiale non disponibile: ' + e.message); }
@@ -369,7 +516,7 @@ async function main() {
 
   // ── Step 2: OGGI dal realtime ────────────────────────────────
   console.log('Carico misure di oggi ' + targetDate + '...');
-  const recOggi = await fetchRealtimeDay(targetDate);
+  const recOggi = arpaGiu ? [] : await fetchRealtimeDay(targetDate);
   console.log('  Record: ' + recOggi.length);
   const oggi = buildDay(recOggi, stIndex, quote);
   console.log('  Stazioni con dati: ' + oggi.length);
@@ -388,6 +535,7 @@ async function main() {
       let stations = null;
       const esistente = leggiFile(day);
       try {
+        if (arpaGiu) throw new Error('ARPA non risponde');
         const rec = await fetchRealtimeDay(day);
         console.log('  Record realtime: ' + rec.length);
         if (rec.length < 1000) {
@@ -403,11 +551,26 @@ async function main() {
         console.warn('  Realtime non disponibile per ' + day + ': ' + e.message);
         stations = esistente ? esistente.stations : null;
       }
+      // Ripiego MeteoHub: ARPA non ha dato il giorno intero (le ore piene sono 23 a fine marzo, 24 negli altri giorni)
+      const f = finestraGiorno(day), piene = Math.min(24, Math.round((f.end - f.start) / 3600000));
+      const complete = (stations || []).filter(s => (s.h || 0) >= piene).length;
+      if (!stations || stations.length < 5 || complete < stations.length / 2) {
+        console.log(`  ARPA non ha il giorno intero (${complete} stazioni complete su ${(stations || []).length}): provo MeteoHub`);
+        try {
+          const daMH = await giornoDaMeteoHub(day);
+          if (daMH.length >= 5) {
+            stations = unisciRipiego(daMH, stations);
+            ripieghi++;
+            console.log(`  Ripiego: ${stations.filter(s => s.src === 'meteohub').length} stazioni da MeteoHub su ${stations.length}`);
+          }
+        } catch (e) { console.warn('  Ripiego MeteoHub non riuscito: ' + e.message); }
+      }
       if (!stations || stations.length < 5) { console.log('  Niente da scrivere per ' + day); continue; }
 
       // Ufficiale
       let extra = {};
       try {
+        if (arpaGiu) throw new Error('ARPA non risponde');
         const uff = await fetchUfficialeGiorno(day);
         if (uff.n === 0) {
           console.log('  Ufficiale: non ancora pubblicato per ' + day);
@@ -437,6 +600,7 @@ async function main() {
     if (f.replace('.json', '') < cutoffStr) { if (!DRY_RUN) fs.unlinkSync(path.join(DATA_DIR, f)); deleted++; }
   });
   console.log('\nPulizia: ' + deleted + ' eliminati, ' + (allFiles.length - deleted) + ' rimanenti');
+  if (arpaGiu && !ripieghi) throw new Error('ARPA non risponde e MeteoHub non ha dato niente da scrivere');
   console.log('\n=== Completato! ===\n');
 }
 
