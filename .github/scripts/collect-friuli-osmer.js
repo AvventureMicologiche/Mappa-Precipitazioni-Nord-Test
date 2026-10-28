@@ -297,8 +297,22 @@ async function main() {
   if (process.env.DATE_OVERRIDE && process.env.DATE_OVERRIDE.trim()) {
     targetDays = [process.env.DATE_OVERRIDE.trim()];
   } else {
+    // ⚠️ LA FINESTRA LUNGA UNA VOLTA AL GIORNO (27/10/2026, fase 2 dell'alleggerimento delle fonti, dopo i blocchi
+    // di OMIRL, ARPA Piemonte e OASI). I sette giorni costano 8 date UTC per stazione (~370 richieste) e servono a
+    // raccogliere le ore che OSMER ingerisce tardi: basta il primo giro della giornata. Gli altri fanno ieri e
+    // l'altro ieri (3 date UTC, ~140 richieste). «Gia' fatta oggi» = il file di tre giorni fa, che solo la finestra
+    // lunga riscrive, ha `collected` di oggi. Misurato il 26-27/10: ieri ha gia' 40 stazioni all'1 di notte.
+    let giorni = GIORNI_WINDOW;
+    if (!process.env.GIORNI_FINESTRA && GIORNI_WINDOW > 2) {
+      try {
+        const f3 = path.join(DATA_DIR, `${fmtDate(new Date(noon - 3 * 24 * 3600000))}.json`);
+        const c = new Date(JSON.parse(fs.readFileSync(f3, 'utf8')).collected);
+        if (fmtDate(new Date(c.getTime() + getItalyOffset(c) * 3600000)) === fmtDate(italyNow)) giorni = 2;
+      } catch (e) { /* file mancante o illeggibile: finestra lunga */ }
+    }
+    console.log(`  Finestra: ${giorni} giorni` + (giorni === 2 ? ' (quella lunga e\' gia\' stata fatta oggi)' : ''));
     targetDays = [];
-    for (let i = 1; i <= GIORNI_WINDOW; i++) targetDays.push(fmtDate(new Date(noon - i * 24 * 3600000)));
+    for (let i = 1; i <= giorni; i++) targetDays.push(fmtDate(new Date(noon - i * 24 * 3600000)));
   }
 
   // Ogni giorno solare italiano usa le ore di DUE date UTC (quella del giorno e

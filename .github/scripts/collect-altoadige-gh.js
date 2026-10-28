@@ -13,11 +13,11 @@
  *   LT     → temperatura → t: [min, max] °C
  *   WG     → vento medio (m/s ×3,6)  ┐
  *   WG.BOE → raffica    (m/s ×3,6)  ┘→ w: [media, raffica] km/h
- * Ogni run ricalcola IERI (giorno completo) e OGGI (parziale, i run
- * successivi correggono) → nessun problema di merge. Campi scritti solo con
+ * Dal 27/10/2026 si calcola solo IERI, a giorno completo, una volta al giorno
+ * (lib-meteo-una-volta.js); prima ogni run rifaceva ieri e oggi. Campi scritti solo con
  * ore coperte ≥ MIN_ORE_METEO; stazioni senza sensore restano senza campi.
  * Sanity come Svizzera/Austria: t in [-45,50] °C, WG <60 m/s, BOE <90 m/s.
- * ~171 richieste extra per run (57 stazioni × 3 sensori); tutta la parte
+ * ~228 richieste extra al giorno (57 stazioni × 4 sensori, con l'umidità); tutta la parte
  * meteo sta in un try: un suo guasto non tocca mai la raccolta pioggia.
  */
 
@@ -25,6 +25,7 @@ const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
 const { tieniMeteo } = require('./lib-tieni-meteo.js');
+const { meteoIeriDaFare } = require('./lib-meteo-una-volta.js');
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data', 'altoadige');
 const API_URL  = 'https://static-meteo.provincia.bz.it/stations-data/website/valley.json';
@@ -295,16 +296,24 @@ async function main() {
     console.log(`✅ Scritto ${outFile} (${finalStations.length} stazioni)`);
   }
 
-  // ── Temperatura e vento: ieri (completo) + oggi (parziale) ──────
+  // ── Temperatura e vento: solo IERI, una volta (lib-meteo-una-volta.js) ──────
+  // Fino al 27/10/2026 ogni giro ricalcolava ieri (completo) + oggi (parziale): 228 richieste a giro, e «oggi»
+  // la mappa non lo mostra. Ora il giorno si calcola intero il mattino dopo, di norma al giro delle 4:30.
   // Dentro un try: un guasto delle timeseries non deve MAI far fallire
   // la raccolta pioggia già scritta qui sopra.
   try {
     const prevStr = new Date(Date.UTC(
       +dateStr.slice(0, 4), +dateStr.slice(5, 7) - 1, +dateStr.slice(8, 10)
     ) - 86400000).toISOString().slice(0, 10);
-    const giorni = process.env.DATE_OVERRIDE ? [dateStr] : [prevStr, dateStr];
-    console.log(`  Meteo t/w: raccolgo ${giorni.join(', ')}...`);
-    await raccogliMeteo(stations.map(s => s.id), giorni);
+    const prevFile = path.join(DATA_DIR, `${prevStr}.json`);
+    const d = process.env.DATE_OVERRIDE ? { fare: true, perche: 'data scelta a mano' }
+            : !fs.existsSync(prevFile) ? { fare: false, perche: `manca il file di ${prevStr}` }
+            : meteoIeriDaFare(prevFile, ['t'], 40);
+    const giorni = process.env.DATE_OVERRIDE ? [dateStr] : [prevStr];
+    if (d.fare) {
+      console.log(`  Meteo t/w: raccolgo ${giorni.join(', ')} (${d.perche})...`);
+      await raccogliMeteo(stations.map(s => s.id), giorni);
+    } else console.log(`  Meteo t/w di ${prevStr}: salto, ${d.perche}`);
   } catch (e) {
     console.warn('  Warn: raccolta meteo t/w fallita: ' + e.message);
   }

@@ -72,6 +72,7 @@ const CONCURRENCY = 8;    // stazioni in parallelo (stile Liguria)
 // zero richieste in piu': il CSV «recent» di ogni stazione ha gia' tutto l'anno. ⚠️ Solo l'anno CORRENTE: nei primi
 // giorni di gennaio i giorni di dicembre non ci sono, e una loro stima resta (andrebbe preso lo «historical»).
 const REPAIR_DAYS = 30;
+const ORA_POMERIGGIO = 12;   // da quest'ora italiana il giro rifa' sempre tutto (fase 3, 27/10/2026: vedi main)
 
 function getItalyOffset(date) {
   // Svizzera e Italia condividono lo stesso fuso (CET/CEST)
@@ -230,8 +231,9 @@ async function collectStation(st, windows, maxEnd) {
   if (!recBuf) return null;
   let rows = parseHourly(recBuf);
   if (!rows || rows.length === 0) return null;
+  const fino = rows[rows.length - 1][0];   // fin dove arriva il file dell'anno, prima di _now (spia `completo`, 27/10/2026)
   // se il recent non arriva alla fine della finestra più recente, integra con now
-  if (rows[rows.length - 1][0] < maxEnd) {
+  if (fino < maxEnd) {
     const nowBuf = await fetchBuf(`${baseUrl}_now.csv`);
     if (nowBuf) {
       const nowRows = parseHourly(nowBuf) || [];
@@ -277,7 +279,7 @@ async function collectStation(st, windows, maxEnd) {
       }
     }
   }
-  return res;
+  return { per: res, fino };
 }
 
 function loadExisting(dateStr) {
@@ -291,7 +293,7 @@ const eStima = j => !!j && /open-meteo/.test(j.source || '');
 /** Merge per stazione: il valore nuovo vince, le stazioni vecchie senza valore nuovo restano.
  *  ⚠️ Ma NON sopra un file di stima (26/10/2026): le stazioni stimate senza valore nuovo resterebbero dentro un file
  *  che da quel momento si dichiara `meteoswiss`, cioe' stime spacciate per misure. Su una stima si riparte da zero. */
-function writeDay(dateStr, freshStations) {
+function writeDay(dateStr, freshStations, completo) {
   const existing = loadExisting(dateStr);
   const byId = {};
   if (existing && Array.isArray(existing.stations) && !eStima(existing)) {
@@ -307,6 +309,7 @@ function writeDay(dateStr, freshStations) {
     date:      dateStr,
     collected: new Date().toISOString(),
     source:    'meteoswiss',
+    ...(completo ? { completo: true } : {}),   // ieri intero nel file dell'anno: i giri del mattino dopo si saltano
     count:     merged.length,
     stations:  merged,
   }));
@@ -317,10 +320,6 @@ function writeDay(dateStr, freshStations) {
 async function main() {
   console.log('=== collect-svizzera-meteoswiss avviato ===');
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-
-  const stations = await buildStationList();
-  console.log(`  Stazioni MeteoSwiss utilizzabili (rre150h0 attivo, escluso TI): ${stations.length}`);
-  if (stations.length < 100) throw new Error(`Troppo poche stazioni in anagrafe: ${stations.length}`);
 
   // ── Giorni da raccogliere ──
   const now = new Date();
@@ -337,6 +336,30 @@ async function main() {
       if (!ex || (ex.count || 0) < 150 || eStima(ex)) targets.push({ dateStr, always: false });
     }
   }
+  const ieriStr = fmtDate(new Date(todayNoon - 24 * 3600000));
+
+  // ── GIRO DA SALTARE (27/10/2026, fase 3 dell'alleggerimento delle fonti) ──
+  // Ogni giro scarica per OGNI stazione il file con l'anno intero (circa 1 MB per le SMN: Lugano 970 KB), cioe'
+  // oltre 150 MB, per ricalcolare ieri e l'altro ieri. Misurato sulla storia di git (16-26/10): dopo il primo giro
+  // del mattino il file di ieri cambia su 0-7 stazioni su 270, per correzioni di MeteoSvizzera da pochi decimi (la
+  // piu' grande 1,1 → 0 mm). Quindi: se il file di ieri e' COMPLETO (lo scrive il giro che l'ha calcolato, vedi la
+  // spia piu' sotto) i giri del MATTINO non scaricano niente. Il giro del POMERIGGIO (dalle 12 italiane, il cron
+  // delle 12:40 UTC) rifa' sempre tutto e prende le correzioni, e il mattino dopo ieri si ricalcola come altro ieri:
+  // il file finale e' lo stesso di prima. Non si salta con DATE_OVERRIDE ne' se c'e' un giorno da riparare.
+  const oraIt = new Date(now.getTime() + getItalyOffset(now) * 3600000).getUTCHours();
+  if (!(process.env.DATE_OVERRIDE && process.env.DATE_OVERRIDE.trim()) && oraIt < ORA_POMERIGGIO && targets.length === 2) {
+    const ex = loadExisting(ieriStr);
+    if (ex && ex.completo === true && (ex.count || 0) >= 150) {
+      const quando = new Date(Date.parse(ex.collected) + getItalyOffset(now) * 3600000).toISOString().slice(11, 16);
+      console.log(`  ${ieriStr} gia' completo dal giro delle ${quando} (${ex.count} stazioni): salto, il pomeriggio rifa' tutto`);
+      return;
+    }
+  }
+
+  const stations = await buildStationList();
+  console.log(`  Stazioni MeteoSwiss utilizzabili (rre150h0 attivo, escluso TI): ${stations.length}`);
+  if (stations.length < 100) throw new Error(`Troppo poche stazioni in anagrafe: ${stations.length}`);
+
   const windows = targets.map(t => Object.assign({ dateStr: t.dateStr }, dayWindow(t.dateStr)));
   const maxEnd = Math.max.apply(null, windows.map(w => w.end));
   console.log('  Giorni: ' + targets.map(t => t.dateStr + (t.always ? '' : ' (riparazione)')).join(', '));
@@ -344,6 +367,7 @@ async function main() {
   // ── Raccolta a batch ──
   const perDay = {};
   for (const w of windows) perDay[w.dateStr] = [];
+  const finoIeri = [];   // fin dove arriva il file dell'anno, per le stazioni che hanno ieri
   let done = 0, failed = 0;
   for (let i = 0; i < stations.length; i += CONCURRENCY) {
     const batch = stations.slice(i, i + CONCURRENCY);
@@ -358,8 +382,9 @@ async function main() {
       const st = batch[j], res = results[j];
       done++;
       if (!res) continue;
-      for (const dateStr of Object.keys(res)) {
-        const r = res[dateStr]; // {mm, t?, w?, u?, i?} — vedi collectStation
+      if (res.per[ieriStr]) finoIeri.push(res.fino);
+      for (const dateStr of Object.keys(res.per)) {
+        const r = res.per[dateStr]; // {mm, t?, w?, u?, i?} — vedi collectStation
         // ⚠️ QUI IL RECORD SI RICOSTRUISCE CAMPO PER CAMPO: un campo nuovo
         // calcolato in collectStation e non ricopiato qui sparisce in
         // silenzio, senza nessun errore e coi millimetri giusti. E' successo
@@ -380,7 +405,18 @@ async function main() {
   if (failed > 0) console.log(`  (${failed} stazioni fallite)`);
   if (failed > stations.length / 2) throw new Error('Più di metà stazioni fallite: probabile problema di rete/API');
 
-  for (const t of targets) writeDay(t.dateStr, perDay[t.dateStr]);
+  // ── Spia `completo` sul file di ieri (27/10/2026): il file dell'anno arriva gia' alla fine di ieri, senza bisogno di
+  // _now, per almeno il 95% delle stazioni che hanno ieri (e sono almeno 150)? Allora ieri e' intero e i giri del
+  // mattino dopo questo si possono saltare. Decide il dato, non l'orario: se alle 4:30 manca l'ultima ora, il segno non
+  // c'e' e il giro dopo rifa' tutto.
+  const wIeri = windows.find(w => w.dateStr === ieriStr);
+  let ieriCompleto = false;
+  if (wIeri) {
+    const ok = finoIeri.filter(f => f >= wIeri.end).length;
+    ieriCompleto = finoIeri.length >= 150 && ok >= finoIeri.length * 0.95;
+    console.log(`  Ieri ${ieriStr}: ${ok}/${finoIeri.length} stazioni intere nel file dell'anno${ieriCompleto ? ', completo' : ''}`);
+  }
+  for (const t of targets) writeDay(t.dateStr, perDay[t.dateStr], t.dateStr === ieriStr && ieriCompleto);
 
   // ── Pulizia file > 730 giorni (retention finestra scorrevole) ──
   const MAX_DAYS = 730;

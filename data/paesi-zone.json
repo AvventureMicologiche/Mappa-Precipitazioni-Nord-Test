@@ -3175,6 +3175,12 @@
    "lat": 44.521,
    "lon": 10.199,
    "r": "emilia"
+  },
+  {
+   "n": "Ventasso",
+   "lat": 44.37,
+   "lon": 10.324,
+   "r": "emilia"
   }
  ],
  "lunigiana": [
@@ -3286,6 +3292,24 @@
    "n": "Corte Brugnatella",
    "lat": 44.712,
    "lon": 9.38,
+   "r": "emilia"
+  },
+  {
+   "n": "Ferriere",
+   "lat": 44.646,
+   "lon": 9.498,
+   "r": "emilia"
+  },
+  {
+   "n": "Coli",
+   "lat": 44.743,
+   "lon": 9.413,
+   "r": "emilia"
+  },
+  {
+   "n": "Bobbio",
+   "lat": 44.766,
+   "lon": 9.387,
    "r": "emilia"
   }
  ],
@@ -4303,9 +4327,27 @@
    "r": "trentino"
   },
   {
+   "n": "Torrebelvicino",
+   "lat": 45.717,
+   "lon": 11.307,
+   "r": "veneto"
+  },
+  {
    "n": "Laghi",
    "lat": 45.824,
    "lon": 11.273,
+   "r": "veneto"
+  },
+  {
+   "n": "Arsiero",
+   "lat": 45.804,
+   "lon": 11.35,
+   "r": "veneto"
+  },
+  {
+   "n": "Velo d'Astico",
+   "lat": 45.789,
+   "lon": 11.366,
    "r": "veneto"
   }
  ],
@@ -4817,9 +4859,27 @@
    "r": "friuli"
   },
   {
+   "n": "Pontebba",
+   "lat": 46.507,
+   "lon": 13.304,
+   "r": "friuli"
+  },
+  {
    "n": "Dogna",
    "lat": 46.448,
    "lon": 13.315,
+   "r": "friuli"
+  },
+  {
+   "n": "Taipana",
+   "lat": 46.253,
+   "lon": 13.345,
+   "r": "friuli"
+  },
+  {
+   "n": "Resiutta",
+   "lat": 46.393,
+   "lon": 13.22,
    "r": "friuli"
   }
  ],
@@ -4846,6 +4906,36 @@
    "n": "Resia",
    "lat": 46.373,
    "lon": 13.306,
+   "r": "friuli"
+  },
+  {
+   "n": "Pontebba",
+   "lat": 46.507,
+   "lon": 13.304,
+   "r": "friuli"
+  },
+  {
+   "n": "Moggio Udinese",
+   "lat": 46.41,
+   "lon": 13.195,
+   "r": "friuli"
+  },
+  {
+   "n": "Resiutta",
+   "lat": 46.393,
+   "lon": 13.22,
+   "r": "friuli"
+  },
+  {
+   "n": "Tarvisio",
+   "lat": 46.506,
+   "lon": 13.573,
+   "r": "friuli"
+  },
+  {
+   "n": "Taipana",
+   "lat": 46.253,
+   "lon": 13.345,
    "r": "friuli"
   }
  ],
@@ -4890,6 +4980,12 @@
    "n": "Taipana",
    "lat": 46.253,
    "lon": 13.345,
+   "r": "friuli"
+  },
+  {
+   "n": "Venzone",
+   "lat": 46.334,
+   "lon": 13.139,
    "r": "friuli"
   }
  ],
@@ -4996,6 +5092,36 @@
    "n": "Montenars",
    "lat": 46.257,
    "lon": 13.18,
+   "r": "friuli"
+  },
+  {
+   "n": "Magnano in Riviera",
+   "lat": 46.23,
+   "lon": 13.177,
+   "r": "friuli"
+  },
+  {
+   "n": "Gemona del Friuli",
+   "lat": 46.277,
+   "lon": 13.14,
+   "r": "friuli"
+  },
+  {
+   "n": "Chiusaforte",
+   "lat": 46.408,
+   "lon": 13.31,
+   "r": "friuli"
+  },
+  {
+   "n": "Artegna",
+   "lat": 46.242,
+   "lon": 13.156,
+   "r": "friuli"
+  },
+  {
+   "n": "Resiutta",
+   "lat": 46.393,
+   "lon": 13.22,
    "r": "friuli"
   }
  ],
@@ -5555,9 +5681,27 @@
    "r": "altoadige"
   },
   {
+   "n": "Bolzano",
+   "lat": 46.499,
+   "lon": 11.357,
+   "r": "altoadige"
+  },
+  {
    "n": "Castelrotto",
    "lat": 46.568,
    "lon": 11.559,
+   "r": "altoadige"
+  },
+  {
+   "n": "Laives",
+   "lat": 46.426,
+   "lon": 11.338,
+   "r": "altoadige"
+  },
+  {
+   "n": "Ponte Gardena",
+   "lat": 46.597,
+   "lon": 11.53,
    "r": "altoadige"
   }
  ],
@@ -5750,6 +5894,30 @@
    "n": "Capolona",
    "lat": 43.563,
    "lon": 11.86,
+   "r": "toscana"
+  },
+  {
+   "n": "Sansepolcro",
+   "lat": 43.57,
+   "lon": 12.141,
+   "r": "toscana"
+  },
+  {
+   "n": "Civitella in Val di Chiana",
+   "lat": 43.403,
+   "lon": 11.771,
+   "r": "toscana"
+  },
+  {
+   "n": "Castiglion Fibocchi",
+   "lat": 43.528,
+   "lon": 11.763,
+   "r": "toscana"
+  },
+  {
+   "n": "Caprese Michelangelo",
+   "lat": 43.644,
+   "lon": 11.986,
    "r": "toscana"
   }
  ],
@@ -6247,6 +6415,42 @@
    "lat": 43.05,
    "lon": 10.888,
    "r": "toscana"
+  },
+  {
+   "n": "Gavorrano",
+   "lat": 42.925,
+   "lon": 10.906,
+   "r": "toscana"
+  },
+  {
+   "n": "Chiusdino",
+   "lat": 43.155,
+   "lon": 11.088,
+   "r": "toscana"
+  },
+  {
+   "n": "Monticiano",
+   "lat": 43.139,
+   "lon": 11.18,
+   "r": "toscana"
+  },
+  {
+   "n": "Civitella Paganico",
+   "lat": 42.994,
+   "lon": 11.282,
+   "r": "toscana"
+  },
+  {
+   "n": "Scarlino",
+   "lat": 42.907,
+   "lon": 10.852,
+   "r": "toscana"
+  },
+  {
+   "n": "Monterotondo Marittimo",
+   "lat": 43.146,
+   "lon": 10.856,
+   "r": "toscana"
   }
  ],
  "monte-pisano": [
@@ -6417,15 +6621,33 @@
    "r": "toscana"
   },
   {
+   "n": "Siena",
+   "lat": 43.318,
+   "lon": 11.332,
+   "r": "toscana"
+  },
+  {
    "n": "Murlo",
    "lat": 43.168,
    "lon": 11.391,
    "r": "toscana"
   },
   {
+   "n": "Monteroni d'Arbia",
+   "lat": 43.231,
+   "lon": 11.422,
+   "r": "toscana"
+  },
+  {
    "n": "Radicondoli",
    "lat": 43.261,
    "lon": 11.041,
+   "r": "toscana"
+  },
+  {
+   "n": "Montieri",
+   "lat": 43.13,
+   "lon": 11.016,
    "r": "toscana"
   }
  ],
@@ -6692,6 +6914,36 @@
    "n": "Castelsantangelo sul Nera",
    "lat": 42.894,
    "lon": 13.153,
+   "r": "marche"
+  },
+  {
+   "n": "Roccafluvione",
+   "lat": 42.861,
+   "lon": 13.475,
+   "r": "marche"
+  },
+  {
+   "n": "Amandola",
+   "lat": 42.98,
+   "lon": 13.356,
+   "r": "marche"
+  },
+  {
+   "n": "Comunanza",
+   "lat": 42.958,
+   "lon": 13.414,
+   "r": "marche"
+  },
+  {
+   "n": "Venarotta",
+   "lat": 42.881,
+   "lon": 13.493,
+   "r": "marche"
+  },
+  {
+   "n": "Ussita",
+   "lat": 42.944,
+   "lon": 13.138,
    "r": "marche"
   }
  ],
@@ -7736,6 +7988,36 @@
    "n": "Capizzi",
    "lat": 37.849,
    "lon": 14.478,
+   "r": "sicilia"
+  },
+  {
+   "n": "Troina",
+   "lat": 37.785,
+   "lon": 14.6,
+   "r": "sicilia"
+  },
+  {
+   "n": "Cerami",
+   "lat": 37.81,
+   "lon": 14.506,
+   "r": "sicilia"
+  },
+  {
+   "n": "Cesarò",
+   "lat": 37.844,
+   "lon": 14.712,
+   "r": "sicilia"
+  },
+  {
+   "n": "Acquedolci",
+   "lat": 38.056,
+   "lon": 14.588,
+   "r": "sicilia"
+  },
+  {
+   "n": "Alcara li Fusi",
+   "lat": 38.021,
+   "lon": 14.701,
    "r": "sicilia"
   }
  ]

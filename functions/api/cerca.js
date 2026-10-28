@@ -9,6 +9,8 @@
 // admin2, population, feature_code}]}), cosi' le quattro caselle di ricerca del sito restano com'erano. Come Open-Meteo:
 // sotto le 2 lettere niente, con 2 lettere solo i nomi uguali, da 3 l'inizio del nome (anche dei nomi alternativi:
 // «ginevra» trova Genève). In cima chi ha il nome uguale, poi i piu' abitati.
+// In piu' di Open-Meteo (28/10/2026): «S.» e «S» valgono San, Sant', Santo, Santa, come nella ricerca dei comuni della
+// mappa (locVarianti in index.html). «s. stefano d» trova Santo Stefano d'Aveto anche fra le frazioni.
 
 const ORIGINI = /^https?:\/\/(precipitazioni\.avventuremicologiche\.it|avventurepluvio(-test)?\.pages\.dev|localhost(:\d+)?|127\.0\.0\.1(:\d+)?)$/;
 let DIVISI = null;
@@ -22,6 +24,10 @@ const nomeFile = p => {
   const n = [...p].map(c => /[a-z0-9]/.test(c) ? c : c === ' ' ? '_' : 'u' + c.codePointAt(0).toString(16)).join('');
   return (/^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/.test(n) ? '~' + n : n) + '.tsv';
 };
+// la stessa di locVarianti in index.html: GeoNames scrive il santo per esteso, e' la DOMANDA che va allargata, e solo
+// quando uno scrive l'abbreviazione (chi scrive «san» trova quello che trovava prima)
+const SANTI = ['san', 'sant', 'santo', 'santa', 'santi', 'sante'];
+const varianti = q => { const m = q.match(/^ss? (.+)$/); return m ? [q, ...SANTI.map(x => x + ' ' + m[1])] : [q]; };
 
 export async function onRequestGet({ request, env }) {
   const u = new URL(request.url), cors = intestazioni(request);
@@ -31,19 +37,21 @@ export async function onRequestGet({ request, env }) {
     const paese = (u.searchParams.get('countryCode') || '').toUpperCase();
     if (q.length < 2) return rispondi({ results: [] }, cors);
     if (!DIVISI) DIVISI = new Set(await (await env.ASSETS.fetch(new URL('/luoghi/divisi.json', request.url))).json());
-    // si scende nei gruppi divisi finche' la domanda e' piu' lunga del gruppo; se finisce prima, la «cima» del gruppo
-    let p = q.slice(0, 2), cima = false;
-    while (DIVISI.has(p)) { if (q.length > p.length) p = q.slice(0, p.length + 1); else { cima = true; break; } }
-    const righe = await leggi(env, request, nomeFile(p).replace('.tsv', cima ? '-cima.tsv' : '.tsv'));
     const esatto = q.length === 2, trovati = new Map();
-    for (const r of righe) {
-      const k = r.slice(0, r.indexOf('\t'));
-      if (esatto ? k !== q : !k.startsWith(q)) continue;
-      // colonne: chiave, principale, id, nome, lat, lon, paese, regione, id-regione, provincia, abitanti, tipo, quota
-      const f = r.split('\t');
-      if (paese && f[6] !== paese) continue;
-      const uguale = k === q ? 1 : 0, vero = +f[1], prima = trovati.get(f[2]);
-      if (!prima || uguale > prima.uguale || (uguale === prima.uguale && vero > prima.vero)) trovati.set(f[2], { f, uguale, vero });
+    for (const v of varianti(q)) {
+      // si scende nei gruppi divisi finche' la domanda e' piu' lunga del gruppo; se finisce prima, la «cima» del gruppo
+      let p = v.slice(0, 2), cima = false;
+      while (DIVISI.has(p)) { if (v.length > p.length) p = v.slice(0, p.length + 1); else { cima = true; break; } }
+      const righe = await leggi(env, request, nomeFile(p).replace('.tsv', cima ? '-cima.tsv' : '.tsv'));
+      for (const r of righe) {
+        const k = r.slice(0, r.indexOf('\t'));
+        if (esatto ? k !== v : !k.startsWith(v)) continue;
+        // colonne: chiave, principale, id, nome, lat, lon, paese, regione, id-regione, provincia, abitanti, tipo, quota
+        const f = r.split('\t');
+        if (paese && f[6] !== paese) continue;
+        const uguale = k === v ? 1 : 0, vero = +f[1], prima = trovati.get(f[2]);
+        if (!prima || uguale > prima.uguale || (uguale === prima.uguale && vero > prima.vero)) trovati.set(f[2], { f, uguale, vero });
+      }
     }
     // prima il nome uguale, poi chi lo ha come nome vero (non alternativo), poi i piu' abitati
     const results = [...trovati.values()]

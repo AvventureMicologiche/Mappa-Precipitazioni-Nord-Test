@@ -74,11 +74,22 @@ function getJSON(pathQ, retries = 3) {
   });
 }
 
+/* ⚠️ L'ANAGRAFE E' UNA RICHIESTA SOLA (27/10/2026, fase 3 dell'alleggerimento delle fonti). Prima erano cinque, una
+   per tipologia (pioggia, temperatura, vento, umidita', direzione), a ogni giro: Socrata e' la fonte che risponde 429
+   alle raffiche, e cinque richieste di fila per un elenco che cambia di rado erano le prime da togliere. Le righe
+   arrivano nell'ordine di sempre (:id), cosi' per una stazione con due sensori dello stesso tipo vince lo stesso. */
+const TIPOLOGIE = ['Precipitazione', 'Temperatura', 'Velocità Vento', 'Umidità Relativa', 'Direzione Vento'];
+async function fetchAnagrafeTutta() {
+  const where = encodeURIComponent(`tipologia in (${TIPOLOGIE.map(t => `'${t}'`).join(',')})`);
+  const sel = encodeURIComponent('idsensore,idstazione,nomestazione,lat,lng,quota,provincia,tipologia');
+  const rows = await getJSON(`/resource/nf78-nj6b.json?$limit=5000&$order=${encodeURIComponent(':id')}&$select=${sel}&$where=${where}`);
+  const per = {}; TIPOLOGIE.forEach(t => { per[t] = []; });
+  rows.forEach(r => { if (per[r.tipologia]) per[r.tipologia].push(r); });
+  return per;
+}
+
 /** Anagrafe sensori pioggia: id -> {n, lat, lon, q, p, st (idstazione)}. */
-async function fetchAnagrafe() {
-  const where = encodeURIComponent("tipologia='Precipitazione'");
-  const sel = encodeURIComponent('idsensore,idstazione,nomestazione,lat,lng,quota,provincia');
-  const rows = await getJSON(`/resource/nf78-nj6b.json?$limit=1000&$select=${sel}&$where=${where}`);
+function fetchAnagrafe(rows) {
   const map = {};
   rows.forEach(r => {
     const lat = parseFloat(r.lat), lon = parseFloat(r.lng);
@@ -92,11 +103,8 @@ async function fetchAnagrafe() {
 // L'anagrafe ha anche sensori Temperatura (309, °C) e Velocità Vento
 // (155, m/s → ×3,6); idstazione lega i sensori della stessa stazione
 // fisica al pluviometro. La raffica NON esiste su Socrata → w[1] = null.
-/** idstazione → idsensore per una tipologia (Temperatura / Velocità Vento). */
-async function fetchSensoriMeteo(tipologia) {
-  const where = encodeURIComponent(`tipologia='${tipologia}'`);
-  const sel = encodeURIComponent('idsensore,idstazione');
-  const rows = await getJSON(`/resource/nf78-nj6b.json?$limit=1000&$select=${sel}&$where=${where}`);
+/** idstazione → idsensore per una tipologia (Temperatura / Velocità Vento), dalle righe di fetchAnagrafeTutta. */
+function fetchSensoriMeteo(rows) {
   const map = {};
   rows.forEach(r => { if (r.idsensore && r.idstazione && !map[r.idstazione]) map[r.idstazione] = r.idsensore; });
   return map;
@@ -291,17 +299,19 @@ async function main() {
   console.log('=== collect-lombardia avviato ===');
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
-  const anagrafe = await fetchAnagrafe();
+  const righe = await fetchAnagrafeTutta();
+  const anagrafe = fetchAnagrafe(righe['Precipitazione']);
   console.log(`  Anagrafe: ${Object.keys(anagrafe).length} sensori pioggia`);
   if (Object.keys(anagrafe).length < 50) throw new Error('Anagrafe troppo piccola');
   let tempByStaz = null, windByStaz = null, umidByStaz = null;
-  try {
-    tempByStaz = await fetchSensoriMeteo('Temperatura');
-    windByStaz = await fetchSensoriMeteo('Velocità Vento');
-    umidByStaz = await fetchSensoriMeteo('Umidità Relativa');
-    try { DIR_BY_STAZ = await fetchSensoriMeteo('Direzione Vento'); } catch (e) { console.warn('  Warn anagrafe direzione: ' + e.message); }
-    console.log(`  Sensori meteo: ${Object.keys(tempByStaz).length} temperatura, ${Object.keys(windByStaz).length} vento, ${Object.keys(umidByStaz).length} umidità`);
-  } catch (e) { console.warn('  Warn anagrafe meteo: ' + e.message); }
+  // come prima: una tipologia che non da' sensori vale «meteo non disponibile», e writeDay tiene quello del file
+  const oNull = m => (Object.keys(m).length ? m : null);
+  tempByStaz = oNull(fetchSensoriMeteo(righe['Temperatura']));
+  windByStaz = oNull(fetchSensoriMeteo(righe['Velocità Vento']));
+  umidByStaz = oNull(fetchSensoriMeteo(righe['Umidità Relativa']));
+  DIR_BY_STAZ = fetchSensoriMeteo(righe['Direzione Vento']);
+  if (!tempByStaz || !windByStaz || !umidByStaz) { tempByStaz = windByStaz = umidByStaz = null; console.warn('  Warn anagrafe meteo: una tipologia senza sensori'); }
+  else console.log(`  Sensori meteo: ${Object.keys(tempByStaz).length} temperatura, ${Object.keys(windByStaz).length} vento, ${Object.keys(umidByStaz).length} umidità`);
 
   // Giorni bersaglio: DATE_OVERRIDE (uno o "A:B" range) oppure ieri + altroieri
   let targetDays = [];

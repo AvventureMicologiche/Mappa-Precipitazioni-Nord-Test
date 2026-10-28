@@ -36,6 +36,7 @@ var OMIRL_BASE = OMIRL_DIRETTO;   // lo cambia scegliStrada
 const PARALLELE = 3;
 const { creaDir, segnaDir, direzione, daSettore } = require('./lib-direzione.js');
 const { tieniMeteo } = require('./lib-tieni-meteo.js');
+const { meteoIeriDaFare } = require('./lib-meteo-una-volta.js');
 
 function getItalyOffset(date) {
   const year = date.getUTCFullYear();
@@ -347,10 +348,18 @@ async function main() {
   console.log('  OK: ' + ok + ', fallite: ' + fail + ', con pioggia: ' + withRain);
 
   // Temperatura e vento: in un try, la pioggia non deve mai risentirne
+  // ⚠️ UNA VOLTA AL GIORNO (27/10/2026, fase 2 dell'alleggerimento delle fonti): le 3 liste e i ~350 grafici
+  // Termo/Vento/Igro si scaricano nel primo giro dopo le 3 italiane che trova ieri senza (lib-meteo-una-volta.js).
+  // Agli altri giri si rifa' solo la pioggia, e t/w/u/wd restano dal file (tieniMeteo, qui sotto).
   try {
-    var byId = {};
-    output.forEach(function(s) { byId[s.id] = s; });
-    await aggiungiMeteoLiguria(byId, dayStartMs, dayEndMs);
+    var dm = process.env.DATE_OVERRIDE ? { fare: true, perche: 'data scelta a mano' }
+           : meteoIeriDaFare(path.join(DATA_DIR, yesterdayDate + '.json'), ['t'], 120);
+    if (dm.fare) {
+      console.log('  Meteo t/w/u: raccolgo (' + dm.perche + ')');
+      var byId = {};
+      output.forEach(function(s) { byId[s.id] = s; });
+      await aggiungiMeteoLiguria(byId, dayStartMs, dayEndMs);
+    } else console.log('  Meteo t/w/u di ' + yesterdayDate + ': salto, ' + dm.perche);
   } catch(e) { console.warn('  Warn: meteo t/w saltato: ' + e.message); }
 
   if (output.length < 10) {

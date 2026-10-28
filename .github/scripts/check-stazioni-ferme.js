@@ -105,9 +105,11 @@ const mediana = a => {
   return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2;
 };
 
+// abruzzo: la PROVA del 27/10/2026 (MeteoNetwork + stime ICON-2I) resta fuori finche' non si decide: le stime
+// non sono pluviometri, e le sue MeteoNetwork ferme le toglie gia' il collector (segnaFerme)
 function regioni() {
   return fs.readdirSync(DATA_DIR, { withFileTypes: true })
-    .filter(d => d.isDirectory())
+    .filter(d => d.isDirectory() && d.name !== 'abruzzo')
     .map(d => d.name)
     .sort();
 }

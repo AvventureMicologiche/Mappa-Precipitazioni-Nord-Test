@@ -5,10 +5,13 @@
 // chiunque arrivi la richiesta. Passa SOLO le GET dei percorsi in FONTI e solo con l'intestazione X-Chiave uguale
 // al segreto CHIAVE: non e' un passaggio aperto per chiunque. /dove (con la chiave) dice da che centro dati esce.
 // Copia in repo: .github/cloudflare/omirl-tramite.js (+ omirl-tramite.wrangler.toml)
+// Il terzo campo e' l'Accept da mandare: OASI risponde in CSV, le altre in JSON.
 const FONTI = [
-  ['/Omirl/rest/', 'https://omirl.regione.liguria.it'],          // ARPA Liguria
-  ['/api_realtime/', 'https://utility.arpa.piemonte.it'],        // ARPA Piemonte, realtime
-  ['/meteoidro/', 'https://utility.arpa.piemonte.it'],           // ARPA Piemonte, archivio ufficiale
+  ['/Omirl/rest/', 'https://omirl.regione.liguria.it', 'application/json'],          // ARPA Liguria
+  ['/api_realtime/', 'https://utility.arpa.piemonte.it', 'application/json'],        // ARPA Piemonte, realtime
+  ['/meteoidro/', 'https://utility.arpa.piemonte.it', 'application/json'],           // ARPA Piemonte, archivio ufficiale
+  // OASI Ticino (27/10/2026): dal 21/10 non risponde ai runner di GitHub, dal PC si'
+  ['/web/rest/', 'https://www.oasi.ti.ch', '*/*'],
 ];
 
 export default {
@@ -23,7 +26,7 @@ export default {
     }
     try {
       const r = await fetch(fonte[1] + url.pathname + url.search, {
-        headers: { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0 (mappa-precipitazioni)' },
+        headers: { 'Accept': fonte[2], 'User-Agent': 'Mozilla/5.0 (mappa-precipitazioni)' },
         signal: AbortSignal.timeout(25000),
       });
       return new Response(r.body, { status: r.status, headers: { 'content-type': r.headers.get('content-type') || 'application/json' } });

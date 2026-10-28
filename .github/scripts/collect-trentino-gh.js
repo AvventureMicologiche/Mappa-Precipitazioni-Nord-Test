@@ -70,7 +70,7 @@ function fetchText(url) {
 // serie a 15 minuti: relative_humidity_list (%), wind_list con speed_value
 // (media, m/s) e windgust (m/s), temperature_list. Inventario: 43 stazioni su
 // 111 con l'igrometro (sensoriStazioniGeoJson). Quindi, dopo aver scritto il
-// file di ieri, una chiamata per stazione (~110, in gruppi di 6) aggiunge
+// file di ieri, una chiamata per stazione coi sensori (~50, in gruppi di 6; ~110 fino al 27/10/2026) aggiunge
 // u:[min,max] e w:[media,raffica] km/h dove le ore coperte sono ≥ 20.
 // ⚠️ Le date portano "+01" FISSO (CET, come ARSO): d'estate il giorno solare
 // italiano e' spostato di un'ora, si converte via getItalyOffset. Le ultime
@@ -78,8 +78,22 @@ function fetchText(url) {
 // quarti d'ora su 96, sotto la soglia di attenzione. Tutto dentro un try:
 // un guasto qui non tocca la pioggia.
 const LAST_URL = 'https://dati.meteotrentino.it/service.asmx/getLastDataOfMeteoStation?codice=';
+// ⚠️ SOLO LE STAZIONI COI SENSORI, UNA VOLTA AL GIORNO (27/10/2026, fase 2 dell'alleggerimento delle fonti).
+// Prima si chiamavano tutte le ~104 stazioni a ogni giro, ma umidita' o vento li hanno 43-45. L'inventario
+// ufficiale (una richiesta) le elenca: il 27/10 dava 50 stazioni con vento o umidita', e dentro c'erano tutte le 45
+// viste nei file dal 10 al 26/10. Se l'inventario non risponde si chiamano tutte, come prima. Quando farlo lo
+// decide lib-meteo-una-volta.js: il primo giro dopo le 3 italiane che trova ieri senza u/w.
+const SENSORI_URL = 'https://dati.meteotrentino.it/service.asmx/sensoriStazioniGeoJson';
 const { creaDir, segnaDir, direzione } = require('./lib-direzione.js');
 const { tieniMeteo } = require('./lib-tieni-meteo.js');
+const { meteoIeriDaFare } = require('./lib-meteo-una-volta.js');
+async function stazioniConSensori() {
+  try {
+    const l = (await fetchJSON(SENSORI_URL)).dotazioneSensori || [];
+    const ids = new Set(l.filter(x => x.vento === 'true' || x.umidita === 'true').map(x => x.staz));
+    return ids.size >= 20 ? ids : null;   // inventario vuoto o rotto: meglio chiamarle tutte
+  } catch (e) { console.warn('  Warn inventario sensori: ' + e.message + ', chiamo tutte le stazioni'); return null; }
+}
 const MIN_ORE_METEO = 20;
 // ⚠️ (19/10/2026, quinto check, bug 6) il file di ieri si riscrive DA CAPO a ogni giro con pioggia e temperatura, e
 // u/w/wd li rimette solo dopo arricchisciMeteoIeri, una chiamata per stazione: se quella cadeva (tutta o per una
@@ -111,7 +125,9 @@ async function arricchisciMeteoIeri(giorno, file) {
   if (!fs.existsSync(file)) return;
   const data = JSON.parse(fs.readFileSync(file, 'utf8'));
   let conU = 0, conW = 0;
-  const staz = data.stations || [];
+  const conSensori = await stazioniConSensori();
+  const staz = (data.stations || []).filter(s => !conSensori || conSensori.has(s.id));
+  console.log(`  Meteo u/w di ${giorno}: chiamo ${staz.length} stazioni` + (conSensori ? ' (quelle coi sensori)' : ''));
   for (let i = 0; i < staz.length; i += 6) {
     await Promise.all(staz.slice(i, i + 6).map(async s => {
       try {
@@ -270,7 +286,12 @@ async function main() {
         }
       }
     } catch(e) { console.warn('Warn aggiornamento ieri: ' + e.message); }
-    try { await arricchisciMeteoIeri(_yDate, path.join(DATA_DIR, `${_yDate}.json`)); }
+    try {
+      const _yFile = path.join(DATA_DIR, `${_yDate}.json`);
+      const d = meteoIeriDaFare(_yFile, ['u', 'w'], 30);
+      if (d.fare) await arricchisciMeteoIeri(_yDate, _yFile);
+      else console.log(`  Meteo u/w di ${_yDate}: salto, ${d.perche}`);
+    }
     catch(e) { console.warn('Warn meteo u/w ieri: ' + e.message); }
   } else {
     // prova a mano: DATE_OVERRIDE=ieri arricchisce quel giorno (l'endpoint copre solo ieri e oggi)

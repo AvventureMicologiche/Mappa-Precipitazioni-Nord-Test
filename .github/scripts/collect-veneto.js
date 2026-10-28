@@ -170,6 +170,25 @@ function estraiMeteoVen(xml, prefix) {
   return out;
 }
 
+// Il record di IERI, cioè il giorno che va in mappa: totale = somma degli
+// incrementi (bug #20) e completezza >= 85% delle letture attese, se no si
+// scarta la stazione invece di scrivere una sottostima. La finestra XML di
+// ARPAV copre ~48 ore, quindi al primo run del mattino ieri è sempre completo.
+function recordIeri(xml, s, yPrefix) {
+  const sReg = /<SENSORE>([\s\S]*?)<\/SENSORE>/g; let sm;
+  while ((sm = sReg.exec(xml)) !== null) {
+    const sens=sm[1]; if(getTag(sens,'TYPE')!=='PREC') continue;
+    const tot=totalePrecGiorno(sens,yPrefix);
+    if(tot.letture < tot.attese*0.85) return null;
+    const mm=tot.mm;
+    if(mm>300) return null;
+    const rec={id:s.id,n:s.nome,lat:Math.round(s.lat*10000)/10000,lon:Math.round(s.lon*10000)/10000,q:s.quota,p:s.prov,mm:Math.round(mm*10)/10};
+    try { Object.assign(rec, estraiMeteoVen(xml, yPrefix)); } catch(e) {}
+    return rec;
+  }
+  return null;
+}
+
 async function main() {
   const targetDate = getTargetDate();
   console.log(`\n=== Raccolta dati Veneto per ${targetDate} ===\n`);
@@ -207,6 +226,15 @@ async function main() {
   const targetPrefix = targetDate.replace(/-/g, ''); // es. 20260505
   const output = [];
   let ok = 0, skip = 0;
+  // ⚠️ UNA LETTURA SOLA PER STAZIONE (27/10/2026, fase 2 dell'alleggerimento delle fonti, dopo i blocchi di OMIRL,
+  // ARPA Piemonte e OASI). Lo stesso XML porta oggi e ieri: prima il ramo «aggiorna ieri» lo riscaricava da capo,
+  // ~390 richieste a giro invece di ~195. Il calcolo di ieri e' lo stesso di prima (recordIeri).
+  const aggiornaIeri = !process.env.DATE_OVERRIDE;
+  const _yd = new Date(new Date().getTime() + getItalyOffset(new Date()) * 3600000 - 24 * 3600000);
+  const _p = n => String(n).padStart(2, '0');
+  const _yDate = _yd.getUTCFullYear() + '-' + _p(_yd.getUTCMonth()+1) + '-' + _p(_yd.getUTCDate());
+  const _yPrefix = _yDate.replace(/-/g,'');
+  const _out = [];
 
   // Processa in batch di 10 per non sovraccaricare il server
   const BATCH = 10;
@@ -245,6 +273,9 @@ async function main() {
           ok++;
           break;
         }
+        if (aggiornaIeri) {
+          try { const _rec = recordIeri(xml, s, _yPrefix); if (_rec) _out.push(_rec); } catch(e) {}
+        }
       } catch(e) {
         skip++;
       }
@@ -269,41 +300,10 @@ async function main() {
   }), 'utf8');
   console.log(`Salvato: ${outFile} (${output.length} stazioni)`);
   } // fine if output.length >= 5
-  // ── Step 3b: aggiorna sempre anche ieri ──────────────────────
-  if (!process.env.DATE_OVERRIDE) {
-    const _yd = new Date(new Date().getTime() + getItalyOffset(new Date()) * 3600000 - 24 * 3600000);
-    const _p = n => String(n).padStart(2, '0');
-    const _yDate = _yd.getUTCFullYear() + '-' + _p(_yd.getUTCMonth()+1) + '-' + _p(_yd.getUTCDate());
-    const _yPrefix = _yDate.replace(/-/g,'');
+  // ── Step 3b: aggiorna sempre anche ieri (dagli stessi XML dello step 2) ──
+  if (aggiornaIeri) {
     console.log('Aggiorno anche ieri: ' + _yDate);
     try {
-      const _out = [];
-      for (let i = 0; i < stazioni.length; i += BATCH) {
-        const batch = stazioni.slice(i, i + BATCH);
-        await Promise.all(batch.map(async (s) => {
-          try {
-            const xml = await fetchURL(`${BASE_URL}/${s.link}`);
-            const sReg = /<SENSORE>([\s\S]*?)<\/SENSORE>/g; let sm;
-            while ((sm = sReg.exec(xml)) !== null) {
-              const sens=sm[1]; if(getTag(sens,'TYPE')!=='PREC') continue;
-              // Qui si scrive IERI, cioè il giorno che va in mappa: totale =
-              // somma degli incrementi (bug #20) e completezza >= 85% delle
-              // letture attese, se no si scarta la stazione invece di scrivere
-              // una sottostima. La finestra XML di ARPAV copre ~48 ore, quindi
-              // al primo run del mattino ieri è sempre completo.
-              const tot=totalePrecGiorno(sens,_yPrefix);
-              if(tot.letture < tot.attese*0.85) break;
-              const mm=tot.mm;
-              if(mm>300) break;
-              const _rec={id:s.id,n:s.nome,lat:Math.round(s.lat*10000)/10000,lon:Math.round(s.lon*10000)/10000,q:s.quota,p:s.prov,mm:Math.round(mm*10)/10};
-              try { Object.assign(_rec, estraiMeteoVen(xml, _yPrefix)); } catch(e) {}
-              _out.push(_rec);
-              break;
-            }
-          } catch(e) {}
-        }));
-        await new Promise(r => setTimeout(r, 200));
-      }
       if (_out.length >= 5) {
         fs.writeFileSync(path.join(DATA_DIR,_yDate+'.json'), JSON.stringify({date:_yDate,collected:new Date().toISOString(),count:_out.length,stations:_out}),'utf8');
         console.log('Aggiornato ieri: ' + _yDate + ' (' + _out.length + ' stazioni)');

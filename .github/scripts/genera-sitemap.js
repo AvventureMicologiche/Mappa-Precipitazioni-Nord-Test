@@ -71,6 +71,10 @@ function scriviSitemap(SITO, RADICE) {
   const voci = fam.mappa;
 
   voci.push({ loc: SITO + '/', lastmod: '2026-08-14', freq: 'daily', pri: '1.0' });
+  // /previsioni/ (28/10/2026): la mappa aperta sulle previsioni, servita da functions/previsioni/index.js. Solo dove la
+  // Function c'e': il repo di test non ce l'ha, e la sitemap dichiarerebbe una pagina che risponde 404
+  if (c_e(path.join('functions', 'previsioni', 'index.js')))
+    voci.push({ loc: SITO + '/previsioni/', lastmod: '2026-10-28', freq: 'daily', pri: '0.9' });
   // '/fonti' e non '/fonti.html': Cloudflare Pages rimanda il .html con un 308 (check dell'8/10/2026)
   voci.push({ loc: SITO + '/fonti', lastmod: '2026-10-08', freq: 'monthly', pri: '0.5' });
   // La guida (12/9/2026). Priorita' 0.6: sta sopra le fonti, che sono una
@@ -177,6 +181,9 @@ function scriviSitemap(SITO, RADICE) {
   // Dal 24/10 sera due gruppi: le zone di ZONE_METEO_B (genera-pagine-meteo-zona.js) vanno in sitemap-meteo-b.xml.
   const MZ = path.join(RADICE, 'meteo'), MB = new Set(require('./genera-pagine-meteo-zona.js').ZONE_METEO_B);
   if (fs.existsSync(MZ)) {
+    // la pagina madre delle zone (28/10/2026), in testa alla sitemap del gruppo A
+    if (c_e(path.join('meteo', 'index.html')))
+      fam.meteo.push({ loc: SITO + '/meteo/', lastmod: LASTMOD.meteo || LASTMOD.regioni, freq: 'weekly', pri: '0.8' });
     for (const d of fs.readdirSync(MZ).sort()) {
       if (c_e(path.join('meteo', d, 'index.html')))
         fam[MB.has(d) ? 'meteoB' : 'meteo'].push({ loc: SITO + '/meteo/' + d + '/', lastmod: LASTMOD.meteo || LASTMOD.regioni, freq: 'daily', pri: '0.7' });

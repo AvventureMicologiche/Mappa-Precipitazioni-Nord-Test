@@ -52,6 +52,8 @@ const MH_URL = 'https://meteohub.agenziaitaliameteo.it/api/observations';
 const { creaDir, segnaDir, direzione } = require('./lib-direzione.js');
 const { correggiZeri } = require('./lib-quota-terreno.js');
 const { tieniMeteo } = require('./lib-tieni-meteo.js');
+const { meteoIeriDaFare } = require('./lib-meteo-una-volta.js');
+const SOGLIA_VENTO_MH = 100;   // ieri ha il vento su ~140 stazioni: sotto 100 il giro dopo lo richiede (27/10/2026)
 async function ventoMeteoHub(dateStr, elenco) {
   // ⚠️ Da lib-giorno-italiano (18/10/2026): il giorno dura 23 o 25 ore al cambio d'ora.
   const f = require('./lib-giorno-italiano.js').finestraGiorno(dateStr);
@@ -462,10 +464,17 @@ async function main() {
         // VALIDATO il 19/8 sulle ore in comune di oggi: 272 confronti, scarto
         // medio 1,41 km/h, spiegato dal confronto fra istanti diversi dentro la
         // stessa ora (il vento e' raffichato). Unita': m/s in entrambe le fonti.
+        // ⚠️ UNA VOLTA AL GIORNO (27/10/2026, fase 3 dell'alleggerimento delle fonti): il campionatore e' fermo dal
+        // 26/8 e il vento arriva tutto da qui, ma si chiedeva a OGNI giro, chiusure serali comprese, sempre per lo
+        // stesso ieri. Misurato sulla storia di git (20-26/10): dal primo giro dopo le 3 il vento di ieri non cambia
+        // piu' (una volta su sette una stazione in piu' nel pomeriggio). Si chiede al primo giro dopo le 3 italiane
+        // che trova ieri col vento su meno di SOGLIA_VENTO_MH stazioni; agli altri w/wd restano quelli del file.
+        const vm = meteoIeriDaFare(file, ['w'], SOGLIA_VENTO_MH);
         let daMH = {}, daMHwd = {};
         try {
           const mancanti = (j.stations || []).filter(s => !wIeri[s.id]);
-          if (mancanti.length) { const r = await ventoMeteoHub(ieriStr, mancanti); daMH = r.w; daMHwd = r.wd; }
+          if (mancanti.length && vm.fare) { const r = await ventoMeteoHub(ieriStr, mancanti); daMH = r.w; daMHwd = r.wd; }
+          else if (mancanti.length) console.log(`  Vento MeteoHub di ${ieriStr}: salto, ${vm.perche}`);
         } catch (e) { console.warn('  Warn: rete di sicurezza MeteoHub saltata: ' + e.message); }
         let nC = 0, nM = 0;
         (j.stations || []).forEach(s => {

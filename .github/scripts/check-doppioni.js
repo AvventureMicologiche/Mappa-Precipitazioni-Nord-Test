@@ -64,9 +64,10 @@ const rif = process.env.GIORNO ? new Date(process.env.GIORNO + 'T12:00:00Z') : n
 const giorni = [];
 for (let k = COPPIE; k >= 0; k--) giorni.push(fmt(new Date(rif.getTime() - k * 86400000)));
 
+// abruzzo: la PROVA del 27/10/2026 (MeteoNetwork + stime ICON-2I), fuori dalla sorveglianza finche' non si decide
 const regioni = fs.readdirSync(DATA_DIR).filter(n => {
   const p = path.join(DATA_DIR, n);
-  return fs.statSync(p).isDirectory() && !/vento|funghi|riepiloghi|vetrine/.test(n);
+  return fs.statSync(p).isDirectory() && !/vento|funghi|riepiloghi|vetrine|abruzzo/.test(n);
 }).sort();
 
 const allarmi = [];

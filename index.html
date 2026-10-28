@@ -1772,6 +1772,25 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
   .naz-chip.on{background:#fff;border-color:#fff;color:#1b3f6e;}
 }
 </style>
+<!-- LINK ALLE PREVISIONI (?m=prev, 27/10/2026, suo: «prima mi flasha per qualche secondo la mappa pluviometrica e
+     poi appare la pagina previsioni»). Le previsioni partono solo a mappa pronta, e fino a quel momento si vedeva lo
+     storico: linguetta «Storico piogge» accesa, periodi, aiuto. Con un link alle previsioni la pagina nasconde da
+     subito i pezzi dello storico e accende la linguetta Previsioni. La classe la toglie entra() delle previsioni, e da
+     sola dopo 20 s se le previsioni non partono (il link con la regione aspetta 15 s): si torna allo storico com'era. -->
+<style>
+html.apre-prev #time-panel,html.apre-prev #map-hint-panel,html.apre-prev #legend-panel,html.apre-prev #badge,html.apre-prev #beta-note,html.apre-prev #tq-btn,html.apre-prev #vic-riga{visibility:hidden !important}
+@media(min-width:901px){html.apre-prev #novita-box{visibility:hidden !important}}
+html.apre-prev #map .leaflet-marker-pane svg{display:none}
+html.apre-prev #map path.conf-pulse{animation:none !important;fill-opacity:0 !important}
+html.apre-prev #sez-storico{border-bottom-color:transparent !important;color:#dfe8f5 !important}
+html.apre-prev #sez-prev{border-bottom-color:#ffd54a !important;color:#fff !important}
+html.apre-prev #sez-prev::after{display:none}
+</style>
+<script>
+  // /previsioni/ (28/10/2026) vale come ?m=prev: e' lo stesso index.html, servito da functions/previsioni/index.js
+  if(/[?&]m=prev(&|$)/.test(location.search)||/^\/previsioni\/$/.test(location.pathname)){ document.documentElement.classList.add('apre-prev');
+    setTimeout(function(){ document.documentElement.classList.remove('apre-prev'); },20000); }
+</script>
 </head>
 <body>
 
@@ -1787,7 +1806,7 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
          un sito-mappa la casetta si legge come "torna alla vista iniziale", non
          come "vai su un altro sito". Da misurare su click_home / click_youtube. -->
     <a href="https://avventuremicologiche.it" target="_blank" rel="noopener" title="Vai al sito Avventure Micologiche" onclick="try{gtag('event','click_home',{pulsante:'archie-header'})}catch(e){}" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#f3efe6;text-decoration:none;flex-shrink:0;margin-right:2px;border:1.5px solid rgba(255,255,255,.85);box-sizing:border-box;overflow:hidden;">
-      <img src="archie-avatar.webp" alt="Avventure Micologiche" style="width:100%;height:100%;object-fit:cover;display:block;">
+      <img src="/archie-avatar.webp" alt="Avventure Micologiche" style="width:100%;height:100%;object-fit:cover;display:block;">
     </a>
     <span style="font-size:18px" class="hdr-goccia">🌧</span>
     <div class="hdr-titolo">
@@ -1882,7 +1901,7 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
        onclick="try{gtag('event','click_youtube',{pulsante:'box-desktop'})}catch(e){}"
        id="channel-logo" class="prevetrina">
       <div class="v-alto v-iscr">
-        <img src="archie-avatar.webp" alt="Archie" class="ch-ava">
+        <img src="/archie-avatar.webp" alt="Archie" class="ch-ava">
         <div class="v-dx">
           <div class="v-occhio v-iscr"><svg width="16" height="12" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#FF0000"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg> Canale YouTube</div>
           <div class="v-nome">Avventure Micologiche</div>
@@ -2174,7 +2193,7 @@ body.in-scatto #hint-cerca-slot,body.in-scatto #map-hint-panel .mh-o{display:non
       <a href="https://www.youtube.com/@avventuremicologiche" target="_blank"
          onclick="try{gtag('event','click_youtube',{pulsante:'pillola-mobile'})}catch(e){}"
          id="channel-pill" class="prevetrina">
-        <img src="archie-avatar.webp" alt="Archie">
+        <img src="/archie-avatar.webp" alt="Archie">
         <div class="cp-t">Più di 1.000 analisi al giorno<small>Grazie a tutti · iscriviti al canale</small></div>
         <div class="cp-yt">
           <svg width="26" height="19" viewBox="0 0 42 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -5682,16 +5701,22 @@ function togliGemelleDiConfine(dati){
 // regione selezionata.
 function render(dati,fonte,labelPeriodo,ringsOverride){
   dati=togliGemelleDiConfine(dati);   // due ARPA, lo stesso pluviometro: un pallino solo
-  totalStations=dati.length;
-  var sorted=dati.slice().sort(function(a,b){return b.mm-a.mm;});
-  var vals=dati.map(function(d){return d.mm;});
+  // I pluviometri FUORI regione (_fuori: le cinque venete del Cadore che il Friuli prende in prestito, 27/10/2026,
+  // suo: «sembrano un bug a prima vista») entrano SOLO nel colore, dove aiutano ai bordi: niente pallino, e
+  // stazioni, massimo, media, minimo e classifica sono della regione. Senza, il «massimo del Friuli» poteva essere
+  // un pluviometro veneto che in mappa non si vede.
+  var conta=dati.filter(function(s){return !s._fuori;});
+  if(!conta.length) conta=dati;
+  totalStations=conta.length;
+  var sorted=conta.slice().sort(function(a,b){return b.mm-a.mm;});
+  var vals=conta.map(function(d){return d.mm;});
   var mx=Math.max.apply(null,vals),mn=Math.min.apply(null,vals);
   var av=Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length*10)/10;
-  document.getElementById('sn').textContent=dati.length;
+  document.getElementById('sn').textContent=conta.length;
   document.getElementById('smx').textContent=histNum(Math.round(mx*10)/10);   // virgola, A12 del quarto check
   document.getElementById('sav').textContent=histNum(av);
   document.getElementById('smn').textContent=histNum(Math.round(mn*10)/10);
-  setBadge(dati.length+' stazioni · '+fonte);
+  setBadge(conta.length+' stazioni · '+fonte);
   // L'avviso esce INSIEME ai numeri, non alla fine del calcolo della griglia:
   // la legenda con «160 stazioni · 87,3 max» compare subito, e per qualche
   // secondo l'utente leggerebbe quei numeri senza sapere che un giorno manca.
@@ -5708,7 +5733,7 @@ function render(dati,fonte,labelPeriodo,ringsOverride){
   // regione, tenendo a parita di zona quelle con anemometro. Il colore, il
   // massimo, la media e la classifica restano calcolati su TUTTE.
   var daDiradare={}, pallini=[];
-  dati.forEach(function(s){
+  conta.forEach(function(s){
     if(s && s._cap){ (daDiradare[s._region||"?"]=daDiradare[s._region||"?"]||[]).push(s); }
     else pallini.push(s);
   });
@@ -6875,7 +6900,8 @@ else if(!stMeta[key].q && s.q){ stMeta[key].q=s.q; stMeta[key].qt=s.qt; }   // l
 //  2) Stazioni ARPA Veneto di confine (Cadore/Comelico): coprono l'alta Carnia NW,
 //     dove le OSMER scarseggiano. Storico reale dal repo PROD (no backfill), NON
 //     soggette al filtro. Caricate solo se il Veneto non è già selezionato (evita
-//     doppioni in multiregione). Contribuiscono all'IDW anche se fuori confine.
+//     doppioni in multiregione). Contribuiscono all'IDW anche se fuori confine, ma dal
+//     27/10/2026 SENZA PALLINO e fuori dai numeri del Friuli (_fuori, vedi render).
 // ═══════════════════════════════════════════════════════════════
 var FRIULI_VENETO_BORDER={'Sella Ciampigotto':1,'Santo Stefano di Cadore':1,'Costalta':1,'Domegge di Cadore':1,'Casamazzagno':1};
 function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
@@ -6931,6 +6957,7 @@ function loadOSMERFriuliRegion(pastDate,nowDate,labelPeriodo,cb){
       // cercare il file nella cartella giusta (friuli-osmer o meteohub-friuli),
       // come già fa la Svizzera con 'oasi'/'ms'.
       return {n:s.n,lat:s.lat,lon:s.lon,q:s.q,qt:s.qt,w:s.w,u:s.u,t:s.t,p:s.p||'FVG',_src:s._src,
+              _fuori:s._src==='veneto',   // solo colore: niente pallino e fuori dai numeri del Friuli (render)
               mm:Math.round(mm*10)/10};
     }).filter(Boolean);
     if(full.length<5){cb([],'🟢 ARPA OSMER FVG');return;}
@@ -7555,6 +7582,9 @@ function loadGeoJSONOnce(cb){
 // Confini da URL dedicato (es. Ticino: cantone svizzero, non presente nei geojson italiani)
 var geojsonUrlCache={};
 function loadGeoJSONUrl(url,cb){
+  // i confini esteri sono scritti senza percorso ('austria-confine.geojson'): da /previsioni/ (28/10/2026) diventavano
+  // /previsioni/austria-confine.geojson, cioe' 404, e la mappa restava senza Austria, Svizzera, Francia e Slovenia
+  if(!/^(https?:)?\//.test(url)) url='/'+url;
   if(geojsonUrlCache[url]){cb(geojsonUrlCache[url]);return;}
   fetch(url)
     .then(function(r){if(!r.ok)throw new Error('HTTP');return r.json();})
@@ -10130,7 +10160,8 @@ function buildShareUrl(){
   if(window._boschiAcceso) p.set('boschi', '1');   // retino «Tipi di bosco», 15/9/2026
   if(window._satOn) p.set('sat', '1');   // Mappa|Satellite (29/9/2026): chi apre il link vede la foto
   if(window._boschiAcceso && window._quotaFascia && window._quotaFascia()) p.set('quota', window._quotaFascia());   // filtro di altitudine
-  return location.origin+location.pathname+'?'+p.toString();
+  // da /previsioni/ il link porta alla mappa: aperto, /previsioni/ ripartirebbe dalle previsioni (28/10/2026)
+  return location.origin+location.pathname.replace(/^\/previsioni\/$/,'/')+'?'+p.toString();
 }
 window.buildShareUrl=buildShareUrl;
 // Gancio di collaudo: la mappa vive nella IIFE e dalla console non si legge.
@@ -12261,7 +12292,7 @@ function loadDefaultMarkers(){
         +'<div class="v-dx">'
           +'<div class="v-occhio">'+ytPieno+' '+V.occhiello+'</div>'
           +'<div class="v-gancio'+(V.gancio2?'':' v-uno')+'"'+(V.ganciopx?' style="font-size:'+V.ganciopx+'px"':'')+'><b>'+V.gancio1+'</b>'+(V.gancio2?'<b>'+V.gancio2+'</b>':'')+'</div>'
-          +'<div class="v-canale"><img src="archie-avatar.webp" alt="">'+V.canale+'</div>'
+          +'<div class="v-canale"><img src="/archie-avatar.webp" alt="">'+V.canale+'</div>'
         +'</div></div>'
         +'<div class="v-btn">'+V.bottone+'</div>';
       copertinaRipiego(box.querySelector('.v-cop'), V.copertina);
@@ -12308,7 +12339,7 @@ function loadDefaultMarkers(){
       nuova.className='cp-social';
       nuova.innerHTML=
         '<a class="cp-alto" href="'+V.link+'" target="_blank" rel="noopener" onclick="'+tracc('vetrina-mobile').replace(/"/g,'&quot;')+'">'
-        +(V.copertina ? '<img class="cp-cop" src="'+urlCopertina(V.copertina)+'" alt="">' : '<img src="archie-avatar.webp" alt="Archie">')
+        +(V.copertina ? '<img class="cp-cop" src="'+urlCopertina(V.copertina)+'" alt="">' : '<img src="/archie-avatar.webp" alt="Archie">')
         +'<div class="cp-t">'+(V.gancioP||V.gancio)+'<small>'+segno+' '+V.occhielloP+' \u00B7 '+V.canale+'</small></div>'
         +'</a>'
         +'<div class="cp-riga">'+riga+'</div>';
@@ -12837,7 +12868,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
        \u00ABpioggia\u00BB sta in .rd-lunga: sul tablet, nella riga a tre, sparisce (25/10/2026, vedi #btn-sat-riga). */
     b.className='tp-custom-btn rd-btn'; b.id='btn-radar'; b.innerHTML='<span class="rd-ic">\uD83C\uDF27\uFE0F</span> Radar<span class="rd-lunga"> pioggia</span>';
     riga.appendChild(b);
-    b.addEventListener('click',function(){ acceso?esci():entra(); });
+    b.addEventListener('click',function(){ if(acceso){ esci(); return; } entra(); if(acceso){ try{ gtag('event','radar',{stato:'acceso'}); }catch(_){} } });
     // ⚠️ Il tasto «Indietro» della legenda chiama hideLegendMobile(), che in
     //    modo radar non fa niente perche' il pannello lo teniamo aperto a
     //    forza: sembrava rotto. In modo radar deve uscire dal radar.
@@ -12902,6 +12933,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
         // ⚠️ Ripremendo il tasto gia' acceso si torna ad «Adesso»: durante
         //    un'animazione quello e' il gesto naturale per fermarla, e non
         //    serve un tasto in piu' per farlo.
+        try{ gtag('event','radar',{stato:'tasto-'+x.id}); }catch(_){}
         if(scelta===x.id && x.id!=='ora') vai('ora'); else vai(x.id);
       });
       d.appendChild(c);
@@ -12919,7 +12951,7 @@ body.senza-pallini #map .leaflet-marker-pane .loc-pin svg{display:block}
       var q=new URLSearchParams(location.search).get('radar');
       if(q && ['ora','due','prev'].indexOf(q)>-1){
         var giri=0, att2=setInterval(function(){
-          if(regioniAttive().length){ clearInterval(att2); entra(); vai(q); }
+          if(regioniAttive().length){ clearInterval(att2); entra(); if(acceso){ try{ gtag('event','radar',{stato:'link'}); }catch(_){} } vai(q); }
           else if(++giri>75) clearInterval(att2);
         },200);
       }
@@ -16517,6 +16549,18 @@ body.con-sezioni .sh-fonte .sh-funghi{flex:1 1 0;text-align:center;margin:0}
 #pv-pan .cerca-slot #loc-input::placeholder{color:#5b6b80;font-weight:500}
 #pv-pan .fo{margin-top:10px;font:600 11px/1.3 inherit;color:#6b7684;text-align:center}
 #pv-pan .fo a{color:#1f6fd1;text-decoration:underline;cursor:pointer;white-space:nowrap}
+/* VISTA ITALIA (27/10/2026): i confini non respirano piu' (sotto ci sono le previsioni) ma restano cliccabili,
+   e sul computer la regione sotto il mouse si accende appena. Il riquadro resta quello delle regioni, senza
+   la frase lunga sotto i giorni (suo: «troppo lunga»): una riga sopra la casella, sua, e solo sul computer (al
+   telefono la casella e' la barra in alto, che dice gia' «Cerca il paese o scegli la regione») */
+/* il fumetto (sua scelta fra quattro, 27/10): la punta scende verso la casella e dice da sola «qui sotto» */
+#pv-invito{display:none;position:relative;background:#eaf2fd;border:1px solid #c6d9f2;border-radius:9px;padding:7px 10px 7px 32px;margin:0 0 12px;font-size:12px;font-weight:600;line-height:1.3;color:#1b3f6e}
+#pv-invito svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:#1f6fd1}
+#pv-invito::after{content:'';position:absolute;left:26px;bottom:-6px;width:10px;height:10px;background:#eaf2fd;border-right:1px solid #c6d9f2;border-bottom:1px solid #c6d9f2;transform:rotate(45deg)}
+body.pv-italia #pv-invito{display:block}
+@media(max-width:900px){body.pv-italia #pv-invito{display:none}}
+body.modo-prev.pv-italia #map path.conf-pulse{animation:none !important;fill-opacity:0 !important}
+@media(hover:hover){body.modo-prev.pv-italia #map path.conf-pulse:hover{fill-opacity:.16 !important;stroke-opacity:1 !important}}
 /* le temperature di ieri restavano accese sopra le previsioni (giro del 7/10 sera: 170 etichette in Liguria) */
 .modo-prev .leaflet-tq-pane{display:none}   /* Leaflet toglie «Pane» dal nome: tqPane diventa leaflet-tq-pane */
 /* l'invito a scegliere: rosso vivo e grande come «Seleziona prima una regione!» dello storico (suo, 8/10) */
@@ -16614,7 +16658,9 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
      «Storico piogge qui». Il tetto e' lo stesso di prima; con tante righe si scorre come sempre. */
   #pv-det{top:auto;right:0;left:0;bottom:0;width:auto;max-height:calc(100% - 76px);border-radius:14px 14px 0 0;box-shadow:0 -3px 12px rgba(0,0,0,.3)}
   #pv-det .rows{flex:0 1 auto}
-  .modo-prev.pv-det-aperto .fonte-tag{display:none !important}
+  /* la scritta della fonte in alto non c'e' nelle previsioni del telefono (28/10/2026, suo): e' la stessa riga del
+     riquadro in basso («ECMWF via MET Norway · agg.»), che resta. Prima spariva solo con la scheda aperta. */
+  .modo-prev .fonte-tag{display:none !important}
   #pv-det .hd .x{font:700 12.5px/1 inherit;color:#1b3f6e;background:#eef3fa;border:1.5px solid #9db4d6;border-radius:999px;padding:7px 12px;align-self:flex-start;white-space:nowrap}
   #pv-det .hd .x::after{content:' Chiudi'}
   #pv-det .hd .nm{font-size:22px}
@@ -16631,6 +16677,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
   var MESIL=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
   var ICONE=[[/clearsky_day|fair_day/,'☀️'],[/clearsky_night|fair_night/,'🌙'],[/partlycloudy_day/,'⛅'],[/partlycloudy_night|^cloudy|fog/,'☁️'],[/thunder/,'⛈️'],[/heavyrain|heavysleet/,'🌧️'],[/rain|sleet|drizzle/,'🌦️'],[/snow/,'🌨️']];
   var acceso=false, giorno=1, aree={}, punti={}, punto=null, gruppo=null, guardia=null, quanti=0, fonteVecchia=null, locCasa=null, inCorso=0, cercato=null, posto=null, pillCasa=null;
+  var rifai=false, toccata=false;   // vedi «IL RIQUADRO CRESCE DOPO» accanto al ResizeObserver di pv-pan (28/10/2026)
   function el(id){ return document.getElementById(id); }
   /* ⚠️ I NOMI DEI POSTI SI METTONO IN PAGINA COME TESTO (20/10/2026, settimo check, bug 3). Il nome di un link
      (`pn=`, `n=`) finiva in innerHTML cosi' com'era: un link costruito apposta faceva girare codice sul nostro dominio.
@@ -16662,9 +16709,13 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     storia.det=false; if(!soloDet) storia.prev=false;
     tend(function(){ try{ ignoraPop++; history.go(-k); }catch(e){ ignoraPop--; } });
   }
+  /* aperta da /previsioni/ (28/10/2026), tornando alla pioggia l'indirizzo torna la mappa: ricaricando non si riaprono le
+     previsioni. Due volte: in esci() e quando arriva il passo indietro di togliPassi, che e' asincrono e riporta la voce
+     della cronologia di prima, ancora con /previsioni/ */
+  function indirizzoMappa(){ if(!acceso&&/^\/previsioni\/$/.test(location.pathname)){ try{ history.replaceState(history.state,'','/'+location.search+location.hash); }catch(e){} } }
   /* ⚠️ chi consuma il passo ferma l'evento: dopo c'e' l'ascoltatore dello storico (8/10, in fondo al file) */
   window.addEventListener('popstate',function(e){
-    if(ignoraPop>0){ ignoraPop--; e.stopImmediatePropagation(); return; }
+    if(ignoraPop>0){ ignoraPop--; e.stopImmediatePropagation(); indirizzoMappa(); return; }
     if(!acceso) return;
     if(storia.det){ storia.det=false; e.stopImmediatePropagation(); chiudiDettaglio(); return; }
     if(storia.prev){ storia.prev=false; e.stopImmediatePropagation(); esci(); }
@@ -16680,6 +16731,12 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     return minimo;
   }
   function zone(){ var rk=regioni().slice(); if(posto&&posto.regs) posto.regs.forEach(function(k){ if(rk.indexOf(k)<0) rk.push(k); }); return rk; }
+  /* VISTA ITALIA (27/10/2026, suo, la «F» del mockup): senza nessuna scelta non si mostra piu' un riquadro con le
+     istruzioni ma il tempo sui capoluoghi di regione, come fanno 3B Meteo e ilMeteo. E' un'area finta, «italia» in
+     data/capoluoghi.json: non e' una regione scelta, quindi regioni() e zone() restano vuote e il resto del sito non
+     se ne accorge. Una regione toccata sulla mappa (computer) o scelta dalla barra (telefono) prende il suo posto. */
+  function chiavi(){ var rk=zone(); return rk.length?rk:['italia']; }
+  function italia(){ return !zone().length; }
   function fissaPosto(p){
     var regs=[]; try{ if(window._regioniVicine) regs=window._regioniVicine(p.lat,p.lon)||[]; }catch(e){}
     if(p.reg&&regs.indexOf(p.reg)<0) regs.unshift(p.reg);
@@ -16725,6 +16782,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     var mp=el('map'); if(!mp) return;
     var pan=document.createElement('div'); pan.id='pv-pan';
     pan.innerHTML='<div class="tt"><b id="pv-tt">☀️ Previsioni</b></div>'
+      +'<div class="invito-it" id="pv-invito"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg>Tocca una città, una regione o digita una località qui sotto</div>'
       +'<div class="cerca-slot" id="pv-cerca-slot"></div>'
       +'<div class="gg-r" id="pv-gg"></div>'
       +'<div class="fo"><span id="pv-fo"></span><span id="pv-radar-r"> · <a id="pv-radar">📡 Diretta radar</a></span></div>';
@@ -16737,6 +16795,15 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     cb.addEventListener('click',function(){ if(window._regApri) window._regApri(); var li=el('loc-input'); if(li){ try{ li.focus(); }catch(e){} } ga('casella'); });
     try{ if(window.ResizeObserver) new ResizeObserver(function(){ if(window.posizionaChipFonte) window.posizionaChipFonte(); }).observe(cb); }catch(e){}
     if(window.L){ L.DomEvent.disableClickPropagation(pan); L.DomEvent.disableScrollPropagation(pan); L.DomEvent.disableClickPropagation(det); L.DomEvent.disableScrollPropagation(det); }
+    /* ⚠️ IL RIQUADRO CRESCE DOPO L'INQUADRATURA (28/10/2026, telefono). Alla prima apertura la vetrina arriva qualche
+       secondo dopo i giorni (misurato a 393x760: 139 -> 189 px) e la mappa, inquadrata sul riquadro corto, finiva
+       sotto quello lungo: la Sicilia tagliata e Palermo sparito. Si rifa' l'ultima inquadratura delle zone (o
+       dell'Italia), ma solo se dopo di lei nessuno ha toccato la mappa, se non c'e' una scheda aperta e se non era
+       quella di un posto (inquadraPosto spegne `rifai`). Senza rifarla, si diradano almeno le etichette. */
+    try{ if(window.ResizeObserver){ var hPan=0; new ResizeObserver(function(){ var h=pan.offsetHeight; if(Math.abs(h-hPan)<8) return; hPan=h;
+      if(!acceso||!tel()) return;
+      if(rifai&&!toccata&&h>40&&!document.body.classList.contains('pv-det-aperto')) inquadra(); else dirada(); }).observe(pan); } }catch(e){}
+    ['pointerdown','touchstart','wheel'].forEach(function(t){ mp.addEventListener(t,function(e){ if(!pan.contains(e.target)&&!det.contains(e.target)) toccata=true; },{capture:true,passive:true}); });
     el('pv-gg').addEventListener('click',function(e){ e.stopPropagation(); var c=e.target.closest('.pv-gg'); if(c) scegliGiorno(+c.dataset.i);
       // toccando l'invito: sul telefono si apre la tendina, sul computer il cursore va nella casella
       if(e.target.closest('.avviso')&&document.body.classList.contains('pv-vuoto')){ try{ if(tel()){ if(window._regApri) window._regApri(); } else { var li=el('loc-input'); if(li) li.focus(); } }catch(x){} } });
@@ -16769,10 +16836,19 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     });
     window.addEventListener('resize',posiziona);
     // link con ?m=prev: si aspetta la regione scelta dal sito (fino a 15 s)
+    /* SENZA REGIONE E SENZA POSTO NEL LINK (27/10/2026, il tasto «Previsioni» della home): non c'e' niente da
+       aspettare, si entra nelle previsioni senza scelte, cioe' l'invito a scegliere la regione o cercare un paese.
+       Prima la home apriva la Liguria, perche' senza regione il link restava sullo storico dopo 15 s. Si aspetta solo
+       quello che l'invito indica: sul computer i confini che respirano (sono loro da cliccare), sul telefono la barra
+       in alto, sotto cui va il fumetto. ⚠️ Sul telefono i confini da cliccare non si disegnano affatto (c'e' la
+       tendina): aspettando quelli si restava 15 s sullo storico. */
     try{
       var q=new URLSearchParams(location.search);
-      if(q.get('m')==='prev'){
+      if(q.get('m')==='prev'||/^\/previsioni\/$/.test(location.pathname)){   // /previsioni/: vedi «LINK ALLE PREVISIONI» in cima
+        var vuoto=!q.get('r')&&!q.get('l')&&!q.get('pl');
         var giri=0, att=setInterval(function(){
+          if(vuoto){ var ra=el('reg-apri'), pronto=map()&&(tel()?!!(ra&&ra.getBoundingClientRect().height>0):!!document.querySelector('#map path.conf-pulse'));
+            if(pronto||giri>75){ clearInterval(att); entra(true); zittoStoria=false; } giri++; return; }
           if(regioni().length || giri>75){ clearInterval(att); if(regioni().length){ entra(true); var l=(q.get('l')||q.get('pl')||'').split(',').map(Number);   // pl/pn: i link delle pagine
             // il paese del link (pl/pn) lo legge gia' entra() dal sito; qui resta solo chi non l'ha messo (l/n)
             if(!posto&&window._puntoBuono(q.get('l')||q.get('pl'))) tieniPosto({n:q.get('n')||q.get('pn')||'Località cercata',lat:l[0],lon:l[1],q:null},true); zittoStoria=false; } }
@@ -16796,7 +16872,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
   /* ── entra / esci ── */
   function entra(daLink){
     if(acceso||!map()) return;
-    acceso=true; window._prevAttivo=true;
+    acceso=true; window._prevAttivo=true; document.documentElement.classList.remove('apre-prev');   // vedi «LINK ALLE PREVISIONI» in cima
     zittoStoria=!!daLink; passo('prev');
     giorno=oraRoma()>=20?1:0;
     if(document.body.classList.contains('modo-radar') && el('btn-radar')) el('btn-radar').click();
@@ -16814,7 +16890,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     // la pillola della vetrina scende in fondo al riquadro (sul telefono vive nel pannello dello storico, qui nascosto)
     if(tel()){ var pl=el('channel-pill'), pn=el('pv-pan'); if(pl&&pn&&!pillCasa){ pillCasa={p:pl.parentNode,n:pl.nextSibling}; pn.appendChild(pl); } }
     posiziona();
-    if(!gruppo){ gruppo=L.layerGroup().addTo(map()); map().on('zoomend',lontano); }
+    if(!gruppo){ gruppo=L.layerGroup().addTo(map()); map().on('zoomend',lontano); map().on('zoomend moveend',dirada); }
     sorveglia(true);
     /* IL PAESE SCELTO NELLO STORICO (suo, 7/10 sera): cercato un paese, il sito sceglie le regioni e aspetta le
        date; se a quel punto si passa alle previsioni, il paese c'e' evidenziato con la sua scheda aperta, e
@@ -16840,7 +16916,8 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     chiudiDettaglio(true);
     /* se nelle previsioni si era CERCATO un posto, lo storico si apre su quel posto (sua richiesta 7/10:
        «se da li' clicco storico resto li'»): si rifa' la ricerca vera del sito, che sceglie le regioni e centra */
-    var c=cercato; cercato=null; posto=null; document.body.classList.remove('pv-vuoto');
+    var c=cercato; cercato=null; posto=null; document.body.classList.remove('pv-vuoto'); document.body.classList.remove('pv-italia');
+    indirizzoMappa();
     if(pillCasa){ var pl=el('channel-pill'); if(pl){ if(pillCasa.n&&pillCasa.n.parentNode===pillCasa.p) pillCasa.p.insertBefore(pl,pillCasa.n); else pillCasa.p.appendChild(pl); } pillCasa=null; }
     if(ripristina!==false && c && window._locVai){ try{ window._locVai(c); }catch(e){} ga('chiudi'); return; }
     if(ripristina!==false){
@@ -16862,7 +16939,9 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
   }
   function contaPallini(){ var n=0, m=map(); if(!m) return 0; m.eachLayer(function(l){ if(l instanceof L.CircleMarker) n++; }); return n; }
   function inquadra(){
-    var m=map(), rk=zone(); if(!m||!rk.length) return;
+    var m=map(), rk=zone(); if(!m) return;
+    rifai=true; toccata=false;
+    if(!rk.length){ if(tel()) inquadraItalia(); return; }
     if(!tel()){
       /* computer: il fit del sito riserva lo spazio del suo pannello a sinistra, ma qui c'e' anche la tabella
          a destra (470 px + 40): con tre regioni la mappa finiva sotto la tabella (suo, 7/10). Si inquadrano i
@@ -16894,6 +16973,19 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     try{ if(window._fitRegioni) window._fitRegioni(rk); }catch(e){}
     var alza=Math.round((sotto-sopra)/2); if(alza>10) m.panBy([0,alza],{animate:false});
   }
+  /* VISTA ITALIA SUL TELEFONO (28/10/2026, suo: «non e' centrata giusta, la Sicilia e' tagliata»): si inquadra
+     l'Italia intera, dal Brennero a Capo Passero e dal Monte Bianco a Otranto, al centro della striscia libera
+     sopra il riquadro dei giorni. Prima restava la vista di apertura del sito, tarata sul pannello dello storico:
+     misurato a 393x760, 86 px vuoti sopra le Alpi e Capo Passero 12 px SOTTO il riquadro. Sui capoluoghi no: il
+     piu' a sud e' Palermo, e la Sicilia scende un altro grado e mezzo. Lo zoom non cambia (5,25): sul telefono
+     l'Italia e' limitata dalla larghezza, si guadagna solo il centro. Lampedusa resta fuori apposta. */
+  var ITALIA_TEL=[[36.69,6.62],[47.09,18.52]];
+  function inquadraItalia(){
+    var m=map(), pan=el('pv-pan'), mb=el('map').getBoundingClientRect(), sotto=0;
+    if(pan){ var r=pan.getBoundingClientRect(); if(r.height>40) sotto=Math.max(0,mb.bottom-Math.max(r.top,mb.top)); }
+    var sopra=Math.max(sopraTel(),casellaSotto(mb));
+    try{ m.fitBounds(ITALIA_TEL,{paddingTopLeft:[8,sopra+14],paddingBottomRight:[8,sotto+14],animate:false}); }catch(e){}
+  }
 
   /* ── dati ── */
   function chiedi(url){
@@ -16913,12 +17005,17 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     if(eraVuoto!==!rk.length) posiziona();   // «Indietro» compare o sparisce: il riquadro si riaggancia
     // sul computer, finche' non ci sono capoluoghi, la casella non li nomina (suo, 8/10)
     if(locCasa){ var lci=el('loc-input'); if(lci) lci.placeholder=rk.length?'Cerca la tua località o toccane una sulla mappa':'Cerca un paese o una località'; }
-    if(!rk.length){ var ft0=el('fonte-tag'); if(ft0) ft0.textContent='Previsioni modello ECMWF via MET Norway';
+    /* senza scelte la vista Italia (vedi chiavi); l'invito di prima resta solo come ripiego, se le previsioni
+       dell'Italia non arrivano */
+    document.body.classList.toggle('pv-italia',!rk.length); fumetto(false);
+    tt.textContent='☀️ Previsioni · '+(rk.length?rk.map(nome).join(' + '):'Italia');
+    if(!rk.length){ var ft0=el('fonte-tag'); if(ft0) ft0.textContent='Previsioni modello ECMWF via MET Norway'; }
+    function invito(){ document.body.classList.remove('pv-italia');
       tt.textContent='☀️ Previsioni'; fumetto(tel()); el('pv-gg').innerHTML=tel()?''
         :'<div class="avviso pv-inv"><div class="r"><span class="c"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span><span>Cerca un paese nella casella qui sopra</span></div><div class="o"><span></span>oppure<span></span></div><div class="r"><span class="c"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span><span>Clicca una regione sulla mappa</span></div></div>';   /* computer: la variante «C4» scelta da lui l'8/10; il telefono resta com'era */ el('pv-fo').textContent=''; if(gruppo) gruppo.clearLayers(); return; }
-    fumetto(false); tt.textContent='☀️ Previsioni · '+rk.map(nome).join(' + ');
+    var ks=rk.length?rk:['italia'];
     // anche le aree tenute in memoria che cominciano con un giorno passato (pagina aperta di notte, bug 11)
-    var mancanti=rk.filter(function(k){ return !aree[k] || vecchia(primiGiorni(aree[k])); });
+    var mancanti=ks.filter(function(k){ return !aree[k] || vecchia(primiGiorni(aree[k])); });
     if(mancanti.length) el('pv-fo').textContent='carico…';
     var mio=++inCorso;
     // un'area che arriva solo dal posto cercato, se non risponde, si salta: le regioni scelte invece devono esserci
@@ -16927,21 +17024,22 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     Promise.all(mancanti.map(function(k){ return chiedi(API+'?capoluoghi='+encodeURIComponent(k)+API_V).then(function(j){
           if(!(j.capoluoghi||[]).some(function(c){ return c.giorni&&c.giorni.length; })) throw new Error('nessuna citta');
           aree[k]=j; })
-        .catch(function(e){ if(regioni().indexOf(k)>=0) throw e; }); }))
+        .catch(function(e){ if(k==='italia'||regioni().indexOf(k)>=0) throw e; }); }))
       .then(function(){ if(mio!==inCorso) return; carica._riprovato=false; disegna(); if(riinquadra==='posto') inquadraPosto(); else if(riinquadra) inquadra(); })
       .catch(function(){ if(mio!==inCorso) return;
         if(!carica._riprovato){ carica._riprovato=true; setTimeout(function(){ if(acceso) carica(riinquadra); },1800); return; }   // una riprova silenziosa
         carica._riprovato=false;
+        if(!rk.length){ invito(); return; }   // la vista Italia non e' arrivata: l'invito di prima
         el('pv-gg').innerHTML='<div class="avviso">Previsioni non disponibili in questo momento, riprova fra poco</div>'; el('pv-fo').textContent=''; });
   }
   function primiGiorni(a){ if(a&&a.capoluoghi) for(var j=0;j<a.capoluoghi.length;j++) if(a.capoluoghi[j].giorni) return a.capoluoghi[j].giorni; return null; }
   function giorniBase(){
-    var rk=zone();
+    var rk=chiavi();
     for(var i=0;i<rk.length;i++){ var g=daOggi(primiGiorni(aree[rk[i]])); if(g.length) return g; }   // da oggi in poi (bug 11)
     return null;
   }
   function disegna(){
-    var rk=zone(), gb=giorniBase(); if(!gb) return;
+    var rk=chiavi(), gb=giorniBase(); if(!gb) return;
     if(giorno>=gb.length) giorno=gb.length-1;
     el('pv-gg').innerHTML=gb.map(function(e,i){ return chip(e,i,i===giorno,false); }).join('');
     var g=gb[giorno].g, d=giornoData(g), agg=null;
@@ -16973,14 +17071,29 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     // sul computer, finche' non si tocca niente, a destra sta un cenno piccolo; la tabella arriva col primo tocco
     if(!tel()&&!punto) cenno();
     else if(punto){ renderDet(); if(tel()) tieniInVista(); }   // telefono: la scheda cambia altezza col giorno (18/10/2026)
-    lontano();
+    lontano(); dirada();
   }
   function scegliGiorno(i){ giorno=i; disegna(); ga('giorno',{giorno:i}); }
   function cenno(){
     var det=el('pv-det'); if(det){ det.className=''; det.innerHTML=''; }
     var pan=el('pv-pan'); if(pan) pan.classList.add('con-cenno');
   }
-  function lontano(){ try{ document.body.classList.toggle('pv-lontano', acceso && map().getZoom()<7.6); }catch(e){} }
+  // nella vista Italia le temperature restano anche da lontano: sono loro la notizia (27/10/2026)
+  function lontano(){ try{ document.body.classList.toggle('pv-lontano', acceso && !italia() && map().getZoom()<7.6); }catch(e){} }
+  /* VISTA ITALIA: le etichette dei capoluoghi si DIRADANO, non si spostano (la regola delle pagine /meteo/, 24/10/2026).
+     Nell'ordine di capoluoghi.json, dal piu' abitato: chi toccherebbe un'etichetta gia' messa o un riquadro del sito
+     si nasconde, e ingrandendo ricompare. visibility e non display: Leaflet continua a sapere dove sta.
+     ⚠️ Si nasconde il CONTENITORE di Leaflet, non l'etichetta: il contenitore resta grande quanto lei e, visibile,
+     prendeva il clic al suo posto (un clic vicino a Siena apriva una citta' nascosta invece della Toscana). */
+  function dirada(){
+    if(!gruppo||!acceso) return;
+    var it=italia(), presi=[];
+    if(it) ['pv-pan','pv-det','channel-logo','region-panel'].forEach(function(id){ var e=el(id); if(!e) return; var r=e.getBoundingClientRect(), s=getComputedStyle(e); if(r.width>0&&r.height>0&&s.display!=='none'&&s.visibility!=='hidden') presi.push(r); });
+    function tocca(a,b){ return !(a.right+4<b.left||b.right+4<a.left||a.bottom+4<b.top||b.bottom+4<a.top); }
+    gruppo.eachLayer(function(l){ var e=l.getElement&&l.getElement(), d=e&&e.firstChild; if(!d) return;
+      e.style.visibility=''; if(!it) return;
+      var r=d.getBoundingClientRect(); if(presi.some(function(p){ return tocca(p,r); })) e.style.visibility='hidden'; else presi.push(r); });
+  }
   /* quando si apre la tabella, la targhetta toccata non deve finirci sotto: si scorre di quel tanto */
   // telefono: dove finisce la barra della regione, in px dalla cima della mappa (0 se non c'e')
   function sopraTel(){
@@ -17100,6 +17213,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
   /* inquadratura del posto cercato: lui e i tre capoluoghi piu' vicini, non tutta la regione */
   function inquadraPosto(){
     var m=map(); if(!m||!posto) return;
+    rifai=false;   // il posto non si perde quando il riquadro cresce
     var cs=[], cl=Math.cos(posto.lat*Math.PI/180);
     zone().forEach(function(k){ var a=aree[k]; if(a&&a.capoluoghi) a.capoluoghi.forEach(function(c){
       var dy=c.lat-posto.lat, dx=(c.lon-posto.lon)*cl, d=dx*dx+dy*dy; if(d>1e-5) cs.push({c:c,d:d}); }); });

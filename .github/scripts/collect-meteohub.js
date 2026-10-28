@@ -185,38 +185,59 @@ const MIN_ORE_METEO = 20;
    giornaliero piu' forte di tutto l'archivio (209.700 stazioni-giorno) e' 74,4 km/h in cima al Mont Aigoual.
    La raffica (B11041) resta a 90. Stesso tetto in collect-toscana-sir.js e backfill-meteo-meteohub.js. */
 const VENTO_MAX_MS = 40;
+const ORE_DOPO = 3;   // il meteo di un giorno e' definitivo se chiesto almeno 3 ore dopo la sua fine (fase 3, 27/10/2026)
 const { creaDir, segnaDir, direzione } = require('./lib-direzione.js');
 const { tieniMeteo } = require('./lib-tieni-meteo.js');
 const { fattoreVento } = require('./lib-vento-meteohub.js');
-async function collectMeteoHub(netCfg, w) {
+function urlProdotto(netCfg, w, prod) {
+  const q = `reftime: >=${w.qFrom},<=${w.qTo};product:${prod};license:CCBY_COMPLIANT`;
+  return `${BASE_URL}?networks=${encodeURIComponent(netCfg.net)}&q=${encodeURIComponent(q)}`;
+}
+/** La serie piu' fitta di un prodotto per una stazione, contata DENTRO la finestra w (estremi compresi, come la
+ *  richiesta all'API). Con la risposta di un giorno solo e' la scelta di sempre (tutta la serie sta nella finestra);
+ *  con quella di due giorni (fase 3, 27/10/2026) la serie si sceglie giorno per giorno, come se li avessi chiesti a parte. */
+function serieMigliore(entry, prod, w) {
+  let best = null, nBest = -1;
+  for (const pr of (entry.prod || [])) {
+    if (pr.var !== prod || !Array.isArray(pr.val)) continue;
+    const n = pr.val.filter(v => v.ref >= w.refFrom && v.ref <= w.refTo).length;
+    if (n > nBest) { best = pr; nBest = n; }
+  }
+  return best;
+}
+function perIdDa(raw, prod, w) {
+  const perId = {};
+  for (const entry of (raw.data || [])) {
+    const stat = entry.stat || {};
+    if (typeof stat.lat !== 'number' || typeof stat.lon !== 'number') continue;
+    const best = serieMigliore(entry, prod, w);
+    if (!best) continue;
+    const vals = best.val.filter(v => v.ref > w.refFrom && v.ref <= w.refTo && typeof v.val === 'number');
+    if (!vals.length) continue;
+    perId[`${stat.lat.toFixed(5)}_${stat.lon.toFixed(5)}`] = vals;
+  }
+  return perId;
+}
+// ⚠️ OGNI QUERY PER CONTO SUO (19/10/2026, quinto check, bug 6). Prima stavano tutte in UN try (quello di
+// collectDay): se cadeva l'umidita' si perdevano anche temperatura e vento gia' arrivati. Ora una query che
+// cade da' null, si salta solo il suo campo, e writeDay lo riprende dal file del giorno (lib-tieni-meteo.js).
+const PRODOTTI_METEO = ['B12101', 'B11002', 'B11041', 'B11001', 'B13003'];
+async function scaricaMeteo(netCfg, w) {
+  const raw = {};
+  for (const prod of PRODOTTI_METEO) {
+    if (prod === 'B11002' || prod === 'B11001' || prod === 'B13003') await sleep(500);   // le pause di sempre
+    try { raw[prod] = await fetchJSON(urlProdotto(netCfg, w, prod)); }
+    catch (e) { console.warn(`  Warn ${prod} ${netCfg.net}: ${e.message}`); raw[prod] = null; }
+  }
+  return raw;
+}
+/** t/w/wd/u del giorno w dalle risposte di scaricaMeteo (anche di piu' giorni). `completo` = arrivate tutte e cinque. */
+function meteoDelGiorno(rawMeteo, w) {
   const out = {};   // id → {t?, w?}
-  const fetchProd = async prod => {
-    const q = `reftime: >=${w.qFrom},<=${w.qTo};product:${prod};license:CCBY_COMPLIANT`;
-    const url = `${BASE_URL}?networks=${encodeURIComponent(netCfg.net)}&q=${encodeURIComponent(q)}`;
-    const raw = await fetchJSON(url);
-    const perId = {};
-    for (const entry of (raw.data || [])) {
-      const stat = entry.stat || {};
-      if (typeof stat.lat !== 'number' || typeof stat.lon !== 'number') continue;
-      let best = null;
-      for (const pr of (entry.prod || [])) {
-        if (pr.var !== prod || !Array.isArray(pr.val)) continue;
-        if (!best || pr.val.length > best.val.length) best = pr;
-      }
-      if (!best) continue;
-      const vals = best.val.filter(v => v.ref > w.refFrom && v.ref <= w.refTo && typeof v.val === 'number');
-      if (!vals.length) continue;
-      perId[`${stat.lat.toFixed(5)}_${stat.lon.toFixed(5)}`] = vals;
-    }
-    return perId;
-  };
+  const prendi = prod => (rawMeteo[prod] ? perIdDa(rawMeteo[prod], prod, w) : null);
   const oreDi = vals => new Set(vals.map(v => (v.ref || '').slice(11, 13))).size;
-  // ⚠️ OGNI QUERY PER CONTO SUO (19/10/2026, quinto check, bug 6). Prima stavano tutte in UN try (quello di
-  // collectDay): se cadeva l'umidita' si perdevano anche temperatura e vento gia' arrivati. Ora una query che
-  // cade da' null, si salta solo il suo campo, e writeDay lo riprende dal file del giorno (lib-tieni-meteo.js).
-  const prendi = async prod => { try { return await fetchProd(prod); } catch (e) { console.warn(`  Warn ${prod} ${netCfg.net}: ${e.message}`); return null; } };
 
-  const temp = (await prendi('B12101')) || {};
+  const temp = prendi('B12101') || {};
   Object.keys(temp).forEach(id => {
     // ⚠️ FALSI ZERI (3/10/2026): in una serie in KELVIN uno 0 grezzo non e' una
     // temperatura (0 K), e' un dato non pervenuto. Con la sola conversione
@@ -245,13 +266,12 @@ async function collectMeteoHub(netCfg, w) {
       (out[id] = out[id] || {}).t = [Math.round(Math.min(...vals) * 10) / 10,
                                      Math.round(Math.max(...vals) * 10) / 10];
   });
-  await sleep(500);
   /* SENZA LA RAFFICA il vento si scrive lo stesso, ma «provvisorio» (wp, 20/10/2026, settimo check, bug 10): prima si
      buttava tutto, e al primo salvataggio del giorno il file restava senza vento e direzione fino al giro dopo. Il
      segno wp lo legge writeDay: dove il file del giorno ha gia' un vento (con la sua raffica) si tiene quello, perche'
      [media, null] cancellerebbe la raffica gia' salvata; dove non c'e' niente si scrive [media, null]. */
-  const ventoRaw = await prendi('B11002');
-  const raffica = await prendi('B11041');
+  const ventoRaw = prendi('B11002');
+  const raffica = prendi('B11041');
   const vento = ventoRaw || {}, senzaRaffica = !raffica;
   Object.keys(vento).forEach(id => {
     // ⚠️ le ore si contano sulle letture BUONE (19/10/2026, bug 9): con l'anemometro bloccato a 45 m/s tutto il giorno
@@ -274,8 +294,7 @@ async function collectMeteoHub(netCfg, w) {
   // vettoriale pesata sulla velocita' (lib-direzione.js). In un try suo: se manca,
   // restano vento, temperatura e umidita'.
   try {
-    await sleep(500);
-    const dirz = await fetchProd('B11001');
+    const dirz = prendi('B11001') || {};
     Object.keys(dirz).forEach(id => {
       if (!out[id] || !out[id].w || !vento[id]) return;
       const perRef = {};
@@ -287,33 +306,88 @@ async function collectMeteoHub(netCfg, w) {
     });
   } catch (e) { console.warn(`  Warn direzione ${netCfg.net}: ${e.message}`); }
   // Umidità relativa (18/8/2026): prodotto B13003 (%), una query in più per rete/giorno.
-  await sleep(500);
-  const umid = (await prendi('B13003')) || {};
+  const umid = prendi('B13003') || {};
   Object.keys(umid).forEach(id => {
     const vals = umid[id].map(v => v.val).filter(v => v >= 0 && v <= 100);
     if (vals.length && oreDi(umid[id]) >= MIN_ORE_METEO)
       (out[id] = out[id] || {}).u = [Math.round(Math.min(...vals)), Math.round(Math.max(...vals))];
   });
-  return out;
+  return { out, completo: PRODOTTI_METEO.every(p => rawMeteo[p]) };
 }
+async function collectMeteoHub(netCfg, w) { return meteoDelGiorno(await scaricaMeteo(netCfg, w), w); }
 
 // `opz` serve al ripiego del Piemonte (collect-piemonte.js, 26/10/2026): `ore` aggiunge `h` (ore lette, come nei file
 // ARPA), `quote: false` salta la quota dal terreno (il Piemonte ha quella dell'ente). Senza `opz` non cambia niente.
+// `opz.meteo: false` salta le cinque richieste meteo (fase 3, 27/10/2026): il ritorno al giorno singolo di collectDue
+// le chiede solo per i giorni che non hanno ancora il meteo completo. Il ripiego del Piemonte non lo passa: come prima.
 async function collectDay(netCfg, dateStr, opz = {}) {
   const w = utcWindowForItalianDay(dateStr);
-  const q = `reftime: >=${w.qFrom},<=${w.qTo};product:B13011;license:CCBY_COMPLIANT`;
-  const url = `${BASE_URL}?networks=${encodeURIComponent(netCfg.net)}&q=${encodeURIComponent(q)}`;
-  const raw = await fetchJSON(url);
+  const out = pioggiaDaRaw(await fetchJSON(urlProdotto(netCfg, w, 'B13011')), w, netCfg, opz);
+  // t/w: un guasto qui non deve mai far fallire la pioggia
+  if (opz.meteo !== false) try {
+    const meteo = await collectMeteoHub(netCfg, w);
+    out.forEach(rec => { if (meteo.out[rec.id]) Object.assign(rec, meteo.out[rec.id]); });
+    out.meteoCompleto = meteo.completo;   // proprieta' dell'array: writeDay non la scrive, la legge main
+  } catch (e) { console.warn(`  Warn meteo ${netCfg.net}: ${e.message}`); }
+  if (opz.quote !== false) await completaQuote(out);   // stazioni nuove, non ancora in quote-terreno.json (14/10/2026)
+  return out;
+}
+
+/* ⚠️ IERI E L'ALTRO IERI IN UNA RICHIESTA SOLA (27/10/2026, fase 3 dell'alleggerimento delle fonti). Prima ogni giro
+   chiedeva ogni prodotto un giorno per volta: 11 reti x 2 giorni x 6 prodotti = 132 richieste, quattro volte al giorno.
+   Ora UNA richiesta di pioggia per rete copre i due giorni, che si dividono qui con la stessa finestra di prima, e le
+   cinque del meteo si fanno solo per i giorni che non l'hanno ancora completo (`meteo_completo` nel file, vedi main).
+   Misurato sulla storia di git (18-26/10): dopo il giro delle 4:30 pioggia e meteo di ieri non cambiano piu' (una
+   stazione arpafvg ogni tanto, e la pioggia si richiede comunque a ogni giro).
+   DUE DIFESE, cosi' il caso peggiore e' il giro di prima: se la richiesta doppia cade (dopo i suoi 3 tentativi), o se
+   per un giorno porta meno stazioni della soglia della rete (una risposta tagliata a meta' senza errore), quel giorno
+   si rifa' da solo con collectDay e si tiene il piu' ricco dei due.
+   Il meteo si chiede DOPO la pioggia, una richiesta per prodotto per tutti i giorni che lo devono avere, e solo se il
+   giorno ha abbastanza stazioni da essere scritto (con la Puglia del 26/10, una stazione sola, erano 5 richieste buttate).
+   Di solito e' il solo ieri, cioe' la stessa richiesta di un giorno di prima: due giorni insieme solo la prima volta. */
+async function collectDue(netCfg, giorni, meteoDi, soglia) {
+  const ws = {}; giorni.forEach(d => { ws[d] = utcWindowForItalianDay(d); });
+  const unisci = ds => ({
+    qFrom: ds.map(d => ws[d].qFrom).sort()[0], qTo: ds.map(d => ws[d].qTo).sort().pop(),
+    refFrom: ds.map(d => ws[d].refFrom).sort()[0], refTo: ds.map(d => ws[d].refTo).sort().pop() });
+  let raw = null;
+  try { raw = await fetchJSON(urlProdotto(netCfg, unisci(giorni), 'B13011')); }
+  catch (e) { console.warn(`  Warn ${netCfg.net}: richiesta doppia caduta (${e.message}), torno al giorno per giorno`); }
+  const ris = {};
+  for (const d of giorni) {
+    let out = raw ? pioggiaDaRaw(raw, ws[d], netCfg, {}) : null;
+    if (!out || (soglia >= 10 && out.length < soglia)) {
+      if (out) console.log(`  ${d}: ${out.length} stazioni dalla richiesta doppia, sotto la soglia ${soglia}: rifaccio il giorno da solo`);
+      await sleep(1000);
+      const singolo = await collectDay(netCfg, d, { meteo: false, quote: false });
+      if (!out || singolo.length > out.length) out = singolo;
+    }
+    ris[d] = { stazioni: out };
+  }
+  const conMeteo = meteoDi.filter(d => ris[d].stazioni.length >= 10);   // sotto le 10 writeDay non scrive
+  if (conMeteo.length) {
+    await sleep(500);
+    const rawMeteo = await scaricaMeteo(netCfg, unisci(conMeteo));
+    for (const d of conMeteo) {
+      try {   // t/w: un guasto qui non deve mai far fallire la pioggia
+        const m = meteoDelGiorno(rawMeteo, ws[d]);
+        ris[d].stazioni.forEach(rec => { if (m.out[rec.id]) Object.assign(rec, m.out[rec.id]); });
+        ris[d].meteoCompleto = m.completo;
+      } catch (e) { console.warn(`  Warn meteo ${netCfg.net} ${d}: ${e.message}`); ris[d].meteoCompleto = false; }
+    }
+  }
+  for (const d of giorni) await completaQuote(ris[d].stazioni);   // stazioni nuove, non in quote-terreno.json (14/10/2026)
+  return ris;
+}
+
+/** Le stazioni con la pioggia del giorno w da una risposta B13011 (di un giorno o di piu'). */
+function pioggiaDaRaw(raw, w, netCfg, opz) {
   const out = [];
   for (const entry of (raw.data || [])) {
     const stat = entry.stat || {};
     if (typeof stat.lat !== 'number' || typeof stat.lon !== 'number') continue;
-    // Serie B13011 più fitta per questa stazione
-    let best = null;
-    for (const pr of (entry.prod || [])) {
-      if (pr.var !== 'B13011' || !Array.isArray(pr.val)) continue;
-      if (!best || pr.val.length > best.val.length) best = pr;
-    }
+    // Serie B13011 più fitta per questa stazione (dentro il giorno: vedi serieMigliore)
+    const best = serieMigliore(entry, 'B13011', w);
     if (!best) continue;
     // Passo in secondi dal trange "1,0,N" → letture attese nel giorno
     const stepSec = parseInt((best.trange || '').split(',')[2], 10);
@@ -345,12 +419,6 @@ async function collectDay(netCfg, dateStr, opz = {}) {
     if (inte) rec.i = inte;
     out.push(rec);
   }
-  // t/w: un guasto qui non deve mai far fallire la pioggia
-  try {
-    const meteo = await collectMeteoHub(netCfg, w);
-    out.forEach(rec => { if (meteo[rec.id]) Object.assign(rec, meteo[rec.id]); });
-  } catch (e) { console.warn(`  Warn meteo ${netCfg.net}: ${e.message}`); }
-  if (opz.quote !== false) await completaQuote(out);   // stazioni nuove, non ancora in quote-terreno.json (14/10/2026)
   return out;
 }
 
@@ -434,7 +502,9 @@ function togliPicchiFalsi(stations, dateStr) {
 // bug 11), perche' la usa anche backfill-meteo-meteohub.js. Gira in writeDay DOPO tieniMeteo.
 const { togliVentiFalsi } = require('./lib-venti-falsi.js');
 
-function writeDay(dir, dateStr, stations, net, soglia, src) {
+// `meteoCompleto`: true = il meteo di questo giro e' completo e definitivo (si scrive `meteo_completo`), false = no,
+// undefined = a questo giro il meteo non si e' chiesto e il segno resta quello del file (fase 3, 27/10/2026).
+function writeDay(dir, dateStr, stations, net, soglia, src, meteoCompleto) {
   stations = togliPicchiFalsi(stations, dateStr);
   if (stations.length < 10) {
     console.warn(`  ${dateStr}: solo ${stations.length} stazioni, salto la scrittura`);
@@ -465,14 +535,16 @@ function writeDay(dir, dateStr, stations, net, soglia, src) {
   const ripresi = prima ? tieniMeteo(stations, prima.stations) : 0;
   if (ripresi) console.log(`  ${dateStr}: t/w/u/wd ripresi dal file per ${ripresi} stazioni`);
   togliVentiFalsi(stations, dateStr);   // dopo tieniMeteo (bug 9, 19/10/2026)
-  fs.writeFileSync(outFile, JSON.stringify({
+  const segnoMeteo = meteoCompleto === undefined ? !!(prima && prima.meteo_completo) : meteoCompleto;
+  fs.writeFileSync(outFile, JSON.stringify(Object.assign({
     date:      dateStr,
     collected: new Date().toISOString(),
     source:    src || 'meteohub-dpcn',
     network:   net,
+  }, segnoMeteo ? { meteo_completo: true } : {}, {
     count:     stations.length,
     stations
-  }));
+  })));
   console.log(`  ✅ Scritto ${outFile} (${stations.length} stazioni)`);
   return true;
 }
@@ -557,10 +629,32 @@ async function main() {
       }
     }
 
-    for (const dStr of targetDays) {
+    // Il meteo di un giorno si dichiara completo (`meteo_completo`) solo se chiesto almeno ORE_DOPO ore dopo la sua fine:
+    // un giro che corre a cavallo della mezzanotte lo chiede, ma il giro dopo lo richiede ancora.
+    const tardi = d => Date.now() >= Date.parse(utcWindowForItalianDay(d).refTo + 'Z') + ORE_DOPO * 3600000;
+    let singoli = targetDays;
+    if (!(process.env.DATE_OVERRIDE && process.env.DATE_OVERRIDE.trim())) {
+      // ieri + altroieri in una richiesta, col meteo solo dove manca (fase 3, 27/10/2026: vedi collectDue)
+      const coppia = targetDays.slice(0, 2);
+      singoli = targetDays.slice(2);
+      const meteoDi = coppia.filter(d => { const j = leggiFile(path.join(dir, `${d}.json`)); return !(j && j.meteo_completo); });
+      console.log(`  Raccolgo ${coppia.join(' + ')} in una richiesta, meteo ${meteoDi.length ? 'di ' + meteoDi.join(' + ') : 'gia\' completo: salto'}`);
+      try {
+        const ris = await collectDue(netCfg, coppia, meteoDi, soglia);
+        for (const d of coppia) {
+          const mc = ris[d].meteoCompleto;
+          writeDay(dir, d, ris[d].stazioni, netCfg.net, soglia, netCfg.src, mc === undefined ? undefined : mc && tardi(d));
+        }
+      } catch (e) {
+        console.warn(`  Warn: ${netCfg.net} ${coppia.join(' + ')} fallito: ${e.message}`);
+      }
+      await sleep(1000);
+    }
+    for (const dStr of singoli) {
       try {
         console.log(`  Raccolgo ${dStr}...`);
-        writeDay(dir, dStr, await collectDay(netCfg, dStr), netCfg.net, soglia, netCfg.src);
+        const st = await collectDay(netCfg, dStr);
+        writeDay(dir, dStr, st, netCfg.net, soglia, netCfg.src, !!st.meteoCompleto && tardi(dStr));
       } catch(e) {
         console.warn(`  Warn: ${netCfg.net} ${dStr} fallito: ${e.message}`);
       }

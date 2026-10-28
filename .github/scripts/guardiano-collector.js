@@ -230,6 +230,25 @@ function controllaCartelle(adesso) {
     };
     visti.push(base);
 
+    /* ⚠️ IL BUCO DI UNA CARTELLA SOLA NON E' UN GIRO PERSO (28/10/2026).
+       Un workflow che scrive piu' cartelle (MeteoHub 11, Francia 13) e' girato
+       se le sue ALTRE cartelle hanno il giorno: allora quella che manca manca
+       alla fonte, e ri-lanciarlo rifa' le stesse richieste per niente. Il caso:
+       MeteoHub Puglia, una stazione al giorno dal 26/10 (guasto a monte), con
+       meteohub.yml ri-lanciato tre volte al mattino e una la sera, e dietro
+       ogni volta i riepiloghi. Servono PIU' della meta' delle sorelle: con
+       meta' o piu' ferme e' la piattaforma o il giro (MeteoHub dal 17 al 21/9),
+       e li' si ri-lancia come prima. Il buco resta in `visti`, quindi nel
+       registro, e check-fonti.js suona lo stesso. */
+    const sorelle = REGIONI.filter(s => s.wf === r.wf && s.dir !== r.dir);
+    const conGiorno = sorelle.filter(s => !finti.has(s.dir) &&
+                                          fs.existsSync(path.join(DATA, s.dir, `${giorno}.json`))).length;
+    if (sorelle.length && conGiorno * 2 > sorelle.length) {
+      base.fonte = `${conGiorno} cartelle su ${sorelle.length} di ${r.wf} hanno il ${giorno}: il giro c'e' stato, manca alla fonte`;
+      spiega(base.fonte);
+      continue;
+    }
+
     /* ⚠️ LE TARATURE VALGONO SOLO SUL BUCO DI UN GIORNO (22/9/2026).
        Margine e «ci pensa il prossimo» servono a non ri-lanciare chi sta solo
        arrivando tardi: e' un'ipotesi ragionevole quando manca IERI e basta.
@@ -366,7 +385,7 @@ function main() {
     console.log('cartelle senza il giorno, su cui NON agisco:');
     for (const v of zitti) {
       console.log(`   ${v.dir}: manca ${v.giorno} (buco ${v.buco} g), ` +
-                  `ultimo giro ${v.daUltimo}' fa, prossimo fra ${v.alProssimo}'`);
+                  (v.fonte ? v.fonte : `ultimo giro ${v.daUltimo}' fa, prossimo fra ${v.alProssimo}'`));
     }
     console.log('');
   }
