@@ -89,20 +89,35 @@ const MINIMO = 5;                   // sotto questi giorni buoni non si scrive
 // anche le reti dei posti ospiti (data/liguria per la Toscana), e contando quelle un SIR fermo dava toscana.json
 // «fresco» con i soli 2 posti OMIRL su 169. `proprie` = r.dirs: contano per presenti/primo/ultimo e per MINIMO;
 // i dati si leggono sempre da tutte. ⚠️ GEMELLA del ripiego dentro genera-pagine-funghi.js (diCasa).
+/* ⚠️ LE STIME SI DICHIARANO (1/11/2026, sua decisione, scheda 105 bis). Un giorno in cui la rete non ha trasmesso
+   e' un file `open-meteo-*` (gapfill) o una stazione `om` / `src` open-meteo: i millimetri restano nei totali, come
+   prima, ma si segna chi e' stimato e quando, e le pagine lo dicono in cima (avvisoStime di lib-pagina-funghi.js).
+   Fino a oggi `leggi()` non guardava la provenienza e le pagine chiamavano «misure a terra» anche le stime. */
+const STIMA = /open-meteo|icon-2i-gapfill/;   // le stazioni stimate da ICON-2I (2/11/2026) hanno `om`
+function leggiS(dir, giorno) {
+  try {
+    const j = JSON.parse(fs.readFileSync(path.join(DATI, dir, giorno + '.json'), 'utf8'));
+    if (!Array.isArray(j.stations) || !j.stations.length) return null;
+    const tutto = STIMA.test(String(j.source || ''));
+    for (const s of j.stations) if (tutto || s.om || STIMA.test(String(s.src || ''))) s._st = 1;
+    return j.stations;
+  } catch (e) { return null; }
+}
+
 function perGiorno(dirs, giorni, proprie) {
-  const out = {}, outT = {}, outW = {}, outI = {};
+  const out = {}, outT = {}, outW = {}, outI = {}, outS = {};
   let presenti = 0, primo = null, ultimo = null;
   giorni.forEach((g, i) => {
     const n = i + 1;
-    const m = {}, mt = {}, mw = {}, mi = {};
+    const m = {}, mt = {}, mw = {}, mi = {}, ms = {};
     let qualcosa = false, diCasa = false;
     for (const dir of dirs) {
-      const staz = leggi(dir, g);
+      const staz = leggiS(dir, g);
       if (!staz) continue;
       qualcosa = true;
       if (!proprie || proprie.includes(dir)) diCasa = true;
       for (const s of staz) {
-        if (s.mm != null) m[s.id] = (m[s.id] || 0) + s.mm;
+        if (s.mm != null) { m[s.id] = (m[s.id] || 0) + s.mm; if (s._st) ms[s.id] = 1; }
         // ⚠️ t e w si prendono COSI' COME SONO, non si sommano: la pioggia di
         // due cartelle sullo stesso id si somma, una temperatura no.
         if (Array.isArray(s.t) && s.t.some(v => v != null) && !mt[s.id]) mt[s.id] = s.t;
@@ -114,13 +129,13 @@ function perGiorno(dirs, giorni, proprie) {
       }
     }
     if (!qualcosa) return;
-    out[n] = m; outT[n] = mt; outW[n] = mw; outI[n] = mi;
+    out[n] = m; outT[n] = mt; outW[n] = mw; outI[n] = mi; outS[n] = ms;
     if (!diCasa) return;            // solo gli ospiti: i loro mm restano, ma il giorno non conta
     presenti++;
     if (!ultimo) ultimo = g;        // giorni e' ordinato dal piu' recente
     primo = g;
   });
-  return { mm: out, t: outT, w: outW, i: outI, presenti, primo, ultimo };
+  return { mm: out, t: outT, w: outW, i: outI, st: outS, presenti, primo, ultimo };
 }
 
 const uno = n => Math.round(n * 10) / 10;
@@ -249,7 +264,10 @@ for (const k of Object.keys(POSTI)) {
     for (const p of POSTI[k]) {
       if (!coperti[p[0]]) continue;
       const v = posti[p[0]][0];
-      if (v > 0) italia.push([bello(p[1]), p[2], k, sln[p[0]], v, p[4], p[5]]);
+      // l'ottavo: 1 se nella finestra 13-20 c'e' almeno un giorno stimato (la pagina indice lo segna, 1/11/2026)
+      let stF = 0;
+      for (let n = DA; n >= A; n--) if (g.st[n] && g.st[n][p[0]]) stF = 1;
+      if (v > 0) italia.push([bello(p[1]), p[2], k, sln[p[0]], v, p[4], p[5], stF]);
     }
   }
 
@@ -326,6 +344,13 @@ for (const k of Object.keys(POSTI)) {
       }
       if (ha) serieI[p[0]] = o;
     }
+    // I giorni STIMATI di ogni pluviometro, con l'indice della serie (0 = ieri): solo chi ne ha (1/11/2026).
+    const stime = {};
+    for (const p of POSTI[k]) {
+      const l = [];
+      for (let n = 1; n <= GIORNI; n++) if (g.st[n] && g.st[n][p[0]]) l.push(n - 1);
+      if (l.length) stime[p[0]] = l;
+    }
     const sl = slugRegione(POSTI[k]);
     const anagrafe = POSTI[k].map(p => [p[0], bello(p[1]), p[2], p[3], p[4], p[5], p[6], sl[p[0]]]);
     /* ⚠️ L'ULTIMA PIOGGIA FORTE VA SCRITTA QUI, non lasciata calcolare alla
@@ -348,6 +373,8 @@ for (const k of Object.keys(POSTI)) {
       serieT, serieW, serieI,
       // solo se ce n'e' qualcuno: le regioni senza sospesi non cambiano file
       ...(Object.keys(sospesi).length ? { sospesi } : {}),
+      // idem per le stime: senza giorni stimati il file resta quello di prima
+      ...(Object.keys(stime).length ? { stime } : {}),
     }) + '\n';
     const destG = path.join(USCITA, k + '-giorni.json');
     const primaG = fs.existsSync(destG) ? fs.readFileSync(destG, 'utf8') : '';
@@ -472,7 +499,8 @@ for (const k of Object.keys(POSTI)) {
     finestra: [giorni[DA - 1], giorni[A - 1]],
     // le regioni DEI POSTI BAGNATI, non quelle elaborate (19/10/2026, bug 16): l'indice scriveva «in 19 regioni» con 18
     quanti: tenute.length, regioni: new Set(tenute.map(r => r[2])).size,
-    primi: tenute.slice(0, 25).map(r => [r[0], r[1], r[2], r[3], uno(r[4])]),
+    // il sesto, 1, solo per i posti con giorni stimati nella finestra: la pagina indice li segna con l'asterisco
+    primi: tenute.slice(0, 25).map(r => r[7] ? [r[0], r[1], r[2], r[3], uno(r[4]), 1] : [r[0], r[1], r[2], r[3], uno(r[4])]),
   }) + '\n';
   const destN = path.join(USCITA, 'italia.json');
   const primaN = fs.existsSync(destN) ? fs.readFileSync(destN, 'utf8') : '';

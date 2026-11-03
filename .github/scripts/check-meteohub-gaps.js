@@ -11,10 +11,16 @@
  *  4. se MeteoHub ingerisce in ritardo (il collector auto-ripara ieri/altroieri
  *     e i giorni con file mancante o <10 stazioni), l'evento si chiude da solo
  *     come "risolto-meteohub";
- *  5. un buco del giorno G ancora aperto viene COPERTO con Open-Meteo quando
- *     oggi >= G + GRACE_DAYS: file interi con source "open-meteo-gapfill",
- *     giorni parziali integrati SOLO sulle stazioni mancanti (marcate om:true),
- *     i dati reali non si toccano.
+ *  5. un buco del giorno G ancora aperto viene COPERTO con le stime del modello
+ *     ICON-2I quando oggi >= G + GRACE_DAYS: file interi con source
+ *     "icon-2i-gapfill", giorni parziali integrati SOLO sulle stazioni mancanti
+ *     (marcate om:true e src:'icon-2i'), i dati reali non si toccano.
+ *     ⚠️ Fino al 2/11/2026 le stime erano di Open-Meteo ("open-meteo-gapfill",
+ *     registro "coperto-openmeteo"): restano nei file e nel registro come sono.
+ *     Open-Meteo e' stato tolto perche' il suo piano gratuito vieta i siti con
+ *     pubblicita' o abbonamenti; come si legge ICON e perche' basta, in
+ *     lib-icon2i.js. I file ICON restano ~8 giorni: con la grazia di 2 giorni
+ *     c'e' margine, un buco scoperto piu' tardi resta aperto.
  *
  * Il collector non riscrive mai un file esistente con >=10 stazioni fuori da
  * ieri/altroieri, quindi le coperture (che avvengono a G+GRACE_DAYS) sono
@@ -23,11 +29,14 @@
 
 const fs = require('fs');
 const path = require('path');
+const { corseIcon, stimaIcon } = require('./lib-icon2i.js');
 
 const DATA_ROOT = path.join(__dirname, '..', '..', 'data');
 const LEDGER = path.join(DATA_ROOT, 'meteohub-gaps.json');
+// Evento coperto con le stime: 'coperto-icon' dal 2/11/2026, 'coperto-openmeteo' prima.
+const COPERTO = /^coperto-/;
 
-// Giorni di attesa prima di coprire un buco con le stime Open-Meteo.
+// Giorni di attesa prima di coprire un buco con le stime del modello.
 // Da 3 a 2 il 31/7/2026. Sui primi tre eventi il terzo giorno non ha MAI
 // recuperato nulla (Puglia 27/7 ferma a 0 stazioni buone anche oggi, quattro
 // giorni dopo; Basilicata 27/7 ferma a 50 su 61; Molise 29/7 a 23 su 28):
@@ -38,6 +47,9 @@ const LEDGER = path.join(DATA_ROOT, 'meteohub-gaps.json');
 // perché il giorno subito dopo l'ingestione si sta ancora completando.
 const GRACE_DAYS = 2;
 const WINDOW_DAYS = 10;    // finestra di scansione (= finestra pubblica MeteoHub)
+// Le chiusure si guardano piu' indietro: collect-meteohub ripara i giorni coperti fino a 20 giorni (RIPARA_FINO con
+// l'account, dal 2/11/2026). Vedi «LE CHIUSURE FINO A 20 GIORNI» in main().
+const CHIUDI_FINO = 20;
 const PARTIAL_RATIO = 0.9; // sotto il 90% della mediana → giorno parziale
 // Sotto quale quota della normalità un calo merita davvero le stime (4/8/2026).
 // Il 90% qui sopra serve ad ACCORGERSI del calo e a scriverlo nel registro; è
@@ -87,32 +99,9 @@ function registroStazione(s) {
   return r;
 }
 
-async function fetchOpenMeteoDay(stations, dateStr, pastDays) {
-  // Batch da 50 coordinate; forecast API con past_days (l'archive ha ~5 giorni di lag)
-  const out = new Map();
-  for (let i = 0; i < stations.length; i += 50) {
-    const batch = stations.slice(i, i + 50);
-    const lat = batch.map(s => s.lat).join(',');
-    const lon = batch.map(s => s.lon).join(',');
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-      `&daily=precipitation_sum&past_days=${pastDays}&forecast_days=1&timezone=Europe%2FRome`;
-    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-    if (!res.ok) throw new Error(`Open-Meteo HTTP ${res.status}`);
-    let j = await res.json();
-    if (!Array.isArray(j)) j = [j];
-    // ⚠️ ASSENTE NON E' ZERO (20/10/2026, sesto check): un giorno o un valore che Open-Meteo non
-    // restituisce diventava 0 mm, cioe' una stazione asciutta inventata. Ora la stazione resta fuori
-    // dalla mappa e il chiamante non la scrive.
-    j.forEach((loc, k) => {
-      const d = loc && loc.daily;
-      const idx = d && Array.isArray(d.time) ? d.time.indexOf(dateStr) : -1;
-      const v = idx >= 0 && Array.isArray(d.precipitation_sum) ? d.precipitation_sum[idx] : null;
-      if (typeof v === 'number' && Number.isFinite(v)) out.set(batch[k].id, Math.round(v * 10) / 10);
-    });
-    await new Promise(r => setTimeout(r, 800));
-  }
-  return out;
-}
+// L'elenco delle corse ICON si chiede una volta sola, e solo se c'e' davvero un buco da coprire.
+let corse = null;
+async function leCorse() { return corse || (corse = await corseIcon()); }
 
 async function main() {
   console.log('=== check-meteohub-gaps avviato ===');
@@ -156,15 +145,15 @@ async function main() {
       // dato reale ricompare abbastanza ricco, sostituisce le stime — qui si
       // prende atto che il buco si è chiuso davvero. Serve isReal(): su un file
       // di sole stime `buco` è null, ma non è certo un giorno risolto.
-      if (ev && (ev.stato === 'aperto' || ev.stato === 'coperto-openmeteo') && !buco && isReal(j)) {
-        const tardivo = ev.stato === 'coperto-openmeteo';
+      if (ev && (ev.stato === 'aperto' || COPERTO.test(ev.stato)) && !buco && isReal(j)) {
+        const tardivo = COPERTO.test(ev.stato);
         ev.stato = 'risolto-meteohub'; ev.risoltoIl = todayStr;
         if (tardivo) { ev.stimeSostituite = true; delete ev.stazioniCoperte; }
         cambiato = true;
         console.log(`✅ ${region} ${day}: risolto da MeteoHub${tardivo ? ' (stime sostituite dal dato reale)' : ''}`);
         continue;
       }
-      if (!buco || (j && !isReal(j) && j.source === 'open-meteo-gapfill')) continue;
+      if (!buco || (j && !isReal(j) && /-gapfill$/.test(j.source || ''))) continue;
 
       // Un parziale che lascia la rete sopra SOGLIA_GRAVE è "lieve": si annota
       // (serve alla metrica frequenza) ma non si copre e non fa scattare la mail.
@@ -185,35 +174,61 @@ async function main() {
         continue;
       }
 
-      // copertura Open-Meteo dopo GRACE_DAYS
+      // copertura con le stime ICON-2I dopo GRACE_DAYS
       const diff = daysDiff(todayStr, day);
       if (diff < GRACE_DAYS) { console.log(`   ${region} ${day}: aperto da ${diff}g, copro a ${GRACE_DAYS}g`); continue; }
 
       const mancanti = !j ? [...registry.values()]
         : [...registry.values()].filter(s => !j.stations.some(x => x.id === s.id));
       if (mancanti.length === 0) continue;
-      console.log(`🌍 ${region} ${day}: copro ${mancanti.length} stazioni con Open-Meteo...`);
-      const om = await fetchOpenMeteoDay(mancanti, day, Math.min(Math.max(diff + 2, 2), 92));
-      // senza valore Open-Meteo la stazione non si scrive (assente, non 0 mm)
-      const nuove = mancanti.filter(s => om.has(s.id)).map(s => ({ ...s, mm: om.get(s.id), om: true }));
-      if (nuove.length < mancanti.length) console.log(`   ${region} ${day}: ${mancanti.length - nuove.length} stazioni senza valore Open-Meteo, lasciate fuori`);
+      console.log(`🌍 ${region} ${day}: copro ${mancanti.length} stazioni con ICON-2I...`);
+      // Un errore su un giorno (MeteoHub giu', file ICON illeggibile) non deve far saltare gli altri ne'
+      // perdere il registro: si annota, si va avanti, l'evento resta aperto e lo riprova il giro dopo.
+      // ⚠️ IL GIRO NON FINISCE IN ERRORE PER ICON (2/11/2026, check-10, scheda 114). Prima qui il giro usciva con 1: il
+      // workflow ritentava e, se falliva anche il ritentativo, saltava il commit, perdendo le coperture riuscite, i buchi
+      // nuovi e il registro (ogni giorno, se l'errore si ripete). Come check-gaps-nord: solo l'avviso, giallo nel giro.
+      let icon;
+      try { icon = await stimaIcon(mancanti, day, await leCorse()); }
+      catch (e) { console.log(`::warning::${region} ${day}: ICON-2I non letto (${e.message}), riprovo al prossimo giro`); continue; }
+      if (!icon) { console.log(`   ⚠️ ${region} ${day}: ICON-2I non ha piu' tutte le ore di quel giorno sui server, resta aperto`); continue; }
+      // ⚠️ ASSENTE NON E' ZERO (20/10/2026, sesto check): senza valore la stazione non si scrive, niente 0 mm
+      // inventati (con ICON succede solo fuori dalla sua griglia, 33,7-48,9 N e 3-22 E: in Italia non capita).
+      const nuove = mancanti.filter(s => icon.mm.has(s.id)).map(s => ({ ...s, mm: icon.mm.get(s.id), om: true, src: 'icon-2i' }));
+      if (nuove.length < mancanti.length) console.log(`   ${region} ${day}: ${mancanti.length - nuove.length} stazioni fuori dalla griglia ICON, lasciate fuori`);
       // nessun valore: niente file e niente copertura, l'evento resta aperto e si riprova al giro dopo
       if (nuove.length === 0) continue;
 
       const outFile = path.join(DATA_ROOT, 'meteohub-' + region, day + '.json');
       if (!j) {
         fs.writeFileSync(outFile, JSON.stringify({
-          date: day, collected: new Date().toISOString(), source: 'open-meteo-gapfill',
+          date: day, collected: new Date().toISOString(), source: 'icon-2i-gapfill', icon_corse: icon.corse,
           network: 'dpcn-' + region, count: nuove.length, stations: nuove
         }));
       } else {
         j.stations = j.stations.concat(nuove);
         j.count = j.stations.length;
-        j.gapfill = { aggiunte: nuove.length, il: todayStr };
+        j.gapfill = { aggiunte: nuove.length, il: todayStr, fonte: 'icon-2i' };
         fs.writeFileSync(outFile, JSON.stringify(j));
       }
-      ev.stato = 'coperto-openmeteo'; ev.copertoIl = todayStr; ev.stazioniCoperte = nuove.length; cambiato = true;
-      console.log(`   ✅ ${region} ${day}: coperto (${nuove.length} stazioni Open-Meteo)`);
+      ev.stato = 'coperto-icon'; ev.copertoIl = todayStr; ev.stazioniCoperte = nuove.length; cambiato = true;
+      console.log(`   ✅ ${region} ${day}: coperto (${nuove.length} stazioni ICON-2I, corse ${icon.corse.join(', ')})`);
+    }
+
+    // ⚠️ LE CHIUSURE FINO A 20 GIORNI (2/11/2026, scheda 114, check-10 B3). Dal 2/11 (ae6d822b37) collect-meteohub ripara
+    // i giorni coperti fino a 20 giorni indietro, ma qui la scansione e' di 10: un giorno fra l'11° e il 20° tornato vero
+    // restava «coperto» nel registro per sempre (giusti i dati, sbagliato il conto dei giorni a stime). Per CHIUDERE si
+    // guarda fino a CHIUDI_FINO, con la stessa regola di sopra (file vero, stazioni vere almeno alla soglia); i buchi
+    // NUOVI si cercano sempre e solo nei WINDOW_DAYS.
+    for (const ev of ledger.eventi) {
+      if (ev.rete !== region || days.includes(ev.data) || !(ev.stato === 'aperto' || COPERTO.test(ev.stato))) continue;
+      if (daysDiff(todayStr, ev.data) > CHIUDI_FINO) continue;
+      const j = loadDay(region, ev.data);
+      if (!isReal(j) || j.stations.filter(s => !s.om).length < soglia) continue;
+      const tardivo = COPERTO.test(ev.stato);
+      ev.stato = 'risolto-meteohub'; ev.risoltoIl = todayStr;
+      if (tardivo) { ev.stimeSostituite = true; delete ev.stazioniCoperte; }
+      cambiato = true;
+      console.log(`✅ ${region} ${ev.data}: risolto da MeteoHub oltre i ${WINDOW_DAYS} giorni${tardivo ? ' (stime sostituite dal dato reale)' : ''}`);
     }
   }
 
@@ -224,8 +239,8 @@ async function main() {
 
   const aperti = ledger.eventi.filter(e => e.stato === 'aperto').length;
   const risolti = ledger.eventi.filter(e => e.stato === 'risolto-meteohub').length;
-  const coperti = ledger.eventi.filter(e => e.stato === 'coperto-openmeteo').length;
-  console.log(`=== Registro: ${ledger.eventi.length} eventi totali — ${aperti} aperti, ${risolti} risolti da MeteoHub, ${coperti} coperti da Open-Meteo ===`);
+  const coperti = ledger.eventi.filter(e => COPERTO.test(e.stato)).length;
+  console.log(`=== Registro: ${ledger.eventi.length} eventi totali — ${aperti} aperti, ${risolti} risolti da MeteoHub, ${coperti} coperti con stime ===`);
 }
 
 main().catch(e => { console.error('❌', e.message); process.exit(1); });

@@ -28,12 +28,33 @@
 
 const fs = require('fs');
 const path = require('path');
-const { REGIONI, GEN, navAltre, STILE_BASE, STILE_IERI, ESTERE, SITO, GA_ID, CANALE, scrivi, stazDi } = require('./genera-pagine-regione.js');
+const { REGIONI, GEN, navAltre, STILE_BASE, STILE_IERI, ESTERE, SITO, GA_ID, CANALE, scrivi, stazDi, briciolaJson, briciolaHtml, BRIC_CSS } = require('./genera-pagine-regione.js');
+// «zona per zona» solo se la pagina della regione ha l'elenco delle zone (1/11/2026): Puglia, Basilicata, Sardegna e
+// Molise le zone non le hanno, e la riga prometteva una cosa che la pagina non ha
+const HA_ZONE = new Set(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'funghi-zone.json'), 'utf8')).map(z => z.reg));
 const { STILE_NUOVO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = require('./lib-pagina-funghi.js');   // quiz accanto a YouTube (20/10/2026)
 const { scriviSitemap } = require('./genera-sitemap.js');
+const { senzaCommenti } = require('./lib-senza-commenti.js');   // i commenti restano qui, non nelle pagine (2/11/2026)
+const { TESTATA_CSS, testata } = require('./lib-testata.js');   // la testata del sito (28/10/2026)
+const { capoluogo } = require('./lib-capoluoghi.js');
 
 const RADICE = path.resolve(__dirname, '..', '..');
-const VERSIONE_JS = 5;   // si alza quando cambia lib/pagina-adesso.js: il browser riprende il file nuovo (5: /api/cerca, 25/10/2026)
+const VERSIONE_JS = 12;   // si alza quando cambia lib/pagina-adesso.js: il browser riprende il file nuovo (5: /api/cerca, 25/10/2026; 6: la barra che scorre, 7: la riga viva, 30/10/2026; 8: «aggiornate alle» a pochi minuti e carte che si rinfrescano, 31/10/2026; 9: «e un'altra città», 1/11/2026; 10: zoom minimo, non piu' fino al planisfero, 2/11/2026; 11: il radar sulla foto della mappa, 2/11/2026; 12: le previsioni su /previsioni/, 2/11/2026)
+
+/* LA FOTO DELLA MAPPA SOTTO IL RADAR (2/11/2026, scheda 111 ter; regola sua del 2/11: le immagini e le cartine delle
+   pagine hanno sempre la stessa faccia della mappa). La foto NOSTRA della pioggia di index.html (modulo «LA FOTO DAL
+   SATELLITE SOTTO LA PIOGGIA»): indirizzo col commit, limiti dell'Europa, crediti corti, e la stessa luce (LUCE_SAT,
+   +6% a tacca). Si leggono da index.html come fa genera-pagine-meteo-zona.js con SAT_FOTO: se cambiano, basta
+   rigenerare. Se non si trovano il generatore si ferma, invece di scrivere pagine che tornano alla cartina. */
+const INDEX = fs.readFileSync(path.join(RADICE, 'index.html'), 'utf8');
+function fotoDellaMappa() {
+  const commit = /var FOTO_COMMIT='([0-9a-f]{40})'/.exec(INDEX), url = /var FOTO_URL='([^']+)'\+FOTO_COMMIT\+'([^']+)'/.exec(INDEX);
+  const lim = /var FOTO_LIMITI=(\[\[[^;]+\]\]);/.exec(INDEX), cr = /var FOTO_CREDITI='([^']+)'/.exec(INDEX);
+  if (!commit || !url || !lim || !cr) throw new Error("la foto della mappa non si trova in index.html (FOTO_COMMIT, FOTO_URL, FOTO_LIMITI, FOTO_CREDITI)");
+  return { u:url[1] + commit[1] + url[2], lim:JSON.parse(lim[1]), cr:cr[1] };
+}
+const FOTO = fotoDellaMappa();
+const LUCE = +(1 + 0.06 * +((/var LUCE_SAT=(\d+)/.exec(INDEX) || [])[1] || 5)).toFixed(2);
 
 // le regioni: l'anagrafe italiana + l'Abruzzo dopo il Lazio (stesso ordine nord-sud delle altre liste)
 const ABRUZZO = { k:'abruzzo', nome:'Abruzzo', prep:'in', senzaPagina:true };
@@ -96,20 +117,37 @@ function alleggerisci(g) {
   return { type:'MultiPolygon', coordinates:out };
 }
 
-// le citta': i capoluoghi dell'area (lo stesso elenco della sezione Previsioni), dal piu' popoloso
+// le citta': i capoluoghi dell'area (lo stesso elenco della sezione Previsioni), prima il capoluogo di regione, poi
+// quelli di provincia (28/10/2026, suo: «è più importante Savona di Millesimo»: Imperia prima di Sanremo), poi gli
+// altri; ognuno dal piu' popoloso
 const CAPOLUOGHI = JSON.parse(fs.readFileSync(path.join(RADICE, 'data', 'capoluoghi.json'), 'utf8'));
 const POP = {};
 for (const riga of fs.readFileSync(path.join(RADICE, 'data', 'elenco-paesi.txt'), 'utf8').split('\n')) {
   const c = riga.split('|'); if (c.length >= 6) POP[c[0]] = Math.max(POP[c[0]] || 0, +c[5]);
 }
 function cittaDi(r) {
-  return (CAPOLUOGHI[r.k] || []).map(c => ({ n:c.n, lat:c.lat, lon:c.lon, q:c.q == null ? null : c.q, reg:r.k }))
-    .sort((a, b) => (POP[b.n] || 0) - (POP[a.n] || 0));
+  const peso = c => c.c ? 2 : capoluogo(c.n) ? 1 : 0;
+  return (CAPOLUOGHI[r.k] || []).slice().sort((a, b) => peso(b) - peso(a) || (POP[b.n] || 0) - (POP[a.n] || 0))
+    .map(c => ({ n:c.n, lat:c.lat, lon:c.lon, q:c.q == null ? null : c.q, reg:r.k }));
+}
+
+/* I NOMI SOPRA LA FOTO (2/11/2026, scheda 111 ter): la foto non ha scritte, come nella mappa (modulo «NOMI NOSTRI» di
+   index.html). Prima le citta' della regione (sono gia' nei dati, lib/pagina-adesso.js le mette davanti), poi i
+   capoluoghi delle regioni d'Italia e le citta' estere sopra i 300.000 abitanti dell'elenco dei nomi della mappa
+   (data/nomi-esteri-grandi.txt, da OpenStreetMap), nel pezzo d'Europa che la cartina mostra da lontano. La mappa sceglie
+   fra migliaia di nomi per abitanti e zoom; qui sono un centinaio, in ordine, e decide lo spazio. */
+const ESTERI = fs.readFileSync(path.join(RADICE, 'data', 'nomi-esteri-grandi.txt'), 'utf8').split('\n').map(r => r.split('|'))
+  .filter(p => p.length >= 4 && +p[3] >= 300000 && +p[1] > 34 && +p[1] < 60 && +p[2] > -12 && +p[2] < 36)
+  .sort((a, b) => b[3] - a[3]).map(p => ({ n:p[0].trim(), lat:+(+p[1]).toFixed(3), lon:+(+p[2]).toFixed(3) }));
+function nomiDi(r) {
+  const visti = new Set(cittaDi(r).map(c => c.n));
+  return CAPOLUOGHI.italia.map(c => ({ n:c.n, lat:c.lat, lon:c.lon })).concat(ESTERI)
+    .filter(c => !visti.has(c.n) && visti.add(c.n));
 }
 
 const attr = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 const nomeCortoDi = r => r.nomeTitolo || r.nome;
-const linkPrev = c => `${SITO}/?r=${c.reg}&amp;m=prev&amp;pl=${c.lat},${c.lon}&amp;pn=${encodeURIComponent(c.n)}`;
+const linkPrev = c => `${SITO}/previsioni/?r=${c.reg}&amp;pl=${c.lat},${c.lon}&amp;pn=${encodeURIComponent(c.n)}`;
 
 // lo stile di questa pagina (dal mockup approvato il 18/10)
 const STILE_ADESSO = `
@@ -119,8 +157,14 @@ const STILE_ADESSO = `
 .rb-testa .quando{margin-left:auto;opacity:.9;font-size:14.5px;white-space:nowrap;}
 .vivo{width:11px;height:11px;border-radius:50%;background:#ff3b30;flex:none;box-shadow:0 0 0 0 rgba(255,59,48,.7);animation:vivo 1.6s infinite;}
 @keyframes vivo{0%{box-shadow:0 0 0 0 rgba(255,59,48,.7)}70%{box-shadow:0 0 0 9px rgba(255,59,48,0)}100%{box-shadow:0 0 0 0 rgba(255,59,48,0)}}
-/* fondo = il mare di OpenStreetMap: al telefono fra due tessere resta un filo di fondo (la mappa cade a mezzo pixel) */
-#mappa{height:470px;background:#aad3df;}
+/* fondo = il mare aperto della foto, come nella mappa (body.foto-on #map): al telefono fra due tessere resta un filo di
+   fondo (la mappa cade a mezzo pixel). Se la foto non arriva torna la cartina (.osm), col suo mare */
+#mappa{height:470px;background:#123a52;}
+#mappa.osm{background:#aad3df;}
+/* la foto della mappa con la sua luce (LUCE_SAT di index.html), e i nomi bianchi come i «NOMI NOSTRI» della mappa */
+#mappa .leaflet-foto-pane{filter:brightness(${LUCE}) saturate(1.1);}
+.nome-paese{white-space:nowrap;pointer-events:none;}
+.nome-paese span{position:absolute;left:0;top:0;transform:translate(-50%,-100%);margin-top:-5px;color:#fff;font-weight:600;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.15;text-shadow:0 0 3px rgba(0,0,0,.85),0 1px 2px rgba(0,0,0,.6);}
 .rb .tasti{grid-template-columns:repeat(3,1fr);margin:0;padding:12px 12px 4px;}
 .rb .tasti a{cursor:pointer;user-select:none;}
 .rb-scala{padding:8px 14px 12px;}
@@ -166,28 +210,74 @@ const STILE_ADESSO = `
 .cit-gg b{color:var(--blu-scuro);}
 .cit-gg .mmw,.cit-cond .mmw{color:#1f6fd1;font-weight:700;white-space:nowrap;margin-left:3px;}
 .cit-vai{margin-top:auto;align-self:flex-start;font-size:14px;font-weight:700;color:var(--blu);background:#fff;border:1px solid #c9d6e6;border-radius:20px;padding:4px 13px;white-space:nowrap;}
+/* LA RIGA VIVA (30/10/2026, suo: «dovrebbe dire se e come sta piovendo»): la scrive il radar (rigaViva in
+   lib/pagina-adesso.js), come «Il punto di stamattina» delle pagine meteo; il pallino rosso e' quello di IN DIRETTA */
+.ad-ora{background:#eef5fb;border-left:4px solid var(--blu);border-radius:8px;padding:11px 14px 12px;margin:4px 0 12px;font-size:16px;line-height:1.5;color:#1f2d3a;min-height:48px;}
+.ad-ora b{color:var(--blu-scuro);}
+.ad-q{display:flex;align-items:center;gap:7px;font-size:12px;color:#5a6b7d;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;}
+.ad-q::before{content:"";width:8px;height:8px;border-radius:50%;background:#ff3b30;flex:none;}
+#ad-t{display:block;}
+/* «Previsioni meteo valle per valle» e «paese per paese» (30/10/2026): le pagine meteo della regione, linkMeteoRegione
+   di genera-pagine-meteo-zona.js; pillole che vanno a capo */
+.mv-nota{margin:0 0 10px;}
+.mv{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px;}
+.mv-c{display:inline-block;padding:8px 14px;border:1px solid #c9d6e6;border-radius:20px;background:#fff;color:var(--blu);font-weight:700;font-size:15px;text-decoration:none;}
+.mv-c:hover{background:#eef4fd;}
+.mv-c::after{content:" →";}
+/* LA BARRA CHE SCORRE sotto il radar (30/10/2026, suo: «sì, tutti e due»): le citta' della regione con icona, minima e
+   massima di oggi, come la vista Italia della mappa e le pagine meteo. ⚠️ Le stesse regole di .pz-nastro in
+   genera-pagine-meteo-zona.js e lo stesso codice (lib/pagina-adesso.js): se cambia li', si cambia anche qui */
+.pz-nastro{position:relative;height:44px;overflow:hidden;background:#ffd400;border-top:1px solid #e0b800;scroll-margin-top:12px;display:flex;align-items:center;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.pz-nastro[hidden]{display:none}
+.pz-nastro .lab{position:absolute;left:0;top:0;bottom:0;z-index:2;display:flex;align-items:center;gap:8px;padding:0 30px 0 16px;background:#c8102e;color:#fff;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%);font:900 13px/1.1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;letter-spacing:.05em;white-space:nowrap}
+.pz-nastro .lab span{font-size:12px;font-weight:800;color:#ffe36b;letter-spacing:.06em}
+.pz-nastro .lab b{font-weight:900}.pz-nastro .lab em{font-style:normal}.pz-nastro .lab.corto em{display:none}
+.pz-nastro .t{display:flex;white-space:nowrap;will-change:transform;cursor:grab}
+.pz-nastro .v{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;border:0;background:none;color:#111;font:700 14px system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;padding:0 16px;border-right:2px solid #c8102e;cursor:pointer}
+.pz-nastro .v b{font-weight:900;text-transform:uppercase;letter-spacing:.03em}.pz-nastro .v .ic{font-size:18px}
+.pz-nastro .v .mn{color:#5c4a00;font-weight:700}.pz-nastro .v .mx{color:#111;font-weight:900}
+@media (max-width:600px){.pz-nastro{height:40px}
+  .pz-nastro .lab{flex-direction:column;align-items:flex-start;justify-content:center;gap:0;font-size:10.5px;line-height:1.05;padding:0 22px 0 10px;white-space:normal;max-width:38%}.pz-nastro .lab span{font-size:10px}
+  .pz-nastro .v{font-size:13px;padding:0 12px;gap:5px}.pz-nastro .v .ic{font-size:15px}}
 @media(max-width:640px){.citta{gap:10px;} .cit{flex-basis:calc((100% - 10px) / 2);padding:11px 12px 12px;}
   .cit-t{font-size:30px;} .cit-ic{font-size:30px;} .cit-gg{font-size:13.5px;} .cit-vai{font-size:13.5px;padding:4px 11px;}
   #mappa{height:380px;} .reg-lista{grid-template-columns:repeat(2,1fr);}
+  /* «Foto: NASA, ESA WorldCover» e' piu' lunga di «© OpenStreetMap»: a 11 px i crediti andavano a capo a 393 */
+  .leaflet-container .leaflet-control-attribution{font-size:10.5px;}
   .rb-testa{font-size:14.5px;} .rb-testa .quando{font-size:13.5px;}}
 `;
 
+// ⚠️ 31/10/2026 (scheda 104 bis, suo «tutte e sei»): «RADAR METEO <REGIONE>» IN TESTA.
+// Search Console 19-30/10: 11.729 viste e l'1,5% di clic. «radar meteo <regione>» ci
+// vede al 9°-21° posto, e su Google tutti quelli sopra cominciano il titolo cosi'.
+// «pioggia in diretta <regione>» invece e' quasi sempre il nome di un altro sito
+// (Pioggia Diretta, primo): li' siamo gia' terzi. «Dove sta piovendo adesso» resta
+// dentro, e la scritta grande comincia come il titolo (Google, quando lo riscrive,
+// prende lei).
 function titoloDi(r) {
   const n = nomeCortoDi(r);
-  return [`Dove sta piovendo adesso ${r.prep} ${n}: radar pioggia in diretta`,
-          `Dove sta piovendo adesso ${r.prep} ${n}: radar in diretta`,
-          `Dove sta piovendo adesso ${r.prep} ${n}`].find(t => t.length <= 62);
+  return [`Radar meteo ${n}: dove sta piovendo adesso, in diretta`,
+          `Radar meteo ${n}: dove sta piovendo adesso`,
+          `Radar meteo ${n}: dove piove adesso`].find(t => t.length <= 62);
 }
 function descrDi(r) {
   const n = nomeCortoDi(r);
-  return [`Il radar della pioggia ${r.prep} ${n} in diretta: dove piove in questo momento, le ultime 2 ore e i prossimi 40 minuti, e le previsioni delle città.`,
-          `Radar della pioggia ${r.prep} ${n} in diretta: dove piove adesso, le ultime 2 ore e i prossimi 40 minuti, con le previsioni delle città.`,
-          `Radar della pioggia ${r.prep} ${n} in diretta: dove piove adesso e le previsioni delle città.`].find(t => t.length <= 158);
+  return [`Radar meteo ${n} in diretta: dove sta piovendo in questo momento, le ultime 2 ore e i prossimi 40 minuti, e le previsioni delle città.`,
+          `Radar meteo ${n} in diretta: dove piove adesso, le ultime 2 ore e i prossimi 40 minuti, con le previsioni delle città.`,
+          `Radar meteo ${n} in diretta: dove piove adesso e le previsioni delle città.`].find(t => t.length <= 158);
 }
 
 function pagina(r) {
   const citta = cittaDi(r), gen = GEN2[r.k];
-  const dati = JSON.stringify({ k:r.k, sito:SITO, citta, confine:confineDi(r) }).replace(/</g, '\\u003c');
+  // dove/gen per la riga viva: «Non piove in Toscana», «bagna il 15% della Toscana»
+  // foto e nomi: la cartina con la faccia della mappa (2/11/2026, scheda 111 ter)
+  const dati = JSON.stringify({ k:r.k, nome:nomeCortoDi(r), dove:`${r.prep} ${r.nome}`, gen, sito:SITO, citta, confine:confineDi(r),
+    foto:FOTO, nomi:nomiDi(r) }).replace(/</g, '\\u003c');
+  // le pagine meteo della regione (qui e non in cima: genera-pagine-meteo-zona.js chiede confineDi a questo file)
+  const valli = require('./genera-pagine-meteo-zona.js').linkMeteoRegione(r.k, 'pagina-' + r.k + '-adesso');
+  // il percorso (31/10/2026, scheda 104 bis): la regione in mezzo solo se ha la sua pagina (l'Abruzzo no)
+  const briciola = [['Mappa pluviometrica', SITO + '/']].concat(r.senzaPagina
+    ? [['Radar meteo ' + r.nome, null]] : [[r.nome, `${SITO}/${r.k}/`], ['Radar adesso', null]]);
   const carte = citta.map((c, i) => `<a class="cit" data-i="${i}" href="${linkPrev(c)}"><div class="cit-testa"><b>${c.n}</b><span class="cit-ic"></span></div>`
     + `<div class="cit-t">&nbsp;</div><div class="cit-cond">&nbsp;</div><div class="cit-gg">&nbsp;<br>&nbsp;</div><span class="cit-vai">7 giorni →</span></a>`).join('\n');
   const altre = LISTA.filter(x => x.k !== r.k).map(x => `<li><a href="${SITO}/${x.k}/adesso/">${x.nome}</a></li>`).join('\n');
@@ -195,7 +285,7 @@ function pagina(r) {
 <h2>Quanta pioggia è caduta</h2>
 <p>Il radar dice dove piove adesso. Quanta acqua è caduta davvero lo misurano i pluviometri a terra, millimetro per millimetro: ieri, negli ultimi 7, 20 e 30 giorni.</p>
 <a class="ieri-btn" href="${SITO}/${r.k}/">
-  <b>Dove ha piovuto ieri ${r.prep} ${r.nome}</b><small>I millimetri di ${stazDi(r, RADICE)} pluviometri, zona per zona</small><i>→</i></a>
+  <b>Dove ha piovuto ieri ${r.prep} ${r.nome}</b><small>I millimetri di ${stazDi(r, RADICE)} pluviometri${HA_ZONE.has(r.k) ? ', zona per zona' : ''}</small><i>→</i></a>
 `;
   const radarPluvio = r.senzaPagina
     ? `<p>Il radar guarda la pioggia in quota: può vedere gocce che evaporano prima di toccare terra, o perderla dietro le montagne.</p>`
@@ -209,9 +299,11 @@ I pluviometri la misurano a terra. Per sapere quanta ne è caduta c'è la pagina
 <title>${attr(titoloDi(r))}</title>
 <meta name="description" content="${attr(descrDi(r))}">
 <link rel="canonical" href="${SITO}/${r.k}/adesso/">
+${briciolaJson(briciola)}
 <meta property="og:title" content="${attr(`Dove sta piovendo adesso ${r.prep} ${r.nome}`)}">
-<meta property="og:description" content="Il radar della pioggia in diretta e le previsioni delle città.">
+<meta property="og:description" content="${attr(descrDi(r))}">
 <meta property="og:image" content="${SITO}/preview.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:url" content="${SITO}/${r.k}/adesso/">
 <meta property="og:type" content="website">
 <!-- Google tag: il config solo sul dominio vero, come le pagine regione -->
@@ -229,21 +321,20 @@ I pluviometri la misurano a terra. Per sapere quanta ne è caduta c'è la pagina
 ${STILE_BASE}
 ${STILE_NUOVO}
 ${STILE_IERI}
-${RILIEVO}${STILE_ADESSO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}</style>
+${RILIEVO}${STILE_ADESSO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}${BRIC_CSS}${TESTATA_CSS}</style>
 </head>
 <body>
-<header>
-  <a class="logo" href="${SITO}/">🌧️ Mappa Pluviometrica</a>
-  <a class="yt" href="${CANALE}" target="_blank" rel="noopener"
-     onclick="try{gtag('event','click_youtube',{pulsante:'pagina-${r.k}-adesso'})}catch(e){}">▶ Iscriviti</a>
-</header>
+${testata({ sito: SITO, canale: CANALE, reg: r.k, ga: 'pagina-' + r.k + '-adesso', attiva: '' })}
 <main>
-<h1>Dove sta piovendo adesso ${r.prep} ${r.nome}</h1>
+${briciolaHtml(briciola)}
+<h1>Radar meteo ${r.nome}: dove sta piovendo adesso</h1>
 <p class="sotto"><b>Radar della pioggia in diretta</b>: le macchie colorate sono la pioggia che sta cadendo adesso. Si aggiorna da solo ogni 5 minuti.</p>
+<div class="ad-ora" aria-live="polite"><span class="ad-q" id="ad-q">Adesso</span><span id="ad-t">Sto guardando il radar…</span></div>
 
 <div class="rb">
   <div class="rb-testa"><span class="vivo"></span><b>IN DIRETTA</b><span class="quando" id="quando">carico il radar…</span></div>
   <div id="mappa"></div>
+  <div class="pz-nastro" id="nastro"><div class="lab"><b>METEO<em> ${attr(nomeCortoDi(r).toUpperCase())}</em></b><span>OGGI</span></div><div class="t"></div></div>
   <div class="tasti">
     <a class="forte" data-id="ora">Adesso</a>
     <a data-id="due">▶ −2 ore</a>
@@ -276,7 +367,7 @@ ${RILIEVO}${STILE_ADESSO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}</style>
 <div class="citta" id="citta">
 ${carte}
 </div>
-${ieri}
+${valli}${ieri}
 <h2>Dove sta piovendo adesso nelle altre regioni</h2>
 <ul class="reg-lista">
 ${altre}
@@ -318,14 +409,16 @@ ${navAltre('regione')}
 if (require.main === module) {
   const senza = LISTA.filter(r => !GEN2[r.k]).map(r => r.k);
   if (senza.length) { console.error('⚠️ manca il genitivo per: ' + senza.join(', ')); process.exit(1); }
-  for (const r of LISTA) {
+  const SOLO = process.env.SOLO;   // SOLO=liguria: una pagina sola, per i campioni (sitemap non toccata, 28/10/2026)
+  for (const r of LISTA.filter(r => !SOLO || r.k === SOLO)) {
     const html = pagina(r);
     const nc = cittaDi(r).length;
     if (!nc) { console.error(`⚠️ ${r.k}: nessuna città in capoluoghi.json`); process.exit(1); }
-    scrivi(path.join(RADICE, r.k, 'adesso', 'index.html'), html, true);
+    scrivi(path.join(RADICE, r.k, 'adesso', 'index.html'), senzaCommenti(html), true);
     console.log(`  /${r.k}/adesso/  ${nc} città · ${Math.round(Buffer.byteLength(html) / 1024)} KB · «${titoloDi(r)}» (${titoloDi(r).length})`);
   }
-  console.log(`\n${LISTA.length} pagine scritte, sitemap.xml con ${scriviSitemap(SITO, RADICE)} indirizzi.`);
+  if (SOLO) console.log(`(SOLO=${SOLO}: sitemap non toccata)`);
+  else console.log(`\n${LISTA.length} pagine scritte, sitemap.xml con ${scriviSitemap(SITO, RADICE)} indirizzi.`);
 }
 
-module.exports = { LISTA };
+module.exports = { LISTA, confineDi };   // confineDi anche per le anteprime delle pagine «Meteo <paese>» (28/10/2026)

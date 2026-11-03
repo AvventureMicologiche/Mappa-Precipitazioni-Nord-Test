@@ -9,9 +9,10 @@
 <meta property="og:title" content="Mappa forestale della Val Sedornia: che bosco c'è">
 <meta property="og:description" content="La mappa forestale della Val Sedornia, paese per paese. Per funghi, castagne, foliage ed escursioni.">
 <meta property="og:image" content="https://avventurepluvio-test.pages.dev/mappa-forestale/zone/val-sedornia/scorcio.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:url" content="https://avventurepluvio-test.pages.dev/mappa-forestale/zone/val-sedornia/">
 <meta property="og:type" content="website">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Mappa forestale d'Italia","item":"https://avventurepluvio-test.pages.dev/mappa-forestale/"},{"@type":"ListItem","position":2,"name":"Lombardia","item":"https://avventurepluvio-test.pages.dev/mappa-forestale/lombardia/"},{"@type":"ListItem","position":3,"name":"Val Sedornia"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Mappa pluviometrica","item":"https://avventurepluvio-test.pages.dev/"},{"@type":"ListItem","position":2,"name":"Mappa forestale d'Italia","item":"https://avventurepluvio-test.pages.dev/mappa-forestale/"},{"@type":"ListItem","position":3,"name":"Lombardia","item":"https://avventurepluvio-test.pages.dev/mappa-forestale/lombardia/"},{"@type":"ListItem","position":4,"name":"Val Sedornia"}]}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
@@ -27,9 +28,6 @@ header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-ite
 header a{color:#fff;text-decoration:none;}
 header .logo{font-weight:600;font-size:15px;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;}
 header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;flex:none;}
-/* ⚠️ 25/9/2026, sua schermata da Android: sotto i ~430 px logo e tasto rosso
-   non ci stavano sulla stessa riga e il tasto andava a capo, raddoppiando la
-   testata. Sul telefono via «· piogge» e «Canale»: resta «▶ YouTube». */
 @media(max-width:440px){header{padding:10px 12px;gap:8px;} header .logo span,header .yt .yt-l{display:none;}}
 main{max-width:860px;margin:0 auto;padding:22px 16px 40px;}
 h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
@@ -70,11 +68,6 @@ td b{color:var(--blu-scuro);}
 .loc:hover b::after{opacity:1;}
 .com{display:block;color:#6a7789;font-size:13px;}
 .forte-m{display:none;}
-/* ⚠️ DUE VERSIONI DELL'INTESTAZIONE. Non e' vezzo: le intestazioni non
-   vanno a capo (serve, se no restano appese le codine «fa» e «gg»), e a
-   360 px erano LORO a tenere aperte le colonne, non i numeri. Con la
-   scritta lunga il nome della localita' aveva 99 px e «San Colombano
-   Certenoli» andava su quattro righe. */
 .hd-c{display:none;}
 td.mm{position:relative;min-width:118px;}
 .barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;max-width:calc(100% - 7px);
@@ -93,14 +86,6 @@ td.ultima{font-size:14px;color:#42506a;white-space:nowrap;}
 .nota{color:#6a7789;font-size:14.5px;margin-top:10px;}
 .avviso{background:#fff6e5;border:1px solid #f0d9a8;border-radius:8px;padding:12px 15px;font-size:15px;margin:24px 0 0;}
 .avviso b{color:var(--blu-scuro);}
-/* ⚠️ IL PIE' DI PAGINA NON AVEVA NESSUNA REGOLA (corretto il 3/9/2026). Il
-   tag <footer> c'era su tutte e tre le famiglie di pagine, ma niente lo
-   nominava: il browser lo disegnava a modo suo, tutto a sinistra, senza
-   riga di separazione e coi link viola da «gia' visitato». Sono le stesse
-   regole che le pagine regione hanno da sempre.
-   ⚠️ Questo foglio di stile lo COPIANO anche le pagine di paese e di zona
-   (lo leggono da qui, vedi genera-pagine-localita.js): una regola scritta
-   qui vale per tutte e 1.081. */
 footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;
   font-size:14px;color:#555;text-align:center;}
 footer a{color:var(--blu);}
@@ -113,8 +98,6 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
   text-shadow:0 1px 2px rgba(0,0,0,.35);transition:transform .06s, box-shadow .06s;}
 a:active .vai-mappa{transform:translateY(2px);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.24), 0 2px 0 #0e2b4a, 0 4px 10px rgba(15,45,77,.3);}
-/* La riga di stagione: c'e' solo nei mesi in cui la pagina non serve a
-   molto, e lo dice invece di far finta di niente. */
 #stagione{display:none;background:#eef2f8;border:1px solid #ccd7e6;border-left:4px solid #7a93b5;
   border-radius:8px;padding:12px 15px;font-size:15.5px;color:#42506a;margin:0 0 20px;}
 #stagione b{color:var(--blu-scuro);}
@@ -126,18 +109,11 @@ a:active .vai-mappa{transform:translateY(2px);
   .capo .gr{font-size:21px;}
   table{font-size:14px;} th{font-size:11px;padding:7px 4px;} td{padding:7px 4px;}
   th.tagl,td.tagl{display:none;}
-  /* ⚠️ 110 px per colonna schiacciavano il nome a un centinaio di pixel e
-     «San Colombano Certenoli» andava su QUATTRO righe. Le barre non hanno
-     bisogno di tutto quello spazio: a 74 px il nome ne guadagna 72. */
   td.mm{min-width:74px;}
   .hd-l{display:none;}
   .hd-c{display:inline;}
   td.mm .v{padding-left:5px;font-size:13.5px;}
   .forte-m{display:block;color:#42506a;}
-  /* ⚠️ Sul telefono i tre tasti vanno a capo comunque, e larghi a misura del
-     testo restavano di tre lunghezze diverse: sembravano di importanza
-     diversa. Impilati e tutti larghi uguale si leggono come tre scelte
-     alla pari, che e' quello che sono. */
   .capo-btns{flex-direction:column;}
   .capo-btn{width:100%;text-align:center;}
 }
@@ -187,7 +163,6 @@ nav.altre a{color:var(--blu);}
 .fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
 .fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
-/* C13 (19/10/2026): otto giornate senza pioggia, il grafico vuoto lo dice */
 .fin{position:relative}.fin-nulla{position:absolute;left:0;right:0;top:38%;text-align:center;color:#5a6b80;font-size:14px;font-weight:600}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
@@ -249,7 +224,6 @@ nav.altre a{color:var(--blu);}
 .fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
 .fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
-/* C13 (19/10/2026): otto giornate senza pioggia, il grafico vuoto lo dice */
 .fin{position:relative}.fin-nulla{position:absolute;left:0;right:0;top:38%;text-align:center;color:#5a6b80;font-size:14px;font-weight:600}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
@@ -304,8 +278,6 @@ ul.paesi .quota{flex:none;width:64px;text-align:right;font-weight:800;color:var(
 .griglia img{width:100%;height:auto;border-radius:8px;border:1px solid var(--bordo);display:block;}
 .griglia span{position:absolute;left:8px;bottom:8px;background:rgba(15,45,77,.85);color:#fff;font-size:13px;font-weight:700;border-radius:6px;padding:2px 8px;}
 .pioggia{border-top:1px solid var(--bordo);margin-top:26px;padding-top:6px;}
-/* BOTTONE YOUTUBE (lib-pagina-funghi.js) */
-/* A TUTTA RIGA come i bottoni che aprono la mappa (25/10/2026, suo: «fallo largo come quelli che aprono le mappe») */
 .yt-btn{display:flex;justify-content:center;width:100%;box-sizing:border-box;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
   font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 4px 0 #7d0d12,0 9px 18px rgba(160,20,27,.32);transition:transform .08s,box-shadow .08s;}
@@ -315,8 +287,6 @@ ul.paesi .quota{flex:none;width:64px;text-align:right;font-weight:800;color:var(
 .yt-btn:hover{background:linear-gradient(180deg,#e8323a,#c01820);}
 .yt-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7d0d12,0 4px 8px rgba(160,20,27,.3);}
 
-/* QUIZ ACCANTO A YOUTUBE: due celle uguali, una sotto l'altra sul telefono (25/10/2026, suo: «dove c'e' il quiz lascia
-   com'e'», solo YouTube da solo va a tutta riga) */
 .coppia-btn{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 4px;}
 .coppia-btn a{justify-content:center;box-sizing:border-box;min-height:53px;width:100%;}
 .coppia-btn svg{width:26px;flex:none;}
@@ -327,7 +297,6 @@ ul.paesi .quota{flex:none;width:64px;text-align:right;font-weight:800;color:var(
 .quiz-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a06a08,0 4px 8px rgba(150,95,10,.3);}
 @media(max-width:560px){.coppia-btn{grid-template-columns:1fr;}}
 
-/* ── IL METEO NELLE PAGINE REGIONE (lib-meteo-regione.js, 19/10/2026) ── */
 header{position:relative;flex-wrap:nowrap;}
 .mk-cerca{position:relative;flex:1;max-width:340px;margin-left:14px;}
 .mk-cerca input{width:100%;box-sizing:border-box;border:0;border-radius:9px;padding:8px 12px 8px 34px;font:500 15px/1.2 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
@@ -342,7 +311,7 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-r small{color:#6b7d93;white-space:nowrap;}
 .mk-porte-t{padding:12px 14px 4px;font-weight:700;font-size:15px;}
 .mk-porte-t small{display:block;font-weight:500;color:#6b7d93;font-size:13px;margin-top:2px;}
-.mk-6{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 12px 12px;}
+.mk-6{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:8px;padding:8px 12px 12px;}
 .mk-6 a{display:flex;align-items:center;gap:9px;padding:10px 10px;border:1px solid #d3deeb;border-radius:10px;text-decoration:none;color:#10263f;font-weight:700;font-size:14.5px;line-height:1.15;}
 .mk-6 a:hover{background:#eef4fb;}
 .mk-6 a span{font-size:20px;}
@@ -355,9 +324,9 @@ header{position:relative;flex-wrap:nowrap;}
   header .yt{margin-left:8px;}
   .mk-drop{min-width:0;}
 }
-.mk-porte{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;}
-.mk-porte a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 8px;border-radius:11px;background:rgba(255,255,255,.12);
-  color:#fff;text-decoration:none;font-weight:700;font-size:13.5px;border:1px solid rgba(255,255,255,.22);}
+.mk-porte{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:8px;margin-top:14px;}
+.mk-porte a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 3px 8px;border-radius:11px;background:rgba(255,255,255,.12);
+  color:#fff;text-decoration:none;font-weight:700;font-size:13.5px;line-height:1.15;text-align:center;border:1px solid rgba(255,255,255,.22);}
 .mk-porte a span{font-size:21px;line-height:1;}
 .mk-porte a:hover{background:rgba(255,255,255,.2);}
 .mk-meteo{background:#f3f7fc;border:1px solid #d6e2f0;border-radius:14px;padding:4px 16px 14px;margin:18px 0 6px;}
@@ -372,11 +341,10 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-cr{display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;align-items:center;gap:4px;padding:8px 12px;border-bottom:1px solid #eef2f7;text-decoration:none;color:#10263f;font-size:15px;}
 .mk-cr:hover{background:#f3f7fc;}
 .mk-cr b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.mk-cr b small{display:block;font-weight:500;font-size:12px;color:#5f738c;}   /* «al pluviometro», pagine paese (20/10/2026) */
+.mk-cr b small{display:block;font-weight:500;font-size:12px;color:#5f738c;}
 .mk-cr span{display:flex;align-items:center;gap:3px;font-weight:600;flex-wrap:wrap;}
 .mk-cr span i{font-style:normal;font-size:19px;}
 .mk-cr span em{font-style:normal;font-size:12px;color:#1f6fd1;font-weight:700;width:100%;padding-left:24px;margin-top:-3px;}
-/* la % di pioggia (25/10/2026): la GOCCIA come nelle pagine meteo, i tre toni della mappa (sotto il 10% grigia, dal 60% rossa) */
 .mk-cr span em.mk-pc{margin-top:0;}.mk-cr span em.mk-pc.z{color:#9aa3ad;font-weight:500;}.mk-cr span em.mk-pc.alta{color:#c21f1f;}
 .mk-cr-t{background:#eef4fb;font-size:13px;color:#4a6180;padding:6px 12px;}
 .mk-cr-t span{font-weight:700;}
@@ -388,10 +356,9 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-boschi{background:#eef6ef;border:1px solid #cfe3d2;border-radius:14px;padding:4px 16px 16px;margin:18px 0 6px;}
 .mk-boschi h2{margin-top:14px;color:#1d4a2a;}
 .mk-boschi-p{font-size:15px;color:#3d5a45;margin:2px 0 10px;}
-@media(max-width:400px){.mk-boschi .mk-tuo input::placeholder{font-size:15px;}}   /* la frase sta intera anche a 360 px */
+@media(max-width:400px){.mk-boschi .mk-tuo input::placeholder{font-size:15px;}}
 .mk-boschi .mk-tuo input{border-color:#2f6b3d;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%232f6b3d' stroke-width='2.6' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5 21 21'/%3E%3C/svg%3E");}
 .mk-citta-n a{color:#1b3f6e;font-weight:700;}
-/* il bottone del radar sotto la tabella (20/10/2026): bianco, e blu pieno col pallino che pulsa se oggi piove */
 .mk-radar{display:flex;align-items:center;gap:11px;margin:12px 0 2px;padding:11px 14px;border-radius:12px;text-decoration:none;
   border:2px solid #1f6fd1;background:#fff;color:#123b6e;}
 .mk-radar .mk-ic{font-size:24px;line-height:1;flex:none;}
@@ -414,16 +381,61 @@ header{position:relative;flex-wrap:nowrap;}
 #mk-meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
 #mk-meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
 #mk-meteo .mk-cr span em{white-space:nowrap;}
+
+header.tB{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:10px;padding:0;background:#fff;color:#123252;border-bottom:1px solid #d0d8e8}
+.tB a{text-decoration:none;opacity:1}
+.tB .t-in{max-width:var(--t-max,760px);margin:0 auto;width:100%;padding:0 var(--t-pad,16px);display:flex;align-items:center}
+.tB .t-striscia{background:#0f2d4f}
+.tB .t-striscia .t-in{gap:2px;height:38px;padding:0 calc(var(--t-pad,16px) - 11px)}
+.tB .t-striscia a{color:rgba(255,255,255,.86);font-size:13.5px;font-weight:600;padding:0 11px;height:38px;display:flex;align-items:center;white-space:nowrap}
+.tB .t-striscia a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tB .t-striscia a.on{color:#0f2d4f;background:#f9c93e}
+.tB .t-striscia .t-dx{margin-left:auto;display:flex;gap:2px}
+.tB .t-banda .t-in{position:relative;gap:16px;padding-top:14px;padding-bottom:14px}
+.tB .t-marchio{display:flex;align-items:center;gap:12px}
+.tB .t-goccia{font-size:34px;line-height:1}
+.tB .t-marchio b{display:block;font-size:24px;font-weight:800;letter-spacing:-.015em;line-height:1.1;color:#123252}
+.tB .t-marchio small{display:block;font-size:13.5px;color:#4a5a6e;font-weight:500;margin-top:3px;line-height:1.3}
+.tB .t-tel{display:none}
+.tB .t-ytp{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:#e12b2b;color:#fff;font-size:14.5px;font-weight:700;padding:9px 16px 9px 13px;border-radius:999px;white-space:nowrap}
+.tB .t-ytp svg{width:18px;height:18px;fill:#fff}
+.tB .mk-lente{display:flex;align-items:center;justify-content:center;margin-left:auto;flex:none;width:40px;height:40px;border:0;border-radius:50%;background:#1b3f6e;cursor:pointer}
+.tB .mk-lente ~ .t-ytp{margin-left:0}
+.tB .mk-cerca{display:none;position:absolute;left:var(--t-pad,16px);right:var(--t-pad,16px);top:50%;transform:translateY(-50%);margin:0;max-width:none;z-index:60}
+.tB .mk-cerca input{border:2px solid #1b3f6e;padding:11px 12px 11px 36px}
+header.tB.mk-aperto .mk-cerca{display:block}
+header.tB.mk-aperto .t-marchio,header.tB.mk-aperto .t-ytp,header.tB.mk-aperto .mk-lente{visibility:hidden}
+.tB .t-in:has(.mk-lente) .t-it{display:none}
+@media (max-width:760px){
+  .tB .t-striscia{order:2}
+  .tB .t-banda .t-in{padding-top:10px;padding-bottom:10px;gap:10px}
+  .tB .t-goccia{font-size:26px}
+  .tB .t-marchio b{font-size:18px}
+  .tB .t-marchio small{font-size:12px;margin-top:1px}
+  .tB .t-pc{display:none}.tB .t-tel{display:inline}
+  .tB .t-ytp{font-size:13px;padding:7px 11px 7px 9px;gap:6px}
+  .tB .mk-lente{width:34px;height:34px}
+  .tB .t-in:has(.mk-lente) .t-marchio b{font-size:16px}
+  .tB .t-striscia .t-in{overflow-x:auto;scrollbar-width:none;padding:0 calc(var(--t-pad,16px) - 11px);-webkit-mask-image:linear-gradient(90deg,#000 86%,transparent);mask-image:linear-gradient(90deg,#000 86%,transparent)}
+  .tB .t-striscia .t-in::-webkit-scrollbar{display:none}
+  .tB .t-striscia .t-dx{margin-left:0;padding-right:30px}
+}
+@media (max-width:389px){.tB .t-marchio{gap:8px}.tB .t-goccia{font-size:23px}.tB .t-marchio b{font-size:16px;white-space:nowrap}
+  .tB .t-banda .t-in{gap:8px}.tB .t-ytp{padding:7px 9px}.tB .mk-lente ~ .t-ytp span{display:none}}
+header.tB{--t-max:860px}@media (max-width:640px){header.tB{--t-pad:12px}}
 </style>
 </head>
 <body>
-<header>
-  <a href="https://avventurepluvio-test.pages.dev/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· mappa forestale</span></a>
-  <a class="yt" href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener"
-     onclick="try{gtag('event','click_youtube',{pulsante:'forestale'})}catch(e){}">▶ <span class="yt-l">Canale </span>YouTube</a>
+<header class="tB">
+  <nav class="t-striscia" aria-label="Menu"><div class="t-in"><a href="https://avventurepluvio-test.pages.dev/?r=lombardia" onclick="try{gtag('event','apri_mappa',{da:'forestale-testata-storico'})}catch(e){}">Storico piogge</a><a href="https://avventurepluvio-test.pages.dev/previsioni/?r=lombardia" onclick="try{gtag('event','apri_mappa',{da:'forestale-testata-previsioni'})}catch(e){}">Previsioni meteo</a><a href="https://avventurepluvio-test.pages.dev/guida/">Guida</a><span class="t-dx"><a href="https://avventuremicologiche.it/#noi">Chi siamo</a><a href="https://avventuremicologiche.it/#piede">Contatti</a></span></div></nav>
+  <div class="t-banda"><div class="t-in">
+    <a class="t-marchio" href="https://avventurepluvio-test.pages.dev/"><span class="t-goccia">🌧️</span><span><b>Mappa Pluviometrica</b><small><span class="t-pc">Previsioni, radar e pioggia misurata<span class="t-it"> in tutta Italia</span> · un progetto di Avventure Micologiche</span><span class="t-tel">di Avventure Micologiche</span></small></span></a>
+    <a class="t-ytp" href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" onclick="try{gtag('event','click_youtube',{pulsante:'forestale'})}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg><span>Iscriviti</span></a>
+  </div></div>
 </header>
+<script>(function(){var a=document.querySelector('.tB .t-striscia a.on'),f=a&&a.parentNode;if(f&&a.offsetLeft+a.offsetWidth>f.clientWidth-30)f.scrollLeft=a.offsetLeft-40;})()</script>
 <main>
-<p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/" style="color:var(--blu)">‹ Mappa forestale d'Italia</a> <span style="color:#9aa7b8">›</span> <a href="https://avventurepluvio-test.pages.dev/mappa-forestale/lombardia/" style="color:var(--blu)">Lombardia</a> <span style="color:#9aa7b8">›</span> Val Sedornia</p>
+<p class="bric" style="font-size:14px;color:#666;margin-bottom:6px"><a href="https://avventurepluvio-test.pages.dev/" style="color:var(--blu)">Mappa pluviometrica</a> › <a href="https://avventurepluvio-test.pages.dev/mappa-forestale/" style="color:var(--blu)">Mappa forestale d'Italia</a> › <a href="https://avventurepluvio-test.pages.dev/mappa-forestale/lombardia/" style="color:var(--blu)">Lombardia</a> › Val Sedornia</p>
 <h1>Mappa forestale della Val Sedornia: che bosco c'è</h1>
 <p class="breve" style="margin-top:-2px">La carta forestale della Val Sedornia, colorata sopra il rilievo. Tocchi un punto e sai che bosco è, a che quota e su quale versante. Per chi va a funghi, a castagne, a vedere il foliage o a camminare.</p>
 <a class="cta" href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;boschi=1&amp;z=12&amp;c=45.98482,9.98973">🌲 Apri la mappa forestale della Val Sedornia</a>
@@ -480,7 +492,7 @@ header{position:relative;flex-wrap:nowrap;}
 <h2>E la pioggia? Sulla stessa mappa</h2>
 <p>La mappa forestale sta dentro la nostra <b>mappa pluviometrica</b>: 3 pluviometri intorno alla zona, con la pioggia vera giorno per giorno. Con <b>⇆ Confronta con piogge</b> metti accanto boschi e pioggia.</p>
 <a class="cta" href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;z=11&amp;c=45.98482,9.98973&amp;g=20">💧 Apri la mappa della pioggia: ultimi 20 giorni</a>
-<div class="tasti"><a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;z=11&amp;c=45.98482,9.98973&amp;g=1">Ieri</a><a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;z=11&amp;c=45.98482,9.98973&amp;g=7">Ultimi 7 gg</a><a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;z=11&amp;c=45.98482,9.98973&amp;g=10">Ultimi 10 gg</a><a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;z=11&amp;c=45.98482,9.98973&amp;g=15">Ultimi 15 gg</a><a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;z=11&amp;c=45.98482,9.98973&amp;g=30">Ultimi 30 gg</a><a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;z=11&amp;c=45.98482,9.98973&amp;radar=ora">📡 Radar adesso</a></div>
+<div class="tasti"><a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;z=11&amp;c=45.98482,9.98973&amp;g=1">Ieri</a><a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;z=11&amp;c=45.98482,9.98973&amp;g=7">Ultimi 7 gg</a><a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;z=11&amp;c=45.98482,9.98973&amp;g=10">Ultimi 10 gg</a><a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;z=11&amp;c=45.98482,9.98973&amp;g=15">Ultimi 15 gg</a><a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;z=11&amp;c=45.98482,9.98973&amp;g=30">Ultimi 30 gg</a><a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;z=11&amp;c=45.98482,9.98973&amp;radar=ora">📡 Radar piogge</a></div>
 <a href="https://avventurepluvio-test.pages.dev/zone/val-sedornia/"><img class="img-f" src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/lombardia.jpg" alt="La pioggia degli ultimi giorni in Lombardia" width="1600" height="1000" loading="lazy"></a>
 <p><a href="https://avventurepluvio-test.pages.dev/zone/val-sedornia/">Dove ha piovuto in Val Sedornia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/zone/val-sedornia/">Funghi in Val Sedornia oggi</a></p>
 </div>
@@ -500,30 +512,21 @@ header{position:relative;flex-wrap:nowrap;}
   function mm(n) { return n === 0 ? '0' : n < 10 ? num(n) : String(Math.round(n)); }
   function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
   function ga(da) { try { gtag('event', 'apri_mappa', { da: GA + '-' + da }); } catch (e) {} }
-  // le icone della mappa (index.html, ICONE)
   var ICONE = [[/clearsky_day|fair_day/, '☀️'], [/clearsky_night|fair_night/, '🌙'], [/partlycloudy_day/, '⛅'], [/partlycloudy_night|^cloudy|fog/, '☁️'],
                [/thunder/, '⛈️'], [/heavyrain|heavysleet/, '🌧️'], [/rain|sleet|drizzle/, '🌦️'], [/snow/, '🌨️']];
   function icona(s) { for (var i = 0; i < ICONE.length; i++) if (ICONE[i][0].test(s || '')) return ICONE[i][1]; return '☁️'; }
-  /* ⚠️ I GIORNI PER DATA, NON PER POSIZIONE (19/10/2026, quinto check, bug 11). Dopo mezzanotte una previsione presa
-     prima (cache) comincia con IERI: la tabella chiamava «oggi» ieri e il grafico metteva ieri due volte, fra i
-     misurati e fra i previsti. I giorni passati si tolgono appena arriva la risposta (daOggi) e i nomi si danno
-     confrontando la data. Stessa regola nella mappa (index.html) e in lib/pagina-adesso.js. */
   function isoRoma(ms) { return new Date(ms).toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' }); }
-  // ⚠️ DOMANI = OGGI + un giorno di CALENDARIO (20/10/2026, sesto check, bug 7): «adesso + 24 ore» sbagliava al cambio
-  // d'ora (25/10/2026 fra 00 e 01 dava ancora il 25, 27/3/2027 fra 23 e 24 dava il 29). Mezzogiorno UTC: nessun fuso lo sposta.
   var OGGI = isoRoma(Date.now()), DOMANI = (function (p) { return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] + 1, 12)).toISOString().slice(0, 10); })(OGGI.split('-'));
   function daOggi(j) { if (j && j.capoluoghi) j.capoluoghi.forEach(function (c) { if (c.giorni) c.giorni = c.giorni.filter(function (x) { return x.g >= OGGI; }); }); return j; }
   function nomeG(s, d) { var x = daIso(s); return s === OGGI ? 'oggi' : s === DOMANI ? 'domani' : GS[x.getDay()] + ' ' + x.getDate(); }
   function nomeReg(k) { return { valledaosta: "Valle d'Aosta", altoadige: 'Alto Adige', emilia: 'Emilia-Romagna', friuli: 'Friuli' }[k] || (k.charAt(0).toUpperCase() + k.slice(1)); }
   function pl(x) { return '&pl=' + (+x.lat).toFixed(4) + ',' + (+x.lon).toFixed(4) + '&pn=' + encodeURIComponent(x.n) + (x.z ? '&pz=1' : ''); }
   function vai(url, da) { ga(da); setTimeout(function () { location.href = url; }, 120); }
+  var CAPI = '|torino|alessandria|asti|biella|cuneo|novara|verbania|vercelli|aosta|milano|bergamo|brescia|como|cremona|lecco|lodi|mantova|monza|pavia|sondrio|varese|trento|bolzano|venezia|belluno|padova|rovigo|treviso|verona|vicenza|trieste|gorizia|pordenone|udine|genova|imperia|la spezia|savona|bologna|ferrara|forli|cesena|modena|parma|piacenza|ravenna|reggio emilia|reggio nell emilia|rimini|firenze|arezzo|grosseto|livorno|lucca|massa|carrara|pisa|pistoia|prato|siena|perugia|terni|ancona|ascoli piceno|fermo|macerata|pesaro|urbino|roma|frosinone|latina|rieti|viterbo|l aquila|chieti|pescara|teramo|campobasso|isernia|napoli|avellino|benevento|caserta|salerno|bari|barletta|andria|trani|brindisi|foggia|lecce|taranto|potenza|matera|catanzaro|cosenza|crotone|reggio calabria|reggio di calabria|vibo valentia|palermo|agrigento|caltanissetta|catania|enna|messina|ragusa|siracusa|trapani|cagliari|sassari|nuoro|oristano|carbonia|iglesias|olbia|tempio pausania|tortoli|lanusei|sanluri|villacidro|';
+  function capo(n) { return CAPI.indexOf('|' + norm(n) + '|') >= 0 ? 1 : 0; }
 
-  /* ── l'elenco dei comuni e le frazioni ── */
   var ELENCO = null, IN_ARRIVO = null;
   function norm(t) { return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/['’.-]/g, ' ').replace(/\s+/g, ' ').trim(); }
-  /* ⚠️ (20/10/2026, sesto check, bug 14) un 503 non e' un elenco: prima il testo dell'errore diventava ELENCO=[] e la
-     casella restava muta per tutta la visita. Come lib/pagina-adesso.js: errore se !r.ok, UNA promessa in volo (due
-     chiamate ravvicinate non scaricano due volte i 366 KB) e dimenticata sull'errore, cosi' si ritenta alla prossima. */
   function carica() {
     if (ELENCO) return Promise.resolve(ELENCO);
     if (!IN_ARRIVO) IN_ARRIVO = fetch('/data/elenco-paesi.txt').then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) {
@@ -539,18 +542,16 @@ header{position:relative;flex-wrap:nowrap;}
     q = norm(q); if (q.length < 2 || !ELENCO) return [];
     var a = [];
     ELENCO.forEach(function (x) { var i = x.q.indexOf(q); if (i < 0 || (i !== 0 && x.q.charAt(i - 1) !== ' ')) return; a.push({ x: x, p: i === 0 ? 0 : 1 }); });
-    a.sort(function (u, v) { return u.p - v.p || (v.x.z - u.x.z) || v.x.pop - u.x.pop; });   // tutta Italia alla pari
+    a.sort(function (u, v) { return u.p - v.p || (v.x.z - u.x.z) || v.x.pop - u.x.pop; });
     return a.slice(0, 6).map(function (u) { return u.x; });
   }
-  // ⚠️ COPIA di GEO_REGIONI di index.html e di lib/pagina-adesso.js: se cambia una, cambiano tutte
   var GEO_REGIONI = { 'Piemonte': 'piemonte', "Valle d'Aosta": 'valledaosta', 'Lombardia': 'lombardia', 'Veneto': 'veneto',
     'Friuli Venezia Giulia': 'friuli', 'Liguria': 'liguria', 'Emilia-Romagna': 'emilia', 'Toscana': 'toscana', 'Umbria': 'umbria',
     'Marche': 'marche', 'Lazio': 'lazio', 'Abruzzo': 'abruzzo', 'Molise': 'molise', 'Campania': 'campania', 'Puglia': 'puglia',
     'Basilicata': 'basilicata', 'Calabria': 'calabria', 'Sicilia': 'sicilia', 'Sardegna': 'sardegna' };
   function frazioni(testo) {
-    // dal 25/10/2026 /api/cerca (GeoNames servito dal sito) al posto di Open-Meteo, stessa forma della risposta
     return fetch(API.replace('/api/previsioni', '/api/cerca') + '?name=' + encodeURIComponent(testo) + '&count=10&language=it&countryCode=IT')
-      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (j) {   // un 429 non e' «nessun posto» (settimo check, bug 8)
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (j) {
         var visti = {};
         return (j.results || []).map(function (x) {
           var a1 = x.admin1 || '', a2 = x.admin2 || '';
@@ -562,7 +563,6 @@ header{position:relative;flex-wrap:nowrap;}
         }).filter(Boolean).sort(function (u, v) { return v.pop - u.pop; });
       });
   }
-  // una casella col suo menu: i comuni subito, le frazioni dopo una pausa di scrittura se c'e' posto
   function casella(inp, drop, scelto) {
     var righe = [], sel = -1, giro = 0, attesa = null;
     function disegna() {
@@ -574,19 +574,17 @@ header{position:relative;flex-wrap:nowrap;}
       var mio = ++giro; clearTimeout(attesa);
       if (righe.length < 6 && norm(q).length >= 3) attesa = setTimeout(function () {
         frazioni(q.trim()).then(function (f) {
-          if (mio !== giro || sel >= 0) return;   // ha scritto altro, o sta scegliendo con le frecce
+          if (mio !== giro || sel >= 0) return;
           var visti = {}; righe.forEach(function (x) { visti[x.q + '|' + x.reg] = 1; });
           righe = righe.concat(f.filter(function (x) { return !visti[x.q + '|' + x.reg]; })).slice(0, 7);
           if (righe.length) disegna(); else drop.innerHTML = '<div class="mk-porte-t">Nessun posto con questo nome<small>prova con il nome del comune</small></div>';
         }).catch(function () {
-          // (settimo check, bug 8) prima restava per sempre «Cerco anche tra le frazioni…»
           if (mio === giro && sel < 0 && !righe.length) drop.innerHTML = '<div class="mk-porte-t">Le frazioni non rispondono<small>prova con il nome del comune</small></div>';
         });
       }, 350);
       if (!righe.length) { drop.innerHTML = norm(q).length >= 3 ? '<div class="mk-porte-t">Cerco anche tra le frazioni…</div>' : ''; drop.classList.toggle('on', norm(q).length >= 3); return; }
       disegna();
     }
-    // senza elenco (errore) si cerca lo stesso: restano le frazioni del geocoder, e la prossima lettera ritenta l'elenco
     inp.addEventListener('focus', function () { carica().catch(function () {}); });
     inp.addEventListener('input', function () { carica().catch(function () {}).then(function () { mostra(inp.value); }); });
     inp.addEventListener('keydown', function (e) {
@@ -599,15 +597,14 @@ header{position:relative;flex-wrap:nowrap;}
     document.addEventListener('click', function (e) { if (!inp.parentNode.contains(e.target)) drop.classList.remove('on'); });
   }
   function seiPorte(x) {
-    return [['☀️', 'Previsioni', '7 giorni, ora per ora', '/?r=' + x.reg + '&m=prev' + pl(x), 'previsioni'],
-            ['💧', 'Pioggia caduta', 'ieri, 7 e 30 giorni', '/?r=' + x.reg + '&g=7' + pl(x), 'pioggia'],
-            ['📡', 'Radar adesso', 'la pioggia in corso', '/?r=' + x.reg + '&radar=ora' + pl(x), 'radar'],
-            ['🌡', 'Temperature', 'minime e massime', '/?r=' + x.reg + '&g=1&tq=1' + pl(x), 'temperature'],
-            ['🌲', 'Boschi', "che bosco c'è, a che quota", '/?r=' + x.reg + '&boschi=1' + pl(x), 'boschi'],
-            ['🛰', 'Satellite', "la foto dall'alto", '/?r=' + x.reg + '&boschi=1&sat=1' + pl(x), 'satellite']];
+    return [['☀️', 'Previsioni', '7 giorni, ora per ora', '/previsioni/?r=' + x.reg + pl(x), 'previsioni'],
+            ['💧', 'Pioggia caduta', 'ultimi 7 giorni', '/?r=' + x.reg + '&g=7' + pl(x), 'pioggia'],
+            ['💧', 'Pioggia caduta', 'ultimi 30 giorni', '/?r=' + x.reg + '&g=30' + pl(x), 'pioggia-30'],
+            ['📡', 'Radar piogge', 'la pioggia in corso', '/?r=' + x.reg + '&radar=ora' + pl(x), 'radar'],
+            ['🌲', 'Mappa boschi', "che bosco c'è, a che quota", '/?r=' + x.reg + '&boschi=1' + pl(x), 'boschi'],
+            ['🛰️', 'Boschi + satellite', "la foto dall'alto", '/?r=' + x.reg + '&boschi=1&sat=1' + pl(x), 'satellite']];
   }
 
-  /* ═══ 1. IL CERCA NELL'INTESTAZIONE ═══ */
   var header = document.querySelector('header');
   if (header) {
     var hbox = el('div', 'mk-cerca'), hinp = el('input'), hdrop = el('div', 'mk-drop');
@@ -615,8 +612,8 @@ header{position:relative;flex-wrap:nowrap;}
     hbox.appendChild(hinp); hbox.appendChild(hdrop);
     var lente = el('button', 'mk-lente', '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>');
     lente.setAttribute('aria-label', 'Cerca un paese');
-    var yt = header.querySelector('.yt');
-    header.insertBefore(hbox, yt); header.insertBefore(lente, yt);
+    var yt = header.querySelector('.t-ytp') || header.querySelector('.yt'), hdove = yt ? yt.parentNode : header;
+    hdove.insertBefore(hbox, yt); hdove.insertBefore(lente, yt);
     lente.addEventListener('click', function (e) { e.stopPropagation(); header.classList.add('mk-aperto'); hinp.focus(); });
     document.addEventListener('click', function (e) { if (!hbox.contains(e.target) && !hinp.value) header.classList.remove('mk-aperto'); });
     casella(hinp, hdrop, function (x) {
@@ -627,22 +624,18 @@ header{position:relative;flex-wrap:nowrap;}
     hdrop.addEventListener('click', function (e) { var a = e.target.closest('a[data-da]'); if (a) ga(a.getAttribute('data-da')); });
   }
 
-  /* ═══ 3. «CHE TEMPO FARÀ»: la casella e le citta' ═══ */
   var blocco = document.getElementById(OPZ.id || 'meteo');
   var tuo = blocco && blocco.querySelector('.mk-tuo input');
-  if (tuo) casella(tuo, blocco.querySelector('.mk-tuo .mk-drop'), function (x) { tuo.blur(); vai(SITO + '/?r=' + x.reg + '&m=prev' + pl(x), 'cerca-meteo'); });
+  if (tuo) casella(tuo, blocco.querySelector('.mk-tuo .mk-drop'), function (x) { tuo.blur(); vai(SITO + '/previsioni/?r=' + x.reg + pl(x), 'cerca-meteo'); });
   var bosco = OPZ.boschi && document.getElementById(OPZ.boschi), bin = bosco && bosco.querySelector('.mk-tuo input');
   if (bin) casella(bin, bosco.querySelector('.mk-tuo .mk-drop'), function (x) { bin.blur(); vai(SITO + '/?r=' + x.reg + '&boschi=1' + pl(x), 'cerca-boschi'); });
   function disegnaCitta(j) {
     var box = blocco && blocco.querySelector('.mk-citta'); if (!box) return;
     var cc = (j && j.capoluoghi || []).filter(function (c) { return c.giorni && c.giorni.length >= 3; });
     if (!cc.length) {
-      /* (21/10/2026, ottavo check, bug 5) il link porta la regione VERA (sull'indice «italia» non esiste: la mappa restava
-         vuota) e il posto della pagina se c'e'; «guardale» e non «aprile», che si leggeva come il mese.
-         (bug 4) il bottone del radar resta anche senza previsioni: e' proprio quando serve. */
       var rg = OPZ.primi ? PRIMO : K, lp = document.querySelector('main a[href*="pl="]');
       var pq = lp ? (lp.getAttribute('href').match(/[?&](pl=[^&]+&pn=[^&]+(?:&pz=1)?)/) || [])[1] : '';
-      var mp = SITO + '/?' + (rg ? 'r=' + rg + '&' : '') + 'm=prev' + (pq ? '&' + pq : '');
+      var mp = SITO + '/previsioni/' + ((rg ? '&r=' + rg : '') + (pq ? '&' + pq : '')).replace('&', '?');
       var rl = document.querySelector('main a[href*="radar=ora"]');
       var rr = rl ? rl.getAttribute('href') : ADESSO ? SITO + '/' + K + '/adesso/' : OPZ.primi && PRIMO ? SITO + '/?r=' + PRIMO + '&radar=ora' : '';
       box.innerHTML = '<p class="mk-attesa">' + (OPZ.guasto || 'Le previsioni delle città') + ' non rispondono in questo momento: <a href="' + esc(mp) + '">guardale sulla mappa</a>.</p>'
@@ -650,30 +643,21 @@ header{position:relative;flex-wrap:nowrap;}
           + '<span class="mk-ic">📡</span><span><b>Dove sta piovendo adesso</b><small>guarda il radar piogge</small></span><span class="mk-fr">→</span></a>' : '');
       return;
     }
-    // prima il capoluogo di regione, poi per abitanti (dall'elenco dei comuni): Prato e Pisa prima di Manciano
     var ab = {}; (ELENCO || []).forEach(function (x) { if (x.reg === K && !x.z) ab[x.q] = x.pop; });
-    if (!OPZ.area && !OPZ.primi) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
+    if (!OPZ.area && !OPZ.primi) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || capo(b.n) - capo(a.n) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
     var g0 = cc[0].giorni;
-    var conPc = cc.some(function (c) { return c.giorni.slice(0, 3).some(function (g) { return g.pc != null; }); });   // Open-Meteo giu': niente righe vuote
+    var conPc = cc.some(function (c) { return c.giorni.slice(0, 3).some(function (g) { return g.pc != null; }); });
     var testa = '<div class="mk-cr mk-cr-t"><span></span>' + [0, 1, 2].map(function (d) { return '<span>' + nomeG(g0[d].g, d) + '</span>'; }).join('') + '</div>';
     var righe = cc.map(function (c, i) {
-      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + (c.r || K) + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : c.sotto ? '<small>' + esc(c.sotto) + '</small>' : '') + '</b>'
+      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/previsioni/?r=' + (c.r || K) + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : c.sotto ? '<small>' + esc(c.sotto) + '</small>' : '') + '</b>'
         + [0, 1, 2].map(function (d) { var g = c.giorni[d]; return '<span><i>' + icona(g.s) + '</i>' + g.mx + '°'
           + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '')
-          // la % di pioggia del giorno, la piu' alta delle sue ore (la Function con &pr=1, 25/10/2026)
           + (conPc ? '<em class="mk-pc' + (g.pc == null ? '' : g.pc < 10 ? ' z' : g.pc >= 60 ? ' alta' : '') + '">' + (g.pc == null ? '' : '💧 ' + g.pc + '%') + '</em>' : '') + '</span>'; }).join('') + '</a>';
     }).join('');
-    /* IL BOTTONE DEL RADAR (20/10/2026, suo: «il bottone dove sta piovendo adesso col radar è un po' nascosto»).
-       Prima era una riga piccola in coda a «Tocca una città...»: ora e' un bottone sotto la tabella (sua scelta, sotto
-       e non sopra). Si accende (blu pieno, pallino che pulsa) quando nella colonna «oggi» della tabella almeno un posto
-       ha 1 mm o piu': si accende solo su un dato vero. Porta al radar sulla mappa centrato sul posto se la pagina ha gia'
-       quel link (paesi, zone), se no alla pagina «adesso» della regione. */
     var bagnati = cc.filter(function (c) { var g = c.giorni[0]; return g && g.g === OGGI && (g.mm || 0) >= 1; }), piove = bagnati.length > 0;
     var rmap = document.querySelector('main a[href*="radar=ora"]');
     var rh = rmap ? rmap.getAttribute('href') : ADESSO ? SITO + '/' + K + '/adesso/' : '';
     var h2 = blocco.querySelector('h2'), dove = h2 ? h2.textContent.replace(/^Che tempo farà\s*/, '') : '';
-    /* L'INDICE /funghi/ (OPZ.primi, 20/10/2026) non ha un link al radar ne' una pagina «adesso»: il radar si apre sul
-       primo dei venti posti dove oggi piove (se no sul primo della classifica), e la scritta dice in quanti piove. */
     if (OPZ.primi && !rmap && cc[0]) { var cp = bagnati[0] || cc[0]; rh = SITO + '/?r=' + (cp.r || K) + '&radar=ora' + pl(cp); rmap = true;
       if (piove) dove = 'in ' + (bagnati.length === 1 ? 'uno' : bagnati.length) + ' dei ' + cc.length + ' posti'; }
     var radar = !rh ? '' : '<a class="mk-radar' + (piove ? ' piove' : '') + '" href="' + esc(rh) + '"'
@@ -681,8 +665,6 @@ header{position:relative;flex-wrap:nowrap;}
       + (piove ? '<span class="mk-pul"></span><span><b>Oggi è prevista pioggia ' + esc(dove) + '</b><small>guardala arrivare col radar piogge</small></span>'
                : '<span class="mk-ic">📡</span><span><b>Dove sta piovendo adesso</b><small>guarda il radar piogge</small></span>')
       + '<span class="mk-fr">→</span></a>';
-    // La frase del pluviometro solo se la sua riga c'e' (25/10/2026): se le previsioni non rispondono per quel punto
-    // la riga manca, e «Il pluviometro (1399 m) e i paesi intorno» annunciava una riga che non c'era.
     var sopra = OPZ.sopraSenzaQui && !cc.some(function (c) { return c.qui; }) ? OPZ.sopraSenzaQui : OPZ.sopra;
     box.innerHTML = (sopra ? '<p class="mk-sopra">' + esc(sopra) + '</p>' : '') + '<div class="mk-tab">' + testa + righe + '</div>'
       + (cc.length > 6 ? '<button class="mk-tutte">' + (OPZ.tutte || 'Mostra tutte le # città').replace('#', cc.length) + '</button>' : '')
@@ -695,9 +677,6 @@ header{position:relative;flex-wrap:nowrap;}
     if (e.target.closest('a[data-adesso]')) { try { gtag('event', 'apri_adesso', { da: GA + '-meteo' }); } catch (x) {} }
   });
 
-  /* ═══ 4. IL GRAFICO: 30 giorni misurati + 7 previsti (media delle citta') ═══ */
-  // la media per DATA, non per posizione (20/10/2026, sesto check): una citta' con un giorno in meno in testa non
-  // sposta piu' le altre, e la data non si prende piu' dalla prima citta'
   function previsti(j) {
     var somma = {}, quante = {}, date = [];
     (j && j.capoluoghi || []).forEach(function (c) {
@@ -712,10 +691,7 @@ header{position:relative;flex-wrap:nowrap;}
   }
   function grafico(j, F) {
     var box = document.getElementById('grafico'); if (!box || !j || !j.serie || !F.length) return;
-    var ultimo = j.serieDa || j.ultimoGiorno || (j.periodi['1'] || j.periodi['7']).ultimo;   // ultimoGiorno: il riepilogo di zona
-    /* (21/10/2026, ottavo check, bug 7) fra l'ultimo giorno misurato e oggi una barra vuota per OGNI giorno che manca
-       (prima al massimo 3). Se ne mancano piu' di 7 la fonte e' ferma: i previsti non si attaccano, il grafico resta
-       quello della pagina. */
+    var ultimo = j.serieDa || j.ultimoGiorno || (j.periodi['1'] || j.periodi['7']).ultimo;
     var buco = Math.round((daIso(OGGI) - daIso(ultimo)) / 864e5) - 1;
     if (buco > 7) return;
     var s = j.serie, n = Math.min(30, s.length), max = 1, i, q;
@@ -731,9 +707,6 @@ header{position:relative;flex-wrap:nowrap;}
         + (lab[i] ? '<b>' + mm(v) + '</b>' : '') + '<i style="height:' + (v == null ? 0 : Math.max(2, Math.round(v / max * 86))) + '%"></i></div>';
       ax += '<span>' + ((i === n || i % 5 === 0) ? (g.getDate() + '/' + (g.getMonth() + 1)) : '') + '</span>';
     }
-    /* IL BUCO FRA MISURATI E PREVISTI (20/10/2026, settimo check, bug 6): di notte, fino al giro dei riepiloghi del
-       mattino, l'ultimo giorno misurato e' l'altroieri (in Slovenia sempre, ARSO ha ~34 ore di ritardo) e i previsti
-       partono da oggi: «ieri» spariva senza che si vedesse. Ora c'e' una barra vuota per ogni giorno che manca. */
     for (var k = 1; k <= buco; k++) {
       var gb = daIso(ultimo); gb.setDate(gb.getDate() + k);
       barre += '<div class="b" title="' + gb.getDate() + ' ' + MESI[gb.getMonth()] + ': dato non ancora arrivato"><i style="height:0"></i></div>';
@@ -751,31 +724,16 @@ header{position:relative;flex-wrap:nowrap;}
     var h = document.getElementById('h-grafico'); if (h) h.textContent = 'La pioggia: gli ultimi 30 giorni e i prossimi 7';
   }
 
-  // senza il blocco «Che tempo farà» (mappa forestale: tipi di bosco e Italia, solo la ricerca) le previsioni non si chiedono
-  /* OPZ.primi (20/10/2026, indice /funghi/): i posti della tabella sono quelli della CLASSIFICA DEL GIORNO
-     (data/funghi/italia.json, cambia ogni mattina): prima si legge la classifica, poi si chiedono all'API i suoi primi
-     OPZ.primi posti con ?posti=<reg>/<slug>/<sigla>,... nello stesso ordine. */
-  /* (21/10/2026, ottavo check, bug 11) la classifica la scarica UNA volta la pagina (window._italia, con la riserva sulla
-     copia del sito): due download separati potevano dare due classifiche diverse a cavallo della rigenerazione. */
   var PRIMO = '';
   var area = !OPZ.primi ? Promise.resolve(AREA) : (window._italia || fetch(BASE + 'funghi/italia.json', { cache: 'no-store' }).then(function (r) { return r.json(); }))
     .then(function (j) { PRIMO = (j.primi && j.primi[0] && j.primi[0][2]) || '';
       return 'posti=' + (j.primi || []).slice(0, OPZ.primi).map(function (x) { return x[2] + '/' + x[3] + '/' + x[1]; }).join(','); });
   var citta = !blocco ? Promise.resolve(null)
-    : area.then(function (a) { return fetch(API + '?' + a + '&pr=1'); }).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11); &pr=1 la % (25/10/2026)
-  /* ⚠️ SOLO UN RIEPILOGO FRESCO (20/10/2026, settimo check, bug 5): scritto da meno di 36 ore, la stessa regola della
-     pagina. Se e' piu' vecchio la pagina regione ha gia' disegnato il grafico dai file del giorno, e ridisegnarlo col
-     riepilogo vecchio faceva sparire i giorni nuovi: allora il grafico resta com'e', senza i giorni previsti. Le zone
-     piogge un ripiego dai file non ce l'hanno: li' resta il grafico del riepilogo vecchio, sempre senza previsti. */
+    : area.then(function (a) { return fetch(API + '?' + a + '&pr=1'); }).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });
   var riepilogo = OPZ.grafico === false ? null : fetch(BASE + RIEP).then(function (r) { return r.json(); }).then(function (j) {
     var eta = j && j.generato ? Date.now() - Date.parse(j.generato) : -1;
     return eta >= 0 && eta < 36 * 3600 * 1000 ? j : null;
   }).catch(function () { return null; });
-  // l'elenco dei comuni (366 KB) serve solo a ordinare le citta' per abitanti: nelle zone (OPZ.area) i paesi arrivano
-  // gia' in ordine, quindi si disegna subito (20/10/2026, sesto check, bug 15)
-  /* OPZ.ordine (20/10/2026, pagine regione funghi): l'id dell'elenco delle zone della pagina. La tabella prende il SUO
-     ordine (dalla zona piu' bagnata 13-20 giorni fa), che la pagina fa quando arrivano i millimetri: si aspetta quello
-     (la prima .zmm scritta), al massimo 10 secondi, poi si disegna comunque. Ogni zona porta il suo slug (s). */
   function inOrdine(j) {
     var t0 = Date.now();
     (function guarda() {
@@ -787,13 +745,11 @@ header{position:relative;flex-wrap:nowrap;}
     })();
   }
   citta.then(function (j) { if (OPZ.ordine) return inOrdine(j); if (OPZ.area || OPZ.primi) return disegnaCitta(j); return carica().catch(function () {}).then(function () { disegnaCitta(j); }); });
-  // il grafico e' gia' cotto nell'HTML, ma la pagina lo RIDISEGNA quando arriva il suo riepilogo:
-  // per qualche secondo si ricontrolla e si rimettono i giorni previsti se sono spariti
   if (OPZ.grafico !== false) Promise.all([citta, riepilogo]).then(function (x) {
     var F = previsti(x[0]), t0 = Date.now();
     (function aspetta() {
       if (document.querySelector('#grafico .gg') && !document.querySelector('#grafico .mk-fut')) grafico(x[1], F);
-      if (Date.now() - t0 < 60000) setTimeout(aspetta, 200);   // 60 s (settimo check, bug 5): su rete lenta il grafico dai file arriva tardi
+      if (Date.now() - t0 < 60000) setTimeout(aspetta, 200);
     })();
   });
 })("lombardia", "Lombardia", "https://avventurepluvio-test.pages.dev", true, {"ga":"forestale-zona-val-sedornia","grafico":false,"boschi":"mk-boschi","id":"mk-meteo","area":"zona=val-sedornia","guasto":"Le previsioni dei paesi","tutte":"Mostra tutti i paesi (#)","tocca":"Tocca un paese per vederlo ora per ora sulla mappa","sopra":"I paesi della Val Sedornia e dei dintorni"});

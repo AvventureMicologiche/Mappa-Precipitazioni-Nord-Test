@@ -267,9 +267,53 @@ const JS_AGGIORNATO = aggiornato.toString()
   .replace(/^function aggiornato\(\)\s*\{/, '')
   .replace(/\}\s*$/, '');
 
+/* ⚠️ LE STIME SI DICHIARANO (1/11/2026, sua decisione, scheda 105 bis: «quando mancano dati come in Puglia mettiamo
+   stime e le dichiariamo»). Quando una rete si ferma (MeteoHub Puglia 26-29/10) i suoi giorni sono stime Open-Meteo:
+   restano nei totali, ma la pagina lo dice in cima, con le parole delle pagine piogge (lib-numeri-regione.js).
+   genera-funghi.js scrive in <regione>-giorni.json `stime`: {id: [indici della serie, 0 = ieri]}, solo per i
+   pluviometri che ne hanno. `uno` = pagina di UN pluviometro (paese); se no zona o regione, con quanti su quanti.
+   Restituisce l'HTML del riquadro giallo, o "" se nella finestra dei 25 giorni non ci sono stime. Stile in linea:
+   le pagine di paese prendono il foglio dalla pagina della regione. */
+function stime() {
+  function avvisoStime(j, ids, uno) {
+    if (!j || !j.stime || !j.oggi || !ids || !ids.length) return "";
+    var segnati = {}, chi = 0;
+    for (var a = 0; a < ids.length; a++) {
+      var l = j.stime[ids[a]];
+      if (!l || !l.length) continue;
+      chi++;
+      for (var b = 0; b < l.length; b++) segnati[l[b]] = 1;
+    }
+    var ii = Object.keys(segnati).map(Number).sort(function (x, y) { return y - x; });   // dal piu' lontano
+    if (!ii.length) return "";
+    var MM = ["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+    var o = j.oggi.split("-");
+    function data(i) { return new Date(Date.UTC(+o[0], +o[1] - 1, +o[2] - 1 - i)); }
+    function el(d) { var g = d.getUTCDate(); return g === 1 || g === 8 || g === 11; }   // l'8, l'11, l'1
+    function gm(d) { return d.getUTCDate() + " " + MM[d.getUTCMonth()]; }
+    var p = data(ii[0]), u = data(ii[ii.length - 1]), quando;
+    if (ii.length === 1) quando = (el(u) ? "l’" : "il ") + gm(u);
+    else if (ii[0] - ii[ii.length - 1] === ii.length - 1)   // giorni di fila
+      quando = (el(p) ? "dall’" : "dal ") + (p.getUTCMonth() === u.getUTCMonth() ? p.getUTCDate() : gm(p))
+        + (el(u) ? " all’" : " al ") + gm(u);
+    else quando = "in " + ii.length + " giorni fra " + (el(p) ? "l’" : "il ") + gm(p) + " e " + (el(u) ? "l’" : "il ") + gm(u);
+    quando = quando.charAt(0).toUpperCase() + quando.slice(1);
+    var gg1 = ii.length === 1, testo;
+    if (uno) testo = "questo pluviometro non ha trasmesso: " + (gg1 ? "quel giorno è una stima del modello, non una misura." : "quei giorni sono stime del modello, non misure.");
+    else if (chi === ids.length) testo = "i pluviometri non hanno trasmesso: " + (gg1 ? "quel giorno è una stima del modello, non una misura." : "quei giorni sono stime del modello, non misure.");
+    else testo = (chi === 1 ? "un pluviometro su " + ids.length + " non ha trasmesso: i suoi valori di " : chi + " pluviometri su " + ids.length + " non hanno trasmesso: i loro valori di ")
+      + (gg1 ? "quel giorno sono una stima del modello, non una misura." : "quei giorni sono stime del modello, non misure.");
+    return "<div class=\"avviso-stime\" style=\"background:#fff4d6;border:1px solid #f0c64a;border-radius:10px;padding:10px 12px;margin:0 0 12px;font-size:15px;line-height:1.45;color:#5a4300\">⚠️ "
+      + quando + " " + testo + "</div>";
+  }
+}
+const JS_STIME = stime.toString()
+  .replace(/^function stime\(\)\s*\{/, '')
+  .replace(/\}\s*$/, '');
+
 /* ── I BOTTONI IN RILIEVO, comuni a tutte le pagine (11/10/2026) ──────────────
-   Nati sulle pagine regione (sua scelta V2 fra tre: «le scritte cosi' piccole
-   fanno schifo, i bottoni non sembrano bottoni»), poi estesi a funghi, zone e
+   Nati sulle pagine regione (sua scelta V2 fra tre: le scritte erano troppo piccole
+   e i bottoni non sembravano bottoni), poi estesi a funghi, zone e
    paesi su sua richiesta. UN SOLO BLOCCO per tutti: prima lo stesso bottone
    era scritto in quattro generatori.
    ⚠️ VA IN FONDO AL FOGLIO DI STILE di ogni pagina, dopo tutto il resto: le
@@ -383,4 +427,4 @@ function stileDelModello(html) {
   return s.split(RILIEVO).join('').split(YT_BTN).join('').split(QUIZ_CSS).join('').split(STRISCIA_CSS).join('');
 }
 
-module.exports = { STILE_NUOVO, JS_COMUNE, JS_AGGIORNATO, RILIEVO, YT_BTN, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz, stileDelModello };
+module.exports = { STILE_NUOVO, JS_COMUNE, JS_AGGIORNATO, JS_STIME, RILIEVO, YT_BTN, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz, stileDelModello };

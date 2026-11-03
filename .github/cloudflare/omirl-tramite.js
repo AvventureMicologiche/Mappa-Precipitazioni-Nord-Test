@@ -12,6 +12,9 @@ const FONTI = [
   ['/meteoidro/', 'https://utility.arpa.piemonte.it', 'application/json'],           // ARPA Piemonte, archivio ufficiale
   // OASI Ticino (27/10/2026): dal 21/10 non risponde ai runner di GitHub, dal PC si'
   ['/web/rest/', 'https://www.oasi.ti.ch', '*/*'],
+  // ARPA Lombardia su Socrata (2/11/2026): 429 ai runner di GitHub in 17 giri su 22, anche col token; dal PC la stessa
+  // richiesta senza token passa in meno di un secondo. Il collector va diretto e passa di qui solo dopo un 429.
+  ['/resource/', 'https://www.dati.lombardia.it', 'application/json'],
 ];
 
 export default {
@@ -25,8 +28,11 @@ export default {
       return new Response(t, { headers: { 'content-type': 'text/plain' } });
     }
     try {
+      const h = { 'Accept': fonte[2], 'User-Agent': 'Mozilla/5.0 (mappa-precipitazioni)' };
+      // Socrata: senza token da Cloudflare risponde subito 429; il collector manda il suo e qui si passa (2/11/2026)
+      if (fonte[0] === '/resource/' && req.headers.get('X-App-Token')) h['X-App-Token'] = req.headers.get('X-App-Token');
       const r = await fetch(fonte[1] + url.pathname + url.search, {
-        headers: { 'Accept': fonte[2], 'User-Agent': 'Mozilla/5.0 (mappa-precipitazioni)' },
+        headers: h,
         signal: AbortSignal.timeout(25000),
       });
       return new Response(r.body, { status: r.status, headers: { 'content-type': r.headers.get('content-type') || 'application/json' } });

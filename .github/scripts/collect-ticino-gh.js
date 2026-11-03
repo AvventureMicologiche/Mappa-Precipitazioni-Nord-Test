@@ -393,7 +393,7 @@ async function main() {
       if (!motivo) {
         try {
           const j = JSON.parse(fs.readFileSync(f, 'utf8'));
-          if (/open-meteo/.test(j.source || '')) motivo = 'stimato (' + j.source + ')';
+          if (/open-meteo|icon-2i-gapfill/.test(j.source || '')) motivo = 'stimato (' + j.source + ')';
           else if ((j.count || 0) < 30) motivo = 'corto (' + (j.count || 0) + ' stazioni)';
         } catch(e) { motivo = 'illeggibile'; }
       }

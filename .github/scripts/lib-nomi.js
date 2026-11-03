@@ -38,7 +38,7 @@
 //
 // Per chiuderne una, si toglie la chiave da qui e si cancella la sua cartella.
 const LOCALITA = ['lombardia', 'piemonte', 'valledaosta', 'liguria', 'emilia', 'veneto',
-  'friuli', 'trentino', 'altoadige', 'toscana', 'umbria', 'marche', 'lazio',
+  'friuli', 'trentino', 'altoadige', 'toscana', 'umbria', 'marche', 'lazio', 'molise',
   'campania', 'puglia', 'basilicata', 'calabria', 'sicilia', 'sardegna'];
 
 // Le particelle che dentro un nome restano minuscole: «Colle di Cadibona», non
@@ -114,8 +114,16 @@ function bello(n) {
   // ⚠️ Il santo si scioglie DOPO il tondo: su un nome tutto maiuscolo
   // «S. GIACOMO DEMONTE» diventa prima «S. Giacomo Demonte», e solo allora la
   // chiave dell'elenco combacia.
-  return sciogliSanto(tondo);
+  // ⚠️ GLI ACCENTI SCRITTI COME APOSTROFO (1/11/2026, scheda 105 bis): le reti scrivono «Male'», «Mondovi'»,
+  // «Fie' allo Sciliar», e finivano cosi' nei titoli. In fondo alla parola l'apostrofo dopo una vocale diventa
+  // l'accento grave (Malè, Mondovì, Fiè, Nicolò, Viù, Prà). Resta solo «Ca'», che e' giusto cosi'. Gli indirizzi
+  // non cambiano: slug() toglie sia l'apostrofo sia l'accento.
+  return sciogliSanto(tondo).replace(/([A-Za-zÀ-ÿ]+)'(?=[\s),.;:]|$)/g, (t, w) => {
+    const v = ACCENTO[w.slice(-1)];
+    return !v || /^ca$/i.test(w) ? t : w.slice(0, -1) + v;
+  });
 }
+const ACCENTO = { a: 'à', e: 'è', i: 'ì', o: 'ò', u: 'ù' };
 
 // Il nome che diventa indirizzo: «Passo del Turchino» -> «passo-del-turchino»,
 // «Urbe - Vara Sup.» -> «urbe-vara-sup», «Ca' de Massa» -> «ca-de-massa».

@@ -262,6 +262,11 @@ async function fetchHourly(sess, stVal, utcDate) {
  * un run "magro" non peggiora mai un file già ricco.
  */
 function mergeDay(dateStr, freshStations) {
+  // ⚠️ SENZA STAZIONI FRESCHE IL FILE NON SI TOCCA (2/11/2026, scheda 114, check-10 B1). Un giorno che OSMER non ha, coperto
+  // da gaps-nord con le stime (`source:'icon-2i-gapfill'`), qui veniva riscritto con `source:'osmer-fvg'`: le stime
+  // passavano per dato vero (via l'avviso «stime del modello», registro «sostituito-dal-reale»). Niente di nuovo, niente
+  // da scrivere; appena OSMER manda il giorno, le stazioni vere prendono il posto delle stime (stesso id) come sempre.
+  if (!freshStations.length) { console.log(`  ${dateStr}: nessuna stazione fresca, file lasciato com'era`); return false; }
   const file = path.join(DATA_DIR, `${dateStr}.json`);
   const byId = {};
   if (fs.existsSync(file)) {

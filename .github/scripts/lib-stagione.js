@@ -22,12 +22,13 @@
  */
 
 const TESTI = {
+  // ⚠️ niente «i millimetri sono veri» (1/11/2026): la riga sta sopra l'avviso delle stime, quando un pluviometro non ha
+  // trasmesso, e le due frasi si contraddicevano
   fuori: '<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi '
-    + 'ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano '
-    + 'veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.',
+    + 'ovunque, e la finestra dei 13-20 giorni conta poco: per usarla davvero aspetta le '
+    + 'piogge di fine estate.',
   margine: '<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto '
-    + 'dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in '
-    + 'autunno pieno.',
+    + 'dalla quota e dal freddo: i millimetri qui sotto valgono meno che in autunno pieno.',
 };
 
 function rigaStagione() {

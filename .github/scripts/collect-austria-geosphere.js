@@ -155,7 +155,7 @@ function loadExisting(dateStr) {
   try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return null; }
 }
 
-const eStima = j => !!j && /open-meteo/.test(j.source || '');
+const eStima = j => !!j && /open-meteo|icon-2i-gapfill/.test(j.source || '');
 
 /** Merge per stazione: il valore nuovo vince, le vecchie senza valore nuovo restano.
  *  Mai sopra un file di STIMA (26/10/2026): oggi l'Austria non ne ha, ma se un giorno arrivassero le stazioni stimate

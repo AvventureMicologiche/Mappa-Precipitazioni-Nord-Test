@@ -85,7 +85,7 @@ function leggiVere(dir, giorno) {
   try { j = JSON.parse(fs.readFileSync(path.join(DATI, dir, giorno + '.json'), 'utf8')); }
   catch (e) { return null; }
   if (!Array.isArray(j.stations) || !j.stations.length) return null;
-  if (/open-meteo/.test(j.source || '')) return null;
+  if (/open-meteo|icon-2i-gapfill/.test(j.source || '')) return null;
   return j.stations.filter(s => !s.om && !/open-meteo/.test(s.src || ''));
 }
 
@@ -127,12 +127,16 @@ function clima(dirs) {
   // Il mese piu' piovoso, fra quelli INTERI. Un mese in cui la stazione ha
   // misurato dieci giorni su trentuno perderebbe il confronto per un motivo che
   // col tempo non c'entra niente: si scarta, non si corregge a stima.
+  // ⚠️ SOLO I MESI FINITI (1/11/2026, scheda 105 bis): col solo 90% dei giorni il mese in corso contava come «intero»
+  // gia' dal 28, e il ritratto scritto il 30/10 chiamava intero un ottobre a cui mancava l'ultimo giorno.
+  const meseOggi = oggiItalia().slice(0, 7);
   for (const id of Object.keys(out)) {
     const c = out[id];
     let mese = null, meseMm = -1;
     for (const m of Object.keys(c.perMese)) {
       const [a, n] = m.split('-').map(Number);
       const quanti = new Date(Date.UTC(a, n, 0)).getUTCDate();
+      if (m >= meseOggi) continue;
       if (c.perMese[m].giorni < quanti * 0.9) continue;
       if (c.perMese[m].mm > meseMm) { meseMm = c.perMese[m].mm; mese = m; }
     }

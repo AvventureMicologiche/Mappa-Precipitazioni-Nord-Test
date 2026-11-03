@@ -2,8 +2,16 @@
  * check-gaps-nord.js — GitHub Actions (1 run/giorno)
  *
  * Rete di sicurezza per le regioni del Nord: trova i giorni INTERAMENTE
- * mancanti e, passata la grazia, li copre con stime Open-Meteo sulle
- * coordinate delle stazioni vere, marcandole.
+ * mancanti e, passata la grazia, li copre con le stime del modello ICON-2I
+ * sulle coordinate delle stazioni vere, marcandole (source "icon-2i-gapfill",
+ * ogni stazione om:true e src:'icon-2i').
+ *
+ * ⚠️ Fino al 2/11/2026 le stime erano di Open-Meteo ("open-meteo-gapfill",
+ * registro "coperto-openmeteo"): restano come sono. Open-Meteo e' stato tolto
+ * perche' il suo piano gratuito vieta i siti con pubblicita' o abbonamenti;
+ * come si legge ICON e perche' basta, in lib-icon2i.js. ⚠️ I file ICON restano
+ * ~8 giorni: un buco scoperto piu' tardi resta aperto, e i buchi vecchi non si
+ * tappano piu' a mano con SCAN_DAYS (prima lo faceva l'archivio di Open-Meteo).
  *
  * Perché serve (31/7/2026). Le regioni MeteoHub avevano già la loro copertura,
  * il Nord no: se un giorno si perdeva, restava un buco per sempre. E un buco
@@ -38,14 +46,18 @@
  * numero di stazioni oscilla da sé (sensori offline, reti che cambiano) e una
  * soglia sulle stazioni darebbe falsi allarmi a raffica.
  *
- * Uso a mano per tappare buchi vecchi:  SCAN_DAYS=400 node check-gaps-nord.js
+ * Uso a mano per guardare piu' indietro:  SCAN_DAYS=400 node check-gaps-nord.js
+ * (i buchi oltre gli ~8 giorni di ICON li segna nel registro, non li copre)
  */
 
 const fs = require('fs');
 const path = require('path');
+const { corseIcon, stimaIcon } = require('./lib-icon2i.js');
 
 const DATA_ROOT = path.join(__dirname, '..', '..', 'data');
 const LEDGER = path.join(DATA_ROOT, 'gaps-nord.json');
+// Evento coperto con le stime: 'coperto-icon' dal 2/11/2026, 'coperto-openmeteo' prima.
+const COPERTO = /^coperto-/;
 
 const GRACE_DEFAULT = 3;
 // Grazia per regione. Fino al 26/10/2026 Ticino 8 e Svizzera 11, piu' lunghe
@@ -60,8 +72,8 @@ const SCAN_DAYS = parseInt(process.env.SCAN_DAYS || '15', 10);
 const RETENTION_DAYS = 730;   // inutile creare file che la pulizia cancellerebbe
 const MIN_STAZIONI = 10;      // sotto questa soglia l'anagrafe non è affidabile
 // Massimo di giorni coperti per run: se si accumula un arretrato lo si smaltisce
-// nei giorni successivi invece di martellare l'API pubblica in un colpo solo.
-// Una regione grande (Emilia, 323 stazioni) costa 7 chiamate per giorno.
+// nei giorni successivi invece di allungare troppo il giro (un giorno di ICON
+// sono 48 richieste piccole a MeteoHub, circa un minuto).
 const MAX_COPERTURE = parseInt(process.env.MAX_COPERTURE || '5', 10);
 
 // Cartelle dati del Nord + Svizzera (v6.0, 3/8/2026). Escluse `valledaosta` e
@@ -86,7 +98,7 @@ const daysDiff = (a, b) =>
 
 function leggi(f) { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return null; } }
 /** File nato da stime nostre (copertura o backfill), non dato di stazione. */
-const eStima = j => !!j && typeof j.source === 'string' && /open-meteo/.test(j.source);
+const eStima = j => !!j && typeof j.source === 'string' && /open-meteo|icon-2i-gapfill/.test(j.source);
 
 /**
  * Anagrafe per il giorno bucato: unione delle stazioni dei file REALI più
@@ -107,7 +119,9 @@ function anagrafeVicina(dir, giorni, buco) {
       for (const s of (j.stations || [])) {
         if (typeof s.lat !== 'number' || typeof s.lon !== 'number') continue;
         const k = s.id ?? s.n;
-        if (!reg.has(k)) reg.set(k, { id: s.id ?? s.n, n: s.n, lat: s.lat, lon: s.lon, q: s.q || 0, p: s.p || '' });
+        // la quota com'e' (senza, niente «0 m») e il «~» della quota presa dal terreno, come registroStazione di
+        // check-meteohub-gaps (2/11/2026, scheda 114, check-10 B4: il Friuli ha tutte e 40 le stazioni con qt)
+        if (!reg.has(k)) { const r = { id: s.id ?? s.n, n: s.n, lat: s.lat, lon: s.lon, q: s.q, p: s.p || '' }; if (s.qt) r.qt = s.qt; reg.set(k, r); }
       }
     }
     return [...reg.values()];
@@ -124,50 +138,9 @@ function anagrafeVicina(dir, giorni, buco) {
   return raccogli(true);
 }
 
-/**
- * Pioggia giornaliera stimata. Per i giorni recenti si usa l'API forecast con
- * past_days (che arriva fino a ieri); per quelli più vecchi di 90 giorni serve
- * l'archivio, che ha qualche giorno di ritardo ma copre anni indietro.
- */
-async function chiediConAttese(url) {
-  // Open-Meteo risponde 429 se lo si interroga troppo in fretta (successo in
-  // prova con una regione da 323 stazioni = 7 chiamate di fila). Si riprova
-  // con attese crescenti invece di far fallire l'intero run.
-  const attese = [5000, 15000, 45000];
-  for (let tentativo = 0; ; tentativo++) {
-    const res = await fetch(url, { headers: { Accept: 'application/json' } });
-    if (res.ok) return res.json();
-    const recuperabile = res.status === 429 || res.status >= 500;
-    if (!recuperabile || tentativo >= attese.length) throw new Error(`Open-Meteo HTTP ${res.status}`);
-    console.log(`   ⏳ HTTP ${res.status}, riprovo fra ${attese[tentativo] / 1000}s`);
-    await new Promise(r => setTimeout(r, attese[tentativo]));
-  }
-}
-
-async function stimaOpenMeteo(stazioni, giorno, distanza) {
-  const out = new Map();
-  const archivio = distanza > 90;
-  for (let i = 0; i < stazioni.length; i += 50) {
-    const batch = stazioni.slice(i, i + 50);
-    const lat = batch.map(s => s.lat).join(',');
-    const lon = batch.map(s => s.lon).join(',');
-    const url = archivio
-      ? `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}` +
-        `&start_date=${giorno}&end_date=${giorno}&daily=precipitation_sum&timezone=Europe%2FRome`
-      : `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-        `&daily=precipitation_sum&past_days=${Math.min(Math.max(distanza + 2, 2), 92)}` +
-        `&forecast_days=1&timezone=Europe%2FRome`;
-    let j = await chiediConAttese(url);
-    if (!Array.isArray(j)) j = [j];
-    j.forEach((loc, k) => {
-      const idx = loc.daily.time.indexOf(giorno);
-      const v = idx >= 0 ? loc.daily.precipitation_sum[idx] : null;
-      out.set(batch[k].id, (typeof v === 'number') ? Math.round(v * 10) / 10 : 0);
-    });
-    await new Promise(r => setTimeout(r, 1500)); // gentili con l'API pubblica
-  }
-  return out;
-}
+// L'elenco delle corse ICON si chiede una volta sola, e solo se c'e' davvero un buco da coprire.
+let corse = null;
+async function leCorse() { return corse || (corse = await corseIcon()); }
 
 async function main() {
   console.log(`=== check-gaps-nord avviato (finestra ${SCAN_DAYS} giorni) ===`);
@@ -177,7 +150,7 @@ async function main() {
 
   const ledger = fs.existsSync(LEDGER)
     ? leggi(LEDGER)
-    : { nota: 'Registro giorni mancanti nelle regioni del Nord e loro copertura con stime Open-Meteo.', eventi: [] };
+    : { nota: 'Registro giorni mancanti nelle regioni del Nord e loro copertura con stime del modello (ICON-2I dal 2/11/2026, prima Open-Meteo).', eventi: [] };
   let cambiato = false;
   let coperture = 0;
 
@@ -194,7 +167,7 @@ async function main() {
     // Stime gia' sostituite dal dato vero (26/10/2026): Ticino e Svizzera riscrivono i giorni stimati quando la
     // fonte torna. Il registro lo segna, cosi' resta la misura di quante stime sono state solo un tappabuchi.
     for (const ev of ledger.eventi) {
-      if (ev.regione !== reg || ev.stato !== 'coperto-openmeteo' || !presenti.has(ev.data)) continue;
+      if (ev.regione !== reg || !COPERTO.test(ev.stato) || !presenti.has(ev.data)) continue;
       const j = leggi(path.join(dir, ev.data + '.json'));
       if (j && !eStima(j)) {
         ev.stato = 'sostituito-dal-reale'; ev.sostituitoIl = oggi; cambiato = true;
@@ -232,22 +205,26 @@ async function main() {
         console.log(`   ${reg} ${buco}: solo ${anagrafe.length} stazioni nei giorni vicini, rimando`);
         continue;
       }
-      // Un errore su un giorno (API giù, limite di richieste) non deve far
+      // Un errore su un giorno (MeteoHub giù, file ICON illeggibile) non deve far
       // saltare gli altri né perdere il registro: si annota e si va avanti.
       try {
-        console.log(`🌍 ${reg} ${buco}: copro ${anagrafe.length} stazioni con Open-Meteo...`);
-        const om = await stimaOpenMeteo(anagrafe, buco, distanza);
-        const stations = anagrafe.map(s => ({ ...s, mm: om.get(s.id) ?? 0, om: true }));
+        console.log(`🌍 ${reg} ${buco}: copro ${anagrafe.length} stazioni con ICON-2I...`);
+        const icon = await stimaIcon(anagrafe, buco, await leCorse());
+        if (!icon) { console.log(`   ⚠️ ${reg} ${buco}: ICON-2I non ha piu' tutte le ore di quel giorno sui server, resta aperto`); continue; }
+        // senza valore (fuori dalla griglia ICON) la stazione non si scrive: assente non e' zero
+        const stations = anagrafe.filter(s => icon.mm.has(s.id)).map(s => ({ ...s, mm: icon.mm.get(s.id), om: true, src: 'icon-2i' }));
+        if (stations.length < MIN_STAZIONI) { console.log(`   ${reg} ${buco}: solo ${stations.length} stazioni dentro la griglia ICON, rimando`); continue; }
         const somma = stations.reduce((a, s) => a + s.mm, 0);
 
         fs.writeFileSync(path.join(dir, buco + '.json'), JSON.stringify({
           date: buco,
           collected: new Date().toISOString(),
-          source: 'open-meteo-gapfill',
+          source: 'icon-2i-gapfill',
+          icon_corse: icon.corse,
           count: stations.length,
           stations
         }));
-        ev.stato = 'coperto-openmeteo';
+        ev.stato = 'coperto-icon';
         ev.copertoIl = oggi;
         ev.stazioniCoperte = stations.length;
         ev.mmTotali = Math.round(somma * 10) / 10;
@@ -264,7 +241,7 @@ async function main() {
     fs.writeFileSync(LEDGER, JSON.stringify(ledger, null, 2));
   }
   const aperti = ledger.eventi.filter(e => e.stato === 'aperto').length;
-  const coperti = ledger.eventi.filter(e => e.stato === 'coperto-openmeteo').length;
+  const coperti = ledger.eventi.filter(e => COPERTO.test(e.stato)).length;
   const sostituiti = ledger.eventi.filter(e => e.stato === 'sostituito-dal-reale').length;
   console.log(`=== Registro: ${ledger.eventi.length} eventi — ${aperti} aperti, ${coperti} coperti, ${sostituiti} sostituiti dal reale ===`);
 }

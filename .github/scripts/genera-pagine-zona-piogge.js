@@ -32,10 +32,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const { REGIONI, briciolaJson } = require('./genera-pagine-regione.js');
+const { REGIONI, COTTE, briciolaJson } = require('./genera-pagine-regione.js');
+const { oggiItalia, giorniIndietro } = require('./lib-giorni.js');
 const { bello, slug, slugRegione, elenco, diZona, postiDellaZona, diEnte } = require('./lib-nomi.js');
 const { perLink } = require('./lib-vicine.js');
-const { retiDei } = require('./lib-posti.js');   // l'ente dei posti con la rete di un'altra regione (20/10/2026)
+const { retiDei, regioneDati } = require('./lib-posti.js');   // l'ente dei posti con la rete di un'altra regione (20/10/2026)
 const { scriviSitemap } = require('./genera-sitemap.js');
 // il bottone YouTube in fondo, col quiz accanto SOLO nelle regioni che ce l'hanno (18/10/2026):
 // la pagina regione gemella ce l'aveva dall'11/10, queste no
@@ -46,6 +47,8 @@ const { coppiaQuiz } = require('./lib-pagina-funghi.js');
 // della regione (lib-meteo-regione.js, con le opzioni di zona): una regola sola, un posto solo.
 const { METEO_CSS, meteoHtml, meteoClient } = require('./lib-meteo-regione.js');
 const { STRISCIA_CSS, strisciaScript } = require('./lib-striscia.js');
+const { senzaCommenti } = require('./lib-senza-commenti.js');   // i commenti restano qui, non nelle pagine (2/11/2026)
+const { TESTATA_CSS, testata } = require('./lib-testata.js');   // la testata del sito (28/10/2026)
 // il link alle pagine «Previsioni meteo <zona>» (24/10/2026, test su 11 zone): l'elenco sta nel loro generatore
 const { linkMeteo } = require('./genera-pagine-meteo-zona.js');   // la mappa di ieri nel bottone in cima (20/10/2026)
 
@@ -75,6 +78,8 @@ const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 
 // Per REGIONE: gli id non sono unici fra regioni (18/10/2026), la regione di ogni
 // pluviometro la decide postiDellaZona per vicinanza al centro della zona (lib-nomi.js).
+const { escluse, escluso } = require('./lib-escluse.js');
+const ESCLUSE = escluse(RADICE);   // le liste *_ESCLUSE della mappa (lib-escluse.js)
 const SLUG_REG = {}, ANAG_REG = {};
 for (const [k, v] of Object.entries(POSTI)) {
   SLUG_REG[k] = slugRegione(v); ANAG_REG[k] = {};
@@ -97,7 +102,18 @@ function scrivi(dest, testo) {
    ⚠️ REGOLA SUA: «meglio un paese in piu', anche fuori zona, che uno in meno». Per questo la pagina scrive
    «I paesi della X e dei dintorni». Limite noto: in Lunigiana centro e pluviometri stanno a sud, Pontremoli e
    Fivizzano restano fuori (la casella li trova). Ognuno porta la SUA regione (r). Finiscono in
-   data/paesi-zone.json, che legge /api/previsioni?zona=<slug>. Niente quota: MET usa il suo terreno. */
+   data/paesi-zone.json, che legge /api/previsioni?zona=<slug>.
+   ⚠️ LA QUOTA (1/11/2026, scheda 105 bis): fino a oggi qui niente quota, e MET usava il suo terreno; la scheda ora per
+   ora delle pagine meteo invece mandava la quota cotta (lib-quota-paesi.js), e lo stesso paese poteva avere due minime
+   diverse fra tabella e scheda. Ora ogni paese porta `q` dall'archivio quote-paesi.json (stessa fonte, terreno); chi non
+   e' nell'archivio resta senza, come prima. L'archivio lo riempie quotePaesi() (pagine meteo, o a mano).
+   ⚠️ PAESI IN PIU' (PAESI_IN_PIU): la Riviera di Levante ha i pluviometri nell'entroterra (Barbagelata, Ognio) e
+   mostrava solo la Fontanabuona, senza Rapallo, Chiavari o Sestri. I paesi della lista vengono prima di tutti. */
+const PAESI_IN_PIU = {
+  'riviera-di-levante': ['Recco', 'Camogli', 'Rapallo', 'Santa Margherita Ligure', 'Zoagli', 'Chiavari', 'Lavagna', 'Sestri Levante'],
+};
+const { chiave: chiaveQuota } = require('./lib-quota-paesi.js');
+const QUOTE_PAESI = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'quote-paesi.json'), 'utf8')); } catch (e) { return {}; } })();
 const COMUNI = fs.readFileSync(path.join(RADICE, 'data', 'elenco-paesi.txt'), 'utf8').split('\n')
   .map(r => r.split('|')).filter(p => p.length >= 6 && (p[6] || '').trim() !== 'z')
   .map(p => ({ n: p[0], lat: +p[1], lon: +p[2], reg: p[4], pop: +p[5] || 0 }));
@@ -123,8 +139,9 @@ function paesiDellaZona(z) {
   const st = ids.map(id => ANAG_REG[regDi[id]][id]).map(p => ({ lat: +p[4], lon: +p[5] }));
   const dist = st.map(p => km(z.lat, z.lon, p.lat, p.lon)).sort((a, b) => a - b);
   const s = Math.max(6, dist[Math.floor(dist.length / 2)] || 0);   // la scala della zona, in km
-  const cand = new Map(), metti = (c, certo) => { const ch = c.n + '|' + c.reg, v = cand.get(ch);
-    cand.set(ch, { ...c, d: km(z.lat, z.lon, c.lat, c.lon), certo: certo || (v && v.certo) }); };
+  const cand = new Map(), metti = (c, certo, prima) => { const ch = c.n + '|' + c.reg, v = cand.get(ch);
+    cand.set(ch, { ...c, d: km(z.lat, z.lon, c.lat, c.lon), certo: certo || (v && v.certo), prima: prima || (v && v.prima) }); };
+  for (const n of PAESI_IN_PIU[slug(z.n)] || []) { const c = COMUNI.find(x => x.n === n && x.reg === z.reg); if (c) metti(c, true, true); }
   for (const p of st) { let best = null, d0 = Infinity; for (const c of COMUNI) { const d = km(p.lat, p.lon, c.lat, c.lon); if (d < d0) { d0 = d; best = c; } } if (best) metti(best, true); }
   const poli = st.length >= 3 ? inviluppo(st.map(p => [p.lon * k, p.lat])) : [];
   for (const c of COMUNI) {
@@ -140,14 +157,74 @@ function paesiDellaZona(z) {
   // ⚠️ PRIMA I CERTI (comune di un pluviometro o dentro l'area dei pluviometri), poi il cerchio: con la sola vicinanza
   // al centro la Garfagnana perdeva l'alta valle (Piazza al Serchio, Minucciano) per Bagni di Lucca. 20/10/2026.
   const peso = c => Math.log10(c.pop + 10) * Math.exp(-((c.d / (2 * s)) ** 2)) * (c.reg === z.reg ? 1 : 0.6);
-  return [...cand.values()].sort((a, b) => (b.certo ? 1 : 0) - (a.certo ? 1 : 0) || peso(b) - peso(a)).slice(0, MAX_PAESI)
-    .map(c => ({ n: c.n, lat: c.lat, lon: c.lon, r: c.reg }));
+  return [...cand.values()].sort((a, b) => (b.prima ? 1 : 0) - (a.prima ? 1 : 0) || (b.certo ? 1 : 0) - (a.certo ? 1 : 0) || peso(b) - peso(a)).slice(0, MAX_PAESI)
+    .map(c => { const qq = QUOTE_PAESI[chiaveQuota(c.lat, c.lon)]; return { n: c.n, lat: c.lat, lon: c.lon, ...(qq ? { q: qq.q } : {}), r: c.reg }; });
+}
+
+/* ⚠️ I NUMERI SCRITTI NELL'HTML (31/10/2026, scheda 104 bis, proposta 4 del controllo SEO del cloud). Fino a oggi la
+   pagina nasceva con «Sto leggendo i pluviometri…» e la tabella a trattini: i millimetri li metteva il browser, e nel
+   testo che Google legge subito non ce n'era nessuno, proprio sulla domanda «dove ha piovuto ieri <zona>». Ora, come le
+   pagine regione dal 12/10, se il riepilogo della zona e' fresco (meno di 36 ore) e la regione di casa sta in COTTE, il
+   riquadro di ieri, le due schede dei periodi, la tabella e la descrizione nascono coi numeri. Il codice del browser
+   resta com'era e li riscrive coi dati del momento: qui si ripete la sua forma, senza i bottoni. Le rifa' il giro del
+   mattino (pagine-regione.yml) dopo le regioni. */
+const MESI_C = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+const MESI_LC = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+const GIORNI_C = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+const cNum = n => (Math.round(n * 10) / 10).toFixed(1).replace('.', ',');
+const cMm = n => n === 0 ? '0' : n < 10 ? cNum(n) : String(Math.round(n));
+const cLungo = s => { const p = s.split('-'); return (+p[2]) + ' ' + MESI_LC[+p[1] - 1]; };
+const cBreve = s => { const p = s.split('-'); return (+p[2]) + ' ' + MESI_C[+p[1] - 1]; };
+const cMenoDi = d => Math.round(d.media * 10) === 0 && d.top && d.top.length && d.top[0].mm > 0;
+const cMedia = d => cMenoDi(d) ? '<small style="margin:0 .3em 0 0">meno di</small>0,1' : cMm(d.media);
+const cCella = v => v == null ? '–' : v === 0 ? '0 mm' : cNum(v) + ' mm';
+const cGiorno = s => s === giorniIndietro(oggiItalia(), 1)[0] ? 'Ieri'
+  : GIORNI_C[new Date(Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10), 12)).getUTCDay()] + ' ' + cLungo(s);
+function cDalAl(a, b) {
+  const pa = a.split('-'), pb = b.split('-'), da = +pa[2], db = +pb[2], ap = n => n === 1 || n === 8 || n === 11;
+  return (ap(da) ? 'Dall’' : 'Dal ') + (pa[1] === pb[1] ? da : cLungo(a)) + (ap(db) ? ' all’' : ' al ') + cLungo(b);
+}
+function riepilogoZona(zslug, reg) {
+  if (!COTTE.includes(reg)) return null;
+  try {
+    const j = JSON.parse(fs.readFileSync(path.join(RADICE, 'data', 'riepiloghi', 'zone', zslug + '.json'), 'utf8'));
+    const eta = Date.now() - new Date(j.generato).getTime();
+    if (j.periodi && j.periodi['7'] && eta >= 0 && eta < 36 * 3600 * 1000) return j;
+  } catch (e) { /* niente riepilogo: la pagina nasce vuota come prima */ }
+  return null;
+}
+// il riquadro di ieri come lo scrive scriviIeri nel browser, senza i bottoni (arrivano col javascript)
+function verdettoCotto(d) {
+  if (!d) return '';
+  const t = cGiorno(d.ultimo), top = (d.top || []).filter(s => s.mm >= 1);
+  const dett = top.length ? 'Dove ha piovuto di più: ' + top.map(s => `<b>${esc(s.n)}</b> ${cNum(s.mm)} mm`).join(', ') + '.'
+    : d.top && d.top.length && d.top[0].mm > 0 ? `Giornata quasi asciutta: il massimo è stato ${cNum(d.top[0].mm)} mm ${/^[aA]/.test(d.top[0].n) ? 'ad' : 'a'} ${esc(d.top[0].n)}${/\.$/.test(d.top[0].n) ? '' : '.'}`
+    : 'Giornata asciutta: nessun pluviometro della zona ha misurato pioggia.';
+  return `<div class="verdetto"><div class="si">${t === 'Ieri' ? 'Ieri, ' + cLungo(d.ultimo) : t}</div>`
+    + `<div class="gr">${cMedia(d)} mm<small>di media</small></div><div class="top">${dett}</div>`
+    + `<div class="dett">${d.stazioni === 1 ? 'Un pluviometro solo della zona.' : 'Media di ' + d.stazioni + ' pluviometri della zona.'}</div></div>`;
+}
+// la descrizione coi numeri: «Quanta pioggia è caduta nel Casentino: ieri, 30 ottobre, 0 mm di media; 7 giorni 6,4 mm…»
+function descrCotta(z, j, n, ente) {
+  const d1 = j.periodi['1'], d7 = j.periodi['7'], d30 = j.periodi['30'];
+  const m = d => (cMenoDi(d) ? 'meno di 0,1' : cMm(d.media)) + ' mm';
+  // «l'1 novembre», «l'8», «l'11» (1/11/2026): la regola dell'avviso delle stime piu' sotto
+  const art = s => [1, 8, 11].includes(+s.slice(8, 10)) ? 'l’' : 'il ';
+  const quando = d1 ? (cGiorno(d1.ultimo) === 'Ieri' ? 'ieri, ' + cLungo(d1.ultimo) + ', ' : art(d1.ultimo) + cLungo(d1.ultimo) + ', ') + m(d1) + ' di media; ' : '';
+  const resto = 'negli ultimi 7 giorni ' + m(d7) + (d30 ? ', in 30 giorni ' + m(d30) : '');
+  return [`Quanta pioggia è caduta ${z.dove}: ${quando}${resto}. ${n} pluviometri ${ente}.`,
+          `Quanta pioggia è caduta ${z.dove}: ${quando}${resto}. Pluviometro per pluviometro.`,
+          `Quanta pioggia è caduta ${z.dove}: ${quando}${resto}.`].find(t => t.length <= 158) || null;
 }
 
 function pagina(z) {
   const zslug = slug(z.n);
-  const { ids, regDi: REG_DI } = postiDellaZona(POSTI, z);   // senza doppioni
+  const { ids: tuttiIds, regDi: REG_DI } = postiDellaZona(POSTI, z);   // senza doppioni
   const SLUG_DI = id => SLUG_REG[REG_DI[id]][id], ANAG = id => ANAG_REG[REG_DI[id]][id];
+  // ⚠️ SENZA I PLUVIOMETRI ESCLUSI DALLA MAPPA (1/11/2026, scheda 105 bis): la media della zona li toglieva gia'
+  // (genera-riepiloghi.js), il conto e la tabella no. La Riviera di Levante scriveva «3 pluviometri» con la media su 2,
+  // e Sella Giassina restava in tabella col trattino «non ha pubblicato», mentre e' esclusa perche' misura male.
+  const ids = tuttiIds.filter(id => !escluso(ESCLUSE, regioneDati(REG_DI[id], ANAG(id)), ANAG(id)));
   const regioni = [...new Set(ids.map(id => REG_DI[id]))];
   const casa = REGIONI.find(x => x.k === z.reg) || REGIONI.find(x => x.k === regioni[0]);
   const nomeReg = casa.nomeTitolo || casa.nome;
@@ -168,7 +245,8 @@ function pagina(z) {
     `Dove ha piovuto ${z.dove}: ieri e ultimi giorni`,
     `Dove ha piovuto ${z.dove}`,
   ].find(t => t.length <= 62) || `Pioggia ${z.dove}`;
-  const DESCR = [
+  const RIP = riepilogoZona(zslug, casa.k);   // i numeri da scrivere nell'HTML, o null (vedi riepilogoZona)
+  const DESCR = (RIP && descrCotta(z, RIP, ids.length, diEnte(elenco(agenzie)))) || [
     `Quanta pioggia è caduta ${z.dove} ieri e negli ultimi 7 e 30 giorni, pluviometro per pluviometro: ${ids.length} pluviometri ${diEnte(elenco(agenzie))}. Aggiornato ogni giorno.`,
     `Quanta pioggia è caduta ${z.dove} ieri e negli ultimi 7 e 30 giorni, pluviometro per pluviometro. Aggiornato ogni giorno.`,
     `Quanta pioggia è caduta ${z.dove} ieri e negli ultimi 7 e 30 giorni.`,
@@ -189,10 +267,12 @@ function pagina(z) {
 
   // Le righe della tabella, cotte coi loro link: i nomi e i link li legge
   // Google, i millimetri e l'ordine li mette il javascript.
+  const V = id => (RIP && RIP.posti && RIP.posti[id]) || [null, null, null];
   const righe = ids.map(id => ANAG(id)).sort((a, b) => bello(a[1]).localeCompare(bello(b[1]), 'it'))
+    .sort((a, b) => !RIP ? 0 : V(a[0])[1] == null ? 1 : V(b[0])[1] == null ? -1 : V(b[0])[1] - V(a[0])[1])   // come il browser
     .map(p => `<tr data-id="${esc(p[0])}"><td><a href="${SITO}/funghi/${REG_DI[p[0]]}/${SLUG_DI(p[0])}/">${esc(bello(p[1]))}</a>` +
       `<span class="com">${esc(p[2])} · ${p[3]} m</span></td>` +
-      `<td class="mm v1">–</td><td class="mm v7">–</td><td class="mm v30">–</td></tr>`).join('\n');
+      `<td class="mm v1">${cCella(V(p[0])[0])}</td><td class="mm v7">${cCella(V(p[0])[1])}</td><td class="mm v30">${cCella(V(p[0])[2])}</td></tr>`).join('\n');
 
   const altre = ZONE.filter(x => x.reg === casa.k && x.n !== z.n)
     .sort((a, b) => a.n.localeCompare(b.n, 'it'))
@@ -201,12 +281,19 @@ function pagina(z) {
   // ⚠️ 25/9/2026: LO SCHEMA «PRIMA I DATI», come le pagine funghi del 24/9 e
   // la pagina regione: in cima IERI (la domanda del titolo), poi le barre dei
   // 30 giorni, i periodi, i pluviometri, le mappe; le spiegazioni in fondo.
+  // le due schede come le scrive scriviPeriodo nel browser
+  const P = k => RIP && RIP.periodi[String(k)];
+  const cartaMedia = k => P(k) ? cMedia(P(k)) + ' mm <small>di media</small>' : '<span class="attesa">…</span>';
+  const cartaTop = k => !P(k) ? '' : !P(k).top || !P(k).top.length || P(k).top[0].mm < 1 ? '<p class="nota">Periodo quasi asciutto in tutta la zona.</p>'
+    : '<ol class="top-staz">' + P(k).top.map(s => `<li>${esc(s.n)} — ${s.mm === 0 ? '0' : cNum(s.mm)} mm</li>`).join('') + '</ol>';
+  const cartaDate = k => !P(k) ? '' : cDalAl(P(k).primo, P(k).ultimo)
+    + (P(k).giorni < k ? ', ' + P(k).giorni + (P(k).giorni === 1 ? ' giornata di dati' : ' giornate di dati') : '') + '.';
   const card = (k, titolo) => `
   <div class="card">
     <h3>${titolo}</h3>
-    <div class="numerone" id="rip${k}-media"><span class="attesa">…</span></div>
-    <div id="rip${k}-top"></div>
-    <p class="nota" id="rip${k}-date"></p>
+    <div class="numerone" id="rip${k}-media">${cartaMedia(k)}</div>
+    <div id="rip${k}-top">${cartaTop(k)}</div>
+    <p class="nota" id="rip${k}-date">${cartaDate(k)}</p>
     <a class="vai" id="cta${k}" href="${SITO}/?r=${REGS}&amp;g=${k}&amp;${PIN}"
        onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-${zslug}-${k}gg'})}catch(e){}">Apri la mappa →</a>
   </div>`;
@@ -224,6 +311,7 @@ function pagina(z) {
 <meta property="og:title" content="${esc('Dove ha piovuto ' + z.dove + ': ieri e ultimi giorni')}">
 <meta property="og:description" content="${esc('La pioggia misurata dai pluviometri ' + di + ': ieri, ultimi 7 e 30 giorni.')}">
 <meta property="og:image" content="${SITO}/preview.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:url" content="${SITO}/zone/${zslug}/">
 <meta property="og:type" content="website">
 ${briciolaJson([['Mappa pluviometrica', `${SITO}/`], [nomeReg, `${SITO}/${casa.k}/`], [z.n, null]])}
@@ -253,21 +341,17 @@ ${METEO_CSS}${STRISCIA_CSS}
 /* i paesi hanno nomi lunghi («Castelnuovo di Garfagnana»): a capo invece dei puntini, colonna un filo piu' larga */
 #meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
 #meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
-</style>
+${TESTATA_CSS}</style>
 </head>
 <body>
-<header>
-  <a class="logo" href="${SITO}/">🌧️ Mappa Pluviometrica</a>
-  <a class="yt" href="${CANALE}" target="_blank" rel="noopener"
-     onclick="try{gtag('event','click_youtube',{pulsante:'zona-piogge-${zslug}'})}catch(e){}">▶ Iscriviti</a>
-</header>
+${testata({ sito: SITO, canale: CANALE, reg: casa.k, ga: 'zona-piogge-' + zslug, attiva: 'storico' })}
 <main>
 <p class="bric"><a href="${SITO}/">Mappa pluviometrica</a> › <a href="${SITO}/${casa.k}/">${esc(nomeReg)}</a> › ${esc(z.n)}</p>
 <h1>Dove ha piovuto ${esc(z.dove)}</h1>
 <p class="sotto"><b>Pluviometria ${esc(di)}</b>: i dati dei ${ids.length} pluviometri ${esc(diEnte(elenco(agenzie)))}, ieri e nell'ultimo mese.</p>
 
-<div id="attesa">Sto leggendo i pluviometri…</div>
-<div id="verdetto"></div>
+<div id="attesa"${RIP ? ' style="display:none"' : ''}>Sto leggendo i pluviometri…</div>
+<div id="verdetto"${RIP && RIP.periodi['1'] ? ` data-giorno="${RIP.periodi['1'].ultimo}"` : ''}>${RIP ? verdettoCotto(RIP.periodi['1']) : ''}</div>
 ${meteoHtml(casa, `Che tempo farà ${esc(z.dove)}`, 'Sto leggendo le previsioni dei paesi…', undefined, linkMeteo(zslug, z.n, 'zona-piogge-' + zslug))}
 
 <h2 id="h-grafico">La pioggia degli ultimi 30 giorni</h2>
@@ -280,7 +364,7 @@ ${meteoHtml(casa, `Che tempo farà ${esc(z.dove)}`, 'Sto leggendo le previsioni 
 <h2>I pluviometri ${esc(di)}</h2>
 <p class="nota" style="margin-top:0">Dal più bagnato negli ultimi 7 giorni. Ogni nome porta alla sua pagina, con la pioggia giorno per giorno.</p>
 <table class="tab">
-<thead><tr><th>Pluviometro</th><th id="th1">Ieri</th><th>7 giorni</th><th>30 giorni</th></tr></thead>
+<thead><tr><th>Pluviometro</th><th id="th1">${RIP && RIP.periodi['1'] && cGiorno(RIP.periodi['1'].ultimo) !== 'Ieri' ? cBreve(RIP.periodi['1'].ultimo) : 'Ieri'}</th><th>7 giorni</th><th>30 giorni</th></tr></thead>
 <tbody id="righe">
 ${righe}
 </tbody>
@@ -294,8 +378,8 @@ ${righe}
   ${tasto('t20', 20, 'Ultimi 20 gg')}
   ${tasto('t30', 30, 'Ultimi 30 gg')}
   <a href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;radar=ora"
-     onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-${zslug}-radar'})}catch(e){}">📡 Radar adesso</a>
-  <a class="t-prev" href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;m=prev"
+     onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-${zslug}-radar'})}catch(e){}">📡 Radar piogge</a>
+  <a class="t-prev" href="${SITO}/previsioni/?r=${casa.k}&amp;${PIN}"
      onclick="try{gtag('event','apri_mappa',{da:'zona-piogge-${zslug}-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">La pioggia degli ultimi 20 giorni ${casa.prep} ${esc(nomeReg)}; il link apre la mappa già inquadrata ${esc(z.dove)}.</p>
@@ -317,7 +401,8 @@ ${righe}
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
 <p>I millimetri li misurano i ${ids.length} pluviometri ${esc(diEnte(elenco(agenzie)))} che stanno ${esc(z.dove)}: strumenti a terra,
-con il loro nome e la loro quota, non stime da modello. I numeri in cima sono la media dei pluviometri della zona, giorno
+con il loro nome e la loro quota, non stime da modello (se una rete si ferma e qualche giorno è coperto da una stima, lo
+dice l’avviso giallo in cima alla pagina). I numeri in cima sono la media dei pluviometri della zona, giorno
 per giorno. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando. Nella tabella il trattino
 vuol dire che quel pluviometro in quei giorni non ha pubblicato.</p>
 <h2>Dove piove oggi ${esc(z.dove)}? La diretta radar</h2>
@@ -380,9 +465,14 @@ ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel
   }
   tasti(iso(giornoFa(1)));
 
-  function scriviIeri(d){
-    var box = document.getElementById('verdetto');
-    if (!d) { box.innerHTML = ''; return; }
+  // st: i giorni a stima in coda ai periodi (31/10/2026, controllo della scheda 103): lo stesso avviso giallo della
+  // pagina regione (lib-numeri-regione.js), e se ieri era tutto stimato il riepilogo il periodo 1 non ce l'ha
+  function scriviIeri(d, st){
+    var box = document.getElementById('verdetto'), avviso = '';
+    if (st) { var g = +st.al.split('-')[2];
+      avviso = '<div class="avviso-stime">⚠️ ' + (st.dal === st.al ? (g === 1 || g === 8 || g === 11 ? 'L’' : 'Il ') + lungo(st.al) + ' i pluviometri non hanno trasmesso: quel giorno è una stima del modello, non una misura.'
+        : dalAl(st.dal, st.al) + ' i pluviometri non hanno trasmesso: quei giorni sono stime del modello, non misure.') + '</div>'; }
+    if (!d) { box.innerHTML = avviso; return; }
     var t = nomeGiorno(d.ultimo), top = (d.top||[]).filter(function(s){ return s.mm >= 1; }), dett;
     if (top.length) {
       dett = 'Dove ha piovuto di più: ' + top.map(function(s){ return '<b>' + esc(s.n) + '</b> ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm'; }).join(', ') + '.';
@@ -391,7 +481,7 @@ ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel
     } else {
       dett = 'Giornata asciutta: nessun pluviometro della zona ha misurato pioggia.';
     }
-    box.innerHTML = '<div class="verdetto">'
+    box.innerHTML = avviso + '<div class="verdetto">'
       + '<div class="si">' + (t === 'Ieri' ? 'Ieri, ' + lungo(d.ultimo) : t) + '</div>'
       + '<div class="gr">' + mediaMm(d) + ' mm<small>di media</small></div>'
       + '<div class="top">' + dett + '</div>'
@@ -405,9 +495,11 @@ ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel
       + '<small>la pioggia in tutte le località</small></a></div>'
       // 20/10/2026, come le pagine regione (lib-numeri-regione.js): le altre funzioni della mappa, gia' puntate sulla zona
       + '<div class="mk-porte">'
-      + [['☀️', 'Previsioni', '&m=prev', 'porta-previsioni'], ['📡', 'Radar', '&radar=ora', 'porta-radar'],
-         ['🌲', 'Boschi', '&boschi=1', 'porta-boschi'], ['🛰', 'Satellite', '&boschi=1&sat=1', 'porta-satellite']].map(function(t){
-          return '<a href="' + SITO + '/?r=' + CASA + t[2] + '&' + PIN + '" onclick="try{gtag(\\'event\\',\\'apri_mappa\\',{da:\\'zona-piogge-' + ZONA + '-' + t[3] + '\\'})}catch(e){}"><span>' + t[0] + '</span>' + t[1] + '</a>';
+      // 28/10/2026: i nomi dei bottoni delle pagine meteo («Radar piogge», «Mappa boschi», «Boschi + satellite»)
+      // 2/11/2026 (fase B): «Previsioni» (t[2] vuoto) apre /previsioni/, non piu' la radice col parametro
+      + [['☀️', 'Previsioni', '', 'porta-previsioni'], ['📡', 'Radar piogge', '&radar=ora', 'porta-radar'],
+         ['🌲', 'Mappa boschi', '&boschi=1', 'porta-boschi'], ['🛰️', 'Boschi + satellite', '&boschi=1&sat=1', 'porta-satellite']].map(function(t){
+          return '<a href="' + SITO + (t[2] ? '/?r=' : '/previsioni/?r=') + CASA + t[2] + '&' + PIN + '" onclick="try{gtag(\\'event\\',\\'apri_mappa\\',{da:\\'zona-piogge-' + ZONA + '-' + t[3] + '\\'})}catch(e){}"><span>' + t[0] + '</span>' + t[1] + '</a>';
         }).join('') + '</div></div>';
   }
 
@@ -460,7 +552,7 @@ ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel
       document.getElementById('attesa').style.display = 'none';
       var ultimo = (j.periodi['1'] || j.periodi['7']).ultimo;
       tasti(ultimo);
-      scriviIeri(j.periodi['1']);
+      scriviIeri(j.periodi['1'], (j.periodi['30'] || {}).stime || (j.periodi['7'] || {}).stime);
       scriviBarre(j.serie, j.ultimoGiorno || ultimo);   // 17/10/2026: la data di serie[0] scritta dal riepilogo
       scriviPeriodo('7', j.periodi['7']); scriviPeriodo('30', j.periodi['30']);
       var t = nomeGiorno(ultimo);
@@ -506,7 +598,7 @@ if (require.main === module) {
   for (const z of ZONE) {
     if (!postiDellaZona(POSTI, z).ids.length) continue;
     if (SOLO && slug(z.n) !== SOLO) continue;
-    scrivi(path.join(RADICE, 'zone', slug(z.n), 'index.html'), pagina(z));
+    scrivi(path.join(RADICE, 'zone', slug(z.n), 'index.html'), senzaCommenti(pagina(z)));
     n++;
   }
   if (SOLO) { console.log(`${n} pagina scritta (SOLO=${SOLO}), sitemap non toccata.`); process.exit(0); }

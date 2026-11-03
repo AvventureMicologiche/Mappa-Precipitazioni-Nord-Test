@@ -22,10 +22,10 @@
  * c'e' e serve a una frase sola.
  *
  * ⚠️ NIENTE ABRUZZO: non abbiamo una fonte aperta per quella regione (POLARIS
- * e' dietro un login, email del 19/8/2026 senza risposta). NIENTE MOLISE:
- * nessuno dei suoi 24 pluviometri in fascia di quota arriva al 37% di bosco (il
- * piu' boscoso e' Capracotta, 35%), e una pagina vuota e' peggio di nessuna
- * pagina. Restano 19 regioni.
+ * e' dietro un login, email del 19/8/2026 senza risposta). IL MOLISE C'E' DAL
+ * 1/11/2026: col bosco di OpenStreetMap nessuno dei suoi pluviometri arrivava al
+ * 37% (Capracotta 35%), con le carte forestali 9 passano il 50% (vedi
+ * funghi-posti.json in CLAUDE.md, «Correzioni del 1/11/2026»). Sono 20 regioni.
  *
  * ⚠️ QUESTE PAGINE FANNO PARTIRE UN DEPLOY: stanno fuori da `data/` e da
  * `.github/`, quindi non sono nella regola ignore di netlify.toml. Pubblicarle
@@ -37,11 +37,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const { REGIONI, navAltre, briciolaJson, stazDi } = require('./genera-pagine-regione.js');
+const { REGIONI, GEN, navAltre, briciolaJson, stazDi } = require('./genera-pagine-regione.js');
 const { LOCALITA, bello, slug, slugRegione, postiDellaZona, diEnte, elenco } = require('./lib-nomi.js');
 const { rigaStagione } = require('./lib-stagione.js');
 // 24/9/2026: verdetto, barre e finestra comuni con le pagine di zona
-const { STILE_NUOVO, JS_COMUNE, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = require('./lib-pagina-funghi.js');
+const { STILE_NUOVO, JS_COMUNE, JS_STIME, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz } = require('./lib-pagina-funghi.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 
 const POSTI = JSON.parse(fs.readFileSync(path.join(__dirname, 'funghi-posti.json'), 'utf8'));
@@ -58,6 +58,7 @@ const SITO = 'https://avventurepluvio-test.pages.dev';
 const { haBoschi, cartaBreve, cartaDi, fonteNota } = require('./lib-boschi.js');
 const { STRISCIA_CSS, strisciaScript } = require('./lib-striscia.js');   // la mappa nella scheda in cima (20/10/2026)
 const { METEO_CSS, meteoHtml, boschiHtml, meteoClient } = require('./lib-meteo-regione.js');   // «Che tempo farà» (20/10/2026)
+const { TESTATA_CSS, TESTATA_CSS_FUNGHI, testata } = require('./lib-testata.js');   // la testata del sito (28/10/2026)
 
 /* ── «CHE TEMPO FARÀ NELLE ZONE DEI FUNGHI» (20/10/2026, scheda 89, dal mockup approvato sulla Toscana) ──
    Al posto della striscia blu: una riga per ogni zona dei funghi della regione, con la previsione al CENTRO della
@@ -86,7 +87,7 @@ const GENITIVO = {
   lombardia: 'della Lombardia', piemonte: 'del Piemonte', valledaosta: "della Valle d'Aosta",
   liguria: 'della Liguria', emilia: "dell'Emilia-Romagna", veneto: 'del Veneto',
   friuli: 'del Friuli Venezia Giulia', trentino: 'del Trentino', altoadige: "dell'Alto Adige",
-  toscana: 'della Toscana', umbria: "dell'Umbria", marche: 'delle Marche', lazio: 'del Lazio',
+  toscana: 'della Toscana', umbria: "dell'Umbria", marche: 'delle Marche', lazio: 'del Lazio', molise: 'del Molise',
   campania: 'della Campania', puglia: 'della Puglia', basilicata: 'della Basilicata',
   calabria: 'della Calabria', sicilia: 'della Sicilia', sardegna: 'della Sardegna',
 };
@@ -114,6 +115,10 @@ function pagina(r, posti) {
   const corta = elenco([...new Set(RETI.map(x => x.agenziaCorta || x.agenzia.replace(/\s*\(.*\)$/, "")))]);
   const lunga = elenco([...new Set(RETI.map(x => x.agenzia))]);
   const gen = GENITIVO[r.k];
+  // ⚠️ 31/10/2026 (scheda 104 bis, controllo SEO del cloud): le pagine meteo della regione in fondo a «Che tempo
+  // farà», come nelle regioni piogge. Qui dentro: genera-pagine-meteo-zona.js chiede genera-pagine-regione.js.
+  const MZ = require('./genera-pagine-meteo-zona.js');
+  const valli = MZ.linkMeteoRegione(r.k, 'funghi-' + r.k);
   // ⚠️ 13/9/2026: LA DOMANDA E' «DOVE ANDARE A FUNGHI». Search Console, 28
   // giorni: questa pagina in un mese e' comparsa su Google UNA volta, mentre le
   // zone col titolo stretto escono in prima pagina su «funghi in garfagnana
@@ -130,9 +135,12 @@ function pagina(r, posti) {
     `Funghi ${r.prep} ${nome} oggi: dove stanno nascendo?`,
     `Funghi ${r.prep} ${nome} oggi`,
   ].find(t => t.length <= 62) || `Funghi ${r.prep} ${nome} oggi`;
+  // ⚠️ «METEO FUNGHI <REGIONE>» IN TESTA (31/10/2026, suo ok): come le pagine di zona e di paese. Su Google,
+  // «meteo funghi toscana» 1.672 viste in 28 giorni e noi sesti, sotto chi ha «meteofunghi» nel titolo; le zone,
+  // che la riga ce l'hanno, stanno fra il 3° e il 5° posto. Il titolo resta quello di sempre («Funghi … oggi»).
   const descr = [
-    `Dove stanno nascendo funghi ${r.prep} ${nome}? Le piogge degli ultimi 25 giorni nei posti da bosco, zona per zona, misurate dai pluviometri. Aggiornato ogni mattina.`,
-    `Dove stanno nascendo funghi ${r.prep} ${nome}? Le piogge degli ultimi 25 giorni nei posti da bosco, zona per zona.`,
+    `Meteo funghi ${nome}: dove stanno nascendo? Le piogge degli ultimi 25 giorni nei posti da bosco, misurate dai pluviometri. Aggiornato ogni mattina.`,
+    `Meteo funghi ${nome}: dove stanno nascendo? Le piogge degli ultimi 25 giorni nei posti da bosco, misurate dai pluviometri.`,
   ].find(t => t.length <= 158);
   return `<!DOCTYPE html>
 <html lang="it">
@@ -143,11 +151,13 @@ function pagina(r, posti) {
 <meta name="description" content="${descr}">
 <link rel="canonical" href="${SITO}/funghi/${r.k}/">
 <meta property="og:title" content="Funghi ${r.prep} ${nome} oggi: dove stanno nascendo?">
-<meta property="og:description" content="Dove è caduta l'acqua nelle zone da bosco, misurata dai pluviometri. Non previsioni: pioggia vera.">
+<meta property="og:description" content="${descr}">
 <meta property="og:image" content="${SITO}/preview.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:url" content="${SITO}/funghi/${r.k}/">
 <meta property="og:type" content="website">
 ${briciolaJson([
+  ['Mappa pluviometrica', `${SITO}/`],
   ['Piogge per funghi', `${SITO}/funghi/`],
   [nome, null],
 ])}
@@ -295,24 +305,21 @@ nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2p
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
 ${STILE_NUOVO}
-${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}${STRISCIA_CSS}${METEO_CSS}
+${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}${STRISCIA_CSS}${METEO_CSS}${valli ? MZ.MV_CSS : ''}
 #mk-meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
 #mk-meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
 #mk-meteo .mk-cr span em{white-space:nowrap;}
-</style>
+${TESTATA_CSS}${TESTATA_CSS_FUNGHI}</style>
 </head>
 <body>
-<header>
-  <a href="${SITO}/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
-  <a href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener" class="yt">▶ <span class="yt-l">Canale </span>YouTube</a>
-</header>
+${testata({ sito: SITO, canale: 'https://www.youtube.com/@avventuremicologiche?sub_confirmation=1', reg: r.k, ga: 'funghi-' + r.k, attiva: '' })}
 <main>
 
 ${/* La briciola verso la radice della famiglia, dall'8/9/2026. Stessa forma di
      quella che le pagine di paese hanno verso qui: e' il solo link che le 19
      regioni mandano all'indice, e senza di lui l'indice sarebbe una pagina che
      nessuno nomina. */''}
-<p class="nota" style="margin-bottom:6px"><a href="${SITO}/funghi/" style="color:var(--blu)">‹ Piogge per funghi, tutte le regioni</a></p>
+<p class="bric" style="font-size:14px;color:#666;margin-bottom:6px"><a href="${SITO}/" style="color:var(--blu)">Mappa pluviometrica</a> › <a href="${SITO}/funghi/" style="color:var(--blu)">Piogge per funghi</a> › ${nome}</p>
 ${/* ⚠️ LA FINESTRA E LA CLASSIFICA NELLE PRIME TRE RIGHE (9/9/2026), come
      sull'indice. Prima il titolo diceva «Piogge per funghi in Umbria» e sotto
      «quanta acqua e' caduta davvero nelle zone da bosco»: chi arrivava da
@@ -324,6 +331,7 @@ ${/* ⚠️ LA FINESTRA E LA CLASSIFICA NELLE PRIME TRE RIGHE (9/9/2026), come
      questa pagina e' comparsa su Google una volta. La gente cerca «dove andare
      a funghi», e titolo e H1 adesso lo dicono. */''}
 <h1>Funghi ${r.prep} ${nome} oggi: dove stanno nascendo?</h1>
+<p class="breve" style="margin-top:-2px">Meteo funghi ${nome}: la pioggia vera di ${posti.length} pluviometri da bosco, per capire la crescita dei funghi.</p>
 ${rigaStagione()}
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
@@ -331,7 +339,7 @@ ${rigaStagione()}
 <div id="verdetto"></div>
 ${haBoschi(r.k) ? boschiHtml('🌲 Trova i boschi ' + r.prep + ' ' + nome) : ''}
 ${meteoHtml(r, ZONE.some(z => z.reg === r.k) ? 'Che tempo farà nelle zone dei funghi ' + gen : 'Che tempo farà ' + r.prep + ' ' + nome,
-  ZONE.some(z => z.reg === r.k) ? 'Sto leggendo le previsioni delle zone…' : 'Sto leggendo le previsioni delle città…', 'mk-meteo')}
+  ZONE.some(z => z.reg === r.k) ? 'Sto leggendo le previsioni delle zone…' : 'Sto leggendo le previsioni delle città…', 'mk-meteo', valli)}
 
 <h2>Le piogge degli ultimi 25 giorni ${r.prep} ${nome}</h2>
 <div id="grafico"></div>
@@ -349,8 +357,8 @@ ${meteoHtml(r, ZONE.some(z => z.reg === r.k) ? 'Che tempo farà nelle zone dei f
   <a href="${SITO}/?r=${r.k}&amp;g=20">Ultimi 20 gg</a>
   <a href="${SITO}/?r=${r.k}&amp;g=30">Ultimi 30 gg</a>
   <a href="${SITO}/?r=${r.k}&amp;radar=ora"
-     onclick="try{gtag('event','apri_mappa',{da:'funghi-${r.k}-radar'})}catch(e){}">📡 Radar adesso</a>
-  <a class="t-prev" href="${SITO}/?r=${r.k}&amp;m=prev"
+     onclick="try{gtag('event','apri_mappa',{da:'funghi-${r.k}-radar'})}catch(e){}">📡 Radar piogge</a>
+  <a class="t-prev" href="${SITO}/previsioni/?r=${r.k}"
      onclick="try{gtag('event','apri_mappa',{da:'funghi-${r.k}-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <div id="testa" style="display:none"></div>
@@ -411,7 +419,8 @@ con i disegni ${cartaDi(r.k)}. Avvicinati sulla zona che ti interessa.</p>
   <span class="vai-mappa">Guarda i boschi ${r.prep} ${nome} →</span>
 </a>
 <p class="nota" style="margin-bottom:26px;">La fonte è ${fonteNota(r.k)}: dice che bosco
-c'è, non se quest'anno ci sono nati funghi.</p>
+c'è, non se quest'anno ci sono nati funghi.${/* 1/11/2026, scheda 105 bis */ fs.existsSync(path.join(RADICE, 'mappa-forestale', r.k, 'index.html'))
+  ? ` Tipo per tipo, con le percentuali e le valli: <a href="${SITO}/mappa-forestale/${r.k}/">la carta forestale ${GEN[r.k]}</a>.` : ''}</p>
 ` : ''}
 
 
@@ -420,7 +429,8 @@ c'è, non se quest'anno ci sono nati funghi.</p>
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
 <p>I millimetri li misurano i pluviometri ${diEnte(corta)} nei posti da bosco ${gen}: un pluviometro vero,
-quota fra 200 e 1600 metri, almeno il 37% di bosco entro 3 km sulle mappe di OpenStreetMap. I numeri in
+quota fra 200 e 1600 metri e tanto bosco intorno: almeno il 37% entro 3 km sulle mappe di OpenStreetMap,
+o il 50% sulle carte forestali delle regioni, che al sud vedono boschi che OpenStreetMap non ha. I numeri in
 cima sono la media di questi pluviometri, giorno per giorno, aggiornata ogni mattina.</p>
 <p>Perché da 13 a 20 giorni fa: dopo una pioggia il fungo impiega almeno dodici o tredici giorni
 a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due settimane.</p>
@@ -428,8 +438,8 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 <a href="${SITO}/${r.k}/">dove ha piovuto ${r.prep} ${nome}</a>.</p>
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
-<p>Dati ${diEnte(lunga)} via il nostro archivio. Il bosco è calcolato su dati OpenStreetMap, licenza ODbL.
-La provincia viene dai confini provinciali ISTAT.</p>
+<p>Dati ${diEnte(lunga)} via il nostro archivio. Le percentuali di bosco vengono dalle carte forestali delle regioni;
+per scegliere i posti usiamo anche OpenStreetMap, licenza ODbL. La provincia viene dai confini provinciali ISTAT.</p>
 </div>
 ${/* Il bottone YouTube in fondo (12/10/2026): qui prima non c'era, ora c'e' in tutte,
      in coppia col quiz tartufi nelle regioni che il quiz ha (coppiaQuiz). */ ''}${coppiaQuiz(r.k, `<a href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
@@ -486,6 +496,7 @@ ${navAltre('funghi')}
   var MAPPA = '${SITO}/';
   var QUANTI = 15, FORTE = 30;
 ${JS_COMUNE}
+${JS_STIME}
 
   function meno(n){ var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-n); return d; }
   function menoDaI(s, n){ return iso(menoDa(s, n)); }
@@ -535,6 +546,10 @@ ${JS_COMUNE}
       var o = j.oggi, daG = iso(menoDa(o,20)), aG = iso(menoDa(o,13)), ieri = iso(menoDa(o,1));
       var lk = function(dal, al){ return MAPPA + '?r=' + REG + '&da=' + dal + '&a=' + al + '&s=p'; };
       scriviVerdetto(s, o, lk(daG, ieri), 'in media, negli ultimi 20 giorni');
+      /* i giorni stimati dei posti da bosco della regione, detti in cima (1/11/2026, avvisoStime di lib-pagina-funghi.js) */
+      var avv = avvisoStime(j, ids, false);
+      var vv = document.getElementById('verdetto');
+      if (avv && !vv.querySelector('.avviso-stime')) vv.insertAdjacentHTML('afterbegin', avv);
       var ax = scriviBarre(s, o);
       scriviFinestra(s, o, null, 'in media');
       document.getElementById('t-conta').href = lk(daG, aG);
@@ -580,14 +595,17 @@ ${JS_COMUNE}
           .then(function(r){ return r.ok ? r.json() : null; })
           .catch(function(){ return null; });
       })).then(function(parti){
-        var m = null, casa = false;
+        var m = null, casa = false, st = {};
         parti.forEach(function(j, i){
           if (!j || !j.stations || !j.stations.length) return;
           if (!m) m = {};
           if (PROPRIE.indexOf(DIRS[i]) >= 0) casa = true;
-          j.stations.forEach(function(s){ if (s.mm != null) m[s.id] = (m[s.id] || 0) + s.mm; });
+          // le stime come in leggiS di genera-funghi.js (1/11/2026): file e stazioni marcati come stima
+          var tutto = /open-meteo|icon-2i-gapfill/.test(String(j.source || ''));
+          j.stations.forEach(function(s){ if (s.mm != null) { m[s.id] = (m[s.id] || 0) + s.mm;
+            if (tutto || s.om || /open-meteo/.test(String(s.src || ''))) st[s.id] = 1; } });
         });
-        return { n:n, m:m, casa:casa };
+        return { n:n, m:m, casa:casa, st:st };
       });
     })).then(function(res){
       /* ⚠️ GEMELLO DI perGiorno in genera-funghi.js (20/10/2026, sesto check, bug 4): i mm si prendono da tutte
@@ -615,6 +633,15 @@ ${JS_COMUNE}
       function coperto(id, da, a){ var c = 0, d = 0;
         for (var n = da; n >= a; n--) if (perGiorno[n]) { d++; if (perGiorno[n][id] != null) c++; }
         return d > 0 && c >= d * 0.6; }
+      /* anche il ripiego dice i giorni stimati (1/11/2026): stesso avviso del file dei giorni, se non c'e' gia' */
+      var stime = {}, visti = [];
+      buoni.forEach(function(x){ Object.keys(x.st).forEach(function(id){ (stime[id] = stime[id] || []).push(x.n - 1); }); });
+      var ver = document.getElementById('verdetto');
+      if (ver && !ver.querySelector('.avviso-stime')) {
+        POSTI.forEach(function(p){ if (!SOSPESI[p[0]] && coperto(p[0], GIORNI, 1)) visti.push(p[0]); });
+        var avv = avvisoStime({ oggi: iso(meno(0)), stime: stime }, visti, false);
+        if (avv) ver.insertAdjacentHTML('afterbegin', avv);
+      }
       mostra(POSTI.filter(function(p){ return !SOSPESI[p[0]] && coperto(p[0], GIORNI, 1) && coperto(p[0], 20, 13); }).map(function(p){
         return { id:p[0], n:p[1], sig:p[2], q:p[3], lat:p[4], lon:p[5], rete:p[7],
           mm:somma(20,13,p[0]), mm7:somma(7,1,p[0]), mm25:somma(GIORNI,1,p[0]),
@@ -792,12 +819,13 @@ ${strisciaScript({ reg: r.k, tipo: 'regione', ga: 'funghi-' + r.k })}
 
 if (require.main === module) {
   let scritte = 0;
+  const SOLO = process.env.SOLO;   // SOLO=liguria: una pagina sola, per i campioni (niente zone-regioni.json ne' sitemap, 28/10/2026)
   // le zone di «Che tempo farà», tutte le regioni (vedi zoneMeteo)
   const zr = {};
   for (const k of Object.keys(POSTI)) { const l = zoneMeteo(k); if (l.length) zr[k] = l; }
-  fs.writeFileSync(path.join(RADICE, 'data', 'zone-regioni.json'),
+  if (!SOLO) fs.writeFileSync(path.join(RADICE, 'data', 'zone-regioni.json'),
     '{\n' + Object.keys(zr).map(k => JSON.stringify(k) + ':' + JSON.stringify(zr[k])).join(',\n') + '\n}\n', 'utf8');
-  for (const k of Object.keys(POSTI)) {
+  for (const k of Object.keys(POSTI).filter(k => !SOLO || k === SOLO)) {
     const r = REGIONI.find(x => x.k === k);
     if (!r) { console.error(`⚠️ «${k}» non e' in genera-pagine-regione.js`); process.exit(1); }
     if (!GENITIVO[k]) { console.error(`⚠️ manca il genitivo di «${k}»`); process.exit(1); }
@@ -827,6 +855,7 @@ if (require.main === module) {
   // queste pagine non resta indietro. Elenca solo quello che esiste davvero in
   // questo repo, quindi in produzione le voci funghi non compariranno finche'
   // le pagine non ci sono.
+  if (SOLO) { console.log(`\n${scritte} pagina scritta (SOLO=${SOLO}), sitemap non toccata.`); return; }
   const voci = scriviSitemap(SITO, RADICE);
   console.log(`\n${scritte} pagine scritte, sitemap.xml con ${voci} indirizzi.`);
 }

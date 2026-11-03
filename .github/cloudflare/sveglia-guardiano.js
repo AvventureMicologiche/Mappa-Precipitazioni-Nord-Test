@@ -30,9 +30,11 @@ const REPO = 'AvventureMicologiche/Mappa-Precipitazioni-Nord';
 // Toscana e Alto Adige dal 27/10/2026 (fase 1 dell'alleggerimento): il giorno lo chiudono la sera, ma il vento e
 // le temperature complete di ieri arrivano solo con un giro del giorno dopo. Lo facevano i cron di GitHub di notte
 // e del mattino, che adesso sono ridotti a riserva.
+// Abruzzo dal 3/11/2026 (MeteoNetwork + ICON-2I su file, scheda 114): il suo cron di GitHub (4:55 UTC) partiva verso
+// le 13:30 italiane; qui arriva prima dei riepiloghi delle 5:15, come le altre.
 const MATTINO = ['meteohub.yml', 'svizzera.yml', 'lombardia.yml', 'piemonte.yml', 'liguria.yml',
   'veneto.yml', 'trentino.yml', 'austria.yml', 'francia.yml', 'valledaosta-cf.yml',
-  'friuli-osmer.yml', 'ticino.yml', 'emilia.yml', 'toscana.yml', 'altoadige.yml'];
+  'friuli-osmer.yml', 'ticino.yml', 'emilia.yml', 'toscana.yml', 'altoadige.yml', 'abruzzo.yml'];
 
 // [ora italiana, workflow, minuti per «GitHub l'ha gia' fatto» (0 = parte sempre)]
 const TABELLA = [
@@ -52,6 +54,9 @@ const TABELLA = [
   ['05:45', ['meteohub.yml', 'svizzera.yml', 'emilia.yml', 'friuli-osmer.yml'], 45],
   // ── il guardiano resta come rete di sicurezza (ri-lancia cio' che manca ancora)
   ['06:00', ['guardiano.yml'], 0],
+  // ── i buchi MeteoHub (30/10/2026): il cron di GitHub delle 8:40 UTC partiva verso le 15:30 UTC, e la stima di un
+  // giorno perso arrivava due giorni dopo, di pomeriggio. Dopo i due giri MeteoHub (4:30, 5:45: durano 3-4 minuti).
+  ['06:15', ['meteohub-gaps.yml'], 60],
   ['06:30', ['guardiano.yml'], 0],
   ['07:00', ['guardiano.yml'], 0],
   ['07:15', ['emilia.yml'], 45],        // ARPAE completa la giornata fra le 6:30 e le 11

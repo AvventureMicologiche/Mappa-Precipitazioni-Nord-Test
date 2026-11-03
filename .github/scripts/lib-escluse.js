@@ -24,6 +24,7 @@ const path = require('path');
 const PER_LISTA = {
   LOMB_ESCLUSE: 'lombardia', PIEMONTE_ESCLUSE: 'piemonte', LIGURIA_ESCLUSE: 'liguria',
   EMILIA_ESCLUSE: 'emilia', TOSCANA_ESCLUSE: 'toscana',
+  FRIULI_ESCLUSE: 'friuli',   // 31/10/2026: Pontebba, nelle due cartelle friuli-osmer e meteohub-friuli (per ID)
   // ⚠️ PROMEMORIA (19/10/2026, quinto check, bug 18): FRANCIA_ESCLUSE di index.html (Bastia 20033015)
   // qui NON si legge. Oggi non serve, nessuna pagina usa le stazioni francesi. Se un giorno arrivano,
   // aggiungerla con la chiave delle cartelle (francia-corsica, francia-provenza…), non 'francia'.

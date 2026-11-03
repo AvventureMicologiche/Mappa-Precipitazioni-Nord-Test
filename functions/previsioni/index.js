@@ -20,6 +20,11 @@ class Contenuto {
 class Titolo {
   element(el) { el.setInnerContent(TITOLO); }
 }
+// la scritta grande (1/11/2026): «Mappa Pluviometrica · Previsioni meteo», il testo che index.html mette nello span dei
+// paesi quando si entra nelle previsioni (data-prev). Uscendo verso lo storico la pagina rimette data-storico.
+class Sezione {
+  element(el) { const t = el.getAttribute('data-prev'); if (t) el.setInnerContent(t); }
+}
 
 export async function onRequest({ request, env }) {
   if (request.method !== 'GET' && request.method !== 'HEAD') return new Response(null, { status: 405, headers: { Allow: 'GET, HEAD' } });
@@ -29,6 +34,7 @@ export async function onRequest({ request, env }) {
   if (!pagina.ok) return pagina;
   return new HTMLRewriter()
     .on('title', new Titolo())
+    .on('h1 .hdr-paesi', new Sezione())
     .on('link[rel="canonical"]', new Contenuto(URL_PAGINA))
     .on('meta[name="description"]', new Contenuto(DESCR))
     .on('meta[property="og:title"]', new Contenuto(TITOLO + ' | Avventure Micologiche'))

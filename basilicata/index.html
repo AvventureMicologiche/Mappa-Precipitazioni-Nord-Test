@@ -4,11 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pluviometria Basilicata: mappa di 62 pluviometri, 30 giorni</title>
-<meta name="description" content="Mappa di 62 pluviometri MeteoHub aggiornata ogni mattina. Il 25 ottobre 7,6 mm a Irsina, in 7 giorni 55 mm a Tramutola. Tocca un paese e vedi il grafico.">
+<meta name="description" content="Mappa di 62 pluviometri MeteoHub aggiornata ogni mattina. Ieri 77,8 mm a S.Nicola, in 7 giorni 109 mm ad Albano di Lucania. Tocca un paese e vedi il grafico.">
 <link rel="canonical" href="https://avventurepluvio-test.pages.dev/basilicata/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Mappa pluviometrica","item":"https://avventurepluvio-test.pages.dev/"},{"@type":"ListItem","position":2,"name":"Basilicata"}]}</script>
 <meta property="og:title" content="Dove ha piovuto in Basilicata: ieri e negli ultimi giorni">
 <meta property="og:description" content="Riepilogo degli ultimi 7, 20 e 30 giorni con le zone più bagnate, da oltre 60 pluviometri di MeteoHub.">
 <meta property="og:image" content="https://avventurepluvio-test.pages.dev/preview.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:url" content="https://avventurepluvio-test.pages.dev/basilicata/">
 <meta property="og:type" content="website">
 <!-- Google tag (gtag.js) — stessa proprietà del sito.
@@ -56,6 +58,7 @@ p{margin-bottom:12px;}
 .top-staz li{margin:3px 0 3px 20px;}
 .verdetto .top{font-size:16px;opacity:.92;margin-top:8px;}
 .verdetto .top b{font-weight:700;}
+.avviso-stime{background:#fff4d6;border:1px solid #f0c64a;border-radius:10px;padding:10px 12px;margin:0 0 12px;font-size:15px;line-height:1.45;color:#5a4300;}
 #attesa{color:#6a7789;font-size:16px;padding:18px 0;}
 ol.zone-dove{list-style:none;margin:10px 0 6px;padding:0;counter-reset:z;}
 ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
@@ -141,8 +144,8 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
    grafico: con 30 barre strette, in cima non si capiva di chi fosse. */
 .gg .b b{position:static;transform:none;align-self:center;margin-bottom:2px;line-height:1.1;}
 /* ── IL BOTTONE DI IERI, versione V2 (11/10/2026, sua scelta fra tre) ──
-   Guardando la pagina dal PC: «le scritte cosi' piccole fanno schifo, i
-   bottoni non sembrano bottoni». Fondo pieno, ombra profonda con un bordo
+   Guardando la pagina dal PC: le scritte erano troppo piccole e i
+   bottoni non sembravano bottoni. Fondo pieno, ombra profonda con un bordo
    sotto come un tasto, e la freccia in un tondo: il segno che si tocca.
    Gli altri bottoni (previsioni, tasti dei periodi, «Apri la mappa» delle
    schede, scritte del riquadro) stanno nel blocco COMUNE RILIEVO di
@@ -218,7 +221,7 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-r small{color:#6b7d93;white-space:nowrap;}
 .mk-porte-t{padding:12px 14px 4px;font-weight:700;font-size:15px;}
 .mk-porte-t small{display:block;font-weight:500;color:#6b7d93;font-size:13px;margin-top:2px;}
-.mk-6{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 12px 12px;}
+.mk-6{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:8px;padding:8px 12px 12px;}   /* righe alte uguali (28/10/2026) */
 .mk-6 a{display:flex;align-items:center;gap:9px;padding:10px 10px;border:1px solid #d3deeb;border-radius:10px;text-decoration:none;color:#10263f;font-weight:700;font-size:14.5px;line-height:1.15;}
 .mk-6 a:hover{background:#eef4fb;}
 .mk-6 a span{font-size:20px;}
@@ -231,9 +234,10 @@ header{position:relative;flex-wrap:nowrap;}
   header .yt{margin-left:8px;}
   .mk-drop{min-width:0;}
 }
-.mk-porte{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;}
-.mk-porte a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 8px;border-radius:11px;background:rgba(255,255,255,.12);
-  color:#fff;text-decoration:none;font-weight:700;font-size:13.5px;border:1px solid rgba(255,255,255,.22);}
+/* 28/10/2026: coi nomi nuovi («Boschi + satellite») le scritte vanno su due righe: righe alte uguali e testo centrato */
+.mk-porte{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:8px;margin-top:14px;}
+.mk-porte a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 3px 8px;border-radius:11px;background:rgba(255,255,255,.12);
+  color:#fff;text-decoration:none;font-weight:700;font-size:13.5px;line-height:1.15;text-align:center;border:1px solid rgba(255,255,255,.22);}
 .mk-porte a span{font-size:21px;line-height:1;}
 .mk-porte a:hover{background:rgba(255,255,255,.2);}
 .mk-meteo{background:#f3f7fc;border:1px solid #d6e2f0;border-radius:14px;padding:4px 16px 14px;margin:18px 0 6px;}
@@ -288,39 +292,140 @@ header{position:relative;flex-wrap:nowrap;}
 .gg-leg .mk-leg-fut{background:repeating-linear-gradient(135deg,#7fb2ec 0 4px,#a9cdf5 4px 8px) !important;}
 
 /* ── la mappa nella scheda in cima (lib-striscia.js, 20/10/2026) ── */
-.mk-str{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:16px 0 2px;}
-.mk-str a{position:relative;display:block;height:122px;border-radius:11px;overflow:hidden;background:#1d3d63 no-repeat;
+div.mk-str{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:16px 0 2px;}
+/* ⚠️ L'ETICHETTA SOTTO LA CARTINA, NON SOPRA (28/10/2026, come le anteprime delle pagine meteo, dove sopra copriva la
+   Sicilia e le citta' della costa; suo: «prendi le idee nuove che abbiamo messo in queste pagine e applicale»). Il
+   riquadro e' una colonna: la cartina (i.mk-img, dove ritaglia() mette l'immagine) e sotto la striscia gialla. */
+div.mk-str a{position:relative;display:flex;flex-direction:column;height:auto;border-radius:11px;overflow:hidden;background:#1d3d63;
   box-shadow:0 0 0 1px rgba(255,255,255,.28);text-decoration:none;}
-.mk-str a span{position:absolute;left:7px;bottom:7px;background:rgba(9,28,52,.86);color:#fff;font:700 13.5px/1.2 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-  padding:6px 8px;border-radius:8px;}
-.mk-str a span b{display:block;font-weight:800;white-space:nowrap;}
-.mk-str a span small{display:block;font-weight:500;font-size:12px;opacity:.88;margin-top:1px;white-space:nowrap;}
-.mk-str a.mk-uno{grid-column:1 / -1;}
-.mk-str i.mk-pin{position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#e12b2b;border:2px solid #fff;
+div.mk-str a i.mk-img{position:relative;display:block;height:122px;background:#1d3d63 no-repeat;}
+div.mk-str a span{position:static;display:block;flex:1;border-radius:0;box-shadow:none;background:rgba(9,28,52,.86);color:#fff;font:700 13.5px/1.2 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  padding:7px 9px 8px;}
+div.mk-str a span b{display:block;font-weight:800;white-space:nowrap;}
+div.mk-str a span small{display:block;font-weight:500;font-size:12px;opacity:.88;margin-top:1px;white-space:nowrap;}
+div.mk-str a.mk-uno{grid-column:1 / -1;}
+div.mk-str i.mk-pin{position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#e12b2b;border:2px solid #fff;
   box-shadow:0 1px 4px rgba(0,0,0,.45);}
-@media(min-width:700px){.mk-str a{height:150px;}}
+@media(min-width:700px){div.mk-str a i.mk-img{height:150px;}}
 /* al telefono il riquadro e' largo ~146 px a 360: scritte un filo piu' piccole, e a capo piuttosto che fuori */
-@media(max-width:420px){.mk-str a span{left:6px;bottom:6px;right:6px;padding:5px 6px;font-size:12.5px;}
-  .mk-str a span b,.mk-str a span small{white-space:normal;} .mk-str a span small{font-size:11px;}}
-@media(max-width:370px){.mk-str a span{font-size:12px;padding:5px;} .mk-str a span small{font-size:10.5px;}}
-/* pagine piogge: un riquadro solo, piu' alto; nel modo «bottone» la scritta e' quella grande del bottone di ieri */
-.mk-str.mk-ieri a{height:140px;} @media(min-width:700px){.mk-str.mk-ieri a{height:185px;}}
-.mk-str.mk-grande a span{left:10px;bottom:10px;right:auto;padding:9px 13px;border-radius:10px;}
-.mk-str.mk-grande a span b{font-size:19px;} .mk-str.mk-grande a span small{font-size:14px;}
-@media(max-width:420px){.mk-str.mk-grande a span b{font-size:17px;white-space:nowrap;} .mk-str.mk-grande a span small{font-size:13px;white-space:nowrap;}}
-/* il bottone sulla mappa colorato (20/10/2026, suo: «il bottone magari rosso o giallo?»): giallo del quiz, rosso di YouTube */
-.mk-str.mk-giallo a span{background:linear-gradient(180deg,rgba(249,201,62,.85),rgba(237,164,12,.85));color:#3d1f04;box-shadow:0 3px 0 rgba(160,106,8,.85),0 6px 14px rgba(0,0,0,.3);}   /* all'85% (suo: «giallo ma semitrasparente?»): la mappa si intravede, resta un bottone */
-.mk-str.mk-rosso a span{background:linear-gradient(180deg,#ec3b33,#c9221b);color:#fff;box-shadow:0 3px 0 #8f1410,0 6px 14px rgba(0,0,0,.35);}
-.mk-str.mk-giallo a span small,.mk-str.mk-rosso a span small{opacity:.92;}
+@media(max-width:420px){div.mk-str a span{padding:6px 7px 7px;font-size:12.5px;}
+  div.mk-str a span b,div.mk-str a span small{white-space:normal;} div.mk-str a span small{font-size:11px;}}
+@media(max-width:370px){div.mk-str a span{font-size:12px;padding:6px;} div.mk-str a span small{font-size:10.5px;}}
+/* ⚠️ PAGINE PIOGGE: LA CARTINA GRANDE E LA SCRITTA PICCOLA SOPRA (1/11/2026, suo: «da quando le scritte sono cosi'
+   grandi e la cartina non si vede?»,
+   poi sulla Sila Grande «rigenera tutto con questo formato»). Il riquadro e' tutto cartina, 300 px al telefono e 440 al
+   PC (prima 140 / 185 di cartina con sotto la fascia gialla grande), sulle pagine regione si vede la regione INTERA
+   (ritaglia) e la scritta e' UNA riga gialla piccola in basso a sinistra, sopra la cartina. Le pagine funghi (due
+   riquadri, pioggia e boschi) restano come il 28/10: etichetta sotto. */
+div.mk-str.mk-ieri a{display:block;height:300px;}
+div.mk-str.mk-ieri a i.mk-img{position:absolute;left:0;top:0;right:0;bottom:0;height:auto;}
+@media(min-width:700px){div.mk-str.mk-ieri a{height:440px;} div.mk-str.mk-ieri a i.mk-img{height:auto;}}
+div.mk-str.mk-ieri a span{position:absolute;left:8px;bottom:8px;right:auto;flex:none;padding:4px 10px;border-radius:999px;}
+div.mk-str.mk-ieri a span b{font-size:13px;font-weight:800;white-space:nowrap;} div.mk-str.mk-ieri a span small{display:none;}
+div.mk-str.mk-ieri a span em{font-style:normal;font-weight:600;}
+@media(max-width:420px){div.mk-str.mk-ieri a span{left:6px;bottom:6px;padding:4px 9px;}
+  div.mk-str.mk-ieri a span b{font-size:12px;white-space:nowrap;} div.mk-str.mk-ieri a span em{display:none;}}
+/* al PC la pillola un po' piu' grande: accanto al bottone largo di ieri sembrava la cosa meno importante */
+@media(min-width:700px){div.mk-str.mk-ieri a span{left:10px;bottom:10px;padding:5px 12px;} div.mk-str.mk-ieri a span b{font-size:15px;}}
+/* il bottone sotto la cartina, stesso giallo della pillola (1/11/2026) */
+#verdetto a.mk-oppure,a.mk-oppure{display:block;margin:9px 0 2px;padding:11px 10px;border-radius:11px;text-align:center;text-decoration:none;
+  background:linear-gradient(180deg,#f9c93e,#eda40c);color:#3d1f04;font:800 15px/1.2 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  box-shadow:0 3px 0 rgba(160,106,8,.85);}
+#verdetto a.mk-oppure:hover,a.mk-oppure:hover{filter:brightness(1.05);}
+/* la striscia colorata (20/10/2026, suo: «il bottone magari rosso o giallo?»): giallo del quiz, rosso di YouTube.
+   Sotto la cartina il giallo e' pieno, come le anteprime delle pagine meteo (all'85% serviva quando stava sopra) */
+div.mk-str.mk-giallo a span{background:linear-gradient(180deg,#f9c93e,#eda40c);color:#3d1f04;border-top:1px solid rgba(160,106,8,.35);box-shadow:none;}
+div.mk-str.mk-rosso a span{background:linear-gradient(180deg,#ec3b33,#c9221b);color:#fff;border-top:1px solid #8f1410;box-shadow:none;}
+div.mk-str.mk-giallo a span small,div.mk-str.mk-rosso a span small{opacity:.92;}
+/* sopra la cartina (pagine piogge) il giallo ha un'ombra, se no si perde nei colori della pioggia */
+div.mk-str.mk-ieri.mk-giallo a span{background:linear-gradient(180deg,rgba(249,201,62,.94),rgba(237,164,12,.94));border-top:0;
+  box-shadow:0 2px 0 rgba(160,106,8,.85),0 4px 10px rgba(0,0,0,.3);}
+/* ⚠️ PAGINE FUNGHI: I DUE RIQUADRI GRANDI (1/11/2026, suo: «sì ingrandiscili anche qui», proposta B fra due). Come le
+   pagine piogge: tutto cartina, la scritta e' una pillola gialla in basso a sinistra che dice il periodo («Pioggia 20
+   giorni», «Boschi, tipo per tipo»). Al telefono uno SOTTO l'altro, larghi quanto la scheda e alti 240 px (affiancati
+   erano larghi 160 px e la regione si vedeva a meta'); al PC affiancati, alti 320 (erano 122 / 150 con la fascia sotto).
+   Classe mk-grandi, cosi' i riquadri dell'indice /funghi/ (mk-italia, stile loro) non cambiano. */
+div.mk-str.mk-grandi a{display:block;height:240px;}
+div.mk-str.mk-grandi a i.mk-img{position:absolute;left:0;top:0;right:0;bottom:0;height:auto;}
+div.mk-str.mk-grandi a span{position:absolute;left:6px;bottom:6px;right:auto;flex:none;padding:4px 9px;border-radius:999px;}
+div.mk-str.mk-grandi a span b{font-size:12.5px;white-space:nowrap;} div.mk-str.mk-grandi a span small{display:none;}
+@media(max-width:699px){div.mk-str.mk-grandi{grid-template-columns:1fr;}}
+@media(min-width:700px){div.mk-str.mk-grandi a{height:320px;} div.mk-str.mk-grandi a span{left:10px;bottom:10px;padding:5px 12px;}
+  div.mk-str.mk-grandi a span b{font-size:15px;}}
+div.mk-str.mk-grandi.mk-giallo a span{background:linear-gradient(180deg,rgba(249,201,62,.94),rgba(237,164,12,.94));border-top:0;
+  box-shadow:0 2px 0 rgba(160,106,8,.85),0 4px 10px rgba(0,0,0,.3);}
+
+.cit-tit{font-size:18px;color:var(--blu-scuro);margin:22px 0 2px;}
+.mv-nota{margin:0 0 10px;}
+.mv{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px;}
+.mv-c{display:inline-block;padding:8px 14px;border:1px solid #c9d6e6;border-radius:20px;background:#fff;color:var(--blu);font-weight:700;font-size:15px;text-decoration:none;}
+.mv-c:hover{background:#eef4fd;}
+.mv-c::after{content:" →";}
+
+.bric{font-size:14px;color:#666;margin-bottom:6px;}
+.bric a{color:var(--blu);}
+
+/* ── LA TESTATA (lib-testata.js, 28/10/2026) ── */
+header.tB{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:10px;padding:0;background:#fff;color:#123252;border-bottom:1px solid #d0d8e8}
+/* opacity: la pagina delle fonti ha header a{opacity:.85}, che non deve arrivare qui */
+.tB a{text-decoration:none;opacity:1}
+/* la colonna e' quella di main della famiglia: --t-max e --t-pad (760 e 16 di partenza; funghi e mappa forestale 860 e,
+   sotto i 640 px, 12: TESTATA_CSS_FUNGHI). Nella striscia il margine e' 11 px piu' stretto: le voci hanno 11 px di imbottitura */
+.tB .t-in{max-width:var(--t-max,760px);margin:0 auto;width:100%;padding:0 var(--t-pad,16px);display:flex;align-items:center}
+.tB .t-striscia{background:#0f2d4f}
+.tB .t-striscia .t-in{gap:2px;height:38px;padding:0 calc(var(--t-pad,16px) - 11px)}
+.tB .t-striscia a{color:rgba(255,255,255,.86);font-size:13.5px;font-weight:600;padding:0 11px;height:38px;display:flex;align-items:center;white-space:nowrap}
+.tB .t-striscia a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tB .t-striscia a.on{color:#0f2d4f;background:#f9c93e}
+.tB .t-striscia .t-dx{margin-left:auto;display:flex;gap:2px}
+.tB .t-banda .t-in{position:relative;gap:16px;padding-top:14px;padding-bottom:14px}
+.tB .t-marchio{display:flex;align-items:center;gap:12px}
+.tB .t-goccia{font-size:34px;line-height:1}
+.tB .t-marchio b{display:block;font-size:24px;font-weight:800;letter-spacing:-.015em;line-height:1.1;color:#123252}
+.tB .t-marchio small{display:block;font-size:13.5px;color:#4a5a6e;font-weight:500;margin-top:3px;line-height:1.3}
+.tB .t-tel{display:none}
+.tB .t-ytp{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:#e12b2b;color:#fff;font-size:14.5px;font-weight:700;padding:9px 16px 9px 13px;border-radius:999px;white-space:nowrap}
+.tB .t-ytp svg{width:18px;height:18px;fill:#fff}
+/* la lente del cerca (meteoClient): tonda, blu, accanto a Iscriviti; la casella si apre sopra la fascia */
+.tB .mk-lente{display:flex;align-items:center;justify-content:center;margin-left:auto;flex:none;width:40px;height:40px;border:0;border-radius:50%;background:#1b3f6e;cursor:pointer}
+.tB .mk-lente ~ .t-ytp{margin-left:0}
+.tB .mk-cerca{display:none;position:absolute;left:var(--t-pad,16px);right:var(--t-pad,16px);top:50%;transform:translateY(-50%);margin:0;max-width:none;z-index:60}
+.tB .mk-cerca input{border:2px solid #1b3f6e;padding:11px 12px 11px 36px}
+header.tB.mk-aperto .mk-cerca{display:block}
+header.tB.mk-aperto .t-marchio,header.tB.mk-aperto .t-ytp,header.tB.mk-aperto .mk-lente{visibility:hidden}
+/* con la lente nella fascia mancavano 64 px al computer (la frase andava su due righe) e 14 a 393 (il nome su due):
+   la frase perde «in tutta Italia», il nome al telefono scende di 2 px. Senza lente la testata resta quella approvata */
+.tB .t-in:has(.mk-lente) .t-it{display:none}
+@media (max-width:760px){
+  .tB .t-striscia{order:2}
+  .tB .t-banda .t-in{padding-top:10px;padding-bottom:10px;gap:10px}
+  .tB .t-goccia{font-size:26px}
+  .tB .t-marchio b{font-size:18px}
+  .tB .t-marchio small{font-size:12px;margin-top:1px}
+  .tB .t-pc{display:none}.tB .t-tel{display:inline}
+  .tB .t-ytp{font-size:13px;padding:7px 11px 7px 9px;gap:6px}
+  .tB .mk-lente{width:34px;height:34px}
+  .tB .t-in:has(.mk-lente) .t-marchio b{font-size:16px}
+  .tB .t-striscia .t-in{overflow-x:auto;scrollbar-width:none;padding:0 calc(var(--t-pad,16px) - 11px);-webkit-mask-image:linear-gradient(90deg,#000 86%,transparent);mask-image:linear-gradient(90deg,#000 86%,transparent)}
+  .tB .t-striscia .t-in::-webkit-scrollbar{display:none}
+  .tB .t-striscia .t-dx{margin-left:0;padding-right:30px}
+}
+/* a 360 px «Mappa Pluviometrica» andava su due righe */
+@media (max-width:389px){.tB .t-marchio{gap:8px}.tB .t-goccia{font-size:23px}.tB .t-marchio b{font-size:16px;white-space:nowrap}
+  .tB .t-banda .t-in{gap:8px}.tB .t-ytp{padding:7px 9px}.tB .mk-lente ~ .t-ytp span{display:none}}
 </style>
 </head>
 <body>
-<header>
-  <a class="logo" href="https://avventurepluvio-test.pages.dev/">🌧️ Mappa Pluviometrica</a>
-  <a class="yt" href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener"
-     onclick="try{gtag('event','click_youtube',{pulsante:'pagina-basilicata'})}catch(e){}">▶ Iscriviti</a>
+<header class="tB">
+  <nav class="t-striscia" aria-label="Menu"><div class="t-in"><a class="on" href="https://avventurepluvio-test.pages.dev/?r=basilicata" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-testata-storico'})}catch(e){}">Storico piogge</a><a href="https://avventurepluvio-test.pages.dev/previsioni/?r=basilicata" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-testata-previsioni'})}catch(e){}">Previsioni meteo</a><a href="https://avventurepluvio-test.pages.dev/guida/">Guida</a><span class="t-dx"><a href="https://avventuremicologiche.it/#noi">Chi siamo</a><a href="https://avventuremicologiche.it/#piede">Contatti</a></span></div></nav>
+  <div class="t-banda"><div class="t-in">
+    <a class="t-marchio" href="https://avventurepluvio-test.pages.dev/"><span class="t-goccia">🌧️</span><span><b>Mappa Pluviometrica</b><small><span class="t-pc">Previsioni, radar e pioggia misurata<span class="t-it"> in tutta Italia</span> · un progetto di Avventure Micologiche</span><span class="t-tel">di Avventure Micologiche</span></small></span></a>
+    <a class="t-ytp" href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" onclick="try{gtag('event','click_youtube',{pulsante:'pagina-basilicata'})}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg><span>Iscriviti</span></a>
+  </div></div>
 </header>
+<script>(function(){var a=document.querySelector('.tB .t-striscia a.on'),f=a&&a.parentNode;if(f&&a.offsetLeft+a.offsetWidth>f.clientWidth-30)f.scrollLeft=a.offsetLeft-40;})()</script>
 <main>
+<p class="bric"><a href="https://avventurepluvio-test.pages.dev/">Mappa pluviometrica</a> › Basilicata</p>
 <h1>Pluviometria Basilicata: dove ha piovuto</h1>
 <p class="sotto"><b>Pluviometria della Basilicata</b>: i dati di oltre 60 pluviometri di MeteoHub, ieri e nell'ultimo mese, dal Pollino alle Murge lucane.</p>
 
@@ -329,68 +434,71 @@ header{position:relative;flex-wrap:nowrap;}
      alla domanda del titolo, cioe' IERI, poi le barre, poi i periodi, le zone,
      le mappe. Le spiegazioni stanno in fondo, in piccolo. -->
 <div id="attesa" style="display:none"></div>
-<div id="verdetto"><div class="verdetto"><div class="si">Domenica 25 ottobre</div><div class="gr">1,9 mm<small>di media</small></div><div class="top">Dove ha piovuto di più: <b>Irsina</b> 7,6 mm, <b>Bradano Ponte Colonna</b> 7,3 mm, <b>Forenza</b> 5,6 mm.</div><div class="dett">Media di 61 pluviometri.</div><div class="dett">I dati di ieri non sono ancora arrivati da tutte le reti: questa è l’ultima giornata intera.</div><div class="capo-btns"><a class="ieri-btn" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-25&amp;a=2026-10-25&amp;s=p" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-ieri-box'})}catch(e){}"><b>Mappa di quel giorno</b><i>→</i><small>la pioggia in tutte le località</small></a></div><div class="mk-porte"><a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;m=prev" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-previsioni'})}catch(e){}"><span>☀️</span>Previsioni</a><a href="https://avventurepluvio-test.pages.dev/basilicata/adesso/" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-radar'})}catch(e){}"><span>📡</span>Radar</a><a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;boschi=1" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-boschi'})}catch(e){}"><span>🌲</span>Boschi</a><a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;boschi=1&amp;sat=1" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-satellite'})}catch(e){}"><span>🛰</span>Satellite</a></div></div></div>
+<div id="verdetto"><div class="verdetto"><div class="si">Ieri, 2 novembre</div><div class="gr">44 mm<small>di media</small></div><div class="top">Dove ha piovuto di più: <b>S.Nicola</b> 77,8 mm, <b>Albano di Lucania</b> 76,1 mm, <b>S.Mauro Forte</b> 72,7 mm.</div><div class="dett">Media di 62 pluviometri.</div><div class="capo-btns"><a class="ieri-btn" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-11-02&amp;a=2026-11-02&amp;s=p" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-ieri-box'})}catch(e){}"><b>Apri la mappa di ieri</b><i>→</i><small>la pioggia in tutte le località</small></a></div><div class="mk-porte"><a href="https://avventurepluvio-test.pages.dev/previsioni/?r=basilicata" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-previsioni'})}catch(e){}"><span>☀️</span>Previsioni</a><a href="https://avventurepluvio-test.pages.dev/basilicata/adesso/" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-radar'})}catch(e){}"><span>📡</span>Radar piogge</a><a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;boschi=1" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-boschi'})}catch(e){}"><span>🌲</span>Mappa boschi</a><a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;boschi=1&amp;sat=1" onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-porta-satellite'})}catch(e){}"><span>🛰️</span>Boschi + satellite</a></div></div></div>
 <!-- 19/10/2026: al posto della striscia blu «Che tempo farà», il blocco meteo (lib-meteo-regione.js):
      la casella per il proprio paese, che apre la mappa delle previsioni, e le città principali. -->
 <section class="mk-meteo" id="meteo">
 <h2>Che tempo farà in Basilicata</h2>
 <div class="mk-tuo"><input type="search" autocomplete="off" aria-label="Cerca un paese o una frazione" placeholder="Il tuo paese, anche una frazione"><div class="mk-drop"></div></div>
 <div class="mk-citta"><p class="mk-attesa">Sto leggendo le previsioni delle città…</p></div>
+<h3 class="cit-tit">Previsioni meteo paese per paese</h3>
+<div class="mv"><a class="mv-c" href="https://avventurepluvio-test.pages.dev/meteo/basilicata/lagonegro/" onclick="try{gtag('event','apri_meteo_paese',{da:'pagina-basilicata'})}catch(e){}">Meteo Lagonegro</a></div>
+
 </section>
 
 <h2 id="h-grafico">La pioggia degli ultimi 30 giorni</h2>
-<div id="grafico"><div class="gg"><div class="b" title="26 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="27 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="28 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="29 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="30 settembre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="1 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="2 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="3 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="4 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="5 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="6 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="7 ottobre: 0,2 mm"><i style="height:2%"></i></div><div class="b" title="8 ottobre: 7,3 mm"><b>7,3</b><i style="height:33%"></i></div><div class="b" title="9 ottobre: 11,0 mm"><i style="height:49%"></i></div><div class="b" title="10 ottobre: 15,8 mm"><b>16</b><i style="height:70%"></i></div><div class="b" title="11 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b" title="12 ottobre: 11,8 mm"><b>12</b><i style="height:53%"></i></div><div class="b" title="13 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b" title="14 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="15 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b" title="16 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="17 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="18 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="19 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="20 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="21 ottobre: 19,3 mm"><b>19</b><i style="height:86%"></i></div><div class="b dentro" title="22 ottobre: 0,3 mm"><i style="height:2%"></i></div><div class="b dentro" title="23 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="24 ottobre: 1,9 mm"><i style="height:8%"></i></div><div class="b dentro" title="25 ottobre: 1,9 mm"><i style="height:8%"></i></div></div><div class="gg-x"><span>26/9</span><span></span><span></span><span></span><span></span><span>1/10</span><span></span><span></span><span></span><span></span><span>6/10</span><span></span><span></span><span></span><span></span><span>11/10</span><span></span><span></span><span></span><span></span><span>16/10</span><span></span><span></span><span></span><span></span><span>21/10</span><span></span><span></span><span></span><span>25/10</span></div><p class="gg-leg"><i style="background:var(--blu)"></i>ultimi 7 giorni &nbsp; <i style="background:#b9cbe2"></i>i giorni prima &nbsp;·&nbsp; media dei pluviometri della regione, in mm</p></div>
+<div id="grafico"><div class="gg"><div class="b" title="4 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="5 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="6 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="7 ottobre: 0,2 mm"><i style="height:2%"></i></div><div class="b" title="8 ottobre: 7,3 mm"><i style="height:14%"></i></div><div class="b" title="9 ottobre: 11,0 mm"><i style="height:21%"></i></div><div class="b" title="10 ottobre: 15,8 mm"><b>16</b><i style="height:31%"></i></div><div class="b" title="11 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b" title="12 ottobre: 11,8 mm"><b>12</b><i style="height:23%"></i></div><div class="b" title="13 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b" title="14 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="15 ottobre: 0,1 mm"><i style="height:2%"></i></div><div class="b" title="16 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="17 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="18 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="19 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="20 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="21 ottobre: 19,3 mm"><b>19</b><i style="height:38%"></i></div><div class="b" title="22 ottobre: 0,3 mm"><i style="height:2%"></i></div><div class="b" title="23 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b" title="24 ottobre: 1,9 mm"><i style="height:4%"></i></div><div class="b" title="25 ottobre: 1,9 mm"><i style="height:4%"></i></div><div class="b" title="26 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="27 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="28 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="29 ottobre: 0,0 mm"><i style="height:2%"></i></div><div class="b dentro" title="30 ottobre: 7,8 mm"><i style="height:15%"></i></div><div class="b dentro" title="31 ottobre: 4,7 mm"><i style="height:9%"></i></div><div class="b dentro" title="1 novembre: 6,2 mm"><i style="height:12%"></i></div><div class="b dentro" title="2 novembre: 44,2 mm"><b>44</b><i style="height:86%"></i></div></div><div class="gg-x"><span>4/10</span><span></span><span></span><span></span><span></span><span>9/10</span><span></span><span></span><span></span><span></span><span>14/10</span><span></span><span></span><span></span><span></span><span>19/10</span><span></span><span></span><span></span><span></span><span>24/10</span><span></span><span></span><span></span><span></span><span>29/10</span><span></span><span></span><span></span><span>2/11</span></div><p class="gg-leg"><i style="background:var(--blu)"></i>ultimi 7 giorni &nbsp; <i style="background:#b9cbe2"></i>i giorni prima &nbsp;·&nbsp; media dei pluviometri della regione, in mm</p></div>
 
 <h2>Dove ha piovuto di più</h2>
 <div class="griglia">
   <div class="card">
     <h3>Ultimi 7 giorni</h3>
-    <div class="numerone" id="rip7-media">23 mm <small>di media</small></div>
-    <div id="rip7-top"><ol class="top-staz"><li>Tramutola — 54,7 mm</li><li>S.Nicola — 54,4 mm</li><li>Vietri — 52,5 mm</li><li>Rotonda — 46,2 mm</li><li>Picerno — 42,8 mm</li></ol></div>
-    <p class="nota" id="rip7-date">Dal 19 al 25 ottobre.</p>
+    <div class="numerone" id="rip7-media">61 mm <small>di media</small></div>
+    <div id="rip7-top"><ol class="top-staz"><li>Albano di Lucania — 109,4 mm</li><li>S.Nicola — 107,2 mm</li><li>Vaglio di Basilicata — 104,6 mm</li><li>Tricarico — 97,3 mm</li><li>Potenza Q.A. — 92,5 mm</li></ol></div>
+    <p class="nota" id="rip7-date">Dal 27 ottobre al 2 novembre.</p>
     <!-- ⚠️ L'indirizzo scritto qui deve GIA' portare alla regione (23/8/2026):
          lo script in fondo lo riscrive con le date esatte, ma solo dopo che i
          dati sono arrivati. Il parametro g sono i giorni: la mappa li fa date. -->
-    <a class="vai" id="cta7" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-19&amp;a=2026-10-25&amp;s=p"
+    <a class="vai" id="cta7" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-27&amp;a=2026-11-02&amp;s=p"
        onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-7gg'})}catch(e){}">Apri la mappa →</a>
   </div>
   <div class="card">
     <h3>Ultimi 20 giorni</h3>
-    <div class="numerone" id="rip20-media">69 mm <small>di media</small></div>
-    <div id="rip20-top"><ol class="top-staz"><li>Lagonegro — 155,1 mm</li><li>Tramutola — 124,8 mm</li><li>Rotonda — 124,7 mm</li><li>Castelsaraceno — 113,9 mm</li><li>Castrocucco — 111,3 mm</li></ol></div>
-    <p class="nota" id="rip20-date">Dal 6 al 25 ottobre.</p>
-    <a class="vai" id="cta20" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-06&amp;a=2026-10-25&amp;s=p"
+    <div class="numerone" id="rip20-media">86 mm <small>di media</small></div>
+    <div id="rip20-top"><ol class="top-staz"><li>S.Nicola — 161,8 mm</li><li>Albano di Lucania — 124,9 mm</li><li>Potenza — 124,4 mm</li><li>Vaglio di Basilicata — 121,5 mm</li><li>Abriola a Sellata Pierfaone — 120,6 mm</li></ol></div>
+    <p class="nota" id="rip20-date">Dal 14 ottobre al 2 novembre.</p>
+    <a class="vai" id="cta20" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-14&amp;a=2026-11-02&amp;s=p"
        onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-20gg'})}catch(e){}">Apri la mappa →</a>
   </div>
   <div class="card" id="card30">
     <h3>Ultimo mese</h3>
-    <div class="numerone" id="rip30-media">69 mm <small>di media</small></div>
-    <div id="rip30-top"><ol class="top-staz"><li>Lagonegro — 155,1 mm</li><li>Tramutola — 124,8 mm</li><li>Rotonda — 124,7 mm</li><li>Castelsaraceno — 114,1 mm</li><li>Castrocucco — 111,3 mm</li></ol></div>
-    <p class="nota" id="rip30-date">Dal 26 settembre al 25 ottobre.</p>
-    <a class="vai" id="cta30" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-09-26&amp;a=2026-10-25&amp;s=p"
+    <div class="numerone" id="rip30-media">132 mm <small>di media</small></div>
+    <div id="rip30-top"><ol class="top-staz"><li>S.Nicola — 214,0 mm</li><li>Lagonegro — 187,9 mm</li><li>Tramutola — 182,8 mm</li><li>Abriola a Sellata Pierfaone — 182,0 mm</li><li>Rotonda — 170,4 mm</li></ol></div>
+    <p class="nota" id="rip30-date">Dal 4 ottobre al 2 novembre.</p>
+    <a class="vai" id="cta30" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-04&amp;a=2026-11-02&amp;s=p"
        onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-30gg'})}catch(e){}">Apri la mappa →</a>
   </div>
 </div>
 
 <h2>Mappa pluviometrica della Basilicata: guardala in dettaglio</h2>
 <div class="tasti">
-  <a class="forte" id="t1" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-25&amp;a=2026-10-25&amp;s=p"
+  <a class="forte" id="t1" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-11-02&amp;a=2026-11-02&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-1gg'})}catch(e){}">Ieri</a>
-  <a id="t7" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-19&amp;a=2026-10-25&amp;s=p"
+  <a id="t7" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-27&amp;a=2026-11-02&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-7gg'})}catch(e){}">Ultimi 7 gg</a>
-  <a id="t15" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-11&amp;a=2026-10-25&amp;s=p"
+  <a id="t15" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-19&amp;a=2026-11-02&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-15gg'})}catch(e){}">Ultimi 15 gg</a>
-  <a id="t20" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-06&amp;a=2026-10-25&amp;s=p"
+  <a id="t20" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-14&amp;a=2026-11-02&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-20gg'})}catch(e){}">Ultimi 20 gg</a>
-  <a id="t30" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-09-26&amp;a=2026-10-25&amp;s=p"
+  <a id="t30" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-04&amp;a=2026-11-02&amp;s=p"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-30gg'})}catch(e){}">Ultimi 30 gg</a>
   <a href="https://avventurepluvio-test.pages.dev/basilicata/adesso/"
-     onclick="try{gtag('event','apri_adesso',{da:'pagina-basilicata-tasto'})}catch(e){}">📡 Radar adesso</a>
-  <a class="t-prev" href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;m=prev"
+     onclick="try{gtag('event','apri_adesso',{da:'pagina-basilicata-tasto'})}catch(e){}">📡 Radar piogge</a>
+  <a class="t-prev" href="https://avventurepluvio-test.pages.dev/previsioni/?r=basilicata"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">La pioggia degli ultimi 20 giorni in Basilicata, pluviometro per pluviometro.</p>
-<a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-06&amp;a=2026-10-25&amp;s=p" id="lnk-img" style="display:block;text-decoration:none;"
+<a href="https://avventurepluvio-test.pages.dev/?r=basilicata&amp;da=2026-10-14&amp;a=2026-11-02&amp;s=p" id="lnk-img" style="display:block;text-decoration:none;"
    onclick="try{gtag('event','apri_mappa',{da:'pagina-basilicata-anteprima'})}catch(e){}">
   <img class="img-mappa" src="https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/basilicata.jpg" alt="La mappa delle piogge in Basilicata: le zone più bagnate, stazione per stazione"
        width="1600" height="1000" loading="lazy"></a>
@@ -405,6 +513,7 @@ header{position:relative;flex-wrap:nowrap;}
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
 <p>I millimetri li misurano <b>oltre 60 pluviometri di MeteoHub</b>, strumenti a terra, non stime da modello.
+Se una rete si ferma e qualche giorno è coperto da una stima, lo dice l’avviso giallo in cima alla pagina.
 I numeri in cima sono la media dei pluviometri della regione, giorno per giorno; sotto, i più bagnati di ogni periodo.
 La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>
 <h2>La pioggia in corso: la diretta radar</h2>
@@ -424,10 +533,11 @@ temperatura, vento e umidità.</p>
 
 <footer>
 <nav class="altre">
-  <div style="background:#f4fbf3;border:1px solid #cfe8cf;border-radius:9px;padding:1px 15px 11px;margin-top:16px;">
+  <p style="margin:0 0 10px">Le regioni vicine: <a href="https://avventurepluvio-test.pages.dev/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/calabria/">Calabria</a></p>
+<div style="background:#f4fbf3;border:1px solid #cfe8cf;border-radius:9px;padding:1px 15px 11px;margin-top:16px;">
     <b style="color:#2d6a30">🍄 Dove ha piovuto di più?</b>
     <p><a href="https://avventurepluvio-test.pages.dev/funghi/" style="color:#2d6a30;font-weight:600">La nostra selezione, le località più bagnate</a>
-    <span style="color:#7a8b9a">·</span> oppure il riepilogo delle regioni: <a href="https://avventurepluvio-test.pages.dev/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sardegna/">Sardegna</a></p>
+    <span style="color:#7a8b9a">·</span> oppure le pagine funghi, regione per regione: <a href="https://avventurepluvio-test.pages.dev/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/molise/">Molise</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sardegna/">Sardegna</a></p>
   </div>
 </nav>
   Dati: MeteoHub ·
@@ -515,15 +625,24 @@ temperatura, vento e umidità.</p>
     out.tasti[x[0]] = link(iso(menoDa(ultimo, x[1] - 1)), ultimo);
   });
 
+  /* ⚠️ I GIORNI A STIMA, DETTI IN CIMA (31/10/2026, controllo della scheda 103): quando una rete si ferma i suoi giorni
+     sono stime del modello (il riepilogo li segna in `stime`, il periodo piu' lungo dice da quando), e la pagina li
+     dava per misure. Stesso avviso della mappa (avvisoStime in index.html), detto per intero. Su «ieri» le stime non
+     contano proprio: se il giorno era tutto stimato il riepilogo non ha il periodo 1 e qui resta solo l'avviso. */
+  var st = (p['30'] && p['30'].stime) || (p['20'] && p['20'].stime) || (p['7'] && p['7'].stime), avviso = '';
+  var gst = st ? +st.al.split('-')[2] : 0;   // «L’8 ottobre», «Il 29 ottobre»
+  if (st) avviso = '<div class="avviso-stime">⚠️ ' + (st.dal === st.al ? (gst === 1 || gst === 8 || gst === 11 ? 'L’' : 'Il ') + lungo(st.al) + ' i pluviometri non hanno trasmesso: quel giorno è una stima del modello, non una misura.'
+    : dalAl(st.dal, st.al) + ' i pluviometri non hanno trasmesso: quei giorni sono stime del modello, non misure.') + '</div>';
+
   // ── IERI, in cima: la risposta alla domanda del titolo ──
   var d = p['1'];
-  if (!d || !d.giorni) out.verdetto = '';
+  if (!d || !d.giorni) out.verdetto = avviso;
   else {
     var t = nomeGiorno(d.ultimo), top = (d.top || []).filter(function (s) { return s.mm >= 1; }).slice(0, 3), dett;
     if (top.length) dett = 'Dove ha piovuto di più: ' + top.map(function (s) { return '<b>' + esc(s.n) + '</b> ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm'; }).join(', ') + '.';
     else if (d.top && d.top.length && d.top[0].mm > 0) dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm ' + (/^[aA]/.test(d.top[0].n) ? 'ad ' : 'a ') + esc(d.top[0].n) + (/\.$/.test(d.top[0].n) ? '' : '.');   // «T.P.» non prende un altro punto (18/10/2026)
     else dett = 'Giornata asciutta: nessun pluviometro ha misurato pioggia.';
-    out.verdetto = '<div class="verdetto">'
+    out.verdetto = avviso + '<div class="verdetto">'
       + '<div class="si">' + (t === 'Ieri' ? 'Ieri, ' + lungo(d.ultimo) : t) + '</div>'
       + '<div class="gr">' + mediaMm(d) + ' mm<small>di media</small></div>'
       + '<div class="top">' + dett + '</div>'
@@ -539,10 +658,11 @@ temperatura, vento e umidità.</p>
       // 19/10/2026 (lib-meteo-regione.js): sotto «Apri la mappa di ieri» le altre funzioni della mappa. Il Radar
       // porta alla pagina «adesso», che c'e' per le regioni italiane; per le estere apre la diretta radar.
       + '<div class="mk-porte">'
-      + [['☀️', 'Previsioni', SITO + '/?r=' + K + '&amp;m=prev', 'porta-previsioni'],
-         ['📡', 'Radar', ['svizzera', 'austria', 'slovenia'].indexOf(K) >= 0 ? SITO + '/?r=' + K + '&amp;radar=ora' : SITO + '/' + K + '/adesso/', 'porta-radar'],
-         ['🌲', 'Boschi', SITO + '/?r=' + K + '&amp;boschi=1', 'porta-boschi'],
-         ['🛰', 'Satellite', SITO + '/?r=' + K + '&amp;boschi=1&amp;sat=1', 'porta-satellite']].map(function (t) {
+      // 28/10/2026: i nomi dei bottoni delle pagine meteo («Radar piogge», «Mappa boschi», «Boschi + satellite»)
+      + [['☀️', 'Previsioni', SITO + '/previsioni/?r=' + K, 'porta-previsioni'],
+         ['📡', 'Radar piogge', ['svizzera', 'austria', 'slovenia'].indexOf(K) >= 0 ? SITO + '/?r=' + K + '&amp;radar=ora' : SITO + '/' + K + '/adesso/', 'porta-radar'],
+         ['🌲', 'Mappa boschi', SITO + '/?r=' + K + '&amp;boschi=1', 'porta-boschi'],
+         ['🛰️', 'Boschi + satellite', SITO + '/?r=' + K + '&amp;boschi=1&amp;sat=1', 'porta-satellite']].map(function (t) {
           return '<a href="' + t[2] + '" onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'pagina-' + K + '-' + t[3] + '\'})}catch(e){}"><span>' + t[0] + '</span>' + t[1] + '</a>';
         }).join('') + '</div></div>';
   }
@@ -744,6 +864,11 @@ temperatura, vento e umidità.</p>
   function nomeReg(k) { return { valledaosta: "Valle d'Aosta", altoadige: 'Alto Adige', emilia: 'Emilia-Romagna', friuli: 'Friuli' }[k] || (k.charAt(0).toUpperCase() + k.slice(1)); }
   function pl(x) { return '&pl=' + (+x.lat).toFixed(4) + ',' + (+x.lon).toFixed(4) + '&pn=' + encodeURIComponent(x.n) + (x.z ? '&pz=1' : ''); }
   function vai(url, da) { ga(da); setTimeout(function () { location.href = url; }, 120); }
+  /* I CAPOLUOGHI DI PROVINCIA PRIMA DEGLI ALTRI PAESI nella tabella delle citta' (28/10/2026, suo: «è più importante
+     Savona di Millesimo», «in tutte le pagine»): la lista di lib-capoluoghi.js (CAPI), scritta come la normalizza norm().
+     In fondo a questo file un controllo ferma il generatore se le due liste non sono uguali. */
+  var CAPI = '|torino|alessandria|asti|biella|cuneo|novara|verbania|vercelli|aosta|milano|bergamo|brescia|como|cremona|lecco|lodi|mantova|monza|pavia|sondrio|varese|trento|bolzano|venezia|belluno|padova|rovigo|treviso|verona|vicenza|trieste|gorizia|pordenone|udine|genova|imperia|la spezia|savona|bologna|ferrara|forli|cesena|modena|parma|piacenza|ravenna|reggio emilia|reggio nell emilia|rimini|firenze|arezzo|grosseto|livorno|lucca|massa|carrara|pisa|pistoia|prato|siena|perugia|terni|ancona|ascoli piceno|fermo|macerata|pesaro|urbino|roma|frosinone|latina|rieti|viterbo|l aquila|chieti|pescara|teramo|campobasso|isernia|napoli|avellino|benevento|caserta|salerno|bari|barletta|andria|trani|brindisi|foggia|lecce|taranto|potenza|matera|catanzaro|cosenza|crotone|reggio calabria|reggio di calabria|vibo valentia|palermo|agrigento|caltanissetta|catania|enna|messina|ragusa|siracusa|trapani|cagliari|sassari|nuoro|oristano|carbonia|iglesias|olbia|tempio pausania|tortoli|lanusei|sanluri|villacidro|';
+  function capo(n) { return CAPI.indexOf('|' + norm(n) + '|') >= 0 ? 1 : 0; }
 
   /* ── l'elenco dei comuni e le frazioni ── */
   var ELENCO = null, IN_ARRIVO = null;
@@ -775,7 +900,7 @@ temperatura, vento e umidità.</p>
     'Marche': 'marche', 'Lazio': 'lazio', 'Abruzzo': 'abruzzo', 'Molise': 'molise', 'Campania': 'campania', 'Puglia': 'puglia',
     'Basilicata': 'basilicata', 'Calabria': 'calabria', 'Sicilia': 'sicilia', 'Sardegna': 'sardegna' };
   function frazioni(testo) {
-    // dal 25/10/2026 /api/cerca (GeoNames servito dal sito) al posto di Open-Meteo, stessa forma della risposta
+    // dal 25/10/2026 /api/cerca (GeoNames servito dal sito) al posto del geocoder di prima, stessa forma della risposta
     return fetch(API.replace('/api/previsioni', '/api/cerca') + '?name=' + encodeURIComponent(testo) + '&count=10&language=it&countryCode=IT')
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (j) {   // un 429 non e' «nessun posto» (settimo check, bug 8)
         var visti = {};
@@ -825,13 +950,16 @@ temperatura, vento e umidità.</p>
     drop.addEventListener('click', function (e) { var r = e.target.closest('.mk-r'); if (r) { var x = righe[+r.getAttribute('data-i')]; inp.value = x.n; scelto(x); } });
     document.addEventListener('click', function (e) { if (!inp.parentNode.contains(e.target)) drop.classList.remove('on'); });
   }
+  /* le sei porte come i sei bottoni delle pagine meteo (porte() di genera-pagine-meteo-zona.js, 28/10/2026, suo): via
+     «Temperature» («sono quelle di ieri»), al suo posto la pioggia a 30 giorni accanto a quella a 7; «Mappa boschi» e
+     «Boschi + satellite» al posto di «Boschi» e «Satellite», «Radar piogge» al posto di «Radar adesso» */
   function seiPorte(x) {
-    return [['☀️', 'Previsioni', '7 giorni, ora per ora', '/?r=' + x.reg + '&m=prev' + pl(x), 'previsioni'],
-            ['💧', 'Pioggia caduta', 'ieri, 7 e 30 giorni', '/?r=' + x.reg + '&g=7' + pl(x), 'pioggia'],
-            ['📡', 'Radar adesso', 'la pioggia in corso', '/?r=' + x.reg + '&radar=ora' + pl(x), 'radar'],
-            ['🌡', 'Temperature', 'minime e massime', '/?r=' + x.reg + '&g=1&tq=1' + pl(x), 'temperature'],
-            ['🌲', 'Boschi', "che bosco c'è, a che quota", '/?r=' + x.reg + '&boschi=1' + pl(x), 'boschi'],
-            ['🛰', 'Satellite', "la foto dall'alto", '/?r=' + x.reg + '&boschi=1&sat=1' + pl(x), 'satellite']];
+    return [['☀️', 'Previsioni', '7 giorni, ora per ora', '/previsioni/?r=' + x.reg + pl(x), 'previsioni'],
+            ['💧', 'Pioggia caduta', 'ultimi 7 giorni', '/?r=' + x.reg + '&g=7' + pl(x), 'pioggia'],
+            ['💧', 'Pioggia caduta', 'ultimi 30 giorni', '/?r=' + x.reg + '&g=30' + pl(x), 'pioggia-30'],
+            ['📡', 'Radar piogge', 'la pioggia in corso', '/?r=' + x.reg + '&radar=ora' + pl(x), 'radar'],
+            ['🌲', 'Mappa boschi', "che bosco c'è, a che quota", '/?r=' + x.reg + '&boschi=1' + pl(x), 'boschi'],
+            ['🛰️', 'Boschi + satellite', "la foto dall'alto", '/?r=' + x.reg + '&boschi=1&sat=1' + pl(x), 'satellite']];
   }
 
   /* ═══ 1. IL CERCA NELL'INTESTAZIONE ═══ */
@@ -842,8 +970,9 @@ temperatura, vento e umidità.</p>
     hbox.appendChild(hinp); hbox.appendChild(hdrop);
     var lente = el('button', 'mk-lente', '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>');
     lente.setAttribute('aria-label', 'Cerca un paese');
-    var yt = header.querySelector('.yt');
-    header.insertBefore(hbox, yt); header.insertBefore(lente, yt);
+    // la testata nuova (lib-testata.js, 28/10/2026): casella e lente nella fascia bianca, prima di Iscriviti
+    var yt = header.querySelector('.t-ytp') || header.querySelector('.yt'), hdove = yt ? yt.parentNode : header;
+    hdove.insertBefore(hbox, yt); hdove.insertBefore(lente, yt);
     lente.addEventListener('click', function (e) { e.stopPropagation(); header.classList.add('mk-aperto'); hinp.focus(); });
     document.addEventListener('click', function (e) { if (!hbox.contains(e.target) && !hinp.value) header.classList.remove('mk-aperto'); });
     casella(hinp, hdrop, function (x) {
@@ -857,7 +986,7 @@ temperatura, vento e umidità.</p>
   /* ═══ 3. «CHE TEMPO FARÀ»: la casella e le citta' ═══ */
   var blocco = document.getElementById(OPZ.id || 'meteo');
   var tuo = blocco && blocco.querySelector('.mk-tuo input');
-  if (tuo) casella(tuo, blocco.querySelector('.mk-tuo .mk-drop'), function (x) { tuo.blur(); vai(SITO + '/?r=' + x.reg + '&m=prev' + pl(x), 'cerca-meteo'); });
+  if (tuo) casella(tuo, blocco.querySelector('.mk-tuo .mk-drop'), function (x) { tuo.blur(); vai(SITO + '/previsioni/?r=' + x.reg + pl(x), 'cerca-meteo'); });
   var bosco = OPZ.boschi && document.getElementById(OPZ.boschi), bin = bosco && bosco.querySelector('.mk-tuo input');
   if (bin) casella(bin, bosco.querySelector('.mk-tuo .mk-drop'), function (x) { bin.blur(); vai(SITO + '/?r=' + x.reg + '&boschi=1' + pl(x), 'cerca-boschi'); });
   function disegnaCitta(j) {
@@ -869,7 +998,7 @@ temperatura, vento e umidità.</p>
          (bug 4) il bottone del radar resta anche senza previsioni: e' proprio quando serve. */
       var rg = OPZ.primi ? PRIMO : K, lp = document.querySelector('main a[href*="pl="]');
       var pq = lp ? (lp.getAttribute('href').match(/[?&](pl=[^&]+&pn=[^&]+(?:&pz=1)?)/) || [])[1] : '';
-      var mp = SITO + '/?' + (rg ? 'r=' + rg + '&' : '') + 'm=prev' + (pq ? '&' + pq : '');
+      var mp = SITO + '/previsioni/' + ((rg ? '&r=' + rg : '') + (pq ? '&' + pq : '')).replace('&', '?');
       var rl = document.querySelector('main a[href*="radar=ora"]');
       var rr = rl ? rl.getAttribute('href') : ADESSO ? SITO + '/' + K + '/adesso/' : OPZ.primi && PRIMO ? SITO + '/?r=' + PRIMO + '&radar=ora' : '';
       box.innerHTML = '<p class="mk-attesa">' + (OPZ.guasto || 'Le previsioni delle città') + ' non rispondono in questo momento: <a href="' + esc(mp) + '">guardale sulla mappa</a>.</p>'
@@ -877,14 +1006,15 @@ temperatura, vento e umidità.</p>
           + '<span class="mk-ic">📡</span><span><b>Dove sta piovendo adesso</b><small>guarda il radar piogge</small></span><span class="mk-fr">→</span></a>' : '');
       return;
     }
-    // prima il capoluogo di regione, poi per abitanti (dall'elenco dei comuni): Prato e Pisa prima di Manciano
+    // prima il capoluogo di regione, poi quelli di provincia (28/10/2026: Imperia prima di Sanremo), poi per abitanti
+    // (dall'elenco dei comuni): Prato e Pisa prima di Manciano
     var ab = {}; (ELENCO || []).forEach(function (x) { if (x.reg === K && !x.z) ab[x.q] = x.pop; });
-    if (!OPZ.area && !OPZ.primi) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
+    if (!OPZ.area && !OPZ.primi) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || capo(b.n) - capo(a.n) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
     var g0 = cc[0].giorni;
-    var conPc = cc.some(function (c) { return c.giorni.slice(0, 3).some(function (g) { return g.pc != null; }); });   // Open-Meteo giu': niente righe vuote
+    var conPc = cc.some(function (c) { return c.giorni.slice(0, 3).some(function (g) { return g.pc != null; }); });   // % di pioggia assente: niente righe vuote
     var testa = '<div class="mk-cr mk-cr-t"><span></span>' + [0, 1, 2].map(function (d) { return '<span>' + nomeG(g0[d].g, d) + '</span>'; }).join('') + '</div>';
     var righe = cc.map(function (c, i) {
-      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + (c.r || K) + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : c.sotto ? '<small>' + esc(c.sotto) + '</small>' : '') + '</b>'
+      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/previsioni/?r=' + (c.r || K) + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : c.sotto ? '<small>' + esc(c.sotto) + '</small>' : '') + '</b>'
         + [0, 1, 2].map(function (d) { var g = c.giorni[d]; return '<span><i>' + icona(g.s) + '</i>' + g.mx + '°'
           + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '')
           // la % di pioggia del giorno, la piu' alta delle sue ore (la Function con &pr=1, 25/10/2026)
@@ -1038,14 +1168,18 @@ temperatura, vento e umidità.</p>
     var s = 256 * Math.pow(2, z), sy = Math.sin(lat * Math.PI / 180);
     return [(lon + 180) / 360 * s, (0.5 - Math.log((1 + sy) / (1 - sy)) / (4 * Math.PI)) * s];
   }
-  function ritaglia(a, g) {
+  function ritaglia(a0, g) {
+    // la cartina sta nella parte di sopra del riquadro (i.mk-img, 28/10/2026: l'etichetta e' sotto)
+    var a = a0.querySelector('i.mk-img') || a0;
     // ⚠️ la pagina disegna la scheda mentre e' ancora nascosta (riquadri larghi 0): si riprova finche' ha una misura
     var j = g.j, tw = a.clientWidth, th = a.clientHeight;
-    if (!tw || !th) { a._prove = (a._prove || 0) + 1; if (a._prove < 50) setTimeout(function () { ritaglia(a, g); }, 200); return; }
+    if (!tw || !th) { a._prove = (a._prove || 0) + 1; if (a._prove < 50) setTimeout(function () { ritaglia(a0, g); }, 200); return; }
     var k, cx, cy, p;
     if (OPZ.tipo === 'regione' && j.reg) {
       var nw = proj(j.reg.n, j.reg.w, j.z), se = proj(j.reg.s, j.reg.e, j.z);
       k = tw / Math.max(1, se[0] - nw[0]);
+      // (1/11/2026) i riquadri sono alti: la regione ci sta INTERA, anche in altezza (la Calabria era a meta')
+      k = 0.94 * Math.min(k, th / Math.max(1, se[1] - nw[1]));
       cx = (nw[0] + se[0]) / 2 - j.x0; cy = (nw[1] + se[1]) / 2 - j.y0;
     } else if (OPZ.lat == null) {   // regione senza confine nel JSON: il centro dell'immagine
       k = tw / j.w; cx = j.w / 2; cy = j.h / 2;
@@ -1069,7 +1203,7 @@ temperatura, vento e umidità.</p>
   }
   function carica(tipo, base) {
     if (geo[tipo]) return geo[tipo];
-    var f = OPZ.reg + (tipo === 'ieri' ? '-ieri' : '-mappa');
+    var f = OPZ.reg + (tipo === 'ieri' ? '-ieri' : tipo === '7g' ? '-7g' : '-mappa');
     geo[tipo] = fetch(base + f + '.json').then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (j) { return { j: j, url: base + f + '.webp' + (j.generato ? '?v=' + encodeURIComponent(j.generato.slice(0, 13)) : '') }; })
       .catch(function () { return null; });
@@ -1087,30 +1221,54 @@ temperatura, vento e umidità.</p>
        resta; modo 'bottone': il bottone stesso diventa la mappa, con la sua scritta sopra l'immagine. */
     if (OPZ.ieri) {
       var tit = vecchio.querySelector('b'), sot = vecchio.querySelector('small');
-      d.className = 'mk-str mk-ieri' + (OPZ.modo === 'sopra' ? '' : ' mk-grande') + COL;
-      d.innerHTML = '<a href="' + vecchio.getAttribute('href') + '" data-t="ieri" class="mk-uno"><span>' + (OPZ.modo === 'sopra'
+      d.className = 'mk-str mk-ieri' + COL;   // 2/11/2026: via « mk-grande», classe senza CSS (check 9)
+      d.innerHTML = '<a href="' + vecchio.getAttribute('href') + '" data-t="ieri" class="mk-uno"><i class="mk-img"></i><span>' + (OPZ.modo === 'sopra'
         ? '<b>💧 Guarda la pioggia di ieri</b><small>località per località →</small>'
         : '<b>' + (tit ? tit.textContent : 'Apri la mappa di ieri') + ' →</b><small>' + (sot ? sot.textContent : '') + '</small>') + '</span></a>';
       btns.setAttribute('data-str', '1');
       if (OPZ.modo === 'sopra') btns.parentNode.insertBefore(d, btns); else btns.parentNode.replaceChild(d, btns);
       var a1 = d.querySelector('a');
-      a1.addEventListener('click', function () { ga('ieri'); });
+      a1.addEventListener('click', function () { ga(a1.getAttribute('data-t')); });
       /* ⚠️ L'IMMAGINE DEVE ESSERE DEL GIORNO DEL BOTTONE (21/10/2026, ottavo check, bug 2): se lo scatto di ieri fallisce
          (o GitHub salta il giro) sul ramo resta quella dell'altroieri, che usciva sotto «Ieri» senza nessun avviso.
          Se la data del JSON non e' quella del link (da=) l'immagine non si mette: il riquadro resta blu con la scritta,
          come quando manca. */
       var daL = (vecchio.getAttribute('href').match(/[?&]da=(\d{4}-\d\d-\d\d)/) || [])[1];
-      carica('ieri', PIOGGIA).then(function (g) { if (g && (!daL || !g.j.da || g.j.da === daL)) { a1._g = g; ritaglia(a1, g); } });
+      /* ⚠️ LA CARTINA DEGLI ULTIMI 7 GIORNI (1/11/2026, suo: «la scritta va bene la pioggia di ieri e la mappa ultimi 7
+         giorni»). La scheda resta su ieri (e' la risposta alla ricerca), la cartina e' quella dei 7 giorni (<reg>-7g, che
+         genera-anteprime.js scatta per tutte le regioni): nei giorni asciutti quella di ieri era solo cartina e pallini
+         bianchi. Il riquadro porta alla mappa dei 7 giorni (il link #cta7 della pagina) e lo dice. Se lo scatto dei 7
+         giorni manca o non finisce a ieri, resta la cartina di ieri come prima. */
+      /* ⚠️ E SOTTO, IL BOTTONE GIALLO «OPPURE GUARDA LA PIOGGIA DI IERI» (1/11/2026, suo: «il tasto dentro la mappa 7 gg va
+         bene e poi tasto giallo orizzontale sotto la mappa»). La pillola sulla cartina dice quanti giorni si guardano, il
+         bottone porta alla mappa di ieri (il link del vecchio «Apri la mappa di ieri»). Si mettono SUBITO, senza aspettare
+         il JSON, cosi' la pagina non salta di 50 px quando arriva; se la cartina dei 7 giorni manca si torna a com'era
+         (pillola di ieri, niente bottone: direbbe la stessa cosa due volte). */
+      var c7 = OPZ.modo === 'sopra' ? null : document.getElementById('cta7'), sp = a1.querySelector('span'), ieriHtml = sp.innerHTML, opp = null;
+      if (c7) {
+        a1.setAttribute('href', c7.getAttribute('href')); a1.setAttribute('data-t', '7giorni');
+        sp.innerHTML = '<b>💧 Pioggia degli ultimi 7 giorni<em> · apri la mappa</em> →</b>';
+        opp = document.createElement('a'); opp.className = 'mk-oppure'; opp.href = vecchio.getAttribute('href');
+        opp.textContent = 'Oppure guarda la pioggia di ieri →';
+        opp.addEventListener('click', function () { ga('ieri'); });
+        d.parentNode.insertBefore(opp, d.nextSibling);
+      }
+      carica('7g', PIOGGIA).then(function (g7) {
+        if (g7 && c7 && (!daL || !g7.j.a || g7.j.a === daL)) { a1._g = g7; ritaglia(a1, g7); return; }
+        if (opp) { opp.parentNode.removeChild(opp); a1.setAttribute('href', vecchio.getAttribute('href')); a1.setAttribute('data-t', 'ieri'); sp.innerHTML = ieriHtml; }
+        carica('ieri', PIOGGIA).then(function (g) { if (g && (!daL || !g.j.da || g.j.da === daL)) { a1._g = g; ritaglia(a1, g); } });
+      });
       return;
     }
     // (21/10/2026, ottavo check, bug 9) solo il bottone NORMALE diventa la striscia: «Vedi i vicini sulla mappa» (pluviometro
     // sospeso, millimetri sbagliati) resta com'e', se no sopra la pagina che lo dice invitava a «guardare la pioggia»
     if (vecchio.textContent.replace(/\s+/g, ' ').trim() !== 'Vedi sulla mappa') return;
+    d.className = 'mk-str mk-grandi' + COL;   // i due riquadri grandi (1/11/2026)
     var b = document.querySelector('main a[href*="boschi=1"]:not([href*="sat=1"])');
     // le scritte (20/10/2026, suo: «scriviamo qualcosa in più che incentivi il click»): una riga corta che invita
     // e una piccola sotto; tre alternative messe a confronto in localhost, questa e' la 1
-    d.innerHTML = '<a href="' + vecchio.getAttribute('href') + '" data-t="pioggia"' + (b ? '' : ' class="mk-uno"') + '><span><b>💧 Guarda la pioggia</b><small>ultimi 20 giorni →</small></span></a>'
-      + (b ? '<a href="' + b.getAttribute('href') + '" data-t="boschi"><span><b>🌲 Guarda i boschi</b><small>tipo per tipo →</small></span></a>' : '');
+    d.innerHTML = '<a href="' + vecchio.getAttribute('href') + '" data-t="pioggia"' + (b ? '' : ' class="mk-uno"') + '><i class="mk-img"></i><span><b>💧 Pioggia 20 giorni →</b></span></a>'
+      + (b ? '<a href="' + b.getAttribute('href') + '" data-t="boschi"><i class="mk-img"></i><span><b>🌲 Boschi, tipo per tipo →</b></span></a>' : '');
     btns.setAttribute('data-str', '1');
     btns.parentNode.replaceChild(d, btns);
     [].forEach.call(d.querySelectorAll('a'), function (a) {

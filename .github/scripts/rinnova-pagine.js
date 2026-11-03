@@ -14,9 +14,11 @@
  * le pagine nuove vanno online col giro pagine-regione.yml del mattino dopo, che
  * pubblica tutto main (ottavo check, punto C, 21/10/2026), o subito con
  * `node cloudflare-pages\pubblica-pages.js` lanciato a mano dal PC. Gira
- * **quattro volte l'anno e non ogni notte**, e i millimetri di ieri restano nel javascript.
+ * **una volta al mese (dal 2 al 6, una volta sola, dal 2/11/2026; prima solo il 2; fino al 31/10 quattro volte l'anno)
+ * e non ogni notte**, e i millimetri di
+ * ieri restano nel javascript.
  *
- * ⚠️ NON TOCCA LE 23 PAGINE REGIONE NE' LE 19 FUNGHI. Quelle il ritratto non
+ * ⚠️ NON TOCCA LE 22 PAGINE REGIONE NE' LE 19 FUNGHI. Quelle il ritratto non
  * ce l'hanno: rigenerarle non cambierebbe un byte, e la loro data in
  * `pagine-lastmod.json` deve restare quella vera dell'ultima modifica.
  * (`genera-pagine-funghi.js` viene comunque lanciato, perche' le pagine di

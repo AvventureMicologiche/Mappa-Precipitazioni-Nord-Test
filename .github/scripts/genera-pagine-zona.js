@@ -54,11 +54,13 @@ const { perLink } = require('./lib-vicine.js');
 const { scriviSitemap } = require('./genera-sitemap.js');
 const { haBoschi, cartaBreve, cartaDi, fonteDa } = require('./lib-boschi.js');
 const { STRISCIA_CSS, strisciaScript } = require('./lib-striscia.js');   // la mappa nella scheda in cima (20/10/2026)
+const { senzaCommenti } = require('./lib-senza-commenti.js');   // i commenti restano qui, non nelle pagine (2/11/2026)
+const { TESTATA_CSS, TESTATA_CSS_FUNGHI, testata } = require('./lib-testata.js');   // la testata del sito (28/10/2026)
 // Il ritratto dell'archivio, cotto dentro la pagina: il perche' sta in cima
 // a lib-clima.js. Qui e' di zona, cioe' la media dei suoi pluviometri.
 const { clima, buono, dataBella, meseBello, migliaia, virgola, artGiorno, aNome } = require('./lib-clima.js');
 // 24/9/2026: grafica e codice di pagina comuni con le pagine di regione
-const { STILE_NUOVO, JS_COMUNE, JS_AGGIORNATO, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz, stileDelModello } = require('./lib-pagina-funghi.js');
+const { STILE_NUOVO, JS_COMUNE, JS_AGGIORNATO, JS_STIME, RILIEVO, QUIZ_REGIONI, QUIZ_CSS, coppiaQuiz, stileDelModello } = require('./lib-pagina-funghi.js');
 // ⚠️ CAMPIONE 20/10/2026 (Garfagnana, solo in locale): come le zone piogge, piu' «Trova i boschi» (sua idea). Stesso
 // codice nel browser (lib-meteo-regione.js) con le opzioni dei funghi: blocco meteo con un altro id (#meteo qui e' il
 // grafico delle temperature) e NIENTE giorni previsti nel grafico dei funghi (regola: niente previsioni di crescita).
@@ -93,6 +95,9 @@ function pagina(z) {
   const zslug = slug(z.n);
   const { ids, regDi: REG_DI } = postiDellaZona(POSTI, z);   // senza doppioni
   const SLUG_DI = id => SLUG_REG[REG_DI[id]][id];
+  // ⚠️ QUANTI PLUVIOMETRI SI DICHIARANO (1/11/2026, scheda 105 bis): senza gli esclusi dalla mappa, che la media gia'
+  // non contava. In tabella restano col trattino (17/10/2026). Prima la Riviera di Levante diceva 3 con la media su 2.
+  const nAttivi = ids.filter(id => { const pp = POSTI[REG_DI[id]].find(x => x[0] === id) || [id]; return !escluso(ESCLUSE, regioneDati(REG_DI[id], pp), pp); }).length;
   const regioni = [...new Set(ids.map(id => REG_DI[id]))];
   const casa = REGIONI.find(x => x.k === z.reg) || REGIONI.find(x => x.k === regioni[0]);
   const nomeReg = casa.nomeTitolo || casa.nome;
@@ -122,20 +127,30 @@ function pagina(z) {
   // di stagione sotto il titolo (lib-stagione.js). Tetto 62 caratteri.
   // ⚠️ 24/9/2026: «stanno nascendo?» in coda, come sulle pagine di paese.
   // Davanti resta «Funghi <zona> oggi», la forma delle ricerche vere.
+  // ⚠️ 31/10/2026 (scheda 104 bis, suo «tutte e sei»): «METEO FUNGHI» IN TESTA,
+  // come sulle pagine di paese. Search Console 3-30/10: «meteo funghi <zona>»
+  // 1.131 viste in posizione 8,9, mentre le ricerche con «oggi» stanno a 5,3.
+  // «Meteo funghi Garfagnana oggi» tiene dentro anche «funghi garfagnana oggi».
+  // ⚠️ Val Clarea e Alpe di Poti sono anche pagine di paese con lo stesso nome: li' la zona tiene
+  // «Funghi in Val Clarea oggi», se no i due titoli sarebbero identici parola per parola.
+  const OMONIMA = Object.values(SLUG_REG).some(m => Object.values(m).includes(zslug));
   const TITOLO = [
+    ...(OMONIMA ? [] : ['Meteo funghi ' + z.n + ' oggi: stanno nascendo?']),
     'Funghi ' + z.dove + ' oggi: stanno nascendo?',
+    ...(OMONIMA ? [] : ['Meteo funghi ' + z.n + ' oggi']),
     'Funghi ' + z.dove + ' oggi',
   ].find(t => t.length <= 62) || ('Funghi ' + z.dove).slice(0, 62);
+  const H1 = (OMONIMA ? 'Funghi ' + z.dove : 'Meteo funghi ' + z.n) + ' oggi: stanno nascendo?';   // come il titolo intero
   // ⚠️ 26/9/2026: «METEO FUNGHI» E «CRESCITA» (Search Console: le ricerche
   // sono «funghi X oggi», «meteo funghi X», «crescita funghi X»; il titolo
-  // copre solo la prima). Il titolo non si tocca, lo ha deciso lui: le altre
-  // due forme vanno nella descrizione e nella riga sotto il titolo. Nella
-  // descrizione niente millimetri: la pagina si rigenera ogni tre mesi e un
-  // numero cotto qui sarebbe vecchio; il verdetto lo scrive il browser.
+  // copriva solo la prima). Nella descrizione niente millimetri: la pagina si
+  // rigenera ogni tre mesi e un numero cotto qui sarebbe vecchio; il verdetto
+  // lo scrive il browser. Dal 31/10 «meteo funghi» sta nel titolo e la
+  // descrizione comincia con «Crescita funghi».
   const DESCR = [
-    'Meteo funghi ' + z.n + ': quanta pioggia è caduta negli ultimi 20 giorni, da ' + ids.length + ' pluviometri da bosco, e il verdetto per la crescita dei funghi. Aggiornato ogni mattina.',
-    'Meteo funghi ' + z.n + ': la pioggia degli ultimi 20 giorni da ' + ids.length + ' pluviometri da bosco e il verdetto per la crescita dei funghi.',
-    'Meteo funghi ' + z.n + ': la pioggia degli ultimi 20 giorni e il verdetto per la crescita dei funghi.',
+    'Crescita funghi ' + z.dove + ': quanta pioggia è caduta negli ultimi 20 giorni, da ' + nAttivi + ' pluviometri da bosco, e il verdetto per i funghi. Aggiornato ogni mattina.',
+    'Crescita funghi ' + z.dove + ': la pioggia degli ultimi 20 giorni da ' + nAttivi + ' pluviometri da bosco e il verdetto per i funghi.',
+    'Crescita funghi ' + z.dove + ': la pioggia degli ultimi 20 giorni e il verdetto per i funghi.',
   ].find(t => t.length <= 158) || ('Funghi ' + z.dove + ' oggi: le piogge degli ultimi 25 giorni.');
 
   const modello = path.join(RADICE, 'funghi', casa.k, 'index.html');
@@ -222,11 +237,13 @@ function pagina(z) {
 <meta name="description" content="${esc(DESCR)}">
 <link rel="canonical" href="${SITO}/funghi/zone/${zslug}/">
 <meta property="og:title" content="Funghi ${esc(z.dove)} oggi: stanno nascendo?">
-<meta property="og:description" content="Le piogge degli ultimi 25 giorni, misurate dai pluviometri nelle zone da bosco.">
+<meta property="og:description" content="${esc(DESCR)}">
 <meta property="og:image" content="${SITO}/preview.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:url" content="${SITO}/funghi/zone/${zslug}/">
 <meta property="og:type" content="website">
 ${briciolaJson([
+  ['Mappa pluviometrica', SITO + '/'],
   ['Piogge per funghi', SITO + '/funghi/'],
   [nomeReg, SITO + '/funghi/' + casa.k + '/'],
   [z.n, null],
@@ -247,21 +264,17 @@ nav.altre a{color:var(--blu);}
 ${RILIEVO}${QUIZ_REGIONI[casa.k] ? QUIZ_CSS : ''}${METEO_CSS}${STRISCIA_CSS}
 #mk-meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
 #mk-meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
-</style>
+${TESTATA_CSS}${TESTATA_CSS_FUNGHI}</style>
 </head>
 <body>
 
-<header>
-  <a href="${SITO}/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
-  <a class="yt" href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener"
-     onclick="try{gtag('event','click_youtube',{pulsante:'zona-${casa.k}'})}catch(e){}">▶ <span class="yt-l">Canale </span>YouTube</a>
-</header>
+${testata({ sito: SITO, canale: CANALE + '?sub_confirmation=1', reg: casa.k, ga: 'zona-' + casa.k, attiva: '' })}
 
 <main>
-<p class="nota" style="margin-bottom:6px"><a href="${SITO}/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="${SITO}/funghi/${casa.k}/" style="color:var(--blu)">${esc(nomeReg)}</a></p>
+<p class="bric" style="font-size:14px;color:#666;margin-bottom:6px"><a href="${SITO}/" style="color:var(--blu)">Mappa pluviometrica</a> › <a href="${SITO}/funghi/" style="color:var(--blu)">Piogge per funghi</a> › <a href="${SITO}/funghi/${casa.k}/" style="color:var(--blu)">${esc(nomeReg)}</a> › ${esc(z.n)}</p>
 
-<h1>Funghi ${esc(z.dove)} oggi: stanno nascendo?</h1>
-<p class="breve" style="margin-top:-2px">Meteo funghi ${esc(z.n)}: la pioggia vera ${ids.length > 1 ? 'di ' + ids.length + ' pluviometri da bosco' : 'del pluviometro'}, per capire la crescita dei funghi.</p>
+<h1>${esc(H1)}</h1>
+<p class="breve" style="margin-top:-2px">Crescita funghi ${esc(z.dove)}: la pioggia vera ${nAttivi > 1 ? 'di ' + nAttivi + ' pluviometri da bosco' : 'del pluviometro'}, per capire se stanno nascendo.</p>
 ${rigaStagione()}
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
@@ -287,8 +300,8 @@ ${meteoHtml(casa, `Che tempo farà ${esc(z.dove)}`, 'Sto leggendo le previsioni 
   <a href="${SITO}/?r=${REGS}&amp;g=30&amp;${PIN_A}">Ultimi 30 gg</a>
   <a class="forte" id="t-conta" href="${SITO}/?r=${REGS}&amp;g=20&amp;${PIN_A}">Range crescita funghi 13-20 gg fa</a>
   <a class="t-radar" href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;radar=ora"
-     onclick="try{gtag('event','apri_mappa',{da:'zona-${zslug}-radar'})}catch(e){}">📡 Radar adesso</a>
-  <a class="t-radar t-prev" href="${SITO}/?r=${casa.k}&amp;${PIN}&amp;m=prev"
+     onclick="try{gtag('event','apri_mappa',{da:'zona-${zslug}-radar'})}catch(e){}">📡 Radar piogge</a>
+  <a class="t-radar t-prev" href="${SITO}/previsioni/?r=${casa.k}&amp;${PIN}"
      onclick="try{gtag('event','apri_mappa',{da:'zona-${zslug}-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">Ogni pallino è un pluviometro: cerca quello più bagnato vicino ai tuoi boschi.</p>
@@ -316,11 +329,16 @@ ${haBoschi(casa.k) ? `<h2>Che boschi ci sono nella zona</h2>
   <span class="vai-mappa">🌲 Guarda i boschi ${esc(z.dove)}</span>
 </a>
 <p class="nota">La pioggia dice quando andare, il bosco dice dove. I boschi vengono ${esc(fonteDa(casa.k))}.</p>
-` : ''}
+${/* la carta forestale della zona, o della regione (1/11/2026, scheda 105 bis) */ fs.existsSync(path.join(RADICE, 'mappa-forestale', 'zone', zslug, 'index.html'))
+  ? `<p class="nota">I boschi tipo per tipo, con le percentuali: <a href="${SITO}/mappa-forestale/zone/${zslug}/">la carta forestale ${esc(diZona(z.dove))}</a>.</p>
+`
+  : fs.existsSync(path.join(RADICE, 'mappa-forestale', casa.k, 'index.html')) ? `<p class="nota">I boschi tipo per tipo, con le percentuali: <a href="${SITO}/mappa-forestale/${casa.k}/">la carta forestale ${esc(GEN[casa.k])}</a>.</p>
+` : ''}` : ''}
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano i <b>${ids.length} pluviometri</b> ${esc(diEnte(elenco(agenzie)))} nelle zone
-da bosco ${esc(diZona(z.dove))}: quota fra 200 e 1600 metri e almeno il 37% di bosco entro 3 km.
+<p>I millimetri li misurano i <b>${nAttivi} pluviometri</b> ${esc(diEnte(elenco(agenzie)))} nelle zone
+da bosco ${esc(diZona(z.dove))}: quota fra 200 e 1600 metri e tanto bosco intorno (almeno il 37% entro 3 km
+sulle mappe di OpenStreetMap, o il 50% sulle carte forestali delle regioni).
 I numeri in cima sono la media dei pluviometri, giorno per giorno. Ogni pluviometro va alla zona più
 vicina, e a una sola. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>
 <p>Perché da 13 a 20 giorni fa: dopo una pioggia il fungo impiega almeno dodici o tredici giorni
@@ -329,15 +347,15 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 <a href="${SITO}/zone/${zslug}/">dove ha piovuto ${esc(z.dove)}</a>.</p>
 ${RITRATTO ? `<h2>L'archivio della zona</h2>
 <p>Da ${meseIso(RITRATTO.dal)} a ${meseIso(RITRATTO.al)}, in ${RITRATTO.giorni} giorni di misura, i ${RITRATTO.quanti} pluviometri
-${esc(diZona(z.dove))}${RITRATTO.quanti < ids.length ? ' che leggiamo dallo stesso giorno' : ''} hanno contato
+${esc(diZona(z.dove))}${RITRATTO.quanti < nAttivi ? ' che leggiamo dallo stesso giorno' : ''} hanno contato
 <b>${migliaia(RITRATTO.media)} mm</b> di pioggia a testa, in media. Il più bagnato è <b>${esc(RITRATTO.alto.n)}</b> con
-${migliaia(RITRATTO.alto.c.mm)} mm, il più asciutto ${esc(RITRATTO.basso.n)} con ${migliaia(RITRATTO.basso.c.mm)}.
+${migliaia(RITRATTO.alto.c.mm)} mm, il più asciutto ${esc(RITRATTO.basso.n)} con ${migliaia(RITRATTO.basso.c.mm)} mm.
 La giornata più piovosa è stata ${artGiorno(RITRATTO.forte.c.maxData)}<b>${dataBella(RITRATTO.forte.c.maxData)}</b> ${aNome(RITRATTO.forte.n)}${esc(RITRATTO.forte.n)},
 con <b>${virgola(RITRATTO.forte.c.maxMm)} mm</b>.</p>` : ''}
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
-<p>Dati ${esc(diEnte(elenco(agenzie)))} via il nostro archivio. Il bosco entro 3 km è calcolato su dati
-OpenStreetMap, licenza ODbL.</p>
+<p>Dati ${esc(diEnte(elenco(agenzie)))} via il nostro archivio. Le percentuali di bosco vengono dalle
+carte forestali delle regioni; per scegliere i posti usiamo anche OpenStreetMap, licenza ODbL.</p>
 </div>
 ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
    onclick="try{gtag('event','click_youtube',{pulsante:'zona-fondo-${casa.k}'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a>`, `zona-fondo-${casa.k}`)}
@@ -372,6 +390,7 @@ ${coppiaQuiz(casa.k, `<a href="${CANALE}?sub_confirmation=1" target="_blank" rel
     : "https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/";
 ${JS_COMUNE}
 ${JS_AGGIORNATO}
+${JS_STIME}
 
   function fresco(j){
     if(!j || !j.generato || !j.serie || !j.oggi) return false;
@@ -387,7 +406,7 @@ ${JS_AGGIORNATO}
   })).then(function(js){
     var buoni = js.filter(function(j){ return j && fresco(j); });
     if (buoni.length !== REGIONI.length) return guasto();
-    var serie = {}, serieT = {}, sospesi = {}, oggi = null, gen = null;
+    var serie = {}, serieT = {}, sospesi = {}, stimeZ = {}, oggi = null, gen = null;
     /* ⚠️ SI ALLINEA PER DATA, NON PER POSIZIONE (17/10/2026). serie[0] e' «ieri» del
        SUO file: se una regione quella mattina non e' stata aggiornata, il suo file
        parte dal giorno prima e affiancando per posizione la media mescolava giorni
@@ -403,12 +422,16 @@ ${JS_AGGIORNATO}
       Object.keys(j.serie).forEach(function(id){ serie[id] = scorri(j.serie[id], k); });
       Object.keys(j.serieT || {}).forEach(function(id){ serieT[id] = scorri(j.serieT[id], k); });
       Object.keys(j.sospesi || {}).forEach(function(id){ sospesi[id] = 1; });
+      /* i giorni stimati, spostati come la serie (1/11/2026, avvisoStime di lib-pagina-funghi.js) */
+      Object.keys(j.stime || {}).forEach(function(id){ stimeZ[id] = j.stime[id].map(function(i){ return i + k; }).filter(function(i){ return i < GIORNI; }); });
     });
     /* 17/10/2026: i pluviometri sospesi (la mappa li esclude perche' misurano
        male, lib-escluse.js) non entrano nella media: in tabella restano col «—» */
     var righe = POSTI.filter(function(p){ return serie[p[0]] && !sospesi[p[0]]; });
     if (righe.length < 2) return guasto();
     disegna(serie, serieT, oggi, righe);
+    var avv = avvisoStime({ oggi: oggi, stime: stimeZ }, righe.map(function(p){ return p[0]; }), false);
+    if (avv) document.getElementById("verdetto").insertAdjacentHTML("afterbegin", avv);
     scriviAggiornato(gen);
   }).catch(function(){ guasto(); });
 
@@ -519,7 +542,8 @@ if (require.main === module) {
     }
     const dir = path.join(RADICE, 'funghi', 'zone', slug(z.n));
     fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(path.join(dir, 'index.html'), html, 'utf8');
+    // la Garfagnana coi commenti: e' il modello della mappa forestale (stileDelModello cerca i blocchi coi loro commenti)
+    fs.writeFileSync(path.join(dir, 'index.html'), slug(z.n) === 'garfagnana' ? html : senzaCommenti(html), 'utf8');
     scritte++;
   }
   if (SOLO) { console.log(`${scritte} pagina scritta (SOLO=${SOLO}), sitemap non toccata.`); process.exit(0); }

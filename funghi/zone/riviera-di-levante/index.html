@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Funghi nella Riviera di Levante oggi: stanno nascendo?</title>
-<meta name="description" content="Meteo funghi Riviera di Levante: la pioggia degli ultimi 20 giorni da 3 pluviometri da bosco e il verdetto per la crescita dei funghi.">
+<title>Meteo funghi Riviera di Levante oggi: stanno nascendo?</title>
+<meta name="description" content="Crescita funghi nella Riviera di Levante: la pioggia degli ultimi 20 giorni da 2 pluviometri da bosco e il verdetto per i funghi.">
 <link rel="canonical" href="https://avventurepluvio-test.pages.dev/funghi/zone/riviera-di-levante/">
 <meta property="og:title" content="Funghi nella Riviera di Levante oggi: stanno nascendo?">
-<meta property="og:description" content="Le piogge degli ultimi 25 giorni, misurate dai pluviometri nelle zone da bosco.">
+<meta property="og:description" content="Crescita funghi nella Riviera di Levante: la pioggia degli ultimi 20 giorni da 2 pluviometri da bosco e il verdetto per i funghi.">
 <meta property="og:image" content="https://avventurepluvio-test.pages.dev/preview.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:url" content="https://avventurepluvio-test.pages.dev/funghi/zone/riviera-di-levante/">
 <meta property="og:type" content="website">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Piogge per funghi","item":"https://avventurepluvio-test.pages.dev/funghi/"},{"@type":"ListItem","position":2,"name":"Liguria","item":"https://avventurepluvio-test.pages.dev/funghi/liguria/"},{"@type":"ListItem","position":3,"name":"Riviera di Levante"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Mappa pluviometrica","item":"https://avventurepluvio-test.pages.dev/"},{"@type":"ListItem","position":2,"name":"Piogge per funghi","item":"https://avventurepluvio-test.pages.dev/funghi/"},{"@type":"ListItem","position":3,"name":"Liguria","item":"https://avventurepluvio-test.pages.dev/funghi/liguria/"},{"@type":"ListItem","position":4,"name":"Riviera di Levante"}]}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
@@ -27,9 +28,6 @@ header{background:var(--blu);color:#fff;padding:10px 16px;display:flex;align-ite
 header a{color:#fff;text-decoration:none;}
 header .logo{font-weight:600;font-size:15px;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;}
 header .yt{margin-left:auto;background:#e12b2b;font-size:13px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;flex:none;}
-/* ⚠️ 25/9/2026, sua schermata da Android: sotto i ~430 px logo e tasto rosso
-   non ci stavano sulla stessa riga e il tasto andava a capo, raddoppiando la
-   testata. Sul telefono via «· piogge» e «Canale»: resta «▶ YouTube». */
 @media(max-width:440px){header{padding:10px 12px;gap:8px;} header .logo span,header .yt .yt-l{display:none;}}
 main{max-width:860px;margin:0 auto;padding:22px 16px 40px;}
 h1{color:var(--blu-scuro);font-size:30px;line-height:1.25;margin-bottom:8px;}
@@ -70,11 +68,6 @@ td b{color:var(--blu-scuro);}
 .loc:hover b::after{opacity:1;}
 .com{display:block;color:#6a7789;font-size:13px;}
 .forte-m{display:none;}
-/* ⚠️ DUE VERSIONI DELL'INTESTAZIONE. Non e' vezzo: le intestazioni non
-   vanno a capo (serve, se no restano appese le codine «fa» e «gg»), e a
-   360 px erano LORO a tenere aperte le colonne, non i numeri. Con la
-   scritta lunga il nome della localita' aveva 99 px e «San Colombano
-   Certenoli» andava su quattro righe. */
 .hd-c{display:none;}
 td.mm{position:relative;min-width:118px;}
 .barra{position:absolute;left:7px;top:50%;transform:translateY(-50%);height:20px;max-width:calc(100% - 7px);
@@ -93,14 +86,6 @@ td.ultima{font-size:14px;color:#42506a;white-space:nowrap;}
 .nota{color:#6a7789;font-size:14.5px;margin-top:10px;}
 .avviso{background:#fff6e5;border:1px solid #f0d9a8;border-radius:8px;padding:12px 15px;font-size:15px;margin:24px 0 0;}
 .avviso b{color:var(--blu-scuro);}
-/* ⚠️ IL PIE' DI PAGINA NON AVEVA NESSUNA REGOLA (corretto il 3/9/2026). Il
-   tag <footer> c'era su tutte e tre le famiglie di pagine, ma niente lo
-   nominava: il browser lo disegnava a modo suo, tutto a sinistra, senza
-   riga di separazione e coi link viola da «gia' visitato». Sono le stesse
-   regole che le pagine regione hanno da sempre.
-   ⚠️ Questo foglio di stile lo COPIANO anche le pagine di paese e di zona
-   (lo leggono da qui, vedi genera-pagine-localita.js): una regola scritta
-   qui vale per tutte e 1.081. */
 footer{border-top:1px solid var(--bordo);margin-top:8px;padding:14px 16px 24px;
   font-size:14px;color:#555;text-align:center;}
 footer a{color:var(--blu);}
@@ -113,8 +98,6 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
   text-shadow:0 1px 2px rgba(0,0,0,.35);transition:transform .06s, box-shadow .06s;}
 a:active .vai-mappa{transform:translateY(2px);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.24), 0 2px 0 #0e2b4a, 0 4px 10px rgba(15,45,77,.3);}
-/* La riga di stagione: c'e' solo nei mesi in cui la pagina non serve a
-   molto, e lo dice invece di far finta di niente. */
 #stagione{display:none;background:#eef2f8;border:1px solid #ccd7e6;border-left:4px solid #7a93b5;
   border-radius:8px;padding:12px 15px;font-size:15.5px;color:#42506a;margin:0 0 20px;}
 #stagione b{color:var(--blu-scuro);}
@@ -126,18 +109,11 @@ a:active .vai-mappa{transform:translateY(2px);
   .capo .gr{font-size:21px;}
   table{font-size:14px;} th{font-size:11px;padding:7px 4px;} td{padding:7px 4px;}
   th.tagl,td.tagl{display:none;}
-  /* ⚠️ 110 px per colonna schiacciavano il nome a un centinaio di pixel e
-     «San Colombano Certenoli» andava su QUATTRO righe. Le barre non hanno
-     bisogno di tutto quello spazio: a 74 px il nome ne guadagna 72. */
   td.mm{min-width:74px;}
   .hd-l{display:none;}
   .hd-c{display:inline;}
   td.mm .v{padding-left:5px;font-size:13.5px;}
   .forte-m{display:block;color:#42506a;}
-  /* ⚠️ Sul telefono i tre tasti vanno a capo comunque, e larghi a misura del
-     testo restavano di tre lunghezze diverse: sembravano di importanza
-     diversa. Impilati e tutti larghi uguale si leggono come tre scelte
-     alla pari, che e' quello che sono. */
   .capo-btns{flex-direction:column;}
   .capo-btn{width:100%;text-align:center;}
 }
@@ -187,7 +163,6 @@ nav.altre a{color:var(--blu);}
 .fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
 .fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
-/* C13 (19/10/2026): otto giornate senza pioggia, il grafico vuoto lo dice */
 .fin{position:relative}.fin-nulla{position:absolute;left:0;right:0;top:38%;text-align:center;color:#5a6b80;font-size:14px;font-weight:600}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
@@ -249,7 +224,6 @@ nav.altre a{color:var(--blu);}
 .fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
 .fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
-/* C13 (19/10/2026): otto giornate senza pioggia, il grafico vuoto lo dice */
 .fin{position:relative}.fin-nulla{position:absolute;left:0;right:0;top:38%;text-align:center;color:#5a6b80;font-size:14px;font-weight:600}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
@@ -277,7 +251,6 @@ nav.altre{border-top:1px solid var(--bordo);margin-top:30px;padding-top:14px;fon
 nav.altre b{display:block;color:var(--blu-scuro);font-size:16px;margin:14px 0 2px;}
 nav.altre p{line-height:1.9;}
 nav.altre a{color:var(--blu);}
-/* BOTTONI IN RILIEVO (lib-pagina-funghi.js) */
 .capo-btns{gap:12px;margin-top:15px;}
 .capo-btn{background:#fff;border:none;color:#10263f;font-size:16px;font-weight:700;padding:12px 18px 13px;border-radius:12px;
   box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 5px 0 #7f97b6,0 10px 18px rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s;}
@@ -305,8 +278,6 @@ nav.altre a{color:var(--blu);}
 .verdetto .dett{font-size:15px;opacity:.85;}
 @media(max-width:480px){.banda-prev b{font-size:17.5px;}.banda-prev span{font-size:14px;}.tasti a{font-size:15px;}.capo-btn{font-size:15.5px;}
   .verdetto .top{font-size:16px;}.verdetto .dett{font-size:14px;}}
-/* BOTTONE YOUTUBE (lib-pagina-funghi.js) */
-/* A TUTTA RIGA come i bottoni che aprono la mappa (25/10/2026, suo: «fallo largo come quelli che aprono le mappe») */
 .yt-btn{display:flex;justify-content:center;width:100%;box-sizing:border-box;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
   font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 4px 0 #7d0d12,0 9px 18px rgba(160,20,27,.32);transition:transform .08s,box-shadow .08s;}
@@ -316,8 +287,6 @@ nav.altre a{color:var(--blu);}
 .yt-btn:hover{background:linear-gradient(180deg,#e8323a,#c01820);}
 .yt-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7d0d12,0 4px 8px rgba(160,20,27,.3);}
 
-/* QUIZ ACCANTO A YOUTUBE: due celle uguali, una sotto l'altra sul telefono (25/10/2026, suo: «dove c'e' il quiz lascia
-   com'e'», solo YouTube da solo va a tutta riga) */
 .coppia-btn{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 4px;}
 .coppia-btn a{justify-content:center;box-sizing:border-box;min-height:53px;width:100%;}
 .coppia-btn svg{width:26px;flex:none;}
@@ -328,7 +297,6 @@ nav.altre a{color:var(--blu);}
 .quiz-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a06a08,0 4px 8px rgba(150,95,10,.3);}
 @media(max-width:560px){.coppia-btn{grid-template-columns:1fr;}}
 
-/* ── IL METEO NELLE PAGINE REGIONE (lib-meteo-regione.js, 19/10/2026) ── */
 header{position:relative;flex-wrap:nowrap;}
 .mk-cerca{position:relative;flex:1;max-width:340px;margin-left:14px;}
 .mk-cerca input{width:100%;box-sizing:border-box;border:0;border-radius:9px;padding:8px 12px 8px 34px;font:500 15px/1.2 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
@@ -343,7 +311,7 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-r small{color:#6b7d93;white-space:nowrap;}
 .mk-porte-t{padding:12px 14px 4px;font-weight:700;font-size:15px;}
 .mk-porte-t small{display:block;font-weight:500;color:#6b7d93;font-size:13px;margin-top:2px;}
-.mk-6{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 12px 12px;}
+.mk-6{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:8px;padding:8px 12px 12px;}
 .mk-6 a{display:flex;align-items:center;gap:9px;padding:10px 10px;border:1px solid #d3deeb;border-radius:10px;text-decoration:none;color:#10263f;font-weight:700;font-size:14.5px;line-height:1.15;}
 .mk-6 a:hover{background:#eef4fb;}
 .mk-6 a span{font-size:20px;}
@@ -356,9 +324,9 @@ header{position:relative;flex-wrap:nowrap;}
   header .yt{margin-left:8px;}
   .mk-drop{min-width:0;}
 }
-.mk-porte{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;}
-.mk-porte a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 8px;border-radius:11px;background:rgba(255,255,255,.12);
-  color:#fff;text-decoration:none;font-weight:700;font-size:13.5px;border:1px solid rgba(255,255,255,.22);}
+.mk-porte{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:8px;margin-top:14px;}
+.mk-porte a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 3px 8px;border-radius:11px;background:rgba(255,255,255,.12);
+  color:#fff;text-decoration:none;font-weight:700;font-size:13.5px;line-height:1.15;text-align:center;border:1px solid rgba(255,255,255,.22);}
 .mk-porte a span{font-size:21px;line-height:1;}
 .mk-porte a:hover{background:rgba(255,255,255,.2);}
 .mk-meteo{background:#f3f7fc;border:1px solid #d6e2f0;border-radius:14px;padding:4px 16px 14px;margin:18px 0 6px;}
@@ -373,11 +341,10 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-cr{display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;align-items:center;gap:4px;padding:8px 12px;border-bottom:1px solid #eef2f7;text-decoration:none;color:#10263f;font-size:15px;}
 .mk-cr:hover{background:#f3f7fc;}
 .mk-cr b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.mk-cr b small{display:block;font-weight:500;font-size:12px;color:#5f738c;}   /* «al pluviometro», pagine paese (20/10/2026) */
+.mk-cr b small{display:block;font-weight:500;font-size:12px;color:#5f738c;}
 .mk-cr span{display:flex;align-items:center;gap:3px;font-weight:600;flex-wrap:wrap;}
 .mk-cr span i{font-style:normal;font-size:19px;}
 .mk-cr span em{font-style:normal;font-size:12px;color:#1f6fd1;font-weight:700;width:100%;padding-left:24px;margin-top:-3px;}
-/* la % di pioggia (25/10/2026): la GOCCIA come nelle pagine meteo, i tre toni della mappa (sotto il 10% grigia, dal 60% rossa) */
 .mk-cr span em.mk-pc{margin-top:0;}.mk-cr span em.mk-pc.z{color:#9aa3ad;font-weight:500;}.mk-cr span em.mk-pc.alta{color:#c21f1f;}
 .mk-cr-t{background:#eef4fb;font-size:13px;color:#4a6180;padding:6px 12px;}
 .mk-cr-t span{font-weight:700;}
@@ -389,10 +356,9 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-boschi{background:#eef6ef;border:1px solid #cfe3d2;border-radius:14px;padding:4px 16px 16px;margin:18px 0 6px;}
 .mk-boschi h2{margin-top:14px;color:#1d4a2a;}
 .mk-boschi-p{font-size:15px;color:#3d5a45;margin:2px 0 10px;}
-@media(max-width:400px){.mk-boschi .mk-tuo input::placeholder{font-size:15px;}}   /* la frase sta intera anche a 360 px */
+@media(max-width:400px){.mk-boschi .mk-tuo input::placeholder{font-size:15px;}}
 .mk-boschi .mk-tuo input{border-color:#2f6b3d;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%232f6b3d' stroke-width='2.6' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5 21 21'/%3E%3C/svg%3E");}
 .mk-citta-n a{color:#1b3f6e;font-weight:700;}
-/* il bottone del radar sotto la tabella (20/10/2026): bianco, e blu pieno col pallino che pulsa se oggi piove */
 .mk-radar{display:flex;align-items:center;gap:11px;margin:12px 0 2px;padding:11px 14px;border-radius:12px;text-decoration:none;
   border:2px solid #1f6fd1;background:#fff;color:#123b6e;}
 .mk-radar .mk-ic{font-size:24px;line-height:1;flex:none;}
@@ -412,51 +378,113 @@ header{position:relative;flex-wrap:nowrap;}
 .gg-x span.mk-fx{color:#2f6db5;font-weight:600;}
 .gg-leg .mk-leg-fut{background:repeating-linear-gradient(135deg,#7fb2ec 0 4px,#a9cdf5 4px 8px) !important;}
 
-/* ── la mappa nella scheda in cima (lib-striscia.js, 20/10/2026) ── */
-.mk-str{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:16px 0 2px;}
-.mk-str a{position:relative;display:block;height:122px;border-radius:11px;overflow:hidden;background:#1d3d63 no-repeat;
+div.mk-str{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:16px 0 2px;}
+div.mk-str a{position:relative;display:flex;flex-direction:column;height:auto;border-radius:11px;overflow:hidden;background:#1d3d63;
   box-shadow:0 0 0 1px rgba(255,255,255,.28);text-decoration:none;}
-.mk-str a span{position:absolute;left:7px;bottom:7px;background:rgba(9,28,52,.86);color:#fff;font:700 13.5px/1.2 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-  padding:6px 8px;border-radius:8px;}
-.mk-str a span b{display:block;font-weight:800;white-space:nowrap;}
-.mk-str a span small{display:block;font-weight:500;font-size:12px;opacity:.88;margin-top:1px;white-space:nowrap;}
-.mk-str a.mk-uno{grid-column:1 / -1;}
-.mk-str i.mk-pin{position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#e12b2b;border:2px solid #fff;
+div.mk-str a i.mk-img{position:relative;display:block;height:122px;background:#1d3d63 no-repeat;}
+div.mk-str a span{position:static;display:block;flex:1;border-radius:0;box-shadow:none;background:rgba(9,28,52,.86);color:#fff;font:700 13.5px/1.2 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  padding:7px 9px 8px;}
+div.mk-str a span b{display:block;font-weight:800;white-space:nowrap;}
+div.mk-str a span small{display:block;font-weight:500;font-size:12px;opacity:.88;margin-top:1px;white-space:nowrap;}
+div.mk-str a.mk-uno{grid-column:1 / -1;}
+div.mk-str i.mk-pin{position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#e12b2b;border:2px solid #fff;
   box-shadow:0 1px 4px rgba(0,0,0,.45);}
-@media(min-width:700px){.mk-str a{height:150px;}}
-/* al telefono il riquadro e' largo ~146 px a 360: scritte un filo piu' piccole, e a capo piuttosto che fuori */
-@media(max-width:420px){.mk-str a span{left:6px;bottom:6px;right:6px;padding:5px 6px;font-size:12.5px;}
-  .mk-str a span b,.mk-str a span small{white-space:normal;} .mk-str a span small{font-size:11px;}}
-@media(max-width:370px){.mk-str a span{font-size:12px;padding:5px;} .mk-str a span small{font-size:10.5px;}}
-/* pagine piogge: un riquadro solo, piu' alto; nel modo «bottone» la scritta e' quella grande del bottone di ieri */
-.mk-str.mk-ieri a{height:140px;} @media(min-width:700px){.mk-str.mk-ieri a{height:185px;}}
-.mk-str.mk-grande a span{left:10px;bottom:10px;right:auto;padding:9px 13px;border-radius:10px;}
-.mk-str.mk-grande a span b{font-size:19px;} .mk-str.mk-grande a span small{font-size:14px;}
-@media(max-width:420px){.mk-str.mk-grande a span b{font-size:17px;white-space:nowrap;} .mk-str.mk-grande a span small{font-size:13px;white-space:nowrap;}}
-/* il bottone sulla mappa colorato (20/10/2026, suo: «il bottone magari rosso o giallo?»): giallo del quiz, rosso di YouTube */
-.mk-str.mk-giallo a span{background:linear-gradient(180deg,rgba(249,201,62,.85),rgba(237,164,12,.85));color:#3d1f04;box-shadow:0 3px 0 rgba(160,106,8,.85),0 6px 14px rgba(0,0,0,.3);}   /* all'85% (suo: «giallo ma semitrasparente?»): la mappa si intravede, resta un bottone */
-.mk-str.mk-rosso a span{background:linear-gradient(180deg,#ec3b33,#c9221b);color:#fff;box-shadow:0 3px 0 #8f1410,0 6px 14px rgba(0,0,0,.35);}
-.mk-str.mk-giallo a span small,.mk-str.mk-rosso a span small{opacity:.92;}
+@media(min-width:700px){div.mk-str a i.mk-img{height:150px;}}
+@media(max-width:420px){div.mk-str a span{padding:6px 7px 7px;font-size:12.5px;}
+  div.mk-str a span b,div.mk-str a span small{white-space:normal;} div.mk-str a span small{font-size:11px;}}
+@media(max-width:370px){div.mk-str a span{font-size:12px;padding:6px;} div.mk-str a span small{font-size:10.5px;}}
+div.mk-str.mk-ieri a{display:block;height:300px;}
+div.mk-str.mk-ieri a i.mk-img{position:absolute;left:0;top:0;right:0;bottom:0;height:auto;}
+@media(min-width:700px){div.mk-str.mk-ieri a{height:440px;} div.mk-str.mk-ieri a i.mk-img{height:auto;}}
+div.mk-str.mk-ieri a span{position:absolute;left:8px;bottom:8px;right:auto;flex:none;padding:4px 10px;border-radius:999px;}
+div.mk-str.mk-ieri a span b{font-size:13px;font-weight:800;white-space:nowrap;} div.mk-str.mk-ieri a span small{display:none;}
+div.mk-str.mk-ieri a span em{font-style:normal;font-weight:600;}
+@media(max-width:420px){div.mk-str.mk-ieri a span{left:6px;bottom:6px;padding:4px 9px;}
+  div.mk-str.mk-ieri a span b{font-size:12px;white-space:nowrap;} div.mk-str.mk-ieri a span em{display:none;}}
+@media(min-width:700px){div.mk-str.mk-ieri a span{left:10px;bottom:10px;padding:5px 12px;} div.mk-str.mk-ieri a span b{font-size:15px;}}
+#verdetto a.mk-oppure,a.mk-oppure{display:block;margin:9px 0 2px;padding:11px 10px;border-radius:11px;text-align:center;text-decoration:none;
+  background:linear-gradient(180deg,#f9c93e,#eda40c);color:#3d1f04;font:800 15px/1.2 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  box-shadow:0 3px 0 rgba(160,106,8,.85);}
+#verdetto a.mk-oppure:hover,a.mk-oppure:hover{filter:brightness(1.05);}
+div.mk-str.mk-giallo a span{background:linear-gradient(180deg,#f9c93e,#eda40c);color:#3d1f04;border-top:1px solid rgba(160,106,8,.35);box-shadow:none;}
+div.mk-str.mk-rosso a span{background:linear-gradient(180deg,#ec3b33,#c9221b);color:#fff;border-top:1px solid #8f1410;box-shadow:none;}
+div.mk-str.mk-giallo a span small,div.mk-str.mk-rosso a span small{opacity:.92;}
+div.mk-str.mk-ieri.mk-giallo a span{background:linear-gradient(180deg,rgba(249,201,62,.94),rgba(237,164,12,.94));border-top:0;
+  box-shadow:0 2px 0 rgba(160,106,8,.85),0 4px 10px rgba(0,0,0,.3);}
+div.mk-str.mk-grandi a{display:block;height:240px;}
+div.mk-str.mk-grandi a i.mk-img{position:absolute;left:0;top:0;right:0;bottom:0;height:auto;}
+div.mk-str.mk-grandi a span{position:absolute;left:6px;bottom:6px;right:auto;flex:none;padding:4px 9px;border-radius:999px;}
+div.mk-str.mk-grandi a span b{font-size:12.5px;white-space:nowrap;} div.mk-str.mk-grandi a span small{display:none;}
+@media(max-width:699px){div.mk-str.mk-grandi{grid-template-columns:1fr;}}
+@media(min-width:700px){div.mk-str.mk-grandi a{height:320px;} div.mk-str.mk-grandi a span{left:10px;bottom:10px;padding:5px 12px;}
+  div.mk-str.mk-grandi a span b{font-size:15px;}}
+div.mk-str.mk-grandi.mk-giallo a span{background:linear-gradient(180deg,rgba(249,201,62,.94),rgba(237,164,12,.94));border-top:0;
+  box-shadow:0 2px 0 rgba(160,106,8,.85),0 4px 10px rgba(0,0,0,.3);}
 
 #mk-meteo .mk-cr{grid-template-columns:1.45fr 1fr 1fr 1fr;}
 #mk-meteo .mk-cr b{white-space:normal;overflow:visible;line-height:1.2;font-size:14.5px;}
+
+header.tB{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:10px;padding:0;background:#fff;color:#123252;border-bottom:1px solid #d0d8e8}
+.tB a{text-decoration:none;opacity:1}
+.tB .t-in{max-width:var(--t-max,760px);margin:0 auto;width:100%;padding:0 var(--t-pad,16px);display:flex;align-items:center}
+.tB .t-striscia{background:#0f2d4f}
+.tB .t-striscia .t-in{gap:2px;height:38px;padding:0 calc(var(--t-pad,16px) - 11px)}
+.tB .t-striscia a{color:rgba(255,255,255,.86);font-size:13.5px;font-weight:600;padding:0 11px;height:38px;display:flex;align-items:center;white-space:nowrap}
+.tB .t-striscia a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tB .t-striscia a.on{color:#0f2d4f;background:#f9c93e}
+.tB .t-striscia .t-dx{margin-left:auto;display:flex;gap:2px}
+.tB .t-banda .t-in{position:relative;gap:16px;padding-top:14px;padding-bottom:14px}
+.tB .t-marchio{display:flex;align-items:center;gap:12px}
+.tB .t-goccia{font-size:34px;line-height:1}
+.tB .t-marchio b{display:block;font-size:24px;font-weight:800;letter-spacing:-.015em;line-height:1.1;color:#123252}
+.tB .t-marchio small{display:block;font-size:13.5px;color:#4a5a6e;font-weight:500;margin-top:3px;line-height:1.3}
+.tB .t-tel{display:none}
+.tB .t-ytp{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:#e12b2b;color:#fff;font-size:14.5px;font-weight:700;padding:9px 16px 9px 13px;border-radius:999px;white-space:nowrap}
+.tB .t-ytp svg{width:18px;height:18px;fill:#fff}
+.tB .mk-lente{display:flex;align-items:center;justify-content:center;margin-left:auto;flex:none;width:40px;height:40px;border:0;border-radius:50%;background:#1b3f6e;cursor:pointer}
+.tB .mk-lente ~ .t-ytp{margin-left:0}
+.tB .mk-cerca{display:none;position:absolute;left:var(--t-pad,16px);right:var(--t-pad,16px);top:50%;transform:translateY(-50%);margin:0;max-width:none;z-index:60}
+.tB .mk-cerca input{border:2px solid #1b3f6e;padding:11px 12px 11px 36px}
+header.tB.mk-aperto .mk-cerca{display:block}
+header.tB.mk-aperto .t-marchio,header.tB.mk-aperto .t-ytp,header.tB.mk-aperto .mk-lente{visibility:hidden}
+.tB .t-in:has(.mk-lente) .t-it{display:none}
+@media (max-width:760px){
+  .tB .t-striscia{order:2}
+  .tB .t-banda .t-in{padding-top:10px;padding-bottom:10px;gap:10px}
+  .tB .t-goccia{font-size:26px}
+  .tB .t-marchio b{font-size:18px}
+  .tB .t-marchio small{font-size:12px;margin-top:1px}
+  .tB .t-pc{display:none}.tB .t-tel{display:inline}
+  .tB .t-ytp{font-size:13px;padding:7px 11px 7px 9px;gap:6px}
+  .tB .mk-lente{width:34px;height:34px}
+  .tB .t-in:has(.mk-lente) .t-marchio b{font-size:16px}
+  .tB .t-striscia .t-in{overflow-x:auto;scrollbar-width:none;padding:0 calc(var(--t-pad,16px) - 11px);-webkit-mask-image:linear-gradient(90deg,#000 86%,transparent);mask-image:linear-gradient(90deg,#000 86%,transparent)}
+  .tB .t-striscia .t-in::-webkit-scrollbar{display:none}
+  .tB .t-striscia .t-dx{margin-left:0;padding-right:30px}
+}
+@media (max-width:389px){.tB .t-marchio{gap:8px}.tB .t-goccia{font-size:23px}.tB .t-marchio b{font-size:16px;white-space:nowrap}
+  .tB .t-banda .t-in{gap:8px}.tB .t-ytp{padding:7px 9px}.tB .mk-lente ~ .t-ytp span{display:none}}
+header.tB{--t-max:860px}@media (max-width:640px){header.tB{--t-pad:12px}}
 </style>
 </head>
 <body>
 
-<header>
-  <a href="https://avventurepluvio-test.pages.dev/" class="logo">🍄 Avventure Micologiche <span style="opacity:.65;font-weight:400">· piogge</span></a>
-  <a class="yt" href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener"
-     onclick="try{gtag('event','click_youtube',{pulsante:'zona-liguria'})}catch(e){}">▶ <span class="yt-l">Canale </span>YouTube</a>
+<header class="tB">
+  <nav class="t-striscia" aria-label="Menu"><div class="t-in"><a href="https://avventurepluvio-test.pages.dev/?r=liguria" onclick="try{gtag('event','apri_mappa',{da:'zona-liguria-testata-storico'})}catch(e){}">Storico piogge</a><a href="https://avventurepluvio-test.pages.dev/previsioni/?r=liguria" onclick="try{gtag('event','apri_mappa',{da:'zona-liguria-testata-previsioni'})}catch(e){}">Previsioni meteo</a><a href="https://avventurepluvio-test.pages.dev/guida/">Guida</a><span class="t-dx"><a href="https://avventuremicologiche.it/#noi">Chi siamo</a><a href="https://avventuremicologiche.it/#piede">Contatti</a></span></div></nav>
+  <div class="t-banda"><div class="t-in">
+    <a class="t-marchio" href="https://avventurepluvio-test.pages.dev/"><span class="t-goccia">🌧️</span><span><b>Mappa Pluviometrica</b><small><span class="t-pc">Previsioni, radar e pioggia misurata<span class="t-it"> in tutta Italia</span> · un progetto di Avventure Micologiche</span><span class="t-tel">di Avventure Micologiche</span></small></span></a>
+    <a class="t-ytp" href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" onclick="try{gtag('event','click_youtube',{pulsante:'zona-liguria'})}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg><span>Iscriviti</span></a>
+  </div></div>
 </header>
+<script>(function(){var a=document.querySelector('.tB .t-striscia a.on'),f=a&&a.parentNode;if(f&&a.offsetLeft+a.offsetWidth>f.clientWidth-30)f.scrollLeft=a.offsetLeft-40;})()</script>
 
 <main>
-<p class="nota" style="margin-bottom:6px"><a href="https://avventurepluvio-test.pages.dev/funghi/" style="color:var(--blu)">‹ Piogge per funghi</a> <span style="color:#9aa7b8">›</span> <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/" style="color:var(--blu)">Liguria</a></p>
+<p class="bric" style="font-size:14px;color:#666;margin-bottom:6px"><a href="https://avventurepluvio-test.pages.dev/" style="color:var(--blu)">Mappa pluviometrica</a> › <a href="https://avventurepluvio-test.pages.dev/funghi/" style="color:var(--blu)">Piogge per funghi</a> › <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/" style="color:var(--blu)">Liguria</a> › Riviera di Levante</p>
 
-<h1>Funghi nella Riviera di Levante oggi: stanno nascendo?</h1>
-<p class="breve" style="margin-top:-2px">Meteo funghi Riviera di Levante: la pioggia vera di 3 pluviometri da bosco, per capire la crescita dei funghi.</p>
+<h1>Meteo funghi Riviera di Levante oggi: stanno nascendo?</h1>
+<p class="breve" style="margin-top:-2px">Crescita funghi nella Riviera di Levante: la pioggia vera di 2 pluviometri da bosco, per capire se stanno nascendo.</p>
 <div id="stagione"></div>
-<script>(function(){var m=new Date().getMonth()+1,t=null;if(m===12||m===1||m===2)t="<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi ovunque, e la finestra dei 13-20 giorni conta poco. I millimetri qui sotto restano veri e misurati, ma per usarli davvero aspetta le piogge di fine estate.";else if(m===11||m===3)t="<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto dalla quota e dal freddo: i millimetri qui sotto sono veri, ma valgono meno che in autunno pieno.";if(t){var s=document.getElementById("stagione");s.innerHTML=t;s.style.display="block";}})();</script>
+<script>(function(){var m=new Date().getMonth()+1,t=null;if(m===12||m===1||m===2)t="<b>Siamo fuori stagione.</b> Da dicembre a febbraio i funghi sono pochi quasi ovunque, e la finestra dei 13-20 giorni conta poco: per usarla davvero aspetta le piogge di fine estate.";else if(m===11||m===3)t="<b>Siamo ai margini della stagione.</b> A quest’epoca la buttata dipende molto dalla quota e dal freddo: i millimetri qui sotto valgono meno che in autunno pieno.";if(t){var s=document.getElementById("stagione");s.innerHTML=t;s.style.display="block";}})();</script>
 
 <div id="attesa">Sto leggendo i pluviometri…</div>
 <div id="guasto"></div>
@@ -470,6 +498,7 @@ header{position:relative;flex-wrap:nowrap;}
 <h2>Che tempo farà nella Riviera di Levante</h2>
 <div class="mk-tuo"><input type="search" autocomplete="off" aria-label="Cerca un paese o una frazione" placeholder="Il tuo paese, anche una frazione"><div class="mk-drop"></div></div>
 <div class="mk-citta"><p class="mk-attesa">Sto leggendo le previsioni dei paesi…</p></div>
+<p class="mk-meteo-zona" style="margin:12px 0 2px;font-size:16px;font-weight:700"><a href="https://avventurepluvio-test.pages.dev/meteo/riviera-di-levante/" onclick="try{gtag('event','apri_meteo_zona',{da:'zona-riviera-di-levante'})}catch(e){}">Previsioni meteo Riviera di Levante →</a></p>
 </section>
 
 <h2>Le piogge degli ultimi 25 giorni</h2>
@@ -489,8 +518,8 @@ header{position:relative;flex-wrap:nowrap;}
   <a href="https://avventurepluvio-test.pages.dev/?r=liguria,emilia,piemonte&amp;g=30&amp;pl=44.42,9.24&amp;pn=Riviera%20di%20Levante&amp;pz=1&amp;z=10&amp;c=44.42,9.24">Ultimi 30 gg</a>
   <a class="forte" id="t-conta" href="https://avventurepluvio-test.pages.dev/?r=liguria,emilia,piemonte&amp;g=20&amp;pl=44.42,9.24&amp;pn=Riviera%20di%20Levante&amp;pz=1&amp;z=10&amp;c=44.42,9.24">Range crescita funghi 13-20 gg fa</a>
   <a class="t-radar" href="https://avventurepluvio-test.pages.dev/?r=liguria&amp;pl=44.42,9.24&amp;pn=Riviera%20di%20Levante&amp;pz=1&amp;radar=ora"
-     onclick="try{gtag('event','apri_mappa',{da:'zona-riviera-di-levante-radar'})}catch(e){}">📡 Radar adesso</a>
-  <a class="t-radar t-prev" href="https://avventurepluvio-test.pages.dev/?r=liguria&amp;pl=44.42,9.24&amp;pn=Riviera%20di%20Levante&amp;pz=1&amp;m=prev"
+     onclick="try{gtag('event','apri_mappa',{da:'zona-riviera-di-levante-radar'})}catch(e){}">📡 Radar piogge</a>
+  <a class="t-radar t-prev" href="https://avventurepluvio-test.pages.dev/previsioni/?r=liguria&amp;pl=44.42,9.24&amp;pn=Riviera%20di%20Levante&amp;pz=1"
      onclick="try{gtag('event','apri_mappa',{da:'zona-riviera-di-levante-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">Ogni pallino è un pluviometro: cerca quello più bagnato vicino ai tuoi boschi.</p>
@@ -520,11 +549,13 @@ header{position:relative;flex-wrap:nowrap;}
   <span class="vai-mappa">🌲 Guarda i boschi nella Riviera di Levante</span>
 </a>
 <p class="nota">La pioggia dice quando andare, il bosco dice dove. I boschi vengono dalla carta «Tipi forestali 2025».</p>
+<p class="nota">I boschi tipo per tipo, con le percentuali: <a href="https://avventurepluvio-test.pages.dev/mappa-forestale/zone/riviera-di-levante/">la carta forestale della Riviera di Levante</a>.</p>
 
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
-<p>I millimetri li misurano i <b>3 pluviometri</b> di ARPA Liguria nelle zone
-da bosco della Riviera di Levante: quota fra 200 e 1600 metri e almeno il 37% di bosco entro 3 km.
+<p>I millimetri li misurano i <b>2 pluviometri</b> di ARPA Liguria nelle zone
+da bosco della Riviera di Levante: quota fra 200 e 1600 metri e tanto bosco intorno (almeno il 37% entro 3 km
+sulle mappe di OpenStreetMap, o il 50% sulle carte forestali delle regioni).
 I numeri in cima sono la media dei pluviometri, giorno per giorno. Ogni pluviometro va alla zona più
 vicina, e a una sola. La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>
 <p>Perché da 13 a 20 giorni fa: dopo una pioggia il fungo impiega almeno dodici o tredici giorni
@@ -534,8 +565,8 @@ a spuntare, di più se fa freddo. La pioggia di ieri serve ai funghi fra due set
 
 <p><b>Ricordati</b> che in molte regioni per raccogliere funghi serve il tesserino, e che nei parchi
 valgono regole proprie.</p>
-<p>Dati di ARPA Liguria via il nostro archivio. Il bosco entro 3 km è calcolato su dati
-OpenStreetMap, licenza ODbL.</p>
+<p>Dati di ARPA Liguria via il nostro archivio. Le percentuali di bosco vengono dalle
+carte forestali delle regioni; per scegliere i posti usiamo anche OpenStreetMap, licenza ODbL.</p>
 </div>
 <div class="coppia-btn"><a href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" class="yt-btn"
    onclick="try{gtag('event','click_youtube',{pulsante:'zona-fondo-liguria'})}catch(e){}"><svg width="21" height="15" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="42" height="30" rx="6" fill="#e12b2b"/><polygon points="16,7 16,23 31,15" fill="#fff"/></svg>Vieni a trovarci su YouTube</a>
@@ -560,7 +591,6 @@ OpenStreetMap, licenza ODbL.</p>
   var ZONA = "Riviera di Levante", DOVE = "nella Riviera di Levante";
   var REGIONI = ["liguria"], REGS = "liguria,emilia,piemonte";
   var LAT = 44.42, LON = 9.24;
-  /* [ id, nome, sigla, quota, lat, lon, slug, regione ] */
   var POSTI = [["BRGEL","Barbagelata","GE",1100,44.4822,9.242,"barbagelata","liguria"],["OGNIO","Ognio","GE",490,44.4437,9.1699,"ognio","liguria"],["SEGIA","Sella Giassina","GE",895,44.4876,9.1821,"sella-giassina","liguria"]];
   var LOCALE = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   var BASE = LOCALE ? "/data/"
@@ -574,33 +604,22 @@ OpenStreetMap, licenza ODbL.</p>
   function menoDa(s, n){ var p = String(s).split("-");
     var d = new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()-n); return d; }
   function gg(s){ var p = String(s).split("-"); return (+p[2]) + " " + MESI[(+p[1])-1]; }
-  /* «il 9 ottobre», ma «l’8», «l’11», «l’1» (17/10/2026: si leggeva «il 8 ottobre») */
   function ilGg(s){ var d = +String(s).split("-")[2]; return (d === 1 || d === 8 || d === 11 ? "l’" : "il ") + gg(s); }
-  /* «dal 4 all'11 settembre»: il mese una volta sola, l'apostrofo davanti a 1, 8, 11 */
   function dalAl(a, b){ var pa = a.split("-"), pb = b.split("-"), da = +pa[2], db = +pb[2];
     var al = (db === 1 || db === 8 || db === 11) ? "all’" : "al ";
     return ((da === 1 || da === 8 || da === 11) ? "dall’" : "dal ") + (pa[1] === pb[1] ? da : gg(a)) + " " + al + gg(b); }
   function esc(t){ return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
-  /* + 1e-9 (19/10/2026, B8): 8,05 fatto per due strade usciva 8,0500 e 8,0499999 e diventava 8,1 nella
-     lista della regione e 8,0 nella pagina della zona. Il margine sposta solo i casi a meta' esatta. */
   function uno(n){ return Math.round(n*10+1e-9)/10; }
   function num(n){ return uno(n).toFixed(1).replace(".", ","); }
-  /* «0» se non e' piovuto, «meno di 0,1» per le tracce, la regola delle pagine piogge (19/10/2026, quarto check) */
   function mmT(n){ return !(n > 0) ? "0" : uno(n) === 0 ? "meno di 0,1" : num(n); }
-  /* serie[0] e' IERI; n va dal piu' lontano al piu' vicino */
   function somma(s, da, a){ var t = 0; for (var n = da; n >= a; n--) t += (s[n-1]||0); return uno(t); }
 
-  /* ⚠️ LA SCALA DEL VERDETTO E' SUA (24/9/2026): pioggia degli ULTIMI 20
-     GIORNI. Sotto 30 mm troppo poco, da 30 poco, da 60 bene, da 100 benissimo.
-     Dice com'e' andata la pioggia, non se ci sono i funghi. */
   var LIV = [{fino:30,t:"Troppo poca pioggia",c:"#c0392b"},
              {fino:60,t:"Poca pioggia",c:"#e6a100"},
              {fino:100,t:"Ha piovuto bene",c:"#5bb85d"},
              {fino:1e9,t:"Ha piovuto benissimo",c:"#2e9d44"}];
 
   function scriviVerdetto(s, oggi, href, sotto){
-    /* 17/10/2026: un giorno senza nessun dato e' null, non zero. Sotto il 60% di
-       giorni con dato (la soglia della mappa) niente verdetto: lo si dice. */
     var g20 = 0; for (var n0 = 20; n0 >= 1; n0--) if (s[n0-1] != null) g20++;
     if (g20 < 12) {
       document.getElementById("verdetto").innerHTML = "<div class=\"verdetto\">"
@@ -611,8 +630,6 @@ OpenStreetMap, licenza ODbL.</p>
       return;
     }
     var m20 = somma(s, 20, 1);
-    /* la fascia si sceglie sul numero COME SI LEGGE (19/10/2026, quarto check B8): 29,48 usciva
-       «Troppo poca pioggia» con scritto 30 mm accanto alla scala «sotto 30». */
     var liv = LIV.filter(function(l){ return Math.round(m20) < l.fino; })[0], k = LIV.indexOf(liv);
     var big = [];
     for (var n = 20; n >= 1; n--) if ((s[n-1]||0) >= 10) big.push(n);
@@ -630,21 +647,15 @@ OpenStreetMap, licenza ODbL.</p>
       + "<div class=\"capo-btns\"><a class=\"capo-btn\" href=\"" + href + "\">Vedi sulla mappa</a></div></div>";
   }
 
-  /* le 25 barre, ieri a destra; restituisce le ascisse per i grafici sotto */
   function scriviBarre(s, oggi){
     var max = Math.max.apply(null, s.concat([1])), barre = "", ax = "";
-    /* 17/10/2026: i numeri si danno dalla barra PIU' ALTA in giu', saltando le
-       vicine di una gia' numerata (come le pagine delle piogge). Prima andavano
-       in ordine di data: a Pieve Santo Stefano il 7/10 (5,9) prendeva il numero
-       e l'8/10 (23,9), accanto, restava senza, e il 5,9 sembrava suo. Il numero
-       sta sopra la SUA barra (CSS .gg .b b), per questo la piu' alta arriva all'86%. */
     var cand = [], lab = {};
     for (var c = 1; c <= GIORNI; c++) if ((s[c-1] || 0) >= 1 && (s[c-1] || 0) >= max*0.2) cand.push(c);
     cand.sort(function (a, b) { return s[b-1] - s[a-1]; })
       .forEach(function (c) { if (!lab[c-1] && !lab[c+1]) lab[c] = 1; });
     for (var i = GIORNI; i >= 1; i--) {
       var v = s[i-1] || 0, d = menoDa(oggi, i), cl = (i >= 13 && i <= 20) ? " dentro" : "";
-      if (s[i-1] == null) {   /* nessun dato: barra vuota tratteggiata, non uno zero (17/10/2026) */
+      if (s[i-1] == null) {
         barre += "<div class=\"b nodato\" title=\"" + gg(iso(d)) + ": nessun dato\"><i></i></div>";
         ax += "<span>" + ((i === GIORNI || i === 1 || i % 5 === 0) ? (d.getDate() + "/" + (d.getMonth()+1)) : "") + "</span>";
         continue;
@@ -660,7 +671,6 @@ OpenStreetMap, licenza ODbL.</p>
     return ax;
   }
 
-  /* la pioggia che conta: titolo con le date e le otto barre larghe */
   function scriviFinestra(s, oggi, _sI, quale){
     var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13));
     document.getElementById("h-conta").textContent = "Però attenzione: la pioggia che conta è quella caduta " + dalAl(daG, aG);
@@ -676,13 +686,11 @@ OpenStreetMap, licenza ODbL.</p>
       else fb += "<div class=\"c\">" + (uno(v) > 0 ? "<b>" + num(v) + "</b>" : "") + "<i style=\"height:" + Math.max(2, Math.round(v/fmax*88)) + "%\"></i></div>";
       fx += "<span>" + GS[d.getDay()] + "<br>" + d.getDate() + "/" + (d.getMonth()+1) + "</span>";
     }
-    /* C13 (19/10/2026): se nei giorni con dato non e' piovuto niente, il grafico vuoto sembrava rotto */
-    var asciutto = somma(s,20,13) === 0;   /* il totale delle otto giornate, lo stesso numero scritto sopra */
+    var asciutto = somma(s,20,13) === 0;
     if (asciutto) fb += "<p class=\"fin-nulla\">Nessuna pioggia in questi otto giorni</p>";
     document.getElementById("finestra").innerHTML = "<div class=\"fin\">" + fb + "</div><div class=\"fin-x\">" + fx + "</div>";
   }
 
-  /* minima e massima degli ultimi 25 giorni, a linee */
   function scriviTemperatura(sT, ax, nota){
     var vals = [];
     for (var q = 0; q < GIORNI; q++) if (sT[q]) { if (sT[q][0] != null) vals.push(sT[q][0]); if (sT[q][1] != null) vals.push(sT[q][1]); }
@@ -736,42 +744,68 @@ OpenStreetMap, licenza ODbL.</p>
   }
 
 
+  function avvisoStime(j, ids, uno) {
+    if (!j || !j.stime || !j.oggi || !ids || !ids.length) return "";
+    var segnati = {}, chi = 0;
+    for (var a = 0; a < ids.length; a++) {
+      var l = j.stime[ids[a]];
+      if (!l || !l.length) continue;
+      chi++;
+      for (var b = 0; b < l.length; b++) segnati[l[b]] = 1;
+    }
+    var ii = Object.keys(segnati).map(Number).sort(function (x, y) { return y - x; });
+    if (!ii.length) return "";
+    var MM = ["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+    var o = j.oggi.split("-");
+    function data(i) { return new Date(Date.UTC(+o[0], +o[1] - 1, +o[2] - 1 - i)); }
+    function el(d) { var g = d.getUTCDate(); return g === 1 || g === 8 || g === 11; }
+    function gm(d) { return d.getUTCDate() + " " + MM[d.getUTCMonth()]; }
+    var p = data(ii[0]), u = data(ii[ii.length - 1]), quando;
+    if (ii.length === 1) quando = (el(u) ? "l’" : "il ") + gm(u);
+    else if (ii[0] - ii[ii.length - 1] === ii.length - 1)
+      quando = (el(p) ? "dall’" : "dal ") + (p.getUTCMonth() === u.getUTCMonth() ? p.getUTCDate() : gm(p))
+        + (el(u) ? " all’" : " al ") + gm(u);
+    else quando = "in " + ii.length + " giorni fra " + (el(p) ? "l’" : "il ") + gm(p) + " e " + (el(u) ? "l’" : "il ") + gm(u);
+    quando = quando.charAt(0).toUpperCase() + quando.slice(1);
+    var gg1 = ii.length === 1, testo;
+    if (uno) testo = "questo pluviometro non ha trasmesso: " + (gg1 ? "quel giorno è una stima del modello, non una misura." : "quei giorni sono stime del modello, non misure.");
+    else if (chi === ids.length) testo = "i pluviometri non hanno trasmesso: " + (gg1 ? "quel giorno è una stima del modello, non una misura." : "quei giorni sono stime del modello, non misure.");
+    else testo = (chi === 1 ? "un pluviometro su " + ids.length + " non ha trasmesso: i suoi valori di " : chi + " pluviometri su " + ids.length + " non hanno trasmesso: i loro valori di ")
+      + (gg1 ? "quel giorno sono una stima del modello, non una misura." : "quei giorni sono stime del modello, non misure.");
+    return "<div class=\"avviso-stime\" style=\"background:#fff4d6;border:1px solid #f0c64a;border-radius:10px;padding:10px 12px;margin:0 0 12px;font-size:15px;line-height:1.45;color:#5a4300\">⚠️ "
+      + quando + " " + testo + "</div>";
+  }
+
+
   function fresco(j){
     if(!j || !j.generato || !j.serie || !j.oggi) return false;
     var eta = Date.now() - new Date(j.generato).getTime();
     return eta >= 0 && eta < 36*3600*1000;
   }
-  /* ⚠️ UNA ZONA STA ANCHE A CAVALLO DI PIU REGIONI: i file sono da uno a
-     quattro, si aspettano tutti e si uniscono. Se ne manca uno si va sul
-     guasto: una media a cui manca meta valle vale meno di nessuna. */
   Promise.all(REGIONI.map(function(k){
     return fetch(BASE + "funghi/" + k + "-giorni.json")
       .then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; });
   })).then(function(js){
     var buoni = js.filter(function(j){ return j && fresco(j); });
     if (buoni.length !== REGIONI.length) return guasto();
-    var serie = {}, serieT = {}, sospesi = {}, oggi = null, gen = null;
-    /* ⚠️ SI ALLINEA PER DATA, NON PER POSIZIONE (17/10/2026). serie[0] e' «ieri» del
-       SUO file: se una regione quella mattina non e' stata aggiornata, il suo file
-       parte dal giorno prima e affiancando per posizione la media mescolava giorni
-       diversi. Riferimento: il file piu' recente; quello piu' vecchio scorre di k
-       giorni, con «nessun dato» davanti. */
+    var serie = {}, serieT = {}, sospesi = {}, stimeZ = {}, oggi = null, gen = null;
     buoni.forEach(function(j){ if (!oggi || j.oggi > oggi) oggi = j.oggi; });
     var giorniFra = function(a, b){ var x = a.split("-"), y = b.split("-");
       return Math.round((Date.UTC(+x[0], +x[1]-1, +x[2]) - Date.UTC(+y[0], +y[1]-1, +y[2])) / 864e5); };
     var scorri = function(arr, k){ if (!k) return arr; var o = []; for (var q = 0; q < arr.length; q++) o.push(q < k ? null : arr[q-k]); return o; };
     buoni.forEach(function(j){
-      if (!gen || j.generato < gen) gen = j.generato;   // la data della parte PIU VECCHIA
+      if (!gen || j.generato < gen) gen = j.generato;
       var k = giorniFra(oggi, j.oggi);
       Object.keys(j.serie).forEach(function(id){ serie[id] = scorri(j.serie[id], k); });
       Object.keys(j.serieT || {}).forEach(function(id){ serieT[id] = scorri(j.serieT[id], k); });
       Object.keys(j.sospesi || {}).forEach(function(id){ sospesi[id] = 1; });
+      Object.keys(j.stime || {}).forEach(function(id){ stimeZ[id] = j.stime[id].map(function(i){ return i + k; }).filter(function(i){ return i < GIORNI; }); });
     });
-    /* 17/10/2026: i pluviometri sospesi (la mappa li esclude perche' misurano
-       male, lib-escluse.js) non entrano nella media: in tabella restano col «—» */
     var righe = POSTI.filter(function(p){ return serie[p[0]] && !sospesi[p[0]]; });
     if (righe.length < 2) return guasto();
     disegna(serie, serieT, oggi, righe);
+    var avv = avvisoStime({ oggi: oggi, stime: stimeZ }, righe.map(function(p){ return p[0]; }), false);
+    if (avv) document.getElementById("verdetto").insertAdjacentHTML("afterbegin", avv);
     scriviAggiornato(gen);
   }).catch(function(){ guasto(); });
 
@@ -792,26 +826,21 @@ OpenStreetMap, licenza ODbL.</p>
 
   function disegna(serie, serieT, oggi, righe){
     document.getElementById("attesa").style.display = "none";
-    /* la serie della ZONA: media dei pluviometri, giorno per giorno. Un
-       giorno senza dato non e uno zero: si media su chi c e. */
     var s = [];
     for (var i = 0; i < GIORNI; i++) {
       var t = 0, n = 0;
       righe.forEach(function(p){ var v = serie[p[0]][i]; if (v != null) { t += v; n++; } });
-      s.push(n ? t / n : null)   /* 17/10/2026: valore pieno, si arrotonda solo scrivendo (prima 16 zone su 114 non tornavano con la lista regionale) */;
+      s.push(n ? t / n : null) ;
     }
     var sT = [];
     for (var i2 = 0; i2 < GIORNI; i2++) {
       var a = 0, b = 0, na = 0, nb = 0;
-      // minima e massima contate a parte: una delle due puo' mancare (17/10/2026)
       righe.forEach(function(p){ var v = (serieT[p[0]] || [])[i2]; if (v) { if (v[0] != null) { a += v[0]; na++; } if (v[1] != null) { b += v[1]; nb++; } } });
       sT.push(na || nb ? [na ? uno(a / na) : null, nb ? uno(b / nb) : null] : null);
     }
     var daG = iso(menoDa(oggi,20)), aG = iso(menoDa(oggi,13)), ieri = iso(menoDa(oggi,1));
     scriviVerdetto(s, oggi, link(daG, ieri), "in media, negli ultimi 20 giorni");
     var ax = scriviBarre(s, oggi);
-    /* 17/10/2026: «Ieri» solo se e' davvero ieri. Fra mezzanotte e il primo giro
-       del mattino il file e' ancora quello del giorno prima (come nelle pagine di paese). */
     var ieriVero = iso(menoDa(iso(new Date()), 1)), giornoIeri = ilGg(ieri);
     document.getElementById("ieri").innerHTML = (ieri === ieriVero ? "Ieri, " + gg(ieri)
       : giornoIeri.charAt(0).toUpperCase() + giornoIeri.slice(1)) + ": " + (s[0] == null ? "il dato non è ancora arrivato."
@@ -821,14 +850,8 @@ OpenStreetMap, licenza ODbL.</p>
     document.getElementById("lnk-pioggia").href = link(daG, ieri);
     if (sT.some(function(x){ return x; })) scriviTemperatura(sT, ax, "media dei pluviometri della zona");
 
-    /* ⚠️ La tabella e GIA NELL HTML coi link: qui si riempiono le caselle e si
-       RIORDINA dal piu bagnato spostando le righe, senza innerHTML. */
     var dati = {};
-    /* 17/10/2026: assente non e' zero. Un pluviometro col dato in meno del 60%
-       dei giorni (sui 25 o sulla finestra 13-20) resta senza numeri, «—» e in
-       fondo: coi giorni mancanti contati asciutti sembrerebbe il piu' asciutto. */
     function conD(ss, da, a){ var c = 0; for (var n = da; n >= a; n--) if (ss[n-1] != null) c++; return c; }
-    /* i giorni in cui la zona ha almeno un dato: se manca tutta la rete non pesa sul singolo (17/10/2026) */
     function giorniZona(da, a){ var c = 0; for (var n = da; n >= a; n--) if (righe.some(function(p){ return serie[p[0]][n-1] != null; })) c++; return c; }
     righe.forEach(function(p){ var ss = serie[p[0]];
       if (conD(ss,GIORNI,1) < giorniZona(GIORNI,1)*0.6 || conD(ss,20,13) < giorniZona(20,13)*0.6) return;
@@ -868,30 +891,21 @@ OpenStreetMap, licenza ODbL.</p>
   function mm(n) { return n === 0 ? '0' : n < 10 ? num(n) : String(Math.round(n)); }
   function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
   function ga(da) { try { gtag('event', 'apri_mappa', { da: GA + '-' + da }); } catch (e) {} }
-  // le icone della mappa (index.html, ICONE)
   var ICONE = [[/clearsky_day|fair_day/, '☀️'], [/clearsky_night|fair_night/, '🌙'], [/partlycloudy_day/, '⛅'], [/partlycloudy_night|^cloudy|fog/, '☁️'],
                [/thunder/, '⛈️'], [/heavyrain|heavysleet/, '🌧️'], [/rain|sleet|drizzle/, '🌦️'], [/snow/, '🌨️']];
   function icona(s) { for (var i = 0; i < ICONE.length; i++) if (ICONE[i][0].test(s || '')) return ICONE[i][1]; return '☁️'; }
-  /* ⚠️ I GIORNI PER DATA, NON PER POSIZIONE (19/10/2026, quinto check, bug 11). Dopo mezzanotte una previsione presa
-     prima (cache) comincia con IERI: la tabella chiamava «oggi» ieri e il grafico metteva ieri due volte, fra i
-     misurati e fra i previsti. I giorni passati si tolgono appena arriva la risposta (daOggi) e i nomi si danno
-     confrontando la data. Stessa regola nella mappa (index.html) e in lib/pagina-adesso.js. */
   function isoRoma(ms) { return new Date(ms).toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' }); }
-  // ⚠️ DOMANI = OGGI + un giorno di CALENDARIO (20/10/2026, sesto check, bug 7): «adesso + 24 ore» sbagliava al cambio
-  // d'ora (25/10/2026 fra 00 e 01 dava ancora il 25, 27/3/2027 fra 23 e 24 dava il 29). Mezzogiorno UTC: nessun fuso lo sposta.
   var OGGI = isoRoma(Date.now()), DOMANI = (function (p) { return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] + 1, 12)).toISOString().slice(0, 10); })(OGGI.split('-'));
   function daOggi(j) { if (j && j.capoluoghi) j.capoluoghi.forEach(function (c) { if (c.giorni) c.giorni = c.giorni.filter(function (x) { return x.g >= OGGI; }); }); return j; }
   function nomeG(s, d) { var x = daIso(s); return s === OGGI ? 'oggi' : s === DOMANI ? 'domani' : GS[x.getDay()] + ' ' + x.getDate(); }
   function nomeReg(k) { return { valledaosta: "Valle d'Aosta", altoadige: 'Alto Adige', emilia: 'Emilia-Romagna', friuli: 'Friuli' }[k] || (k.charAt(0).toUpperCase() + k.slice(1)); }
   function pl(x) { return '&pl=' + (+x.lat).toFixed(4) + ',' + (+x.lon).toFixed(4) + '&pn=' + encodeURIComponent(x.n) + (x.z ? '&pz=1' : ''); }
   function vai(url, da) { ga(da); setTimeout(function () { location.href = url; }, 120); }
+  var CAPI = '|torino|alessandria|asti|biella|cuneo|novara|verbania|vercelli|aosta|milano|bergamo|brescia|como|cremona|lecco|lodi|mantova|monza|pavia|sondrio|varese|trento|bolzano|venezia|belluno|padova|rovigo|treviso|verona|vicenza|trieste|gorizia|pordenone|udine|genova|imperia|la spezia|savona|bologna|ferrara|forli|cesena|modena|parma|piacenza|ravenna|reggio emilia|reggio nell emilia|rimini|firenze|arezzo|grosseto|livorno|lucca|massa|carrara|pisa|pistoia|prato|siena|perugia|terni|ancona|ascoli piceno|fermo|macerata|pesaro|urbino|roma|frosinone|latina|rieti|viterbo|l aquila|chieti|pescara|teramo|campobasso|isernia|napoli|avellino|benevento|caserta|salerno|bari|barletta|andria|trani|brindisi|foggia|lecce|taranto|potenza|matera|catanzaro|cosenza|crotone|reggio calabria|reggio di calabria|vibo valentia|palermo|agrigento|caltanissetta|catania|enna|messina|ragusa|siracusa|trapani|cagliari|sassari|nuoro|oristano|carbonia|iglesias|olbia|tempio pausania|tortoli|lanusei|sanluri|villacidro|';
+  function capo(n) { return CAPI.indexOf('|' + norm(n) + '|') >= 0 ? 1 : 0; }
 
-  /* ── l'elenco dei comuni e le frazioni ── */
   var ELENCO = null, IN_ARRIVO = null;
   function norm(t) { return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/['’.-]/g, ' ').replace(/\s+/g, ' ').trim(); }
-  /* ⚠️ (20/10/2026, sesto check, bug 14) un 503 non e' un elenco: prima il testo dell'errore diventava ELENCO=[] e la
-     casella restava muta per tutta la visita. Come lib/pagina-adesso.js: errore se !r.ok, UNA promessa in volo (due
-     chiamate ravvicinate non scaricano due volte i 366 KB) e dimenticata sull'errore, cosi' si ritenta alla prossima. */
   function carica() {
     if (ELENCO) return Promise.resolve(ELENCO);
     if (!IN_ARRIVO) IN_ARRIVO = fetch('/data/elenco-paesi.txt').then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) {
@@ -907,18 +921,16 @@ OpenStreetMap, licenza ODbL.</p>
     q = norm(q); if (q.length < 2 || !ELENCO) return [];
     var a = [];
     ELENCO.forEach(function (x) { var i = x.q.indexOf(q); if (i < 0 || (i !== 0 && x.q.charAt(i - 1) !== ' ')) return; a.push({ x: x, p: i === 0 ? 0 : 1 }); });
-    a.sort(function (u, v) { return u.p - v.p || (v.x.z - u.x.z) || v.x.pop - u.x.pop; });   // tutta Italia alla pari
+    a.sort(function (u, v) { return u.p - v.p || (v.x.z - u.x.z) || v.x.pop - u.x.pop; });
     return a.slice(0, 6).map(function (u) { return u.x; });
   }
-  // ⚠️ COPIA di GEO_REGIONI di index.html e di lib/pagina-adesso.js: se cambia una, cambiano tutte
   var GEO_REGIONI = { 'Piemonte': 'piemonte', "Valle d'Aosta": 'valledaosta', 'Lombardia': 'lombardia', 'Veneto': 'veneto',
     'Friuli Venezia Giulia': 'friuli', 'Liguria': 'liguria', 'Emilia-Romagna': 'emilia', 'Toscana': 'toscana', 'Umbria': 'umbria',
     'Marche': 'marche', 'Lazio': 'lazio', 'Abruzzo': 'abruzzo', 'Molise': 'molise', 'Campania': 'campania', 'Puglia': 'puglia',
     'Basilicata': 'basilicata', 'Calabria': 'calabria', 'Sicilia': 'sicilia', 'Sardegna': 'sardegna' };
   function frazioni(testo) {
-    // dal 25/10/2026 /api/cerca (GeoNames servito dal sito) al posto di Open-Meteo, stessa forma della risposta
     return fetch(API.replace('/api/previsioni', '/api/cerca') + '?name=' + encodeURIComponent(testo) + '&count=10&language=it&countryCode=IT')
-      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (j) {   // un 429 non e' «nessun posto» (settimo check, bug 8)
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (j) {
         var visti = {};
         return (j.results || []).map(function (x) {
           var a1 = x.admin1 || '', a2 = x.admin2 || '';
@@ -930,7 +942,6 @@ OpenStreetMap, licenza ODbL.</p>
         }).filter(Boolean).sort(function (u, v) { return v.pop - u.pop; });
       });
   }
-  // una casella col suo menu: i comuni subito, le frazioni dopo una pausa di scrittura se c'e' posto
   function casella(inp, drop, scelto) {
     var righe = [], sel = -1, giro = 0, attesa = null;
     function disegna() {
@@ -942,19 +953,17 @@ OpenStreetMap, licenza ODbL.</p>
       var mio = ++giro; clearTimeout(attesa);
       if (righe.length < 6 && norm(q).length >= 3) attesa = setTimeout(function () {
         frazioni(q.trim()).then(function (f) {
-          if (mio !== giro || sel >= 0) return;   // ha scritto altro, o sta scegliendo con le frecce
+          if (mio !== giro || sel >= 0) return;
           var visti = {}; righe.forEach(function (x) { visti[x.q + '|' + x.reg] = 1; });
           righe = righe.concat(f.filter(function (x) { return !visti[x.q + '|' + x.reg]; })).slice(0, 7);
           if (righe.length) disegna(); else drop.innerHTML = '<div class="mk-porte-t">Nessun posto con questo nome<small>prova con il nome del comune</small></div>';
         }).catch(function () {
-          // (settimo check, bug 8) prima restava per sempre «Cerco anche tra le frazioni…»
           if (mio === giro && sel < 0 && !righe.length) drop.innerHTML = '<div class="mk-porte-t">Le frazioni non rispondono<small>prova con il nome del comune</small></div>';
         });
       }, 350);
       if (!righe.length) { drop.innerHTML = norm(q).length >= 3 ? '<div class="mk-porte-t">Cerco anche tra le frazioni…</div>' : ''; drop.classList.toggle('on', norm(q).length >= 3); return; }
       disegna();
     }
-    // senza elenco (errore) si cerca lo stesso: restano le frazioni del geocoder, e la prossima lettera ritenta l'elenco
     inp.addEventListener('focus', function () { carica().catch(function () {}); });
     inp.addEventListener('input', function () { carica().catch(function () {}).then(function () { mostra(inp.value); }); });
     inp.addEventListener('keydown', function (e) {
@@ -967,15 +976,14 @@ OpenStreetMap, licenza ODbL.</p>
     document.addEventListener('click', function (e) { if (!inp.parentNode.contains(e.target)) drop.classList.remove('on'); });
   }
   function seiPorte(x) {
-    return [['☀️', 'Previsioni', '7 giorni, ora per ora', '/?r=' + x.reg + '&m=prev' + pl(x), 'previsioni'],
-            ['💧', 'Pioggia caduta', 'ieri, 7 e 30 giorni', '/?r=' + x.reg + '&g=7' + pl(x), 'pioggia'],
-            ['📡', 'Radar adesso', 'la pioggia in corso', '/?r=' + x.reg + '&radar=ora' + pl(x), 'radar'],
-            ['🌡', 'Temperature', 'minime e massime', '/?r=' + x.reg + '&g=1&tq=1' + pl(x), 'temperature'],
-            ['🌲', 'Boschi', "che bosco c'è, a che quota", '/?r=' + x.reg + '&boschi=1' + pl(x), 'boschi'],
-            ['🛰', 'Satellite', "la foto dall'alto", '/?r=' + x.reg + '&boschi=1&sat=1' + pl(x), 'satellite']];
+    return [['☀️', 'Previsioni', '7 giorni, ora per ora', '/previsioni/?r=' + x.reg + pl(x), 'previsioni'],
+            ['💧', 'Pioggia caduta', 'ultimi 7 giorni', '/?r=' + x.reg + '&g=7' + pl(x), 'pioggia'],
+            ['💧', 'Pioggia caduta', 'ultimi 30 giorni', '/?r=' + x.reg + '&g=30' + pl(x), 'pioggia-30'],
+            ['📡', 'Radar piogge', 'la pioggia in corso', '/?r=' + x.reg + '&radar=ora' + pl(x), 'radar'],
+            ['🌲', 'Mappa boschi', "che bosco c'è, a che quota", '/?r=' + x.reg + '&boschi=1' + pl(x), 'boschi'],
+            ['🛰️', 'Boschi + satellite', "la foto dall'alto", '/?r=' + x.reg + '&boschi=1&sat=1' + pl(x), 'satellite']];
   }
 
-  /* ═══ 1. IL CERCA NELL'INTESTAZIONE ═══ */
   var header = document.querySelector('header');
   if (header) {
     var hbox = el('div', 'mk-cerca'), hinp = el('input'), hdrop = el('div', 'mk-drop');
@@ -983,8 +991,8 @@ OpenStreetMap, licenza ODbL.</p>
     hbox.appendChild(hinp); hbox.appendChild(hdrop);
     var lente = el('button', 'mk-lente', '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>');
     lente.setAttribute('aria-label', 'Cerca un paese');
-    var yt = header.querySelector('.yt');
-    header.insertBefore(hbox, yt); header.insertBefore(lente, yt);
+    var yt = header.querySelector('.t-ytp') || header.querySelector('.yt'), hdove = yt ? yt.parentNode : header;
+    hdove.insertBefore(hbox, yt); hdove.insertBefore(lente, yt);
     lente.addEventListener('click', function (e) { e.stopPropagation(); header.classList.add('mk-aperto'); hinp.focus(); });
     document.addEventListener('click', function (e) { if (!hbox.contains(e.target) && !hinp.value) header.classList.remove('mk-aperto'); });
     casella(hinp, hdrop, function (x) {
@@ -995,22 +1003,18 @@ OpenStreetMap, licenza ODbL.</p>
     hdrop.addEventListener('click', function (e) { var a = e.target.closest('a[data-da]'); if (a) ga(a.getAttribute('data-da')); });
   }
 
-  /* ═══ 3. «CHE TEMPO FARÀ»: la casella e le citta' ═══ */
   var blocco = document.getElementById(OPZ.id || 'meteo');
   var tuo = blocco && blocco.querySelector('.mk-tuo input');
-  if (tuo) casella(tuo, blocco.querySelector('.mk-tuo .mk-drop'), function (x) { tuo.blur(); vai(SITO + '/?r=' + x.reg + '&m=prev' + pl(x), 'cerca-meteo'); });
+  if (tuo) casella(tuo, blocco.querySelector('.mk-tuo .mk-drop'), function (x) { tuo.blur(); vai(SITO + '/previsioni/?r=' + x.reg + pl(x), 'cerca-meteo'); });
   var bosco = OPZ.boschi && document.getElementById(OPZ.boschi), bin = bosco && bosco.querySelector('.mk-tuo input');
   if (bin) casella(bin, bosco.querySelector('.mk-tuo .mk-drop'), function (x) { bin.blur(); vai(SITO + '/?r=' + x.reg + '&boschi=1' + pl(x), 'cerca-boschi'); });
   function disegnaCitta(j) {
     var box = blocco && blocco.querySelector('.mk-citta'); if (!box) return;
     var cc = (j && j.capoluoghi || []).filter(function (c) { return c.giorni && c.giorni.length >= 3; });
     if (!cc.length) {
-      /* (21/10/2026, ottavo check, bug 5) il link porta la regione VERA (sull'indice «italia» non esiste: la mappa restava
-         vuota) e il posto della pagina se c'e'; «guardale» e non «aprile», che si leggeva come il mese.
-         (bug 4) il bottone del radar resta anche senza previsioni: e' proprio quando serve. */
       var rg = OPZ.primi ? PRIMO : K, lp = document.querySelector('main a[href*="pl="]');
       var pq = lp ? (lp.getAttribute('href').match(/[?&](pl=[^&]+&pn=[^&]+(?:&pz=1)?)/) || [])[1] : '';
-      var mp = SITO + '/?' + (rg ? 'r=' + rg + '&' : '') + 'm=prev' + (pq ? '&' + pq : '');
+      var mp = SITO + '/previsioni/' + ((rg ? '&r=' + rg : '') + (pq ? '&' + pq : '')).replace('&', '?');
       var rl = document.querySelector('main a[href*="radar=ora"]');
       var rr = rl ? rl.getAttribute('href') : ADESSO ? SITO + '/' + K + '/adesso/' : OPZ.primi && PRIMO ? SITO + '/?r=' + PRIMO + '&radar=ora' : '';
       box.innerHTML = '<p class="mk-attesa">' + (OPZ.guasto || 'Le previsioni delle città') + ' non rispondono in questo momento: <a href="' + esc(mp) + '">guardale sulla mappa</a>.</p>'
@@ -1018,30 +1022,21 @@ OpenStreetMap, licenza ODbL.</p>
           + '<span class="mk-ic">📡</span><span><b>Dove sta piovendo adesso</b><small>guarda il radar piogge</small></span><span class="mk-fr">→</span></a>' : '');
       return;
     }
-    // prima il capoluogo di regione, poi per abitanti (dall'elenco dei comuni): Prato e Pisa prima di Manciano
     var ab = {}; (ELENCO || []).forEach(function (x) { if (x.reg === K && !x.z) ab[x.q] = x.pop; });
-    if (!OPZ.area && !OPZ.primi) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
+    if (!OPZ.area && !OPZ.primi) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || capo(b.n) - capo(a.n) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
     var g0 = cc[0].giorni;
-    var conPc = cc.some(function (c) { return c.giorni.slice(0, 3).some(function (g) { return g.pc != null; }); });   // Open-Meteo giu': niente righe vuote
+    var conPc = cc.some(function (c) { return c.giorni.slice(0, 3).some(function (g) { return g.pc != null; }); });
     var testa = '<div class="mk-cr mk-cr-t"><span></span>' + [0, 1, 2].map(function (d) { return '<span>' + nomeG(g0[d].g, d) + '</span>'; }).join('') + '</div>';
     var righe = cc.map(function (c, i) {
-      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + (c.r || K) + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : c.sotto ? '<small>' + esc(c.sotto) + '</small>' : '') + '</b>'
+      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/previsioni/?r=' + (c.r || K) + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : c.sotto ? '<small>' + esc(c.sotto) + '</small>' : '') + '</b>'
         + [0, 1, 2].map(function (d) { var g = c.giorni[d]; return '<span><i>' + icona(g.s) + '</i>' + g.mx + '°'
           + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '')
-          // la % di pioggia del giorno, la piu' alta delle sue ore (la Function con &pr=1, 25/10/2026)
           + (conPc ? '<em class="mk-pc' + (g.pc == null ? '' : g.pc < 10 ? ' z' : g.pc >= 60 ? ' alta' : '') + '">' + (g.pc == null ? '' : '💧 ' + g.pc + '%') + '</em>' : '') + '</span>'; }).join('') + '</a>';
     }).join('');
-    /* IL BOTTONE DEL RADAR (20/10/2026, suo: «il bottone dove sta piovendo adesso col radar è un po' nascosto»).
-       Prima era una riga piccola in coda a «Tocca una città...»: ora e' un bottone sotto la tabella (sua scelta, sotto
-       e non sopra). Si accende (blu pieno, pallino che pulsa) quando nella colonna «oggi» della tabella almeno un posto
-       ha 1 mm o piu': si accende solo su un dato vero. Porta al radar sulla mappa centrato sul posto se la pagina ha gia'
-       quel link (paesi, zone), se no alla pagina «adesso» della regione. */
     var bagnati = cc.filter(function (c) { var g = c.giorni[0]; return g && g.g === OGGI && (g.mm || 0) >= 1; }), piove = bagnati.length > 0;
     var rmap = document.querySelector('main a[href*="radar=ora"]');
     var rh = rmap ? rmap.getAttribute('href') : ADESSO ? SITO + '/' + K + '/adesso/' : '';
     var h2 = blocco.querySelector('h2'), dove = h2 ? h2.textContent.replace(/^Che tempo farà\s*/, '') : '';
-    /* L'INDICE /funghi/ (OPZ.primi, 20/10/2026) non ha un link al radar ne' una pagina «adesso»: il radar si apre sul
-       primo dei venti posti dove oggi piove (se no sul primo della classifica), e la scritta dice in quanti piove. */
     if (OPZ.primi && !rmap && cc[0]) { var cp = bagnati[0] || cc[0]; rh = SITO + '/?r=' + (cp.r || K) + '&radar=ora' + pl(cp); rmap = true;
       if (piove) dove = 'in ' + (bagnati.length === 1 ? 'uno' : bagnati.length) + ' dei ' + cc.length + ' posti'; }
     var radar = !rh ? '' : '<a class="mk-radar' + (piove ? ' piove' : '') + '" href="' + esc(rh) + '"'
@@ -1049,8 +1044,6 @@ OpenStreetMap, licenza ODbL.</p>
       + (piove ? '<span class="mk-pul"></span><span><b>Oggi è prevista pioggia ' + esc(dove) + '</b><small>guardala arrivare col radar piogge</small></span>'
                : '<span class="mk-ic">📡</span><span><b>Dove sta piovendo adesso</b><small>guarda il radar piogge</small></span>')
       + '<span class="mk-fr">→</span></a>';
-    // La frase del pluviometro solo se la sua riga c'e' (25/10/2026): se le previsioni non rispondono per quel punto
-    // la riga manca, e «Il pluviometro (1399 m) e i paesi intorno» annunciava una riga che non c'era.
     var sopra = OPZ.sopraSenzaQui && !cc.some(function (c) { return c.qui; }) ? OPZ.sopraSenzaQui : OPZ.sopra;
     box.innerHTML = (sopra ? '<p class="mk-sopra">' + esc(sopra) + '</p>' : '') + '<div class="mk-tab">' + testa + righe + '</div>'
       + (cc.length > 6 ? '<button class="mk-tutte">' + (OPZ.tutte || 'Mostra tutte le # città').replace('#', cc.length) + '</button>' : '')
@@ -1063,9 +1056,6 @@ OpenStreetMap, licenza ODbL.</p>
     if (e.target.closest('a[data-adesso]')) { try { gtag('event', 'apri_adesso', { da: GA + '-meteo' }); } catch (x) {} }
   });
 
-  /* ═══ 4. IL GRAFICO: 30 giorni misurati + 7 previsti (media delle citta') ═══ */
-  // la media per DATA, non per posizione (20/10/2026, sesto check): una citta' con un giorno in meno in testa non
-  // sposta piu' le altre, e la data non si prende piu' dalla prima citta'
   function previsti(j) {
     var somma = {}, quante = {}, date = [];
     (j && j.capoluoghi || []).forEach(function (c) {
@@ -1080,10 +1070,7 @@ OpenStreetMap, licenza ODbL.</p>
   }
   function grafico(j, F) {
     var box = document.getElementById('grafico'); if (!box || !j || !j.serie || !F.length) return;
-    var ultimo = j.serieDa || j.ultimoGiorno || (j.periodi['1'] || j.periodi['7']).ultimo;   // ultimoGiorno: il riepilogo di zona
-    /* (21/10/2026, ottavo check, bug 7) fra l'ultimo giorno misurato e oggi una barra vuota per OGNI giorno che manca
-       (prima al massimo 3). Se ne mancano piu' di 7 la fonte e' ferma: i previsti non si attaccano, il grafico resta
-       quello della pagina. */
+    var ultimo = j.serieDa || j.ultimoGiorno || (j.periodi['1'] || j.periodi['7']).ultimo;
     var buco = Math.round((daIso(OGGI) - daIso(ultimo)) / 864e5) - 1;
     if (buco > 7) return;
     var s = j.serie, n = Math.min(30, s.length), max = 1, i, q;
@@ -1099,9 +1086,6 @@ OpenStreetMap, licenza ODbL.</p>
         + (lab[i] ? '<b>' + mm(v) + '</b>' : '') + '<i style="height:' + (v == null ? 0 : Math.max(2, Math.round(v / max * 86))) + '%"></i></div>';
       ax += '<span>' + ((i === n || i % 5 === 0) ? (g.getDate() + '/' + (g.getMonth() + 1)) : '') + '</span>';
     }
-    /* IL BUCO FRA MISURATI E PREVISTI (20/10/2026, settimo check, bug 6): di notte, fino al giro dei riepiloghi del
-       mattino, l'ultimo giorno misurato e' l'altroieri (in Slovenia sempre, ARSO ha ~34 ore di ritardo) e i previsti
-       partono da oggi: «ieri» spariva senza che si vedesse. Ora c'e' una barra vuota per ogni giorno che manca. */
     for (var k = 1; k <= buco; k++) {
       var gb = daIso(ultimo); gb.setDate(gb.getDate() + k);
       barre += '<div class="b" title="' + gb.getDate() + ' ' + MESI[gb.getMonth()] + ': dato non ancora arrivato"><i style="height:0"></i></div>';
@@ -1119,31 +1103,16 @@ OpenStreetMap, licenza ODbL.</p>
     var h = document.getElementById('h-grafico'); if (h) h.textContent = 'La pioggia: gli ultimi 30 giorni e i prossimi 7';
   }
 
-  // senza il blocco «Che tempo farà» (mappa forestale: tipi di bosco e Italia, solo la ricerca) le previsioni non si chiedono
-  /* OPZ.primi (20/10/2026, indice /funghi/): i posti della tabella sono quelli della CLASSIFICA DEL GIORNO
-     (data/funghi/italia.json, cambia ogni mattina): prima si legge la classifica, poi si chiedono all'API i suoi primi
-     OPZ.primi posti con ?posti=<reg>/<slug>/<sigla>,... nello stesso ordine. */
-  /* (21/10/2026, ottavo check, bug 11) la classifica la scarica UNA volta la pagina (window._italia, con la riserva sulla
-     copia del sito): due download separati potevano dare due classifiche diverse a cavallo della rigenerazione. */
   var PRIMO = '';
   var area = !OPZ.primi ? Promise.resolve(AREA) : (window._italia || fetch(BASE + 'funghi/italia.json', { cache: 'no-store' }).then(function (r) { return r.json(); }))
     .then(function (j) { PRIMO = (j.primi && j.primi[0] && j.primi[0][2]) || '';
       return 'posti=' + (j.primi || []).slice(0, OPZ.primi).map(function (x) { return x[2] + '/' + x[3] + '/' + x[1]; }).join(','); });
   var citta = !blocco ? Promise.resolve(null)
-    : area.then(function (a) { return fetch(API + '?' + a + '&pr=1'); }).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });   // da oggi in poi (bug 11); &pr=1 la % (25/10/2026)
-  /* ⚠️ SOLO UN RIEPILOGO FRESCO (20/10/2026, settimo check, bug 5): scritto da meno di 36 ore, la stessa regola della
-     pagina. Se e' piu' vecchio la pagina regione ha gia' disegnato il grafico dai file del giorno, e ridisegnarlo col
-     riepilogo vecchio faceva sparire i giorni nuovi: allora il grafico resta com'e', senza i giorni previsti. Le zone
-     piogge un ripiego dai file non ce l'hanno: li' resta il grafico del riepilogo vecchio, sempre senza previsti. */
+    : area.then(function (a) { return fetch(API + '?' + a + '&pr=1'); }).then(function (r) { return r.json(); }).then(daOggi).catch(function () { return null; });
   var riepilogo = OPZ.grafico === false ? null : fetch(BASE + RIEP).then(function (r) { return r.json(); }).then(function (j) {
     var eta = j && j.generato ? Date.now() - Date.parse(j.generato) : -1;
     return eta >= 0 && eta < 36 * 3600 * 1000 ? j : null;
   }).catch(function () { return null; });
-  // l'elenco dei comuni (366 KB) serve solo a ordinare le citta' per abitanti: nelle zone (OPZ.area) i paesi arrivano
-  // gia' in ordine, quindi si disegna subito (20/10/2026, sesto check, bug 15)
-  /* OPZ.ordine (20/10/2026, pagine regione funghi): l'id dell'elenco delle zone della pagina. La tabella prende il SUO
-     ordine (dalla zona piu' bagnata 13-20 giorni fa), che la pagina fa quando arrivano i millimetri: si aspetta quello
-     (la prima .zmm scritta), al massimo 10 secondi, poi si disegna comunque. Ogni zona porta il suo slug (s). */
   function inOrdine(j) {
     var t0 = Date.now();
     (function guarda() {
@@ -1155,48 +1124,46 @@ OpenStreetMap, licenza ODbL.</p>
     })();
   }
   citta.then(function (j) { if (OPZ.ordine) return inOrdine(j); if (OPZ.area || OPZ.primi) return disegnaCitta(j); return carica().catch(function () {}).then(function () { disegnaCitta(j); }); });
-  // il grafico e' gia' cotto nell'HTML, ma la pagina lo RIDISEGNA quando arriva il suo riepilogo:
-  // per qualche secondo si ricontrolla e si rimettono i giorni previsti se sono spariti
   if (OPZ.grafico !== false) Promise.all([citta, riepilogo]).then(function (x) {
     var F = previsti(x[0]), t0 = Date.now();
     (function aspetta() {
       if (document.querySelector('#grafico .gg') && !document.querySelector('#grafico .mk-fut')) grafico(x[1], F);
-      if (Date.now() - t0 < 60000) setTimeout(aspetta, 200);   // 60 s (settimo check, bug 5): su rete lenta il grafico dai file arriva tardi
+      if (Date.now() - t0 < 60000) setTimeout(aspetta, 200);
     })();
   });
 })("liguria", "Liguria", "https://avventurepluvio-test.pages.dev", true, {"ga":"zona-riviera-di-levante","area":"zona=riviera-di-levante","id":"mk-meteo","grafico":false,"boschi":"mk-boschi","guasto":"Le previsioni dei paesi","tutte":"Mostra tutti i paesi (#)","tocca":"Tocca un paese per vederlo ora per ora sulla mappa","sopra":"I paesi della Riviera di Levante e dei dintorni"});
 </script>
 <script>
 (function strisciaMappa(OPZ) {
-  // OPZ: reg, tipo ('punto' | 'zona' | 'regione'), lat, lon, ga (prefisso degli eventi), boschi (testo del riquadro)
   var LOCALE = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   var PIOGGIA = LOCALE ? '/_anteprime-prova/' : 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/';
   var BOSCHI = LOCALE ? '/tessere-boschi/anteprime/' : 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/tessere-boschi/anteprime/';
   var KMPX = { punto: 0.2, zona: 0.3 }[OPZ.tipo];
-  var geo = {};   // tipo -> {j, url}
+  var geo = {};
 
   function proj(lat, lon, z) {
     var s = 256 * Math.pow(2, z), sy = Math.sin(lat * Math.PI / 180);
     return [(lon + 180) / 360 * s, (0.5 - Math.log((1 + sy) / (1 - sy)) / (4 * Math.PI)) * s];
   }
-  function ritaglia(a, g) {
-    // ⚠️ la pagina disegna la scheda mentre e' ancora nascosta (riquadri larghi 0): si riprova finche' ha una misura
+  function ritaglia(a0, g) {
+    var a = a0.querySelector('i.mk-img') || a0;
     var j = g.j, tw = a.clientWidth, th = a.clientHeight;
-    if (!tw || !th) { a._prove = (a._prove || 0) + 1; if (a._prove < 50) setTimeout(function () { ritaglia(a, g); }, 200); return; }
+    if (!tw || !th) { a._prove = (a._prove || 0) + 1; if (a._prove < 50) setTimeout(function () { ritaglia(a0, g); }, 200); return; }
     var k, cx, cy, p;
     if (OPZ.tipo === 'regione' && j.reg) {
       var nw = proj(j.reg.n, j.reg.w, j.z), se = proj(j.reg.s, j.reg.e, j.z);
       k = tw / Math.max(1, se[0] - nw[0]);
+      k = 0.94 * Math.min(k, th / Math.max(1, se[1] - nw[1]));
       cx = (nw[0] + se[0]) / 2 - j.x0; cy = (nw[1] + se[1]) / 2 - j.y0;
-    } else if (OPZ.lat == null) {   // regione senza confine nel JSON: il centro dell'immagine
+    } else if (OPZ.lat == null) {
       k = tw / j.w; cx = j.w / 2; cy = j.h / 2;
     } else {
       p = proj(OPZ.lat, OPZ.lon, j.z);
-      var mpx = 40075016.686 * Math.cos(OPZ.lat * Math.PI / 180) / (256 * Math.pow(2, j.z));   // metri per pixel dell'immagine
+      var mpx = 40075016.686 * Math.cos(OPZ.lat * Math.PI / 180) / (256 * Math.pow(2, j.z));
       k = mpx / 1000 / (KMPX || 0.25);
       cx = p[0] - j.x0; cy = p[1] - j.y0;
     }
-    k = Math.min(1.1, Math.max(k, tw / j.w, th / j.h));   // non oltre 1,1 (a 1,6 i pallini della Toscana sgranavano: meglio un'area piu' larga), e l'immagine copre sempre il riquadro
+    k = Math.min(1.1, Math.max(k, tw / j.w, th / j.h));
     var bw = j.w * k, bh = j.h * k;
     var x = Math.min(0, Math.max(tw - bw, tw / 2 - cx * k)), y = Math.min(0, Math.max(th - bh, th / 2 - cy * k));
     a.style.backgroundImage = 'url(' + g.url + ')';
@@ -1210,7 +1177,7 @@ OpenStreetMap, licenza ODbL.</p>
   }
   function carica(tipo, base) {
     if (geo[tipo]) return geo[tipo];
-    var f = OPZ.reg + (tipo === 'ieri' ? '-ieri' : '-mappa');
+    var f = OPZ.reg + (tipo === 'ieri' ? '-ieri' : tipo === '7g' ? '-7g' : '-mappa');
     geo[tipo] = fetch(base + f + '.json').then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (j) { return { j: j, url: base + f + '.webp' + (j.generato ? '?v=' + encodeURIComponent(j.generato.slice(0, 13)) : '') }; })
       .catch(function () { return null; });
@@ -1220,38 +1187,40 @@ OpenStreetMap, licenza ODbL.</p>
   function metti() {
     var btns = document.querySelector('#verdetto .capo-btns'); if (!btns || btns.getAttribute('data-str')) return;
     var vecchio = btns.querySelector('a'); if (!vecchio || btns.querySelectorAll('a').length !== 1) return;
-    // il colore delle etichette: giallo all'85% per tutte (20/10/2026, sua scelta sul confronto con il blu scuro)
     var COL = ' mk-' + (OPZ.colore || 'giallo');
     var d = document.createElement('div'); d.className = 'mk-str' + COL;
-    /* PAGINE PIOGGE (OPZ.ieri, 20/10/2026, suo: «in alto solo la mappa piogge»): un riquadro solo, la pioggia di IERI
-       (<reg>-ieri.webp), largo quanto la scheda. modo 'sopra': la mappa sopra il bottone «Apri la mappa di ieri», che
-       resta; modo 'bottone': il bottone stesso diventa la mappa, con la sua scritta sopra l'immagine. */
     if (OPZ.ieri) {
       var tit = vecchio.querySelector('b'), sot = vecchio.querySelector('small');
-      d.className = 'mk-str mk-ieri' + (OPZ.modo === 'sopra' ? '' : ' mk-grande') + COL;
-      d.innerHTML = '<a href="' + vecchio.getAttribute('href') + '" data-t="ieri" class="mk-uno"><span>' + (OPZ.modo === 'sopra'
+      d.className = 'mk-str mk-ieri' + COL;
+      d.innerHTML = '<a href="' + vecchio.getAttribute('href') + '" data-t="ieri" class="mk-uno"><i class="mk-img"></i><span>' + (OPZ.modo === 'sopra'
         ? '<b>💧 Guarda la pioggia di ieri</b><small>località per località →</small>'
         : '<b>' + (tit ? tit.textContent : 'Apri la mappa di ieri') + ' →</b><small>' + (sot ? sot.textContent : '') + '</small>') + '</span></a>';
       btns.setAttribute('data-str', '1');
       if (OPZ.modo === 'sopra') btns.parentNode.insertBefore(d, btns); else btns.parentNode.replaceChild(d, btns);
       var a1 = d.querySelector('a');
-      a1.addEventListener('click', function () { ga('ieri'); });
-      /* ⚠️ L'IMMAGINE DEVE ESSERE DEL GIORNO DEL BOTTONE (21/10/2026, ottavo check, bug 2): se lo scatto di ieri fallisce
-         (o GitHub salta il giro) sul ramo resta quella dell'altroieri, che usciva sotto «Ieri» senza nessun avviso.
-         Se la data del JSON non e' quella del link (da=) l'immagine non si mette: il riquadro resta blu con la scritta,
-         come quando manca. */
+      a1.addEventListener('click', function () { ga(a1.getAttribute('data-t')); });
       var daL = (vecchio.getAttribute('href').match(/[?&]da=(\d{4}-\d\d-\d\d)/) || [])[1];
-      carica('ieri', PIOGGIA).then(function (g) { if (g && (!daL || !g.j.da || g.j.da === daL)) { a1._g = g; ritaglia(a1, g); } });
+      var c7 = OPZ.modo === 'sopra' ? null : document.getElementById('cta7'), sp = a1.querySelector('span'), ieriHtml = sp.innerHTML, opp = null;
+      if (c7) {
+        a1.setAttribute('href', c7.getAttribute('href')); a1.setAttribute('data-t', '7giorni');
+        sp.innerHTML = '<b>💧 Pioggia degli ultimi 7 giorni<em> · apri la mappa</em> →</b>';
+        opp = document.createElement('a'); opp.className = 'mk-oppure'; opp.href = vecchio.getAttribute('href');
+        opp.textContent = 'Oppure guarda la pioggia di ieri →';
+        opp.addEventListener('click', function () { ga('ieri'); });
+        d.parentNode.insertBefore(opp, d.nextSibling);
+      }
+      carica('7g', PIOGGIA).then(function (g7) {
+        if (g7 && c7 && (!daL || !g7.j.a || g7.j.a === daL)) { a1._g = g7; ritaglia(a1, g7); return; }
+        if (opp) { opp.parentNode.removeChild(opp); a1.setAttribute('href', vecchio.getAttribute('href')); a1.setAttribute('data-t', 'ieri'); sp.innerHTML = ieriHtml; }
+        carica('ieri', PIOGGIA).then(function (g) { if (g && (!daL || !g.j.da || g.j.da === daL)) { a1._g = g; ritaglia(a1, g); } });
+      });
       return;
     }
-    // (21/10/2026, ottavo check, bug 9) solo il bottone NORMALE diventa la striscia: «Vedi i vicini sulla mappa» (pluviometro
-    // sospeso, millimetri sbagliati) resta com'e', se no sopra la pagina che lo dice invitava a «guardare la pioggia»
     if (vecchio.textContent.replace(/\s+/g, ' ').trim() !== 'Vedi sulla mappa') return;
+    d.className = 'mk-str mk-grandi' + COL;
     var b = document.querySelector('main a[href*="boschi=1"]:not([href*="sat=1"])');
-    // le scritte (20/10/2026, suo: «scriviamo qualcosa in più che incentivi il click»): una riga corta che invita
-    // e una piccola sotto; tre alternative messe a confronto in localhost, questa e' la 1
-    d.innerHTML = '<a href="' + vecchio.getAttribute('href') + '" data-t="pioggia"' + (b ? '' : ' class="mk-uno"') + '><span><b>💧 Guarda la pioggia</b><small>ultimi 20 giorni →</small></span></a>'
-      + (b ? '<a href="' + b.getAttribute('href') + '" data-t="boschi"><span><b>🌲 Guarda i boschi</b><small>tipo per tipo →</small></span></a>' : '');
+    d.innerHTML = '<a href="' + vecchio.getAttribute('href') + '" data-t="pioggia"' + (b ? '' : ' class="mk-uno"') + '><i class="mk-img"></i><span><b>💧 Pioggia 20 giorni →</b></span></a>'
+      + (b ? '<a href="' + b.getAttribute('href') + '" data-t="boschi"><i class="mk-img"></i><span><b>🌲 Boschi, tipo per tipo →</b></span></a>' : '');
     btns.setAttribute('data-str', '1');
     btns.parentNode.replaceChild(d, btns);
     [].forEach.call(d.querySelectorAll('a'), function (a) {

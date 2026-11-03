@@ -56,22 +56,67 @@ function finestraSocrata(dateStr) {
 const INTESTAZIONI = Object.assign({ 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0 (compatible; MappaPluvio/1.0)' },
   process.env.SOCRATA_APP_TOKEN ? { 'X-App-Token': process.env.SOCRATA_APP_TOKEN } : {});
 
-function getJSON(pathQ, retries = 3) {
+/* ⚠️ IL 429 E LA STRADA DAL WORKER (2/11/2026, scheda 109). Dal 27/10 Socrata risponde 429 ai runner di GitHub in 17
+   giri su 22, anche col token (il 13-14/10 lo aveva quasi azzerato): cade la prima richiesta grossa, la pioggia, cinque
+   volte in 100 s, e in due giorni sono caduti quattro giorni interi (recuperati dai giri dopo). Dal PC la stessa
+   richiesta, senza token, passa al primo colpo in meno di un secondo. Ora al 429 la richiesta si rifa' subito dal
+   worker omirl-tramite fissato a Milano (TRAMITE_URL + X-Chiave, come Piemonte e Ticino; il worker passa anche
+   l'X-App-Token, perche' da Cloudflare senza token Socrata rifiuta subito). Se rifiuta anche li', si aspetta e si
+   riprova, diretta e poi dal worker, con pause lunghe (45 s, 2 minuti) e un tetto di 6 minuti di attese per giro. */
+const TRAMITE_URL = (process.env.TRAMITE_URL || '').replace(/\/$/, '');
+const TRAMITE_CHIAVE = process.env.TRAMITE_CHIAVE || '';
+const PAUSE_429 = [0, 45000, 120000];
+const ATTESA_429_MAX = 6 * 60000;
+let attesa429 = 0;
+// r429 conta le risposte 429, dirette e dal worker; tramiteNo le risposte del worker che non sono ne' 200 ne' 429
+// (un 403 = chiave sbagliata), che prima finivano nelle pause senza lasciare traccia nel log
+const conti = { diretta: 0, tramite: 0, tramiteOk: 0, r429: 0, tramiteNo: [] };
+/* ⚠️ LA RISPOSTA TAGLIATA (3/11/2026, scheda 114 bis, voce B5 del check-10). Una risposta chiusa a meta' (il worker
+   chiude dopo 25 s) o una connessione che resta muta non chiudevano mai la promessa: il giro restava appeso fino al
+   tetto dei 20 minuti del workflow, senza i Retry e senza commit (provato in locale). Ora la risposta tagliata e'
+   un errore, e dopo TEMPO_MAX senza dati la richiesta si chiude: li' prendono i tentativi di sempre. */
+const TEMPO_MAX = 60000;
+function richiesta(pathQ, viaTramite) {
   return new Promise((resolve, reject) => {
-    const attempt = n => {
-      https.get({ host: HOST, path: pathQ, headers: INTESTAZIONI }, res => {
-        let data = '';
-        res.on('data', c => data += c);
-        res.on('end', () => {
-          // 429 = Socrata rifiuta le raffiche: si riprova piu' volte e con pause piu' lunghe (13/10/2026)
-          if (res.statusCode === 429 && n < Math.max(retries, 5)) return setTimeout(() => attempt(n+1), 10000*n);
-          if (res.statusCode !== 200) { if (n < retries) return setTimeout(() => attempt(n+1), 4000*n); return reject(new Error(`HTTP ${res.statusCode}`)); }
-          try { resolve(JSON.parse(data)); } catch(e) { if (n < retries) return setTimeout(() => attempt(n+1), 4000*n); reject(new Error('JSON: '+e.message)); }
-        });
-      }).on('error', e => { if (n < retries) return setTimeout(() => attempt(n+1), 4000*n); reject(e); });
-    };
-    attempt(1);
+    let opz;
+    if (viaTramite) { const u = new URL(TRAMITE_URL + pathQ); opz = { host: u.host, path: u.pathname + u.search, headers: Object.assign({ 'X-Chiave': TRAMITE_CHIAVE }, INTESTAZIONI) }; conti.tramite++; }
+    else { opz = { host: HOST, path: pathQ, headers: INTESTAZIONI }; conti.diretta++; }
+    const req = https.get(opz, res => {
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => resolve({ status: res.statusCode, data }));
+      res.on('error', reject);
+      res.on('close', () => { if (!res.complete) reject(new Error('risposta tagliata')); });
+    }).on('error', reject);
+    req.setTimeout(TEMPO_MAX, () => req.destroy(new Error(`nessun dato in ${TEMPO_MAX / 1000} s`)));
   });
+}
+async function getJSON(pathQ, retries = 3) {
+  let errori = 0, k = 0;
+  for (;;) {
+    let r;
+    try { r = await richiesta(pathQ, false); }
+    catch (e) { if (++errori < retries) { await sleep(4000 * errori); continue; } throw e; }
+    if (r.status === 429) {
+      conti.r429++;
+      if (TRAMITE_URL) {
+        try {
+          const t = await richiesta(pathQ, true);
+          if (t.status === 200) { const j = JSON.parse(t.data); conti.tramiteOk++; return j; }
+          if (t.status === 429) conti.r429++;
+          else conti.tramiteNo.push('HTTP ' + t.status);
+        } catch (e) { conti.tramiteNo.push(e.message.slice(0, 60)); /* il worker non ha risposto: si prosegue con le pause */ }
+      }
+      k++;
+      if (k >= PAUSE_429.length || attesa429 + PAUSE_429[k] > ATTESA_429_MAX) throw new Error('HTTP 429');
+      attesa429 += PAUSE_429[k];
+      await sleep(PAUSE_429[k]);
+      continue;
+    }
+    if (r.status !== 200) { if (++errori < retries) { await sleep(4000 * errori); continue; } throw new Error(`HTTP ${r.status}`); }
+    try { return JSON.parse(r.data); }
+    catch (e) { if (++errori < retries) { await sleep(4000 * errori); continue; } throw new Error('JSON: ' + e.message); }
+  }
 }
 
 /* ⚠️ L'ANAGRAFE E' UNA RICHIESTA SOLA (27/10/2026, fase 3 dell'alleggerimento delle fonti). Prima erano cinque, una
@@ -329,10 +374,36 @@ async function main() {
     targetDays = [1, 2].map(i => fmtDate(new Date(noon - i * 86400000)));   // ieri + altroieri
   }
 
+  /* ⚠️ UN SECONDO TENTATIVO, SOLO SE IL FILE E' RIMASTO SENZA (30/10/2026, scheda 101 ter). Il giro delle 4:30 del
+     30/10 ha preso 429 da Socrata sulla sola richiesta della direzione, cinque volte di fila: il file del 29/10 era
+     nuovo, tieniMeteo non aveva niente da tenere, e il giorno e' rimasto senza direzione fino al giro delle 12 (la
+     riserva delle 4:40 UTC GitHub l'ha fatta partire alle 11:00), con la mail di check-campi alle 11:45. Un minuto
+     dopo Socrata rispondeva gia' (l'altro ieri, chiesto subito dopo, e' passato). Quindi: se la richiesta meteo o
+     quella della direzione e' caduta e nel file scritto quel campo non c'e' su nessuna stazione, a fine giro si
+     aspetta un minuto e si rifa' il giorno UNA volta. Se il file ha gia' i valori dei giri prima non si richiede
+     niente: Socrata e' la fonte che risponde 429 alle raffiche. */
+  const daRifare = [];
   for (const dStr of targetDays) {
-    try { writeDay(dStr, await fetchDay(dStr, anagrafe, tempByStaz, windByStaz, umidByStaz)); }
-    catch(e) { console.warn(`  Warn ${dStr}: ${e.message}`); }
+    try {
+      const st = await fetchDay(dStr, anagrafe, tempByStaz, windByStaz, umidByStaz);
+      const senza = c => !st.some(s => s[c] != null);
+      if (writeDay(dStr, st) && ((st.meteoKo && senza('t')) || (st.direzioneKo && senza('wd')))) daRifare.push(dStr);
+    }
+    catch(e) {
+      console.warn(`  Warn ${dStr}: ${e.message}`);
+      // 2/11/2026: anche la pioggia caduta per 429 si riprova fra un minuto (il 1/11 sera il giro non ha scritto niente)
+      if (/HTTP 429/.test(e.message)) daRifare.push(dStr);
+    }
     await sleep(500);
+  }
+  if (daRifare.length) {
+    console.log(`  ${daRifare.join(' + ')}: meteo o direzione caduti e assenti dal file, riprovo fra un minuto`);
+    await sleep(60000);
+    for (const dStr of daRifare) {
+      try { writeDay(dStr, await fetchDay(dStr, anagrafe, tempByStaz, windByStaz, umidByStaz)); }
+      catch(e) { console.warn(`  Warn ${dStr} (secondo tentativo): ${e.message}`); }
+      await sleep(500);
+    }
   }
 
   // ── Pulizia file > 730 giorni (retention finestra scorrevole) ──
@@ -346,6 +417,8 @@ async function main() {
     .forEach(f => { if (f.replace('.json', '') < cutoffStr) { fs.unlinkSync(path.join(DATA_DIR, f)); deleted++; } });
   if (deleted > 0) console.log(`  Pulizia retention: ${deleted} file eliminati`);
 
+  console.log(`  Richieste a Socrata: ${conti.diretta} dirette, ${conti.tramite} dal worker (${conti.tramiteOk} riuscite), ${conti.r429} risposte 429, ${Math.round(attesa429 / 1000)} s di attese` +
+    (conti.tramiteNo.length ? `; ${conti.tramiteNo.length} risposte del worker non 429 (${[...new Set(conti.tramiteNo)].join(', ')})` : ''));
   console.log('=== collect-lombardia completato ===');
 }
 

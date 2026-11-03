@@ -189,7 +189,7 @@ function leggiGiorno(dir, giorno) {
  *    all'11 luglio 2026, l'Emilia fino al 2 maggio, e senza questo controllo
  *    entravano nel confronto travestite da dato reale.
  */
-function fileStimato(j) { return /open-meteo/.test(j.source || ''); }
+function fileStimato(j) { return /open-meteo|icon-2i-gapfill/.test(j.source || ''); }
 function eStima(s) { return s.om === true || /open-meteo/.test(s.src || ''); }
 
 function nomeFonte(lato, dir) { return (lato.separa && lato.separa[dir]) || lato.nome; }
@@ -338,7 +338,7 @@ if (!totale) {
   console.log('Allarga GIORNI oppure abbassa SOGLIA.');
   process.exit(0);
 }
-if (scartatiStima) console.log(`\n(${scartatiStima} confronti scartati: una delle due stazioni era una stima Open-Meteo.)`);
+if (scartatiStima) console.log(`\n(${scartatiStima} confronti scartati: una delle due stazioni era una stima del modello.)`);
 if (giorniInaffidabili.size) {
   const per = {};
   for (const v of giorniInaffidabili) { const d = v.split(' ')[0]; per[d] = (per[d] || 0) + 1; }

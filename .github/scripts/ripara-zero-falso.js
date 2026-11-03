@@ -60,7 +60,7 @@ function leggi(reg) {
   const f = path.join(DATA_DIR, reg, GIORNO + '.json');
   if (!fs.existsSync(f)) return { file: f, json: null, st: [] };
   const json = JSON.parse(fs.readFileSync(f, 'utf8'));
-  if (typeof json.source === 'string' && /open-meteo/i.test(json.source)) return { file: f, json, st: [] };
+  if (typeof json.source === 'string' && /open-meteo|icon-2i-gapfill/i.test(json.source)) return { file: f, json, st: [] };
   const st = (json.stations || []).filter(s => typeof s.mm === 'number' && typeof s.lat === 'number');
   return { file: f, json, st: st.map(s => ({ ...s, rete: reg })) };
 }

@@ -249,7 +249,7 @@ async function main() {
       const d = new Date(oggi); d.setUTCDate(d.getUTCDate() - i); const g = iso(d);
       const f = path.join(DATA_DIR, `${g}.json`);
       let ripara = !fs.existsSync(f);
-      if (!ripara) { try { ripara = /open-meteo/.test(JSON.parse(fs.readFileSync(f, 'utf8')).source || ''); } catch (e) { ripara = true; } }
+      if (!ripara) { try { ripara = /open-meteo|icon-2i-gapfill/.test(JSON.parse(fs.readFileSync(f, 'utf8')).source || ''); } catch (e) { ripara = true; } }
       if (ripara) { console.log(`  Auto-riparazione: ${g} mancante o stimato`); giorni.push(g); }
     }
   }

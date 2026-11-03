@@ -147,7 +147,11 @@ const REGIONI = [
   { dir: 'meteohub-basilicata', nome: 'Basilicata', wf: 'meteohub.yml', sito: 'https://meteohub.agenziaitaliameteo.it/' },
   { dir: 'meteohub-calabria',   nome: 'Calabria',   wf: 'meteohub.yml', sito: 'https://meteohub.agenziaitaliameteo.it/' },
   { dir: 'meteohub-sicilia',    nome: 'Sicilia',    wf: 'meteohub.yml', sito: 'https://meteohub.agenziaitaliameteo.it/' },
-  { dir: 'meteohub-sardegna',   nome: 'Sardegna',   wf: 'meteohub.yml', sito: 'https://meteohub.agenziaitaliameteo.it/' }
+  { dir: 'meteohub-sardegna',   nome: 'Sardegna',   wf: 'meteohub.yml', sito: 'https://meteohub.agenziaitaliameteo.it/' },
+  // Abruzzo (2/11/2026): MeteoNetwork + stime ICON-2I, collect-abruzzo.js. Da qui lo guarda anche il guardiano, che
+  // ri-lancia abruzzo.yml se il giro salta. Le stazioni contano anche i punti ICON: se ICON non si legge, il file
+  // resta con le sole MeteoNetwork (~15 su ~160) e dopo tre giorni suona «sotto metà».
+  { dir: 'abruzzo',             nome: 'Abruzzo (MeteoNetwork + stime ICON-2I)', wf: 'abruzzo.yml', sito: 'https://meteohub.agenziaitaliameteo.it/' }
 ];
 
 const GAPS_METEOHUB = path.join(DATA_ROOT, 'meteohub-gaps.json');
@@ -174,7 +178,7 @@ const itaDate = g => { const [y, m, d] = g.split('-'); return `${d}/${m}/${y}`; 
 
 function leggi(f) { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return null; } }
 /** File nato da stime nostre (gapfill, backfill, archivio), non dato di stazione. */
-const eStima = j => !!j && typeof j.source === 'string' && /open-meteo/.test(j.source);
+const eStima = j => !!j && typeof j.source === 'string' && /open-meteo|icon-2i-gapfill/.test(j.source);
 
 /* ---------- analisi di una regione ---------- */
 const mediana = a => { const s = [...a].sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : 0; };
@@ -440,15 +444,18 @@ function main() {
       }
     } else {
       if (prec.stato === 'allarme') {
+        // 2/11/2026 (scheda 113): `prec.dal` e' il giorno della mail d'allarme, non l'inizio del guasto («in guasto dal
+        // 31/10» per una Puglia ferma dal 26/10); e «nessun nuovo evento» era falso il giorno di un evento lieve nuovo.
         rientri.push(prec.tipo === 'stazioni'
           ? `  ${r.nome} — stazioni tornate normali (ieri ${st.stazioniIeri}, di norma ${st.riferimento}).\n` +
-            `    Era a meno di metà dal ${itaDate(prec.dal)}. I giorni ridotti restano com'erano: quello che\n` +
+            `    Allarme partito il ${itaDate(prec.dal)}. I giorni ridotti restano com'erano: quello che\n` +
             `    non è stato misurato allora non si recupera.\n`
           : prec.tipo === 'eventi'
-          ? `  ${r.nome} — nessun nuovo evento-buco MeteoHub. In guasto dal ${itaDate(prec.dal)}.\n` +
-            `    I giorni coperti nel frattempo restano integrazioni Open-Meteo (om:true nel file).\n`
+          ? `  ${r.nome} — buchi MeteoHub sotto la soglia: ${st.eventi === 1 ? '1 giorno' : st.eventi + ' giorni'} di fila con buchi gravi (allarme da ${soglia}).\n` +
+            `    Allarme partito il ${itaDate(prec.dal)}. I buchi lievi (rete sopra il 60%) restano nel registro\n` +
+            `    e non si coprono; i giorni coperti prima restano stime del modello (om:true nel file).\n`
           : `  ${r.nome} — dati reali di nuovo presenti (ultimo: ${itaDate(st.ultimoReale)}, ${st.stazioni} stazioni).\n` +
-            `    Era ferma dal ${itaDate(prec.dal)}. I giorni scoperti nel frattempo restano stime Open-Meteo.\n`);
+            `    Allarme partito il ${itaDate(prec.dal)}. I giorni scoperti nel frattempo restano stime del modello.\n`);
         console.log(`🟢 ${r.dir}: rientrata [${prec.tipo || 'assente'}]`);
         cambiato = true;
       }
@@ -472,13 +479,13 @@ function main() {
   const buchi = problemi.filter(x => x.tipo === 'eventi').length;
   if (allarmi.length) {
     sezioni.push(`ALLARME — ${problemi.length === 1 ? '1 regione' : `${problemi.length} regioni`}\n\n` + allarmi.join('\n') +
-      (assenti ? '\n  La rete di sicurezza sta coprendo i giorni mancanti con stime Open-Meteo:\n' +
+      (assenti ? '\n  La rete di sicurezza sta coprendo i giorni mancanti con stime del modello:\n' +
                  '  la mappa non mostra buchi, ma quei totali sono stime, non pioggia misurata.\n' : '') +
       (ridotte ? '\n  Attenzione al caso delle stazioni ridotte: i giorni ci sono e il totale in\n' +
                  '  mappa sembra normale, ma è calcolato su una frazione della rete. Le zone\n' +
                  '  rimaste scoperte risultano asciutte anche se ci ha piovuto.\n' : '') +
       (buchi ? '\n  Gli eventi-buco MeteoHub sono misurati PRIMA della copertura: a schermo i\n' +
-               '  giorni sembrano pieni, ma le stazioni mancanti sono integrazioni Open-Meteo\n' +
+               '  giorni sembrano pieni, ma le stazioni mancanti sono stime del modello\n' +
                '  (om:true nel file). Il registro è data/meteohub-gaps.json.\n' : '') +
       `\n  Prossimo promemoria fra ${PROMEMORIA_GIORNI} giorni, se resta così.\n`);
   }

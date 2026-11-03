@@ -76,3 +76,83 @@
 /funghi/liguria/alto-madonna-del-lago/ /funghi/piemonte/alto-madonna-del-lago/ 301
 /funghi/emilia/romagnese/ /funghi/lombardia/romagnese/ 301
 /funghi/emilia/valverde/ /funghi/lombardia/valverde/ 301
+
+# LA PAGINA MADRE DELLE PAGINE METEO E' LA MAPPA DELLE PREVISIONI - 28/10/2026 sera
+# /meteo/ (l'indice delle 31 zone e dei 20 paesi) c'e' stata solo il 28/10. Suo: «la pagina madre dovrebbe essere la
+# mappa»: il percorso delle pagine meteo porta a /previsioni/, e chi aveva /meteo/ ci arriva da qui.
+/meteo /previsioni/ 301
+/meteo/ /previsioni/ 301
+
+# LA PAGINA DELLA SLOVENIA NON C'E' PIU' - 1/11/2026 (scheda 105 bis, sua decisione)
+# ARSO pubblica con ~34 ore di ritardo: la pagina prometteva «ieri» senza averlo mai e i suoi numeri non tornavano.
+# La Slovenia resta sulla mappa: chi aveva l'indirizzo arriva li', con la Slovenia gia' scelta.
+/slovenia /?r=slovenia 301
+/slovenia/ /?r=slovenia 301
+
+# Pagine meteo tolte il 1/11/2026 perche' quasi uguali a quelle che le contengono (analisi delle famiglie di pagine)
+/meteo/candalla /meteo/alpi-apuane/ 301
+/meteo/candalla/ /meteo/alpi-apuane/ 301
+/meteo/val-serina /meteo/val-brembana/ 301
+/meteo/val-serina/ /meteo/val-brembana/ 301
+
+# Posti funghi nuovi tolti il 1/11/2026 sera, poche ore dopo averli aggiunti (vedi CLAUDE.md, «Quarto giro»)
+/funghi/sicilia/borgo-schisina/ /funghi/sicilia/ 301
+/funghi/sicilia/borgo-schisina /funghi/sicilia/ 301
+/funghi/sicilia/casa-degli-alpini/ /funghi/sicilia/ 301
+/funghi/sicilia/casa-degli-alpini /funghi/sicilia/ 301
+/funghi/sicilia/case-cavallaro/ /funghi/sicilia/ 301
+/funghi/sicilia/case-cavallaro /funghi/sicilia/ 301
+/funghi/sicilia/castanea-delle-furie/ /funghi/sicilia/ 301
+/funghi/sicilia/castanea-delle-furie /funghi/sicilia/ 301
+/funghi/sicilia/colle-chiesa/ /funghi/sicilia/ 301
+/funghi/sicilia/colle-chiesa /funghi/sicilia/ 301
+/funghi/sicilia/cumia/ /funghi/sicilia/ 301
+/funghi/sicilia/cumia /funghi/sicilia/ 301
+/funghi/sicilia/leni-sias/ /funghi/sicilia/ 301
+/funghi/sicilia/leni-sias /funghi/sicilia/ 301
+/funghi/sicilia/messina-san-michele/ /funghi/sicilia/ 301
+/funghi/sicilia/messina-san-michele /funghi/sicilia/ 301
+/funghi/sicilia/montagna-grande/ /funghi/sicilia/ 301
+/funghi/sicilia/montagna-grande /funghi/sicilia/ 301
+/funghi/sicilia/monte-colla/ /funghi/sicilia/ 301
+/funghi/sicilia/monte-colla /funghi/sicilia/ 301
+/funghi/sicilia/pettineo-sp176/ /funghi/sicilia/ 301
+/funghi/sicilia/pettineo-sp176 /funghi/sicilia/ 301
+/funghi/sicilia/pizzo-rosarello/ /funghi/sicilia/ 301
+/funghi/sicilia/pizzo-rosarello /funghi/sicilia/ 301
+/funghi/sicilia/rimiti/ /funghi/sicilia/ 301
+/funghi/sicilia/rimiti /funghi/sicilia/ 301
+/funghi/sicilia/rocca-timogna/ /funghi/sicilia/ 301
+/funghi/sicilia/rocca-timogna /funghi/sicilia/ 301
+/funghi/sicilia/salice/ /funghi/sicilia/ 301
+/funghi/sicilia/salice /funghi/sicilia/ 301
+/funghi/sicilia/san-pier-niceto-sias/ /funghi/sicilia/ 301
+/funghi/sicilia/san-pier-niceto-sias /funghi/sicilia/ 301
+/funghi/sicilia/serra-merio/ /funghi/sicilia/ 301
+/funghi/sicilia/serra-merio /funghi/sicilia/ 301
+/funghi/sicilia/tortorici-pagliara/ /funghi/sicilia/ 301
+/funghi/sicilia/tortorici-pagliara /funghi/sicilia/ 301
+/funghi/sicilia/villa-vela/ /funghi/sicilia/ 301
+/funghi/sicilia/villa-vela /funghi/sicilia/ 301
+/funghi/calabria/petilia-policastro/ /funghi/calabria/ 301
+/funghi/calabria/petilia-policastro /funghi/calabria/ 301
+/funghi/calabria/rogliano/ /funghi/calabria/ 301
+/funghi/calabria/rogliano /funghi/calabria/ 301
+/funghi/calabria/scilla-villaggio-del-pino/ /funghi/calabria/ 301
+/funghi/calabria/scilla-villaggio-del-pino /funghi/calabria/ 301
+/funghi/calabria/tiriolo/ /funghi/calabria/ 301
+/funghi/calabria/tiriolo /funghi/calabria/ 301
+/funghi/campania/montella-meteo/ /funghi/campania/ 301
+/funghi/campania/montella-meteo /funghi/campania/ 301
+/funghi/campania/tramonti/ /funghi/campania/ 301
+/funghi/campania/tramonti /funghi/campania/ 301
+
+# Zona rinominata il 1/11/2026: «Sila Greca» era la Sila Grande (Monte Curcio, Camigliatello, Spineto)
+/zone/sila-greca /zone/sila-grande/ 301
+/zone/sila-greca/ /zone/sila-grande/ 301
+/funghi/zone/sila-greca /funghi/zone/sila-grande/ 301
+/funghi/zone/sila-greca/ /funghi/zone/sila-grande/ 301
+/meteo/sila-greca /meteo/sila-grande/ 301
+/meteo/sila-greca/ /meteo/sila-grande/ 301
+/mappa-forestale/zone/sila-greca /mappa-forestale/zone/sila-grande/ 301
+/mappa-forestale/zone/sila-greca/ /mappa-forestale/zone/sila-grande/ 301

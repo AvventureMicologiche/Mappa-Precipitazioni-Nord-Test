@@ -45,7 +45,7 @@ function main() {
     if (!fs.existsSync(f)) continue;
     let j; try { j = JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { continue; }
     // le stime non sono misure: fuori i file di Open-Meteo e le stazioni stimate
-    if (/open-meteo/.test(j.source || '') || !Array.isArray(j.stations)) continue;
+    if (/open-meteo|icon-2i-gapfill/.test(j.source || '') || !Array.isArray(j.stations)) continue;
     for (const s of j.stations) {
       const t = s.t;
       if (!t || typeof t[0] !== 'number' || typeof t[1] !== 'number' || t[0] === t[1]) continue;

@@ -3,9 +3,10 @@
    scrivere il suo paese e andare sulla mappa, a tutte le funzioni (anche i boschi). Regola del campione:
    la RISPOSTA in cima («Ieri, 18 ottobre: 2,3 mm») non si tocca e niente le va sopra.
    Quattro pezzi:
-   1. il cerca nell'intestazione: casella al computer, lente al telefono; scelto il posto, sei porte
-      (Previsioni, Pioggia caduta, Radar, Temperature, Boschi, Satellite) verso la mappa;
-   2. sotto «Apri la mappa di ieri» la riga Previsioni · Radar · Boschi · Satellite: sta in
+   1. il cerca nell'intestazione: casella al computer, lente al telefono (dal 28/10/2026, testata nuova: lente
+      sempre, nella fascia bianca); scelto il posto, sei porte (Previsioni, Pioggia caduta 7 e 30 giorni, Radar
+      piogge, Mappa boschi, Boschi + satellite) verso la mappa;
+   2. sotto «Apri la mappa di ieri» la riga Previsioni · Radar piogge · Mappa boschi · Boschi + satellite: sta in
       lib-numeri-regione.js (scheda di ieri), qui solo lo stile;
    3. dopo la scheda, «Che tempo farà»: casella per qualsiasi paese o frazione d'Italia, che apre SUBITO la
       mappa sulle previsioni di quel posto (scheda 7 giorni e ora per ora), e le citta' principali una per
@@ -35,7 +36,7 @@ header{position:relative;flex-wrap:nowrap;}
 .mk-r small{color:#6b7d93;white-space:nowrap;}
 .mk-porte-t{padding:12px 14px 4px;font-weight:700;font-size:15px;}
 .mk-porte-t small{display:block;font-weight:500;color:#6b7d93;font-size:13px;margin-top:2px;}
-.mk-6{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 12px 12px;}
+.mk-6{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:8px;padding:8px 12px 12px;}   /* righe alte uguali (28/10/2026) */
 .mk-6 a{display:flex;align-items:center;gap:9px;padding:10px 10px;border:1px solid #d3deeb;border-radius:10px;text-decoration:none;color:#10263f;font-weight:700;font-size:14.5px;line-height:1.15;}
 .mk-6 a:hover{background:#eef4fb;}
 .mk-6 a span{font-size:20px;}
@@ -48,9 +49,10 @@ header{position:relative;flex-wrap:nowrap;}
   header .yt{margin-left:8px;}
   .mk-drop{min-width:0;}
 }
-.mk-porte{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;}
-.mk-porte a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 8px;border-radius:11px;background:rgba(255,255,255,.12);
-  color:#fff;text-decoration:none;font-weight:700;font-size:13.5px;border:1px solid rgba(255,255,255,.22);}
+/* 28/10/2026: coi nomi nuovi («Boschi + satellite») le scritte vanno su due righe: righe alte uguali e testo centrato */
+.mk-porte{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:8px;margin-top:14px;}
+.mk-porte a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 3px 8px;border-radius:11px;background:rgba(255,255,255,.12);
+  color:#fff;text-decoration:none;font-weight:700;font-size:13.5px;line-height:1.15;text-align:center;border:1px solid rgba(255,255,255,.22);}
 .mk-porte a span{font-size:21px;line-height:1;}
 .mk-porte a:hover{background:rgba(255,255,255,.2);}
 .mk-meteo{background:#f3f7fc;border:1px solid #d6e2f0;border-radius:14px;padding:4px 16px 14px;margin:18px 0 6px;}
@@ -172,6 +174,11 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
   function nomeReg(k) { return { valledaosta: "Valle d'Aosta", altoadige: 'Alto Adige', emilia: 'Emilia-Romagna', friuli: 'Friuli' }[k] || (k.charAt(0).toUpperCase() + k.slice(1)); }
   function pl(x) { return '&pl=' + (+x.lat).toFixed(4) + ',' + (+x.lon).toFixed(4) + '&pn=' + encodeURIComponent(x.n) + (x.z ? '&pz=1' : ''); }
   function vai(url, da) { ga(da); setTimeout(function () { location.href = url; }, 120); }
+  /* I CAPOLUOGHI DI PROVINCIA PRIMA DEGLI ALTRI PAESI nella tabella delle citta' (28/10/2026, suo: «è più importante
+     Savona di Millesimo», «in tutte le pagine»): la lista di lib-capoluoghi.js (CAPI), scritta come la normalizza norm().
+     In fondo a questo file un controllo ferma il generatore se le due liste non sono uguali. */
+  var CAPI = '|torino|alessandria|asti|biella|cuneo|novara|verbania|vercelli|aosta|milano|bergamo|brescia|como|cremona|lecco|lodi|mantova|monza|pavia|sondrio|varese|trento|bolzano|venezia|belluno|padova|rovigo|treviso|verona|vicenza|trieste|gorizia|pordenone|udine|genova|imperia|la spezia|savona|bologna|ferrara|forli|cesena|modena|parma|piacenza|ravenna|reggio emilia|reggio nell emilia|rimini|firenze|arezzo|grosseto|livorno|lucca|massa|carrara|pisa|pistoia|prato|siena|perugia|terni|ancona|ascoli piceno|fermo|macerata|pesaro|urbino|roma|frosinone|latina|rieti|viterbo|l aquila|chieti|pescara|teramo|campobasso|isernia|napoli|avellino|benevento|caserta|salerno|bari|barletta|andria|trani|brindisi|foggia|lecce|taranto|potenza|matera|catanzaro|cosenza|crotone|reggio calabria|reggio di calabria|vibo valentia|palermo|agrigento|caltanissetta|catania|enna|messina|ragusa|siracusa|trapani|cagliari|sassari|nuoro|oristano|carbonia|iglesias|olbia|tempio pausania|tortoli|lanusei|sanluri|villacidro|';
+  function capo(n) { return CAPI.indexOf('|' + norm(n) + '|') >= 0 ? 1 : 0; }
 
   /* ── l'elenco dei comuni e le frazioni ── */
   var ELENCO = null, IN_ARRIVO = null;
@@ -203,7 +210,7 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
     'Marche': 'marche', 'Lazio': 'lazio', 'Abruzzo': 'abruzzo', 'Molise': 'molise', 'Campania': 'campania', 'Puglia': 'puglia',
     'Basilicata': 'basilicata', 'Calabria': 'calabria', 'Sicilia': 'sicilia', 'Sardegna': 'sardegna' };
   function frazioni(testo) {
-    // dal 25/10/2026 /api/cerca (GeoNames servito dal sito) al posto di Open-Meteo, stessa forma della risposta
+    // dal 25/10/2026 /api/cerca (GeoNames servito dal sito) al posto del geocoder di prima, stessa forma della risposta
     return fetch(API.replace('/api/previsioni', '/api/cerca') + '?name=' + encodeURIComponent(testo) + '&count=10&language=it&countryCode=IT')
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (j) {   // un 429 non e' «nessun posto» (settimo check, bug 8)
         var visti = {};
@@ -253,13 +260,16 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
     drop.addEventListener('click', function (e) { var r = e.target.closest('.mk-r'); if (r) { var x = righe[+r.getAttribute('data-i')]; inp.value = x.n; scelto(x); } });
     document.addEventListener('click', function (e) { if (!inp.parentNode.contains(e.target)) drop.classList.remove('on'); });
   }
+  /* le sei porte come i sei bottoni delle pagine meteo (porte() di genera-pagine-meteo-zona.js, 28/10/2026, suo): via
+     «Temperature» («sono quelle di ieri»), al suo posto la pioggia a 30 giorni accanto a quella a 7; «Mappa boschi» e
+     «Boschi + satellite» al posto di «Boschi» e «Satellite», «Radar piogge» al posto di «Radar adesso» */
   function seiPorte(x) {
-    return [['☀️', 'Previsioni', '7 giorni, ora per ora', '/?r=' + x.reg + '&m=prev' + pl(x), 'previsioni'],
-            ['💧', 'Pioggia caduta', 'ieri, 7 e 30 giorni', '/?r=' + x.reg + '&g=7' + pl(x), 'pioggia'],
-            ['📡', 'Radar adesso', 'la pioggia in corso', '/?r=' + x.reg + '&radar=ora' + pl(x), 'radar'],
-            ['🌡', 'Temperature', 'minime e massime', '/?r=' + x.reg + '&g=1&tq=1' + pl(x), 'temperature'],
-            ['🌲', 'Boschi', "che bosco c'è, a che quota", '/?r=' + x.reg + '&boschi=1' + pl(x), 'boschi'],
-            ['🛰', 'Satellite', "la foto dall'alto", '/?r=' + x.reg + '&boschi=1&sat=1' + pl(x), 'satellite']];
+    return [['☀️', 'Previsioni', '7 giorni, ora per ora', '/previsioni/?r=' + x.reg + pl(x), 'previsioni'],
+            ['💧', 'Pioggia caduta', 'ultimi 7 giorni', '/?r=' + x.reg + '&g=7' + pl(x), 'pioggia'],
+            ['💧', 'Pioggia caduta', 'ultimi 30 giorni', '/?r=' + x.reg + '&g=30' + pl(x), 'pioggia-30'],
+            ['📡', 'Radar piogge', 'la pioggia in corso', '/?r=' + x.reg + '&radar=ora' + pl(x), 'radar'],
+            ['🌲', 'Mappa boschi', "che bosco c'è, a che quota", '/?r=' + x.reg + '&boschi=1' + pl(x), 'boschi'],
+            ['🛰️', 'Boschi + satellite', "la foto dall'alto", '/?r=' + x.reg + '&boschi=1&sat=1' + pl(x), 'satellite']];
   }
 
   /* ═══ 1. IL CERCA NELL'INTESTAZIONE ═══ */
@@ -270,8 +280,9 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
     hbox.appendChild(hinp); hbox.appendChild(hdrop);
     var lente = el('button', 'mk-lente', '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>');
     lente.setAttribute('aria-label', 'Cerca un paese');
-    var yt = header.querySelector('.yt');
-    header.insertBefore(hbox, yt); header.insertBefore(lente, yt);
+    // la testata nuova (lib-testata.js, 28/10/2026): casella e lente nella fascia bianca, prima di Iscriviti
+    var yt = header.querySelector('.t-ytp') || header.querySelector('.yt'), hdove = yt ? yt.parentNode : header;
+    hdove.insertBefore(hbox, yt); hdove.insertBefore(lente, yt);
     lente.addEventListener('click', function (e) { e.stopPropagation(); header.classList.add('mk-aperto'); hinp.focus(); });
     document.addEventListener('click', function (e) { if (!hbox.contains(e.target) && !hinp.value) header.classList.remove('mk-aperto'); });
     casella(hinp, hdrop, function (x) {
@@ -285,7 +296,7 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
   /* ═══ 3. «CHE TEMPO FARÀ»: la casella e le citta' ═══ */
   var blocco = document.getElementById(OPZ.id || 'meteo');
   var tuo = blocco && blocco.querySelector('.mk-tuo input');
-  if (tuo) casella(tuo, blocco.querySelector('.mk-tuo .mk-drop'), function (x) { tuo.blur(); vai(SITO + '/?r=' + x.reg + '&m=prev' + pl(x), 'cerca-meteo'); });
+  if (tuo) casella(tuo, blocco.querySelector('.mk-tuo .mk-drop'), function (x) { tuo.blur(); vai(SITO + '/previsioni/?r=' + x.reg + pl(x), 'cerca-meteo'); });
   var bosco = OPZ.boschi && document.getElementById(OPZ.boschi), bin = bosco && bosco.querySelector('.mk-tuo input');
   if (bin) casella(bin, bosco.querySelector('.mk-tuo .mk-drop'), function (x) { bin.blur(); vai(SITO + '/?r=' + x.reg + '&boschi=1' + pl(x), 'cerca-boschi'); });
   function disegnaCitta(j) {
@@ -297,7 +308,7 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
          (bug 4) il bottone del radar resta anche senza previsioni: e' proprio quando serve. */
       var rg = OPZ.primi ? PRIMO : K, lp = document.querySelector('main a[href*="pl="]');
       var pq = lp ? (lp.getAttribute('href').match(/[?&](pl=[^&]+&pn=[^&]+(?:&pz=1)?)/) || [])[1] : '';
-      var mp = SITO + '/?' + (rg ? 'r=' + rg + '&' : '') + 'm=prev' + (pq ? '&' + pq : '');
+      var mp = SITO + '/previsioni/' + ((rg ? '&r=' + rg : '') + (pq ? '&' + pq : '')).replace('&', '?');
       var rl = document.querySelector('main a[href*="radar=ora"]');
       var rr = rl ? rl.getAttribute('href') : ADESSO ? SITO + '/' + K + '/adesso/' : OPZ.primi && PRIMO ? SITO + '/?r=' + PRIMO + '&radar=ora' : '';
       box.innerHTML = '<p class="mk-attesa">' + (OPZ.guasto || 'Le previsioni delle città') + ' non rispondono in questo momento: <a href="' + esc(mp) + '">guardale sulla mappa</a>.</p>'
@@ -305,14 +316,15 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
           + '<span class="mk-ic">📡</span><span><b>Dove sta piovendo adesso</b><small>guarda il radar piogge</small></span><span class="mk-fr">→</span></a>' : '');
       return;
     }
-    // prima il capoluogo di regione, poi per abitanti (dall'elenco dei comuni): Prato e Pisa prima di Manciano
+    // prima il capoluogo di regione, poi quelli di provincia (28/10/2026: Imperia prima di Sanremo), poi per abitanti
+    // (dall'elenco dei comuni): Prato e Pisa prima di Manciano
     var ab = {}; (ELENCO || []).forEach(function (x) { if (x.reg === K && !x.z) ab[x.q] = x.pop; });
-    if (!OPZ.area && !OPZ.primi) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
+    if (!OPZ.area && !OPZ.primi) cc.sort(function (a, b) { return (b.c || 0) - (a.c || 0) || capo(b.n) - capo(a.n) || (ab[norm(b.n)] || 0) - (ab[norm(a.n)] || 0) || a.n.localeCompare(b.n, 'it'); });
     var g0 = cc[0].giorni;
-    var conPc = cc.some(function (c) { return c.giorni.slice(0, 3).some(function (g) { return g.pc != null; }); });   // Open-Meteo giu': niente righe vuote
+    var conPc = cc.some(function (c) { return c.giorni.slice(0, 3).some(function (g) { return g.pc != null; }); });   // % di pioggia assente: niente righe vuote
     var testa = '<div class="mk-cr mk-cr-t"><span></span>' + [0, 1, 2].map(function (d) { return '<span>' + nomeG(g0[d].g, d) + '</span>'; }).join('') + '</div>';
     var righe = cc.map(function (c, i) {
-      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/?r=' + (c.r || K) + '&m=prev' + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : c.sotto ? '<small>' + esc(c.sotto) + '</small>' : '') + '</b>'
+      return '<a class="mk-cr' + (i >= 6 ? ' mk-dopo' : '') + '" href="' + SITO + '/previsioni/?r=' + (c.r || K) + pl(c) + '" data-da="citta"><b>' + esc(c.n) + (c.qui ? '<small>al pluviometro</small>' : c.sotto ? '<small>' + esc(c.sotto) + '</small>' : '') + '</b>'
         + [0, 1, 2].map(function (d) { var g = c.giorni[d]; return '<span><i>' + icona(g.s) + '</i>' + g.mx + '°'
           + ((g.mm || 0) >= 0.5 ? '<em>' + mm(g.mm) + ' mm</em>' : '')
           // la % di pioggia del giorno, la piu' alta delle sue ore (la Function con &pr=1, 25/10/2026)
@@ -452,5 +464,8 @@ function meteoClient(K, NOME, SITO, ADESSO, OPZ) {
     })();
   });
 }
+
+// la lista dei capoluoghi scritta dentro meteoClient (CAPI) deve essere quella di lib-capoluoghi.js (28/10/2026)
+if (meteoClient.toString().indexOf("var CAPI = '" + require('./lib-capoluoghi.js').CAPI + "';") < 0) throw new Error('lib-meteo-regione.js: CAPI diversa da quella di lib-capoluoghi.js');
 
 module.exports = { METEO_CSS, meteoHtml, boschiHtml, meteoClient, ESTERE };

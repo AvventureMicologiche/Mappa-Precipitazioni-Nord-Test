@@ -23,6 +23,7 @@
 <meta property="og:title" content="Come si usa la mappa dei pluviometri: la guida completa">
 <meta property="og:description" content="Come si usa la mappa dei pluviometri: regione e periodo, pallini e colori, Piogge per funghi, schede delle stazioni e diretta radar. Con consigli e domande.">
 <meta property="og:image" content="https://avventurepluvio-test.pages.dev/preview.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:url" content="https://avventurepluvio-test.pages.dev/guida/">
 <meta property="og:type" content="website">
 <!-- La briciola per i motori di ricerca. ⚠️ Deve dire ESATTAMENTE quello che
@@ -262,12 +263,69 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
   table{font-size:15px;display:block;overflow-x:auto;white-space:nowrap}
   td:first-child{white-space:normal}
 }
+/* ── LA TESTATA (lib-testata.js, 28/10/2026) ── */
+header.tB{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:10px;padding:0;background:#fff;color:#123252;border-bottom:1px solid #d0d8e8}
+/* opacity: la pagina delle fonti ha header a{opacity:.85}, che non deve arrivare qui */
+.tB a{text-decoration:none;opacity:1}
+/* la colonna e' quella di main della famiglia: --t-max e --t-pad (760 e 16 di partenza; funghi e mappa forestale 860 e,
+   sotto i 640 px, 12: TESTATA_CSS_FUNGHI). Nella striscia il margine e' 11 px piu' stretto: le voci hanno 11 px di imbottitura */
+.tB .t-in{max-width:var(--t-max,760px);margin:0 auto;width:100%;padding:0 var(--t-pad,16px);display:flex;align-items:center}
+.tB .t-striscia{background:#0f2d4f}
+.tB .t-striscia .t-in{gap:2px;height:38px;padding:0 calc(var(--t-pad,16px) - 11px)}
+.tB .t-striscia a{color:rgba(255,255,255,.86);font-size:13.5px;font-weight:600;padding:0 11px;height:38px;display:flex;align-items:center;white-space:nowrap}
+.tB .t-striscia a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tB .t-striscia a.on{color:#0f2d4f;background:#f9c93e}
+.tB .t-striscia .t-dx{margin-left:auto;display:flex;gap:2px}
+.tB .t-banda .t-in{position:relative;gap:16px;padding-top:14px;padding-bottom:14px}
+.tB .t-marchio{display:flex;align-items:center;gap:12px}
+.tB .t-goccia{font-size:34px;line-height:1}
+.tB .t-marchio b{display:block;font-size:24px;font-weight:800;letter-spacing:-.015em;line-height:1.1;color:#123252}
+.tB .t-marchio small{display:block;font-size:13.5px;color:#4a5a6e;font-weight:500;margin-top:3px;line-height:1.3}
+.tB .t-tel{display:none}
+.tB .t-ytp{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:#e12b2b;color:#fff;font-size:14.5px;font-weight:700;padding:9px 16px 9px 13px;border-radius:999px;white-space:nowrap}
+.tB .t-ytp svg{width:18px;height:18px;fill:#fff}
+/* la lente del cerca (meteoClient): tonda, blu, accanto a Iscriviti; la casella si apre sopra la fascia */
+.tB .mk-lente{display:flex;align-items:center;justify-content:center;margin-left:auto;flex:none;width:40px;height:40px;border:0;border-radius:50%;background:#1b3f6e;cursor:pointer}
+.tB .mk-lente ~ .t-ytp{margin-left:0}
+.tB .mk-cerca{display:none;position:absolute;left:var(--t-pad,16px);right:var(--t-pad,16px);top:50%;transform:translateY(-50%);margin:0;max-width:none;z-index:60}
+.tB .mk-cerca input{border:2px solid #1b3f6e;padding:11px 12px 11px 36px}
+header.tB.mk-aperto .mk-cerca{display:block}
+header.tB.mk-aperto .t-marchio,header.tB.mk-aperto .t-ytp,header.tB.mk-aperto .mk-lente{visibility:hidden}
+/* con la lente nella fascia mancavano 64 px al computer (la frase andava su due righe) e 14 a 393 (il nome su due):
+   la frase perde «in tutta Italia», il nome al telefono scende di 2 px. Senza lente la testata resta quella approvata */
+.tB .t-in:has(.mk-lente) .t-it{display:none}
+@media (max-width:760px){
+  .tB .t-striscia{order:2}
+  .tB .t-banda .t-in{padding-top:10px;padding-bottom:10px;gap:10px}
+  .tB .t-goccia{font-size:26px}
+  .tB .t-marchio b{font-size:18px}
+  .tB .t-marchio small{font-size:12px;margin-top:1px}
+  .tB .t-pc{display:none}.tB .t-tel{display:inline}
+  .tB .t-ytp{font-size:13px;padding:7px 11px 7px 9px;gap:6px}
+  .tB .mk-lente{width:34px;height:34px}
+  .tB .t-in:has(.mk-lente) .t-marchio b{font-size:16px}
+  .tB .t-striscia .t-in{overflow-x:auto;scrollbar-width:none;padding:0 calc(var(--t-pad,16px) - 11px);-webkit-mask-image:linear-gradient(90deg,#000 86%,transparent);mask-image:linear-gradient(90deg,#000 86%,transparent)}
+  .tB .t-striscia .t-in::-webkit-scrollbar{display:none}
+  .tB .t-striscia .t-dx{margin-left:0;padding-right:30px}
+}
+/* a 360 px «Mappa Pluviometrica» andava su due righe */
+@media (max-width:389px){.tB .t-marchio{gap:8px}.tB .t-goccia{font-size:23px}.tB .t-marchio b{font-size:16px;white-space:nowrap}
+  .tB .t-banda .t-in{gap:8px}.tB .t-ytp{padding:7px 9px}.tB .mk-lente ~ .t-ytp span{display:none}}
+header.tB{--t-max:1080px;--t-pad:20px}
+.top .dentro{padding-top:22px}   /* senza la riga «← Torna alla mappa» il titolo restava attaccato in alto */
 </style>
 </head>
 <body>
 
+<header class="tB">
+  <nav class="t-striscia" aria-label="Menu"><div class="t-in"><a href="https://avventurepluvio-test.pages.dev/" onclick="try{gtag('event','apri_mappa',{da:'guida-testata-storico'})}catch(e){}">Storico piogge</a><a href="https://avventurepluvio-test.pages.dev/previsioni/" onclick="try{gtag('event','apri_mappa',{da:'guida-testata-previsioni'})}catch(e){}">Previsioni meteo</a><a href="https://avventurepluvio-test.pages.dev/guida/">Guida</a><span class="t-dx"><a href="https://avventuremicologiche.it/#noi">Chi siamo</a><a href="https://avventuremicologiche.it/#piede">Contatti</a></span></div></nav>
+  <div class="t-banda"><div class="t-in">
+    <a class="t-marchio" href="https://avventurepluvio-test.pages.dev/"><span class="t-goccia">🌧️</span><span><b>Mappa Pluviometrica</b><small><span class="t-pc">Previsioni, radar e pioggia misurata<span class="t-it"> in tutta Italia</span> · un progetto di Avventure Micologiche</span><span class="t-tel">di Avventure Micologiche</span></small></span></a>
+    <a class="t-ytp" href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" onclick="try{gtag('event','click_youtube',{pulsante:'guida'})}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg><span>Iscriviti</span></a>
+  </div></div>
+</header>
+<script>(function(){var a=document.querySelector('.tB .t-striscia a.on'),f=a&&a.parentNode;if(f&&a.offsetLeft+a.offsetWidth>f.clientWidth-30)f.scrollLeft=a.offsetLeft-40;})()</script>
 <header class="top">
-  <div class="barra"><a href="/">← Torna alla mappa</a></div>
   <div class="dentro">
     <div class="occhiello">Guida</div>
     <h1>Come si usa la mappa dei pluviometri</h1>
@@ -289,8 +347,9 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
      Sul telefono la spiegazione si nasconde e restano le ultime quattro. -->
 <div class="upd">
   <div class="tit"><span class="tag">NOVITÀ</span><b>Ultimi aggiornamenti</b>
-    <span class="quando">26 ottobre 2026</span></div>
+    <span class="quando">30 ottobre 2026</span></div>
   <ul>
+    <li><span class="data">30 ott</span><span><a href="#previsioni">Le previsioni sul satellite</a><span class="d">: regioni, valli e paesi sulla foto dal satellite, con il tempo e la minima e la massima su ogni città, e sotto una fascia gialla che le fa scorrere tutte. Tocchi una città e si apre il dettaglio ora per ora.</span></span></li>
     <li><span class="data">26 ott</span><span><a href="#colori">Le cerrete</a><span class="d">: nella mappa boschi un colore nuovo, il bordeaux, per i boschi di cerro, separati dagli altri querceti nelle 14 regioni la cui carta li distingue.</span></span></li>
     <li><span class="data">7 ott</span><span><a href="#previsioni">Le previsioni meteo</a><span class="d">: la linguetta «Previsioni» in cima alla mappa. Il tempo previsto su città e paesi, giorno per giorno, e per qualsiasi località il dettaglio ora per ora con temperatura, millimetri, probabilità di pioggia e vento, per sette giorni. Anche dalla scheda di ogni pluviometro e dalle pagine dei funghi.</span></span></li>
     <li><span class="data">4 ott</span><span><a href="#temperature-ieri">Le temperature di ieri sulla mappa</a><span class="d">: tocca l'icona col termometro sulla mappa e accanto a ogni pluviometro compaiono la minima e la massima del giorno prima, anche sopra la pioggia del periodo che hai scelto.</span></span></li>
@@ -299,8 +358,6 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
     <li><span class="data">30 set</span><span><a href="#satellite">I boschi dal satellite</a><span class="d">: nella mappa boschi premi Satellite e i colori dei boschi restano sopra la foto vera, fino a distinguere case, alberi e sentieri. Regoli l'intensità dei colori o li togli.</span></span></li>
     <li><span class="data">28 set</span><span><a href="#altitudine">Filtra i boschi per altitudine</a><span class="d">: nella mappa boschi trascini due frecce e restano solo i boschi fra le quote che scegli, per esempio fra 800 e 1.000 metri.</span></span></li>
     <li><span class="data">27 set</span><span><a href="https://avventurepluvio-test.pages.dev/mappa-forestale/">La mappa forestale d'Italia</a><span class="d">: una pagina per ogni regione e ogni valle, con i boschi tipo per tipo e la carta ufficiale da cui vengono.</span></span></li>
-    <li><span class="data">26 set</span><span><a href="#colori">Pioppi, salici, ontani e frassini</a><span class="d">: nella mappa boschi un colore nuovo per i boschi lungo fiumi e torrenti, in tutta Italia.</span></span></li>
-    <li><span class="data">26 set</span><span><a href="#cerca">Cerca con le coordinate</a><span class="d">: nella casella di ricerca scrivi il punto del GPS o incolla un link di Google Maps.</span></span></li>
   </ul>
   <button class="tutte" type="button">Vedi tutte le novità ▾</button>
   <p class="rivedi"><a href="/?novita=1">Rivedi la presentazione delle novità</a>, la finestra coi filmati che compare alla prima apertura della mappa.</p>
@@ -360,7 +417,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Il sito raccoglie lo storico della <b>pioggia già caduta</b>, misurata da oltre 5.700 pluviometri delle reti pubbliche di monitoraggio in Italia, Svizzera, Austria, Francia e Slovenia, oltre alle <b>previsioni</b> per i giorni successivi. Le due cose stanno in sezioni separate: lo storico dice quanti millimetri sono caduti in un punto preciso nei giorni scorsi, le previsioni che tempo farà nei prossimi sette giorni (<a href="#previsioni">capitolo 12</a>).</p>
 
 <figure class="media">
-  <img src="pioggia-colorata.jpg" alt="La mappa della pioggia degli ultimi 30 giorni su Piemonte, Lombardia e Veneto: colori dal blu al rosso e i pallini bianchi dei pluviometri" width="1000" height="560" loading="lazy">
+  <img src="pioggia-colorata.jpg" alt="La mappa della pioggia degli ultimi 30 giorni su Piemonte, Lombardia e Veneto: colori dal blu al rosso sopra la foto dal satellite e i pallini bianchi dei pluviometri" width="1000" height="560" loading="lazy">
   <figcaption>Piemonte, Lombardia e Veneto, la pioggia degli ultimi 30 giorni: dal blu dove ne è caduta poca al rosso dove ne è caduta di più. Ogni pallino bianco è un pluviometro.</figcaption>
 </figure>
 
@@ -399,7 +456,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Il pannello del periodo somma la pioggia dei giorni che scegli. I tasti pronti sono sei, più le date libere.</p>
 
 <figure class="stretta">
-  <img src="periodo.jpg" alt="Il pannello del periodo: Ieri, 7, 10, 15, 20, 30 giorni, Date personalizzate, Radar pioggia, Mappa boschi, Satellite e Piogge per funghi" width="786" height="456" loading="lazy">
+  <img src="periodo.jpg" alt="Il pannello del periodo: Ieri, 7, 10, 15, 20, 30 giorni, Date personalizzate, Radar pioggia, Mappa boschi, Satellite e Piogge per funghi" width="786" height="498" loading="lazy">
   <figcaption>Sei periodi pronti, le date libere, il radar, la mappa boschi, il satellite e il tasto verde della finestra per i funghi.</figcaption>
 </figure>
 
@@ -419,15 +476,16 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 
 <h2 id="funghi"><span class="n">6</span>Il tasto «Piogge per funghi»</h2>
 <p>È il tasto più usato del sito, e non fa niente di magico: somma la pioggia caduta <b>da 13 a 20 giorni fa</b>, cioè otto giorni di accumulo in una finestra che sta nel passato.</p>
-<p>Il motivo è che un fungo non nasce il giorno della pioggia. Fra l'acqua che bagna il terreno e il fungo che si vede passano, per i porcini e in condizioni normali, <b>da 13 a 20 giorni</b>. La domanda utile quindi non è «dove ha piovuto ieri» ma «dove aveva piovuto quando serviva», e quella finestra la trovi con un tocco.</p>
+<h3 id="quanti-giorni">Quanti giorni dopo la pioggia nascono i funghi?</h3>
+<p>Un fungo non nasce il giorno della pioggia. Fra l'acqua che bagna il terreno e il fungo che si vede passano, per i porcini e in condizioni normali, <b>da 13 a 20 giorni</b>. La domanda utile quindi non è «dove ha piovuto ieri» ma «dove aveva piovuto quando serviva», e quella finestra la trovi con un tocco.</p>
 <div class="bosco"><b>Non è una previsione di funghi.</b> La pioggia è una condizione necessaria e non sufficiente: contano la temperatura, la quota, l'esposizione, il tipo di bosco, quanto era secco il terreno prima, e chi è passato prima di te. Il sito ti dice dove è piovuto nel momento giusto. Il resto è mestiere tuo.</div>
 <p>Se vuoi la stessa cosa già ordinata, senza toccare niente, ci sono le pagine <a href="/funghi/">Piogge per funghi</a>: la classifica delle località più bagnate in quella finestra, per tutta l'Italia e regione per regione.</p>
 
 <h2 id="leggere"><span class="n">7</span>Leggere la mappa</h2>
 
 <figure>
-  <img src="mappa.jpg" alt="La mappa della Liguria a 7 giorni: la sfumatura dei colori, i pallini dei pluviometri e il pannello della legenda" width="1440" height="587" loading="lazy">
-  <figcaption>Liguria a sette giorni. A sinistra i due pannelli, sotto la scala dei colori con i quattro numeri del periodo. Ogni pallino è un pluviometro.</figcaption>
+  <img src="mappa.jpg" alt="La mappa della Liguria in una settimana di pioggia, dal 18 al 24 ottobre: la sfumatura dei colori sopra la foto dal satellite, i pallini dei pluviometri e i pannelli del periodo e della legenda" width="1440" height="704" loading="lazy">
+  <figcaption>Liguria a sette giorni, dal 18 al 24 ottobre. A sinistra i due pannelli, sotto la scala dei colori con i quattro numeri del periodo. Ogni pallino è un pluviometro.</figcaption>
 </figure>
 
 <h3>I pallini sono misure</h3>
@@ -448,7 +506,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <h2 id="temperature-ieri"><span class="n">8</span>Le temperature di ieri sui pallini</h2>
 <p>Scelta una regione, sulla mappa compare l'icona col termometro <span class="ui">🌡 ieri</span>: dal computer in alto a destra, sotto la casella di ricerca; dal telefono in basso a destra, appena sopra il pannello. Toccandola diventa blu e scrive accanto ai pallini la <b>minima</b>, in blu, e la <b>massima</b>, in rosso, del giorno prima. Si accende anche sopra la pioggia del periodo scelto, così vedi insieme quanto è piovuto e com'erano le notti. Da lontano i numeri si diradano per non accavallarsi: avvicinandoti compaiono tutti. Si spegne toccando di nuovo l'icona. Nel radar, nella mappa boschi e nelle previsioni l'icona non c'è.</p>
 <figure class="stretta">
-  <img src="temperature-ieri.jpg" alt="La Toscana dal telefono con le temperature di ieri accanto ai pallini: la minima in blu e la massima in rosso, e in basso a destra l'icona accesa" width="786" height="760" loading="lazy">
+  <img src="temperature-ieri.jpg" alt="La Toscana dal telefono con le temperature di ieri accanto ai pallini: la minima in blu e la massima in rosso, e in basso a destra l'icona accesa" width="786" height="698" loading="lazy">
   <figcaption>La Toscana dal telefono con l'icona accesa, in basso a destra. Accanto a ogni pallino, minima e massima di ieri.</figcaption>
 </figure>
 <p class="mini">Se una stazione ha dato un valore che i vicini smentiscono, per esempio per un sensore guasto, quel numero non lo scriviamo e il pallino resta senza. Il link e la foto condivisa portano le temperature accese.</p>
@@ -521,17 +579,19 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>È una pagina dedicata a quel pluviometro e al paese intorno, fatta per rispondere senza dover toccare niente. Dentro c'è:</p>
 
 <figure>
-  <img src="scheda-paese.jpg" alt="La parte alta di una pagina di paese: titolo, millimetri della finestra dei funghi e grafico degli ultimi venticinque giorni" width="1100" height="1132" loading="lazy">
-  <figcaption>La parte alta della scheda di Torriglia Garaventa. Sotto continua col ritratto dell'archivio e coi link ai posti vicini.</figcaption>
+  <img src="scheda-paese.jpg" alt="La parte alta di una pagina di paese: il titolo, il giudizio sulla pioggia degli ultimi 20 giorni coi millimetri, e i due riquadri della pioggia e dei boschi inquadrati sul paese" width="1100" height="836" loading="lazy">
+  <figcaption>La parte alta della scheda di Torriglia Garaventa. Sotto continua con le previsioni, i grafici, i pluviometri vicini e l'archivio.</figcaption>
 </figure>
 <ul>
-  <li><b>quanta acqua è caduta nella finestra dei funghi</b>, col numero grande e le due date esatte, più quando è caduta l'ultima pioggia forte;</li>
-  <li><b>il grafico degli ultimi venticinque giorni</b>, con gli otto giorni della finestra in scuro e gli altri in chiaro: si vede a colpo d'occhio se la pioggia è arrivata al momento giusto o troppo tardi;</li>
-  <li><b>quattro numeri a confronto</b>: la finestra dei funghi, gli ultimi 7 giorni, gli ultimi 25 e quand'è stata l'ultima pioggia sopra i 30 millimetri;</li>
-  <li><b>temperatura e vento</b> dello stesso periodo, e un'anteprima della mappa già inquadrata sul posto;</li>
-  <li><b>il ritratto del posto</b> ricavato da tutto l'archivio: quanti millimetri in quante giornate bagnate, il giorno più bagnato, il mese più piovoso e che posto occupa fra i pluviometri da bosco della sua regione;</li>
-  <li><b>perché quel posto è in elenco</b>: c'è un pluviometro vero, sta fra i 200 e i 1.600 metri e ha almeno il 37% di bosco entro tre chilometri, misurato sulle mappe;</li>
-  <li>i link <b>alla zona</b> che lo contiene e a tutte le altre località della regione.</li>
+  <li><b>quanta acqua è caduta negli ultimi 20 giorni</b>, col giudizio in alto («Ha piovuto benissimo»), i giorni più bagnati e la scala da sotto 30 a oltre 100 millimetri;</li>
+  <li><b>due riquadri, la pioggia e i boschi</b>, già inquadrati sul paese col segnaposto rosso: un tocco apre la mappa lì;</li>
+  <li><b>che tempo farà</b> oggi, domani e dopodomani al pluviometro e nei paesi intorno, col tasto del radar per vedere dove sta piovendo adesso;</li>
+  <li><b>il grafico degli ultimi venticinque giorni</b> e, sotto, <b>gli otto giorni da 13 a 20 giorni fa</b>, quelli da cui nascono i funghi di oggi, con com'è caduta la pioggia: lenta, che entra nel terreno, o battente, che corre via;</li>
+  <li><b>i pluviometri più vicini</b> e quelli dove ha piovuto di più nella regione, col posto che occupa fra i pluviometri da bosco;</li>
+  <li><b>temperatura e vento</b> degli ultimi 25 giorni e <b>che boschi ci sono intorno</b>;</li>
+  <li><b>come funziona la pagina</b>: chi misura i millimetri, a che quota e con quanto bosco intorno, e perché si guarda da 13 a 20 giorni fa;</li>
+  <li><b>l'archivio del pluviometro</b>: quanti millimetri in quante giornate bagnate da quando lo misuriamo;</li>
+  <li>i link a tutte le altre località della regione.</li>
 </ul>
 
 
@@ -539,8 +599,8 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Il tasto <span class="ui">Radar pioggia</span> cambia modo: la sfumatura dei cumulati si spegne, i pallini spariscono, restano i confini e compare <b>la pioggia in corso adesso</b>. Tre tasti e una linea del tempo: <span class="ui">Adesso</span>, <span class="ui">▶ -2 ore</span> per rivedere da dove è arrivata, <span class="ui">+40 min</span> per i quaranta minuti seguenti. Si esce col tasto, o semplicemente scegliendo un periodo.</p>
 
 <figure class="media">
-  <img src="radar.jpg" alt="La diretta radar: un fronte di pioggia sulle Alpi, forte in Tirolo e verso Salisburgo, più debole sull'Alto Adige e sul Friuli, col pannello dei tasti Adesso, meno due ore e più quaranta minuti" width="893" height="538" loading="lazy">
-  <figcaption>Un fronte sulle Alpi, il 24 settembre alle 18:30: giallo e arancio dove piove forte, in Tirolo e verso Salisburgo, azzurro sull'Alto Adige e sul Friuli. A sinistra i tre tasti e la scala in millimetri all'ora.</figcaption>
+  <img src="radar.jpg" alt="La diretta radar: la pioggia sulla Sardegna e sul mare intorno, forte sul nord dell'isola e lungo la costa orientale, col pannello dei tasti Adesso, meno due ore e più quaranta minuti" width="893" height="656" loading="lazy">
+  <figcaption>La pioggia sulla Sardegna, il 1° novembre alle 16:30: giallo e arancio dove piove forte, sul nord dell'isola e lungo la costa orientale, azzurro dove piove poco. A sinistra i tre tasti e la scala in millimetri all'ora.</figcaption>
 </figure>
 
 <p>Il radar vede la pioggia dall'alto, a due chilometri di risoluzione: ti dice <i>dove</i> sta piovendo adesso e dove andrà nei prossimi quaranta minuti. <i>Quanto</i> è caduto lo misurano i pluviometri, come in tutto il resto del sito.</p>
@@ -551,18 +611,18 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Scegli la regione come sempre e sulla mappa compaiono <b>città e paesi</b>, ognuno con il tempo previsto, la massima e la minima del giorno scelto. I giorni li cambi dalla striscia in basso (sul computer a sinistra). Per un posto preciso, <b>tocca una città o un paese</b> oppure <b>cerca la località</b> nella casella: si apre il dettaglio <b>ora per ora</b>, con il tempo, la temperatura, i millimetri, la probabilità di pioggia e il vento. Dal dettaglio, <span class="ui">Storico piogge qui</span> ti riporta allo storico sullo stesso punto; e dalla scheda di ogni pluviometro, <span class="ui">vai alle previsioni</span> fa il percorso inverso.</p>
 
 <figure class="media">
-  <img src="previsioni.jpg" alt="La sezione Previsioni: la Lombardia con il tempo previsto su città e paesi, a sinistra i sette giorni e la casella di ricerca, a destra il dettaglio ora per ora di Mantova" width="1000" height="579" loading="lazy">
-  <figcaption>La Lombardia per domani: su ogni città il tempo, la massima e la minima. A destra il dettaglio di Mantova, ora per ora.</figcaption>
+  <img src="previsioni.jpg" alt="La sezione Previsioni: la Lombardia vista dal satellite con il tempo, la minima e la massima su città e paesi, Milano in blu; a sinistra i sette giorni, la casella di ricerca e il dettaglio ora per ora di Milano, in basso la fascia gialla che scorre sulle città" width="1000" height="599" loading="lazy">
+  <figcaption>La Lombardia oggi, sulla foto dal satellite: su ogni città il tempo, la minima e la massima. A sinistra il dettaglio di Milano, ora per ora; in basso le città che scorrono.</figcaption>
 </figure>
 
 <p>Le prime due giornate e mezza sono ora per ora, poi a fasce di sei ore: è così che le pubblica il modello. La probabilità di pioggia è la percentuale di scenari del modello in cui in quell'ora piove: 90% vuol dire «quasi sicuro», 20% «difficile ma possibile».</p>
-<p class="mini">Le previsioni vengono dal modello ECMWF servite da MET Norway, l'istituto meteorologico norvegese; la probabilità di pioggia da Open-Meteo. Si aggiornano più volte al giorno. Non entrano mai nei conti dello storico né nelle pagine dei funghi: lì restano solo i millimetri misurati.</p>
+<p class="mini">Le previsioni vengono dal modello ECMWF servite da MET Norway, l'istituto meteorologico norvegese. Si aggiornano più volte al giorno. Non entrano mai nei conti dello storico né nelle pagine dei funghi: lì restano solo i millimetri misurati.</p>
 
 <h2 id="boschi"><span class="n">13</span>La mappa boschi</h2>
 <p>La pioggia dice <i>quando</i> andare, il bosco dice <i>dove</i>: faggete, castagneti, querceti e abetaie non danno gli stessi funghi. Il tasto <span class="ui">🌲 Mappa boschi</span>, accanto a quello del radar, cambia modo: la pioggia e i pallini spariscono, e <b>i boschi si colorano per tipo</b>, in undici gruppi, sopra il rilievo di monti e valli.</p>
 
 <figure class="media">
-  <img src="boschi.jpg" alt="La mappa boschi in Val d'Aveto, fra Liguria ed Emilia: faggete in verde, castagneti in arancio, querceti in ocra sopra il rilievo, col pannello della legenda" width="1000" height="671" loading="lazy">
+  <img src="boschi.jpg" alt="La mappa boschi in Val d'Aveto, fra Liguria ed Emilia: faggete in verde, castagneti in arancio, querceti in ocra sopra il rilievo, col pannello della legenda" width="1000" height="557" loading="lazy">
   <figcaption>La Val d'Aveto, a cavallo fra Liguria ed Emilia: faggete in verde, castagneti in arancio, querceti in ocra, e sotto i colori il rilievo delle valli. Sotto la legenda, le due carte usate.</figcaption>
 </figure>
 <p>Ogni regione e ogni valle ha anche la sua pagina, con quanto pesa ogni tipo di bosco, i paesi intorno e la carta ufficiale da cui viene il colore: parti dalla <a href="https://avventurepluvio-test.pages.dev/mappa-forestale/">mappa forestale d'Italia</a>. Castagneti, querceti e abetaie hanno anche una pagina loro, con i loro funghi: <a href="https://avventurepluvio-test.pages.dev/mappa-forestale/castagneti/">castagneti</a>, <a href="https://avventurepluvio-test.pages.dev/mappa-forestale/querceti/">querceti</a>, <a href="https://avventurepluvio-test.pages.dev/mappa-forestale/abetaie-e-peccete/">abetaie e peccete</a>.</p>
@@ -573,7 +633,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Tocca un punto qualsiasi della mappa: si apre una nuvoletta con tutto quello che serve per decidere se quel posto vale il giro.</p>
 
 <figure class="stretta">
-  <img src="boschi-nuvoletta.jpg" alt="La nuvoletta aperta toccando un castagneto vicino a Borzonasca: quota 208 metri, versante a sud-est, pendenza 28 gradi, sole del mattino, e il tasto Apri su Google Maps" width="786" height="744" loading="lazy">
+  <img src="boschi-nuvoletta.jpg" alt="La nuvoletta aperta toccando un castagneto vicino a Borzonasca: quota 208 metri, versante a sud-est, pendenza 28 gradi, sole del mattino, e il tasto Apri su Google Maps" width="786" height="704" loading="lazy">
   <figcaption>Un tocco su un castagneto vicino a Borzonasca: 208 metri, versante a sud-est con 28° di pendenza, cioè sole del mattino e terreno che asciuga. Sotto, il tasto per aprire il punto su Google Maps.</figcaption>
 </figure>
 <div class="bosco">
@@ -590,7 +650,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Scegli la regione e tocca il tasto: la mappa inquadra la regione. <b>Se prima hai cercato un paese, si apre sul paese</b>, abbastanza vicina da leggere i versanti. Da lontano i boschi sono una macchia unica: ingrandisci sulla valle che ti interessa. Si esce col tasto stesso, che nel frattempo è diventato <span class="ui">✕ Chiudi mappa</span>, con <span class="ui">↩ Indietro</span>, oppure scegliendo un periodo.</p>
 
 <figure class="stretta">
-  <img src="boschi-telefono.jpg" alt="La mappa boschi dal telefono intorno a Borzonasca, col segnaposto rosso, il rilievo sotto i colori e sotto la legenda dei dieci gruppi" width="786" height="1404" loading="lazy">
+  <img src="boschi-telefono.jpg" alt="La mappa boschi dal telefono intorno a Borzonasca, col segnaposto rosso, il rilievo sotto i colori e sotto la legenda dei tipi di bosco" width="786" height="1420" loading="lazy">
   <figcaption>Dal telefono, intorno a Borzonasca: castagneti in arancio sui versanti, faggete in verde più in là, e il rilievo che fa leggere le valli. Sotto la legenda e il nome della carta.</figcaption>
 </figure>
 <p>Anche le pagine di paese e di zona delle regioni coperte hanno il tasto <span class="ui">Guarda i boschi</span>, che apre la mappa boschi già centrata su quel posto.</p>
@@ -639,7 +699,7 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
 <p>Il tasto <span class="ui">🛰 Satellite</span> sta accanto a <span class="ui">Mappa boschi</span>, e c'è anche nel pannello della mappa boschi: la cartina lascia il posto alla foto dal satellite e i colori dei boschi restano sopra. Ingrandendo fino in fondo si distinguono le case, i singoli alberi e i sentieri, e capisci se quel bosco è fitto o rado, se c'è una strada per arrivarci, dove lasciare la macchina.</p>
 
 <figure class="media">
-  <img src="satellite.jpg" alt="Santo Stefano d'Aveto dal satellite nella mappa boschi: le case fra i prati, i boschi colorati sopra la foto, la nuvoletta aperta su un robinieto a 981 metri, e nel pannello il tasto Satellite acceso con la manopola dell'intensità" width="1000" height="566" loading="lazy">
+  <img src="satellite.jpg" alt="Santo Stefano d'Aveto dal satellite nella mappa boschi: le case fra i prati, i boschi colorati sopra la foto, la nuvoletta aperta su un robinieto a 981 metri, e nel pannello il tasto Satellite acceso con la manopola dell'intensità" width="1000" height="573" loading="lazy">
   <figcaption>Santo Stefano d'Aveto dal satellite: le case fra i prati, i boschi in colore sopra la foto, e la nuvoletta di un robinieto a 981 metri con il tasto per Google Maps. Nel pannello il tasto Satellite acceso, in verde, e la manopola dell'intensità.</figcaption>
 </figure>
 <div class="bosco">
@@ -670,6 +730,12 @@ td:first-child{font-weight:600;color:#2c3e54;white-space:nowrap}
   <li><b>Pagina di zona</b>, per esempio <a href="/funghi/zone/garfagnana/">Funghi in Garfagnana</a>: Garfagnana, Val Trebbia, Sila, Cansiglio e altre centodieci, ognuna coi pluviometri che le stanno dentro.</li>
   <li><b>Pagina di paese</b>: la scheda del pluviometro più vicino, con l'archivio, quanto è piovuto nella finestra, da quanti giorni non piove e il ritratto del posto. Ci si arriva dalla mappa con <span class="ui">vai alla scheda →</span>, o cercando il nome del paese su Google.</li>
   <li><b>L'indice <a href="/funghi/">Piogge per funghi</a></b>: la porta su tutte, con la classifica nazionale delle località più bagnate in questo momento.</li>
+</ul>
+<p>E le pagine delle previsioni, che partono dalla <a href="/previsioni/">mappa delle previsioni</a>:</p>
+<ul>
+  <li><b>Pagina «Meteo» di valle</b>, per esempio <a href="/meteo/garfagnana/">Meteo Garfagnana</a>: i paesi della valle, ognuno alla sua quota, con le previsioni a 7 giorni e ora per ora.</li>
+  <li><b>Pagina «Meteo» di paese</b>, per esempio <a href="/meteo/liguria/sassello/">Meteo Sassello</a>: il paese e quelli intorno, con la pioggia già caduta al pluviometro.</li>
+  <li><b>Pagina «Radar adesso» di regione</b>, per esempio <a href="/liguria/adesso/">Radar meteo Liguria</a>: dove sta piovendo in questo momento e il tempo delle città.</li>
 </ul>
 <p>Da novembre a marzo, sotto il titolo delle pagine funghi, un avviso ricorda che si è ai margini o fuori stagione.</p>
 <p>Le pagine sono gusci fissi e i numeri li scaricano al momento: quello che leggi è sempre aggiornato a ieri.</p>
@@ -767,10 +833,10 @@ con i <b>soli posti da bosco</b>, nella finestra da 13 a 20 giorni fa che serve 
 <div class="pagine">
 <!-- PAGINE:INIZIO -->
 <p><b>Dove ha piovuto: tutti i pluviometri, pianura compresa</b></p>
-<p><a href="https://avventurepluvio-test.pages.dev/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/molise/">Molise</a> · <a href="https://avventurepluvio-test.pages.dev/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/sardegna/">Sardegna</a> · <a href="https://avventurepluvio-test.pages.dev/svizzera/">Svizzera</a> · <a href="https://avventurepluvio-test.pages.dev/austria/">Austria</a> · <a href="https://avventurepluvio-test.pages.dev/slovenia/">Slovenia</a></p>
+<p><a href="https://avventurepluvio-test.pages.dev/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/molise/">Molise</a> · <a href="https://avventurepluvio-test.pages.dev/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/sardegna/">Sardegna</a> · <a href="https://avventurepluvio-test.pages.dev/svizzera/">Svizzera</a> · <a href="https://avventurepluvio-test.pages.dev/austria/">Austria</a></p>
 <div class="bosco">
 <p><b>🍄 Dove potrebbero esserci le prime nascite di funghi</b></p>
-<p><a href="https://avventurepluvio-test.pages.dev/funghi/">La nostra selezione, le località più bagnate</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sardegna/">Sardegna</a></p>
+<p><a href="https://avventurepluvio-test.pages.dev/funghi/">La nostra selezione, le località più bagnate</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/molise/">Molise</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sardegna/">Sardegna</a></p>
 </div>
 <!-- PAGINE:FINE -->
 </div>

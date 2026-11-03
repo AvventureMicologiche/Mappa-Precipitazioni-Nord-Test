@@ -56,6 +56,7 @@ const { METEO_CSS, meteoHtml, meteoClient } = require('./lib-meteo-regione.js');
 // 20/10/2026 (lib-striscia.js, sua scelta B): il bottone «Apri la mappa di ieri» diventa la mappa della pioggia di
 // IERI (<regione>-ieri.webp, dal giro delle anteprime), con la sua scritta su un'etichetta gialla all'85%
 const { STRISCIA_CSS, strisciaScript } = require('./lib-striscia.js');
+const { TESTATA_CSS, testata } = require('./lib-testata.js');   // la testata del sito (28/10/2026)
 // «Apri la mappa di ieri» con le scritte piu' grandi (suo, 20/10/2026), una riga anche a 360 px. Solo qui e non in
 // STILE_IERI, che usano anche le pagine «adesso» con testi diversi. Sta PRIMA di METEO_CSS perche' le zone piogge
 // copiano il foglio della regione di casa tagliandolo all'inizio del blocco meteo: cosi' lo ereditano.
@@ -113,7 +114,7 @@ const REGIONI = [
   { k:'sardegna',    nome:'Sardegna',               prep:'in',   dirs:['meteohub-sardegna'],    agenzia:'MeteoHub',              url:'', staz:'oltre 90',         geo:'dalla Gallura al Sulcis' },
   { k:'svizzera',    nome:'Svizzera',               prep:'in',   dirs:['svizzera','ticino'],    agenzia:'MeteoSvizzera e OASI Ticino', agenziaCorta:'MeteoSvizzera', url:'', staz:'oltre 300',  geo:'dal Ticino ai Grigioni, dal Vallese al Giura' },
   { k:'austria',     nome:'Austria',                prep:'in',   dirs:['austria'],              agenzia:'GeoSphere Austria',     url:'', staz:'quasi 270',        geo:'dai ghiacciai del Tirolo alle colline del Burgenland' },
-  { k:'slovenia',    nome:'Slovenia',               prep:'in',   dirs:['slovenia'],             agenzia:'ARSO Slovenia',         url:'', staz:'oltre 110',        geo:'dalle Alpi Giulie al Carso', nota:'ARSO pubblica con circa 36 ore di ritardo: nei riepiloghi qui sotto gli ultimi uno o due giorni possono mancare, ed è normale.' },
+  // ⚠️ LA SLOVENIA NON HA PIU' UNA PAGINA (1/11/2026, sua decisione, scheda 105 bis). ARSO pubblica con ~34 ore di ritardo: la pagina non aveva mai «ieri» ma lo prometteva, e non era fra le COTTE (diceva «oltre 110 pluviometri» col riquadro a 109). La Slovenia resta sulla MAPPA; /slovenia/ rimanda a /?r=slovenia (_redirects). Togliendola da qui spariscono da soli la pagina, la voce di sitemap, il riepilogo e i link in guida, fonti e pagine funghi.
 ];
 
 // ── I LINK FRA LE PAGINE ────────────────────────────────────────────────────
@@ -189,7 +190,28 @@ const listaRegioni = () => REGIONI
 
 // `tipo` = 'regione' | 'funghi': la famiglia della pagina che si sta scrivendo.
 // Si elenca l'ALTRA.
-function navAltre(tipo) {
+// LE REGIONI VICINE (1/11/2026, analisi delle famiglie di pagine): le pagine regione non si linkavano fra loro.
+// Confini di terra, piu' lo Stretto fra Calabria e Sicilia; si linkano solo le regioni che una pagina ce l'hanno.
+const VICINE = {
+  valledaosta: ['piemonte', 'svizzera'], piemonte: ['valledaosta', 'lombardia', 'liguria', 'emilia', 'svizzera'],
+  liguria: ['piemonte', 'emilia', 'toscana'], lombardia: ['piemonte', 'emilia', 'veneto', 'trentino', 'altoadige', 'svizzera'],
+  emilia: ['piemonte', 'lombardia', 'veneto', 'liguria', 'toscana', 'marche'],
+  veneto: ['lombardia', 'emilia', 'trentino', 'altoadige', 'friuli', 'austria'], trentino: ['lombardia', 'veneto', 'altoadige'],
+  altoadige: ['trentino', 'veneto', 'lombardia', 'austria', 'svizzera'], friuli: ['veneto', 'austria'],
+  toscana: ['liguria', 'emilia', 'marche', 'umbria', 'lazio'], umbria: ['toscana', 'marche', 'lazio'],
+  marche: ['emilia', 'toscana', 'umbria', 'lazio', 'abruzzo'], lazio: ['toscana', 'umbria', 'marche', 'abruzzo', 'molise', 'campania'],
+  molise: ['abruzzo', 'lazio', 'campania', 'puglia'], campania: ['lazio', 'molise', 'puglia', 'basilicata'],
+  puglia: ['molise', 'campania', 'basilicata'], basilicata: ['campania', 'puglia', 'calabria'], calabria: ['basilicata', 'sicilia'],
+  sicilia: ['calabria'], svizzera: ['valledaosta', 'piemonte', 'lombardia', 'altoadige', 'austria'],
+  austria: ['altoadige', 'veneto', 'friuli', 'svizzera'],
+};
+function vicineHtml(k) {
+  const v = (VICINE[k] || []).filter(x => fs.existsSync(path.join(__dirname, '..', '..', x, 'index.html')))
+    .map(x => REGIONI.find(r => r.k === x)).filter(Boolean);
+  return v.length ? `<p style="margin:0 0 10px">Le regioni vicine: ${v.map(r => `<a href="${SITO}/${r.k}/">${r.nomeTitolo || r.nome}</a>`).join(' · ')}</p>
+` : '';
+}
+function navAltre(tipo, k) {
   if (tipo === 'regione') {
     // ⚠️ DUE STRADE, E SI DEVE CAPIRE CHE SONO DUE. La riga porta a cose
     // diverse: «La nostra selezione» e' la classifica nazionale delle localita'
@@ -198,10 +220,10 @@ function navAltre(tipo) {
     // link di cui non si sa dove porta non lo clicca nessuno. Stessa forma
     // della striscia in fondo alla mappa: domanda, la selezione, il riepilogo.
     return `<nav class="altre">
-  <div style="${BOSCO}">
+  ${k ? vicineHtml(k) : ''}<div style="${BOSCO}">
     <b style="color:#2d6a30">🍄 Dove ha piovuto di più?</b>
     <p><a href="${SITO}/funghi/" style="color:#2d6a30;font-weight:600">La nostra selezione, le località più bagnate</a>
-    <span style="color:#7a8b9a">·</span> oppure il riepilogo delle regioni: ${listaFunghi()}</p>
+    <span style="color:#7a8b9a">·</span> oppure le pagine funghi, regione per regione: ${listaFunghi()}</p>
   </div>
 </nav>`;
   }
@@ -291,11 +313,15 @@ function descrMappa(r, j, N, n) {
   // il nome SENZA la provincia aggiunta dal riepilogo (`nb`, bug 8 del 19/10/2026): con «(Provincia del verbano
   // cusio os)» due volte la frase arrivava a 226 caratteri e restava solo «Mappa di 277 pluviometri…»
   const uno = !d1 || !d1.giorni ? null : t1 && t1.mm >= 1 ? `${quando} ${virgola(t1.mm)} mm ${aDi(nomeBello(t1.nb || t1.n))}` : `${quando} giornata ${t1 && t1.mm > 0 ? 'quasi ' : ''}asciutta`;
-  const sette = t7 && t7.mm >= 1 ? `in 7 giorni ${mmD(t7.mm)} mm ${aDi(nomeBello(t7.nb || t7.n))}` : null;
-  const numeri = [uno, sette].filter(Boolean).join(', ');
+  // (1/11/2026) se nei 7 giorni ci sono giorni stimati (j.periodi['7'].stime) il massimo della settimana non si scrive:
+  // in Puglia «in 7 giorni 116 mm a Lesina» contava quattro giorni di stime
+  const sette = t7 && t7.mm >= 1 && !d7.stime ? `in 7 giorni ${mmD(t7.mm)} mm ${aDi(nomeBello(t7.nb || t7.n))}` : null;
+  // la maiuscola (31/10/2026): senza «ieri» (giorno tutto stimato, vedi genera-riepiloghi.js) la frase partiva da «in 7 giorni»
+  const numeri = (t => t.charAt(0).toUpperCase() + t.slice(1))([uno, sette].filter(Boolean).join(', '));
   // la forma «apertura + ieri» senza coda (19/10/2026): con un nome lungo («Gressoney-Saint-Jean - lago di Seebna»)
   // la Valle d'Aosta sforava i 158 caratteri per la sola coda e ripiegava sull'apertura nuda
-  const forme = [`${apre} ${numeri}. ${coda}`, `${apre} ${numeri}.`, `${apre} ${uno ? uno + '.' : ''} ${coda}`, uno ? `${apre} ${uno}.` : apre, apre];
+  // senza numeri (ne' ieri ne' 7 giorni) le prime due forme davano «mattina.. Tocca»: il doppio punto (1/11/2026)
+  const forme = (numeri ? [`${apre} ${numeri}. ${coda}`, `${apre} ${numeri}.`] : []).concat([`${apre} ${uno ? uno + '.' : ''} ${coda}`, uno ? `${apre} ${uno}.` : apre, apre]);
   return forme.map(t => t.replace(/\s+/g, ' ').replace(/ \./g, '.').trim()).find(t => t.length <= 158);
 }
 function descrCotta(r, j, N) {
@@ -305,11 +331,15 @@ function descrCotta(r, j, N) {
   const primo = !d1 || !d1.giorni ? null
     : t1 && t1.mm >= 1 ? `${quando}: ${virgola(t1.mm)} mm ${aDi(t1.nb || t1.n)}.`
     : `${quando}: giornata ${t1 && t1.mm > 0 ? 'quasi ' : ''}asciutta ${r.prep} ${r.nome}.`;
-  const sette = `Ultimi 7 giorni: ${virgola(d7.media)} mm di media su ${d7.stazioni} pluviometri ${ag}`;
+  // (1/11/2026) «0,0 mm di media» quando la media si arrotonda a zero: la pagina scrive «meno di 0,1»; e i giorni stimati
+  // dei 7 giorni si dicono, senza il massimo della settimana
+  const media = d7.media === 0 ? null : d7.media < 0.05 ? 'meno di 0,1 mm di media' : `${virgola(d7.media)} mm di media`;
+  const stime = d7.stime ? `, con ${Math.round((Date.parse(d7.stime.al) - Date.parse(d7.stime.dal)) / 864e5) + 1} giorni stimati` : '';
+  const sette = media ? `Ultimi 7 giorni: ${media} su ${d7.stazioni} pluviometri ${ag}${stime}` : `Ultimi 7 giorni: nessuna pioggia sui ${d7.stazioni} pluviometri ${ag}`;
   const forme = [
-    [primo, sette + (t7 && t7.mm >= 1 ? `, ${mmD(t7.mm)} mm ${aDi(t7.nb || t7.n)}.` : '.')],
+    [primo, sette + (t7 && t7.mm >= 1 && !d7.stime ? `, ${mmD(t7.mm)} mm ${aDi(t7.nb || t7.n)}.` : '.')],
     [primo, sette + '.'],
-    [primo, `Ultimi 7 giorni: ${virgola(d7.media)} mm di media.`],
+    [primo, media ? `Ultimi 7 giorni: ${media}${stime}.` : 'Ultimi 7 giorni: nessuna pioggia.'],
     [primo],
   ];
   for (const f of forme) { const t = f.filter(Boolean).join(' '); if (t.length <= 158) return t; }
@@ -360,6 +390,7 @@ p{margin-bottom:12px;}
 .top-staz li{margin:3px 0 3px 20px;}
 .verdetto .top{font-size:16px;opacity:.92;margin-top:8px;}
 .verdetto .top b{font-weight:700;}
+.avviso-stime{background:#fff4d6;border:1px solid #f0c64a;border-radius:10px;padding:10px 12px;margin:0 0 12px;font-size:15px;line-height:1.45;color:#5a4300;}
 #attesa{color:#6a7789;font-size:16px;padding:18px 0;}
 ol.zone-dove{list-style:none;margin:10px 0 6px;padding:0;counter-reset:z;}
 ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
@@ -386,8 +417,8 @@ const STILE_IERI = `/* Sulle pagine piogge l'etichetta sta SOPRA la sua barra, n
    grafico: con 30 barre strette, in cima non si capiva di chi fosse. */
 .gg .b b{position:static;transform:none;align-self:center;margin-bottom:2px;line-height:1.1;}
 /* ── IL BOTTONE DI IERI, versione V2 (11/10/2026, sua scelta fra tre) ──
-   Guardando la pagina dal PC: «le scritte cosi' piccole fanno schifo, i
-   bottoni non sembrano bottoni». Fondo pieno, ombra profonda con un bordo
+   Guardando la pagina dal PC: le scritte erano troppo piccole e i
+   bottoni non sembravano bottoni. Fondo pieno, ombra profonda con un bordo
    sotto come un tasto, e la freccia in un tondo: il segno che si tocca.
    Gli altri bottoni (previsioni, tasti dei periodi, «Apri la mappa» delle
    schede, scritte del riquadro) stanno nel blocco COMUNE RILIEVO di
@@ -428,6 +459,11 @@ function pagina(r, radice){
   // parole ora stanno anche nel testo fisso (sottotitolo, «ultimo mese»,
   // «mappa pluviometrica»). Ricontrollare con `sc.py` verso meta' ottobre.
   const gen = GEN[r.k];
+  // ⚠️ 31/10/2026 (scheda 104 bis, controllo SEO del cloud): le pagine meteo della regione in fondo a «Che tempo
+  // farà», le stesse pillole delle «adesso». Qui dentro e non in cima: genera-pagine-meteo-zona.js chiede questo file.
+  const MZ = require('./genera-pagine-meteo-zona.js');
+  const valli = MZ.linkMeteoRegione(r.k, 'pagina-' + r.k);
+  const BRICIOLA = [['Mappa pluviometrica', SITO + '/'], [r.nomeTitolo || r.nome, null]];
   const titolo = `Dove ha piovuto ${r.prep} ${r.nome}`;
   // ⚠️ 26/10/2026: LA SCRITTA GRANDE COMINCIA COME IL TITOLO (sua scelta, scheda GA4 4). Per
   // «pluviometria toscana» Google non mostrava il nostro <title>: lo riscriveva con l'h1 piu' il
@@ -465,12 +501,14 @@ function pagina(r, radice){
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${attr(TITOLO_IERI.has(r.k) ? ((N && titoloCotto(r, rip, N)) || titoloTag) : titoloMappa(r, N ? rip.periodi['7'].stazioni : r.staz))}</title>
-<meta name="description" content="${attr(TITOLO_IERI.has(r.k) ? ((N && descrCotta(r, rip, N)) || descr) : descrMappa(r, rip, N, N ? rip.periodi['7'].stazioni : r.staz))}">
+<title>${attr(TITOLO_IERI.has(r.k) ? ((N && titoloCotto(r, rip, N)) || titoloTag) : titoloMappa(r, N ? reteDi(rip) : r.staz))}</title>
+<meta name="description" content="${attr(TITOLO_IERI.has(r.k) ? ((N && descrCotta(r, rip, N)) || descr) : descrMappa(r, rip, N, N ? reteDi(rip) : r.staz))}">
 <link rel="canonical" href="${SITO}/${r.k}/">
+${briciolaJson(BRICIOLA)}
 <meta property="og:title" content="${titolo}: ieri e negli ultimi giorni">
 <meta property="og:description" content="Riepilogo degli ultimi 7, 20 e 30 giorni con le zone più bagnate, da ${r.staz} pluviometri ${diEnte(r.agenzia)}.">
 <meta property="og:image" content="${SITO}/preview.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:url" content="${SITO}/${r.k}/">
 <meta property="og:type" content="website">
 <!-- Google tag (gtag.js) — stessa proprietà del sito.
@@ -493,15 +531,12 @@ function pagina(r, radice){
 ${STILE_BASE}
 ${STILE_NUOVO}
 ${STILE_IERI}
-${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}${IERI_GRANDE}${METEO_CSS}${STRISCIA_CSS}</style>
+${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}${IERI_GRANDE}${METEO_CSS}${STRISCIA_CSS}${valli ? MZ.MV_CSS : ''}${BRIC_CSS}${TESTATA_CSS}</style>
 </head>
 <body>
-<header>
-  <a class="logo" href="${SITO}/">🌧️ Mappa Pluviometrica</a>
-  <a class="yt" href="${CANALE}" target="_blank" rel="noopener"
-     onclick="try{gtag('event','click_youtube',{pulsante:'pagina-${r.k}'})}catch(e){}">▶ Iscriviti</a>
-</header>
+${testata({ sito: SITO, canale: CANALE, reg: r.k, ga: 'pagina-' + r.k, attiva: 'storico' })}
 <main>
+${briciolaHtml(BRICIOLA)}
 <h1>${h1}</h1>
 <p class="sotto"><b>Pluviometria ${gen}</b>: i dati di ${r.staz} pluviometri ${diEnte(r.agenzia)}, ieri e nell'ultimo mese, ${r.geo}.</p>
 
@@ -513,7 +548,7 @@ ${RILIEVO}${QUIZ_REGIONI[r.k] ? QUIZ_CSS : ''}${IERI_GRANDE}${METEO_CSS}${STRISC
 <div id="verdetto">${cotto(() => N.verdetto, '')}</div>
 <!-- 19/10/2026: al posto della striscia blu «Che tempo farà», il blocco meteo (lib-meteo-regione.js):
      la casella per il proprio paese, che apre la mappa delle previsioni, e le città principali. -->
-${meteoHtml(r)}
+${meteoHtml(r, null, null, null, valli)}
 
 <h2 id="h-grafico">La pioggia degli ultimi 30 giorni</h2>
 <div id="grafico">${cotto(() => N.grafico, '')}</div>
@@ -579,8 +614,8 @@ ${zz.map(z => `<li data-z="${slug(z.n)}"><a href="${SITO}/zone/${slug(z.n)}/">${
      onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-30gg'})}catch(e){}">Ultimi 30 gg</a>
   ${ESTERE.includes(r.k) ? `<a href="${SITO}/?r=${r.k}&amp;radar=ora"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-radar'})}catch(e){}">` : `<a href="${SITO}/${r.k}/adesso/"
-     onclick="try{gtag('event','apri_adesso',{da:'pagina-${r.k}-tasto'})}catch(e){}">`}📡 Radar adesso</a>
-  <a class="t-prev" href="${SITO}/?r=${r.k}&amp;m=prev"
+     onclick="try{gtag('event','apri_adesso',{da:'pagina-${r.k}-tasto'})}catch(e){}">`}📡 Radar piogge</a>
+  <a class="t-prev" href="${SITO}/previsioni/?r=${r.k}"
      onclick="try{gtag('event','apri_mappa',{da:'pagina-${r.k}-previsioni'})}catch(e){}">☀️ Previsioni</a>
 </div>
 <p class="breve">La pioggia degli ultimi 20 giorni ${r.prep} ${r.nome}, pluviometro per pluviometro.</p>
@@ -599,6 +634,7 @@ ${FUNGHI.includes(r.k) ? `
 <div class="noioso">
 <h2>Come funziona questa pagina</h2>
 <p>I millimetri li misurano <b>${r.staz} pluviometri ${diEnte(r.agenzia)}</b>, strumenti a terra, non stime da modello.
+Se una rete si ferma e qualche giorno è coperto da una stima, lo dice l’avviso giallo in cima alla pagina.
 I numeri in cima sono la media dei pluviometri della regione, giorno per giorno; sotto, i più bagnati di ogni periodo.
 La giornata di oggi non è contata perché i pluviometri la stanno ancora misurando.</p>${r.nota ? `\n<p>${r.nota}</p>` : ''}
 ${ESTERE.includes(r.k) ? `<h2>Dove piove oggi ${r.prep} ${r.nome}? La diretta radar</h2>
@@ -620,7 +656,7 @@ ${coppiaQuiz(r.k, `<a href="${CANALE}" target="_blank" rel="noopener" class="yt-
 </main>
 
 <footer>
-${navAltre('regione')}
+${navAltre('regione', r.k)}
   Dati: ${fonteFooter} ·
   <a href="${SITO}/fonti">tutte le fonti e licenze</a> ·
   <a href="https://avventuremicologiche.it">Avventure Micologiche</a><br>
@@ -820,6 +856,17 @@ function scrivi(dest, testo, crlf){
    risultati arricchiti la segnala come errore.
    ⚠️ Deve dire ESATTAMENTE quello che dice la briciola visibile in cima alla
    pagina: se le due divergono, e' Google a dirlo e lo dice tardi. */
+// ⚠️ 31/10/2026 (scheda 104 bis, proposta 4 del cloud): IL PERCORSO ANCHE SU REGIONI, «ADESSO» E /funghi/. Erano le
+// sole 45 pagine senza: tutte le altre famiglie hanno «Mappa pluviometrica › …» in cima e il BreadcrumbList, che Google
+// mostra nei risultati al posto dell'indirizzo. Stesso stile del .bric delle zone piogge.
+const BRIC_CSS = `
+.bric{font-size:14px;color:#666;margin-bottom:6px;}
+.bric a{color:var(--blu);}
+`;
+// il percorso visibile, dalle stesse voci del BreadcrumbList: [nome, indirizzo], l'ultima senza indirizzo
+function briciolaHtml(voci) {
+  return `<p class="bric">${voci.map(([n, u]) => u ? `<a href="${u}">${attr(n)}</a>` : attr(n)).join(' › ')}</p>`;
+}
 function briciolaJson(voci) {
   const dati = {
     '@context': 'https://schema.org',
@@ -887,17 +934,25 @@ function mappaInUnFile(radice, rel) {
 
 /* ⚠️ IL NUMERO DEI PLUVIOMETRI DAL RIEPILOGO (19/10/2026, quinto check, bug 16). Quelli scritti a mano in REGIONI
    invecchiano (Liguria «quasi 200» con 175, Molise «circa 25» con 28, Lombardia «oltre 250» con 250): si scrive
-   «oltre N», N arrotondato per difetto alla decina (alla cinquina sotto i 100) sotto il piu' basso fra ieri e 7
-   giorni del riepilogo. Senza riepilogo resta quello a mano. La usano anche le pagine «adesso» e quelle funghi. */
+   «oltre N», N arrotondato per difetto alla decina (alla cinquina sotto i 100) sotto la rete (reteDi qui sotto,
+   dal 1/11/2026; prima era il piu' basso fra ieri e 7 giorni del riepilogo). Senza riepilogo resta quello a mano. La usano anche le pagine «adesso» e quelle funghi. */
+/* ⚠️ UN SOLO NUMERO PER PAGINA (1/11/2026, scheda 105 bis). Prima il titolo prendeva i pluviometri dei 7 giorni (i
+   meno, dopo il filtro di copertura), il sottotitolo il minimo fra ieri e 7 giorni e il riquadro quelli di ieri: la
+   Basilicata diceva 50, «oltre 45» e 62 sulla stessa pagina. Ora titolo, descrizione e sottotitolo usano la RETE, il
+   piu' alto fra i periodi del riepilogo; il riquadro resta il conto di quel giorno (e non lo supera). */
+function reteDi(rip) {
+  const n = Math.max(...['1', '7', '20', '30'].map(k => ((rip && rip.periodi && rip.periodi[k]) || {}).stazioni || 0));
+  return n > 0 ? n : null;
+}
 function stazDi(r, radice) {
   try {
     const rip = JSON.parse(fs.readFileSync(path.join(radice, 'data', 'riepiloghi', r.k + '.json'), 'utf8'));
-    const n = Math.min(...['1', '7'].map(k => (rip.periodi[k] || {}).stazioni).filter(x => x > 0));
+    const n = reteDi(rip) || Infinity;
     if (isFinite(n)) { const p = n >= 100 ? 10 : 5; return n >= 20 ? 'oltre ' + Math.floor((n - 1) / p) * p : String(n); }
   } catch (e) {}
   return r.staz;
 }
-module.exports = { REGIONI, FUNGHI, GEN, navAltre, briciolaJson, STILE_BASE, STILE_IERI, ESTERE, SITO, GA_ID, CANALE, scrivi, stazDi };   // GEN: anche per le pagine di zona (18/10/2026)
+module.exports = { REGIONI, FUNGHI, GEN, COTTE, navAltre, briciolaJson, briciolaHtml, BRIC_CSS, STILE_BASE, STILE_IERI, ESTERE, SITO, GA_ID, CANALE, scrivi, stazDi };   // GEN: anche per le pagine di zona (18/10/2026)
 
 if (require.main === module) {
   const radice = path.resolve(__dirname, '..', '..');

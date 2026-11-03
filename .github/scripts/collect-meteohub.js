@@ -449,7 +449,7 @@ function realiInFile(j) {
  *  soglia di sicurezza le contava fra i giorni sani. Ora prende tutta la
  *  famiglia `open-meteo*`. */
 function haStime(j) {
-  return !!j && ((j.source || '').startsWith('open-meteo') || !!j.gapfill ||
+  return !!j && ((j.source || '').startsWith('open-meteo') || (j.source || '') === 'icon-2i-gapfill' || !!j.gapfill ||
                  (Array.isArray(j.stations) && j.stations.some(s => s.om)));
 }
 function leggiFile(f) {
@@ -616,7 +616,11 @@ async function main() {
       // ancora i giorni parziali sopra le 10 stazioni (Molise 29/7: 23 su 28),
       // che non venivano riletti MAI.
       targetDays = [1, 2].map(i => fmtDate(new Date(noon - i * 24 * 3600000)));
-      for (let i = 3; i <= 9; i++) {
+      // Con l'account (MH_TOKEN) l'archivio e' aperto oltre i ~10 giorni pubblici: si riprova fino a 20 giorni
+      // indietro (2/11/2026, scheda 109: la Puglia del 26-30/10 MeteoHub la stava ricaricando a meta', 9-17 ore su 24,
+      // e il 26 sarebbe uscito dalla finestra il 4/11). Si richiedono solo i giorni ancora con stime o sotto soglia.
+      const RIPARA_FINO = MH_TOKEN ? 20 : 9;
+      for (let i = 3; i <= RIPARA_FINO; i++) {
         const dStr = fmtDate(new Date(noon - i * 24 * 3600000));
         const j = leggiFile(path.join(dir, `${dStr}.json`));
         const reali = realiInFile(j);

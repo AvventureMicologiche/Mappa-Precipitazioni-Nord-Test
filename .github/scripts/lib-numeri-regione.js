@@ -57,15 +57,24 @@ function numeriRegione(j, oggi, K, SITO) {
     out.tasti[x[0]] = link(iso(menoDa(ultimo, x[1] - 1)), ultimo);
   });
 
+  /* ⚠️ I GIORNI A STIMA, DETTI IN CIMA (31/10/2026, controllo della scheda 103): quando una rete si ferma i suoi giorni
+     sono stime del modello (il riepilogo li segna in `stime`, il periodo piu' lungo dice da quando), e la pagina li
+     dava per misure. Stesso avviso della mappa (avvisoStime in index.html), detto per intero. Su «ieri» le stime non
+     contano proprio: se il giorno era tutto stimato il riepilogo non ha il periodo 1 e qui resta solo l'avviso. */
+  var st = (p['30'] && p['30'].stime) || (p['20'] && p['20'].stime) || (p['7'] && p['7'].stime), avviso = '';
+  var gst = st ? +st.al.split('-')[2] : 0;   // «L’8 ottobre», «Il 29 ottobre»
+  if (st) avviso = '<div class="avviso-stime">⚠️ ' + (st.dal === st.al ? (gst === 1 || gst === 8 || gst === 11 ? 'L’' : 'Il ') + lungo(st.al) + ' i pluviometri non hanno trasmesso: quel giorno è una stima del modello, non una misura.'
+    : dalAl(st.dal, st.al) + ' i pluviometri non hanno trasmesso: quei giorni sono stime del modello, non misure.') + '</div>';
+
   // ── IERI, in cima: la risposta alla domanda del titolo ──
   var d = p['1'];
-  if (!d || !d.giorni) out.verdetto = '';
+  if (!d || !d.giorni) out.verdetto = avviso;
   else {
     var t = nomeGiorno(d.ultimo), top = (d.top || []).filter(function (s) { return s.mm >= 1; }).slice(0, 3), dett;
     if (top.length) dett = 'Dove ha piovuto di più: ' + top.map(function (s) { return '<b>' + esc(s.n) + '</b> ' + (s.mm === 0 ? '0' : num(s.mm)) + ' mm'; }).join(', ') + '.';
     else if (d.top && d.top.length && d.top[0].mm > 0) dett = 'Giornata quasi asciutta: il massimo è stato ' + num(d.top[0].mm) + ' mm ' + (/^[aA]/.test(d.top[0].n) ? 'ad ' : 'a ') + esc(d.top[0].n) + (/\.$/.test(d.top[0].n) ? '' : '.');   // «T.P.» non prende un altro punto (18/10/2026)
     else dett = 'Giornata asciutta: nessun pluviometro ha misurato pioggia.';
-    out.verdetto = '<div class="verdetto">'
+    out.verdetto = avviso + '<div class="verdetto">'
       + '<div class="si">' + (t === 'Ieri' ? 'Ieri, ' + lungo(d.ultimo) : t) + '</div>'
       + '<div class="gr">' + mediaMm(d) + ' mm<small>di media</small></div>'
       + '<div class="top">' + dett + '</div>'
@@ -81,10 +90,11 @@ function numeriRegione(j, oggi, K, SITO) {
       // 19/10/2026 (lib-meteo-regione.js): sotto «Apri la mappa di ieri» le altre funzioni della mappa. Il Radar
       // porta alla pagina «adesso», che c'e' per le regioni italiane; per le estere apre la diretta radar.
       + '<div class="mk-porte">'
-      + [['☀️', 'Previsioni', SITO + '/?r=' + K + '&amp;m=prev', 'porta-previsioni'],
-         ['📡', 'Radar', ['svizzera', 'austria', 'slovenia'].indexOf(K) >= 0 ? SITO + '/?r=' + K + '&amp;radar=ora' : SITO + '/' + K + '/adesso/', 'porta-radar'],
-         ['🌲', 'Boschi', SITO + '/?r=' + K + '&amp;boschi=1', 'porta-boschi'],
-         ['🛰', 'Satellite', SITO + '/?r=' + K + '&amp;boschi=1&amp;sat=1', 'porta-satellite']].map(function (t) {
+      // 28/10/2026: i nomi dei bottoni delle pagine meteo («Radar piogge», «Mappa boschi», «Boschi + satellite»)
+      + [['☀️', 'Previsioni', SITO + '/previsioni/?r=' + K, 'porta-previsioni'],
+         ['📡', 'Radar piogge', ['svizzera', 'austria', 'slovenia'].indexOf(K) >= 0 ? SITO + '/?r=' + K + '&amp;radar=ora' : SITO + '/' + K + '/adesso/', 'porta-radar'],
+         ['🌲', 'Mappa boschi', SITO + '/?r=' + K + '&amp;boschi=1', 'porta-boschi'],
+         ['🛰️', 'Boschi + satellite', SITO + '/?r=' + K + '&amp;boschi=1&amp;sat=1', 'porta-satellite']].map(function (t) {
           return '<a href="' + t[2] + '" onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'pagina-' + K + '-' + t[3] + '\'})}catch(e){}"><span>' + t[0] + '</span>' + t[1] + '</a>';
         }).join('') + '</div></div>';
   }

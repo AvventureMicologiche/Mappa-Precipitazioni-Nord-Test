@@ -77,7 +77,7 @@ const SOLO_ELENCO   = process.env.SOLO_ELENCO === '1';
 const REGISTRO      = path.join(DATA_DIR, 'stazioni-ferme.json');
 
 const fmt = d => d.toISOString().slice(0, 10);
-const eStima = j => !!j && typeof j.source === 'string' && /open-meteo/i.test(j.source);
+const eStima = j => !!j && typeof j.source === 'string' && /open-meteo|icon-2i-gapfill/i.test(j.source);
 
 function giorniFinestra() {
   const g = [];

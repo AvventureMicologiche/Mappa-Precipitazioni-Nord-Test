@@ -52,7 +52,7 @@ const W = 1600, H = 1000;        // finestra del browser (×2 per il retina)
 // Piemonte-VdA e Trentino-A.A. si risolvono lato sito.
 const REGIONI = ['lombardia','piemonte','valledaosta','liguria','emilia','veneto','friuli',
   'trentino','altoadige','toscana','umbria','marche','lazio','molise','campania','puglia',
-  'basilicata','calabria','sicilia','sardegna','svizzera','austria','slovenia'];
+  'basilicata','calabria','sicilia','sardegna','svizzera','austria'];   // slovenia tolta il 1/11/2026: la sua pagina non c'e' piu'
 
 const p2 = n => String(n).padStart(2, '0');
 const iso = d => d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
@@ -78,6 +78,33 @@ async function scattaPulita(page, k, nome, meta) {
     mp.eachLayer(l => { if (l.options && l.options.fill === false && l.getBounds) { const x = l.getBounds(); if (x.isValid()) b = b ? b.extend(x) : L.latLngBounds(x.getSouthWest(), x.getNorthEast()); } });
     if (b) mp.fitBounds(b, { padding: [20, 20], animate: false });
   });
+  /* ⚠️ LE REGIONI LUNGHE INTERE ANCHE NEI RIQUADRI QUASI QUADRATI (2/11/2026, scheda 111 bis, suo: «sono tagliate?»).
+     Lo scatto era sempre 1600x918, piu' largo che alto; i riquadri delle pagine (lib-striscia.js) sono quasi quadrati
+     (telefono 292-325 x 300, PC 692 x 440, funghi 333 x 240) e l'immagine deve coprirli tutti: nelle regioni lunghe
+     vinceva la copertura in altezza e si perdevano i capi (al telefono di 360: Emilia 58% della larghezza, Austria 64,
+     Liguria 67, Alto Adige 70, poi VdA, Svizzera, Sicilia, Molise). Ora la mappa si allunga in ALTEZZA quanto serve
+     (alta almeno 1,1 volte la larghezza della regione, per il riquadro di 292 x 300 col margine 0,94 di ritaglia()),
+     STESSO ZOOM e stesso centro: piu' terra sopra e sotto, niente altro. ⚠️ Non si rifa' fitBounds sulla mappa alta:
+     ingrandiva di un quarto (Alto Adige, Valle d'Aosta, Sicilia, Molise), la regione tornava piu' larga del conto e al
+     telefono di 360 si riperdevano i bordi. Le regioni che ci stanno gia' restano 1600x918, stesso peso di prima. */
+  const lunga = await page.evaluate(() => {
+    const mp = window._mapDebug, el = document.getElementById('map'); let b = null;
+    mp.eachLayer(l => { if (l.options && l.options.fill === false && l.getBounds) { const x = l.getBounds(); if (x.isValid()) b = b ? b.extend(x) : L.latLngBounds(x.getSouthWest(), x.getNorthEast()); } });
+    if (!b || !el) return null;
+    const rw = Math.abs(mp.latLngToContainerPoint(b.getNorthEast()).x - mp.latLngToContainerPoint(b.getSouthWest()).x);
+    const z = mp.getZoom(), c = mp.unproject(mp.project(b.getNorthWest(), z).add(mp.project(b.getSouthEast(), z)).divideBy(2), z);
+    return { mappa: el.clientHeight, serve: Math.ceil(rw * 1.1) + 40, z: z, lat: c.lat, lng: c.lng };
+  });
+  /* ...e un'immagine allungata si salva a 1.200 px (scala 0,375, come i boschi): a 1.600 pesava il doppio (Emilia
+     352 KB invece di 160, Alto Adige 541 invece di 273), cosi' resta come prima. Il JSON tiene le misure in pixel della
+     mappa, la pagina la stende uguale. */
+  const allungata = !!(lunga && lunga.serve > lunga.mappa);
+  if (allungata) {
+    const vp = page.viewport();
+    await page.setViewport(Object.assign({}, vp, { height: vp.height + lunga.serve - lunga.mappa }));
+    await new Promise(r => setTimeout(r, 800));
+    await page.evaluate(g => { const mp = window._mapDebug; mp.invalidateSize({ animate: false }); mp.setView([g.lat, g.lng], g.z, { animate: false }); }, lunga);
+  }
   await page.waitForNetworkIdle({ idleTime: 1200, timeout: 30000 }).catch(() => {});
   await new Promise(r => setTimeout(r, process.env.BOSCHI ? 4000 : 2500));
   await page.addStyleTag({ content: 'body *{visibility:hidden !important} #map .leaflet-map-pane, #map .leaflet-map-pane *{visibility:visible !important}' });
@@ -93,7 +120,7 @@ async function scattaPulita(page, k, nome, meta) {
   });
   if (!g || !g.w) throw new Error('mappa pulita: niente _mapDebug o #map');
   await page.screenshot({ path: path.join(OUT_DIR, k + '-' + nome + '.webp'), type: 'webp', quality: process.env.BOSCHI ? 50 : 72,
-    clip: { x: g.x, y: g.y, width: g.w, height: g.h, scale: process.env.BOSCHI ? 0.375 : 0.5 } });
+    clip: { x: g.x, y: g.y, width: g.w, height: g.h, scale: process.env.BOSCHI || allungata ? 0.375 : 0.5 } });
   /* ⚠️ I BOSCHI A 1.200 PX E QUALITA' 50 (21/10/2026, ottavo check, bug 12): a 1.600 px pesavano fino a 457 KB (Lombardia)
      per un riquadro di 146-400 px, e abbassando solo la qualita' le regioni alpine (rilievo pieno di dettagli) restavano
      sopra i 250. Il JSON tiene le misure in pixel della MAPPA (w, h): la pagina stende l'immagine con quelle
@@ -105,8 +132,18 @@ async function scattaPulita(page, k, nome, meta) {
 }
 
 /* LA PIOGGIA DI IERI, pulita (20/10/2026): per la striscia in cima alle pagine PIOGGE (regioni e zone), che parlano
-   di ieri e non dei 20 giorni. <k>-ieri.webp + <k>-ieri.json, stesso formato della mappa pulita. */
-async function scattaIeri(browser, k) {
+   di ieri e non dei 20 giorni. <k>-ieri.webp + <k>-ieri.json, stesso formato della mappa pulita.
+   Con giorni = 7 (28/10/2026) la pioggia degli ULTIMI 7 GIORNI fino a quello stesso giorno, <k>-7g.webp + .json: e'
+   l'anteprima del bottone «Pluviometri» delle pagine «Meteo <paese>» e delle zone meteo, e si scatta solo per le loro
+   regioni (SETTE). ⚠️ Anche quelle delle ZONE (29/10/2026, suo: «perche' la val brembana sui pluviometri mette 7 giorni
+   come scritta e poi mostra ieri?»): prima solo i paesi, e le 10 zone di Lombardia, Campania, Sicilia, Calabria, Lazio,
+   Marche e Umbria ripiegavano sull'immagine di ieri sotto la scritta «ultimi 7 giorni».
+   ⚠️ DAL 1/11/2026 PER TUTTE LE REGIONI: la cartina in cima alle pagine piogge (regioni e zone, lib-striscia.js) e'
+   quella dei 7 giorni (suo: «la scritta va bene la pioggia di ieri e la mappa ultimi 7 giorni»). Lo scatto di ieri
+   resta: e' il ripiego se quello dei 7 giorni manca. ~9 scatti in piu' al giro, ~2 minuti. */
+async function scattaIeri(browser, k, giorni) {
+  giorni = giorni || 1;
+  const nome = giorni === 1 ? 'ieri' : giorni + 'g';
   const page = await browser.newPage();
   await page.setViewport({ width: W, height: H, deviceScaleFactor: 2 });
   await page.evaluateOnNewDocument(() => { try { localStorage.setItem('novitaVista', '2099'); } catch (e) {} });
@@ -115,13 +152,14 @@ async function scattaIeri(browser, k) {
      vuota, il «✅» non arrivava mai e lo scatto aspettava 3 minuti per niente. Senza riepilogo, ieri. */
   let ieri = iso(giornoFa(1));
   try { const u = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'data', 'riepiloghi', k + '.json'), 'utf8')).periodi['1'].ultimo; if (/^\d{4}-\d\d-\d\d$/.test(u)) ieri = u; } catch (e) {}
+  const da = giorni === 1 ? ieri : new Date(Date.parse(ieri + 'T12:00:00Z') - (giorni - 1) * 864e5).toISOString().slice(0, 10);
   try {
-    await page.goto(SITO + '?r=' + k + '&da=' + ieri + '&a=' + ieri, { waitUntil: 'networkidle2', timeout: 120000 });
+    await page.goto(SITO + '?r=' + k + '&da=' + da + '&a=' + ieri, { waitUntil: 'networkidle2', timeout: 120000 });
     await page.waitForFunction(() => { const s = document.getElementById('tp-status'); return s && s.textContent.indexOf('✅') === 0; }, { timeout: 180000, polling: 500 });
     await new Promise(r => setTimeout(r, 3000));
-    return ', ieri ' + await scattaPulita(page, k, 'ieri', { tipo: 'ieri', da: ieri, a: ieri }) + ' KB';
+    return ', ' + nome + ' ' + await scattaPulita(page, k, nome, { tipo: nome, da: da, a: ieri }) + ' KB';
   } catch (e) {
-    return ', ieri FALLITA (' + e.message.slice(0, 60) + ')';
+    return ', ' + nome + ' FALLITA (' + e.message.slice(0, 60) + ')';
   } finally { await page.close(); }
 }
 
@@ -180,6 +218,7 @@ async function scatta(browser, k) {
     let pulita = '';
     try { pulita = ', pulita ' + await scattaPulita(page, k) + ' KB'; } catch (e) { pulita = ', pulita FALLITA (' + e.message.slice(0, 60) + ')'; }
     pulita += await scattaIeri(browser, k);
+    pulita += await scattaIeri(browser, k, 7);
     // (21/10/2026, ottavo check, bug 2) uno scatto pulito o «di ieri» fallito lascia sul ramo l'immagine vecchia: si
     // segnala nel registro del giro come avviso di GitHub, cosi' si vede senza aprire il registro intero
     if (/FALLITA/.test(pulita)) console.log('::warning::anteprime ' + k + ':' + pulita);

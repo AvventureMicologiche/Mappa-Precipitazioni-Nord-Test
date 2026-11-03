@@ -68,7 +68,7 @@ function pulisci(giorno) {
     if (!fs.existsSync(f)) continue;
     let j; try { j = JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { continue; }
     // le stime non sono misure: non fanno da vicine e non si toccano
-    if (/open-meteo/.test(j.source || '') || !Array.isArray(j.stations)) continue;
+    if (/open-meteo|icon-2i-gapfill/.test(j.source || '') || !Array.isArray(j.stations)) continue;
     file[f] = j;
     for (const s of j.stations) {
       const t = s.t;

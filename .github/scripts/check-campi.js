@@ -17,8 +17,8 @@
  * NON CHIAMA NESSUNA FONTE ESTERNA: legge i nostri file, gia' nel checkout.
  * NON TOCCA UN SOLO DATO: manda l'elenco, il rilancio resta una scelta umana.
  *
- * COME CONTA. Per ogni rete, ieri e l'altro ieri (cosi' un run saltato non perde
- * niente): quante stazioni ci sono e quante hanno t, w, wd, u. Il confronto e'
+ * COME CONTA. Per ogni rete, l'ALTRO IERI: quante stazioni ci sono e quante
+ * hanno t, w, wd, u. Il confronto e'
  * con la mediana dei 14 giorni prima (almeno 7 validi). Suona se un conteggio
  * scende sotto il 60% della mediana. Le reti dove quel campo non arriva ad
  * almeno 5 stazioni non si guardano (Alto Adige senza wd, e simili).
@@ -34,11 +34,24 @@
  * u 1/9 (0 contro 55), Sardegna t e w 7/9 (19 contro 93), Friuli w e u 11-14/9
  * (14 contro 36), Liguria wd 9-11/10 (5 contro 47).
  *
- * Un buco di piu' giorni manda la mail due mattine di fila; un campo sparito per
- * sempre si zittisce da solo in circa una settimana, quando la mediana si adegua.
+ * PERCHE' L'ALTRO IERI E NON IERI (3/11/2026, scheda 115 bis). Fino al 3/11 si
+ * guardavano ieri e l'altro ieri, e la mail partiva anche per un giro in
+ * ritardo: il vento toscano del 2/11 mancava alle 11:45 perche' la sveglia delle
+ * 4:30 aveva saltato la Toscana, ed e' tornato da solo alle 12:52. Lui: le mail
+ * solo per problemi certi, non per il ritardo di un workflow. Il meteo di ieri
+ * lo attaccano i giri del giorno dopo; l'altro ieri nessun giro lo tocca piu',
+ * quindi quello che manca e' perso davvero. Sui log di alert-fonti dal 14/10:
+ * 5 mail, di cui 2 ritardi rientrati (Toscana w 2/11, Lombardia wd 29/10) e 2
+ * buchi MeteoHub poi dichiarati gapfill (Sardegna 15/10, Puglia 30/10); con
+ * l'altro ieri restano Toscana t/u 17/10 e Campania 29/10, una mail per buco.
+ * Il prezzo: un buco vero arriva un giorno dopo.
  *
- * Prova in locale:  node .github/scripts/check-campi.js          (ieri e l'altro ieri)
- *                   GIORNO=2026-09-07 node .github/scripts/check-campi.js
+ * Un buco di piu' giorni manda una mail ogni mattina, un giorno per volta; un
+ * campo sparito per sempre si zittisce da solo in circa una settimana, quando la
+ * mediana si adegua.
+ *
+ * Prova in locale:  node .github/scripts/check-campi.js          (l'altro ieri)
+ *                   GIORNO=2026-09-07 node .github/scripts/check-campi.js   (il giorno da guardare)
  *                   DATA_DIR=<cartella> GIORNO=... per i file di un altro momento
  * Senza GITHUB_OUTPUT non scrive output ne' mail .eml, stampa e basta.
  */
@@ -51,7 +64,7 @@ const SOGLIA   = parseFloat(process.env.SOGLIA || '0.6');  // sotto il 60% della
 const MIN_BASE = 5;    // reti dove il campo arriva ad almeno 5 stazioni
 const STORIA   = 14;   // giorni della mediana
 const MIN_VAL  = 7;    // giorni validi minimi per avere una mediana
-const GIORNI   = 2;    // ieri e l'altro ieri
+const GIORNI   = 1;    // solo l'altro ieri (3/11/2026: ieri lo recuperano ancora i giri in ritardo)
 
 const CAMPI = [
   ['staz', 'stazioni'],
@@ -62,7 +75,7 @@ const CAMPI = [
 ];
 
 const fmt = d => d.toISOString().slice(0, 10);
-const eStima = j => !!j && typeof j.source === 'string' && /open-meteo/i.test(j.source);
+const eStima = j => !!j && typeof j.source === 'string' && /open-meteo|icon-2i-gapfill/i.test(j.source);
 
 const cache = new Map();
 function conta(regione, giorno) {
@@ -89,8 +102,8 @@ function mediana(a) {
   return s.length >= MIN_VAL ? s[Math.floor(s.length / 2)] : null;
 }
 
-// la data di riferimento: ieri (il giorno chiuso), o GIORNO per le prove
-const rif = process.env.GIORNO ? new Date(process.env.GIORNO + 'T12:00:00Z') : new Date(Date.now() - 86400000);
+// la data di riferimento: l'altro ieri (nessun giro lo recupera piu'), o GIORNO per le prove
+const rif = process.env.GIORNO ? new Date(process.env.GIORNO + 'T12:00:00Z') : new Date(Date.now() - 2 * 86400000);
 const giorno = k => fmt(new Date(rif.getTime() + k * 86400000));
 const daGuardare = [];
 for (let k = GIORNI - 1; k >= 0; k--) daGuardare.push(giorno(-k));
@@ -143,11 +156,15 @@ solo per caso tre giorni dopo.
 
 ${righe}
 
+Il giorno segnalato e' l'altro ieri: i giri che potevano recuperarlo da soli
+sono gia' passati, quindi non e' un ritardo.
+
 Cosa fare: guardare se la fonte ha ripreso a pubblicare quel campo; se si',
 rilanciare il collector della regione per quel giorno (Run workflow sul suo
 .yml con date_override = il giorno) FINCHE' la fonte tiene ancora i dati.
-Attenzione Liguria: OMIRL tiene circa 69 ore; oltre, il rilancio riscrive la
-pioggia con ore parziali, e serve una riparazione mirata del solo campo.
+Attenzione Liguria: OMIRL tiene circa 69 ore, per l'altro ieri si arriva fino
+a stasera; oltre, il rilancio riscrive la pioggia con ore parziali, e serve una
+riparazione mirata del solo campo.
 Se la fonte non lo pubblica piu', non c'e' niente da fare: il controllo si
 zittisce da solo in circa una settimana.
 

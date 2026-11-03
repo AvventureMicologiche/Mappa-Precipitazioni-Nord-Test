@@ -28,6 +28,7 @@
   <meta property="og:title" content="Fonti e licenze della Mappa Pluviometrica">
   <meta property="og:description" content="Le fonti dei dati pluviometrici della Mappa Pluviometrica Italia: agenzie regionali, licenze e criteri di utilizzo.">
   <meta property="og:image" content="https://avventurepluvio-test.pages.dev/preview.jpg">
+<meta name="twitter:card" content="summary_large_image">
   <meta property="og:url" content="https://avventurepluvio-test.pages.dev/fonti">
   <meta property="og:type" content="website">
 <style>
@@ -60,14 +61,74 @@ td a:hover{text-decoration:underline}
   tr{border-top:1px solid #dde5f0;padding:8px 0}
   td:first-child{font-weight:600;color:#1b3f6e;padding-top:10px}
 }
+/* ── LA TESTATA (lib-testata.js, 28/10/2026) ── */
+header.tB{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:10px;padding:0;background:#fff;color:#123252;border-bottom:1px solid #d0d8e8}
+/* opacity: la pagina delle fonti ha header a{opacity:.85}, che non deve arrivare qui */
+.tB a{text-decoration:none;opacity:1}
+/* la colonna e' quella di main della famiglia: --t-max e --t-pad (760 e 16 di partenza; funghi e mappa forestale 860 e,
+   sotto i 640 px, 12: TESTATA_CSS_FUNGHI). Nella striscia il margine e' 11 px piu' stretto: le voci hanno 11 px di imbottitura */
+.tB .t-in{max-width:var(--t-max,760px);margin:0 auto;width:100%;padding:0 var(--t-pad,16px);display:flex;align-items:center}
+.tB .t-striscia{background:#0f2d4f}
+.tB .t-striscia .t-in{gap:2px;height:38px;padding:0 calc(var(--t-pad,16px) - 11px)}
+.tB .t-striscia a{color:rgba(255,255,255,.86);font-size:13.5px;font-weight:600;padding:0 11px;height:38px;display:flex;align-items:center;white-space:nowrap}
+.tB .t-striscia a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tB .t-striscia a.on{color:#0f2d4f;background:#f9c93e}
+.tB .t-striscia .t-dx{margin-left:auto;display:flex;gap:2px}
+.tB .t-banda .t-in{position:relative;gap:16px;padding-top:14px;padding-bottom:14px}
+.tB .t-marchio{display:flex;align-items:center;gap:12px}
+.tB .t-goccia{font-size:34px;line-height:1}
+.tB .t-marchio b{display:block;font-size:24px;font-weight:800;letter-spacing:-.015em;line-height:1.1;color:#123252}
+.tB .t-marchio small{display:block;font-size:13.5px;color:#4a5a6e;font-weight:500;margin-top:3px;line-height:1.3}
+.tB .t-tel{display:none}
+.tB .t-ytp{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:#e12b2b;color:#fff;font-size:14.5px;font-weight:700;padding:9px 16px 9px 13px;border-radius:999px;white-space:nowrap}
+.tB .t-ytp svg{width:18px;height:18px;fill:#fff}
+/* la lente del cerca (meteoClient): tonda, blu, accanto a Iscriviti; la casella si apre sopra la fascia */
+.tB .mk-lente{display:flex;align-items:center;justify-content:center;margin-left:auto;flex:none;width:40px;height:40px;border:0;border-radius:50%;background:#1b3f6e;cursor:pointer}
+.tB .mk-lente ~ .t-ytp{margin-left:0}
+.tB .mk-cerca{display:none;position:absolute;left:var(--t-pad,16px);right:var(--t-pad,16px);top:50%;transform:translateY(-50%);margin:0;max-width:none;z-index:60}
+.tB .mk-cerca input{border:2px solid #1b3f6e;padding:11px 12px 11px 36px}
+header.tB.mk-aperto .mk-cerca{display:block}
+header.tB.mk-aperto .t-marchio,header.tB.mk-aperto .t-ytp,header.tB.mk-aperto .mk-lente{visibility:hidden}
+/* con la lente nella fascia mancavano 64 px al computer (la frase andava su due righe) e 14 a 393 (il nome su due):
+   la frase perde «in tutta Italia», il nome al telefono scende di 2 px. Senza lente la testata resta quella approvata */
+.tB .t-in:has(.mk-lente) .t-it{display:none}
+@media (max-width:760px){
+  .tB .t-striscia{order:2}
+  .tB .t-banda .t-in{padding-top:10px;padding-bottom:10px;gap:10px}
+  .tB .t-goccia{font-size:26px}
+  .tB .t-marchio b{font-size:18px}
+  .tB .t-marchio small{font-size:12px;margin-top:1px}
+  .tB .t-pc{display:none}.tB .t-tel{display:inline}
+  .tB .t-ytp{font-size:13px;padding:7px 11px 7px 9px;gap:6px}
+  .tB .mk-lente{width:34px;height:34px}
+  .tB .t-in:has(.mk-lente) .t-marchio b{font-size:16px}
+  .tB .t-striscia .t-in{overflow-x:auto;scrollbar-width:none;padding:0 calc(var(--t-pad,16px) - 11px);-webkit-mask-image:linear-gradient(90deg,#000 86%,transparent);mask-image:linear-gradient(90deg,#000 86%,transparent)}
+  .tB .t-striscia .t-in::-webkit-scrollbar{display:none}
+  .tB .t-striscia .t-dx{margin-left:0;padding-right:30px}
+}
+/* a 360 px «Mappa Pluviometrica» andava su due righe */
+@media (max-width:389px){.tB .t-marchio{gap:8px}.tB .t-goccia{font-size:23px}.tB .t-marchio b{font-size:16px;white-space:nowrap}
+  .tB .t-banda .t-in{gap:8px}.tB .t-ytp{padding:7px 9px}.tB .mk-lente ~ .t-ytp span{display:none}}
+header.tB{--t-max:860px}
+main > h1{font-size:28px;line-height:1.2;font-weight:700;color:#123252;margin:0 0 14px}
+/* il percorso in cima (1/11/2026), come le altre pagine */
+.bric{font-size:12.5px;color:#667;margin:4px 0 6px}
+.bric a{color:#1b5db0;text-decoration:none}
 </style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Mappa pluviometrica","item":"https://avventurepluvio-test.pages.dev/"},{"@type":"ListItem","position":2,"name":"Fonti e licenze"}]}</script>
 </head>
 <body>
-<header>
-  <a href="/" title="Torna alla mappa">← Mappa</a>
-  <h1>Fonti e licenze</h1>
+<header class="tB">
+  <nav class="t-striscia" aria-label="Menu"><div class="t-in"><a href="https://avventurepluvio-test.pages.dev/" onclick="try{gtag('event','apri_mappa',{da:'fonti-testata-storico'})}catch(e){}">Storico piogge</a><a href="https://avventurepluvio-test.pages.dev/previsioni/" onclick="try{gtag('event','apri_mappa',{da:'fonti-testata-previsioni'})}catch(e){}">Previsioni meteo</a><a href="https://avventurepluvio-test.pages.dev/guida/">Guida</a><span class="t-dx"><a href="https://avventuremicologiche.it/#noi">Chi siamo</a><a href="https://avventuremicologiche.it/#piede">Contatti</a></span></div></nav>
+  <div class="t-banda"><div class="t-in">
+    <a class="t-marchio" href="https://avventurepluvio-test.pages.dev/"><span class="t-goccia">🌧️</span><span><b>Mappa Pluviometrica</b><small><span class="t-pc">Previsioni, radar e pioggia misurata<span class="t-it"> in tutta Italia</span> · un progetto di Avventure Micologiche</span><span class="t-tel">di Avventure Micologiche</span></small></span></a>
+    <a class="t-ytp" href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" onclick="try{gtag('event','click_youtube',{pulsante:'fonti'})}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg><span>Iscriviti</span></a>
+  </div></div>
 </header>
+<script>(function(){var a=document.querySelector('.tB .t-striscia a.on'),f=a&&a.parentNode;if(f&&a.offsetLeft+a.offsetWidth>f.clientWidth-30)f.scrollLeft=a.offsetLeft-40;})()</script>
 <main>
+<div class="bric"><a href="/">Mappa pluviometrica</a> › Fonti e licenze</div>
+<h1>Fonti e licenze</h1>
 
 <p>Questo sito mostra le precipitazioni misurate dai <b>pluviometri delle reti pubbliche di monitoraggio</b>. I dati appartengono alle rispettive agenzie ed enti, che ne sono gli unici titolari: questo sito li raccoglie, li archivia e li visualizza <b>citando sempre la fonte</b> (il piè di pagina della mappa indica l'agenzia dei dati che stai guardando). Il sito è gratuito, senza pubblicità e senza registrazione.</p>
 
@@ -103,7 +164,7 @@ td a:hover{text-decoration:underline}
 <thead><tr><th>Regioni</th><th>Fonte</th><th>Note</th></tr></thead>
 <tbody>
 <tr><td>Marche, Umbria, Lazio, Molise, Campania, Puglia, Basilicata, Calabria, Sicilia, Sardegna</td><td><a href="https://meteohub.agenziaitaliameteo.it" target="_blank" rel="noopener">MeteoHub — Agenzia ItaliaMeteo</a></td><td>piattaforma nazionale per la condivisione dei dati meteorologici; reti pluviometriche regionali del sistema di Protezione Civile. Storico in costruzione da luglio 2026: i giorni precedenti sono stime (vedi sotto)</td></tr>
-<tr><td>Abruzzo</td><td><a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a></td><td>in attesa di una fonte di stazione: valori modellistici, non pluviometri</td></tr>
+<tr><td>Abruzzo</td><td>Stazioni della rete <a href="https://www.meteonetwork.it" target="_blank" rel="noopener">MeteoNetwork</a> (MeteoNetwork Association OdV) e stime del <a href="https://meteohub.agenziaitaliameteo.it" target="_blank" rel="noopener">modello ICON-2I, Agenzia ItaliaMeteo</a>, via MeteoHub</td><td>CC BY 4.0 tutt'e due. La Regione non pubblica i suoi pluviometri: dove non c'è una stazione MeteoNetwork la mappa usa le stime del modello, dichiarate aprendo il pallino; ai bordi colorano anche i pluviometri di Lazio, Marche e Molise. Prima del 19/10/2026 solo stime (vedi «Stime di riempimento»)</td></tr>
 </tbody>
 </table>
 
@@ -111,8 +172,11 @@ td a:hover{text-decoration:underline}
 <table>
 <thead><tr><th>Cosa</th><th>Fonte</th><th>Licenza</th></tr></thead>
 <tbody>
-<tr><td>Stime di riempimento</td><td><a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a></td><td>CC BY 4.0. Usate solo per: storico precedente all'avvio della raccolta reale, e rari giorni in cui la fonte ufficiale non ha pubblicato (nei dati sono sempre marcate come stime, mai spacciate per misure)</td></tr>
+<tr><td>Stime di riempimento</td><td><a href="https://meteohub.agenziaitaliameteo.it" target="_blank" rel="noopener">Modello ICON-2I, Agenzia ItaliaMeteo</a> via MeteoHub; prima <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a></td><td>CC BY 4.0 tutt'e due. Usate solo per i rari giorni in cui la fonte ufficiale non ha pubblicato (ICON-2I da novembre 2026, Open-Meteo prima) e per lo storico precedente all'avvio della raccolta reale (Open-Meteo). Nei dati sono sempre marcate come stime, mai spacciate per misure</td></tr>
 <tr><td>Cartografia di base</td><td><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a></td><td>ODbL</td></tr>
+<tr id="satellite"><td>Foto dal satellite da lontano e il mare</td><td><a href="https://visibleearth.nasa.gov/images/73751/july-blue-marble-next-generation-w-topography-and-bathymetry" target="_blank" rel="noopener">NASA Blue Marble Next Generation</a> con il rilievo del fondale (luglio 2004), NASA Earth Observatory, Reto Stöckli</td><td>pubblico dominio. È la foto sotto la pioggia e sotto le previsioni da lontano (fino alla vista di una provincia) e in tutto il mare; i colori sono stati ritoccati da noi</td></tr>
+<tr><td>Foto dal satellite della terra, da più vicino</td><td><a href="https://esa-worldcover.org" target="_blank" rel="noopener">ESA WorldCover 2021</a>, Sentinel-2 RGBNIR: © ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium</td><td>CC BY 4.0. La terra nella foto alla vista di una provincia o di una valle intera; i colori sono stati ritoccati da noi. Le tessere stanno nel repo <a href="https://github.com/AvventureMicologiche/Mappa-Precipitazioni-Satellite" target="_blank" rel="noopener">Mappa-Precipitazioni-Satellite</a></td></tr>
+<tr><td>Foto dal satellite da vicino</td><td><a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a> World Imagery: Esri, Vantor, Earthstar Geographics</td><td>servizio a chiave dell'account ArcGIS Location Platform. È la foto quando si ingrandisce su valli e paesi, e quella del tasto «Satellite» nella Mappa boschi</td></tr>
 <tr><td>Confini regionali</td><td><a href="https://github.com/openpolis/geojson-italy" target="_blank" rel="noopener">openpolis / geojson-italy</a> (da dati ISTAT)</td><td>dati aperti</td></tr>
 <tr><td>Confine del Ticino</td><td><a href="https://www.swisstopo.admin.ch" target="_blank" rel="noopener">swisstopo — swissBOUNDARIES3D</a></td><td>open government data</td></tr>
 <tr><td>Rilievo, quota, versante e pendenza</td><td><a href="https://doi.org/10.13127/tinitaly/1.1" target="_blank" rel="noopener">TINITALY 1.1</a>, modello altimetrico d'Italia a 10 metri: Tarquini S., Isola I., Favalli M., Battistini A., Dotta G. (2023), Istituto Nazionale di Geofisica e Vulcanologia (INGV)</td><td>CC BY 4.0. Serve alla «Mappa boschi»: il rilievo e, toccando un punto, quota, versante e pendenza</td></tr>
@@ -174,10 +238,10 @@ con i <b>soli posti da bosco</b>, nella finestra da 13 a 20 giorni fa che serve 
 <div class="pagine">
 <!-- PAGINE:INIZIO -->
 <p><b>Dove ha piovuto: tutti i pluviometri, pianura compresa</b></p>
-<p><a href="https://avventurepluvio-test.pages.dev/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/molise/">Molise</a> · <a href="https://avventurepluvio-test.pages.dev/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/sardegna/">Sardegna</a> · <a href="https://avventurepluvio-test.pages.dev/svizzera/">Svizzera</a> · <a href="https://avventurepluvio-test.pages.dev/austria/">Austria</a> · <a href="https://avventurepluvio-test.pages.dev/slovenia/">Slovenia</a></p>
+<p><a href="https://avventurepluvio-test.pages.dev/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/molise/">Molise</a> · <a href="https://avventurepluvio-test.pages.dev/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/sardegna/">Sardegna</a> · <a href="https://avventurepluvio-test.pages.dev/svizzera/">Svizzera</a> · <a href="https://avventurepluvio-test.pages.dev/austria/">Austria</a></p>
 <div class="bosco">
 <p><b>🍄 Dove potrebbero esserci le prime nascite di funghi</b></p>
-<p><a href="https://avventurepluvio-test.pages.dev/funghi/">La nostra selezione, le località più bagnate</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sardegna/">Sardegna</a></p>
+<p><a href="https://avventurepluvio-test.pages.dev/funghi/">La nostra selezione, le località più bagnate</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lombardia/">Lombardia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/piemonte/">Piemonte</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/valledaosta/">Valle d'Aosta</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/liguria/">Liguria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/emilia/">Emilia-Romagna</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/veneto/">Veneto</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/friuli/">Friuli</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/trentino/">Trentino</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/altoadige/">Alto Adige</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/toscana/">Toscana</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/umbria/">Umbria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/marche/">Marche</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/lazio/">Lazio</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/molise/">Molise</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/campania/">Campania</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/puglia/">Puglia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/basilicata/">Basilicata</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/calabria/">Calabria</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sicilia/">Sicilia</a> · <a href="https://avventurepluvio-test.pages.dev/funghi/sardegna/">Sardegna</a></p>
 </div>
 <!-- PAGINE:FINE -->
 </div>

@@ -26,7 +26,7 @@ Mappa interattiva delle precipitazioni cumulate in Nord Italia e Toscana, con da
 - **Backend:** Netlify Functions
 - **Automazione:** GitHub Actions (raccolta dati giornaliera)
 - **Dati storici:** File JSON in `data/<regione>/YYYY-MM-DD.json`
-- **Fallback:** Open-Meteo Archive per dati storici > 15 giorni
+- **Stime:** solo dove manca il dato ufficiale, sempre dichiarate nei file (`source`): modello ICON-2I (Agenzia ItaliaMeteo) dal 2/11/2026, Open-Meteo per lo storico precedente
 
 ---
 

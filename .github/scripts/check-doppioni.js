@@ -50,7 +50,7 @@ const fmt = d => d.toISOString().slice(0, 10);
    ufficiale di Meteo-France; quattro su cinque misurano a scatti di 1 mm, dove coincidere e' facile.
    Toscana, Alto Adige e Trentino (le reti dei bug #17-#19) `i` non ce l'hanno: li' il controllo e' quello di prima. */
 const oreDiverse = (p, s) => Array.isArray(p.i) && Array.isArray(s.i) && (p.i[0] !== s.i[0] || Math.abs((+p.i[1] || 0) - (+s.i[1] || 0)) >= 0.05);
-const eStima = j => !!j && typeof j.source === 'string' && /open-meteo/i.test(j.source);
+const eStima = j => !!j && typeof j.source === 'string' && /open-meteo|icon-2i-gapfill/i.test(j.source);
 
 function leggi(regione, giorno) {
   const p = path.join(DATA_DIR, regione, giorno + '.json');

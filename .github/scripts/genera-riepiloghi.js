@@ -108,6 +108,43 @@ function etichette(prov) {
    giorni con 17 giorni nulli su 25, mentre la pagina funghi della stessa zona lo
    escludeva: due pagine, due numeri. Vale per le regioni (riepilogo) e per le zone. */
 const COPERTURA_MIN = 0.6;
+/* ⚠️ IL FRIULI ALL'80% (31/10/2026, controllo della scheda 103): la mappa del Friuli tiene un pluviometro solo se c'e'
+   almeno l'80% dei giorni (COV_MIN di loadOSMERFriuliRegion, scelta scritta nel CLAUDE.md: le stazioni OSMER a serie
+   bucata davano macchie asciutte false). Qui c'era il 60% di tutte le regioni, e la pagina contava pluviometri che la
+   mappa non mostra (30 giorni al 29/10: 144 contro 142, media 124,6 contro 125,6). Vale per la regione e per le zone. */
+const COPERTURA_REGIONE = { friuli: 0.8 };
+const copertura = k => COPERTURA_REGIONE[k] || COPERTURA_MIN;
+
+/* ⚠️ LE STIME, COME LA MAPPA (31/10/2026, controllo della scheda 103). Dal 26 al 29/10 la rete pugliese era spenta e i
+   file di quei giorni sono stime Open-Meteo (`open-meteo-gapfill`, ogni stazione `om`): la pagina scriveva «Il 29
+   ottobre 2,9 mm a Monopoli» e «strumenti a terra, non stime da modello», e il suo bottone apriva la mappa su «Nessun
+   dato». La regola e' quella di usaGiorno() in index.html: su UN giorno le stazioni stimate non contano, e se in una
+   cartella ne restano meno di 5 quella cartella quel giorno non conta (il giorno «ieri» puo' non uscire, come per la
+   Slovenia); sui periodi lunghi le stime restano e il riepilogo dice quali giorni sono (`stime`, come avvisoStime()
+   della mappa: la catena di giorni `open-meteo-gapfill` che arriva fino a 2 giorni dalla fine del periodo). */
+const STIME_MIN_REALI = 5;
+function soloVere(staz) {
+  if (!staz) return staz;
+  const vere = staz.filter(s => !s.om);
+  return vere.length === staz.length ? staz : vere.length >= STIME_MIN_REALI ? vere : null;
+}
+const fonteCache = {};
+function stimato(dir, g) {
+  const k = dir + '/' + g;
+  if (!(k in fonteCache)) {
+    let s = ''; try { s = JSON.parse(fs.readFileSync(path.join(DATI, dir, g + '.json'), 'utf8')).source || ''; } catch (e) {}
+    fonteCache[k] = /-gapfill$/.test(s);   // open-meteo-gapfill fino al 2/11/2026, poi icon-2i-gapfill
+  }
+  return fonteCache[k];
+}
+// gg dal piu' recente; { dal, al } oppure null
+function stimeInCoda(dirs, gg) {
+  const st = g => dirs.some(d => stimato(d, g));
+  const i = gg.findIndex(st);
+  if (i < 0 || i > 2) return null;
+  let j = i; while (j + 1 < gg.length && st(gg[j + 1])) j++;
+  return { dal: gg[j], al: gg[i] };
+}
 
 // A parita' di millimetri: nome in ordine alfabetico, poi id. Un ordine che non dipende
 // dall'ordine in cui arrivano i file (19/10/2026).
@@ -118,10 +155,11 @@ function pariMerito(na, nb, a, b) {
 function riepilogo(r, giorni, fuori) {
   const somma = {}, nomi = {}, prov = {}, conDato = {};
   let presenti = 0, primo = null, ultimo = null;
+  const unGiorno = giorni.length === 1;   // su un giorno solo le stime non contano, vedi soloVere
   for (const g of giorni) {
     let qualcosa = false;
     for (const dir of r.dirs) {
-      const staz = leggi(dir, g);
+      const staz = unGiorno ? soloVere(leggi(dir, g)) : leggi(dir, g);
       if (!staz) continue;
       qualcosa = true;
       for (const s of staz) {
@@ -140,7 +178,7 @@ function riepilogo(r, giorni, fuori) {
     primo = g;
   }
   if (!presenti) return null;
-  const chiavi = Object.keys(somma).filter(id => conDato[id] >= presenti * COPERTURA_MIN);   // copertura, vedi sopra
+  const chiavi = Object.keys(somma).filter(id => conDato[id] >= presenti * copertura(r.k));   // copertura, vedi sopra
   if (!chiavi.length) return null;
   const et = etichette(prov);
   const media = chiavi.slice().sort().reduce((a, id) => a + somma[id], 0) / chiavi.length;   // sempre nello stesso ordine: vedi pariMerito
@@ -153,11 +191,13 @@ function riepilogo(r, giorni, fuori) {
       // `nb` = il nome senza la provincia aggiunta qui, solo quando c'e': la meta description lo usa per stare nei 158
       // caratteri (bug 8, 19/10/2026; le parentesi dei nomi veri, «Monte Epomeo (Ischia)», non si toccano)
       return n === nb ? { n, mm: Math.round(somma[id] * 10) / 10 } : { n, nb, mm: Math.round(somma[id] * 10) / 10 }; });
+  const stime = unGiorno ? null : stimeInCoda(r.dirs, giorni);
   return {
     media: Math.round(media * 10) / 10,
     giorni: presenti,
     stazioni: chiavi.length,
     primo, ultimo, top,
+    ...(stime ? { stime } : {}),
   };
 }
 
@@ -393,16 +433,18 @@ const cache = {};
 function datiRegione(k) {
   if (cache[k]) return cache[k];
   const r = REGIONI.find(x => x.k === k);
-  const out = { da: r ? ultimoCompleto(r.dirs) : null, mm: [] };
+  // stime: gli id stimati (`om`) di quel giorno, che sul giorno singolo non contano (vedi soloVere, 31/10/2026)
+  const out = { da: r ? ultimoCompleto(r.dirs) : null, mm: [], stime: [], dirs: r ? r.dirs : [] };
   for (let i = 0; i < FINESTRA; i++) {
-    const m = new Map();
+    const m = new Map(), om = new Set();
     for (const { k: kr, dir: d } of cartelleConRete(r, POSTI[k], REGIONI)) {   // anche le reti dei posti «ospiti» (bug 17)
-      for (const st of leggi(d, giorni[i]) || []) {
+      const tutte = leggi(d, giorni[i]), vere = soloVere(tutte);
+      for (const st of tutte || []) {
         if (escluso(ESCLUSE, kr, [st.id, st.n])) continue;   // esclusi dalla mappa, nella lista della LORO rete
-        if (st.mm != null && !m.has(st.id)) m.set(st.id, st.mm);
+        if (st.mm != null && !m.has(st.id)) { m.set(st.id, st.mm); if (!vere || (st.om && vere !== tutte)) om.add(st.id); }
       }
     }
-    out.mm.push(m);
+    out.mm.push(m); out.stime.push(om);
   }
   return (cache[k] = out);
 }
@@ -446,15 +488,18 @@ for (const z of ZONE) {
         if (rd.mm[i].size) disponibili++;     // la sua regione ha il file quel giorno
         const v = rd.mm[i].get(id);
         if (v == null) continue;
+        if (n === 1 && rd.stime[i].has(id)) continue;   // su un giorno solo le stime non contano (31/10/2026)
         somma += v; visti++; giorniConDati.add(i);
       }
-      // copertura (18/10/2026): sotto il 60% dei giorni della sua regione il totale non vale, come in genera-funghi
-      (valori[id] = valori[id] || [null, null, null])[j] = visti && visti >= disponibili * COPERTURA_MIN ? uno(somma) : null;
+      // copertura (18/10/2026): sotto il 60% dei giorni della sua regione il totale non vale, come in genera-funghi;
+      // l'80% per il Friuli (31/10/2026, vedi COPERTURA_REGIONE)
+      (valori[id] = valori[id] || [null, null, null])[j] = visti && visti >= disponibili * copertura(regDi[id]) ? uno(somma) : null;
     }
     const con = ids.filter(id => valori[id][j] != null);
     if (!con.length) continue;
     const ord = con.slice().sort((a, b) => valori[b][j] - valori[a][j] || pariMerito(nomeDi[regDi[a] + ':' + a], nomeDi[regDi[b] + ':' + b], a, b));   // pari merito, vedi riepilogo()
     const dentro = [...giorniConDati].sort((a, b) => a - b);
+    const stime = n === 1 ? null : stimeInCoda([...new Set(regs.flatMap(k => datiRegione(k).dirs))], giorni.slice(da, da + n));
     periodi[String(n)] = {
       media: uno(con.slice().sort().reduce((t, id) => t + valori[id][j], 0) / con.length),   // stesso ordine a ogni giro (26,75 diventava 26,8 o 26,7)
       stazioni: con.length,
@@ -462,6 +507,7 @@ for (const z of ZONE) {
       primo: giorni[dentro[dentro.length - 1]],
       ultimo: giorni[dentro[0]],
       top: ord.slice(0, 3).map(id => ({ n: nomeDi[regDi[id] + ':' + id], mm: valori[id][j] })),
+      ...(stime ? { stime } : {}),   // i giorni a stima in coda al periodo, vedi stimeInCoda
     };
   }
   if (!periodi['7']) { zSaltate.push(z.n); continue; }

@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Previsioni meteo Val Brembana: che tempo farà nei prossimi 7 giorni, paese per paese</title>
-<meta name="description" content="Previsioni meteo della Val Brembana per i prossimi 7 giorni: pioggia prevista, minime e massime in 12 paesi della valle, ognuno alla sua quota, ora per ora. E quanta pioggia è già caduta nei pluviometri di ARPA Lombardia.">
+<title>Meteo Val Brembana: previsioni a 7 giorni, paese per paese</title>
+<meta name="description" content="Meteo Val Brembana: pioggia, minime e massime dei prossimi 7 giorni in 12 paesi della valle, ognuno alla sua quota, ora per ora, e la pioggia già caduta.">
 <link rel="canonical" href="https://avventurepluvio-test.pages.dev/meteo/val-brembana/">
-<meta property="og:title" content="Previsioni meteo Val Brembana: i prossimi 7 giorni, paese per paese">
-<meta property="og:description" content="Previsioni meteo della Val Brembana per i prossimi 7 giorni: pioggia prevista, minime e massime in 12 paesi della valle, ognuno alla sua quota, ora per ora. E quanta pioggia è già caduta nei pluviometri di ARPA Lombardia.">
+<meta property="og:title" content="Meteo Val Brembana: previsioni a 7 giorni, paese per paese">
+<meta property="og:description" content="Meteo Val Brembana: pioggia, minime e massime dei prossimi 7 giorni in 12 paesi della valle, ognuno alla sua quota, ora per ora, e la pioggia già caduta.">
 <meta property="og:image" content="https://avventurepluvio-test.pages.dev/preview.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:url" content="https://avventurepluvio-test.pages.dev/meteo/val-brembana/">
 <meta property="og:type" content="website">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Mappa pluviometrica","item":"https://avventurepluvio-test.pages.dev/"},{"@type":"ListItem","position":2,"name":"Previsioni meteo","item":"https://avventurepluvio-test.pages.dev/meteo/"},{"@type":"ListItem","position":3,"name":"Val Brembana"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Mappa pluviometrica","item":"https://avventurepluvio-test.pages.dev/"},{"@type":"ListItem","position":2,"name":"Previsioni meteo","item":"https://avventurepluvio-test.pages.dev/previsioni/"},{"@type":"ListItem","position":3,"name":"Val Brembana"}]}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9R7MXXS0V4"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -51,6 +52,7 @@ p{margin-bottom:12px;}
 .top-staz li{margin:3px 0 3px 20px;}
 .verdetto .top{font-size:16px;opacity:.92;margin-top:8px;}
 .verdetto .top b{font-weight:700;}
+.avviso-stime{background:#fff4d6;border:1px solid #f0c64a;border-radius:10px;padding:10px 12px;margin:0 0 12px;font-size:15px;line-height:1.45;color:#5a4300;}
 #attesa{color:#6a7789;font-size:16px;padding:18px 0;}
 ol.zone-dove{list-style:none;margin:10px 0 6px;padding:0;counter-reset:z;}
 ol.zone-dove li{counter-increment:z;display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bordo);}
@@ -108,7 +110,6 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .fin .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;}
 .fin .c i{display:block;background:var(--blu);border-radius:4px 4px 0 0;min-height:3px;}
 .fin .c b{font-size:13px;color:var(--blu-scuro);margin-bottom:3px;}
-/* C13 (19/10/2026): otto giornate senza pioggia, il grafico vuoto lo dice */
 .fin{position:relative}.fin-nulla{position:absolute;left:0;right:0;top:38%;text-align:center;color:#5a6b80;font-size:14px;font-weight:600}
 .fin-x{display:flex;gap:6px;font-size:12px;color:#6b7a8d;}
 .fin-x span{flex:1;text-align:center;line-height:1.25;}
@@ -132,16 +133,7 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .noioso p{margin-bottom:8px;}
 .noioso a{color:var(--blu);}
 
-/* Sulle pagine piogge l'etichetta sta SOPRA la sua barra, non in cima al
-   grafico: con 30 barre strette, in cima non si capiva di chi fosse. */
 .gg .b b{position:static;transform:none;align-self:center;margin-bottom:2px;line-height:1.1;}
-/* ── IL BOTTONE DI IERI, versione V2 (11/10/2026, sua scelta fra tre) ──
-   Guardando la pagina dal PC: «le scritte cosi' piccole fanno schifo, i
-   bottoni non sembrano bottoni». Fondo pieno, ombra profonda con un bordo
-   sotto come un tasto, e la freccia in un tondo: il segno che si tocca.
-   Gli altri bottoni (previsioni, tasti dei periodi, «Apri la mappa» delle
-   schede, scritte del riquadro) stanno nel blocco COMUNE RILIEVO di
-   lib-pagina-funghi.js, uguale per tutte le pagine: qui sotto, in fondo. */
 .ieri-btn{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px;width:100%;
   text-decoration:none;background:#fff;color:#10263f;padding:14px 16px 15px 20px;border-radius:14px;line-height:1.35;
   box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 6px 0 #7f97b6,0 12px 22px rgba(0,0,0,.38);
@@ -153,7 +145,6 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .ieri-btn:hover{background:#f3f7fc;}
 .ieri-btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #7f97b6,0 5px 10px rgba(0,0,0,.3);}
 @media(max-width:480px){.ieri-btn b{font-size:17.5px;}.ieri-btn small{font-size:14px;}}
-/* BOTTONI IN RILIEVO (lib-pagina-funghi.js) */
 .capo-btns{gap:12px;margin-top:15px;}
 .capo-btn{background:#fff;border:none;color:#10263f;font-size:16px;font-weight:700;padding:12px 18px 13px;border-radius:12px;
   box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 #c9d6e6,0 5px 0 #7f97b6,0 10px 18px rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s;}
@@ -181,8 +172,6 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .verdetto .dett{font-size:15px;opacity:.85;}
 @media(max-width:480px){.banda-prev b{font-size:17.5px;}.banda-prev span{font-size:14px;}.tasti a{font-size:15px;}.capo-btn{font-size:15.5px;}
   .verdetto .top{font-size:16px;}.verdetto .dett{font-size:14px;}}
-/* BOTTONE YOUTUBE (lib-pagina-funghi.js) */
-/* A TUTTA RIGA come i bottoni che aprono la mappa (25/10/2026, suo: «fallo largo come quelli che aprono le mappe») */
 .yt-btn{display:flex;justify-content:center;width:100%;box-sizing:border-box;align-items:center;gap:10px;background:linear-gradient(180deg,#e0262e,#b8141b);color:#fff !important;
   font-weight:800;font-size:16.5px;text-decoration:none !important;padding:13px 20px 14px;border-radius:12px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 4px 0 #7d0d12,0 9px 18px rgba(160,20,27,.32);transition:transform .08s,box-shadow .08s;}
@@ -192,8 +181,6 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .yt-btn:hover{background:linear-gradient(180deg,#e8323a,#c01820);}
 .yt-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7d0d12,0 4px 8px rgba(160,20,27,.3);}
 
-/* QUIZ ACCANTO A YOUTUBE: due celle uguali, una sotto l'altra sul telefono (25/10/2026, suo: «dove c'e' il quiz lascia
-   com'e'», solo YouTube da solo va a tutta riga) */
 .coppia-btn{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 4px;}
 .coppia-btn a{justify-content:center;box-sizing:border-box;min-height:53px;width:100%;}
 .coppia-btn svg{width:26px;flex:none;}
@@ -213,7 +200,6 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 
 .bric{font-size:14px;color:#666;margin-bottom:6px;}
 .bric a{color:var(--blu);}
-/* ── pagina «Previsioni meteo <zona>» (campione 24/10/2026, prove/meteo-zone/) ── */
 .pz-cerca{position:relative;margin:14px 0 4px}
 .pz-cerca input{width:100%;box-sizing:border-box;font-size:16px;padding:12px 14px 12px 40px;border:2px solid #1a5fa8;border-radius:12px;outline:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%231a5fa8' stroke-width='2.6' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5 21 21'/%3E%3C/svg%3E") no-repeat 13px center}
 .pz-drop{display:none;position:absolute;left:0;right:0;top:100%;margin-top:4px;background:#fff;border:1px solid #c9d5e1;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:1000;overflow:hidden}
@@ -235,8 +221,6 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .pz-g .t{font-size:13px}.pz-g .t .mn{color:#1a5fa8}.pz-g .t .mx{color:#c4501a;font-weight:700}
 .pz-g .p{font-size:13px;font-weight:700;color:#1a5fa8;margin-top:4px;min-height:17px}
 .pz-g .p.zero{opacity:.6;font-weight:400}
-/* LA % DI PIOGGIA (25/10/2026): la GOCCIA come weather.com e Google (sua scelta), e i millimetri scritti «mm». Tre toni
-   come la mappa del sito: sotto il 10% grigia, dal 60% rossa. Nei giorni e' la piu' alta fra i paesi della zona */
 .pz-g .pc{font-size:12.5px;font-weight:700;color:#1a5fa8;margin-top:2px;min-height:16px}
 .pz-g .pc.z,.pz-scheda .giorni .pc.z,table.pz-tab td .pc.z{color:#9aa3ad;font-weight:500}
 .pz-g .pc.alta,.pz-scheda .giorni .pc.alta,table.pz-tab td .pc.alta,.pz-et .pp.alta{color:#c21f1f}
@@ -248,20 +232,40 @@ footer nav.altre{border-top:none;margin-top:0;padding-top:0;}
 .pz-mappa-testa{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
 .pz-mappa-testa .dove{font-weight:700;color:#0f3d6e}
 #pz-mappa{height:460px;border-radius:12px;border:1px solid #c9d5e1;margin:8px 0 4px;z-index:1}
+#pz-mappa.sat{background:#3e526b}#pz-mappa.sat .leaflet-tile-pane{filter:brightness(1.3) saturate(1.1)}
+.pz-nastro{position:relative;height:44px;overflow:hidden;background:#ffd400;border:2px solid #1a5fa8;border-bottom:0;border-radius:14px 14px 0 0;margin:14px 0 0;scroll-margin-top:12px;display:flex;align-items:center;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.pz-nastro:not([hidden]) + .pz-scheda{margin-top:0;border-top-left-radius:0;border-top-right-radius:0}
+.pz-nastro:has(+ .pz-scheda:not(.on)){border-bottom:2px solid #1a5fa8;border-radius:14px}
+.pz-nastro[hidden]{display:none}
+.pz-nastro .lab{position:absolute;left:0;top:0;bottom:0;z-index:2;display:flex;align-items:center;gap:8px;padding:0 30px 0 16px;background:#c8102e;color:#fff;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%);font:900 13px/1.1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;letter-spacing:.05em;white-space:nowrap}
+.pz-nastro .lab span{font-size:12px;font-weight:800;color:#ffe36b;letter-spacing:.06em}
+.pz-nastro .lab b{font-weight:900}.pz-nastro .lab em{font-style:normal}.pz-nastro .lab.corto em{display:none}
+.pz-nastro .t{display:flex;white-space:nowrap;will-change:transform;cursor:grab}
+.pz-nastro .v{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;border:0;background:none;color:#111;font:700 14px system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;padding:0 16px;border-right:2px solid #c8102e;cursor:pointer}
+.pz-nastro .v b{font-weight:900;text-transform:uppercase;letter-spacing:.03em}.pz-nastro .v .ic{font-size:18px}
+.pz-nastro .v small{font-weight:600;color:#6d5800;font-size:11px}
+.pz-nastro .v .mn{color:#5c4a00;font-weight:700}.pz-nastro .v .mx{color:#111;font-weight:900}
+@media (max-width:600px){.pz-nastro{height:40px}
+  .pz-nastro .lab{flex-direction:column;align-items:flex-start;justify-content:center;gap:0;font-size:10.5px;line-height:1.05;padding:0 22px 0 10px;white-space:normal;max-width:38%}.pz-nastro .lab span{font-size:10px}
+  .pz-nastro .v{font-size:13px;padding:0 12px;gap:5px}.pz-nastro .v .ic{font-size:15px}}
 .pz-pt{position:relative}
-/* ⚠️ L'ETICHETTA STA SUL PAESE (24/10/2026 sera, suo, dopo tre prove bocciate con puntino + etichetta spostata + lineetta:
-   «niente di quello che mi hai proposto funziona, guarda come fanno gli altri»). Come la mappa di 3B Meteo: il
-   riquadro e' CENTRATO sul punto del paese, niente puntino a parte, niente lineette; se due si toccherebbero non se ne
-   sposta nessuna, si NASCONDE il paese meno importante, e ingrandendo la mappa ricompare. */
-.pz-et{position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;cursor:pointer;text-align:center;line-height:1.12;background:rgba(255,255,255,.95);border-radius:8px;padding:2px 7px 3px;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.pz-et{position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;cursor:pointer;text-align:center;line-height:1.12;background:#fff;border-radius:8px;padding:2px 7px 3px;box-shadow:0 1px 4px rgba(0,0,0,.45);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#111}
 .pz-et .r1{display:block;font-size:12px;font-weight:800}
 .pz-et .ic{font-size:16px;vertical-align:-3px;margin-right:2px}
-.pz-et .mn{color:#1a5fa8}.pz-et .mx{color:#c4501a}
-.pz-et .gc{color:#1a5fa8;margin-left:4px}.pz-et .gc.bagnato{background:#1a5fa8;color:#fff;border-radius:999px;padding:0 5px}
-.pz-et .pp{color:#1a5fa8;margin-left:4px}
-.pz-et .nm{display:block;font-size:11px;font-weight:700;color:#1f2d3a}
+.pz-et .mn{color:#1856b8}.pz-et .mx{color:#c21f1f}
+.pz-et .gc{color:#1856b8;margin-left:4px}.pz-et .gc.bagnato{background:#1856b8;color:#fff;border-radius:999px;padding:0 5px}
+.pz-et .pp{color:#1856b8;margin-left:4px}
+.pz-et .nm{display:block;font-size:11px;font-weight:700;color:#111}
 .pz-et.via{display:none}
-@media (max-width:600px){.pz-et{padding:1px 5px 2px}.pz-et .r1{font-size:11px}.pz-et .ic{font-size:14px}.pz-et .nm{font-size:10px}}
+#pz-mappa .pz-et{display:inline-flex;align-items:center;gap:4px;padding:2px 8px 2px 4px}#pz-mappa .pz-et.via{display:none}
+#pz-mappa .pz-et .r1{display:contents}
+#pz-mappa .pz-et .ic{order:0;margin:0;font-size:17px;vertical-align:0}#pz-mappa .pz-et .nm{order:1;font-size:12.5px;font-weight:800}
+#pz-mappa .pz-et .mn{order:2}#pz-mappa .pz-et .mx{order:3}#pz-mappa .pz-et .pp,#pz-mappa .pz-et .gc{order:4;margin-left:0}
+.pz-et.scelto{background:#1f6fd1}.pz-et.scelto .nm,.pz-et.scelto .pp{color:#fff}.pz-et.scelto .mn,.pz-et.scelto .gc{color:#cfe3ff}.pz-et.scelto .mx{color:#ffd0d0}
+.pz-et.scelto .gc.bagnato{background:#fff;color:#1f6fd1}
+@media (max-width:600px){.pz-et{padding:1px 5px 2px}.pz-et .r1{font-size:11px}.pz-et .ic{font-size:14px}.pz-et .nm{font-size:10px}
+  #pz-mappa .pz-et{flex-direction:column;gap:0;padding:1px 5px 2px}#pz-mappa .pz-et .r1{display:flex;align-items:center;gap:3px}
+  #pz-mappa .pz-et .ic{font-size:14px}#pz-mappa .pz-et .nm{font-size:10px}}
 .pz-zoom{color:#1a5fa8;font-weight:700}
 .pz-scorri{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:8px 0}
 table.pz-tab{border-collapse:collapse;min-width:640px;width:100%;font-size:13px}
@@ -287,20 +291,36 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
 .pz-scheda .giorni button.sel{background:#1a5fa8;color:#fff;border-color:#1a5fa8}
 .pz-scheda .giorni b{display:block;text-transform:capitalize}
 .pz-scheda .giorni .pc{display:block;font-weight:700;color:#1a5fa8}.pz-scheda .giorni button.sel .pc{color:#fff}
-.pz-ore{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(54px,1fr);gap:4px;overflow-x:auto;padding:6px 0 8px}
-.pz-ora{text-align:center;border-radius:8px;padding:5px 2px;background:#f6f9fc;font-size:12px}
-/* «pomeriggio» a 13 px vuole 72 px e al telefono la casella ne dava 55-71: tagliato in «pomeriggi» (25/10/2026) */
-.pz-ore.fasce{grid-auto-columns:minmax(70px,1fr)}
-.pz-ore.fasce .pz-ora{padding:8px 2px;font-size:13px}.pz-ore.fasce .pz-ora .ic{font-size:26px}.pz-ore.fasce .pz-ora .h b{display:block;color:#0f3d6e;font-size:12px;letter-spacing:-.2px}
-.pz-ora .h{color:#5a6b7d}.pz-ora .ic{font-size:20px}.pz-ora .t{font-weight:700}
-.pz-ora .mm{color:#1a5fa8;font-weight:700;min-height:15px}.pz-ora .v{color:#7a8796;font-size:11px}
-/* la % di pioggia, ora per ora: gli stessi tre toni della mappa (sotto il 10% grigia, dal 60% rossa) */
-.pz-ora .pc{font-size:11.5px;font-weight:700;color:#1a5fa8;min-height:15px}.pz-ora .pc.z{color:#9aa3ad;font-weight:500}.pz-ora .pc.alta{color:#c21f1f}
-.pz-porte{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
-.pz-porte a{display:block;text-align:center;border:1px solid #c9d5e1;border-radius:10px;padding:8px 4px;text-decoration:none;color:#0f3d6e;font-size:12.5px;font-weight:700}
+.tv-nota{margin:8px 0 0;font-size:12.5px;color:#5a6b7d}
+.tv{width:100%;border-collapse:collapse;margin:6px 0 8px;font-size:14px;font-variant-numeric:tabular-nums}
+.tv td{padding:9px 6px;border-bottom:1px solid #e6edf4;text-align:left;white-space:nowrap;vertical-align:middle}
+.tv .h{font-weight:700;color:#0f3d6e;width:48px}
+.tv .h b{display:block;font-size:12px;letter-spacing:-.2px}
+.tv tr.f6 .h{font-weight:500;color:#5a6b7d}
+.tv .ic{font-size:22px;line-height:1;margin-right:8px;vertical-align:middle}
+.tv .pa{color:#33475b;vertical-align:middle}
+.tv .t{font-weight:700;font-size:16px;color:#0f2b46;text-align:right;padding-right:14px}
+.tv .mmv{color:#1a5fa8}.tv .z{color:#9aa3ad}
+.tv .pc{font-weight:700;color:#1a5fa8;font-size:12.5px}.tv .pc.z{color:#9aa3ad;font-weight:500}.tv .pc.alta{color:#c21f1f}
+.tv .piove .pc{margin-left:8px}
+.tv .ve{color:#33475b}.tv .ve small{color:#7a8796;font-size:12px}
+.tv .fr{display:inline-block;font-style:normal;color:#1a5fa8;font-weight:700;margin-right:5px;line-height:1}
+.tv .sep td{background:#eef4fa;color:#0f3d6e;font-weight:700;font-size:12.5px;padding:6px;border-bottom:1px solid #d8e2ec}
+@media(max-width:560px){.tv .pa{display:none}.tv td{padding:8px 4px}.tv .piove .pc{display:block;margin:0;font-size:12px}.tv .t{padding-right:8px}}
+.pz-porte{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:6px;margin-top:8px}
+.pz-porte a{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px solid #c9d5e1;border-radius:10px;padding:8px 4px;text-decoration:none;color:#0f3d6e;font-size:12.5px;font-weight:700}
 .pz-porte a span{display:block;font-size:20px}
-.pz-graf{display:flex;align-items:flex-end;gap:2px;height:130px;margin:12px 0 4px;padding-bottom:2px;border-bottom:1px solid #c9d5e1}
-.pz-graf .b{flex:1;background:#1a5fa8;border-radius:2px 2px 0 0;min-height:2px;cursor:pointer}
+.pz-porte a small{display:block;font-size:11.5px;font-weight:500;color:#4a5d72}
+@media(max-width:380px){.pz-porte a{font-size:12px;padding:8px 2px}}
+.pz-graf{position:relative;display:flex;align-items:flex-end;gap:2px;height:130px;margin:34px 0 0;padding-bottom:2px;border-bottom:1px solid #c9d5e1}
+.pz-fut{position:absolute;top:-28px;bottom:-1px;right:0;margin-left:-1px;background:#eef4fb;border-left:1px solid #9db4cc;border-radius:0 10px 0 0;pointer-events:none}
+.pz-gt{position:absolute;left:0;top:-24px;font-size:10.5px;line-height:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7a8a9b;white-space:nowrap;pointer-events:none}
+.pz-gt.pre{margin-left:8px;color:#2f6aa6}
+.pz-graf-date{position:relative;height:22px;margin:0 0 4px;font-size:11.5px;color:#5a6b7d}
+.pz-graf-date span{position:absolute;top:4px;transform:translateX(-50%);white-space:nowrap}
+.pz-graf-date span.d{transform:translateX(-100%)}.pz-graf-date span.s{transform:none}
+.pz-graf-date span.oggi{top:3px;background:#0f3d6e;color:#fff;font-weight:700;font-size:11px;line-height:15px;border-radius:999px;padding:0 8px}
+.pz-graf .b{position:relative;flex:1;background:#1a5fa8;border-radius:2px 2px 0 0;min-height:2px;cursor:pointer}
 .pz-graf .b:hover,.pz-graf .b.sel{background:#c4501a}
 .pz-graf .b.prev{background:repeating-linear-gradient(45deg,#7fb0e0,#7fb0e0 3px,#b9d4ef 3px,#b9d4ef 6px)}
 .pz-graf .b.prev.sel,.pz-graf .b.prev:hover{background:#c4501a}
@@ -313,26 +333,93 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
 .pz-vai a{display:block;border:1px solid #c9d5e1;border-radius:10px;padding:12px;text-decoration:none;color:#0f3d6e;font-weight:700;background:#fff}
 .pz-vai a small{display:block;font-weight:400;color:#5a6b7d;margin-top:3px}
 @media (max-width:600px){.pz-giorni{gap:4px}.pz-g{padding:6px 2px}.pz-g .ic{font-size:22px}.pz-g .t,.pz-g .p{font-size:12px}.pz-vai{grid-template-columns:1fr}#pz-mappa{height:480px}
-  /* al telefono la casella del giorno e' larga ~48 px: «5,8 mm» andava a capo (25/10/2026), e sotto adesso c'e' la % */
   .pz-g .p,.pz-g .pc{font-size:11.5px;letter-spacing:-.3px;white-space:nowrap}}
 @media (max-width:380px){.pz-g .p,.pz-g .pc{font-size:11px}}
+
+.pz-ant{display:grid;grid-template-columns:1fr;gap:14px;margin:12px 0 22px}
+.pz-ant-c{position:relative;display:block;border-radius:14px;overflow:hidden;border:1px solid #c9d5e1;background:#fff;text-decoration:none;box-shadow:0 2px 10px rgba(15,61,110,.10)}
+.pz-ant-v{position:relative;height:250px;pointer-events:none;background:#e8eef4 center/cover no-repeat}
+.pz-ant-v.leaflet-container{background:#e8eef4}
+.pz-ant-v.sat.leaflet-container{background:#3e526b}.pz-ant-v.sat .leaflet-tile-pane{filter:brightness(1.3) saturate(1.1)}
+.pz-ant-t{display:block;padding:10px 14px 11px;font-weight:800;font-size:16.5px;line-height:1.25;color:#3d1f04;background:linear-gradient(180deg,#f9c93e,#eda40c);border-top:1px solid rgba(160,106,8,.35)}
+.pz-ant-t small{display:block;font-weight:600;font-size:12.5px;opacity:.92;margin-top:1px}
+.pz-ant-q{position:absolute;top:8px;right:8px;z-index:1000;font-style:normal;font-size:12px;font-weight:700;background:rgba(255,255,255,.92);border-radius:6px;padding:2px 7px;color:#0f3d6e}
+.pz-ant-q:empty{display:none}
+.pz-ant-v .leaflet-control-attribution{font-size:10px;background:rgba(255,255,255,.7)}
+.pz-ant-v .pz-et{padding:1px 5px 2px}.pz-ant-v .pz-et .r1{font-size:10.5px}.pz-ant-v .pz-et .ic{font-size:13px}.pz-ant-v .pz-et .nm{font-size:9.5px}
+.pz-ant-v .pz-et.corta .nm,.pz-ant-v .pz-et.mini .nm,.pz-ant-v .pz-et.mini .mn{display:none}
+.pz-ant-v .pz-et.mini{padding:0 4px 1px}.pz-ant-v .pz-et.mini .ic{margin-right:1px}
+.pz-ant-v .pz-et.nome .mn{display:none}
+@media (min-width:700px){.pz-ant-v{height:300px}}
+
+.cit-tit{font-size:18px;color:var(--blu-scuro);margin:22px 0 2px;}
+.mv-nota{margin:0 0 10px;}
+.mv{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px;}
+.mv-c{display:inline-block;padding:8px 14px;border:1px solid #c9d6e6;border-radius:20px;background:#fff;color:var(--blu);font-weight:700;font-size:15px;text-decoration:none;}
+.mv-c:hover{background:#eef4fd;}
+.mv-c::after{content:" →";}
+
+header.tB{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:10px;padding:0;background:#fff;color:#123252;border-bottom:1px solid #d0d8e8}
+.tB a{text-decoration:none;opacity:1}
+.tB .t-in{max-width:var(--t-max,760px);margin:0 auto;width:100%;padding:0 var(--t-pad,16px);display:flex;align-items:center}
+.tB .t-striscia{background:#0f2d4f}
+.tB .t-striscia .t-in{gap:2px;height:38px;padding:0 calc(var(--t-pad,16px) - 11px)}
+.tB .t-striscia a{color:rgba(255,255,255,.86);font-size:13.5px;font-weight:600;padding:0 11px;height:38px;display:flex;align-items:center;white-space:nowrap}
+.tB .t-striscia a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tB .t-striscia a.on{color:#0f2d4f;background:#f9c93e}
+.tB .t-striscia .t-dx{margin-left:auto;display:flex;gap:2px}
+.tB .t-banda .t-in{position:relative;gap:16px;padding-top:14px;padding-bottom:14px}
+.tB .t-marchio{display:flex;align-items:center;gap:12px}
+.tB .t-goccia{font-size:34px;line-height:1}
+.tB .t-marchio b{display:block;font-size:24px;font-weight:800;letter-spacing:-.015em;line-height:1.1;color:#123252}
+.tB .t-marchio small{display:block;font-size:13.5px;color:#4a5a6e;font-weight:500;margin-top:3px;line-height:1.3}
+.tB .t-tel{display:none}
+.tB .t-ytp{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:#e12b2b;color:#fff;font-size:14.5px;font-weight:700;padding:9px 16px 9px 13px;border-radius:999px;white-space:nowrap}
+.tB .t-ytp svg{width:18px;height:18px;fill:#fff}
+.tB .mk-lente{display:flex;align-items:center;justify-content:center;margin-left:auto;flex:none;width:40px;height:40px;border:0;border-radius:50%;background:#1b3f6e;cursor:pointer}
+.tB .mk-lente ~ .t-ytp{margin-left:0}
+.tB .mk-cerca{display:none;position:absolute;left:var(--t-pad,16px);right:var(--t-pad,16px);top:50%;transform:translateY(-50%);margin:0;max-width:none;z-index:60}
+.tB .mk-cerca input{border:2px solid #1b3f6e;padding:11px 12px 11px 36px}
+header.tB.mk-aperto .mk-cerca{display:block}
+header.tB.mk-aperto .t-marchio,header.tB.mk-aperto .t-ytp,header.tB.mk-aperto .mk-lente{visibility:hidden}
+.tB .t-in:has(.mk-lente) .t-it{display:none}
+@media (max-width:760px){
+  .tB .t-striscia{order:2}
+  .tB .t-banda .t-in{padding-top:10px;padding-bottom:10px;gap:10px}
+  .tB .t-goccia{font-size:26px}
+  .tB .t-marchio b{font-size:18px}
+  .tB .t-marchio small{font-size:12px;margin-top:1px}
+  .tB .t-pc{display:none}.tB .t-tel{display:inline}
+  .tB .t-ytp{font-size:13px;padding:7px 11px 7px 9px;gap:6px}
+  .tB .mk-lente{width:34px;height:34px}
+  .tB .t-in:has(.mk-lente) .t-marchio b{font-size:16px}
+  .tB .t-striscia .t-in{overflow-x:auto;scrollbar-width:none;padding:0 calc(var(--t-pad,16px) - 11px);-webkit-mask-image:linear-gradient(90deg,#000 86%,transparent);mask-image:linear-gradient(90deg,#000 86%,transparent)}
+  .tB .t-striscia .t-in::-webkit-scrollbar{display:none}
+  .tB .t-striscia .t-dx{margin-left:0;padding-right:30px}
+}
+@media (max-width:389px){.tB .t-marchio{gap:8px}.tB .t-goccia{font-size:23px}.tB .t-marchio b{font-size:16px;white-space:nowrap}
+  .tB .t-banda .t-in{gap:8px}.tB .t-ytp{padding:7px 9px}.tB .mk-lente ~ .t-ytp span{display:none}}
 </style>
 </head>
 <body>
-<header>
-  <a class="logo" href="https://avventurepluvio-test.pages.dev/">🌧️ Mappa Pluviometrica</a>
-  <a class="yt" href="https://www.youtube.com/@avventuremicologiche" target="_blank" rel="noopener"
-     onclick="try{gtag('event','click_youtube',{pulsante:'meteo-val-brembana'})}catch(e){}">▶ Iscriviti</a>
+<header class="tB">
+  <nav class="t-striscia" aria-label="Menu"><div class="t-in"><a href="https://avventurepluvio-test.pages.dev/?r=lombardia" onclick="try{gtag('event','apri_mappa',{da:'meteo-val-brembana-testata-storico'})}catch(e){}">Storico piogge</a><a class="on" href="https://avventurepluvio-test.pages.dev/previsioni/?r=lombardia" onclick="try{gtag('event','apri_mappa',{da:'meteo-val-brembana-testata-previsioni'})}catch(e){}">Previsioni meteo</a><a href="https://avventurepluvio-test.pages.dev/guida/">Guida</a><span class="t-dx"><a href="https://avventuremicologiche.it/#noi">Chi siamo</a><a href="https://avventuremicologiche.it/#piede">Contatti</a></span></div></nav>
+  <div class="t-banda"><div class="t-in">
+    <a class="t-marchio" href="https://avventurepluvio-test.pages.dev/"><span class="t-goccia">🌧️</span><span><b>Mappa Pluviometrica</b><small><span class="t-pc">Previsioni, radar e pioggia misurata<span class="t-it"> in tutta Italia</span> · un progetto di Avventure Micologiche</span><span class="t-tel">di Avventure Micologiche</span></small></span></a>
+    <a class="t-ytp" href="https://www.youtube.com/@avventuremicologiche?sub_confirmation=1" target="_blank" rel="noopener" onclick="try{gtag('event','click_youtube',{pulsante:'meteo-val-brembana'})}catch(e){}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg><span>Iscriviti</span></a>
+  </div></div>
 </header>
+<script>(function(){var a=document.querySelector('.tB .t-striscia a.on'),f=a&&a.parentNode;if(f&&a.offsetLeft+a.offsetWidth>f.clientWidth-30)f.scrollLeft=a.offsetLeft-40;})()</script>
 <main>
-<p class="bric"><a href="https://avventurepluvio-test.pages.dev/">Mappa pluviometrica</a> › <a href="https://avventurepluvio-test.pages.dev/meteo/">Previsioni meteo</a> › Val Brembana</p>
-<h1>Previsioni meteo Val Brembana</h1>
-<p class="sotto"><b>Che tempo farà in Val Brembana nei prossimi 7 giorni</b>: pioggia, minime e massime in 12 paesi della valle, ognuno alla sua quota, e quanta pioggia è già caduta nei pluviometri di ARPA Lombardia.</p>
+<p class="bric"><a href="https://avventurepluvio-test.pages.dev/">Mappa pluviometrica</a> › <a href="https://avventurepluvio-test.pages.dev/previsioni/">Previsioni meteo</a> › Val Brembana</p>
+<h1>Meteo Val Brembana: previsioni a 7 giorni</h1>
+<p class="sotto"><b>Che tempo farà in Val Brembana nei prossimi 7 giorni</b> a San Giovanni Bianco, Val Brembilla, Piazza Brembana e negli altri 9 paesi della valle, ognuno alla sua quota: pioggia, minime e massime, e quanta pioggia è già caduta nei pluviometri di ARPA Lombardia.</p>
 
 <div class="pz-cerca"><input id="cerca" type="search" autocomplete="off" placeholder="Cerca il tuo paese, anche una frazione" aria-label="Cerca un paese o una frazione"><div class="pz-drop" id="drop"></div></div>
+<div class="pz-nastro" id="nastro"><div class="lab"><b>METEO<em> VAL BREMBANA</em></b><span>…</span></div><div class="t"></div></div>
 <section class="pz-scheda" id="scheda" aria-live="polite"></section>
 
-<div class="pz-punto" id="punto"><span class="pz-quando">Il punto di stamattina</span>Sto leggendo previsioni e pluviometri…</div>
+<div class="pz-punto" id="punto"><span class="pz-quando">Il punto di stamattina</span> Sto leggendo previsioni e pluviometri…</div>
 
 <h2>I prossimi 7 giorni in Val Brembana</h2>
 <p class="nota" style="margin-top:0">Tocca un giorno: la mappa e la tabella qui sotto passano a quel giorno. 💧 è la probabilità di pioggia, la più alta fra i paesi.</p>
@@ -345,11 +432,12 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
 
 <h2>Paese per paese</h2>
 <p class="nota" style="margin-top:0">Dal più in basso al più in alto (quota del terreno, ~). Tocca un paese per le ore; scorri di lato per tutti i giorni. 💧 è la probabilità di pioggia.</p>
-<div class="pz-scorri"><table class="pz-tab" id="tab"></table></div>
+<div class="pz-scorri"><table class="pz-tab" id="tab"><thead><tr><th>Paese</th><th>7 giorni</th></tr></thead><tbody><tr><td>Zogno<span class="q">~ 349 m</span></td><td>…</td></tr><tr><td>San Pellegrino Terme<span class="q">~ 374 m</span></td><td>…</td></tr><tr><td>San Giovanni Bianco<span class="q">~ 412 m</span></td><td>…</td></tr><tr><td>Val Brembilla<span class="q">~ 417 m</span></td><td>…</td></tr><tr><td>Algua<span class="q">~ 496 m</span></td><td>…</td></tr><tr><td>Camerata Cornello<span class="q">~ 522 m</span></td><td>…</td></tr><tr><td>Piazza Brembana<span class="q">~ 546 m</span></td><td>…</td></tr><tr><td>Bracca<span class="q">~ 600 m</span></td><td>…</td></tr><tr><td>Berbenno<span class="q">~ 657 m</span></td><td>…</td></tr><tr><td>Taleggio<span class="q">~ 761 m</span></td><td>…</td></tr><tr><td>Serina<span class="q">~ 812 m</span></td><td>…</td></tr><tr><td>Dossena<span class="q">~ 973 m</span></td><td>…</td></tr></tbody></table></div>
 
 <h2>La pioggia caduta e quella in arrivo</h2>
 <p class="nota" style="margin-top:0">Gli ultimi 30 giorni misurati dai pluviometri di ARPA Lombardia (media della valle) e i 7 giorni previsti. Tocca una barra.</p>
 <div class="pz-graf" id="graf"></div>
+<div class="pz-graf-date" id="graf-date"></div>
 <div class="pz-graf-info" id="graf-info"></div>
 <div class="pz-leg"><span><i style="background:#1a5fa8"></i>misurata</span><span><i style="background:repeating-linear-gradient(45deg,#7fb0e0,#7fb0e0 3px,#b9d4ef 3px,#b9d4ef 6px)"></i>prevista</span><span id="leg-date"></span></div>
 <div class="griglia" style="margin-top:14px">
@@ -357,22 +445,25 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
   <div class="card"><h3>Ultimi 7 giorni</h3><div class="numerone" id="r7">…</div><div id="r7t"></div></div>
 </div>
 
-<a class="pz-radar" href="https://avventurepluvio-test.pages.dev/lombardia/adesso/" onclick="try{gtag('event','apri_mappa',{da:'meteo-val-brembana-radar'})}catch(e){}">📡 Sta piovendo adesso in Val Brembana?<small>Guarda il radar delle piogge in diretta</small></a>
-
-<h2>Le altre pagine della Val Brembana</h2>
-<div class="pz-vai">
-  <a href="https://avventurepluvio-test.pages.dev/zone/val-brembana/" onclick="try{gtag('event','apri_mappa',{da:'meteo-val-brembana-zona-piogge'})}catch(e){}">💧 Quanto ha piovuto in Val Brembana<small>Ieri, 7 e 30 giorni, pluviometro per pluviometro</small></a>
-  <a href="https://avventurepluvio-test.pages.dev/funghi/zone/val-brembana/" onclick="try{gtag('event','apri_mappa',{da:'meteo-val-brembana-zona-funghi'})}catch(e){}">🍄 Funghi in Val Brembana<small>La pioggia che conta, da 13 a 20 giorni fa</small></a>
-  <a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;g=7&amp;pl=45.8725,9.65194&amp;pn=Val%20Brembana&amp;pz=1" onclick="try{gtag('event','apri_mappa',{da:'meteo-val-brembana-mappa'})}catch(e){}">🗺 La mappa della pioggia<small>La Val Brembana sulla mappa pluviometrica</small></a>
-  <a href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;m=prev&amp;pl=45.8725,9.65194&amp;pn=Val%20Brembana&amp;pz=1" onclick="try{gtag('event','apri_mappa',{da:'meteo-val-brembana-previsioni'})}catch(e){}">☀️ Le previsioni sulla mappa<small>Tocca un paese qualsiasi della valle</small></a>
+<h2>Guarda le nostre mappe</h2>
+<div class="pz-ant" id="ant">
+  <a class="pz-ant-c" href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;radar=ora" onclick="try{gtag('event','apri_mappa',{da:'meteo-val-brembana-radar'})}catch(e){}"><div class="pz-ant-v" id="ant-radar"></div><i class="pz-ant-q" id="ant-radar-q"></i><span class="pz-ant-t">📡 Radar piogge<small>Dove sta piovendo adesso, in Italia e in Europa</small></span></a>
+  <a class="pz-ant-c" href="https://avventurepluvio-test.pages.dev/previsioni/?r=lombardia" onclick="try{gtag('event','apri_mappa',{da:'meteo-val-brembana-prev'})}catch(e){}"><div class="pz-ant-v" id="ant-prev"></div><i class="pz-ant-q" id="ant-prev-q"></i><span class="pz-ant-t">☀️ Previsioni Lombardia<small>Il tempo città per città, ora per ora</small></span></a>
+  <a class="pz-ant-c" href="https://avventurepluvio-test.pages.dev/?r=lombardia&amp;g=7" onclick="try{gtag('event','apri_mappa',{da:'meteo-val-brembana-pluvio'})}catch(e){}"><div class="pz-ant-v" id="ant-pluvio"></div><i class="pz-ant-q" id="ant-pluvio-q"></i><span class="pz-ant-t">💧 Pluviometri Lombardia<small>La pioggia degli ultimi 7 giorni, pluviometro per pluviometro</small></span></a>
 </div>
+<h2>Previsioni meteo in Lombardia</h2>
+<h3 class="cit-tit">Previsioni meteo valle per valle</h3>
+<p class="nota mv-nota">I paesi di ogni valle, ognuno alla sua quota: previsioni a 7 giorni, ora per ora.</p>
+<div class="mv"><a class="mv-c" href="https://avventurepluvio-test.pages.dev/meteo/val-trompia/" onclick="try{gtag('event','apri_meteo_zona',{da:'meteo-val-brembana'})}catch(e){}">Meteo Val Trompia</a><a class="mv-c" href="https://avventurepluvio-test.pages.dev/meteo/val-veddasca/" onclick="try{gtag('event','apri_meteo_zona',{da:'meteo-val-brembana'})}catch(e){}">Meteo Val Veddasca</a><a class="mv-c" href="https://avventurepluvio-test.pages.dev/meteo/valle-sabbia/" onclick="try{gtag('event','apri_meteo_zona',{da:'meteo-val-brembana'})}catch(e){}">Meteo Valle Sabbia</a><a class="mv-c" href="https://avventurepluvio-test.pages.dev/meteo/valmalenco/" onclick="try{gtag('event','apri_meteo_zona',{da:'meteo-val-brembana'})}catch(e){}">Meteo Valmalenco</a><a class="mv-c" href="https://avventurepluvio-test.pages.dev/meteo/valsassina/" onclick="try{gtag('event','apri_meteo_zona',{da:'meteo-val-brembana'})}catch(e){}">Meteo Valsassina</a></div>
+<h3 class="cit-tit">Previsioni meteo paese per paese</h3>
+<div class="mv"><a class="mv-c" href="https://avventurepluvio-test.pages.dev/meteo/lombardia/porlezza/" onclick="try{gtag('event','apri_meteo_paese',{da:'meteo-val-brembana'})}catch(e){}">Meteo Porlezza</a></div>
 
 <h2>Come funziona questa pagina</h2>
-<p>Le previsioni sono quelle del modello ECMWF, distribuite da MET Norway (CC BY 4.0), chieste per ognuno dei 12 paesi e aggiornate più volte al giorno; la probabilità di pioggia (💧) è di Open-Meteo (CC BY 4.0). La pioggia caduta è misurata dai pluviometri di ARPA Lombardia: non è una stima. Le due cose stanno separate anche nel grafico, perché una è un dato e l'altra una previsione.</p>
+<p>Le previsioni sono quelle del modello ECMWF, distribuite da MET Norway (CC BY 4.0), chieste per ognuno dei 12 paesi e aggiornate più volte al giorno. La pioggia caduta è misurata dai pluviometri di ARPA Lombardia: non è una stima. Le due cose stanno separate anche nel grafico, perché una è un dato e l'altra una previsione.</p>
 </main>
 
 <footer>
-  Previsioni: MET Norway (ECMWF) · Probabilità di pioggia: Open-Meteo · Pioggia misurata: ARPA Lombardia ·
+  Previsioni: MET Norway (ECMWF) · Pioggia misurata: ARPA Lombardia ·
   <a href="https://avventurepluvio-test.pages.dev/fonti">tutte le fonti e licenze</a> ·
   <a href="https://avventurepluvio-test.pages.dev/guida/">guida alla mappa</a> ·
   <a href="https://avventuremicologiche.it">Avventure Micologiche</a>
@@ -384,7 +475,7 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
   var SITO = C.sito, REG = C.reg;
   var API = '/api/previsioni';
   var BASE = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? '/data/' : C.raw;
-  var RIP = BASE + 'riepiloghi/zone/' + C.slug + '.json';
+  var RIP = BASE + (C.giorni || 'riepiloghi/zone/' + C.slug + '.json');
   var QUOTE = C.quote, PLUV = C.pluv;
   var GS = ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab'], GL = ['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
   var ICONE = [[/clearsky_day|fair_day/, '☀️'], [/clearsky_night|fair_night/, '🌙'], [/partlycloudy_day/, '⛅'], [/partlycloudy_night|^cloudy|fog/, '☁️'],
@@ -399,25 +490,22 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
   function num(n) { return (Math.round(n * 10) / 10).toFixed(1).replace('.', ','); }
   function mm(n) { return n === 0 ? '0' : n < 10 ? num(n) : String(Math.round(n)); }
   function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
-  // la % di pioggia: la goccia e i tre toni (vedi .pz-g .pc nello stile)
   function tonoPc(p) { return p == null ? '' : p < 10 ? ' z' : p >= 60 ? ' alta' : ''; }
   function pcTesto(p) { return p == null ? '' : '💧 ' + p + '%'; }
   function finoAl(p) { return (/^(8|11$|1$)/.test(String(p)) ? "fino all'" : 'fino al ') + p + '%'; }
   function norm(t) { return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/['’.-]/g, ' ').replace(/\s+/g, ' ').trim(); }
   function $(id) { return document.getElementById(id); }
-  function ga(azione) { try { gtag('event', 'meteo_zona', { zona: C.slug, azione: azione }); } catch (e) {} }
+  function ga(azione) { try { gtag('event', C.evento || 'meteo_zona', { zona: C.slug, azione: azione }); } catch (e) {} }
   var J = null, G = [], RIPJ = null, SEL = OGGI, mappa = null, strato = null, PAESI = [];
 
-  /* ── i 7 giorni della valle ── */
   function giorniDi() {
     var per = {};
-    PAESI.forEach(function (c) { c.giorni.forEach(function (g) { if (g.g < OGGI) return; (per[g.g] = per[g.g] || []).push({ c: c, g: g }); }); });
+    (C.solo ? PAESI.slice(0, 1) : PAESI).forEach(function (c) { c.giorni.forEach(function (g) { if (g.g < OGGI) return; (per[g.g] = per[g.g] || []).push({ c: c, g: g }); }); });
     return Object.keys(per).sort().slice(0, 7).map(function (k) {
       var l = per[k], conti = {}, top = null, mmS = 0, mmMax = 0, dove = '';
       l.forEach(function (x) { var i = icona(x.g.s); conti[i] = (conti[i] || 0) + 1; mmS += x.g.mm; if (x.g.mm > mmMax) { mmMax = x.g.mm; dove = x.c.n; } });
       Object.keys(conti).forEach(function (i) { if (!top || conti[i] > conti[top]) top = i; });
       var mn = Math.min.apply(null, l.map(function (x) { return x.g.mn; })), mx = Math.max.apply(null, l.map(function (x) { return x.g.mx; }));
-      // la % del giorno nella zona = la piu' alta fra i paesi, e dove
       var pc = null, dpc = '';
       l.forEach(function (x) { if (x.g.pc != null && (pc == null || x.g.pc > pc)) { pc = x.g.pc; dpc = x.c.n; } });
       return { g: k, ic: top, mn: mn, mx: mx, dmn: l.filter(function (x) { return x.g.mn === mn; })[0].c.n, dmx: l.filter(function (x) { return x.g.mx === mx; })[0].c.n, mm: mmS / l.length, mmMax: mmMax, dove: dove, pc: pc, dpc: dpc };
@@ -430,72 +518,55 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
       return '<button class="pz-g' + (x.g === SEL ? ' sel' : '') + '" data-g="' + x.g + '"><div class="n">' + nome(x.g) + '</div><div class="ic">' + x.ic + '</div>'
         + '<div class="t"><span class="mn">' + x.mn + '°</span> / <span class="mx">' + x.mx + '°</span></div>'
         + '<div class="p' + (x.mm < 0.1 ? ' zero' : '') + '">' + (x.mm < 0.1 ? 'asciutto' : mm(x.mm) + ' mm') + '</div>'
-        + (conPc ? '<div class="pc' + tonoPc(x.pc) + '"' + (x.pc != null ? ' title="probabilità di pioggia, la più alta fra i paesi: ' + esc(x.dpc) + '"' : '') + '>' + pcTesto(x.pc) + '</div>' : '')
+        + (conPc ? '<div class="pc' + tonoPc(x.pc) + '"' + (x.pc != null ? ' title="probabilità di pioggia' + (C.solo ? ' a ' : ', la più alta fra i paesi: ') + esc(x.dpc) + '"' : '') + '>' + pcTesto(x.pc) + '</div>' : '')
         + '<div class="barra"><i style="width:' + Math.min(100, x.mm / maxMm * 100) + '%"></i></div></button>';
     }).join('');
   }
   function totale() {
     var tot = G.reduce(function (a, x) { return a + x.mm; }, 0), picco = G.slice().sort(function (a, b) { return b.mmMax - a.mmMax; })[0];
     $('tot').innerHTML = tot < 0.5 ? 'Nei prossimi 7 giorni <b>non è prevista pioggia</b> che conti ' + C.inValle + '.'
+      : C.solo ? 'In tutta la settimana sono previsti <b>' + mm(tot) + ' mm</b> ' + C.dove + '; il giorno più bagnato è <b>' + nome(picco.g, true) + '</b>, con ' + mm(picco.mmMax) + ' mm.'
       : 'In tutta la settimana sono previsti in media <b>' + mm(tot) + ' mm</b>; il giorno più bagnato è <b>' + nome(picco.g, true) + '</b>, fino a ' + mm(picco.mmMax) + ' mm a ' + esc(picco.dove) + '.';
     return tot;
   }
   function sceglie(g) {
-    SEL = g; disegnaGiorni(); disegnaMappa(); disegnaTab();
+    SEL = g; disegnaGiorni(); disegnaMappa(); disegnaTab(); disegnaNastro();
     var x = G.filter(function (y) { return y.g === g; })[0];
-    $('mappa-giorno').textContent = 'La ' + C.valle + ' ' + (g === OGGI ? 'oggi' : g === DOMANI ? 'domani' : nome(g, true)) + (x ? ': ' + (x.mm < 0.1 ? 'asciutto' : mm(x.mm) + ' mm in media') : '');
+    var quando = g === OGGI ? 'oggi' : g === DOMANI ? 'domani' : nome(g, true);
+    $('mappa-giorno').textContent = C.solo ? C.intorno + ', ' + quando
+      : 'La ' + C.valle + ' ' + quando + (x ? ': ' + (x.mm < 0.1 ? 'asciutto' : mm(x.mm) + ' mm in media') : '');
   }
 
-  /* ── la mappa della valle ── */
   function disegnaMappa() {
     if (!window.L || !J) return;
     if (!mappa) {
-      // ⚠️ AL TELEFONO UN DITO FA SCORRERE LA PAGINA, NON LA MAPPA (24/10/2026, suo «la mappa si sposta se scrolli col
-      // dito: fissala»): sugli schermi touch niente trascinamento a un dito; restano il pizzico a due dita (che sposta
-      // anche), i bottoni + e − e i tocchi sui paesi. Si guarda il PUNTATORE, non la larghezza, come il tasto «La mia
-      // posizione» della mappa: un computer con la finestra stretta resta col mouse.
       var touch = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
       mappa = L.map('pz-mappa', { scrollWheelZoom: false, attributionControl: true, zoomSnap: 0.25, dragging: !touch });
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 15, attribution: '© OpenStreetMap' }).addTo(mappa);
-      /* il RILIEVO del sito (tessere TINITALY 1.1, INGV, CC BY 4.0): stessa ricetta della mappa boschi, pane sotto le
-         tessere e tessere in «multiply». Qui si puo': sotto non c'e' la pioggia colorata (la regola del 24/9) */
-      mappa.createPane('rilievo'); mappa.getPane('rilievo').style.zIndex = 190; mappa.getPane('tilePane').style.mixBlendMode = 'multiply';
-      L.tileLayer(C.rilievo + '{z}/{x}/{y}.png', { pane: 'rilievo', minZoom: 5, maxNativeZoom: 13, maxZoom: 15, errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
-        attribution: 'rilievo: TINITALY 1.1, INGV (CC BY 4.0)' }).addTo(mappa);
-      // le lineette in un pannello SOTTO le etichette: ogni marcatore ha il suo livello, e una lineetta lunga passava
-      // sopra la pillola di un altro paese (24/10/2026, Garfagnana al telefono)
+      var sat = L.tileLayer(C.sat, { maxNativeZoom: 17, maxZoom: 15, attribution: 'Foto: Esri, Vantor, Earthstar Geographics' });
+      var fondo = function () { $('pz-mappa').classList.add('sat'); if (!mappa.hasLayer(sat)) sat.addTo(mappa); };
       mappa.createPane('linee'); mappa.getPane('linee').style.zIndex = 590;
-      // il margine e' mezza etichetta per lato: le etichette stanno CENTRATE sul paese, e un paese sul bordo ne avrebbe meta' fuori (e sparirebbe)
       mappa.fitBounds(L.latLngBounds(PAESI.map(function (c) { return [c.lat, c.lon]; })), { padding: innerWidth <= 600 ? [58, 26] : [80, 34], maxZoom: 12 });
-      mappa.on('zoomend', sistemaEtichette);
-      // ⚠️ NIENTE PALLINI DEI PLUVIOMETRI su questa mappa (24/10/2026, suo «sì toglili»): la mappa dice solo «che tempo
-      // farà nei paesi», e i puntini verdi della pioggia misurata confondevano. I pluviometri stanno nel blocco della
-      // pioggia caduta (nomi cliccabili) e nella pagina piogge della zona.
+      mappa.setMinZoom(Math.max(6, Math.floor(mappa.getZoom()) - 4));
+      fondo();
+      mappa.on('zoomend', function () { fondo(); sistemaEtichette(); });
     }
     if (strato) mappa.removeLayer(strato);
     strato = L.layerGroup().addTo(mappa);
     PAESI.forEach(function (c, n) {
       var g = c.giorni.filter(function (x) { return x.g === SEL; })[0]; if (!g) return;
-      // icona del cielo e temperature SEMPRE (suo, 24/10), i millimetri solo se piove; sotto il nome.
-      // ⚠️ DAL 25/10 LA GOCCIA E' LA %, NON I MILLIMETRI (sua scelta, come weather.com): «💧40%» dal 10% in su (sotto
-      // e' rumore, e ogni pezzo in piu' allarga la pillola e nasconde un paese), poi «0,8 mm» col suo nome
       var r1 = '<span class="r1"><span class="ic">' + icona(g.s) + '</span><span class="mn">' + g.mn + '°</span> <span class="mx">' + g.mx + '°</span>'
         + (g.pc != null && g.pc >= 10 ? '<span class="pp' + tonoPc(g.pc) + '" title="probabilità di pioggia">💧' + g.pc + '%</span>' : '')
         + (g.mm >= 0.1 ? '<span class="gc' + (g.mm >= 1 ? ' bagnato' : '') + '" title="' + mm(g.mm) + ' mm di pioggia">' + mm(g.mm) + ' mm</span>' : '') + '</span>';
-      L.marker([c.lat, c.lon], { icon: L.divIcon({ className: '', html: '<div class="pz-pt"><span class="pz-et" data-n="' + n + '">' + r1 + '<span class="nm">' + esc(c.n) + '</span></span></div>', iconSize: [0, 0] }), zIndexOffset: 1000 - n })
+      L.marker([c.lat, c.lon], { icon: L.divIcon({ className: '', html: '<div class="pz-pt"><span class="pz-et' + (c.n === SCELTO ? ' scelto' : '') + '" data-n="' + n + '">' + r1 + '<span class="nm">' + esc(c.n) + '</span></span></div>', iconSize: [0, 0] }), zIndexOffset: 1000 - n })
         .addTo(strato).on('click', function () { apri(posto(c), 'mappa'); });
     });
     sistemaEtichette();
   }
-  /* DIRADARE, NON SPOSTARE (24/10/2026 sera, vedi lo stile .pz-et). Le etichette si passano in ordine di importanza
-     (l'ordine dell'elenco dei paesi della zona: prima i comuni dei pluviometri e i piu' grandi); ognuna resta centrata
-     sul suo paese se non tocca quelle gia' tenute e sta dentro la mappa, se no si nasconde. Ingrandendo ricompaiono:
-     si rifa' a ogni zoom. Sotto la mappa si dice quanti paesi sono nascosti. */
   function sistemaEtichette() {
     var bordo = $('pz-mappa').getBoundingClientRect(), messi = [], nascosti = 0;
     var E = [].slice.call(document.querySelectorAll('#pz-mappa .pz-et'));
     E.forEach(function (l) { l.classList.remove('via'); });
-    E.sort(function (a, b) { return a.getAttribute('data-n') - b.getAttribute('data-n'); }).forEach(function (l) {
+    E.sort(function (a, b) { return b.classList.contains('scelto') - a.classList.contains('scelto') || a.getAttribute('data-n') - b.getAttribute('data-n'); }).forEach(function (l) {
       var r = l.getBoundingClientRect();
       var fuori = r.left < bordo.left + 2 || r.right > bordo.right - 2 || r.top < bordo.top + 2 || r.bottom > bordo.bottom - 18;
       var tocca = messi.some(function (m) { return !(r.right + 3 < m.left || r.left - 3 > m.right || r.bottom + 3 < m.top || r.top - 3 > m.bottom); });
@@ -506,7 +577,72 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
       + (nascosti === 1 ? "l'altro paese" : 'gli altri ' + nascosti + ' paesi') + '.</span>' : '');
   }
 
-  /* ── la tabella paese per paese ── */
+  var NA = { pos: 0, w: 0, t0: 0, v: 0, presa: null, sopra: false, giro: 0, vista: true, largo: 0 };
+  var FERMO = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  function km(a, b) { var r = Math.PI / 180, x = (b.lon - a.lon) * r * Math.cos((a.lat + b.lat) / 2 * r), y = (b.lat - a.lat) * r; return Math.sqrt(x * x + y * y) * 6371; }
+  function naGira(t) {
+    var na = $('nastro'), tr = na && na.querySelector('.t');
+    if (!tr || na.hidden || !NA.vista) { NA.giro = 0; NA.t0 = 0; return; }
+    var dt = NA.t0 ? Math.min(64, t - NA.t0) : 16; NA.t0 = t;
+    if (!NA.presa) {
+      if (Math.abs(NA.v) > 0.05) { NA.pos += NA.v * dt; NA.v *= Math.pow(0.94, dt / 16); }
+      else { NA.v = 0; if (!NA.sopra && !FERMO) NA.pos -= 0.045 * dt; } }
+    if (NA.w > 0) { NA.pos %= NA.w; if (NA.pos > 0) NA.pos -= NA.w; }
+    tr.style.transform = 'translate3d(' + NA.pos.toFixed(1) + 'px,0,0)';
+    if (FERMO && !NA.presa && !NA.v) { NA.giro = 0; NA.t0 = 0; return; }
+    NA.giro = requestAnimationFrame(naGira);
+  }
+  function naParti() { if (!NA.giro && NA.vista) { NA.t0 = 0; NA.giro = requestAnimationFrame(naGira); } }
+  function taglia() {
+    var na = $('nastro'), lab = na && na.querySelector('.lab'); if (!lab) return;
+    lab.classList.remove('corto');
+    var alto = lab.querySelector('b').offsetHeight + lab.querySelector('span').offsetHeight;
+    if (alto > lab.clientHeight || lab.offsetWidth > na.clientWidth * 0.45) lab.classList.add('corto');
+  }
+  function disegnaNastro() {
+    var na = $('nastro'); if (!na || !J) return;
+    var lista = PAESI.map(function (c, i) { return { c: c, i: i, g: c.giorni.filter(function (x) { return x.g === SEL; })[0] }; }).filter(function (x) { return x.g; });
+    if (!lista.length) { na.hidden = true; return; }
+    if (C.solo) { lista.forEach(function (x) { x.k = x.i ? km(PAESI[0], x.c) : -1; }); lista.sort(function (a, b) { return a.k - b.k; }); }
+    else lista.sort(function (a, b) { return (QUOTE[a.c.n] != null ? QUOTE[a.c.n] : 1e4) - (QUOTE[b.c.n] != null ? QUOTE[b.c.n] : 1e4); });
+    var quando = SEL === OGGI ? 'OGGI' : SEL === DOMANI ? 'DOMANI' : nome(SEL).toUpperCase();
+    var vv = lista.map(function (x) {
+      var q = QUOTE[x.c.n], sotto = C.solo ? (x.k >= 0 ? Math.max(1, Math.round(x.k)) + ' km' : '') : (q != null ? q.toLocaleString('it-IT') + ' m' : '');
+      return '<button class="v" data-n="' + esc(x.c.n) + '"><b>' + esc(x.c.n) + '</b>' + (sotto ? '<small>' + sotto + '</small>' : '')
+        + '<span class="ic">' + icona(x.g.s) + '</span><span class="mn">' + x.g.mn + '°</span><span class="mx">' + x.g.mx + '°</span></button>';
+    }).join('');
+    na.hidden = false;
+    na.innerHTML = '<div class="lab"><b>METEO<em> ' + esc(C.nastro.toUpperCase()) + '</em></b><span>' + esc(quando) + '</span></div><div class="t">' + vv + '</div>';
+    taglia();
+    var tr = na.querySelector('.t'), P = na.querySelector('.lab').offsetWidth, una, copie = 2;
+    tr.style.paddingLeft = P + 'px';
+    una = tr.scrollWidth - P;
+    while (una > 0 && P + una * copie < na.clientWidth + una && copie < 12) copie++;
+    tr.innerHTML = new Array(copie + 1).join(vv);
+    NA.w = una; NA.pos = 0; NA.v = 0; NA.largo = innerWidth; naParti();
+  }
+  (function () {
+    var na = $('nastro'); if (!na) return;
+    function apriDa(b) { var c = b && PAESI.filter(function (x) { return x.n === b.getAttribute('data-n'); })[0]; if (c) apri(posto(c), 'nastro'); }
+    na.addEventListener('pointerdown', function (ev) { if (ev.button > 0) return; NA.v = 0; NA.presa = { x: ev.clientX, pos: NA.pos, mosso: false, ux: ev.clientX, ut: ev.timeStamp }; naParti(); });
+    na.addEventListener('pointermove', function (ev) { var p = NA.presa; if (!p) return;
+      if (!p.mosso && Math.abs(ev.clientX - p.x) > 6) { p.mosso = true; try { na.setPointerCapture(ev.pointerId); } catch (e) {} }
+      if (!p.mosso) return;
+      NA.pos = p.pos + (ev.clientX - p.x);
+      var dt = ev.timeStamp - p.ut; if (dt > 0) { NA.v = (ev.clientX - p.ux) / dt; p.ux = ev.clientX; p.ut = ev.timeStamp; } });
+    na.addEventListener('pointerup', function (ev) { var p = NA.presa; NA.presa = null; if (!p) return;
+      if (!p.mosso) { NA.v = 0; var b = document.elementFromPoint(ev.clientX, ev.clientY); apriDa(b && b.closest ? b.closest('#nastro .v') : null); return; }
+      if (ev.timeStamp - p.ut > 90) NA.v = 0;
+      NA.v = Math.max(-3, Math.min(3, NA.v)); naParti(); });
+    na.addEventListener('pointercancel', function () { NA.presa = null; });
+    na.addEventListener('pointerenter', function (ev) { if (ev.pointerType === 'mouse') NA.sopra = true; });
+    na.addEventListener('pointerleave', function (ev) { if (ev.pointerType === 'mouse') NA.sopra = false; });
+    na.addEventListener('click', function (e) { if (e.detail === 0) apriDa(e.target.closest('.v')); });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { NA.vista = e[e.length - 1].isIntersecting; if (NA.vista) naParti(); }).observe(na);
+    var rt = 0; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { if (innerWidth !== NA.largo) { taglia(); disegnaNastro(); } }, 200); });
+    taglia();
+  })();
+
   function disegnaTab() {
     if (!J) return;
     var date = G.map(function (x) { return x.g; });
@@ -522,14 +658,44 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
       }).join('') + '</tbody>';
   }
 
-  /* ── la scheda del posto: 7 giorni e ore ── */
-  var SCHEDA = null, AVVIO = false;
+  var SCHEDA = null, AVVIO = false, SCELTO = null;
   function posto(c) { return { n: c.n, lat: c.lat, lon: c.lon, quota: QUOTE[c.n], reg: c.r || REG }; }
   function FASCIA(h) { return h < 6 ? 'notte' : h < 12 ? 'mattina' : h < 18 ? 'pomeriggio' : 'sera'; }
+  var DIR = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSO', 'SO', 'OSO', 'O', 'ONO', 'NO', 'NNO'];
+  function dir(vd) { return vd == null ? '' : DIR[Math.round((((vd % 360) + 360) % 360) / 22.5) % 16]; }
+  function freccia(vd) { return vd == null ? '' : '<i class="fr" style="transform:rotate(' + Math.round(vd) + 'deg)">↓</i>'; }
+  var PAROLE = [[/thunder/, 'Temporale'], [/heavyrainshowers/, 'Rovesci forti'], [/lightrainshowers/, 'Rovesci deboli'], [/rainshowers/, 'Rovesci'],
+                [/heavyrain/, 'Pioggia forte'], [/lightrain/, 'Pioggia debole'], [/rain|drizzle/, 'Pioggia'], [/sleet/, 'Pioggia e neve'],
+                [/heavysnow/, 'Neve forte'], [/lightsnow/, 'Neve debole'], [/snow/, 'Neve'], [/fog/, 'Nebbia'], [/clearsky/, 'Sereno'],
+                [/fair/, 'Poco nuvoloso'], [/partlycloudy/, 'Nubi sparse'], [/cloudy/, 'Nuvoloso']];
+  function parola(s) { for (var i = 0; i < PAROLE.length; i++) if (PAROLE[i][0].test(s || '')) return PAROLE[i][1]; return ''; }
+  function oreDi(j, g, ora) {
+    var tutte = j.ore || [];
+    if (g !== OGGI) return tutte.filter(function (o) { return o.g === g; });
+    var out = [];
+    for (var i = 0; i < tutte.length; i++) {
+      var o = tutte[i];
+      if (o.g < OGGI || (o.g === OGGI && o.h < ora && !o.h6)) continue;
+      if (o.g !== OGGI && (out.length >= 8 || o.h6)) break;
+      out.push(o);
+    }
+    return out;
+  }
+  function righeOre(ore, conPc) {
+    var prima = ore[0] && ore[0].g;
+    return ore.map(function (o) {
+      var pc = conPc && o.pc != null ? '<span class="pc' + tonoPc(o.pc) + '">' + pcTesto(o.pc) + '</span>' : '';
+      return (o.g !== prima ? (prima = o.g, '<tr class="sep"><td colspan="5">' + maiusc(nome(o.g, true)) + '</td></tr>') : '')
+        + '<tr' + (o.h6 ? ' class="f6"' : '') + '><td class="h">' + (o.h6 ? '<b>' + FASCIA(o.h) + '</b>' + o.h + '-' + ((o.h + 6) % 24) : String(o.h).padStart(2, '0')) + '</td>'
+        + '<td><span class="ic">' + icona(o.s) + '</span><span class="pa">' + parola(o.s) + '</span></td><td class="t">' + Math.round(o.t) + '°</td>'
+        + '<td' + (o.mm >= 0.1 ? ' class="piove"><b class="mmv">' + mm(o.mm) + ' mm</b>' + pc : '>' + (pc || '<span class="z">–</span>')) + '</td>'
+        + '<td class="ve">' + freccia(o.vd) + (o.v != null ? Math.round(o.v * 3.6) + ' km/h' : '') + ' <small>' + dir(o.vd) + '</small></td></tr>';
+    }).join('');
+  }
   function porte(x) {
     var pl = '&pl=' + (+x.lat).toFixed(4) + ',' + (+x.lon).toFixed(4) + '&pn=' + encodeURIComponent(x.n);
-    return [['☀️', 'Vai alla mappa', '/?r=' + x.reg + '&m=prev' + pl, 'previsioni'], ['💧', 'Pioggia caduta', '/?r=' + x.reg + '&g=7' + pl, 'pioggia'], ['📡', 'Radar adesso', '/?r=' + x.reg + '&radar=ora' + pl, 'radar'],
-            ['🌡', 'Temperature', '/?r=' + x.reg + '&g=1&tq=1' + pl, 'temperature'], ['🌲', 'Boschi', '/?r=' + x.reg + '&boschi=1' + pl, 'boschi'], ['🛰', 'Satellite', '/?r=' + x.reg + '&boschi=1&sat=1' + pl, 'satellite']]
+    return [['☀️', 'Vai alla mappa', '/previsioni/?r=' + x.reg + pl, 'previsioni'], ['💧', 'Pioggia caduta<small>ultimi 7 giorni</small>', '/?r=' + x.reg + '&g=7' + pl, 'pioggia-7'], ['💧', 'Pioggia caduta<small>ultimi 30 giorni</small>', '/?r=' + x.reg + '&g=30' + pl, 'pioggia-30'],
+            ['📡', 'Radar piogge', '/?r=' + x.reg + '&radar=ora' + pl, 'radar'], ['🌲', 'Mappa boschi', '/?r=' + x.reg + '&boschi=1' + pl, 'boschi'], ['🛰️', 'Boschi + satellite', '/?r=' + x.reg + '&boschi=1&sat=1' + pl, 'satellite']]
       .map(function (p) { return '<a href="' + SITO + p[2] + '" onclick="try{gtag(\'event\',\'apri_mappa\',{da:\'meteo-' + C.slug + '-scheda-' + p[3] + '\'})}catch(e){}"><span>' + p[0] + '</span>' + p[1] + '</a>'; }).join('');
   }
   function disegnaScheda(g) {
@@ -537,31 +703,26 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
     var giorni = (j.giorni || []).filter(function (x) { return x.g >= OGGI; }).slice(0, 7);
     if (!giorni.some(function (x) { return x.g === g; })) g = giorni[0] && giorni[0].g;
     var ora = +new Date().toLocaleString('en-GB', { timeZone: 'Europe/Rome', hour: '2-digit', hour12: false }) % 24;
-    var ore = (j.ore || []).filter(function (o) { return o.g === g && (o.g !== OGGI || o.h >= ora || o.h6); });
+    var ore = oreDi(j, g, ora);
     var q = s.x.quota != null ? s.x.quota : (j.q != null ? Math.round(j.q) : null);
     var conPc = ore.some(function (o) { return o.pc != null; });
     $('scheda').innerHTML = '<div class="testa"><div><h3>' + esc(s.x.n) + '</h3><div class="sub">' + (q != null ? '~ ' + q + ' m · ' : '') + 'previsioni ora per ora' + (conPc ? ' · 💧 probabilità di pioggia' : '') + (AVVIO ? ' · tocca un altro paese o cercalo per cambiarlo' : '') + '</div></div><button class="chiudi" aria-label="Chiudi">×</button></div>'
       + '<div class="giorni">' + giorni.map(function (x) { return '<button data-g="' + x.g + '" class="' + (x.g === g ? 'sel' : '') + '"><b>' + nome(x.g) + '</b>' + icona(x.s) + ' ' + x.mn + '°/' + x.mx + '°<br>' + (x.mm >= 0.1 ? mm(x.mm) + ' mm' : '–') + (x.pc != null ? '<span class="pc' + tonoPc(x.pc) + '">' + pcTesto(x.pc) + '</span>' : '') + '</button>'; }).join('') + '</div>'
-      // fasce anche se la prima casella e' un'ora sola: MET da' le 00 locali come ora e poi le fasce di 6 (25/10/2026)
-      + (ore.length ? '<div class="pz-ore' + (ore.some(function (o) { return o.h6; }) ? ' fasce' : '') + '">' + ore.map(function (o) {
-          return '<div class="pz-ora"><div class="h">' + (o.h6 ? '<b>' + FASCIA(o.h) + '</b>' + o.h + '-' + ((o.h + 6) % 24) : String(o.h).padStart(2, '0') + ':00') + '</div><div class="ic">' + icona(o.s) + '</div><div class="t">' + Math.round(o.t) + '°</div>'
-            + '<div class="mm">' + (o.mm >= 0.1 ? mm(o.mm) + ' mm' : '') + '</div>'
-            // la % ora per ora (25/10/2026): la % del giorno da sola non basta per programmare un'uscita («ti da 100% per
-            // la pioggia della sera ma devi programmare di giorno», suo). Nelle fasce di 6 ore e' la piu' alta (maxProb)
-            + (conPc ? '<div class="pc' + tonoPc(o.pc) + '">' + pcTesto(o.pc) + '</div>' : '')
-            + '<div class="v">' + (o.v != null ? Math.round(o.v * 3.6) + ' km/h' : '') + '</div></div>'; }).join('') + '</div>'
+      + (ore.length ? (g !== OGGI && ore.some(function (o) { return o.h6; }) ? '<p class="tv-nota">Da qui in poi il modello dà le previsioni a fasce di 6 ore.</p>' : '')
+          + '<table class="tv"><tbody>' + righeOre(ore, conPc) + '</tbody></table>'
         : '<p class="nota">Ore non disponibili per questo giorno.</p>')
       + '<div class="pz-porte">' + porte(s.x) + '</div>';
   }
-  // da === 'avvio': la scheda che si apre DA SOLA sul paese principale (24/10/2026, suo: «se non clicchi un paese il
-  // report orario non si vede»): niente scorrimento della pagina e niente evento GA, non e' un gesto di chi legge
   function apri(x, da) {
     var sc = $('scheda'); sc.classList.add('on'); AVVIO = da === 'avvio';
+    SCELTO = x.n; [].forEach.call(document.querySelectorAll('#pz-mappa .pz-et'), function (l) { l.classList.toggle('scelto', (PAESI[+l.getAttribute('data-n')] || {}).n === x.n); });
+    if (window.L && $('pz-mappa')) sistemaEtichette();
     sc.innerHTML = '<p class="nota">Sto leggendo le previsioni di ' + esc(x.n) + '…</p>';
-    if (!AVVIO) { sc.scrollIntoView({ behavior: 'smooth', block: 'start' }); ga('scheda-' + da); }
+    var su = $('nastro') && !$('nastro').hidden ? $('nastro') : sc;
+    if (!AVVIO) { su.scrollIntoView({ behavior: 'smooth', block: 'start' }); ga('scheda-' + da); }
     fetch(API + '?lat=' + (+x.lat).toFixed(3) + '&lon=' + (+x.lon).toFixed(3) + (x.quota != null ? '&q=' + x.quota : ''))
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (j) { SCHEDA = { x: x, j: j }; disegnaScheda(OGGI); })   // sempre su OGGI, con le ore (suo, 24/10)
+      .then(function (j) { SCHEDA = { x: x, j: j }; disegnaScheda(OGGI); })
       .catch(function () { sc.innerHTML = '<div class="testa"><p class="nota">Previsioni di ' + esc(x.n) + ' non disponibili ora, riprova fra poco.</p><button class="chiudi" aria-label="Chiudi">×</button></div>'; });
   }
   $('scheda').addEventListener('click', function (e) {
@@ -569,7 +730,6 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
     var b = e.target.closest('.giorni button'); if (b && SCHEDA) disegnaScheda(b.getAttribute('data-g'));
   });
 
-  /* ── la casella: elenco dei comuni del sito + frazioni dal geocoder ── */
   var ELENCO = null, ARRIVO = null;
   function carica() {
     if (ELENCO) return Promise.resolve(ELENCO);
@@ -580,7 +740,7 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
     return ARRIVO;
   }
   function frazioni(t) {
-    return fetch('/api/cerca?name=' + encodeURIComponent(t) + '&count=8&language=it&countryCode=IT').then(function (r) { return r.json(); })   // GeoNames dal sito, non piu' Open-Meteo (25/10/2026)
+    return fetch('/api/cerca?name=' + encodeURIComponent(t) + '&count=8&language=it&countryCode=IT').then(function (r) { return r.json(); })
       .then(function (j) { return (j.results || []).map(function (x) { return { n: x.name, lat: x.latitude, lon: x.longitude, quota: x.elevation != null ? Math.round(x.elevation) : null, reg: REG, fraz: 'frazione · ' + (x.admin2 || x.admin1 || '').replace(/^Provincia (di )?/, ''), qn: norm(x.name) }; }); });
   }
   var righe = [], sel = -1, giro = 0;
@@ -608,7 +768,6 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
   $('drop').addEventListener('click', function (e) { var r = e.target.closest('.r'); if (r) scegli(righe[+r.getAttribute('data-i')]); });
   document.addEventListener('click', function (e) { if (!e.target.closest('.pz-cerca')) $('drop').classList.remove('on'); });
 
-  /* ── il grafico, la pioggia caduta, il punto ── */
   var BARRE = [];
   function disegnaGraf() {
     var serie = RIPJ && RIPJ.serie ? RIPJ.serie.slice(0, 30).reverse() : [];
@@ -616,7 +775,20 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
     BARRE = serie.map(function (v, i) { return { g: piu(ultimo, i - serie.length + 1), mm: v, prev: false }; })
       .concat(G.map(function (x) { return { g: x.g, mm: x.mm, prev: true, mx: x.mmMax, dove: x.dove, pc: x.pc }; }));
     var mx = Math.max(5, Math.max.apply(null, BARRE.map(function (b) { return b.mm || 0; })));
-    $('graf').innerHTML = BARRE.map(function (b, i) { return '<div class="b' + (b.prev ? ' prev' : '') + '" data-i="' + i + '" style="height:' + ((b.mm || 0) / mx * 100) + '%"></div>'; }).join('');
+    var n = BARRE.length, k = 0;
+    while (k < n && !BARRE[k].prev) k++;
+    function dove(i) { return ((i + 0.5) / n * 100).toFixed(2) + '%'; }
+    function breve(g) { return d(g).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }); }
+    var diviso = k > 0 && k < n, pk = (k / n * 100).toFixed(2) + '%';
+    $('graf').innerHTML = (diviso ? '<div class="pz-fut" style="left:' + pk + '"></div><span class="pz-gt">Misurata</span><span class="pz-gt pre" style="left:' + pk + '">Prevista</span>' : '')
+      + BARRE.map(function (b, i) { return '<div class="b' + (b.prev ? ' prev' : '') + '" data-i="' + i + '" style="height:' + ((b.mm || 0) / mx * 100) + '%"></div>'; }).join('');
+    var tacche = [];
+    for (var i = k - 8; i >= 0; i -= 7) tacche.push(i);
+    if (diviso && k < n - 2) tacche.push(n - 1);
+    if ($('graf-date')) $('graf-date').innerHTML = tacche.map(function (i) {
+      var p = (i + 0.5) / n, sp = p > 0.88 ? ' class="d"' : p < 0.1 ? ' class="s"' : '';
+      return '<span' + sp + ' style="left:' + dove(i) + '">' + breve(BARRE[i].g) + '</span>';
+    }).join('') + (diviso && BARRE[k].g === OGGI ? '<span class="oggi" style="left:' + dove(k) + '">oggi</span>' : '');
     if (BARRE.length) $('leg-date').textContent = 'dal ' + d(BARRE[0].g).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }) + ' a ' + nome(BARRE[BARRE.length - 1].g, true);
   }
   $('graf').addEventListener('click', function (e) {
@@ -624,9 +796,10 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
     var b = BARRE[+el.getAttribute('data-i')], tutte = $('graf').querySelectorAll('.b');
     for (var i = 0; i < tutte.length; i++) tutte[i].classList.toggle('sel', tutte[i] === el);
     var giorno = d(b.g).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
-    $('graf-info').innerHTML = b.prev ? '<b>' + giorno + '</b>: previsti in media <b>' + mm(b.mm) + ' mm</b>' + (b.mx >= 0.1 ? ', fino a ' + mm(b.mx) + ' a ' + esc(b.dove) : '')
+    $('graf-info').innerHTML = b.prev ? '<b>' + giorno + '</b>: previsti ' + (C.solo ? '' : 'in media ') + '<b>' + mm(b.mm) + ' mm</b>' + (!C.solo && b.mx >= 0.1 ? ', fino a ' + mm(b.mx) + ' a ' + esc(b.dove) : '')
         + (b.pc != null ? '; probabilità di pioggia ' + finoAl(b.pc) : '')
-      : '<b>' + giorno + '</b>: ' + (b.mm == null ? 'nessun dato dai pluviometri' : 'misurati in media <b>' + mm(b.mm) + ' mm</b> dai pluviometri ' + C.diValle);
+      : '<b>' + giorno + '</b>: ' + (C.solo ? (b.mm == null ? 'nessun dato dal pluviometro' : 'misurati <b>' + mm(b.mm) + ' mm</b> ' + C.alPluv)
+        : b.mm == null ? 'nessun dato dai pluviometri' : 'misurati in media <b>' + mm(b.mm) + ' mm</b> dai pluviometri ' + C.diValle);
     if (b.prev) sceglie(b.g);
   });
   function disegnaCaduta() {
@@ -634,7 +807,7 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
     [['1', 'r1'], ['7', 'r7']].forEach(function (p) {
       var x = RIPJ && RIPJ.periodi ? RIPJ.periodi[p[0]] : null;
       if (!x) { $(p[1]).textContent = '–'; return; }
-      $(p[1]).innerHTML = mm(x.media) + ' <small>mm di media</small>';
+      $(p[1]).innerHTML = mm(x.media) + (C.solo ? ' <small>mm</small>' : ' <small>mm di media</small>');
       $(p[1] + 't').innerHTML = (x.top || []).slice(0, 3).map(function (t) { return '<div class="nota" style="margin:2px 0">' + (link[t.n] ? '<a href="' + link[t.n] + '">' + esc(t.n) + '</a>' : esc(t.n)) + ': <b>' + mm(t.mm) + ' mm</b></div>'; }).join('');
     });
     if (RIPJ && RIPJ.periodi && RIPJ.periodi['1'] && RIPJ.periodi['1'].ultimo !== IERI) $('r1h').textContent = maiusc(nome(RIPJ.periodi['1'].ultimo, true));
@@ -643,21 +816,99 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
     var p = [];
     var i = RIPJ && RIPJ.periodi ? RIPJ.periodi['1'] : null, s = RIPJ && RIPJ.periodi ? RIPJ.periodi['7'] : null;
     if (i && s) {
-      p.push((i.ultimo === IERI ? 'Ieri' : maiusc(nome(i.ultimo, true))) + ' ' + C.dove + ' ' + (i.media < 0.1 ? '<b>non è piovuto</b>'
-        : 'sono caduti in media <b>' + mm(i.media) + ' mm</b>' + (i.top && i.top[0] ? ' (' + esc(i.top[0].n) + ' ' + mm(i.top[0].mm) + ')' : '')) + '; negli ultimi 7 giorni <b>' + mm(s.media) + ' mm</b>.');
+      var doveMis = C.primo ? C.alPluv + (C.alPluv.indexOf(',') >= 0 ? ',' : '') : C.dove;
+      p.push((i.ultimo === IERI ? 'Ieri' : maiusc(nome(i.ultimo, true))) + ' ' + doveMis + ' ' + (i.media < 0.1 ? '<b>non è piovuto</b>'
+        : 'sono caduti ' + (C.solo ? '' : 'in media ') + '<b>' + mm(i.media) + ' mm</b>' + (i.top && i.top[0] ? ' (' + esc(i.top[0].n) + ' ' + mm(i.top[0].mm) + ')' : '')) + '; negli ultimi 7 giorni <b>' + mm(s.media) + ' mm</b>.');
     }
     var picco = G.slice().sort(function (a, b) { return b.mmMax - a.mmMax; })[0];
-    p.push(tot < 0.5 ? 'Nei prossimi 7 giorni <b>non è prevista pioggia</b>.' : 'Nei prossimi 7 giorni sono previsti in media <b>' + mm(tot) + ' mm</b>, soprattutto ' + nome(picco.g, true) + '.');
-    // la % piu' alta della settimana, e dove (25/10/2026)
+    p.push(tot < 0.5 ? 'Nei prossimi 7 giorni <b>non è prevista pioggia</b>.' : 'Nei prossimi 7 giorni sono previsti ' + (C.solo ? '' : 'in media ') + '<b>' + mm(tot) + ' mm</b>, soprattutto ' + nome(picco.g, true) + '.');
     var rischio = G.filter(function (x) { return x.pc != null; }).sort(function (a, b) { return b.pc - a.pc; })[0];
+    function aDove(n) { return C.solo ? '' : ' a ' + esc(n); }
     if (rischio) p.push(rischio.pc < 30 ? 'La probabilità di pioggia resta <b>sotto il 30%</b> per tutta la settimana.'
-      : 'La probabilità di pioggia più alta è ' + nome(rischio.g, true) + ', <b>' + rischio.pc + '%</b> a ' + esc(rischio.dpc) + '.');
+      : 'La probabilità di pioggia più alta è ' + nome(rischio.g, true) + ', <b>' + rischio.pc + '%</b>' + aDove(rischio.dpc) + '.');
     var fr = G.slice().sort(function (a, b) { return a.mn - b.mn; })[0], cal = G.slice().sort(function (a, b) { return b.mx - a.mx; })[0];
-    p.push('La notte più fredda è ' + nome(fr.g, true) + ', con <b>' + fr.mn + '°</b> a ' + esc(fr.dmn) + '; il giorno più caldo ' + nome(cal.g, true) + ', <b>' + cal.mx + '°</b> a ' + esc(cal.dmx) + '.');
-    $('punto').innerHTML = '<span class="pz-quando">Il punto di stamattina</span>' + p.join(' ');
+    p.push('La notte più fredda è ' + nome(fr.g, true) + ', con <b>' + fr.mn + '°</b>' + aDove(fr.dmn) + '; il giorno più caldo ' + nome(cal.g, true) + ', <b>' + cal.mx + '°</b>' + aDove(cal.dmx) + '.');
+    $('punto').innerHTML = '<span class="pz-quando">Il punto di stamattina</span> ' + p.join(' ');
   }
 
-  /* ── i comandi ── */
+  function miniMappa(id, larga, sat) {
+    var m = L.map(id, { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false, touchZoom: false, zoomSnap: 0.25 });
+    L.control.attribution({ prefix: false, position: 'topleft' }).addTo(m);
+    if (sat) { $(id).classList.add('sat'); L.tileLayer(C.sat, { maxNativeZoom: 17, maxZoom: 12, attribution: 'Foto: Esri' }).addTo(m); }
+    else L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 12, attribution: '© OpenStreetMap' }).addTo(m);
+    var b = larga ? L.latLngBounds(larga)
+      : L.geoJSON(C.ant.confine, { interactive: false, style: sat ? { color: '#fff', weight: 1.5, fill: false, opacity: 0.75 } : { color: '#1b3f6e', weight: 2, fill: false, opacity: 0.9 } }).addTo(m).getBounds();
+    m.fitBounds(b, { paddingTopLeft: [10, 26], paddingBottomRight: [10, 10] });
+    return m;
+  }
+  function antRadar() {
+    var m = miniMappa('ant-radar', [[37.2, 6.5], [50.2, 18.5]]);
+    m.createPane('radar'); m.getPane('radar').style.zIndex = 450;
+    fetch('https://api.librewxr.net/public/weather-maps.json').then(function (r) { return r.ok ? r.json() : Promise.reject(); }).then(function (j) {
+      var p = (j.radar && j.radar.past) || [], f = p[p.length - 1]; if (!f) return;
+      L.tileLayer(j.host + f.path + '/256/{z}/{x}/{y}/2/1_1.png', { pane: 'radar', opacity: 0.95, maxNativeZoom: 6, maxZoom: 12, attribution: 'radar LibreWXR / OPERA (CC BY)' }).addTo(m);
+      $('ant-radar-q').textContent = 'radar delle ' + new Date(f.time * 1000).toLocaleTimeString('it-IT', { timeZone: 'Europe/Rome', hour: '2-digit', minute: '2-digit' });
+    }).catch(function () {});
+  }
+  function antPrev() {
+    var m = miniMappa('ant-prev', null, true);
+    fetch(API + '?capoluoghi=' + REG).then(function (r) { return r.json(); }).then(function (j) {
+      var ORD = C.ant.ord || [], rk = function (c) { var i = ORD.indexOf(c.n); return i < 0 ? 999 : i; };
+      var cc = (j.capoluoghi || []).slice().sort(function (a, b) { return (b.c ? 1 : 0) - (a.c ? 1 : 0) || rk(a) - rk(b); });
+      if (cc.length > 1) m.fitBounds(L.latLngBounds(cc.map(function (c) { return [c.lat, c.lon]; })), { paddingTopLeft: [34, 40], paddingBottomRight: [34, 22], animate: false });
+      cc.forEach(function (c, n) {
+        var g = (c.giorni || []).filter(function (x) { return x.g === OGGI; })[0]; if (!g) return;
+        L.marker([c.lat, c.lon], { interactive: false, zIndexOffset: 1000 - n, icon: L.divIcon({ className: '', iconSize: [0, 0],
+          html: '<div class="pz-pt"><span class="pz-et" data-n="' + n + '"' + (c.c || rk(c) < (C.ant.cap || 0) ? ' data-cap="1"' : '') + '><span class="r1"><span class="ic">' + icona(g.s) + '</span><span class="mn">' + g.mn + '°</span> <span class="mx">' + g.mx + '°</span></span><span class="nm">' + esc(c.n) + '</span></span></div>' }) }).addTo(m);
+      });
+      var box = $('ant-prev'), bordo = box.getBoundingClientRect(), messi = [box.parentNode.querySelector('.pz-ant-t').getBoundingClientRect()];
+      $('ant-prev-q').textContent = 'oggi'; messi.push($('ant-prev-q').getBoundingClientRect());
+      function ciSta(l, forma, gia) {
+        l.className = forma;
+        var r = l.getBoundingClientRect();
+        var fuori = r.left < bordo.left + 2 || r.right > bordo.right - 2 || r.top < bordo.top + 2 || r.bottom > bordo.bottom - 2;
+        var tocca = gia.some(function (q) { return !(r.right + 2 < q.left || r.left - 2 > q.right || r.bottom + 2 < q.top || r.top - 2 > q.bottom); });
+        return fuori || tocca ? null : r;
+      }
+      var tutte = [].slice.call(box.querySelectorAll('.pz-et'));
+      var cap = tutte.filter(function (l) { return l.hasAttribute('data-cap'); });
+      var forma = 'pz-et', quanti = -1;
+      ['pz-et', 'pz-et nome'].forEach(function (f) {
+        var gia = messi.slice(), n = 0;
+        cap.forEach(function (l) { var r = ciSta(l, f, gia); if (r) { gia.push(r); n++; } });
+        if (n > quanti) { quanti = n; forma = f; }
+      });
+      var senza = [];
+      cap.forEach(function (l) { var r = ciSta(l, forma, messi); if (r) messi.push(r); else senza.push(l); });
+      var riservati = [];
+      senza.concat(tutte.filter(function (l) { return !l.hasAttribute('data-cap'); })).forEach(function (l) {
+        var capo = l.hasAttribute('data-cap'), forme = capo ? [] : [forma];
+        if (forma === 'pz-et') forme.push('pz-et corta');
+        forme.push('pz-et mini');
+        for (var f = 0; f < forme.length; f++) { var r = ciSta(l, forme[f], capo ? messi : messi.concat(riservati)); if (r) { messi.push(r); return; } }
+        if (capo) { l.className = forma; riservati.push(l.getBoundingClientRect()); }
+        l.className = 'pz-et via';
+      });
+    }).catch(function () {});
+  }
+  function antPluvio() {
+    var b = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? '/_anteprime-prova/' : 'https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/anteprime/';
+    function prova(f) { return fetch(b + REG + '-' + f + '.json').then(function (r) { return r.ok ? r.json() : Promise.reject(); }).then(function (j) { j.f = f; return j; }); }
+    prova('7g').catch(function () { return prova('ieri'); }).then(function (j) {
+      $('ant-pluvio').style.backgroundImage = 'url(' + b + REG + '-' + j.f + '.webp' + (j.generato ? '?v=' + encodeURIComponent(j.generato.slice(0, 13)) : '') + ')';
+      var corto = function (g) { return d(g).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }); };
+      if (j.da && j.a) $('ant-pluvio-q').textContent = j.da === j.a ? (j.a === IERI ? 'ieri' : corto(j.a)) : 'dal ' + corto(j.da) + ' al ' + corto(j.a);
+    }).catch(function () {});
+  }
+  if (C.ant && $('ant') && window.L) {
+    var antFatte = false;
+    var antVia = function () { if (antFatte) return; antFatte = true; antRadar(); antPrev(); antPluvio(); };
+    if ('IntersectionObserver' in window) {
+      var antIO = new IntersectionObserver(function (e) { if (e.some(function (x) { return x.isIntersecting; })) { antIO.disconnect(); antVia(); } }, { rootMargin: '400px' });
+      antIO.observe($('ant'));
+    } else setTimeout(antVia, 2500);
+  }
+
   $('giorni').addEventListener('click', function (e) { var b = e.target.closest('.pz-g'); if (b) { sceglie(b.getAttribute('data-g')); ga('giorno'); } });
   $('tab').addEventListener('click', function (e) {
     var tr = e.target.closest('tbody tr'); if (!tr || !J) return;
@@ -665,18 +916,29 @@ table.pz-tab td .pc{display:block;font-size:11.5px;color:#1a5fa8;font-weight:700
     if (c) apri(posto(c), 'tabella');
   });
 
-  function guasto() { $('punto').innerHTML = '<span class="pz-quando">Il punto di stamattina</span>Le previsioni dei paesi non rispondono in questo momento: riprova fra qualche minuto, o <a href="' + SITO + '/?r=' + REG + '&m=prev">guardale sulla mappa</a>.'; }
-  Promise.all([fetch(API + '?zona=' + C.slug + '&pr=1').then(function (r) { return r.json(); }),
+  function guasto() { if ($('nastro')) $('nastro').hidden = true; $('punto').innerHTML = '<span class="pz-quando">Il punto di stamattina</span> Le previsioni dei paesi non rispondono in questo momento: riprova fra qualche minuto, o <a href="' + SITO + '/previsioni/?r=' + REG + '">guardale sulla mappa</a>.'; }
+  function daPluviometro(j) {
+    var s = j && j.serie ? j.serie[C.id] : null;
+    if (!s || !s.length) return null;
+    var n = s.length, sette = 0, conti = 0;
+    for (var i = Math.max(0, n - 7); i < n; i++) if (s[i] != null) { sette += s[i]; conti++; }
+    return { serie: s.slice().reverse(), ultimoGiorno: j.ultimo, periodi: {
+      '1': s[n - 1] == null ? null : { media: s[n - 1], ultimo: j.ultimo, top: [] },
+      '7': conti ? { media: sette, ultimo: j.ultimo, top: [] } : null } };
+  }
+  Promise.all([fetch(API + (C.paese ? '?paese=' + C.paese : '?zona=' + C.slug) + '&pr=1').then(function (r) { return r.json(); }),
                fetch(RIP).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })]).then(function (x) {
-    J = x[0]; RIPJ = x[1];
+    J = x[0]; RIPJ = C.giorni ? daPluviometro(x[1]) : x[1];
     PAESI = (J && J.capoluoghi || []).filter(function (c) { return c.giorni && c.giorni.length; });
+    if (C.nomi) PAESI.forEach(function (c) { if (C.nomi[c.n]) c.n = C.nomi[c.n]; });
+    for (var k = 1; C.primo && k < PAESI.length; k++) if (PAESI[k].n === C.primo) { PAESI.unshift(PAESI.splice(k, 1)[0]); break; }
     G = PAESI.length ? giorniDi() : [];
     disegnaCaduta();
     if (!G.length) { guasto(); return; }
     var tot = totale(); disegnaGraf(); punto(tot); sceglie(G[0].g);
-    apri(posto(PAESI[0]), 'avvio');   // le ore si vedono subito, sul primo paese dell'elenco (il principale della zona)
+    apri(posto(PAESI[0]), 'avvio');
   }).catch(function () { guasto(); disegnaCaduta(); });
-})({"sito":"https://avventurepluvio-test.pages.dev","raw":"https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/","slug":"val-brembana","reg":"lombardia","dove":"in Val Brembana","valle":"valle","inValle":"in valle","diValle":"della valle","rilievo":"https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazioni-Tessere@e19f7b19852573d067391c5e46b62bf65473b2db/rilievo/","quote":{"San Giovanni Bianco":412,"Val Brembilla":417,"Piazza Brembana":546,"San Pellegrino Terme":374,"Dossena":973,"Serina":812,"Zogno":349,"Camerata Cornello":522,"Bracca":600,"Berbenno":657,"Algua":496,"Taleggio":761},"pluv":[{"id":"14499","n":"Brembilla","url":"https://avventurepluvio-test.pages.dev/funghi/lombardia/brembilla/","q":468,"lat":45.8147,"lon":9.6092,"ente":"ARPA Lombardia"},{"id":"8098","n":"Piazza Brembana vivaio","url":"https://avventurepluvio-test.pages.dev/funghi/lombardia/piazza-brembana-vivaio/","q":510,"lat":45.9461,"lon":9.6728,"ente":"ARPA Lombardia"},{"id":"2278","n":"San Giovanni Bianco Cornalita","url":"https://avventurepluvio-test.pages.dev/funghi/lombardia/san-giovanni-bianco-cornalita/","q":622,"lat":45.8697,"lon":9.6391,"ente":"ARPA Lombardia"}]});
+})({"sito":"https://avventurepluvio-test.pages.dev","raw":"https://raw.githubusercontent.com/AvventureMicologiche/Mappa-Precipitazioni-Nord/main/data/","slug":"val-brembana","reg":"lombardia","dove":"in Val Brembana","valle":"valle","inValle":"in valle","diValle":"della valle","sat":"https://ibasemaps-api.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?token=AAPTasR-h9fs0ra4WGWkS_scuow..PfyWRixgy2bU4q4L_xFWwxQH8YrVUnFpJFrW78wY_K72YLdviK5mAeSydBEk66vKIwvvowq2oQERMiN_iLMZxI_bI35DHJQ2Kq2GhIBqtgkKUm_cumAnMUoc_t8aNZ_sTL-EQViE0u0sdlMgMrvFKc5IRSYFy6MCE4fJ8EbE5BRae930oAWEbSlekZea3-2chpfwPsuEnxeX1m4HW2UGD0faHCNPYcdHE-AHoM1ox042-adkcZy4hAworYmCGu81zdrbY3s.AT1_VCr3FrpK","quote":{"San Giovanni Bianco":412,"Val Brembilla":417,"Piazza Brembana":546,"San Pellegrino Terme":374,"Dossena":973,"Serina":812,"Zogno":349,"Camerata Cornello":522,"Bracca":600,"Berbenno":657,"Algua":496,"Taleggio":761},"pluv":[{"id":"14499","n":"Brembilla","url":"https://avventurepluvio-test.pages.dev/funghi/lombardia/brembilla/","q":468,"lat":45.8147,"lon":9.6092,"ente":"ARPA Lombardia"},{"id":"8098","n":"Piazza Brembana vivaio","url":"https://avventurepluvio-test.pages.dev/funghi/lombardia/piazza-brembana-vivaio/","q":510,"lat":45.9461,"lon":9.6728,"ente":"ARPA Lombardia"},{"id":"2278","n":"San Giovanni Bianco Cornalita","url":"https://avventurepluvio-test.pages.dev/funghi/lombardia/san-giovanni-bianco-cornalita/","q":622,"lat":45.8697,"lon":9.6391,"ente":"ARPA Lombardia"}],"nastro":"Val Brembana","ant":{"confine":{"type":"Feature","properties":{},"geometry":{"type":"MultiPolygon","coordinates":[[[[8.58,45.752],[8.556,45.774],[8.552,45.788],[8.558,45.804],[8.582,45.814],[8.594,45.828],[8.595,45.845],[8.57,45.891],[8.572,45.901],[8.595,45.923],[8.682,45.987],[8.723,46.014],[8.729,46.023],[8.729,46.029],[8.72,46.042],[8.716,46.062],[8.705,46.083],[8.708,46.091],[8.724,46.11],[8.743,46.122],[8.757,46.103],[8.761,46.101],[8.783,46.094],[8.8,46.095],[8.806,46.101],[8.815,46.097],[8.833,46.083],[8.847,46.076],[8.852,46.076],[8.855,46.062],[8.844,46.049],[8.834,46.051],[8.83,46.046],[8.835,46.044],[8.832,46.041],[8.83,46.042],[8.828,46.033],[8.82,46.025],[8.806,46.022],[8.792,46.005],[8.786,45.989],[8.79,45.988],[8.792,45.992],[8.798,45.992],[8.831,45.988],[8.84,45.983],[8.849,45.973],[8.868,45.961],[8.879,45.956],[8.894,45.958],[8.897,45.955],[8.899,45.945],[8.893,45.936],[8.893,45.931],[8.898,45.925],[8.913,45.917],[8.925,45.906],[8.925,45.9],[8.922,45.895],[8.924,45.892],[8.929,45.891],[8.932,45.886],[8.934,45.87],[8.942,45.87],[8.939,45.863],[8.93,45.859],[8.915,45.844],[8.912,45.83],[8.919,45.834],[8.929,45.833],[8.934,45.839],[8.942,45.842],[8.956,45.843],[8.962,45.839],[8.963,45.835],[8.97,45.832],[8.986,45.838],[8.995,45.834],[8.994,45.824],[9.005,45.82],[9.018,45.819],[9.021,45.822],[9.031,45.821],[9.034,45.823],[9.031,45.825],[9.035,45.839],[9.039,45.842],[9.04,45.847],[9.049,45.852],[9.05,45.858],[9.048,45.863],[9.054,45.872],[9.067,45.876],[9.078,45.886],[9.089,45.901],[9.078,45.9],[9.07,45.912],[9.05,45.921],[9.043,45.927],[9.035,45.926],[9.019,45.929],[9.022,45.938],[9.013,45.942],[9.015,45.951],[9.014,45.961],[8.989,45.97],[8.988,45.973],[9.003,45.98],[9.014,45.989],[9.028,45.994],[9.024,46.002],[9.023,46.016],[9.009,46.027],[9.009,46.036],[9.024,46.053],[9.048,46.062],[9.062,46.061],[9.078,46.065],[9.078,46.075],[9.09,46.088],[9.073,46.114],[9.072,46.12],[9.101,46.128],[9.105,46.132],[9.114,46.135],[9.121,46.135],[9.137,46.154],[9.154,46.162],[9.16,46.171],[9.184,46.172],[9.194,46.18],[9.196,46.187],[9.194,46.194],[9.2,46.206],[9.207,46.211],[9.215,46.212],[9.219,46.216],[9.222,46.226],[9.221,46.23],[9.235,46.234],[9.246,46.232],[9.248,46.234],[9.25,46.24],[9.249,46.255],[9.255,46.269],[9.275,46.292],[9.285,46.297],[9.282,46.308],[9.3,46.327],[9.292,46.335],[9.292,46.338],[9.299,46.343],[9.297,46.351],[9.29,46.357],[9.282,46.358],[9.277,46.369],[9.276,46.374],[9.284,46.386],[9.278,46.39],[9.276,46.395],[9.281,46.399],[9.281,46.41],[9.275,46.419],[9.265,46.42],[9.249,46.431],[9.247,46.436],[9.248,46.447],[9.252,46.45],[9.266,46.451],[9.278,46.462],[9.274,46.47],[9.275,46.481],[9.282,46.497],[9.301,46.5],[9.311,46.505],[9.352,46.505],[9.362,46.51],[9.372,46.504],[9.374,46.5],[9.368,46.494],[9.375,46.486],[9.4,46.47],[9.413,46.467],[9.421,46.474],[9.424,46.479],[9.425,46.49],[9.433,46.497],[9.452,46.5],[9.453,46.505],[9.461,46.507],[9.459,46.485],[9.449,46.483],[9.45,46.479],[9.462,46.48],[9.464,46.47],[9.457,46.463],[9.458,46.441],[9.454,46.422],[9.467,46.398],[9.468,46.388],[9.464,46.384],[9.462,46.376],[9.495,46.365],[9.508,46.35],[9.511,46.339],[9.521,46.325],[9.534,46.312],[9.549,46.302],[9.561,46.306],[9.583,46.294],[9.61,46.295],[9.621,46.288],[9.632,46.286],[9.642,46.287],[9.672,46.301],[9.681,46.299],[9.681,46.297],[9.687,46.294],[9.704,46.291],[9.711,46.292],[9.715,46.293],[9.715,46.301],[9.724,46.309],[9.726,46.314],[9.726,46.32],[9.722,46.321],[9.721,46.328],[9.727,46.334],[9.723,46.341],[9.737,46.351],[9.744,46.352],[9.758,46.344],[9.762,46.339],[9.778,46.335],[9.822,46.352],[9.838,46.361],[9.852,46.364],[9.871,46.363],[9.883,46.371],[9.906,46.381],[9.925,46.366],[9.931,46.368],[9.93,46.372],[9.934,46.375],[9.955,46.379],[9.959,46.378],[9.955,46.374],[9.966,46.363],[9.989,46.352],[9.996,46.352],[9.994,46.341],[9.986,46.335],[9.981,46.323],[9.997,46.314],[10.001,46.304],[10,46.301],[9.993,46.297],[9.994,46.288],[9.997,46.284],[10.03,46.277],[10.056,46.264],[10.06,46.248],[10.048,46.232],[10.047,46.229],[10.049,46.227],[10.059,46.225],[10.069,46.217],[10.084,46.227],[10.095,46.229],[10.124,46.224],[10.131,46.225],[10.146,46.23],[10.151,46.24],[10.174,46.254],[10.176,46.258],[10.17,46.269],[10.161,46.276],[10.162,46.28],[10.156,46.288],[10.138,46.301],[10.139,46.305],[10.116,46.315],[10.106,46.331],[10.106,46.341],[10.108,46.35],[10.111,46.353],[10.129,46.363],[10.126,46.37],[10.128,46.378],[10.141,46.386],[10.156,46.385],[10.162,46.388],[10.164,46.391],[10.162,46.404],[10.166,46.407],[10.161,46.416],[10.153,46.414],[10.148,46.417],[10.143,46.428],[10.135,46.429],[10.131,46.432],[10.101,46.423],[10.08,46.421],[10.08,46.424],[10.062,46.427],[10.055,46.441],[10.043,46.442],[10.041,46.444],[10.04,46.447],[10.044,46.455],[10.053,46.461],[10.051,46.472],[10.044,46.483],[10.047,46.511],[10.052,46.514],[10.054,46.521],[10.053,46.53],[10.044,46.539],[10.049,46.544],[10.06,46.546],[10.083,46.564],[10.085,46.568],[10.079,46.575],[10.092,46.577],[10.101,46.583],[10.098,46.597],[10.102,46.611],[10.119,46.606],[10.133,46.606],[10.14,46.611],[10.165,46.616],[10.188,46.626],[10.194,46.626],[10.21,46.62],[10.219,46.622],[10.223,46.628],[10.24,46.635],[10.241,46.627],[10.252,46.616],[10.256,46.608],[10.242,46.593],[10.244,46.578],[10.254,46.572],[10.26,46.575],[10.271,46.576],[10.282,46.572],[10.289,46.568],[10.294,46.56],[10.296,46.55],[10.312,46.547],[10.325,46.551],[10.337,46.543],[10.341,46.543],[10.348,46.548],[10.352,46.556],[10.363,46.556],[10.396,46.544],[10.419,46.551],[10.437,46.537],[10.453,46.531],[10.458,46.51],[10.473,46.501],[10.476,46.496],[10.482,46.494],[10.497,46.497],[10.531,46.494],[10.555,46.489],[10.562,46.482],[10.576,46.474],[10.6,46.469],[10.622,46.448],[10.617,46.444],[10.619,46.437],[10.616,46.43],[10.618,46.417],[10.619,46.414],[10.628,46.408],[10.631,46.402],[10.611,46.387],[10.606,46.379],[10.598,46.377],[10.567,46.378],[10.542,46.361],[10.544,46.359],[10.543,46.356],[10.539,46.354],[10.534,46.354],[10.534,46.356],[10.53,46.357],[10.519,46.356],[10.516,46.343],[10.521,46.344],[10.563,46.327],[10.565,46.313],[10.576,46.306],[10.58,46.299],[10.56,46.285],[10.576,46.273],[10.583,46.257],[10.585,46.245],[10.569,46.229],[10.571,46.225],[10.569,46.22],[10.549,46.205],[10.541,46.189],[10.554,46.181],[10.565,46.168],[10.558,46.161],[10.554,46.149],[10.548,46.146],[10.546,46.142],[10.55,46.138],[10.551,46.124],[10.542,46.104],[10.534,46.096],[10.522,46.089],[10.514,46.078],[10.489,46.065],[10.483,46.057],[10.482,46.05],[10.486,46.03],[10.485,46.025],[10.483,46.021],[10.47,46.021],[10.462,46.015],[10.457,46.009],[10.453,45.991],[10.453,45.977],[10.476,45.97],[10.487,45.971],[10.489,45.969],[10.488,45.96],[10.483,45.951],[10.485,45.944],[10.491,45.942],[10.491,45.933],[10.509,45.924],[10.511,45.915],[10.506,45.903],[10.502,45.9],[10.496,45.9],[10.49,45.884],[10.504,45.874],[10.502,45.871],[10.502,45.861],[10.507,45.842],[10.502,45.835],[10.502,45.83],[10.508,45.824],[10.528,45.827],[10.544,45.818],[10.542,45.814],[10.526,45.806],[10.534,45.801],[10.533,45.788],[10.536,45.786],[10.56,45.784],[10.575,45.787],[10.589,45.798],[10.611,45.805],[10.635,45.807],[10.641,45.802],[10.651,45.812],[10.656,45.832],[10.677,45.831],[10.696,45.84],[10.711,45.836],[10.717,45.837],[10.722,45.841],[10.736,45.843],[10.749,45.838],[10.756,45.83],[10.76,45.838],[10.771,45.843],[10.778,45.843],[10.784,45.836],[10.791,45.833],[10.796,45.836],[10.804,45.834],[10.824,45.838],[10.84,45.833],[10.835,45.818],[10.808,45.797],[10.772,45.751],[10.706,45.676],[10.631,45.61],[10.628,45.602],[10.643,45.458],[10.648,45.449],[10.644,45.445],[10.624,45.444],[10.627,45.438],[10.64,45.444],[10.647,45.441],[10.648,45.43],[10.644,45.418],[10.655,45.416],[10.665,45.428],[10.715,45.418],[10.72,45.405],[10.719,45.399],[10.708,45.386],[10.698,45.379],[10.707,45.369],[10.715,45.368],[10.704,45.359],[10.692,45.354],[10.686,45.354],[10.687,45.343],[10.706,45.339],[10.715,45.334],[10.713,45.324],[10.706,45.316],[10.72,45.317],[10.721,45.319],[10.73,45.316],[10.733,45.304],[10.728,45.291],[10.737,45.287],[10.783,45.315],[10.812,45.297],[10.817,45.289],[10.827,45.284],[10.84,45.273],[10.841,45.265],[10.847,45.257],[10.876,45.253],[10.879,45.247],[10.889,45.249],[10.9,45.246],[10.902,45.237],[10.937,45.233],[10.931,45.226],[10.931,45.218],[10.935,45.214],[10.945,45.211],[10.947,45.206],[10.966,45.206],[10.991,45.196],[10.997,45.187],[10.993,45.184],[10.999,45.165],[10.998,45.158],[10.994,45.152],[11.011,45.149],[11.021,45.157],[11.028,45.159],[11.03,45.159],[11.032,45.152],[11.036,45.15],[11.047,45.153],[11.05,45.15],[11.042,45.144],[11.044,45.134],[11.029,45.128],[11.028,45.124],[11.039,45.114],[11.073,45.099],[11.098,45.095],[11.094,45.1],[11.097,45.11],[11.101,45.113],[11.106,45.108],[11.127,45.103],[11.135,45.11],[11.138,45.123],[11.146,45.126],[11.165,45.117],[11.174,45.116],[11.188,45.11],[11.203,45.112],[11.205,45.109],[11.178,45.098],[11.177,45.088],[11.187,45.087],[11.188,45.083],[11.175,45.075],[11.175,45.06],[11.197,45.061],[11.21,45.058],[11.239,45.043],[11.248,45.044],[11.257,45.054],[11.264,45.057],[11.268,45.055],[11.271,45.045],[11.263,45.033],[11.271,45.028],[11.274,45.018],[11.307,45.013],[11.313,45.01],[11.333,44.991],[11.396,44.971],[11.409,44.97],[11.422,44.964],[11.427,44.959],[11.428,44.953],[11.427,44.95],[11.426,44.952],[11.406,44.949],[11.39,44.956],[11.373,44.958],[11.362,44.955],[11.359,44.95],[11.356,44.95],[11.323,44.961],[11.309,44.96],[11.285,44.957],[11.272,44.938],[11.262,44.945],[11.246,44.951],[11.243,44.948],[11.207,44.942],[11.202,44.939],[11.159,44.938],[11.154,44.933],[11.151,44.933],[11.121,44.954],[11.072,44.962],[11.06,44.949],[10.993,44.954],[10.967,44.935],[10.951,44.933],[10.951,44.928],[10.941,44.922],[10.917,44.924],[10.89,44.912],[10.888,44.916],[10.898,44.922],[10.877,44.917],[10.874,44.922],[10.871,44.921],[10.866,44.924],[10.867,44.929],[10.865,44.93],[10.848,44.926],[10.84,44.932],[10.819,44.937],[10.813,44.938],[10.809,44.936],[10.745,44.949],[10.743,44.954],[10.748,44.963],[10.742,44.972],[10.741,44.981],[10.732,44.991],[10.725,44.992],[10.712,44.985],[10.711,44.973],[10.703,44.965],[10.696,44.962],[10.692,44.962],[10.688,44.966],[10.694,44.97],[10.696,44.975],[10.687,44.987],[10.679,44.976],[10.665,44.969],[10.651,44.949],[10.639,44.939],[10.628,44.924],[10.625,44.926],[10.62,44.925],[10.6,44.915],[10.582,44.913],[10.571,44.908],[10.532,44.913],[10.523,44.912],[10.515,44.914],[10.499,44.925],[10.475,44.932],[10.463,44.938],[10.436,44.943],[10.431,44.948],[10.417,44.978],[10.408,44.984],[10.393,44.984],[10.368,44.967],[10.359,44.965],[10.349,44.968],[10.331,44.981],[10.309,44.987],[10.31,44.993],[10.303,45],[10.274,44.999],[10.265,45.005],[10.258,45.017],[10.211,45.034],[10.194,45.028],[10.187,45.028],[10.177,45.032],[10.171,45.042],[10.156,45.044],[10.148,45.035],[10.103,45.022],[10.093,45.024],[10.084,45.032],[10.082,45.047],[10.05,45.041],[10.053,45.051],[10.044,45.063],[10.031,45.066],[10.021,45.077],[10.03,45.087],[10.029,45.096],[10.013,45.107],[9.993,45.13],[9.984,45.134],[9.97,45.132],[9.96,45.121],[9.936,45.104],[9.924,45.1],[9.915,45.1],[9.913,45.103],[9.914,45.109],[9.922,45.114],[9.927,45.124],[9.926,45.133],[9.92,45.138],[9.913,45.139],[9.881,45.127],[9.875,45.122],[9.875,45.118],[9.879,45.112],[9.892,45.104],[9.901,45.095],[9.9,45.084],[9.89,45.076],[9.88,45.075],[9.874,45.079],[9.871,45.086],[9.862,45.094],[9.848,45.097],[9.838,45.096],[9.833,45.092],[9.831,45.084],[9.835,45.069],[9.834,45.062],[9.824,45.053],[9.816,45.055],[9.817,45.071],[9.813,45.079],[9.788,45.084],[9.777,45.091],[9.769,45.105],[9.758,45.113],[9.745,45.112],[9.745,45.106],[9.753,45.087],[9.75,45.078],[9.747,45.075],[9.736,45.072],[9.728,45.062],[9.714,45.058],[9.682,45.071],[9.677,45.078],[9.653,45.081],[9.643,45.08],[9.632,45.086],[9.632,45.093],[9.638,45.102],[9.638,45.114],[9.641,45.118],[9.637,45.126],[9.628,45.133],[9.619,45.134],[9.614,45.123],[9.613,45.112],[9.604,45.105],[9.591,45.1],[9.587,45.1],[9.586,45.105],[9.569,45.107],[9.561,45.123],[9.549,45.133],[9.537,45.126],[9.536,45.118],[9.551,45.095],[9.551,45.091],[9.54,45.081],[9.532,45.078],[9.525,45.08],[9.52,45.089],[9.502,45.104],[9.491,45.103],[9.468,45.095],[9.439,45.093],[9.436,45.082],[9.412,45.084],[9.413,45.079],[9.389,45.064],[9.371,45.048],[9.376,45.04],[9.373,45.037],[9.369,45.024],[9.376,45.02],[9.371,45.015],[9.365,45.002],[9.361,45],[9.353,45.001],[9.346,44.996],[9.335,44.975],[9.335,44.968],[9.338,44.965],[9.325,44.956],[9.322,44.944],[9.31,44.935],[9.286,44.934],[9.285,44.93],[9.291,44.925],[9.293,44.92],[9.277,44.896],[9.285,44.895],[9.293,44.89],[9.29,44.882],[9.307,44.876],[9.322,44.88],[9.326,44.873],[9.342,44.867],[9.35,44.837],[9.359,44.824],[9.363,44.822],[9.355,44.812],[9.33,44.8],[9.322,44.8],[9.318,44.786],[9.287,44.773],[9.285,44.768],[9.285,44.761],[9.288,44.757],[9.321,44.743],[9.333,44.735],[9.326,44.723],[9.317,44.719],[9.308,44.706],[9.309,44.702],[9.315,44.697],[9.326,44.694],[9.325,44.69],[9.306,44.688],[9.299,44.681],[9.288,44.68],[9.286,44.684],[9.279,44.686],[9.266,44.684],[9.259,44.68],[9.254,44.692],[9.235,44.716],[9.236,44.713],[9.232,44.703],[9.242,44.687],[9.224,44.683],[9.2,44.686],[9.207,44.706],[9.203,44.724],[9.211,44.734],[9.214,44.752],[9.189,44.759],[9.171,44.772],[9.17,44.778],[9.174,44.784],[9.174,44.796],[9.165,44.8],[9.16,44.806],[9.161,44.815],[9.156,44.815],[9.147,44.809],[9.126,44.806],[9.116,44.807],[9.095,44.819],[9.082,44.814],[9.072,44.817],[9.075,44.823],[9.073,44.828],[9.07,44.831],[9.064,44.83],[9.062,44.836],[9.049,44.849],[9.068,44.86],[9.07,44.865],[9.056,44.888],[9.03,44.889],[9.018,44.901],[9.005,44.904],[9.001,44.908],[8.998,44.918],[8.976,44.941],[8.97,44.944],[8.972,44.95],[8.977,44.953],[8.978,44.967],[8.961,44.987],[8.952,44.988],[8.926,44.982],[8.922,44.987],[8.917,44.988],[8.901,45.008],[8.905,45.027],[8.903,45.037],[8.895,45.04],[8.9,45.044],[8.892,45.051],[8.886,45.051],[8.881,45.054],[8.887,45.06],[8.882,45.061],[8.864,45.049],[8.861,45.051],[8.841,45.047],[8.838,45.044],[8.825,45.044],[8.822,45.04],[8.81,45.034],[8.796,45.036],[8.794,45.034],[8.795,45.031],[8.8,45.03],[8.802,45.026],[8.797,45.02],[8.778,45.024],[8.776,45.019],[8.779,45.013],[8.773,45.007],[8.767,45.007],[8.767,45.01],[8.762,45.012],[8.748,45.009],[8.748,45.013],[8.754,45.015],[8.751,45.021],[8.744,45.024],[8.728,45.023],[8.721,45.027],[8.713,45.038],[8.706,45.038],[8.701,45.033],[8.702,45.028],[8.695,45.023],[8.682,45.029],[8.673,45.028],[8.667,45.024],[8.666,45.02],[8.658,45.018],[8.652,45.024],[8.657,45.027],[8.653,45.034],[8.635,45.041],[8.641,45.044],[8.645,45.057],[8.642,45.061],[8.645,45.061],[8.637,45.066],[8.646,45.075],[8.64,45.078],[8.637,45.084],[8.622,45.09],[8.624,45.098],[8.612,45.103],[8.608,45.108],[8.609,45.117],[8.613,45.124],[8.612,45.128],[8.59,45.133],[8.587,45.146],[8.582,45.151],[8.557,45.158],[8.554,45.157],[8.552,45.159],[8.555,45.164],[8.543,45.173],[8.546,45.183],[8.562,45.194],[8.581,45.202],[8.572,45.206],[8.556,45.205],[8.55,45.2],[8.552,45.196],[8.531,45.193],[8.525,45.198],[8.528,45.201],[8.532,45.199],[8.548,45.204],[8.536,45.216],[8.529,45.217],[8.523,45.222],[8.523,45.225],[8.528,45.23],[8.539,45.23],[8.544,45.234],[8.54,45.237],[8.531,45.237],[8.529,45.24],[8.545,45.24],[8.549,45.238],[8.556,45.241],[8.555,45.243],[8.541,45.242],[8.526,45.246],[8.522,45.25],[8.523,45.255],[8.531,45.254],[8.536,45.248],[8.544,45.254],[8.533,45.258],[8.536,45.262],[8.533,45.265],[8.536,45.272],[8.535,45.278],[8.522,45.279],[8.523,45.274],[8.514,45.274],[8.513,45.28],[8.518,45.287],[8.512,45.291],[8.498,45.292],[8.51,45.311],[8.514,45.313],[8.522,45.312],[8.534,45.319],[8.538,45.317],[8.536,45.326],[8.526,45.342],[8.542,45.348],[8.551,45.356],[8.554,45.362],[8.557,45.353],[8.571,45.349],[8.578,45.348],[8.587,45.352],[8.599,45.349],[8.613,45.354],[8.629,45.35],[8.632,45.346],[8.632,45.338],[8.656,45.326],[8.659,45.304],[8.666,45.292],[8.691,45.293],[8.716,45.303],[8.726,45.332],[8.725,45.336],[8.742,45.332],[8.745,45.34],[8.756,45.344],[8.76,45.352],[8.758,45.355],[8.761,45.356],[8.752,45.357],[8.746,45.355],[8.733,45.365],[8.721,45.37],[8.719,45.378],[8.724,45.378],[8.728,45.375],[8.761,45.376],[8.764,45.377],[8.762,45.382],[8.765,45.388],[8.793,45.379],[8.802,45.379],[8.812,45.383],[8.811,45.389],[8.843,45.394],[8.842,45.399],[8.824,45.422],[8.826,45.434],[8.808,45.433],[8.81,45.437],[8.808,45.448],[8.8,45.456],[8.788,45.463],[8.791,45.47],[8.791,45.48],[8.787,45.486],[8.775,45.484],[8.76,45.497],[8.739,45.498],[8.728,45.502],[8.713,45.52],[8.714,45.528],[8.719,45.531],[8.709,45.543],[8.706,45.553],[8.706,45.569],[8.693,45.578],[8.697,45.584],[8.705,45.589],[8.703,45.6],[8.7,45.604],[8.695,45.602],[8.689,45.607],[8.694,45.61],[8.685,45.619],[8.678,45.622],[8.664,45.621],[8.666,45.63],[8.659,45.637],[8.662,45.643],[8.668,45.643],[8.675,45.635],[8.68,45.633],[8.685,45.634],[8.689,45.638],[8.685,45.647],[8.67,45.66],[8.672,45.666],[8.683,45.67],[8.681,45.677],[8.674,45.678],[8.668,45.675],[8.657,45.674],[8.643,45.675],[8.641,45.677],[8.64,45.685],[8.655,45.709],[8.654,45.714],[8.644,45.723],[8.602,45.726],[8.594,45.73],[8.58,45.752]],[[9.29,44.701],[9.302,44.703],[9.291,44.706],[9.29,44.701]],[[9.299,44.692],[9.304,44.693],[9.305,44.696],[9.299,44.694],[9.299,44.692]]],[[[8.974,45.984],[8.977,45.982],[8.978,45.972],[8.976,45.962],[8.958,45.965],[8.965,45.982],[8.967,45.984],[8.974,45.984]]],[[[8.705,45.024],[8.706,45.013],[8.704,45.018],[8.705,45.024]]]]}},"ord":["Milano","Brescia","Monza","Bergamo","Como","Varese","Cremona","Pavia","Lecco","Mantova","Lodi","Sondrio"],"cap":12}});
 </script>
 </body>
 </html>

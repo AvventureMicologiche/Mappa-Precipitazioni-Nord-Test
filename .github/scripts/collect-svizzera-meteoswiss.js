@@ -288,7 +288,7 @@ function loadExisting(dateStr) {
   try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return null; }
 }
 
-const eStima = j => !!j && /open-meteo/.test(j.source || '');
+const eStima = j => !!j && /open-meteo|icon-2i-gapfill/.test(j.source || '');
 
 /** Merge per stazione: il valore nuovo vince, le stazioni vecchie senza valore nuovo restano.
  *  ⚠️ Ma NON sopra un file di stima (26/10/2026): le stazioni stimate senza valore nuovo resterebbero dentro un file
