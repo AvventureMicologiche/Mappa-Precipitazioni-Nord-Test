@@ -1882,13 +1882,12 @@ html.apre-prev #fonte-tag{visibility:hidden !important}
       /* LE PREVISIONI DELLA VISTA ITALIA SI CHIEDONO DA QUI (29/10/2026, suo: «velocizzare come si apre»): prima partivano
          a mappa pronta (misurato sul sito: al computer a 1,3 s, al telefono a 2,9 s, e i quattro gruppi delle icone solo
          dopo `italia`); ora mentre la pagina scende. chiedi() le prende da _previPronte: un indirizzo diverso dal suo (API,
-         API_V) le lascia li' e chiede come prima. E il collegamento al server del rilievo (Esri) si apre gia' adesso. */
+         API_V) le lascia li' e chiede come prima. Il collegamento a Esri non c'e' piu' dal 27/11/2026 (scheda 143 bis, via Esri). */
       try{ var pa=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)&&location.port!=='8788'?'http://127.0.0.1:8788/api/previsioni':'/api/previsioni';
         window._previPronte={};
         ['italia','italia-alto','italia-nord','italia-centro','italia-sud'].forEach(function(k){ var u=pa+'?capoluoghi='+k+'&v=14';
           window._previPronte[u]=fetch(u).then(function(r){ return r.json().then(function(j){ return {ok:r.ok,s:r.status,j:j}; }); })
             .catch(function(){ return {ok:false,s:0,j:{errore:'rete'}}; }); });
-        var pc=document.createElement('link'); pc.rel='preconnect'; pc.href='https://ibasemaps-api.arcgis.com'; document.head.appendChild(pc);
       }catch(e){}
       /* E CIO' CHE LA VISTA ITALIA NON MOSTRA ASPETTA (29/10/2026): la cartina OSM (sotto il rilievo non si vede), la
          vetrina (nascosta), le temperature di ieri e, al telefono, i confini delle regioni (411 KB compressi; li' non si
@@ -2932,7 +2931,47 @@ var FOTO_URL='https://cdn.jsdelivr.net/gh/AvventureMicologiche/Mappa-Precipitazi
 var FOTO_LIMITI=[[34,-25],[72,45]];   // Europa: Islanda e Canarie comprese, Urali esclusi (fuori, il colore di fondo)
 // corto (31/10/2026, suo: «nei crediti va a capo»): il testo intero, con la licenza di ESA, sta in fonti.html#satellite
 var FOTO_CREDITI='Foto: NASA, <a href="/fonti.html#satellite" target="_blank" rel="noopener">ESA WorldCover</a>';
-var FOTO_CREDITI_ESRI='da vicino Esri, Vantor, Earthstar Geographics';
+window._fotoUrl=FOTO_URL;   // il satellite dei boschi ne prende l'anteprima del suo tasto (27/11/2026)
+/* LA FOTO NOSTRA DA VICINO, ZOOM 11-13 (27/11/2026, scheda 143 bis). ESA WorldCover 2021 Sentinel-2 alla risoluzione
+   piena (10 m), cotta dalla scheda 143 quater (patto: banco, analisi-esri-143bis\CONTRATTO-TESSERE.md): WebP da 512 px
+   «@2x», il livello n copre la tessera standard n, livelli 10-12, quindi in mappa tileSize 512 e zoomOffset -1 agli zoom
+   11-13. Mare e fuori area non esistono: v1/indice.json dice quali ci sono (intervalli di x per riga), le altre non si
+   chiedono (niente 404). Su Cloudflare Pages, non su jsDelivr: i suoi termini chiamano abuso «file in grandi quantita'».
+   Per provarle in locale prima di pubblicarle: ?fotovicina=http://localhost:<porta>/v1/ (solo localhost). */
+var FOTO_VICINA='https://avventurepluvio-foto.pages.dev/v1/';
+try{ (function(){ var q=new URLSearchParams(location.search).get('fotovicina');
+  if(q&&/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//.test(q)) FOTO_VICINA=q.replace(/\/?$/,'/'); })(); }catch(e){}
+var FOTO_VUOTA='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+/* ⚠️ LA FOTO DA VICINO NON CHIEDE TESSERE SOTTO IL SUO ZOOM (7/11/2026, scheda 126, suo «facciamo la A»; nata per Esri,
+   si chiamava EsriDaVicino fino al 27/11/2026: la usano ora la foto nostra da vicino e Mapbox nel satellite). Leaflet sceglie lo
+   zoom delle tessere ARROTONDANDO (GridLayer._setView: Math.round) e le butta col valore vero (_pruneTiles: zoom sotto
+   minZoom → _removeAllTiles): con lo zoom a quarti, a 10,5 e 10,75 le tessere Esri del minZoom 11 si chiedevano (e si
+   pagavano) e sparivano subito, e in mappa restava la foto nostra. Misurato sul sito vero (analisi-esri-126.js, tessere
+   DIVERSE, Esri bloccato): al PC 13 su 134 mai mostrate, al telefono 2 su 24; chi si ferma a 10,5-10,75 butta tutte
+   quelle chieste li' (15-21 a schermata al PC). Qui, sotto il minZoom, il minimo si alza di uno solo mentre _setView
+   decide: nessuna tessera, come Leaflet poi vorrebbe. Da 11 in su tutto uguale (stesse tessere in mappa, provato). La
+   usano la foto sotto la pioggia (qui sotto) e quella delle previsioni (viFondo, in un altro <script>); le pagine meteo
+   hanno la stessa regola in genera-pagine-meteo-zona.js */
+var DaVicino=L.TileLayer.extend({ _setView:function(c,z,a,b){ var m=this.options.minZoom;
+  if(z<m) this.options.minZoom=m+1;
+  try{ L.TileLayer.prototype._setView.call(this,c,z,a,b); } finally{ this.options.minZoom=m; } } });
+window._DaVicino=DaVicino;   // questo script e' tutto dentro una funzione: le previsioni e il satellite la prendono da qui
+// l'indice delle tessere da vicino, chiesto una volta sola per visita (null se non arriva: allora resta la nostra del 10)
+var indiceVicina=null;
+function esisteVicina(liv,n,x,y){ var r=liv[n]&&liv[n][y]; if(!r) return false;
+  for(var i=0;i<r.length;i++){ if(x<r[i][0]) return false; if(x<=r[i][1]) return true; } return false; }
+var FotoVicina=DaVicino.extend({ getTileUrl:function(c){ var n=this._getZoomForUrl();
+  return esisteVicina(this.options.livelli,n,c.x,c.y)?FOTO_VICINA+n+'/'+c.x+'/'+c.y+'.webp':FOTO_VUOTA; } });
+// la foto nostra da vicino: pronta(strato) quando l'indice c'e'. piu: opzioni in piu' (pane a parte)
+window._fotoVicina=function(pane,pronta,piu){
+  if(!indiceVicina) indiceVicina=fetch(FOTO_VICINA+'indice.json').then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(j){ return j&&j.livelli||null; }).catch(function(){ return null; });
+  indiceVicina.then(function(liv){ if(!liv) return;
+    var o={pane:pane,minZoom:11,maxZoom:19,minNativeZoom:11,maxNativeZoom:13,tileSize:512,zoomOffset:-1,
+           crossOrigin:true,zIndex:2,errorTileUrl:FOTO_VUOTA,livelli:liv};
+    for(var k in (piu||{})) o[k]=piu[k];
+    pronta(new FotoVicina('',o)); });
+};
 // usata anche dalla foto delle previsioni (viFondo), che e' in un altro <script>
 window._fotoNostra=function(pane,quandoNonArriva,piu){
   var o={pane:pane,minNativeZoom:4,maxNativeZoom:10,maxZoom:19,bounds:FOTO_LIMITI,crossOrigin:true};
@@ -2971,13 +3010,10 @@ window._fotoNostra=function(pane,quandoNonArriva,piu){
   sotto.getEvents=function(){ var e=L.TileLayer.prototype.getEvents.call(this); delete e.viewprereset; return e; };
   // quandoMappaDisegnata aspetta la foto che si vede, non piu' la cartina OSM (che sotto la foto non c'e')
   window._fondoFoto=function(){ return document.body.classList.contains('foto-on')&&map.hasLayer(lontano)?lontano:null; };
-  // creata tardi: la chiave Esri sta nel modulo del satellite dei boschi, piu' in fondo alla pagina (nel test non c'e')
-  function esri(){
-    if(vicino) return vicino;
-    var k=window._esriChiave; if(k===undefined) return null;
-    vicino=L.tileLayer(k?'https://ibasemaps-api.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?token='+k
-                        :'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                       {pane:'foto',minZoom:11,maxZoom:19,maxNativeZoom:19,tileSize:512,zoomOffset:-1,crossOrigin:'anonymous'});
+  // la foto nostra da vicino (zoom 11-13, poi ingrandita): arriva quando c'e' il suo indice, e allora giusta() la mette
+  var chiesta=false;
+  function daVicino(){
+    if(!chiesta){ chiesta=true; window._fotoVicina('foto',function(l){ vicino=l; giusta(); }); }
     return vicino;
   }
   function vuole(){ var b=document.body.classList; return !rotta&&!b.contains('modo-boschi')&&!b.contains('sat-on')&&!b.contains('modo-prev'); }
@@ -2995,7 +3031,7 @@ window._fotoNostra=function(pane,quandoNonArriva,piu){
   function scritte(){
     var ac=map.attributionControl; if(!ac) return;
     // inline-block: va a capo tutta intera, e si spezza dentro solo se da sola e' piu' larga dei crediti (a 1024 px)
-    var t=vuole()?'<span style="display:inline-block;max-width:100%">'+FOTO_CREDITI+(map.getZoom()>=11?', '+FOTO_CREDITI_ESRI:'')+'</span>':null;
+    var t=vuole()?'<span style="display:inline-block;max-width:100%">'+FOTO_CREDITI+'</span>':null;
     if(t===fotoScritta) return;
     if(fotoScritta){ ac.removeAttribution(fotoScritta); delete ac._attributions[fotoScritta]; }
     fotoScritta=t; if(t) ac.addAttribution(t);
@@ -3010,11 +3046,10 @@ window._fotoNostra=function(pane,quandoNonArriva,piu){
   function giusta(){
     var si=vuole();
     document.body.classList.toggle('foto-on',si);
-    [sotto,lontano,esri()].forEach(function(l){ if(!l) return; if(si){ if(!map.hasLayer(l)) l.addTo(map); } else togli(l); });
+    [sotto,lontano,daVicino()].forEach(function(l){ if(!l) return; if(si){ if(!map.hasLayer(l)) l.addTo(map); } else togli(l); });
     osmSeServe();
     scritte();
   }
-  map.on('zoomend',scritte);
   /* ⚠️ DA LONTANO NIENTE RETTANGOLO (1/11/2026, scheda 105, difetto 6): la foto copre l'Europa (FOTO_LIMITI) e
      rimpicciolendo, sotto lo zoom 5 al PC e il 4 al telefono, diventava un rettangolo dentro la cartina stradale (nel meteo
      su fondo grigio), e sotto il 4 la console si riempiva di errori (tessere che non esistono). Ora lo zoom piu' lontano
@@ -3047,8 +3082,6 @@ window._fotoNostra=function(pane,quandoNonArriva,piu){
   function avvia(){
     giusta();
     try{ new MutationObserver(giusta).observe(document.body,{attributes:true,attributeFilter:['class']}); }catch(e){}
-    // Esri da vicino appena la sua chiave c'e' (il modulo dei boschi gira dopo questo script)
-    if(!vicino) setTimeout(function(){ if(vuole()&&esri()&&!map.hasLayer(vicino)) vicino.addTo(map); },0);
   }
   if(document.body) avvia(); else document.addEventListener('DOMContentLoaded',avvia);
 })();
@@ -13000,6 +13033,8 @@ body.foto-on #map-spinner{background:transparent}
   padding:9px 16px;border-radius:20px;box-shadow:0 2px 10px rgba(0,0,0,.35);text-align:center;pointer-events:none;
   opacity:0;transition:opacity .3s}
 #foto-avviso.on{opacity:1}
+/* il logo di Mapbox sul satellite dallo zoom 14 (27/11/2026, scheda 143 bis): lo vuole Mapbox; disegno ufficiale, quello di mapbox-gl */
+.mapbox-logo{display:block;width:88px;height:23px;background:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' fill-rule='evenodd' viewBox='0 0 88 23'%3E%3Cdefs%3E%3Cpath id='logo' d='M11.5 2.25c5.105 0 9.25 4.145 9.25 9.25s-4.145 9.25-9.25 9.25-9.25-4.145-9.25-9.25 4.145-9.25 9.25-9.25zM6.997 15.983c-.051-.338-.828-5.802 2.233-8.873a4.395 4.395 0 013.13-1.28c1.27 0 2.49.51 3.39 1.42.91.9 1.42 2.12 1.42 3.39 0 1.18-.449 2.301-1.28 3.13C12.72 16.93 7 16 7 16l-.003-.017zM15.3 10.5l-2 .8-.8 2-.8-2-2-.8 2-.8.8-2 .8 2 2 .8z'/%3E%3Cpath id='text' d='M50.63 8c.13 0 .23.1.23.23V9c.7-.76 1.7-1.18 2.73-1.18 2.17 0 3.95 1.85 3.95 4.17s-1.77 4.19-3.94 4.19c-1.04 0-2.03-.43-2.74-1.18v3.77c0 .13-.1.23-.23.23h-1.4c-.13 0-.23-.1-.23-.23V8.23c0-.12.1-.23.23-.23h1.4zm-3.86.01c.01 0 .01 0 .01-.01.13 0 .22.1.22.22v7.55c0 .12-.1.23-.23.23h-1.4c-.13 0-.23-.1-.23-.23V15c-.7.76-1.69 1.19-2.73 1.19-2.17 0-3.94-1.87-3.94-4.19 0-2.32 1.77-4.19 3.94-4.19 1.03 0 2.02.43 2.73 1.18v-.75c0-.12.1-.23.23-.23h1.4zm26.375-.19a4.24 4.24 0 00-4.16 3.29c-.13.59-.13 1.19 0 1.77a4.233 4.233 0 004.17 3.3c2.35 0 4.26-1.87 4.26-4.19 0-2.32-1.9-4.17-4.27-4.17zM60.63 5c.13 0 .23.1.23.23v3.76c.7-.76 1.7-1.18 2.73-1.18 1.88 0 3.45 1.4 3.84 3.28.13.59.13 1.2 0 1.8-.39 1.88-1.96 3.29-3.84 3.29-1.03 0-2.02-.43-2.73-1.18v.77c0 .12-.1.23-.23.23h-1.4c-.13 0-.23-.1-.23-.23V5.23c0-.12.1-.23.23-.23h1.4zm-34 11h-1.4c-.13 0-.23-.11-.23-.23V8.22c.01-.13.1-.22.23-.22h1.4c.13 0 .22.11.23.22v.68c.5-.68 1.3-1.09 2.16-1.1h.03c1.09 0 2.09.6 2.6 1.55.45-.95 1.4-1.55 2.44-1.56 1.62 0 2.93 1.25 2.9 2.78l.03 5.2c0 .13-.1.23-.23.23h-1.41c-.13 0-.23-.11-.23-.23v-4.59c0-.98-.74-1.71-1.62-1.71-.8 0-1.46.7-1.59 1.62l.01 4.68c0 .13-.11.23-.23.23h-1.41c-.13 0-.23-.11-.23-.23v-4.59c0-.98-.74-1.71-1.62-1.71-.85 0-1.54.79-1.6 1.8v4.5c0 .13-.1.23-.23.23zm53.615 0h-1.61c-.04 0-.08-.01-.12-.03-.09-.06-.13-.19-.06-.28l2.43-3.71-2.39-3.65a.213.213 0 01-.03-.12c0-.12.09-.21.21-.21h1.61c.13 0 .24.06.3.17l1.41 2.37 1.4-2.37a.34.34 0 01.3-.17h1.6c.04 0 .08.01.12.03.09.06.13.19.06.28l-2.37 3.65 2.43 3.7c0 .05.01.09.01.13 0 .12-.09.21-.21.21h-1.61c-.13 0-.24-.06-.3-.17l-1.44-2.42-1.44 2.42a.34.34 0 01-.3.17zm-7.12-1.49c-1.33 0-2.42-1.12-2.42-2.51 0-1.39 1.08-2.52 2.42-2.52 1.33 0 2.42 1.12 2.42 2.51 0 1.39-1.08 2.51-2.42 2.52zm-19.865 0c-1.32 0-2.39-1.11-2.42-2.48v-.07c.02-1.38 1.09-2.49 2.4-2.49 1.32 0 2.41 1.12 2.41 2.51 0 1.39-1.07 2.52-2.39 2.53zm-8.11-2.48c-.01 1.37-1.09 2.47-2.41 2.47s-2.42-1.12-2.42-2.51c0-1.39 1.08-2.52 2.4-2.52 1.33 0 2.39 1.11 2.41 2.48l.02.08zm18.12 2.47c-1.32 0-2.39-1.11-2.41-2.48v-.06c.02-1.38 1.09-2.48 2.41-2.48s2.42 1.12 2.42 2.51c0 1.39-1.09 2.51-2.42 2.51z'/%3E%3C/defs%3E%3Cmask id='clip'%3E%3Crect x='0' y='0' width='100%25' height='100%25' fill='white'/%3E%3Cuse xlink:href='%23logo'/%3E%3Cuse xlink:href='%23text'/%3E%3C/mask%3E%3Cg id='outline' opacity='0.3' stroke='%23000' stroke-width='3'%3E%3Ccircle mask='url(%23clip)' cx='11.5' cy='11.5' r='9.25'/%3E%3Cuse xlink:href='%23text' mask='url(%23clip)'/%3E%3C/g%3E%3Cg id='fill' opacity='0.9' fill='%23fff'%3E%3Cuse xlink:href='%23logo'/%3E%3Cuse xlink:href='%23text'/%3E%3C/g%3E%3C/svg%3E") no-repeat;background-size:88px 23px;cursor:pointer}
 @media(min-width:901px){#map .leaflet-control-attribution{max-width:34vw;white-space:normal;text-align:right;line-height:1.35;font-size:10.5px}}
 @media(max-width:900px){#sat-btn{bottom:auto;top:52px;right:8px;width:54px;height:54px}#sat-btn span{font-size:10px;padding-bottom:3px}}
 .bo-sat{display:none;align-items:center;gap:7px;margin:0 0 6px;font-size:11.5px;color:#1b3f6e}
@@ -16054,23 +16089,35 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
    Niente memoria: ogni visita parte dalla cartina (sua regola 29/9). Un link con sat=1
    la accende, ma solo se porta anche boschi=1. */
 (function(){
-  var SAT_FOTO='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-  window._esriChiave=SAT_FOTO.split('token=')[1]||'';   // la stessa chiave per la cartina della vista Italia delle previsioni (28/10/2026); nel test non c'e'
-  // «Alternate» e non «World_Boundaries_and_Places»: quello scrive ogni capoluogo DUE volte,
-  // la citta' col pallino e la provincia omonima (Asti, Cuneo, Pavia...: visto da lui il 29/9)
-  var SAT_NOMI='https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places_Alternate/MapServer/tile/{z}/{y}/{x}';
-  // foto + nomi in un credito solo: al posto di quello di OSM, che col satellite non c'e'
-  // ⚠️ SPENTO di base (29/9 notte, lui: «il satellite e' lento quando zoomo»): con quattro strati a
-  // zoom diversi, passando da uno all'altro la foto sparisce finche' non arriva la nuova (niente tessere
-  // vecchie ingrandite a fare da ponte), e al 13 sul telefono in 4G ci metteva il doppio (1,2 s contro
-  // 0,6). Uno strato solo e' piu' fluido; i riquadri sfocati al 12-13 sono di Esri. ?satfine=1 per provarlo.
-  var SAT_FINE=new URLSearchParams(location.search).get('satfine')==='1';
-  var SAT_NOMI_VICINO='https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}';
+  /* ⚠️ VIA ESRI (27/11/2026, scheda 143 bis, suo «Strada B»: dal 25/2/2027 Esri sarebbe stato a pagamento, «pagare non
+     se ne parla», e il sito un giorno vuole guadagnare). Il satellite e' la foto NOSTRA fino allo zoom 13, la stessa
+     della pioggia (Blue Marble + ESA fino al 10, ESA a 10 m dall'11 al 13: _fotoNostra e _fotoVicina), e MAPBOX
+     SATELLITE dallo zoom 14: gratis fino a 200.000 richieste al mese (Static Tiles API, vedi MAPBOX_SAT), uso commerciale
+     permesso; tessere vere da 512 px a zoomOffset -1, una richiesta copre quattro tessere SENZA perdere nitidezza (Esri a
+     un quarto era sfocata). Stima: 55-90 mila richieste al mese a novembre (resoconto nel banco, analisi-esri-143bis).
+     ⚠️ Mapbox NON ha un tetto di spesa: oltre il gratis addebita, e senza pagamento sospende il conto; allora qui resta la
+     nostra ingrandita (vedi crea).
+     Il token e' il «Default public token» del conto Mapbox «avventuremicologiche» (27/11/2026): Mapbox chiede la carta
+     per crearne altri, e lui non la mette («pagare non se ne parla»). SENZA CARTA nel conto oltre il gratis Mapbox non
+     puo' addebitare: sospende, e qui resta la nostra ingrandita. Il token di default non si restringe agli indirizzi:
+     chi lo copia consuma il nostro gratis (il peggio e' la sospensione). Consumi: account.mapbox.com, Statistics.
+     Senza token (repo di test) niente Mapbox. Crediti e logo come li vuole Mapbox (letti dal suo stile satellite-v9).
+     Fino al 27/11/2026 qui c'era Esri World Imagery a ogni zoom (SAT_FOTO, credenziale «Satellite mappa precipitazioni»,
+     il 74% delle tessere Esri), con un ?satfine=1 di prova per i suoi mosaici agli zoom 12-13. */
+  var MAPBOX_TOKEN='pk.eyJ1IjoiYXZ2ZW50dXJlbWljb2xvZ2ljaGUiLCJhIjoiY213ejhsbGNoMDE2aDJ4czM4MGpqaXNtdSJ9.kcrO8GtNVcQ4jo3YfWWE0Q';
+  /* ⚠️ STATIC TILES API, NON RASTER TILES (27/11/2026). Col conto senza carta la Raster Tiles API (v4/mapbox.satellite,
+     750.000 gratis al mese) risponde SEMPRE 429 «Too Many Requests» (X-Rate-Limit-Limit -1), anche alla prima tessera;
+     la Static Tiles API dello stile satellite-v9 (la stessa foto, senza nomi) risponde 200. Il suo gratis e' piu' piccolo:
+     200.000 richieste al mese (oltre, 0,50 $ ogni 1.000: senza carta, sospensione). Tessere 512 px JPEG (~75 KB) a
+     zoomOffset -1; la @2x da 1024 px pesa il triplo e non serve */
+  var MAPBOX_SAT='https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/512/{z}/{x}/{y}?access_token='+MAPBOX_TOKEN;
   // i nomi sono nostri (29/9, sua scelta: «stonano i nomi di Esri»): si cita solo la foto
-  var CREDITI='Foto &copy; <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a>, Vantor, Earthstar Geographics; nomi esteri &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';   // ODbL
-  var ANTE_SAT='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/8/93/135';
+  var CREDITI='Foto: NASA, <a href="/fonti.html#satellite" target="_blank" rel="noopener">ESA WorldCover</a>; nomi esteri &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';   // ODbL
+  var CREDITI_MAPBOX='da vicino <a href="https://www.mapbox.com/about/maps" target="_blank" rel="noopener">&copy; Mapbox</a> <a href="https://www.maxar.com/" target="_blank" rel="noopener">&copy; Maxar</a> <a class="mapbox-improve-map" href="https://www.mapbox.com/contribute/" target="_blank" rel="noopener">Improve this map</a>';
+  // l'anteprima del tasto: una tessera della foto nostra (prima era una di Esri)
+  function anteSat(){ return (window._fotoUrl||'').replace('{z}/{x}/{y}','8/135/93'); }
   var ANTE_MAPPA='https://a.tile.openstreetmap.org/8/135/93.png';
-  var on=false, strati=null, btn=null, osmPronto=false;
+  var on=false, strati=null, btn=null, osmPronto=false, mapbox=null, mapboxRotto=false, logo=null, crMapbox=false;
   /* La cartina OSM sotto la foto non si vede: si toglie, cosi' non si scarica.
      Ma solo dopo il suo primo «load», che quandoMappaDisegnata aspetta. */
   function osmVia(){
@@ -16092,35 +16139,36 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     mp.createPane('sat-foto'); mp.getPane('sat-foto').style.zIndex=201; mp.getPane('sat-foto').style.pointerEvents='none';
     // dal 31/10/2026 'sat-nomi' lo crea gia' la foto sotto la pioggia (i nomi anche li'): un secondo createPane ne farebbe un altro
     if(!mp.getPane('sat-nomi')){ mp.createPane('sat-nomi'); mp.getPane('sat-nomi').style.zIndex=455; mp.getPane('sat-nomi').style.pointerEvents='none'; }
-    strati=[
-      /* ⚠️ AGLI ZOOM 12 E 13 LA FOTO ESRI E' UN MOSAICO (29/9, visto da lui sul lago d'Iseo):
-         riquadri di voli diversi, alcuni sfocati. Dal 14 e' uniforme. Li' si caricano le tessere
-         del 14 rimpicciolite: al 13 quattro per tessera (tileSize 128, zoomOffset 1), al 12
-         sedici (tileSize 64, zoomOffset 2). Prova locale: ?satfine=0 torna alle tessere normali.
-         ⚠️ minZoom/maxZoom di un GridLayer si confrontano con lo zoom VERO (a quarti), mentre
-         le tessere seguono lo zoom ARROTONDATO: i limiti vanno a 11,25 / 11,5-12,25 / 12,5-13,25 /
-         13,5, se no a 12,75 non c'e' nessuno strato (visto: mappa grigia). */
-    ].concat(SAT_FINE ? [
-      L.tileLayer(SAT_FOTO,{pane:'sat-foto',maxZoom:12.25,crossOrigin:'anonymous'}),
-      // al 12 le tessere del 14 erano SEDICI per tessera: fino a 627 a schermo, e sul suo PC la
-      // foto non arrivava (mappa grigia coi boschi sopra). Tolto: al 12 si resta sulle tessere di Esri.
-      L.tileLayer(SAT_FOTO,{pane:'sat-foto',minZoom:12.5,maxZoom:13.25,tileSize:128,zoomOffset:1,crossOrigin:'anonymous'}),
-      L.tileLayer(SAT_FOTO,{pane:'sat-foto',minZoom:13.5,maxZoom:19,maxNativeZoom:19,crossOrigin:'anonymous'})
-    ] : [
-      L.tileLayer(SAT_FOTO,{pane:'sat-foto',maxZoom:19,maxNativeZoom:19,crossOrigin:'anonymous'})
-    ]).concat([
-      // i nomi NON sono di Esri: li scriviamo noi a ogni zoom (modulo «NOMI NOSTRI» in fondo)
-    ]);
-    /* SE ESRI NON MANDA LA FOTO (31/10/2026, suo: «non possiamo mettere una scritta che dice satellite al momento
-       offline?»): fino ad allora restava il nero. Al terzo errore senza nessuna tessera arrivata si torna alla
-       cartina dei boschi e una scritta lo dice per 5 secondi; il tasto «Satellite» resta, si puo' riprovare. Il caso
-       vero e' il tetto dei 2 milioni di tessere al mese (Esri si ferma fino al 30, senza addebiti). Si contano gli
-       errori DI FILA (una tessera arrivata azzera): cosi' vale anche se Esri si ferma a visita gia' cominciata. */
-    strati.forEach(function(s){
+    /* SE LA FOTO NON ARRIVA (31/10/2026, suo: «non possiamo mettere una scritta che dice satellite al momento
+       offline?»): si torna alla cartina dei boschi e una scritta lo dice per 5 secondi; il tasto «Satellite» resta, si
+       puo' riprovare. Dal 27/11/2026: la foto nostra al terzo errore senza nessuna tessera arrivata (jsDelivr giu'),
+       Mapbox al quarto errore DI FILA (una tessera arrivata azzera: conto sospeso o token sbagliato), e allora si toglie
+       solo lui, per la visita, e da vicino resta la nostra ingrandita. I nomi NON sono foto: li scriviamo noi a ogni
+       zoom (modulo «NOMI NOSTRI» in fondo) */
+    strati=[window._fotoNostra('sat-foto',function(){ if(on){ spegni(false); avviso('Foto dal satellite al momento non disponibile'); } })];
+    window._fotoVicina('sat-foto',function(l){ strati.push(l); if(on&&!mp.hasLayer(l)) l.addTo(mp); });
+    if(MAPBOX_TOKEN){
+      // DaVicino: niente richieste a 13,5-13,75, dove Leaflet arrotonda al 14 ma lo strato non si vede ancora
+      mapbox=new window._DaVicino(MAPBOX_SAT,{pane:'sat-foto',minZoom:14,maxZoom:19,maxNativeZoom:19,tileSize:512,zoomOffset:-1,crossOrigin:'anonymous',zIndex:3});
       var ko=0;
-      s.on('tileload',function(){ ko=0; });
-      s.on('tileerror',function(){ ko++; if(on&&ko>=4){ ko=0; spegni(false); avviso('Foto dal satellite al momento non disponibile'); } });
-    });
+      mapbox.on('tileload',function(){ ko=0; });
+      mapbox.on('tileerror',function(){ ko++; if(on&&ko>=4&&!mapboxRotto){ mapboxRotto=true; mp.removeLayer(mapbox); creditoMapbox(); avviso('Foto da vicino al momento non disponibile'); } });
+      strati.push(mapbox);
+      mp.on('zoomend',creditoMapbox);
+    }
+  }
+  /* I CREDITI E IL LOGO DI MAPBOX solo quando la sua foto si vede (dallo zoom 14), come per Esri dal 31/10/2026 (suo:
+     «le previsioni hai lasciato esri?» guardando una vista tutta nostra). Mapbox vuole il suo logo sulla mappa: un
+     controllo di Leaflet in basso a sinistra, col disegno ufficiale (quello di mapbox-gl). */
+  function creditoMapbox(){
+    var mp=m(); if(!mp) return;
+    var si=!!(on&&mapbox&&!mapboxRotto&&mp.hasLayer(mapbox)&&mp.getZoom()>=14);
+    if(si&&!logo){ logo=L.control({position:'bottomleft'});
+      logo.onAdd=function(){ var a=L.DomUtil.create('a','mapbox-logo'); a.href='https://www.mapbox.com/'; a.target='_blank'; a.rel='noopener';
+        a.setAttribute('aria-label','Mapbox'); a.title='Mapbox'; return a; }; }
+    if(si===crMapbox) return; crMapbox=si;
+    if(mp.attributionControl){ if(si) mp.attributionControl.addAttribution(CREDITI_MAPBOX); else mp.attributionControl.removeAttribution(CREDITI_MAPBOX); }
+    if(si) logo.addTo(mp); else if(logo) logo.remove();
   }
   function avviso(testo){
     var el=document.getElementById('map'); if(!el) return;
@@ -16134,7 +16182,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     if(pb){ if(pb.classList.contains('tessera')) pb.innerHTML=on?'<span>Torna alla mappa</span>':'<i>🛰</i><span>Satellite</span>';
             else pb.textContent=on?'Torna alla mappa':'🛰 Satellite'; }
     if(!btn) return;
-    btn.style.backgroundImage='url("'+(on?ANTE_MAPPA:ANTE_SAT)+'")';
+    btn.style.backgroundImage='url("'+(on?ANTE_MAPPA:anteSat())+'")';
     btn.querySelector('span').textContent=on?'Mappa':'Satellite';
     btn.setAttribute('aria-pressed',on?'true':'false');
     btn.title=on?'Torna alla mappa':'Vedi le foto dal satellite';
@@ -16143,9 +16191,10 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
   function accendi(salva){
     var mp=m(); if(!mp) return;
     if(!strati) crea();
-    strati.forEach(function(s){ if(!mp.hasLayer(s)) s.addTo(mp); });
+    strati.forEach(function(s){ if(s===mapbox&&mapboxRotto) return; if(!mp.hasLayer(s)) s.addTo(mp); });
     if(mp.attributionControl) mp.attributionControl.addAttribution(CREDITI);
     on=true; window._satOn=true; document.body.classList.add('sat-on');
+    creditoMapbox();
     osmVia();
     if(window._boschiSat) window._boschiSat();
     setTimeout(posiziona,50);
@@ -16158,6 +16207,7 @@ body:not(.bq-on) .bq-ist i{background:#a9bcae}
     if(strati) strati.forEach(function(s){ if(mp.hasLayer(s)) mp.removeLayer(s); });
     if(mp.attributionControl) mp.attributionControl.removeAttribution(CREDITI);
     on=false; window._satOn=false; document.body.classList.remove('sat-on');
+    creditoMapbox();
     osmTorna();
     if(window._boschiSat) window._boschiSat();
     setTimeout(posiziona,50);
@@ -18135,19 +18185,12 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
       var r=(d.classList.contains('vi-ico')?d.firstChild:d).getBoundingClientRect(); if(presi.some(function(p){ return tocca(p,r); })) e.style.visibility='hidden'; else presi.push(r); });
   }
   /* LA CARTINA SENZA NOMI DELLA VISTA ITALIA (28/10/2026; suo: «le nuvole non staccano, e le icone coprono i nomi delle
-     citta'»; 3B, ilMeteo e Meteo.it usano tutti una cartina senza scritte). Mare da Esri Ocean Base, sopra
-     l'ombreggiatura del rilievo (Esri World Hillshade) fusa in «multiply», che scurisce solo le montagne, e tutto
-     scurito col CSS: le icone bianche e gialle staccano. Due pane sopra la cartina di sempre, che non si tocca; solo
-     nella vista Italia e sotto lo zoom 7,5 (piu' vicino tornano i nomi, li' servono). Tessere con la chiave ArcGIS del
-     satellite (window._esriChiave); senza chiave, come nel repo di test, dal servizio pubblico.
-     ⚠️ Provate e scartate: World_Light_Gray_Base (ha i nomi dei paesi a questa scala), World_Shaded_Relief da solo (non
-     distingue il mare), World_Terrain_Base ritinta (mare rosa), cartina a colori pieni con la sagoma verde (sua scelta:
-     il rilievo). World_Shaded_Relief con la chiave risponde 404: con la chiave il rilievo e' Elevation/World_Hillshade. */
-  var fondoL=null, rilievoL=null, satL=null, coloreL=null;
-  /* il fondo di regione, valle e paese: 'sat' (la foto, come la vista Italia) o 'verde' (il rilievo verde). Suo, 29/10/2026
-     sera, sul verde nell'anteprima: «non si vedono case, strade, e' tutto troppo anonimo e non riconoscibile» → «proviamo
-     satellite». Con la nostra chiave Esri strade e cartine non ci sono (404): le alternative erano foto o OpenStreetMap */
-  var FONDO_VICINO='sat';
+     citta'»; 3B, ilMeteo e Meteo.it usano tutti una cartina senza scritte): dal 29/10/2026 e' la foto dal satellite, su
+     due pane sopra la cartina di sempre, che non si tocca.
+     ⚠️ 27/11/2026 (scheda 143 bis, via Esri): tolto il fondo «verde» di regione, valle e paese (Esri Ocean Base + World
+     Hillshade sopra un verde pieno), provato il 29/10 e mai usato (suo: «non si vedono case, strade... proviamo
+     satellite»). Il pane viRilievo e la classe vz-fondo restano, vuoti. */
+  var satL=null;
   /* LA FOTO SCHIARITA (30/10/2026, scheda 101, decisione 4: suo «satellite non mi dispiace, puoi schiarirlo leggermente per
      renderlo meno buio»), sulla vista Italia e su regione, valle e paese. A TACCHE: 0 = la foto com'e', ogni tacca +6% di
      luce (filtro brightness sul pane viFondo). Sua scelta la 5 (+30%), fra 0, 2, 4, 5 e 6 provate: con la 6 neve e marmo
@@ -18155,9 +18198,6 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
      piu', a una misura, la mappa scorreva meno fluida) */
   var LUCE_SAT=5;
   document.documentElement.style.setProperty('--sat-luce',String(1+0.06*LUCE_SAT));
-  function esri(serv){ var k=window._esriChiave;
-    return k?'https://ibasemaps-api.arcgis.com/arcgis/rest/services/'+serv+'/MapServer/tile/{z}/{y}/{x}?token='+k
-            :'https://server.arcgisonline.com/ArcGIS/rest/services/'+serv+'/MapServer/tile/{z}/{y}/{x}'; }
   function viFondo(){
     var m=map(); if(!m) return;
     // vista Italia: la foto (29/10/2026); regione, valle e paese anche. ⚠️ 31/10/2026, suo («zoomando scompare il
@@ -18165,7 +18205,7 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     // (resto della cartina a rilievo) e oltre il 13,5 su regione, valle e paese, e tornava la cartina stradale. Il rilievo
     // verde, provato e non usato, resta fino al 13,5 (il suo Hillshade arriva al 13)
     var vicino=!!(acceso&&!italia()&&VE.scena);
-    var on=!!(acceso&&italia())||(vicino&&FONDO_VICINO==='sat'), vz=vicino&&FONDO_VICINO==='verde'&&m.getZoom()<13.5;
+    var on=!!(acceso&&italia())||vicino, vz=false;   // vz: il fondo «verde», tolto il 27/11/2026 (vedi sopra)
     // dall'Italia a una regione, valle o paese la foto dell'Italia se ne va prima che la vista nuova ci sia: fondo scuro
     // fino al suo disegno (vedi «NIENTE CARTINA STRADALE FRA UNA VISTA E L'ALTRA»)
     if(!on&&!vz&&acceso&&!italia()&&!VE.scena&&document.body.classList.contains('vi-fondo')) apreVista();
@@ -18173,32 +18213,21 @@ body.pv-lontano .pv-m .nm{font-size:11px;padding:2px 7px}
     if((on||vz)&&!m.getPane('viFondo')){ m.createPane('vzColore').style.zIndex=205; m.createPane('viFondo').style.zIndex=210; m.createPane('viRilievo').style.zIndex=220;
       ['vzColore','viFondo','viRilievo'].forEach(function(p){ m.getPane(p).style.pointerEvents='none'; }); }
     /* ⚠️ 31/10/2026 (scheda 104): fino allo zoom 10 la foto NOSTRA, la stessa della pioggia (window._fotoNostra:
-       Blue Marble + ESA da jsDelivr), cosi' vista Italia, regioni e province non consumano tessere Esri; Esri piena
-       dallo zoom 11 (valli e paesi: li' conta il dettaglio delle case). Se la nostra non arriva, Esri a ogni zoom
-       come prima. Se Esri si ferma, sotto resta la nostra del 10 ingrandita */
+       Blue Marble + ESA da jsDelivr), cosi' vista Italia, regioni e province non consumavano tessere Esri.
+       ⚠️ 27/11/2026 (scheda 143 bis, suo «Strada B»): anche da vicino la foto nostra, ESA a 10 m agli zoom 11-13
+       (window._fotoVicina, la stessa della pioggia), al 14 la stessa ingrandita: niente piu' Esri. Fino ad allora qui
+       c'era Esri dallo zoom 11 a un quarto delle tessere (dal 3/11), e a ogni zoom se la nostra non arrivava. Ora, se la
+       nostra non arriva, da lontano resta la cartina di sempre sotto, e da vicino la foto da vicino */
     if(on&&!satL){
       /* ⚠️ maxZoom 19 (1/11/2026, scheda 105): senza, Leaflet la ferma al 18 e allo zoom 19 restava la nostra del 10
          ingrandita 512 volte, una macchia di colore (in produzione, prima, la cartina stradale) */
-      var vicinoL=L.tileLayer(esri('World_Imagery'),{pane:'viFondo',minZoom:11,maxZoom:19,maxNativeZoom:17});
-      var nostraL=window._fotoNostra?window._fotoNostra('viFondo',function(){
-        var mm=map(); if(!mm||!satL) return;
-        satL.removeLayer(nostraL); satL.removeLayer(vicinoL); vicinoL.options.minZoom=0; satL.addLayer(vicinoL); creditoEsri(); }):null;
+      var nostraL=window._fotoNostra?window._fotoNostra('viFondo',null):null;
       if(nostraL) nostraL.options.attribution='Foto: NASA, <a href="/fonti.html#satellite" target="_blank" rel="noopener">ESA WorldCover</a>';   // corto: il resto in fonti.html
-      else vicinoL.options.minZoom=0;
-      satL=L.layerGroup(nostraL?[nostraL,vicinoL]:[vicinoL]);
-      // il credito di Esri solo quando la sua foto c'e' davvero (31/10/2026: scritto sempre, lui ha chiesto «le
-      // previsioni hai lasciato esri?» guardando la vista Italia, che e' tutta nostra)
-      var ESRI_CR='da vicino Esri, Vantor, Earthstar Geographics', crSi=false;
-      var creditoEsri=function(){ var mm=map(); if(!mm||!mm.attributionControl) return;
-        var si=!!(mm.hasLayer(satL)&&(vicinoL.options.minZoom===0||mm.getZoom()>=11)); if(si===crSi) return; crSi=si;
-        if(si) mm.attributionControl.addAttribution(ESRI_CR); else mm.attributionControl.removeAttribution(ESRI_CR); };
-      satL.on('add remove',creditoEsri); m.on('zoomend',creditoEsri);
+      satL=L.layerGroup(nostraL?[nostraL]:[]);
+      // la foto da vicino entra quando c'e' il suo indice (il credito e' lo stesso: ESA WorldCover)
+      if(window._fotoVicina) window._fotoVicina('viFondo',function(l){ if(satL) satL.addLayer(l); });
     }
-    if(vz&&!fondoL){ fondoL=L.tileLayer(esri('Ocean/World_Ocean_Base'),{pane:'viFondo',maxNativeZoom:10,attribution:'Cartina: Esri'});
-      rilievoL=L.tileLayer(esri('Elevation/World_Hillshade'),{pane:'viRilievo',maxNativeZoom:13});
-      coloreL=L.rectangle([[-85,-180],[85,180]],{pane:'vzColore',stroke:false,fillColor:'#cfe3a6',fillOpacity:1,interactive:false}); }
     [satL].forEach(function(l){ if(!l) return; if(on&&!m.hasLayer(l)) l.addTo(m); else if(!on&&m.hasLayer(l)) m.removeLayer(l); });
-    [coloreL,fondoL,rilievoL].forEach(function(l){ if(!l) return; if(vz&&!m.hasLayer(l)) l.addTo(m); else if(!vz&&m.hasLayer(l)) m.removeLayer(l); });
   }
   /* IL BANNER CHE SCORRE (28/10/2026, sua idea): i 29 di `italia` con icona, minima e massima, come la striscia dei
      telegiornali. Il contenuto e' scritto due volte e scorre di meta': il giro si chiude senza salti. Toccando una
@@ -19494,6 +19523,11 @@ html:root body:not(.modo-prev) #vic-riga{padding-left:0 !important;padding-right
     background:rgba(255,255,255,.92);box-shadow:0 1px 4px rgba(0,0,0,.18);color:#1b3f6e;font:600 11px system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;cursor:pointer}
   #cr-i b{font:italic 700 14px Georgia,'Times New Roman',serif;line-height:1}
   #map.cr-chiusi #cr-i{display:inline-flex}
+  /* il logo di Mapbox (satellite dallo zoom 14, 27/11/2026, scheda 143 bis): a sinistra stanno i crediti e la «i», e il
+     riquadro in basso lo copriva; qui a destra, alla loro stessa altezza sopra il riquadro. E' l'unico controllo di
+     quell'angolo */
+  #map .leaflet-bottom.leaflet-left{left:auto;right:0;bottom:var(--cr-giu,0px)}
+  #map .leaflet-bottom.leaflet-left .leaflet-control{margin:0 8px 10px 0}
 }
 </style>
 <script>

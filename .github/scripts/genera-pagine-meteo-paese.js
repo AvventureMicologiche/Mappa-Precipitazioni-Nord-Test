@@ -80,7 +80,7 @@ function pagina(p, QUOTE_DI) {
   if (iMeteo >= 0) STILE = STILE.slice(0, iMeteo);
 
   const C = { sito: SITO, raw: RAW, slug: 'paese-' + p.slug, reg, dove: p.dove, valle: 'zona', inValle: p.dove, diValle: '',
-    sat: MZ.SAT, quote, pluv: [], solo: true, paese: p.loc, giorni: 'funghi/' + reg + '-giorni.json', id,
+    vicina: MZ.VICINA, foto: MZ.FOTO, quote, pluv: [], solo: true, paese: p.loc, giorni: 'funghi/' + reg + '-giorni.json', id,
     nomi: p.nomi || null, primo: p.primo || null, intorno: p.n + ' e i paesi intorno', alPluv, evento: 'meteo_paese',
     nastro: p.n,   // il blocco rosso della barra sotto la mappa: «METEO SASSELLO», come il titolo della pagina
     ant: Object.assign({ confine: confineDi(casa) }, ordineCitta(reg)) };
